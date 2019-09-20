@@ -918,24 +918,7 @@ function traerSucursales($serviciosReferencias) {
 }
 
 
-function insertarUsuarios($serviciosReferencias) {
-   $usuario = $_POST['usuario'];
-   $password = $_POST['password'];
-   $refroles = $_POST['refroles'];
-   $email = $_POST['email'];
-   $nombrecompleto = $_POST['nombrecompleto'];
-   if (isset($_POST['activo'])) {
-   $activo = 1;
-   } else {
-   $activo = 0;
-   }
-   $res = $serviciosReferencias->insertarUsuarios($usuario,$password,$refroles,$email,$nombrecompleto,$activo);
-   if ((integer)$res > 0) {
-   echo '';
-   } else {
-   echo 'Hubo un error al insertar datos';
-   }
-}
+
 
 
 function traerUsuarios($serviciosReferencias) {

@@ -39,15 +39,11 @@ function login($usuario,$pass) {
                    u.email,
                    u.usuario,
                    r.descripcion,
-                   r.idrol,
-                   u.reflocatarios,
-                   CONCAT(l.cognom, ' ', l.nom) AS locatario
+                   r.idrol
                FROM
                    dbusuarios u
                        INNER JOIN
                    tbroles r ON r.idrol = u.refroles
-                       LEFT JOIN
-                   dblocatarios l ON l.idlocatario = u.reflocatarios
                WHERE
                    password = '".$pass."' AND u.activo = 1
                        AND idusuario = ".$idUsua;
@@ -77,9 +73,6 @@ function login($usuario,$pass) {
 			$_SESSION['email_sahilices'] = mysql_result($resppass,0,1);
 			$_SESSION['idroll_sahilices'] = mysql_result($resppass,0,4);
 			$_SESSION['refroll_sahilices'] = mysql_result($resppass,0,3);
-
-         $_SESSION['idlocatario_sahilices'] = mysql_result($resppass,0,5);
-         $_SESSION['locatario_sahilices'] = mysql_result($resppass,0,6);
 
 
 			return 1;

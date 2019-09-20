@@ -29,7 +29,7 @@ $configuracion = $serviciosReferencias->traerConfiguracion();
 
 $tituloWeb = mysql_result($configuracion,0,'sistema');
 
-$breadCumbs = '';
+$breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 
 
@@ -117,13 +117,13 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 
 </head>
 
-<body class="theme-red">
+<body class="theme-blue">
 
     <!-- Page Loader -->
     <div class="page-loader-wrapper">
         <div class="loader">
             <div class="preloader">
-                <div class="spinner-layer pl-red">
+                <div class="spinner-layer pl-blue">
                     <div class="circle-clipper left">
                         <div class="circle"></div>
                     </div>
@@ -163,9 +163,9 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="card ">
-							<div class="header bg-red">
+							<div class="header bg-blue">
 								<h2 style="color:#fff">
-									PLANING
+									SOLICITUDES
 								</h2>
 								<ul class="header-dropdown m-r--5">
 									<li class="dropdown">
@@ -181,7 +181,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 							<div class="body table-responsive">
 								<form class="form" id="formFacturas">
 
-								<div class="row contDisponibilidad" style="padding: 5px 20px;">
+								<div class="row" style="padding: 5px 20px;">
 
 
 								</div>
@@ -197,46 +197,6 @@ if ($_SESSION['idroll_sahilices'] == 1) {
     </section>
 
 
-	 <!-- VER -->
-	 <form class="formulario" role="form" id="sign_in">
-		 <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
-			  <div class="modal-dialog modal-lg" role="document">
-					<div class="modal-content">
-						 <div class="modal-header modal-header-ver">
-							  <h4 class="modal-title" id="largeModalLabel">LLOGUER</h4>
-						 </div>
-						 <div class="modal-body">
-							 <div class="row frmVER">
-
-							 </div>
-							 <hr>
-
-							 <div class="row frmComentarios">
-								<div class="col-sm-12">
-								   <label for="carrer" class="control-label" style="text-align:left">Comentarios</label>
-								   <div class="form-group">
-									   <div class="form-line">
-										   <textarea rows="4" class="form-control no-resize" id="comentario" name="comentario" placeholder="Ingrese el Comentario..."></textarea>
-									   </div>
-								   </div>
-							   </div>
-
-							 </div>
-
-
-
-
-						 </div>
-						 <div class="modal-footer">
-							 <button type="submit" class="btn bg-green waves-effect guardar" data-dismiss="modal">GUARDAR COMENTARIO</button>
-							 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-						 </div>
-					</div>
-			  </div>
-		 </div>
-		 <input type="hidden" id="accion" name="accion" value="insertarLloguercomentarios"/>
-		 <input type="hidden" id="reflloguers" name="reflloguers" value="0"/>
-	 </form>
 
 
     <?php echo $baseHTML->cargarArchivosJS('../'); ?>
@@ -253,235 +213,126 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 	<script>
 		$(document).ready(function(){
 
-/*
-				var table = $('#example').DataTable({
-					"bProcessing": true,
-					"bServerSide": true,
-					"sAjaxSource": "../json/jstablasajax.php?tabla=facturastodas&idcliente=0",
-					"language": {
-						"emptyTable":     "No hay datos cargados",
-						"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
-						"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
-						"infoFiltered":   "(filtrados del total de _MAX_ filas)",
-						"infoPostFix":    "",
-						"thousands":      ",",
-						"lengthMenu":     "Mostrar _MENU_ filas",
-						"loadingRecords": "Cargando...",
-						"processing":     "Procesando...",
-						"search":         "Buscar:",
-						"zeroRecords":    "No se encontraron resultados",
-						"paginate": {
-							"first":      "Primero",
-							"last":       "Ultimo",
-							"next":       "Siguiente",
-							"previous":   "Anterior"
-						},
-						"aria": {
-							"sortAscending":  ": activate to sort column ascending",
-							"sortDescending": ": activate to sort column descending"
+
+
+			function frmAjaxModificar(id) {
+				$.ajax({
+					url: '../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: {accion: 'frmAjaxModificar',tabla: 'db', id: id},
+					//mientras enviamos el archivo
+					beforeSend: function(){
+						$('.frmAjaxModificar').html('');
+					},
+					//una vez finalizado correctamente
+					success: function(data){
+
+						if (data != '') {
+							$('.frmAjaxModificar').html(data);
+							$('#fechaingreso').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
+							$('#fechasubido').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
+
+						} else {
+							swal("Error!", data, "warning");
+
+							$("#load").html('');
 						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
 					}
 				});
-*/
-	traerDisponibilidad();
 
-	$('.recargar').click(function() {
-		traerDisponibilidad();
-	});
-
-	function traerDisponibilidad() {
-		$.ajax({
-			url: '../ajax/ajax.php',
-			type: 'POST',
-			// Form data
-			//datos del formulario
-			data: {accion: 'traerDisponibilidad',any: 2019},
-			//mientras enviamos el archivo
-			beforeSend: function(){
-				$('.contDisponibilidad').html('<div align="center"><img src="../imagenes/load13.gif" width="120"></div>');
-			},
-			//una vez finalizado correctamente
-			success: function(data){
-
-				if (data != '') {
-					$('.contDisponibilidad').html(data);
-
-
-				} else {
-					swal("Error!", data, "warning");
-
-					$("#load").html('');
-				}
-			},
-			//si ha ocurrido un error
-			error: function(){
-				$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-				$("#load").html('');
 			}
-		});
-	}
 
-	$(".contDisponibilidad").on("click",'.disponibilidadLloguer', function(){
-		idTable =  $(this).attr("id");
-		$('#reflloguers').val(idTable);
-		verLloguer(idTable);
-		$('#lgmModificar').modal();
-	});//fin del boton modificar
+			$("#example").on("click",'.btnModificar', function(){
+				idTable =  $(this).attr("id");
+				frmAjaxModificar(idTable);
+				$('#lgmModificar').modal();
+			});//fin del boton modificar
 
-	function verLloguer(id) {
-		$.ajax({
-			url: '../ajax/ajax.php',
-			type: 'POST',
-			// Form data
-			//datos del formulario
-			data: {accion: 'verLloguer', id: id},
-			//mientras enviamos el archivo
-			beforeSend: function(){
-				$('.frmVER').html('');
-				$('#comentario').html('');
-			},
-			//una vez finalizado correctamente
-			success: function(data){
-
-				if (data != '') {
-					$('.frmVER').html(data.lloguer);
-					$('#comentario').html(data.comentario);
-
+			$('.maximizar').click(function() {
+				if ($('.icomarcos').text() == 'web') {
+					$('#marcos').show();
+					$('.content').css('marginLeft', '315px');
+					$('.icomarcos').html('aspect_ratio');
 				} else {
-					swal("Error!", data, "warning");
-
-					$("#load").html('');
+					$('#marcos').hide();
+					$('.content').css('marginLeft', '15px');
+					$('.icomarcos').html('web');
 				}
-			},
-			//si ha ocurrido un error
-			error: function(){
-				$(".frmVER").html('<strong>Error!</strong> Actualice la pagina');
-				$("#load").html('');
+
+			});
+
+			$("#example").on("click",'.btnDescargar', function(){
+				usersid =  $(this).attr("id");
+
+				url = "descargaradmin.php?token=" + usersid;
+				$(location).attr('href',url);
+
+			});//fin del boton modificar
+
+			$('.guardar').click(function(e){
+
+				e.preventDefault();
+		      if ($('.formulario')[0].checkValidity()) {
+				//información del formulario
+				var formData = new FormData($(".formulario")[0]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
+
+					},
+					//una vez finalizado correctamente
+					success: function(data){
+
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Modificado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
+
+							$('#lgmModificar').modal('hide');
+							table.ajax.reload();
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
+
+
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
+					}
+				});
 			}
-		});
 
-	}
-
-
-
-	function frmAjaxModificar(id) {
-		$.ajax({
-			url: '../ajax/ajax.php',
-			type: 'POST',
-			// Form data
-			//datos del formulario
-			data: {accion: 'frmAjaxModificar',tabla: 'db', id: id},
-			//mientras enviamos el archivo
-			beforeSend: function(){
-				$('.frmAjaxModificar').html('');
-			},
-			//una vez finalizado correctamente
-			success: function(data){
-
-				if (data != '') {
-					$('.frmAjaxModificar').html(data);
-					$('#fechaingreso').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
-					$('#fechasubido').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
-
-				} else {
-					swal("Error!", data, "warning");
-
-					$("#load").html('');
-				}
-			},
-			//si ha ocurrido un error
-			error: function(){
-				$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-				$("#load").html('');
-			}
-		});
-
-	}
-
-	$("#example").on("click",'.btnModificar', function(){
-		idTable =  $(this).attr("id");
-		frmAjaxModificar(idTable);
-		$('#lgmModificar').modal();
-	});//fin del boton modificar
-
-	$('.maximizar').click(function() {
-		if ($('.icomarcos').text() == 'web') {
-			$('#marcos').show();
-			$('.content').css('marginLeft', '315px');
-			$('.icomarcos').html('aspect_ratio');
-		} else {
-			$('#marcos').hide();
-			$('.content').css('marginLeft', '15px');
-			$('.icomarcos').html('web');
-		}
-
-	});
-
-	$("#example").on("click",'.btnDescargar', function(){
-		usersid =  $(this).attr("id");
-
-		url = "descargaradmin.php?token=" + usersid;
-		$(location).attr('href',url);
-
-	});//fin del boton modificar
-
-	$('.guardar').click(function(e){
-
-		e.preventDefault();
-      if ($('.formulario')[0].checkValidity()) {
-		//información del formulario
-		var formData = new FormData($(".formulario")[0]);
-		var message = "";
-		//hacemos la petición ajax
-		$.ajax({
-			url: '../ajax/ajax.php',
-			type: 'POST',
-			// Form data
-			//datos del formulario
-			data: formData,
-			//necesario para subir archivos via ajax
-			cache: false,
-			contentType: false,
-			processData: false,
-			//mientras enviamos el archivo
-			beforeSend: function(){
-
-			},
-			//una vez finalizado correctamente
-			success: function(data){
-
-				if (data == '') {
-					swal({
-							title: "Respuesta",
-							text: "Registro Modificado con exito!!",
-							type: "success",
-							timer: 1500,
-							showConfirmButton: false
-					});
-
-					$('#lgmModificar').modal('hide');
-					table.ajax.reload();
-				} else {
-					swal({
-							title: "Respuesta",
-							text: data,
-							type: "error",
-							timer: 2500,
-							showConfirmButton: false
-					});
-
-
-				}
-			},
-			//si ha ocurrido un error
-			error: function(){
-				$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-				$("#load").html('');
-			}
-		});
-	}
-
-	});
+			});
 
 
 		});
