@@ -35,47 +35,59 @@ function query($sql,$accion) {
 
 
 
-$tablasAr	= array('clientes' => 'dbclientes',
-							'periodos' => 'dbperiodos',
-							'tarifas' => 'dbtarifas',
-							'ubicaciones' => 'dbubicaciones',
-							'formaspagos' => 'tbformaspagos',
-							'tipoubicacion' => 'tbtipoubicacion',
-							'periodos' => 'dbperiodos',
-							'lloguers' => 'dblloguers',
-							'taxa' => 'tbtaxa',
-							'pagos' => 'dbpagos',
-							'lloguersadicional' => 'dblloguersadicional',
-							'lloguercomentarios' => 'dblloguercomentarios');
+$tablasAr	= array('rolhogar' => 'tbrolhogar',
+							'tipopromotores' => 'tbtipopromotores',
+							'promotorestados' => 'tbpromotorestados',
+							'estadocivil' => 'tbestadocivil',
+							'entidadnacimiento' => 'tbentidadnacimiento',
+							'entidades' => 'tbentidades',
+							'promotores' => 'dbpromotores',
+							'sucursales' => 'dbsucursales',
+							'clientes' => 'dbclientes',
+							'tipoclientes' => 'tbtipoclientes',
+							'solicitudes' => 'dbsolicitudes',
+							'tiposolicitudes' => 'tbtiposolicitudes',
+							'estadosolicitudes' => 'tbestadosolicitudes',
+							'tipoingreso' => 'tbtipoingreso',
+							'documentacionsolicitudes' => 'dbdocumentacionsolicitudes',
+							'documentacionsolicitudesarchivos' => 'dbdocumentacionsolicitudesarchivos');
 
 
 function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 
-	$tablasArAux2	= array('clientes' => 'dbclientes',
-								'periodos' => 'dbperiodos',
-								'tarifas' => 'dbtarifas',
-								'ubicaciones' => 'dbubicaciones',
-								'formaspagos' => 'tbformaspagos',
-								'tipoubicacion' => 'tbtipoubicacion',
-								'periodos' => 'dbperiodos',
-								'lloguers' => 'dblloguers',
-								'taxa' => 'tbtaxa',
-								'pagos' => 'dbpagos',
-								'lloguersadicional' => 'dblloguersadicional',
-								'lloguercomentarios' => 'dblloguercomentarios');
+	$tablasArAux2	= array('rolhogar' => 'tbrolhogar',
+								'tipopromotores' => 'tbtipopromotores',
+								'promotorestados' => 'tbpromotorestados',
+								'estadocivil' => 'tbestadocivil',
+								'entidadnacimiento' => 'tbentidadnacimiento',
+								'entidades' => 'tbentidades',
+								'promotores' => 'dbpromotores',
+								'sucursales' => 'dbsucursales',
+								'clientes' => 'dbclientes',
+								'tipoclientes' => 'tbtipoclientes',
+								'solicitudes' => 'dbsolicitudes',
+								'tiposolicitudes' => 'tbtiposolicitudes',
+								'estadosolicitudes' => 'tbestadosolicitudes',
+								'tipoingreso' => 'tbtipoingreso',
+								'documentacionsolicitudes' => 'dbdocumentacionsolicitudes',
+								'documentacionsolicitudesarchivos' => 'dbdocumentacionsolicitudesarchivos');
 
-	$tablasArAux	= array('clientes' => 1,
-								'periodos' => 1,
-								'tarifas' => 3,
-								'ubicaciones' => 2,
-								'formaspagos' => 1,
-								'tipoubicacion' => 1,
-								'periodos' => 1,
-								'lloguers' => 3,
-								'taxa' => 1,
-								'pagos' => 3,
-								'lloguersadicional' => 2,
-								'lloguercomentarios' => 2);
+	$tablasArAux	= array('rolhogar' => 1,
+								'tipopromotores' => 1,
+								'promotorestados' => 1,
+								'estadocivil' => 1,
+								'entidadnacimiento' => 1,
+								'entidades' => 1,
+								'promotores' => 5,
+								'sucursales' => 2,
+								'clientes' => 5,
+								'tipoclientes' => 1,
+								'solicitudes' => 4,
+								'tiposolicitudes' => 1,
+								'estadosolicitudes' => 1,
+								'tipoingreso' => 1,
+								'documentacionsolicitudes' => 2,
+								'documentacionsolicitudesarchivos' => 4);
 
 	$inner= '';
 	$sql	=	"show columns from ".$tabla;
@@ -105,7 +117,7 @@ $ajaxFuncionesController = '';
 
 $servicios	= "Referencias";
 
-$sqlMapaer	= "SHOW FULL TABLES FROM casacaliente";
+$sqlMapaer	= "SHOW FULL TABLES FROM u115752684_asesores";
 $resMapeo 	=	query($sqlMapaer,0);
 
 $aliasTablaMadre = '';
@@ -185,26 +197,26 @@ if ($res == false) {
 			switch ($row[1]) {
 				case "date":
 					$cuerpoVariablePOST 	= $cuerpoVariablePOST."$".$row[0]." = "."$"."_POST['".$row[0]."']; <br>";
-					$cuerpoVariable 		= $cuerpoVariable."'".'".($'.$row[0].')."'."',";
+					$cuerpoVariable 		= $cuerpoVariable."'".'".$'.$row[0].'."'."',";
 					$cuerpoVariableComunes	= $cuerpoVariableComunes."$".$row[0].",";
 					$cuerpoSQL 				= $cuerpoSQL.$row[0].",";
 
-					$cuerpoVariableUpdate = $cuerpoVariableUpdate.$row[0].' = '."'".'".($'.$row[0].')."'."',";
+					$cuerpoVariableUpdate = $cuerpoVariableUpdate.$row[0].' = '."'".'".$'.$row[0].'."'."',";
 					break;
 				case "datetime":
 					$cuerpoVariablePOST 	= $cuerpoVariablePOST."$".$row[0]." = "."$"."_POST['".$row[0]."']; <br>";
-					$cuerpoVariable = $cuerpoVariable."'".'".($'.$row[0].')."'."',";
+					$cuerpoVariable = $cuerpoVariable."'".'".$'.$row[0].'."'."',";
 					$cuerpoVariableComunes = $cuerpoVariableComunes."$".$row[0].",";
 					$cuerpoSQL = $cuerpoSQL.$row[0].",";
-					$cuerpoVariableUpdate = $cuerpoVariableUpdate.$row[0].' = '."'".'".($'.$row[0].')."'."',";
+					$cuerpoVariableUpdate = $cuerpoVariableUpdate.$row[0].' = '."'".'".$'.$row[0].'."'."',";
 					break;
 				default:
 					if (strpos($row[1],"varchar") !== false) {
 						$cuerpoVariablePOST 	= $cuerpoVariablePOST."$".$row[0]." = "."$"."_POST['".$row[0]."']; <br>";
-						$cuerpoVariable = $cuerpoVariable."'".'".($'.$row[0].')."'."',";
+						$cuerpoVariable = $cuerpoVariable."'".'".$'.$row[0].'."'."',";
 						$cuerpoVariableComunes = $cuerpoVariableComunes."$".$row[0].",";
 						$cuerpoSQL = $cuerpoSQL.$row[0].",";
-						$cuerpoVariableUpdate = $cuerpoVariableUpdate.$row[0].' = '."'".'".($'.$row[0].')."'."',";
+						$cuerpoVariableUpdate = $cuerpoVariableUpdate.$row[0].' = '."'".'".$'.$row[0].'."'."',";
 					} else {
 						if (strpos($row[1],"bit") !== false) {
 							$cuerpoVariablePOST 	= $cuerpoVariablePOST."
@@ -276,7 +288,11 @@ if ($res == false) {
 			"."$"."id = 	"."$"."_POST['id']; <br>
 
 			"."$"."res = "."$"."servicios".$servicios."->eliminar".$nombre."("."$"."id); <br>
-			echo "."$"."res; <br>
+			if ("."$"."res == true) { <br>
+				echo ''; <br>
+			} else { <br>
+				echo 'Hubo un error al eliminar datos'; <br>
+			} <br>
 		} <br>
 
 
@@ -286,7 +302,7 @@ if ($res == false) {
 
 			"."$"."ar = array(); <br>
 
-			while ("."$"."row = mysql_fetch_array("."$"."res) { <br>
+			while ("."$"."row = mysql_fetch_array("."$"."res)) { <br>
 				array_push("."$"."ar, "."$"."row); <br>
 			} <br>
 

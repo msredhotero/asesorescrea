@@ -10,1224 +10,844 @@ date_default_timezone_set('Europe/Madrid');
 class ServiciosReferencias {
 
 
-	/* PARA Lloguercomentarios */
+	/* PARA Clientes */
 
-function insertarLloguercomentarios($reflloguers,$comentario) {
-$sql = "insert into dblloguercomentarios(idlloguercomentario,reflloguers,comentario)
-values ('',".$reflloguers.",'".$comentario."')";
-$res = $this->query($sql,1);
-return $res;
-}
-
-
-function modificarLloguercomentarios($id,$reflloguers,$comentario) {
-$sql = "update dblloguercomentarios
-set
-reflloguers = ".$reflloguers.",comentario = '".$comentario."'
-where idlloguercomentario =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function eliminarLloguercomentarios($id) {
-$sql = "delete from dblloguercomentarios where idlloguercomentario =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function traerLloguercomentarios() {
-$sql = "select
-l.idlloguercomentario,
-l.reflloguers,
-l.comentario
-from dblloguercomentarios l
-inner join dblloguers llo ON llo.idlloguer = l.reflloguers
-inner join dbclientes cl ON cl.idcliente = llo.refclientes
-inner join dbubicaciones ub ON ub.idubicacion = llo.refubicaciones
-inner join tbestados es ON est.idestado = llo.refestados
-order by 1";
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function traerLloguercomentariosPorId($id) {
-$sql = "select idlloguercomentario,reflloguers,comentario from dblloguercomentarios where idlloguercomentario =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-function traerLloguercomentariosPorLloguer($id) {
-$sql = "select idlloguercomentario,comentario from dblloguercomentarios where reflloguers =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-/* Fin */
-/* /* Fin de la Tabla: dblloguercomentarios*/
-
-	/* PARA Locatarios */
-
-	function traerLocatariosajax($length, $start, $busqueda,$colSort,$colSortDir) {
-
-		$where = '';
-
-		$busqueda = str_replace("'","",$busqueda);
-		if ($busqueda != '') {
-			$where = " where c.cognom like '%".$busqueda."%' or c.nom like '%".$busqueda."%' or c.nif like '%".$busqueda."%' or c.carrer like '%".$busqueda."%' or c.codipostal like '%".$busqueda."%' or c.ciutat like '%".$busqueda."%' or td.pais like '%".$busqueda."%' or td.telefon like '%".$busqueda."%' or td.email like '%".$busqueda."%'";
-		}
-
-		$sql = "select
-	   c.idlocatario,
-	   c.cognom,
-	   c.nom,
-	   c.nif,
-	   c.carrer,
-	   c.codipostal,
-	   c.ciutat,
-	   c.pais,
-	   c.telefon,
-	   c.email
-	   from dblocatarios c
-		".$where."
-		ORDER BY ".$colSort." ".$colSortDir."
-		limit ".$start.",".$length;
-
-		$res = $this->query($sql,0);
-		return $res;
-	}
-
-	function insertarLocatarios($cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email) {
-		$sql = "insert into dblocatarios(idlocatario,cognom,nom,nif,carrer,codipostal,ciutat,pais,telefon,email)
-		values ('','".($cognom)."','".($nom)."','".($nif)."','".($carrer)."','".($codipostal)."','".($ciutat)."','".($pais)."','".($telefon)."','".($email)."')";
-
+	function insertarClientes($nombre,$apellido,$email,$sexo,$refestadocivil,$rfc,$curp,$fechanacimiento,$numerocliente,$nacionalidad,$refpromotores,$refrolhogar,$reftipoclientes,$refentidadnacimiento,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+		$sql = "insert into dbclientes(idcliente,nombre,apellido,email,sexo,refestadocivil,rfc,curp,fechanacimiento,numerocliente,nacionalidad,refpromotores,refrolhogar,reftipoclientes,refentidadnacimiento,fechacrea,fechamodi,usuariocrea,usuariomodi)
+		values ('','".$nombre."','".$apellido."','".$email."','".$sexo."',".$refestadocivil.",'".$rfc."','".$curp."','".$fechanacimiento."','".$numerocliente."','".$nacionalidad."',".$refpromotores.",".$refrolhogar.",".$reftipoclientes.",".$refentidadnacimiento.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarLocatarios($id,$cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email) {
-		$sql = "update dblocatarios
-		set
-		cognom = '".($cognom)."',nom = '".($nom)."',nif = '".($nif)."',carrer = '".($carrer)."',codipostal = '".($codipostal)."',ciutat = '".($ciutat)."',pais = '".($pais)."',telefon = '".($telefon)."',email = '".($email)."'
-		where idlocatario =".$id;
-
-		$res = $this->query($sql,0);
-		return $res;
+	function modificarClientes($id,$nombre,$apellido,$email,$sexo,$refestadocivil,$rfc,$curp,$fechanacimiento,$numerocliente,$nacionalidad,$refpromotores,$refrolhogar,$reftipoclientes,$refentidadnacimiento,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+	$sql = "update dbclientes
+	set
+	nombre = '".$nombre."',apellido = '".$apellido."',email = '".$email."',sexo = '".$sexo."',refestadocivil = ".$refestadocivil.",rfc = '".$rfc."',curp = '".$curp."',fechanacimiento = '".$fechanacimiento."',numerocliente = '".$numerocliente."',nacionalidad = '".$nacionalidad."',refpromotores = ".$refpromotores.",refrolhogar = ".$refrolhogar.",reftipoclientes = ".$reftipoclientes.",refentidadnacimiento = ".$refentidadnacimiento.",fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."' where idcliente =".$id;
+	$res = $this->query($sql,0);
+	return $res;
 	}
 
 
-	function eliminarLocatarios($id) {
-		$sql = "delete from dblocatarios where idlocatario =".$id;
-
-		$res = $this->query($sql,0);
-		return $res;
+	function eliminarClientes($id) {
+	$sql = "delete from dbclientes where idcliente =".$id;
+	$res = $this->query($sql,0);
+	return $res;
 	}
 
 
-	function traerLocatarios() {
-		$sql = "select
-		l.idlocatario,
-		l.cognom,
-		l.nom,
-		l.nif,
-		l.carrer,
-		l.codipostal,
-		l.ciutat,
-		l.pais,
-		l.telefon,
-		l.email
-		from dblocatarios l
-		order by 1";
-		$res = $this->query($sql,0);
-		return $res;
+	function traerClientes() {
+	$sql = "select
+	c.idcliente,
+	c.nombre,
+	c.apellido,
+	c.email,
+	c.sexo,
+	c.refestadocivil,
+	c.rfc,
+	c.curp,
+	c.fechanacimiento,
+	c.numerocliente,
+	c.nacionalidad,
+	c.refpromotores,
+	c.refrolhogar,
+	c.reftipoclientes,
+	c.refentidadnacimiento,
+	c.fechacrea,
+	c.fechamodi,
+	c.usuariocrea,
+	c.usuariomodi
+	from dbclientes c
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
 	}
 
 
-	function traerLocatariosPorId($id) {
-		$sql = "select idlocatario,cognom,nom,nif,carrer,codipostal,ciutat,pais,telefon,email from dblocatarios where idlocatario =".$id;
-		$res = $this->query($sql,0);
-		return $res;
+	function traerClientesPorId($id) {
+	$sql = "select idcliente,nombre,apellido,email,sexo,refestadocivil,rfc,curp,fechanacimiento,numerocliente,nacionalidad,refpromotores,refrolhogar,reftipoclientes,refentidadnacimiento,fechacrea,fechamodi,usuariocrea,usuariomodi from dbclientes where idcliente =".$id;
+	$res = $this->query($sql,0);
+	return $res;
 	}
 
 	/* Fin */
-	/* /* Fin de la Tabla: dblocatarios*/
+	/* /* Fin de la Tabla: dbclientes*/
 
-	function buscarAlquilerPorFechaUbicacionPorDia($fecha, $idubicacion) {
-		$sql = "SELECT
-				    l.idlloguer, c.nom, c.cognom, c.telefon, est.estado, l.total, l.persset,
-					 est.color, DATE_FORMAT(l.entrada, '%Y-%m-%d') as entrada, DATE_FORMAT(l.sortida, '%Y-%m-%d') as sortida
-				FROM
-				    dblloguers l
-				        INNER JOIN
-				    dbclientes c ON l.refclientes = c.idcliente
-				        INNER JOIN
-				    tbestados est ON est.idestado = l.refestados
-				WHERE
-				    CAST('".$fecha."' AS DATE) BETWEEN l.entrada AND l.sortida
-				    and l.refubicaciones = ".$idubicacion;
 
-		$res = $this->query($sql,0);
-		return $res;
-	}
+	/* PARA Documentacionsolicitudes */
 
-	function buscarAlquilerPorFechaUbicacion($fechadesde, $fechahasta, $idubicacion) {
-		$sql = "SELECT
-				    l.idlloguer, c.nom, c.cognom, c.telefon, est.estado, l.total, l.persset,
-					 est.color
-				FROM
-				    dblloguers l
-				        INNER JOIN
-				    dbclientes c ON l.refclientes = c.idcliente
-				        INNER JOIN
-				    tbestados est ON est.idestado = l.refestados
-				WHERE
-				    (((l.entrada BETWEEN '".$fechadesde."' AND '".$fechahasta."')
-				        AND (l.entrada <> '".$fechahasta."'))
-				        OR ((l.sortida BETWEEN '".$fechadesde."' AND '".$fechahasta."')
-				        AND (l.sortida <> '".$fechadesde."'))) and l.refubicaciones = ".$idubicacion;
-
-		$res = $this->query($sql,0);
-		return $res;
-	}
-
-	function traerPeriodosDisponibilidad($any) {
-		$sql = "SELECT
-				    p.idperiodo,p.periodo, (datediff(p.finsaperiode,p.desdeperiode) / 7) as semanas ,p.desdeperiode
-				FROM
-				    dbperiodos p
-				where p.any = ".$any."
-				order by p.desdeperiode ";
-
-		$res = $this->query($sql,0);
- 		return $res;
-	}
-
-	/* PARA Lloguersadicional */
-
-	function insertarLloguersadicional($reflloguers,$personas,$entrada,$sortida,$taxapersona,$taxaturistica,$menores) {
-	$sql = "insert into dblloguersadicional(idllogueradicional,reflloguers,personas,entrada,sortida,taxapersona,taxaturistica,menores)
-	values ('',".$reflloguers.",".$personas.",'".($entrada)."','".($sortida)."',".$taxapersona.",".$taxaturistica.",".$menores.")";
+	function insertarDocumentacionsolicitudes($refsolicitudes,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+	$sql = "insert into dbdocumentacionsolicitudes(iddocumentacionsolicitud,refsolicitudes,documentacion,obligatoria,cantidadarchivos,fechacrea,fechamodi,usuariocrea,usuariomodi)
+	values ('',".$refsolicitudes.",'".$documentacion."','".$obligatoria."',".$cantidadarchivos.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
 	$res = $this->query($sql,1);
 	return $res;
 	}
 
 
-	function modificarLloguersadicional($id,$reflloguers,$personas,$entrada,$sortida,$taxapersona,$taxaturistica,$menores) {
-	$sql = "update dblloguersadicional
+	function modificarDocumentacionsolicitudes($id,$refsolicitudes,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+	$sql = "update dbdocumentacionsolicitudes
 	set
-	reflloguers = ".$reflloguers.",personas = ".$personas.",entrada = '".($entrada)."',sortida = '".($sortida)."',taxapersona = ".$taxapersona.",taxaturistica = ".$taxaturistica.",menores = ".$menores."
-	where idllogueradicional =".$id;
+	refsolicitudes = ".$refsolicitudes.",documentacion = '".$documentacion."',obligatoria = '".$obligatoria."',cantidadarchivos = ".$cantidadarchivos.",fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."'
+	where iddocumentacionsolicitud =".$id;
 	$res = $this->query($sql,0);
 	return $res;
 	}
 
 
-	function eliminarLloguersadicional($id) {
-	$sql = "delete from dblloguersadicional where idllogueradicional =".$id;
+	function eliminarDocumentacionsolicitudes($id) {
+	$sql = "delete from dbdocumentacionsolicitudes where iddocumentacionsolicitud =".$id;
 	$res = $this->query($sql,0);
 	return $res;
 	}
 
-	function eliminarLloguersadicionalPorLloguer($idlloguer) {
-	$sql = "delete from dblloguersadicional where reflloguers =".$idlloguer;
-	$res = $this->query($sql,0);
-	return $res;
-	}
 
-	function traerLloguersadicional() {
+	function traerDocumentacionsolicitudes() {
 	$sql = "select
-	l.idllogueradicional,
-	l.reflloguers,
-	l.personas,
-	l.entrada,
-	l.sortida,
-	l.taxapersona,
-	l.taxaturistica,
-	l.menores
-	from dblloguersadicional l
-	inner join dblloguers llo ON llo.idlloguer = l.reflloguers
-	order by 1";
-	$res = $this->query($sql,0);
-	return $res;
-	}
-
-	function traerLloguersadicionalPorLloguer($idlloguer) {
-	$sql = "select
-	l.idllogueradicional,
-	l.reflloguers,
-	l.personas,
-	l.entrada,
-	l.sortida,
-	l.taxapersona,
-	l.taxaturistica,
-	l.menores,
-	datediff(l.sortida,l.entrada) as dias
-	from dblloguersadicional l
-	inner join dblloguers llo ON llo.idlloguer = l.reflloguers
-	where l.reflloguers = ".$idlloguer."
+	d.iddocumentacionsolicitud,
+	d.refsolicitudes,
+	d.documentacion,
+	d.obligatoria,
+	d.cantidadarchivos,
+	d.fechacrea,
+	d.fechamodi,
+	d.usuariocrea,
+	d.usuariomodi
+	from dbdocumentacionsolicitudes d
 	order by 1";
 	$res = $this->query($sql,0);
 	return $res;
 	}
 
 
-
-	function traerLloguersadicionalPorId($id) {
-	$sql = "select idllogueradicional,reflloguers,personas,entrada,sortida,taxapersona,taxaturistica,menores from dblloguersadicional where idllogueradicional =".$id;
+	function traerDocumentacionsolicitudesPorId($id) {
+	$sql = "select iddocumentacionsolicitud,refsolicitudes,documentacion,obligatoria,cantidadarchivos,fechacrea,fechamodi,usuariocrea,usuariomodi from dbdocumentacionsolicitudes where iddocumentacionsolicitud =".$id;
 	$res = $this->query($sql,0);
 	return $res;
 	}
 
 	/* Fin */
-	/* /* Fin de la Tabla: dblloguersadicional*/
+	/* /* Fin de la Tabla: dbdocumentacionsolicitudes*/
 
-	/* PARA Pagos */
 
-	function insertarPagos($reflloguers,$refformaspagos,$cuota,$monto,$taxa,$fecha,$fechapago,$usuario,$cancelado) {
-		$sql = "insert into dbpagos(idpago,reflloguers,refformaspagos,cuota,monto,taxa,fecha,fechapago,usuario,cancelado)
-		values ('',".$reflloguers.",".$refformaspagos.",".$cuota.",".$monto.",".$taxa.",'".($fecha)."','".($fechapago)."','".($usuario)."',".$cancelado.")";
+	/* PARA Documentacionsolicitudesarchivos */
 
-		$res = $this->query($sql,1);
-		return $res;
-	}
-
-
-	function modificarPagos($id,$reflloguers,$refformaspagos,$cuota,$monto,$taxa,$fecha,$fechapago,$usuario,$cancelado) {
-		$sql = "update dbpagos
-		set
-		reflloguers = ".$reflloguers.",refformaspagos = ".$refformaspagos.",cuota = ".$cuota.",monto = ".$monto.",taxa = ".$taxa.",fecha = '".($fecha)."',fechapago = '".($fechapago)."',usuario = '".($usuario)."',cancelado = ".$cancelado."
-		where idpago =".$id;
-
-		$res = $this->query($sql,0);
-		return $res;
-	}
-
-	function modificarPagosParcial($id,$cuota,$taxa,$fechapago,$usuario) {
-		$sql = "update dbpagos
-		set
-		cuota = ".$cuota.",taxa = ".$taxa.",fechapago = '".($fechapago)."',usuario = '".($usuario)."'
-		where idpago =".$id;
-
-		$res = $this->query($sql,0);
-		return $res;
-	}
-
-
-	function eliminarPagos($id) {
-		$sql = "delete from dbpagos where idpago =".$id;
-		$res = $this->query($sql,0);
-		return $res;
-	}
-
-
-	function traerPagos() {
-		$sql = "select
-		p.idpago,
-		p.reflloguers,
-		p.refformaspagos,
-		p.cuota,
-		p.monto,
-		p.taxa,
-		p.fecha,
-		p.fechapago,
-		p.usuario,
-		p.cancelado
-		from dbpagos p
-		inner join dblloguers llo ON llo.idlloguer = p.reflloguers
-		inner join dbclientes cl ON cl.idcliente = llo.refclientes
-		inner join dbubicaciones ub ON ub.idubicacion = llo.refubicaciones
-		inner join tbformaspagos fo ON fo.idformapago = p.refformaspagos
-		order by 1";
-		$res = $this->query($sql,0);
-		return $res;
-	}
-
-	function traerPagosPorLloguers($idlloguer) {
-		$sql = "select
-		p.idpago,
-		p.reflloguers,
-		p.refformaspagos,
-		p.cuota,
-		p.monto,
-		p.taxa,
-		p.fecha,
-		p.fechapago,
-		p.usuario,
-		p.cancelado
-		from dbpagos p
-		inner join dblloguers llo ON llo.idlloguer = p.reflloguers
-		inner join dbclientes cl ON cl.idcliente = llo.refclientes
-		inner join dbubicaciones ub ON ub.idubicacion = llo.refubicaciones
-		left join tbformaspagos fo ON fo.idformapago = p.refformaspagos
-		where p.reflloguers = ".$idlloguer."
-		order by 1";
-		$res = $this->query($sql,0);
-		return $res;
-	}
-
-	function faltaPagar($idlloguer) {
-
-		$resLloguerAdicional =  $this->traerLloguersadicionalPorLloguer($idlloguer);
-
-	   $taxaturisticaAdicional = 0;
-	   $totalTaxaPersona = 0;
-
-	   while ($rowAd = mysql_fetch_array($resLloguerAdicional)) {
-
-	   	$taxaturisticaAdicional += $rowAd['taxaturistica'];
-
-	   	$totalTaxaPersona += $rowAd['taxapersona'];
-
-	   }
-
-		$cadAgregar = $taxaturisticaAdicional + $totalTaxaPersona;
-
-		$sql = "SELECT
-				    l.total + ".$cadAgregar.", COALESCE((l.total + ".$cadAgregar.") - SUM(p.monto), (l.total + ".$cadAgregar.")) AS falta
-				FROM
-				    dblloguers l
-				        LEFT JOIN
-				    dbpagos p ON l.idlloguer = p.reflloguers
-				where l.idlloguer = ".$idlloguer."
-				GROUP BY l.total";
-
-		//die(var_dump($sql));
-
-		$res = $this->query($sql,0);
-		return $res;
-	}
-
-
-	function faltaPagarDato($idlloguer) {
-		$sql = "SELECT
-				    l.total, COALESCE(l.total - SUM(p.monto), l.total) AS falta
-				FROM
-				    dblloguers l
-				        LEFT JOIN
-				    dbpagos p ON l.idlloguer = p.reflloguers
-				where l.idlloguer = ".$idlloguer."
-				GROUP BY l.total";
-
-		$res = $this->query($sql,0);
-
-		if (mysql_num_rows($res)>0) {
-			return mysql_result($res,0,1);
-		}
-		return 0;
-	}
-
-
-	function traerPagosPorId($id) {
-		$sql = "select idpago,reflloguers,refformaspagos,cuota,monto,taxa,fecha,fechapago,usuario,cancelado from dbpagos where idpago =".$id;
-		$res = $this->query($sql,0);
-		return $res;
-	}
-
-	function traerPagosPorIdCompleto($id) {
-		$sql = "select
-					idpago,
-					reflloguers,
-					refformaspagos,
-					cuota,
-					monto,
-					taxa,
-					fecha,
-					fechapago,
-					usuario,
-					cancelado,
-					fp.formapago
-				from dbpagos p
-				inner
-				join 		tbformaspagos fp
-				on			p.refformaspagos = fp.idformapago
-				where idpago =".$id;
-		$res = $this->query($sql,0);
-		return $res;
-	}
-
-	/* Fin */
-	/* /* Fin de la Tabla: dbpagos*/
-
-	function s_datediff( $str_interval, $dt_menor, $dt_maior, $relative=false){
-
-       if( is_string( $dt_menor)) $dt_menor = date_create( $dt_menor);
-       if( is_string( $dt_maior)) $dt_maior = date_create( $dt_maior);
-
-       $diff = date_diff( $dt_menor, $dt_maior, ! $relative);
-
-       switch( $str_interval){
-           case "y":
-               $total = $diff->y + $diff->m / 12 + $diff->d / 365.25; break;
-           case "m":
-               $total= $diff->y * 12 + $diff->m + $diff->d/30 + $diff->h / 24;
-               break;
-           case "d":
-               $total = $diff->y * 365.25 + $diff->m * 30 + $diff->d + $diff->h/24 + $diff->i / 60;
-               break;
-           case "h":
-               $total = ($diff->y * 365.25 + $diff->m * 30 + $diff->d) * 24 + $diff->h + $diff->i/60;
-               break;
-           case "i":
-               $total = (($diff->y * 365.25 + $diff->m * 30 + $diff->d) * 24 + $diff->h) * 60 + $diff->i + $diff->s/60;
-               break;
-           case "s":
-               $total = ((($diff->y * 365.25 + $diff->m * 30 + $diff->d) * 24 + $diff->h) * 60 + $diff->i)*60 + $diff->s;
-               break;
-          }
-       if( $diff->invert)
-               return -1 * $total;
-       else    return $total;
-   }
-
-
-	/* calculos para el alquiler */
-	function calcularCoeficienteTarifa($idubicacion, $fecha) {
-		$sql = "SELECT
-					    t.tarifa / 7, p.periodo, t.tarifa
-					FROM
-					    dbtarifas t
-					        INNER JOIN
-					    dbperiodos p ON t.refperiodos = p.idperiodo
-					where ('".$fecha."' between p.desdeperiode and p.finsaperiode)
-					and t.reftipoubicacion = ".$idubicacion."
-					and p.desdeperiode <> '".$fecha."'";
-		$res = $this->query($sql,0);
-
-		//die(var_dump($sql));
-		if (mysql_num_rows($res)>0) {
-			return array('tarifa' => mysql_result($res,0,0), 'periodo' => mysql_result($res,0,1), 'precio' => mysql_result($res,0,2));
-		}
-
-		return array('tarifa' => 0, 'periodo' => '', 'precio' => 0);
-	}
-
-
-	function calcularTarifa($idubicacion, $fechadesde, $fechahasta, $personas) {
-		$resUbicacion = $this->traerUbicacionesPorId($idubicacion);
-		$idtipoubicacion = mysql_result($resUbicacion,0,'reftipoubicacion');
-
-		$resTaxa = $this->traerTaxa();
-
-		$taxaPer = mysql_result($resTaxa,0,1);
-		$taxaTur = mysql_result($resTaxa,0,2);
-		$taxaMax = mysql_result($resTaxa,0,3);
-
-		$dias = $this->s_datediff('d', $fechadesde, $fechahasta, false);
-
-		$fechaInicio	=	strtotime($fechadesde);
-		$fechaFin		=	strtotime($fechahasta);
-
-		$totalTaxaPersona = 0;
-		$totalTaxaTuristica = 1 * $dias * $taxaTur;
-
-		if ($totalTaxaTuristica > $taxaMax) {
-			$totalTaxaTuristica  = $personas * $taxaMax;
-		} else {
-			$totalTaxaTuristica = $personas * $dias * $taxaTur;
-		}
-
-		$totalTarifa = 0;
-
-		// si es menos de una semana
-		if ($dias < 7) {
-			$totalTaxaPersona = $personas * 1 * $taxaPer;
-		} else {
-			$totalTaxaPersona = $personas * $dias / 7 * $taxaPer;
-		}
-
-		for($i=$fechaInicio+86400; $i<=$fechaFin; $i+=86400){
-		    $totalTarifa += $this->calcularCoeficienteTarifa($idtipoubicacion,date("Y-m-d", $i))['tarifa'];
-		}
-
-		return $totalTarifa;
-		// + $totalTaxaPersona + $totalTaxaTuristica;
-
-	}
-
-
-	function calcularTarifaArray($idubicacion, $fechadesde, $fechahasta, $personas,$total,$falta,$segundopago) {
-		$resUbicacion = $this->traerUbicacionesPorId($idubicacion);
-		$idtipoubicacion = mysql_result($resUbicacion,0,'reftipoubicacion');
-
-		$resTaxa = $this->traerTaxa();
-
-		$taxaPer = mysql_result($resTaxa,0,1);
-		$taxaTur = mysql_result($resTaxa,0,2);
-		$taxaMax = mysql_result($resTaxa,0,3);
-
-		$dias = $this->s_datediff('d', $fechadesde, $fechahasta, false);
-
-		$fechaInicio	=	strtotime($fechadesde);
-		$fechaFin		=	strtotime($fechahasta);
-
-		$totalTarifa = 0;
-
-		for($i=$fechaInicio+86400; $i<=$fechaFin; $i+=86400){
-		    $totalTarifa += $this->calcularCoeficienteTarifa($idtipoubicacion,date("Y-m-d", $i))['tarifa'];
-		}
-
-		return array('tarifa'=> round($totalTarifa,2, PHP_ROUND_HALF_UP), 'taxapersona'=> $personas[0], 'taxaturistica'=> $personas[1], 'total' => $total, 'falta' => $falta, 'fechasegundopago' => $segundopago);
-
-	}
-	/* fin alquileres */
-
-	/* PARA Lloguers */
-
-	function insertarLloguers($refclientes,$refubicaciones,$datalloguer,$entrada,$sortida,$total,$numpertax,$persset,$taxa,$maxtaxa,$refestados) {
-		$sql = "insert into dblloguers(idlloguer,refclientes,refubicaciones,datalloguer,entrada,sortida,total,numpertax,persset,taxa,maxtaxa, refestados)
-		values ('',".$refclientes.",".$refubicaciones.",'".($datalloguer)."','".($entrada)."','".($sortida)."',".$total.",".$numpertax.",".$persset.",".$taxa.",".$maxtaxa.",".$refestados.")";
-
-		$res = $this->query($sql,1);
-		return $res;
-	}
-
-
-	function modificarLloguers($id,$refclientes,$refubicaciones,$datalloguer,$entrada,$sortida,$total,$numpertax,$persset,$taxa,$maxtaxa,$refestados) {
-	$sql = "update dblloguers
-	set
-	refclientes = ".$refclientes.",refubicaciones = ".$refubicaciones.",datalloguer = '".($datalloguer)."',entrada = '".($entrada)."',sortida = '".($sortida)."',total = ".$total.",numpertax = ".$numpertax.",persset = ".$persset.",taxa = ".$taxa.",maxtaxa = ".$maxtaxa.",refestados = ".$refestados."
-	where idlloguer =".$id;
-	$res = $this->query($sql,0);
-	return $res;
-	}
-
-
-	function eliminarLloguers($id) {
-	$sql = "delete from dblloguers where idlloguer =".$id;
-	$res = $this->query($sql,0);
-	return $res;
-	}
-
-
-	function traerLloguers() {
-	$sql = "select
-	l.idlloguer,
-	l.refclientes,
-	l.refubicaciones,
-	l.datalloguer,
-	l.entrada,
-	l.sortida,
-	l.total,
-	l.numpertax,
-	l.persset,
-	l.taxa,
-	l.maxtaxa,
-	l.refestados,
-	nrolloguer
-	from dblloguers l
-	inner join dbclientes cli ON cli.idcliente = l.refclientes
-	inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
-	inner join tbtipoubicacion ti ON ti.idtipoubicacion = ubi.reftipoubicacion
-	inner join tbestados est on est.idestado = l.refestados
-	where l.entrada is not null
-	order by 1";
-	$res = $this->query($sql,0);
-	return $res;
-	}
-
-	function traerLloguersPorIdCompleto($id) {
-	$sql = "select
-	l.idlloguer,
-	l.refclientes,
-	l.refubicaciones,
-	l.datalloguer,
-	l.entrada,
-	l.sortida,
-	l.total,
-	l.numpertax,
-	l.persset,
-	l.taxa,
-	l.maxtaxa,
-	l.refestados,
-	est.estado,
-	cli.nom,
-	cli.cognom,
-	cli.nif,
-	cli.pais,
-	cli.carrer,
-	cli.codipostal,
-	cli.ciutat,
-	ubi.codapartament,
-	DATE_FORMAT(l.entrada, '%d/%m/%Y') as entradacorta,
-	DATE_FORMAT(l.sortida, '%d/%m/%Y') as sortidacorta,
-	year(l.entrada) as anyentrada,
-	year(l.sortida) as anysortida,
-	ubi.dormitorio,
-	DATEDIFF(l.sortida,l.entrada) as dias,
-	ti.idtipoubicacion,
-    coalesce((max(p.personas) + max(p.menores)), l.numpertax) as personasreales
-	from dblloguers l
-	inner join dbclientes cli ON cli.idcliente = l.refclientes
-	inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
-	inner join tbtipoubicacion ti ON ti.idtipoubicacion = ubi.reftipoubicacion
-	inner join tbestados est on est.idestado = l.refestados
-	left join dblloguersadicional p ON p.reflloguers = l.idlloguer
-	where l.idlloguer = ".$id."
-	group by l.idlloguer,
-	l.refclientes,
-	l.refubicaciones,
-	l.datalloguer,
-	l.entrada,
-	l.sortida,
-	l.total,
-	l.numpertax,
-	l.persset,
-	l.taxa,
-	l.maxtaxa,
-	l.refestados,
-	est.estado,
-	cli.nom,
-	cli.cognom,
-	cli.nif,
-	cli.pais,
-	cli.carrer,
-	cli.codipostal,
-	cli.ciutat,
-	ubi.codapartament,
-	ubi.dormitorio,
-	ti.idtipoubicacion
-	order by 1";
-	$res = $this->query($sql,0);
-	return $res;
-	}
-
-	function traerLloguersajax($length, $start, $busqueda,$colSort,$colSortDir) {
-		$where = '';
-
-		switch ($colSort) {
-			case 4:
-				$colSort = 'l.entrada';
-			break;
-			case 5:
-				$colSort = 'l.sortida';
-			break;
-			default:
-				$colSort = 'l.entrada';
-			break;
-		}
-
-
-		$busqueda = str_replace("'","",$busqueda);
-		if ($busqueda != '') {
-			$where = " and (concat(cli.cognom, ' ', cli.nom) like '%".$busqueda."%' or ti.tipoubicacion like '%".$busqueda."%' or DATE_FORMAT(l.entrada, '%d/%m/%Y') like '%".$busqueda."%' or DATE_FORMAT(l.sortida, '%d/%m/%Y') like '%".$busqueda."%' or l.persset like '%".$busqueda."%' or coalesce(nrolloguer,l.idlloguer) like '%".$busqueda."%')";
-		}
-
-		$sql = "select
-		l.idlloguer,
-		concat(cli.cognom, ' ', cli.nom, ' - NIF:', cli.nif) as cliente,
-		ti.tipoubicacion,
-		DATE_FORMAT(l.entrada, '%d/%m/%Y') as entrada,
-		DATE_FORMAT(l.sortida, '%d/%m/%Y') as sortida,
-		datediff(l.sortida, l.entrada) as dias,
-		l.total,
-		est.estado,
-		coalesce(nrolloguer,l.idlloguer) as nrolooguer
-		from dblloguers l
-		inner join dbclientes cli ON cli.idcliente = l.refclientes
-		inner join dbubicaciones ubi ON ubi.idubicacion = l.refubicaciones
-		inner join tbtipoubicacion ti ON ti.idtipoubicacion = ubi.reftipoubicacion
-		inner join tbestados est on est.idestado = l.refestados
-		where (l.entrada is not null and l.sortida is not null) ".$where."
-		ORDER BY ".$colSort." ".$colSortDir."
-		limit ".$start.",".$length;
-
-		$res = $this->query($sql,0);
-		return $res;
-	}
-
-
-	function traerLloguersPorId($id) {
-	$sql = "select idlloguer,refclientes,refubicaciones,datalloguer,entrada,sortida,total,numpertax,persset,taxa,maxtaxa,refestados from dblloguers where idlloguer =".$id;
-	$res = $this->query($sql,0);
-	return $res;
-	}
-
-	function traerLloguersPorIdAux($id) {
-	$sql = "select idlloguer,refclientes,refubicaciones,datalloguer,
-	DATE_FORMAT(entrada, '%d/%m/%Y') as entrada,
-	DATE_FORMAT(sortida, '%d/%m/%Y') as sortida,
-	total,numpertax,persset,taxa,maxtaxa,refestados from dblloguers where idlloguer =".$id;
-	$res = $this->query($sql,0);
-	return $res;
-	}
-
-	/* Fin */
-	/* /* Fin de la Tabla: dblloguers*/
-
-	/* PARA Periodos */
-
-	function insertarPeriodos($periodo,$any,$desdeperiode,$finsaperiode) {
-	$sql = "insert into dbperiodos(idperiodo,periodo,any,desdeperiode,finsaperiode)
-	values ('','".($periodo)."',".$any.",'".($desdeperiode)."','".($finsaperiode)."')";
+	function insertarDocumentacionsolicitudesarchivos($refsolicitudes,$refdocumentacionsolicitudes,$archivo,$type,$refestadoarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+	$sql = "insert into dbdocumentacionsolicitudesarchivos(iddocumentacionsolicitudarchivo,refsolicitudes,refdocumentacionsolicitudes,archivo,type,refestadoarchivos,fechacrea,fechamodi,usuariocrea,usuariomodi)
+	values ('',".$refsolicitudes.",".$refdocumentacionsolicitudes.",'".$archivo."','".$type."',".$refestadoarchivos.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
 	$res = $this->query($sql,1);
 	return $res;
 	}
 
 
-	function modificarPeriodos($id,$periodo,$any,$desdeperiode,$finsaperiode) {
-	$sql = "update dbperiodos
+	function modificarDocumentacionsolicitudesarchivos($id,$refsolicitudes,$refdocumentacionsolicitudes,$archivo,$type,$refestadoarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+	$sql = "update dbdocumentacionsolicitudesarchivos
 	set
-	periodo = '".($periodo)."',any = ".$any.",desdeperiode = '".($desdeperiode)."',finsaperiode = '".($finsaperiode)."'
-	where idperiodo =".$id;
+	refsolicitudes = ".$refsolicitudes.",refdocumentacionsolicitudes = ".$refdocumentacionsolicitudes.",archivo = '".$archivo."',type = '".$type."',refestadoarchivos = ".$refestadoarchivos.",fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."'
+	where iddocumentacionsolicitudarchivo =".$id;
 	$res = $this->query($sql,0);
 	return $res;
 	}
 
 
-	function eliminarPeriodos($id) {
-	$sql = "delete from dbperiodos where idperiodo =".$id;
+	function eliminarDocumentacionsolicitudesarchivos($id) {
+	$sql = "delete from dbdocumentacionsolicitudesarchivos where iddocumentacionsolicitudarchivo =".$id;
 	$res = $this->query($sql,0);
 	return $res;
 	}
 
-	function traerPeriodosajax($length, $start, $busqueda,$colSort,$colSortDir) {
 
-		$where = '';
-
-		$busqueda = str_replace("'","",$busqueda);
-		if ($busqueda != '') {
-			$where = " where p.periodo like '%".$busqueda."%' or p.any like '%".$busqueda."%' or p.desdeperiode like '%".$busqueda."%' or p.finsaperiode like '%".$busqueda."%'";
-		}
-
-		$sql = "select
-		p.idperiodo,
-		p.periodo,
-		p.any,
-		p.desdeperiode,
-		p.finsaperiode
-		from dbperiodos p
-		".$where."
-		ORDER BY ".$colSort." ".$colSortDir."
-		limit ".$start.",".$length;
-
-		$res = $this->query($sql,0);
-		return $res;
-	}
-
-	function traerPeriodos() {
+	function traerDocumentacionsolicitudesarchivos() {
 	$sql = "select
-	p.idperiodo,
-	p.periodo,
-	p.any,
-	p.desdeperiode,
-	p.finsaperiode
-	from dbperiodos p
+	d.iddocumentacionsolicitudarchivo,
+	d.refsolicitudes,
+	d.refdocumentacionsolicitudes,
+	d.archivo,
+	d.type,
+	d.refestadoarchivos,
+	d.fechacrea,
+	d.fechamodi,
+	d.usuariocrea,
+	d.usuariomodi
+	from dbdocumentacionsolicitudesarchivos d
 	order by 1";
 	$res = $this->query($sql,0);
 	return $res;
 	}
 
-	function traerPeriodosPorOrdenPorAny($any) {
-		$sql = "select
-		p.idperiodo,
-		p.periodo,
-		p.any,
-		p.desdeperiode,
-		p.finsaperiode
-		from dbperiodos p
-		where p.any = ".$any."
-		order by 2,4,5,1";
-		$res = $this->query($sql,0);
-		return $res;
-	}
 
-
-	function traerPeriodosPorId($id) {
-	$sql = "select idperiodo,periodo,any,desdeperiode,finsaperiode from dbperiodos where idperiodo =".$id;
+	function traerDocumentacionsolicitudesarchivosPorId($id) {
+	$sql = "select iddocumentacionsolicitudarchivo,refsolicitudes,refdocumentacionsolicitudes,archivo,type,refestadoarchivos,fechacrea,fechamodi,usuariocrea,usuariomodi from dbdocumentacionsolicitudesarchivos where iddocumentacionsolicitudarchivo =".$id;
 	$res = $this->query($sql,0);
 	return $res;
 	}
 
 	/* Fin */
-	/* /* Fin de la Tabla: dbperiodos*/
+	/* /* Fin de la Tabla: dbdocumentacionsolicitudesarchivos*/
 
-/* PARA Clientes */
 
-function traerClientesajax($length, $start, $busqueda,$colSort,$colSortDir) {
+	/* PARA Promotores */
 
-	$where = '';
-
-	$busqueda = str_replace("'","",$busqueda);
-	if ($busqueda != '') {
-		$where = " where c.cognom like '%".$busqueda."%' or c.nom like '%".$busqueda."%' or c.nif like '%".$busqueda."%' or c.carrer like '%".$busqueda."%' or c.codipostal like '%".$busqueda."%' or c.ciutat like '%".$busqueda."%' or c.pais like '%".$busqueda."%' or c.telefon like '%".$busqueda."%' or c.email like '%".$busqueda."%' or c.comentaris like '%".$busqueda."%' or c.telefon2 like '%".$busqueda."%' or c.email2 like '%".$busqueda."%'";
+	function insertarPromotores($reftipopromotores,$refusuarios,$nombre,$apellido,$rfc,$curp,$comision,$teloficina,$telparticular,$telmovil,$refpromotorestados,$refsucursales,$refsupervisorusuario,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+	$sql = "insert into dbpromotores(idpromotor,reftipopromotores,refusuarios,nombre,apellido,rfc,curp,comision,teloficina,telparticular,telmovil,refpromotorestados,refsucursales,refsupervisorusuario,fechacrea,fechamodi,usuariocrea,usuariomodi)
+	values ('',".$reftipopromotores.",".$refusuarios.",'".$nombre."','".$apellido."','".$rfc."','".$curp."',".$comision.",'".$teloficina."','".$telparticular."','".$telmovil."',".$refpromotorestados.",".$refsucursales.",".$refsupervisorusuario.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
+	$res = $this->query($sql,1);
+	return $res;
 	}
 
-	$sql = "select
-   c.idcliente,
-   c.cognom,
-   c.nom,
-   c.nif,
-   c.carrer,
-   c.codipostal,
-   c.ciutat,
-   c.pais,
-   c.telefon,
-   c.email,
-   c.comentaris,
-   c.telefon2,
-   c.email2
-   from dbclientes c
-	".$where."
-	ORDER BY ".$colSort." ".$colSortDir."
-	limit ".$start.",".$length;
 
+	function modificarPromotores($id,$reftipopromotores,$refusuarios,$nombre,$apellido,$rfc,$curp,$comision,$teloficina,$telparticular,$telmovil,$refpromotorestados,$refsucursales,$refsupervisorusuario,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+	$sql = "update dbpromotores
+	set
+	reftipopromotores = ".$reftipopromotores.",refusuarios = ".$refusuarios.",nombre = '".$nombre."',apellido = '".$apellido."',rfc = '".$rfc."',curp = '".$curp."',comision = ".$comision.",teloficina = '".$teloficina."',telparticular = '".$telparticular."',telmovil = '".$telmovil."',refpromotorestados = ".$refpromotorestados.",refsucursales = ".$refsucursales.",refsupervisorusuario = ".$refsupervisorusuario.",fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."' where idpromotor =".$id;
 	$res = $this->query($sql,0);
 	return $res;
-}
-
-function insertarClientes($cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email,$comentaris,$telefon2,$email2) {
-$sql = "insert into dbclientes(idcliente,cognom,nom,nif,carrer,codipostal,ciutat,pais,telefon,email,comentaris,telefon2,email2)
-values ('','".$cognom."','".$nom."','".$nif."','".$carrer."','".$codipostal."','".$ciutat."','".$pais."','".$telefon."','".$email."','".$comentaris."','".$telefon2."','".$email2."')";
-$res = $this->query($sql,1);
-return $res;
-}
-
-
-function modificarClientes($id,$cognom,$nom,$nif,$carrer,$codipostal,$ciutat,$pais,$telefon,$email,$comentaris,$telefon2,$email2) {
-$sql = "update dbclientes
-set
-cognom = '".$cognom."',nom = '".$nom."',nif = '".$nif."',carrer = '".$carrer."',codipostal = '".$codipostal."',ciutat = '".$ciutat."',pais = '".$pais."',telefon = '".$telefon."',email = '".$email."',comentaris = '".$comentaris."',telefon2 = '".$telefon2."',email2 = '".$email2."'
-where idcliente =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function eliminarClientes($id) {
-$sql = "delete from dbclientes where idcliente =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function traerClientes() {
-$sql = "select
-c.idcliente,
-c.cognom,
-c.nom,
-c.nif,
-c.carrer,
-c.codipostal,
-c.ciutat,
-c.pais,
-c.telefon,
-c.email,
-c.comentaris,
-c.telefon2,
-c.email2
-from dbclientes c
-order by trim(c.cognom),trim(c.nom)";
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function traerClientesPorId($id) {
-$sql = "select idcliente,cognom,nom,nif,carrer,codipostal,ciutat,pais,telefon,email,comentaris,telefon2,email2 from dbclientes where idcliente =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-/* Fin */
-/* /* Fin de la Tabla: dbclientes*/
-
-
-
-/* PARA Tarifas */
-
-function insertarTarifas($tarifa,$reftipoubicacion,$refperiodos) {
-$sql = "insert into dbtarifas(idtarifa,reftipoubicacion,refperiodos,tarifa)
-values ('',".$reftipoubicacion.",".$refperiodos.",".$tarifa.")";
-$res = $this->query($sql,1);
-return $res;
-}
-
-
-function modificarTarifas($id,$tarifa,$reftipoubicacion,$refperiodos) {
-$sql = "update dbtarifas
-set
-reftipoubicacion = ".$reftipoubicacion.",refperiodos = ".$refperiodos.",tarifa = ".$tarifa."
-where idtarifa =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-function modificarTarifaSola($id,$tarifa) {
-$sql = "update dbtarifas
-set
-tarifa = ".$tarifa."
-where idtarifa =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function eliminarTarifas($id) {
-$sql = "delete from dbtarifas where idtarifa =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function traerTarifasajax($length, $start, $busqueda,$colSort,$colSortDir) {
-
-	$where = '';
-
-	$busqueda = str_replace("'","",$busqueda);
-	if ($busqueda != '') {
-		$where = " where t.tarifa like '%".$busqueda."%' or p.desdeperiode like '%".$busqueda."%' or tip.tipoubicacion like '%".$busqueda."%' or p.finsaperiode like '%".$busqueda."%'";
 	}
 
-	$sql = "select
-	t.idtarifa,
-	t.tarifa,
-	tip.tipoubicacion,
-	p.desdeperiode,
-	p.finsaperiode,
-	t.reftipoubicacion,
-	t.refperiodos
-	from dbtarifas t
-	inner join tbtipoubicacion tip ON tip.idtipoubicacion = t.reftipoubicacion
-	inner join dbperiodos p ON p.idperiodo = t.refperiodos
-	".$where."
-	ORDER BY ".$colSort." ".$colSortDir."
-	limit ".$start.",".$length;
 
-	//die(var_dump($sql));
+	function eliminarPromotores($id) {
+	$sql = "delete from dbpromotores where idpromotor =".$id;
 	$res = $this->query($sql,0);
 	return $res;
-}
-
-
-function traerTarifas() {
-$sql = "select
-t.idtarifa,
-t.tarifa,
-t.reftipoubicacion,
-t.refperiodos
-from dbtarifas t
-inner join tbtipoubicacion tip ON tip.idtipoubicacion = t.reftipoubicacion
-order by 1";
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function traerTarifasPorId($id) {
-$sql = "select idtarifa,tarifa,reftipoubicacion,refperiodos from dbtarifas where idtarifa =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-function traerTarifasPorPeriodoTipoUbicacion($idperiodo, $idtipoubicacion) {
-$sql = "select idtarifa,tarifa from dbtarifas where refperiodos =".$idperiodo." and reftipoubicacion = ".$idtipoubicacion;
-$res = $this->query($sql,0);
-return $res;
-}
-
-/* Fin */
-/* Fin de la Tabla: dbtarifas */
-
-
-/* PARA Ubicaciones */
-
-function insertarUbicaciones($dormitorio,$color,$reftipoubicacion,$codapartament,$hutg) {
-$sql = "insert into dbubicaciones(idubicacion,dormitorio,color,reftipoubicacion,codapartament,hutg)
-values ('',".$dormitorio.",'".$color."',".$reftipoubicacion.",'".$codapartament."','".$hutg."')";
-$res = $this->query($sql,1);
-return $res;
-}
-
-
-function modificarUbicaciones($id,$dormitorio,$color,$reftipoubicacion,$codapartament,$hutg) {
-$sql = "update dbubicaciones
-set
-dormitorio = ".$dormitorio.",color = '".$color."',reftipoubicacion = ".$reftipoubicacion.",codapartament = '".$codapartament."',hutg = '".$hutg."'
-where idubicacion =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function eliminarUbicaciones($id) {
-$sql = "delete from dbubicaciones where idubicacion =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-function traerUbicacionesajax($length, $start, $busqueda,$colSort,$colSortDir) {
-
-	$where = '';
-
-	$busqueda = str_replace("'","",$busqueda);
-	if ($busqueda != '') {
-		$where = " where u.dormitorio like '%".$busqueda."%' or u.color like '%".$busqueda."%' or tip.tipoubicacion like '%".$busqueda."%' or u.codapartament like '%".$busqueda."%' or u.hutg like '%".$busqueda."%'";
 	}
 
-	$sql = "select
-	u.idubicacion,
-	u.dormitorio,
-	u.color,
-	tip.tipoubicacion,
-	u.codapartament,
-	u.hutg,
-	u.reftipoubicacion
-	from dbubicaciones u
-	inner join tbtipoubicacion tip ON tip.idtipoubicacion = u.reftipoubicacion
-	".$where."
-	ORDER BY ".$colSort." ".$colSortDir."
-	limit ".$start.",".$length;
 
-	//die(var_dump($sql));
+	function traerPromotores() {
+	$sql = "select
+	p.idpromotor,
+	p.reftipopromotores,
+	p.refusuarios,
+	p.nombre,
+	p.apellido,
+	p.rfc,
+	p.curp,
+	p.comision,
+	p.teloficina,
+	p.telparticular,
+	p.telmovil,
+	p.refpromotorestados,
+	p.refsucursales,
+	p.refsupervisorusuario,
+	p.fechacrea,
+	p.fechamodi,
+	p.usuariocrea,
+	p.usuariomodi
+	from dbpromotores p
+	order by 1";
 	$res = $this->query($sql,0);
 	return $res;
-}
-
-function traerUbicaciones() {
-$sql = "select
-u.idubicacion,
-u.dormitorio,
-u.color,
-u.reftipoubicacion,
-u.codapartament,
-u.hutg
-from dbubicaciones u
-inner join tbtipoubicacion tip ON tip.idtipoubicacion = u.reftipoubicacion
-order by 1";
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function traerUbicacionesPorId($id) {
-$sql = "select idubicacion,dormitorio,color,reftipoubicacion,codapartament,hutg from dbubicaciones where idubicacion =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-/* Fin */
-/* /* Fin de la Tabla: dbubicaciones*/
-
-/* PARA Formaspagos */
-
-function insertarFormaspagos($formapago,$abreviatura) {
-$sql = "insert into tbformaspagos(idformapago,formapago,abreviatura)
-values ('','".$formapago."','".$abreviatura."')";
-$res = $this->query($sql,1);
-return $res;
-}
-
-
-function modificarFormaspagos($id,$formapago,$abreviatura) {
-$sql = "update tbformaspagos
-set
-formapago = '".$formapago."',abreviatura = '".$abreviatura."'
-where idformapago =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function eliminarFormaspagos($id) {
-$sql = "delete from tbformaspagos where idformapago =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function traerFormaspagos() {
-$sql = "select
-f.idformapago,
-f.formapago,
-f.abreviatura
-from tbformaspagos f
-order by 1";
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function traerFormaspagosPorId($id) {
-$sql = "select idformapago,formapago,abreviatura from tbformaspagos where idformapago =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-/* Fin */
-/* /* Fin de la Tabla: tbformaspagos*/
-
-
-/* PARA Tipoubicacion */
-
-function insertarTipoubicacion($tipoubicacion) {
-$sql = "insert into tbtipoubicacion(idtipoubicacion,tipoubicacion)
-values ('','".$tipoubicacion."')";
-$res = $this->query($sql,1);
-return $res;
-}
-
-
-function modificarTipoubicacion($id,$tipoubicacion) {
-$sql = "update tbtipoubicacion
-set
-tipoubicacion = '".$tipoubicacion."'
-where idtipoubicacion =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function eliminarTipoubicacion($id) {
-$sql = "delete from tbtipoubicacion where idtipoubicacion =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function traerTipoubicacionajax($length, $start, $busqueda,$colSort,$colSortDir) {
-
-	$where = '';
-
-	$busqueda = str_replace("'","",$busqueda);
-	if ($busqueda != '') {
-		$where = " where t.tipoubicacion like '%".$busqueda."%'";
 	}
 
-	$sql = "select
-	t.idtipoubicacion,
-	t.tipoubicacion
-	from tbtipoubicacion t
-	".$where."
-	ORDER BY ".$colSort." ".$colSortDir."
-	limit ".$start.",".$length;
 
-	//die(var_dump($sql));
+	function traerPromotoresPorId($id) {
+	$sql = "select idpromotor,reftipopromotores,refusuarios,nombre,apellido,rfc,curp,comision,teloficina,telparticular,telmovil,refpromotorestados,refsucursales,refsupervisorusuario,fechacrea,fechamodi,usuariocrea,usuariomodi from dbpromotores where idpromotor =".$id;
 	$res = $this->query($sql,0);
 	return $res;
-}
+	}
 
-function traerTipoubicacion() {
-$sql = "select
-t.idtipoubicacion,
-t.tipoubicacion
-from tbtipoubicacion t
-order by 1";
-$res = $this->query($sql,0);
-return $res;
-}
+	/* Fin */
+	/* /* Fin de la Tabla: dbpromotores*/
 
 
-function traerTipoubicacionPorId($id) {
-$sql = "select idtipoubicacion,tipoubicacion from tbtipoubicacion where idtipoubicacion =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
+	/* PARA Solicitudes */
 
-/* Fin */
-/* Fin de la Tabla: tbtipoubicacion */
+	function insertarSolicitudes($reftiposolicitudes,$refestadosolicitudes,$nombre,$apellido,$email,$fechanacimiento,$telefono,$sexo,$codigopostal,$reftipoingreso,$refclientes,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+	$sql = "insert into dbsolicitudes(idsolicitud,reftiposolicitudes,refestadosolicitudes,nombre,apellido,email,fechanacimiento,telefono,sexo,codigopostal,reftipoingreso,refclientes,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi)
+	values ('',".$reftiposolicitudes.",".$refestadosolicitudes.",'".$nombre."','".$apellido."','".$email."','".$fechanacimiento."','".$telefono."','".$sexo."','".$codigopostal."',".$reftipoingreso.",".$refclientes.",".$refusuarios.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarSolicitudes($id,$reftiposolicitudes,$refestadosolicitudes,$nombre,$apellido,$email,$fechanacimiento,$telefono,$sexo,$codigopostal,$reftipoingreso,$refclientes,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+	$sql = "update dbsolicitudes
+	set
+	reftiposolicitudes = ".$reftiposolicitudes.",refestadosolicitudes = ".$refestadosolicitudes.",nombre = '".$nombre."',apellido = '".$apellido."',email = '".$email."',fechanacimiento = '".$fechanacimiento."',telefono = '".$telefono."',sexo = '".$sexo."',codigopostal = '".$codigopostal."',reftipoingreso = ".$reftipoingreso.",refclientes = ".$refclientes.",refusuarios = ".$refusuarios.",fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."' where idsolicitud =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarSolicitudes($id) {
+	$sql = "delete from dbsolicitudes where idsolicitud =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerSolicitudes() {
+	$sql = "select
+	s.idsolicitud,
+	s.reftiposolicitudes,
+	s.refestadosolicitudes,
+	s.nombre,
+	s.apellido,
+	s.email,
+	s.fechanacimiento,
+	s.telefono,
+	s.sexo,
+	s.codigopostal,
+	s.reftipoingreso,
+	s.refclientes,
+	s.refusuarios,
+	s.fechacrea,
+	s.fechamodi,
+	s.usuariocrea,
+	s.usuariomodi
+	from dbsolicitudes s
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerSolicitudesPorId($id) {
+	$sql = "select idsolicitud,reftiposolicitudes,refestadosolicitudes,nombre,apellido,email,fechanacimiento,telefono,sexo,codigopostal,reftipoingreso,refclientes,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi from dbsolicitudes where idsolicitud =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbsolicitudes*/
+
+
+	/* PARA Sucursales */
+
+	function insertarSucursales($refentidades,$calle,$nombre,$colonia,$ciudad,$codigopostal,$lada,$telefono,$fax,$contacto,$email,$refpadre) {
+	$sql = "insert into dbsucursales(idsucursal,refentidades,calle,nombre,colonia,ciudad,codigopostal,lada,telefono,fax,contacto,email,refpadre)
+	values ('',".$refentidades.",'".$calle."','".$nombre."','".$colonia."','".$ciudad."','".$codigopostal."','".$lada."','".$telefono."','".$fax."','".$contacto."','".$email."',".$refpadre.")";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarSucursales($id,$refentidades,$calle,$nombre,$colonia,$ciudad,$codigopostal,$lada,$telefono,$fax,$contacto,$email,$refpadre) {
+	$sql = "update dbsucursales
+	set
+	refentidades = ".$refentidades.",calle = '".$calle."',nombre = '".$nombre."',colonia = '".$colonia."',ciudad = '".$ciudad."',codigopostal = '".$codigopostal."',lada = '".$lada."',telefono = '".$telefono."',fax = '".$fax."',contacto = '".$contacto."',email = '".$email."',refpadre = ".$refpadre."
+	where idsucursal =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarSucursales($id) {
+	$sql = "delete from dbsucursales where idsucursal =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerSucursales() {
+	$sql = "select
+	s.idsucursal,
+	s.refentidades,
+	s.calle,
+	s.nombre,
+	s.colonia,
+	s.ciudad,
+	s.codigopostal,
+	s.lada,
+	s.telefono,
+	s.fax,
+	s.contacto,
+	s.email,
+	s.refpadre
+	from dbsucursales s
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerSucursalesPorId($id) {
+	$sql = "select idsucursal,refentidades,calle,nombre,colonia,ciudad,codigopostal,lada,telefono,fax,contacto,email,refpadre from dbsucursales where idsucursal =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	/* PARA Entidades */
+
+	function insertarEntidades($nombre,$clave) {
+	$sql = "insert into tbentidades(identidad,nombre,clave)
+	values ('','".$nombre."','".$clave."')";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarEntidades($id,$nombre,$clave) {
+	$sql = "update tbentidades
+	set
+	nombre = '".$nombre."',clave = '".$clave."'
+	where identidad =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarEntidades($id) {
+	$sql = "delete from tbentidades where identidad =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerEntidades() {
+	$sql = "select
+	e.identidad,
+	e.nombre,
+	e.clave
+	from tbentidades e
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerEntidadesPorId($id) {
+	$sql = "select identidad,nombre,clave from tbentidades where identidad =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbentidades*/
+
+
+	/* PARA Entidadnacimiento */
+
+	function insertarEntidadnacimiento($entidadnacimiento,$clave) {
+	$sql = "insert into tbentidadnacimiento(identidadnacimiento,entidadnacimiento,clave)
+	values ('','".$entidadnacimiento."','".$clave."')";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarEntidadnacimiento($id,$entidadnacimiento,$clave) {
+	$sql = "update tbentidadnacimiento
+	set
+	entidadnacimiento = '".$entidadnacimiento."',clave = '".$clave."'
+	where identidadnacimiento =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarEntidadnacimiento($id) {
+	$sql = "delete from tbentidadnacimiento where identidadnacimiento =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerEntidadnacimiento() {
+	$sql = "select
+	e.identidadnacimiento,
+	e.entidadnacimiento,
+	e.clave
+	from tbentidadnacimiento e
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerEntidadnacimientoPorId($id) {
+	$sql = "select identidadnacimiento,entidadnacimiento,clave from tbentidadnacimiento where identidadnacimiento =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbentidadnacimiento*/
+
+
+	/* PARA Estadocivil */
+
+	function insertarEstadocivil($estadocivil) {
+	$sql = "insert into tbestadocivil(idestadocivil,estadocivil)
+	values ('','".$estadocivil."')";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarEstadocivil($id,$estadocivil) {
+	$sql = "update tbestadocivil
+	set
+	estadocivil = '".$estadocivil."'
+	where idestadocivil =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarEstadocivil($id) {
+	$sql = "delete from tbestadocivil where idestadocivil =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerEstadocivil() {
+	$sql = "select
+	e.idestadocivil,
+	e.estadocivil
+	from tbestadocivil e
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerEstadocivilPorId($id) {
+	$sql = "select idestadocivil,estadocivil from tbestadocivil where idestadocivil =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbestadocivil*/
+
+
+	/* PARA Estadosolicitudes */
+
+	function insertarEstadosolicitudes($estadosolicitud) {
+	$sql = "insert into tbestadosolicitudes(idestadosolicitud,estadosolicitud)
+	values ('','".$estadosolicitud."')";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarEstadosolicitudes($id,$estadosolicitud) {
+	$sql = "update tbestadosolicitudes
+	set
+	estadosolicitud = '".$estadosolicitud."'
+	where idestadosolicitud =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarEstadosolicitudes($id) {
+	$sql = "delete from tbestadosolicitudes where idestadosolicitud =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerEstadosolicitudes() {
+	$sql = "select
+	e.idestadosolicitud,
+	e.estadosolicitud
+	from tbestadosolicitudes e
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerEstadosolicitudesPorId($id) {
+	$sql = "select idestadosolicitud,estadosolicitud from tbestadosolicitudes where idestadosolicitud =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbestadosolicitudes*/
+
+
+	/* PARA Promotorestados */
+
+	function insertarPromotorestados($promotorestado) {
+	$sql = "insert into tbpromotorestados(idpromotorestado,promotorestado)
+	values ('','".$promotorestado."')";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarPromotorestados($id,$promotorestado) {
+	$sql = "update tbpromotorestados
+	set
+	promotorestado = '".$promotorestado."'
+	where idpromotorestado =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarPromotorestados($id) {
+	$sql = "delete from tbpromotorestados where idpromotorestado =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerPromotorestados() {
+	$sql = "select
+	p.idpromotorestado,
+	p.promotorestado
+	from tbpromotorestados p
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerPromotorestadosPorId($id) {
+	$sql = "select idpromotorestado,promotorestado from tbpromotorestados where idpromotorestado =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbpromotorestados*/
+
+
+	/* PARA Rolhogar */
+
+	function insertarRolhogar($rolhogar) {
+	$sql = "insert into tbrolhogar(idrolhogar,rolhogar)
+	values ('','".$rolhogar."')";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarRolhogar($id,$rolhogar) {
+	$sql = "update tbrolhogar
+	set
+	rolhogar = '".$rolhogar."'
+	where idrolhogar =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarRolhogar($id) {
+	$sql = "delete from tbrolhogar where idrolhogar =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerRolhogar() {
+	$sql = "select
+	r.idrolhogar,
+	r.rolhogar
+	from tbrolhogar r
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerRolhogarPorId($id) {
+	$sql = "select idrolhogar,rolhogar from tbrolhogar where idrolhogar =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbrolhogar*/
+
+
+	/* PARA Tipoclientes */
+
+	function insertarTipoclientes($tipocliente) {
+	$sql = "insert into tbtipoclientes(idtipocliente,tipocliente)
+	values ('','".$tipocliente."')";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarTipoclientes($id,$tipocliente) {
+	$sql = "update tbtipoclientes
+	set
+	tipocliente = '".$tipocliente."'
+	where idtipocliente =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarTipoclientes($id) {
+	$sql = "delete from tbtipoclientes where idtipocliente =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerTipoclientes() {
+	$sql = "select
+	t.idtipocliente,
+	t.tipocliente
+	from tbtipoclientes t
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerTipoclientesPorId($id) {
+	$sql = "select idtipocliente,tipocliente from tbtipoclientes where idtipocliente =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbtipoclientes*/
+
+
+	/* PARA Tipoingreso */
+
+	function insertarTipoingreso($tipoingreso) {
+	$sql = "insert into tbtipoingreso(idtipoingreso,tipoingreso)
+	values ('','".$tipoingreso."')";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarTipoingreso($id,$tipoingreso) {
+	$sql = "update tbtipoingreso
+	set
+	tipoingreso = '".$tipoingreso."'
+	where idtipoingreso =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarTipoingreso($id) {
+	$sql = "delete from tbtipoingreso where idtipoingreso =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerTipoingreso() {
+	$sql = "select
+	t.idtipoingreso,
+	t.tipoingreso
+	from tbtipoingreso t
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerTipoingresoPorId($id) {
+	$sql = "select idtipoingreso,tipoingreso from tbtipoingreso where idtipoingreso =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbtipoingreso*/
+
+
+	/* PARA Tipopromotores */
+
+	function insertarTipopromotores($tipopromotor) {
+	$sql = "insert into tbtipopromotores(idtipopromotor,tipopromotor)
+	values ('','".$tipopromotor."')";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarTipopromotores($id,$tipopromotor) {
+	$sql = "update tbtipopromotores
+	set
+	tipopromotor = '".$tipopromotor."'
+	where idtipopromotor =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarTipopromotores($id) {
+	$sql = "delete from tbtipopromotores where idtipopromotor =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerTipopromotores() {
+	$sql = "select
+	t.idtipopromotor,
+	t.tipopromotor
+	from tbtipopromotores t
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerTipopromotoresPorId($id) {
+	$sql = "select idtipopromotor,tipopromotor from tbtipopromotores where idtipopromotor =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbtipopromotores*/
+
+
+	/* PARA Tiposolicitudes */
+
+	function insertarTiposolicitudes($tiposolicitud,$condocumentacion,$tope) {
+	$sql = "insert into tbtiposolicitudes(idtiposolicitud,tiposolicitud,condocumentacion,tope)
+	values ('','".$tiposolicitud."','".$condocumentacion."',".$tope.")";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarTiposolicitudes($id,$tiposolicitud,$condocumentacion,$tope) {
+	$sql = "update tbtiposolicitudes
+	set
+	tiposolicitud = '".$tiposolicitud."',condocumentacion = '".$condocumentacion."',tope = ".$tope."
+	where idtiposolicitud =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarTiposolicitudes($id) {
+	$sql = "delete from tbtiposolicitudes where idtiposolicitud =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerTiposolicitudes() {
+	$sql = "select
+	t.idtiposolicitud,
+	t.tiposolicitud,
+	t.condocumentacion,
+	t.tope
+	from tbtiposolicitudes t
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerTiposolicitudesPorId($id) {
+	$sql = "select idtiposolicitud,tiposolicitud,condocumentacion,tope from tbtiposolicitudes where idtiposolicitud =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbtiposolicitudes*/
 
    function GUID()
    {
