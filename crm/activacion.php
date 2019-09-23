@@ -1,10 +1,14 @@
 <?php
 
 require 'includes/funcionesUsuarios.php';
+require 'includes/funcionesReferencias.php.php';
+include ('includes/funciones.php');
 
 session_start();
 
 $serviciosUsuario = new ServiciosUsuarios();
+$serviciosReferencias = new ServiciosReferencias();
+$serviciosFunciones 	= new Servicios();
 
 
 $ui = $_GET['token'];
@@ -28,7 +32,10 @@ if (mysql_num_rows($resActivacion) > 0) {
 		$cadResultado = '';
 	}
 
-
+	$cadEC 			 =	$serviciosFunciones->ComboBoxSelect('EstadoCivil',0);
+	$cadRH 			 =	$serviciosFunciones->ComboBoxSelect('RolHogar',0);
+	$cadTC 			 =	$serviciosFunciones->ComboBoxSelect('TipoClientes',0);
+	$cadEN 			 =	$serviciosFunciones->ComboBoxSelect('EntidadNacimiento',1);
 
 	//pongo al usuario $activo
 	//$resUsuario = $serviciosUsuario->activarUsuario($idusuario);
@@ -59,7 +66,7 @@ if (mysql_num_rows($resActivacion) > 0) {
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>Acceder | RIDERZ</title>
+    <title>Acceder | Asesores CREA</title>
     <!-- Favicon-->
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 
@@ -89,8 +96,8 @@ if (mysql_num_rows($resActivacion) > 0) {
 <body class="login-page">
     <div class="login-box">
         <div class="logo" style="background-color:#0F0; padding:10px 10px;">
-            <a href="javascript:void(0);" style="color:#000;">Activación <b>RIDERZ</b></a>
-            <small style="color:#000;">Administración Sistema de Clientes</small>
+            <a href="javascript:void(0);" style="color:#000;">Activación <b>Asesores CREA</b></a>
+            <small style="color:#000;">Administración de Servicios de Clientes</small>
         </div>
         <div class="card">
             <div class="body demo-masked-input">
@@ -98,6 +105,61 @@ if (mysql_num_rows($resActivacion) > 0) {
 					 	<?php if ($cadResultado == '') { ?>
 						<div align="center">
 							<h3><?php echo $nombrecompleto; ?></h3>
+							<p>Por favor complete sus datos personales para activar su usuario</p>
+						</div>
+
+
+						<div class="input-group">
+							<span class="input-group-addon">
+								<i class="material-icons">account_box</i>
+							</span>
+							<div class="form-line">
+								<input type="text" class="form-control" name="rfc" id="rfc" maxlength="13" placeholder="RFC" required/>
+							</div>
+						</div>
+
+
+						<div class="input-group">
+							<span class="input-group-addon">
+								<i class="material-icons">account_circle</i>
+							</span>
+							<div class="form-line">
+								<input type="text" class="form-control" name="curp" id="curp" maxlength="20" placeholder="CURP" required/>
+							</div>
+						</div>
+
+
+						<div class="input-group">
+							<span class="input-group-addon">
+								<i class="material-icons">language</i>
+							</span>
+							<div class="form-line">
+								<input type="text" class="form-control" name="nacionalidad" id="nacionalidad" maxlength="20" placeholder="Nacionalidad" value="Mexico" required/>
+							</div>
+						</div>
+
+
+						<div class="input-group">
+							<span class="input-group-addon">
+								<i class="material-icons">home</i>
+							</span>
+							<div class="form-line">
+								<select type="text" class="form-control" name="refrolhogar" id="refrolhogar" placeholder="Rol Hogar">
+									<?php echo $cadEC; ?>
+								</select>
+							</div>
+						</div>
+
+
+						<div class="input-group">
+							<span class="input-group-addon">
+								<i class="material-icons">chrome_reader_mode</i>
+							</span>
+							<div class="form-line">
+								<select type="text" class="form-control" name="refestadocivil" id="refestadocivil" placeholder="Estado Civil">
+									<?php echo $cadEC; ?>
+								</select>
+							</div>
 						</div>
 
 						<div class="input-group">
@@ -105,16 +167,9 @@ if (mysql_num_rows($resActivacion) > 0) {
 								<i class="material-icons">location_on</i>
 							</span>
 							<div class="form-line">
-								<input type="text" class="form-control" name="ciudad" id="ciudad" placeholder="Ciudad" />
-							</div>
-						</div>
-
-						<div class="input-group">
-							<span class="input-group-addon">
-								<i class="material-icons">date_range</i>
-							</span>
-							<div class="form-line">
-								<input type="text" class="datepicker form-control" name="fechanacimiento" id="fechanacimiento" placeholder="Fecha Nacimiento" required/>
+								<select type="text" class="form-control" name="refentidadnacimiento" id="refentidadnacimiento" placeholder="Entidad Nacimiento">
+									<?php echo $cadEN; ?>
+								</select>
 							</div>
 						</div>
 
@@ -127,84 +182,9 @@ if (mysql_num_rows($resActivacion) > 0) {
 							</div>
 						</div>
 
-						<div class="input-group">
-							<span class="input-group-addon">
-								<i class="material-icons">code</i>
-							</span>
-							<div class="form-line">
-								<input type="text" class="form-control" name="codigopostal" id="codigopostal" placeholder="Cod. Postal" />
-							</div>
-						</div>
-
-						<div class="input-group">
-							<span class="input-group-addon">
-								<i class="material-icons">map</i>
-							</span>
-							<div class="form-line">
-								<input type="text" class="form-control" name="municipio" id="municipio" placeholder="Municipio del domicilio fiscal"/>
-							</div>
-						</div>
-
-						<div class="input-group">
-							<span class="input-group-addon">
-								<i class="material-icons">code</i>
-							</span>
-							<div class="form-line">
-								<input type="text" class="form-control" name="iban" id="iban" placeholder="Tu IBAN (cuenta del banco) 2 letras y 22 numeros." />
-							</div>
-						</div>
-
-						<div class="input-group">
-							<span class="input-group-addon">
-								<i class="material-icons">card_travel</i>
-							</span>
-							<div class="form-line">
-								<input type="text" class="form-control" name="nroseguro" id="nroseguro" placeholder="N Seguridad Social"/>
-							</div>
-						</div>
-
-						<div class="input-group">
-							<span class="input-group-addon">
-								<i class="material-icons">unarchive</i>
-							</span>
-							<div class="form-line">
-								<div class="row">
-									<div class="custom-file" id="customFile">
-										<input type="file" name="fotofrente" class="custom-file-input" id="fotofrente" aria-describedby="fileHelp" required>
-										<label class="custom-file-label" for="exampleInputFile">
-											Foto de documento de identidad por delante (tamaño maximo del archivo 4 MB)
-										</label>
-									</div>
-								</div>
-							</div>
-						</div>
 
 
-						<div class="input-group">
-							<span class="input-group-addon">
-								<i class="material-icons">unarchive</i>
-							</span>
-							<div class="form-line">
-								<div class="row">
-									<div class="custom-file" id="customFile">
-										<input type="file" name="fotodorsal" class="custom-file-input" id="fotodorsal" aria-describedby="fileHelp" required>
-										<label class="custom-file-label" for="exampleInputFile">
-											Foto de documento de identidad por detrás (tamaño maximo del archivo 4 MB)
-										</label>
-									</div>
-								</div>
-							</div>
-						</div>
 
-
-						<div class="input-group">
-							<span class="input-group-addon">
-								<i class="material-icons">grade</i>
-							</span>
-							<div class="form-line">
-								<input type="text" class="form-control" name="codigoreferencia" id="codigoreferencia" placeholder="Codigo de Referencia"/>
-							</div>
-						</div>
 
 						<div class="row js-sweetalert">
 							<div class="col-xs-7 p-t-5">
@@ -240,7 +220,7 @@ if (mysql_num_rows($resActivacion) > 0) {
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-riderz">
-                    <h4 class="modal-title" id="largeModalLabel">RIDERZ ACTIVACION</h4>
+                    <h4 class="modal-title" id="largeModalLabel">ASESORES CREA ACTIVACION</h4>
                 </div>
                 <div class="modal-body">
                    <div class="">

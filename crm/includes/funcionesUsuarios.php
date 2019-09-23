@@ -331,28 +331,6 @@ function enviarEmail($destinatario,$asunto,$cuerpo) {
 
    $mail = $smtp->send($to, $headers, $body);
 
-   # Defina el número de e-mails que desea enviar por periodo. Si es 0, el proceso por lotes
-	# se deshabilita y los mensajes son enviados tan rápido como sea posible.
-	//define("MAILQUEUE_BATCH_SIZE",0);
-
-	//para el envío en formato HTML
-	//$headers = "MIME-Version: 1.0\r\n";
-
-	// Cabecera que especifica que es un HMTL
-	//$headers  = 'MIME-Version: 1.0' . "\r\n";
-	//$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-
-	//dirección del remitente
-	//$headers .= "From: RIDERZ <info@riderzapp.es>\r\n";
-
-	//ruta del mensaje desde origen a destino
-	//$headers .= "Return-path: ".$destinatario."\r\n";
-
-	//direcciones que recibirán copia oculta
-	//$headers .= "Bcc: msredhotero@msn.com\r\n";
-
-	//mail($destinatario,$asunto,$cuerpo,$headers);
-
    if (PEAR::isError($mail)) {
       return ("
 
@@ -439,15 +417,15 @@ function registrarSocio($email, $password,$apellido, $nombre,$refcliente) {
 	$cuerpo = '';
 
 	$fecha = date_create(date('Y').'-'.date('m').'-'.date('d'));
-	date_add($fecha, date_interval_create_from_date_string('5 days'));
+	date_add($fecha, date_interval_create_from_date_string('30 days'));
 	$fechaprogramada =  date_format($fecha, 'Y-m-d');
 
-   $cuerpo .= '<img src="http://areariderz.es/imagenes/1PNGlogosRIDERZ.png" alt="RIDERZ" width="190">';
+   $cuerpo .= '<img src="http://asesorescrea.com/img/logo.png" alt="RIDERZ" width="190">';
 
-   $cuerpo .= '<h2>¡Bienvenido a RIDERZ!</h2>';
+   $cuerpo .= '<h2>¡Bienvenido a Asesores CREA!</h2>';
 
 
-   $cuerpo .= '<p>Usa el siguente <a href="http://areariderz.es/activacion.php?token='.$token.'" target="_blank">enlace</a> para confirmar tu cuenta.</p>';
+   $cuerpo .= '<p>Usa el siguente <a href="http://asesorescrea.com/crm/activacion.php?token='.$token.'" target="_blank">enlace</a> para confirmar tu cuenta.</p>';
 
 
 	$sql = "INSERT INTO dbusuarios
@@ -463,7 +441,7 @@ function registrarSocio($email, $password,$apellido, $nombre,$refcliente) {
 				(null,
 				'".$apellido.' '.$nombre."',
 				'".$password."',
-				3,
+				4,
 				'".$email."',
 				'".$apellido.' '.$nombre."',
 				0,

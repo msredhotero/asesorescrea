@@ -8,6 +8,70 @@ date_default_timezone_set('Europe/Madrid');
 
 class Servicios {
 
+
+	function ComboBoxSelect($tabla, $opcional) {
+
+		switch ($tabla) {
+			case 'EstadoCivil':
+				$res	 = $serviciosReferencias->traerEstadocivil();
+				$cad	 =	$serviciosFunciones->devolverSelectBox($res,array(1),'');
+			break;
+			case 'RolHogar':
+				$res	 = $serviciosReferencias->traerRolhogar();
+				$cad	 =	$serviciosFunciones->devolverSelectBox($res,array(1),'');
+			break;
+			case 'TipoClientes':
+				$res	 = $serviciosReferencias->traerTipoclientes();
+				$cad	 =	$serviciosFunciones->devolverSelectBox($res,array(1),'');
+			break;
+			case 'EntidadNacimiento':
+				$res	 = $serviciosReferencias->traerEntidadnacimiento();
+				$cad	 =	$serviciosFunciones->devolverSelectBox($res,array(1),'');
+			break;
+			default:
+				$cad = '';
+				break;
+
+		}
+
+		if ($opcional == 1) {
+			$cad = '<option value="0">-- Seleccionar --</option>'.$cad;
+		}
+
+		return $cad;
+	}
+
+	function ComboBoxSelectActivo() {
+		switch ($tabla) {
+			case 'EstadoCivil':
+				$res	 = $serviciosReferencias->traerEstadocivil();
+				$cad	 =	$serviciosFunciones->devolverSelectBox($res,array(1),'');
+			break;
+			case 'RolHogar':
+				$res	 = $serviciosReferencias->traerRolhogar();
+				$cad	 =	$serviciosFunciones->devolverSelectBox($res,array(1),'');
+			break;
+			case 'TipoClientes':
+				$res	 = $serviciosReferencias->traerTipoclientes();
+				$cad	 =	$serviciosFunciones->devolverSelectBox($res,array(1),'');
+			break;
+			case 'EntidadNacimiento':
+				$res	 = $serviciosReferencias->traerEntidadnacimiento();
+				$cad	 =	$serviciosFunciones->devolverSelectBox($res,array(1),'');
+			break;
+			default:
+				$cad = '';
+				break;
+
+		}
+
+		if ($opcional == 1) {
+			$cad = '<option value="0">-- Seleccionar --</option>'.$cad;
+		}
+
+		return $cad;
+	}
+
 	function devolverSelectBox($datos, $ar, $delimitador) {
 
 		$cad		= '';

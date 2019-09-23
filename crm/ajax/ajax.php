@@ -1415,14 +1415,15 @@ function entrar($serviciosUsuarios) {
 
 
 function registrar($serviciosUsuarios) {
-	$usuario			=	$_POST['usuario'];
-	$password			=	$_POST['password'];
-	$refroll			=	$_POST['refroles'];
-   $refclientes			=	$_POST['refclientes'];
-	$email				=	$_POST['email'];
-	$nombre				=	$_POST['nombrecompleto'];
+	$nombre			   =	$_POST['nombre'];
+	$apellido		   =	$_POST['apellido'];
+	$fechanacimiento	=	$_POST['fechanacimiento'];
+   $telefono	      =	$_POST['telefono'];
+	$email			   =	$_POST['email'];
+	$sexo			      =	$_POST['sexo'];
+   $codigopostal		=	$_POST['codigopostal'];
 
-	$res = $serviciosUsuarios->insertarUsuario($usuario,$password,$refroll,$email,$nombre);
+	$res = $serviciosUsuarios->registrarSocio($nombre,$apellido,$fechanacimiento,$telefono,$email,$sexo,$codigopostal);
 	if ((integer)$res > 0) {
 		echo '';
 	} else {
@@ -1494,30 +1495,27 @@ function enviarMail($serviciosUsuarios) {
 function registrarme($serviciosUsuarios, $serviciosReferencias, $serviciosValidador) {
    $error = '';
 
-   $email      = trim($_POST['email']);
-   $pass       = trim($_POST['pass']);
-   $apellido   = trim($_POST['apellido']);
-   $nombre     = trim($_POST['nombre']);
-   $telefono   = trim($_POST['telefono']);
-   $celular    = trim($_POST['celular']);
-   $cuit       = trim($_POST['cuit']);
-   $reftipodocumentos = trim($_POST['reftipodocumentos']);
+   $nombre			   =	trim($_POST['nombre']);
+	$apellido         =  trim($_POST['apellido']);
+	$fechanacimiento	=	$_POST['fechanacimiento'];
+   $telefono	      =	trim($_POST['telefono']);
+	$email            =  trim($_POST['email']);
+	$sexo			      =	$_POST['sexo'];
+   $codigopostal		=	trim($_POST['codigopostal']);
 
-   $aceptaterminos   = $_POST['aceptaterminos'];
-   $subscripcion     = $_POST['subscripcion'];
+   $aceptaterminos   = $_POST['terminos'];
+
+
+   $pass       = $serviciosReferencias->GUID();
 
    $existeEmail = $serviciosUsuarios->existeUsuario($email);
-   $existeCliente = $serviciosReferencias->existeCliente($cuit);
+   //$existeCliente = $serviciosReferencias->existeCliente($cuit);
 
    if ($existeEmail == 1) {
       $error .= 'El Email ingresado ya existe!
       ';
    }
 
-   if ($existeCliente == 1) {
-      $error .= 'El DNI ingresado ya existe!
-      ';
-   }
 
    if ($aceptaterminos == 0) {
       $error .= 'Debe Aceptar los Terminos y Condiciones
@@ -1526,7 +1524,22 @@ function registrarme($serviciosUsuarios, $serviciosReferencias, $serviciosValida
 
    if ($error == '') {
       // todo ok
-      $res = $serviciosReferencias->insertarClientes($reftipodocumentos,$apellido,$nombre,$cuit,$telefono,$celular,$email,$aceptaterminos,$subscripcion,0);
+      $refestadocivil = 1;
+      $rfc = '0';
+      $curp = '0';
+      $numerocliente = '0000';
+      $nacionalidad = 'Mexicano';
+      $refpromotores = 0;
+      $refrolhogar = 1;
+      $reftipoclientes = 1;
+      $refentidadnacimiento = 1;
+      $fechacrea = date('Y-m-d');
+      $fechamodi = date('Y-m-d');
+      $usuariocrea = 'Web';
+      $usuariomodi = '';
+
+
+      $res = $serviciosReferencias->insertarClientes($nombre,$apellido,$email,$sexo,$refestadocivil,$rfc,$curp,$fechanacimiento,$numerocliente,$nacionalidad,$refpromotores,$refrolhogar,$reftipoclientes,$refentidadnacimiento,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
 
       // empiezo la activacion del usuarios
       $resActivacion = $serviciosUsuarios->registrarSocio($email, $pass, $apellido, $nombre, $res);

@@ -16,6 +16,26 @@
 	<script src="js/layerslider.kreaturamedia.jquery.js"></script>
 	<link rel="stylesheet" href="css/layerslider.popup.css">
 	<script src="js/layerslider.popup.js"></script>
+	<style>
+	.selectBox {
+		width: 140px !important;
+		height: 36px !important;
+		border: 0px !important;
+		outline: none !important;
+		border-radius: 35px;
+		border: rgba(27,41,72,0.6) solid 1px !important;
+	}
+
+
+
+	.selectWrapperErr {
+		border-radius: 36px !important;
+		display: inline-block !important;
+		overflow: hidden !important;
+		background: #cccccc !important;
+		border: 2px solid red !important;
+	}
+	</style>
 </head>
 
 <body>
@@ -87,7 +107,7 @@
 								</ul>
 							</div>
 						</nav>
-					</div> 
+					</div>
 				</div>
 				<div class="clearfix"></div>
 			</header>
@@ -99,21 +119,31 @@
 					<div class="clearfix height-20"></div>
 					<div class="col50">
 						<p>Nombre</p>
-						<input type="text">
+						<input type="text" name="txtnombre" id="txtnombre">
 						<p>Email</p>
-						<input type="email">
+						<input type="email" name="txtemail" id="txtemail">
 						<p>Teléfono</p>
-						<input type="tel">
+						<input type="tel" name="txttelefono" id="txttelefono">
 						<p>Código postal</p>
-						<input type="number">
+						<input type="number" name="txtcodigopostal" id="txtcodigopostal">
 					</div>
 					<div class="col50-2">
-						<p>Apellido</p>
-						<input type="text">
+						<p>Apellido Paterno</p>
+						<input type="text" name="txtapellidopaterno" id="txtapellidopaterno">
+						<p>Apellido Materno</p>
+						<input type="text" name="txtapellidomaterno" id="txtapellidomaterno">
 						<p>Fecha de nacimiento</p>
-						<input type="date">
+						<input type="date" name="dtpfechanacimiento" id="dtpfechanacimiento">
 						<p>Sexo</p>
-						<input>
+						<div id="div_dia" class="selectWrapper">
+							<select name="cbsexo" id="cbsexo" class="selectBox" >
+								<option value="0">Seleccione</option>
+								<option value="M">Masculino</option>
+								<option value="F">Femenino</option>
+							</select>
+						</div>
+						<p style="font-weight: normal; margin-top:25px;">Acepto los <a href="aviso-privacidad.html" target="_blank" style="font-weight: bold; text-decoration: underline;">Términos del servicio y la Política de privacidad</a>, incluido el uso de cookies.</p>
+						<input type="checkbox" name="cbxterminos" id="cbxterminos">
 					</div>
 					<div class="clearfix"></div>
 					<p class="right">*Todos los campos son obligatorios.</p>
@@ -140,7 +170,7 @@
 						<a href="nuestra-cultura.html" class="btn2">Leer más</a>
 					</div>
 					<div class="col-2-footer">
-						<h3>LO QUE NUESTROS CLIENTES PIENSAN</h3> 
+						<h3>LO QUE NUESTROS CLIENTES PIENSAN</h3>
 						<div class="linea"></div>
 						<i class="ion-android-star"></i>
 						<i class="ion-android-star"></i>
@@ -175,7 +205,7 @@
 			<div class="copy on767">
 				<p><strong>Asesores Crea 2018</strong> © Todos los Derechos Reservados.</p>
 			</div>
-		</div>	 
+		</div>
 	</div>
 	<div class="ls-popup">
 		<div id="slider" style="width:350px;height:340px;margin:0 auto;margin-bottom: 0px;">

@@ -1277,9 +1277,9 @@ class ServiciosReferencias {
 
    function existeCliente($nrodocumento, $modifica = 0, $id = 0) {
       if ($modifica == 1) {
-         $sql = "select * from dbclientes where nrodocumento = '".$nrodocumento."' and idcliente <> ".$id;
+         $sql = "select * from dbclientes where curp = '".$nrodocumento."' and idcliente <> ".$id;
       } else {
-         $sql = "select * from dbclientes where nrodocumento = '".$nrodocumento."'";
+         $sql = "select * from dbclientes where curp = '".$nrodocumento."'";
       }
 
    	$res = $this->query($sql,0);
