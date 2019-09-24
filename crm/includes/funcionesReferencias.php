@@ -9,65 +9,190 @@ date_default_timezone_set('Europe/Madrid');
 
 class ServiciosReferencias {
 
+	function ComboBoxSelect($tabla, $opcional) {
+
+		switch ($tabla) {
+			case 'EstadoCivil':
+				$res	 = $this->traerEstadocivil();
+				$cad	 =	$this->devolverSelectBox($res,array(1),'');
+			break;
+			case 'RolHogar':
+				$res	 = $this->traerRolhogar();
+				$cad	 =	$this->devolverSelectBox($res,array(1),'');
+			break;
+			case 'TipoClientes':
+				$res	 = $this->traerTipoclientes();
+				$cad	 =	$this->devolverSelectBox($res,array(1),'');
+			break;
+			case 'EntidadNacimiento':
+				$res	 = $this->traerEntidadnacimiento();
+				$cad	 =	$this->devolverSelectBox($res,array(1),'');
+			break;
+			default:
+				$cad = '';
+				break;
+
+		}
+
+		if ($opcional == 1) {
+			$cad = '<option value="0">-- Seleccionar --</option>'.$cad;
+		}
+
+		return $cad;
+	}
+
+	function ComboBoxSelectActivo() {
+		switch ($tabla) {
+			case 'EstadoCivil':
+				$res	 = $this->traerEstadocivil();
+				$cad	 =	$this->devolverSelectBox($res,array(1),'');
+			break;
+			case 'RolHogar':
+				$res	 = $this->traerRolhogar();
+				$cad	 =	$this->devolverSelectBox($res,array(1),'');
+			break;
+			case 'TipoClientes':
+				$res	 = $this->traerTipoclientes();
+				$cad	 =	$this->devolverSelectBox($res,array(1),'');
+			break;
+			case 'EntidadNacimiento':
+				$res	 = $this->traerEntidadnacimiento();
+				$cad	 =	$this->devolverSelectBox($res,array(1),'');
+			break;
+			default:
+				$cad = '';
+				break;
+
+		}
+
+		if ($opcional == 1) {
+			$cad = '<option value="0">-- Seleccionar --</option>'.$cad;
+		}
+
+		return $cad;
+	}
+
+	function devolverSelectBox($datos, $ar, $delimitador) {
+
+		$cad		= '';
+		while ($rowTT = mysql_fetch_array($datos)) {
+			$contenido	= '';
+			foreach ($ar as $i) {
+				$contenido .= $rowTT[$i].$delimitador;
+			}
+			$cad .= '<option value="'.$rowTT[0].'">'.utf8_encode(substr($contenido,0,strlen($contenido)-strlen($delimitador))).'</option>';
+		}
+		return $cad;
+	}
 
 	/* PARA Clientes */
 
-	function insertarClientes($nombre,$apellido,$email,$sexo,$refestadocivil,$rfc,$curp,$fechanacimiento,$numerocliente,$nacionalidad,$refpromotores,$refrolhogar,$reftipoclientes,$refentidadnacimiento,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
-		$sql = "insert into dbclientes(idcliente,nombre,apellido,email,sexo,refestadocivil,rfc,curp,fechanacimiento,numerocliente,nacionalidad,refpromotores,refrolhogar,reftipoclientes,refentidadnacimiento,fechacrea,fechamodi,usuariocrea,usuariomodi)
-		values ('','".$nombre."','".$apellido."','".$email."','".$sexo."',".$refestadocivil.",'".$rfc."','".$curp."','".$fechanacimiento."','".$numerocliente."','".$nacionalidad."',".$refpromotores.",".$refrolhogar.",".$reftipoclientes.",".$refentidadnacimiento.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
+	function generaNroCliente() {
+		$sql = "select max(idcliente) from dbclientes";
+		$res = $this->query($sql,0);
+
+		if (mysql_num_rows($res) > 0) {
+			$idcliente = mysql_result($res,0,0);
+			return 'ASE'.substr('0000000'.$idcliente,-7);
+		}
+
+		return 'ASE0000001';
+	}
+
+	function insertarClientes($nombre,$apellidopaterno,$apellidomaterno,$email,$sexo,$refestadocivil,$rfc,$curp,$fechanacimiento,$numerocliente,$nacionalidad,$refpromotores,$refrolhogar,$reftipoclientes,$refentidadnacimiento,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+		$sql = "insert into dbclientes(idcliente,nombre,apellidopaterno,apellidomaterno,email,sexo,refestadocivil,rfc,curp,fechanacimiento,numerocliente,nacionalidad,refpromotores,refrolhogar,reftipoclientes,refentidadnacimiento,fechacrea,fechamodi,usuariocrea,usuariomodi)
+		values ('','".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$email."','".$sexo."',".$refestadocivil.",'".$rfc."','".$curp."','".$fechanacimiento."','".$numerocliente."','".$nacionalidad."',".$refpromotores.",".$refrolhogar.",".$reftipoclientes.",".$refentidadnacimiento.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarClientes($id,$nombre,$apellido,$email,$sexo,$refestadocivil,$rfc,$curp,$fechanacimiento,$numerocliente,$nacionalidad,$refpromotores,$refrolhogar,$reftipoclientes,$refentidadnacimiento,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
-	$sql = "update dbclientes
-	set
-	nombre = '".$nombre."',apellido = '".$apellido."',email = '".$email."',sexo = '".$sexo."',refestadocivil = ".$refestadocivil.",rfc = '".$rfc."',curp = '".$curp."',fechanacimiento = '".$fechanacimiento."',numerocliente = '".$numerocliente."',nacionalidad = '".$nacionalidad."',refpromotores = ".$refpromotores.",refrolhogar = ".$refrolhogar.",reftipoclientes = ".$reftipoclientes.",refentidadnacimiento = ".$refentidadnacimiento.",fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."' where idcliente =".$id;
-	$res = $this->query($sql,0);
-	return $res;
+	function modificarClientes($id,$nombre,$apellidopaterno,$apellidomaterno,$email,$sexo,$refestadocivil,$rfc,$curp,$fechanacimiento,$numerocliente,$nacionalidad,$refpromotores,$refrolhogar,$reftipoclientes,$refentidadnacimiento,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+		$sql = "update dbclientes
+		set
+		nombre = '".$nombre."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',email = '".$email."',sexo = '".$sexo."',refestadocivil = ".$refestadocivil.",rfc = '".$rfc."',curp = '".$curp."',fechanacimiento = '".$fechanacimiento."',numerocliente = '".$numerocliente."',nacionalidad = '".$nacionalidad."',refpromotores = ".$refpromotores.",refrolhogar = ".$refrolhogar.",reftipoclientes = ".$reftipoclientes.",refentidadnacimiento = ".$refentidadnacimiento.",fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."' where idcliente =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function modificarClientesCorto($id,$refestadocivil,$rfc,$curp,$nacionalidad,$refrolhogar,$refentidadnacimiento) {
+		$sql = "update dbclientes
+		set
+		refestadocivil = ".$refestadocivil.",rfc = '".$rfc."',curp = '".$curp."',numerocliente = '".$this->generaNroCliente()."',nacionalidad = '".$nacionalidad."',refrolhogar = ".$refrolhogar.",refentidadnacimiento = ".$refentidadnacimiento." where idcliente =".$id;
+		$res = $this->query($sql,0);
+		return $res;
 	}
 
 
 	function eliminarClientes($id) {
-	$sql = "delete from dbclientes where idcliente =".$id;
-	$res = $this->query($sql,0);
-	return $res;
+		$sql = "delete from dbclientes where idcliente =".$id;
+		$res = $this->query($sql,0);
+		return $res;
 	}
 
 
 	function traerClientes() {
-	$sql = "select
-	c.idcliente,
-	c.nombre,
-	c.apellido,
-	c.email,
-	c.sexo,
-	c.refestadocivil,
-	c.rfc,
-	c.curp,
-	c.fechanacimiento,
-	c.numerocliente,
-	c.nacionalidad,
-	c.refpromotores,
-	c.refrolhogar,
-	c.reftipoclientes,
-	c.refentidadnacimiento,
-	c.fechacrea,
-	c.fechamodi,
-	c.usuariocrea,
-	c.usuariomodi
-	from dbclientes c
-	order by 1";
-	$res = $this->query($sql,0);
-	return $res;
+		$sql = "select
+		c.idcliente,
+		c.nombre,
+		c.apellidopaterno,
+		c.apellidomaterno,
+		c.email,
+		c.sexo,
+		c.refestadocivil,
+		c.rfc,
+		c.curp,
+		c.fechanacimiento,
+		c.numerocliente,
+		c.nacionalidad,
+		c.refpromotores,
+		c.refrolhogar,
+		c.reftipoclientes,
+		c.refentidadnacimiento,
+		c.fechacrea,
+		c.fechamodi,
+		c.usuariocrea,
+		c.usuariomodi
+		from dbclientes c
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
 	}
 
 
 	function traerClientesPorId($id) {
-	$sql = "select idcliente,nombre,apellido,email,sexo,refestadocivil,rfc,curp,fechanacimiento,numerocliente,nacionalidad,refpromotores,refrolhogar,reftipoclientes,refentidadnacimiento,fechacrea,fechamodi,usuariocrea,usuariomodi from dbclientes where idcliente =".$id;
-	$res = $this->query($sql,0);
-	return $res;
+		$sql = "select idcliente,nombre,apellidopaterno,apellidomaterno,email,sexo,refestadocivil,rfc,curp,fechanacimiento,numerocliente,nacionalidad,refpromotores,refrolhogar,reftipoclientes,refentidadnacimiento,fechacrea,fechamodi,usuariocrea,usuariomodi from dbclientes where idcliente =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerClientesPorIdUsuario($idusuario) {
+		$sql = 'select
+		idcliente,
+		nombre,
+		apellidopaterno,
+		apellidomaterno,
+		email,
+		sexo,
+		refestadocivil,
+		rfc,
+		curp,
+		fechanacimiento,
+		numerocliente,
+		nacionalidad,
+		refpromotores,
+		refrolhogar,
+		reftipoclientes,
+		refentidadnacimiento,
+		fechacrea,fechamodi,usuariocrea,usuariomodi,
+		DATE_FORMAT(fechanacimiento, "%Y") as anioNacimiento,
+		DATE_FORMAT(fechanacimiento, "%m") as mesNacimiento,
+		DATE_FORMAT(fechanacimiento, "%d") as diaNacimiento
+		from dbclientes where refusuarios ='.$idusuario;
+
+		$res = $this->query($sql,0);
+		return $res;
 	}
 
 	/* Fin */

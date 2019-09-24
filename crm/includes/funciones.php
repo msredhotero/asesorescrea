@@ -8,69 +8,41 @@ date_default_timezone_set('Europe/Madrid');
 
 class Servicios {
 
+	function generaCURP($primerApellido, $segundoApellido, $nombre, $diaNacimiento, $mesNacimiento, $anioNacimiento, $sexo, $entidadNacimiento) {
 
-	function ComboBoxSelect($tabla, $opcional) {
+		$primerApellido = urlencode($primerApellido);
+		$segundoApellido = urlencode($segundoApellido);
+		$nombre = urlencode($nombre);
+		$aContext = array(
+			'http' => array(
+				'header'=>"Accept-language: es-es,es;q=0.8,en-us;q=0.5,en;q=0.3\r\n" .
+				"Proxy-Connection: keep-alive\r\n" .
+				"Host: consultas.curp.gob.mx\r\n" .
+				"User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.0; es-ES; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 (.NET CLR 3.5.30729)\r\n" .
+				"Keep-Alive: 300\r\n" .
+				"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n"
+				//, 'proxy' => 'tcp://proxy:puerto', //Si utilizas algun proxy para salir a internet descomenta esta linea y por la direccion de tu proxy y el puerto
+				//'request_fulluri' => True //Tambien esta si utilizas algun proxy
+			),
+		);
 
-		switch ($tabla) {
-			case 'EstadoCivil':
-				$res	 = $serviciosReferencias->traerEstadocivil();
-				$cad	 =	$serviciosFunciones->devolverSelectBox($res,array(1),'');
-			break;
-			case 'RolHogar':
-				$res	 = $serviciosReferencias->traerRolhogar();
-				$cad	 =	$serviciosFunciones->devolverSelectBox($res,array(1),'');
-			break;
-			case 'TipoClientes':
-				$res	 = $serviciosReferencias->traerTipoclientes();
-				$cad	 =	$serviciosFunciones->devolverSelectBox($res,array(1),'');
-			break;
-			case 'EntidadNacimiento':
-				$res	 = $serviciosReferencias->traerEntidadnacimiento();
-				$cad	 =	$serviciosFunciones->devolverSelectBox($res,array(1),'');
-			break;
-			default:
-				$cad = '';
-				break;
+		$cxContext = stream_context_create($aContext);
+		$url = "http://consultas.curp.gob.mx/CurpSP/curp1.do?strPrimerApellido=$primerApellido&strSegundoAplido=$segundoApellido&strNombre=$nombre&strdia=$diaNacimiento&strmes=$mesNacimiento&stranio=$anioNacimiento&sSexoA=$sexo&sEntidadA=$entidadNacimiento&rdbBD=myoracle&strTipo=A&entfija=DF&depfija=04";
 
+		$file = @file_get_contents($url, false, $cxContext);
+		preg_match_all("/var strCurp=\"(.*)\"/", $file, $curp);
+
+		//die(var_dump($url));
+		$curp = $curp[1][0];
+
+		if ($curp) {
+			return $curp;
+		} else {
+
+			return '';
 		}
-
-		if ($opcional == 1) {
-			$cad = '<option value="0">-- Seleccionar --</option>'.$cad;
-		}
-
-		return $cad;
 	}
 
-	function ComboBoxSelectActivo() {
-		switch ($tabla) {
-			case 'EstadoCivil':
-				$res	 = $serviciosReferencias->traerEstadocivil();
-				$cad	 =	$serviciosFunciones->devolverSelectBox($res,array(1),'');
-			break;
-			case 'RolHogar':
-				$res	 = $serviciosReferencias->traerRolhogar();
-				$cad	 =	$serviciosFunciones->devolverSelectBox($res,array(1),'');
-			break;
-			case 'TipoClientes':
-				$res	 = $serviciosReferencias->traerTipoclientes();
-				$cad	 =	$serviciosFunciones->devolverSelectBox($res,array(1),'');
-			break;
-			case 'EntidadNacimiento':
-				$res	 = $serviciosReferencias->traerEntidadnacimiento();
-				$cad	 =	$serviciosFunciones->devolverSelectBox($res,array(1),'');
-			break;
-			default:
-				$cad = '';
-				break;
-
-		}
-
-		if ($opcional == 1) {
-			$cad = '<option value="0">-- Seleccionar --</option>'.$cad;
-		}
-
-		return $cad;
-	}
 
 	function devolverSelectBox($datos, $ar, $delimitador) {
 

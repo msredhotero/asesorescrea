@@ -53,6 +53,10 @@ switch ($accion) {
       eliminarUsuarios($serviciosUsuarios, $serviciosReferencias);
    break;
 
+   case 'activarUsuario':
+      activarUsuario($serviciosUsuarios, $serviciosReferencias);
+   break;
+
 
    case 'frmAjaxModificar':
       frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $serviciosUsuarios);
@@ -310,10 +314,62 @@ switch ($accion) {
       traerTiposolicitudesPorId($serviciosReferencias);
    break;
 
+   case 'generarCURP':
+      generaCURP($serviciosReferencias, $serviciosUsuarios, $serviciosFunciones);
+   break;
+
 }
 /* Fin */
 
 
+function activarUsuario($serviciosUsuarios, $serviciosReferencias) {
+   $idusuario = $_POST['idusuario'];
+   $activacion = $_POST['activacion'];
+
+   $rfc = $_POST['rfc'];
+   $curp = $_POST['curp'];
+   $nacionalidad = $_POST['nacionalidad'];
+   $refrolhogar = $_POST['refrolhogar'];
+   $refestadocivil = $_POST['refestadocivil'];
+   $refentidadnacimiento = $_POST['refentidadnacimiento'];
+   $idcliente = $_POST['idcliente'];
+
+
+   //pongo al usuario $activo
+	$resUsuario = $serviciosUsuarios->activarUsuario($idusuario);
+
+   // concreto la activacion
+   $resConcretar = $serviciosUsuarios->eliminarActivacionusuarios($activacion);
+
+   $resModUsuario = $serviciosReferencias->modificarClientesCorto($idcliente,$refestadocivil,$rfc,$curp,$nacionalidad,$refrolhogar,$refentidadnacimiento);
+
+   if ($resModUsuario == true) {
+
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+
+
+}
+
+function generaCURP($serviciosReferencias, $serviciosUsuarios, $serviciosFunciones) {
+   $apellidopaterno = $_POST['apellidopaterno'];
+   $apellidomaterno = $_POST['apellidomaterno'];
+   $nombre = $_POST['nombre'];
+   $diaNacimiento = $_POST['diaNacimientodiaNacimiento'];
+   $mesNacimiento = $_POST['mesNacimiento'];
+   $anioNacimiento = $_POST['anioNacimiento'];
+   $sexo = $_POST['sexo'];
+   $entidadnacimiento = $_POST['entidadnacimiento'];
+
+   $resEN = $serviciosReferencias->traerEntidadnacimientoPorId($entidadnacimiento);
+   $entidadnacimiento = mysql_result($resEN,0,'clave');
+
+   $CURP = $serviciosFunciones->generaCURP($apellidopaterno, $apellidomaterno, $nombre, $diaNacimiento, $mesNacimiento, $anioNacimiento, $sexo, $entidadnacimiento);
+
+   echo $CURP;
+}
 
 function frmAjaxVer($serviciosFunciones, $serviciosReferencias, $serviciosUsuarios) {
    $tabla = $_POST['tabla'];
@@ -1496,7 +1552,8 @@ function registrarme($serviciosUsuarios, $serviciosReferencias, $serviciosValida
    $error = '';
 
    $nombre			   =	trim($_POST['nombre']);
-	$apellido         =  trim($_POST['apellido']);
+	$apellidopaterno  =  trim($_POST['apellidopaterno']);
+   $apellidomaterno  =  trim($_POST['apellidomaterno']);
 	$fechanacimiento	=	$_POST['fechanacimiento'];
    $telefono	      =	trim($_POST['telefono']);
 	$email            =  trim($_POST['email']);
@@ -1528,7 +1585,7 @@ function registrarme($serviciosUsuarios, $serviciosReferencias, $serviciosValida
       $rfc = '0';
       $curp = '0';
       $numerocliente = '0000';
-      $nacionalidad = 'Mexicano';
+      $nacionalidad = 'Mexico';
       $refpromotores = 0;
       $refrolhogar = 1;
       $reftipoclientes = 1;
@@ -1539,10 +1596,10 @@ function registrarme($serviciosUsuarios, $serviciosReferencias, $serviciosValida
       $usuariomodi = '';
 
 
-      $res = $serviciosReferencias->insertarClientes($nombre,$apellido,$email,$sexo,$refestadocivil,$rfc,$curp,$fechanacimiento,$numerocliente,$nacionalidad,$refpromotores,$refrolhogar,$reftipoclientes,$refentidadnacimiento,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
+      $res = $serviciosReferencias->insertarClientes($nombre,$apellidopaterno,$apellidomaterno,$email,$sexo,$refestadocivil,$rfc,$curp,$fechanacimiento,$numerocliente,$nacionalidad,$refpromotores,$refrolhogar,$reftipoclientes,$refentidadnacimiento,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
 
       // empiezo la activacion del usuarios
-      $resActivacion = $serviciosUsuarios->registrarSocio($email, $pass, $apellido, $nombre, $res);
+      $resActivacion = $serviciosUsuarios->registrarSocio($email, $pass, $apellidopaterno.' '.$apellidomaterno, $nombre, $res);
 
       if ((integer)$resActivacion > 0) {
 

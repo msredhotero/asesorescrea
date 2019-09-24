@@ -1,8 +1,8 @@
 <?php
 
 require 'includes/funcionesUsuarios.php';
-require 'includes/funcionesReferencias.php.php';
-include ('includes/funciones.php');
+require 'includes/funcionesReferencias.php';
+require 'includes/funciones.php';
 
 session_start();
 
@@ -24,6 +24,8 @@ if (mysql_num_rows($resActivacion) > 0) {
 
 	$resUsuario = $serviciosUsuario->traerUsuarioId($idusuario);
 
+	$resCliente = $serviciosReferencias->traerClientesPorIdUsuario($idusuario);
+
 	// verifico que el usuario no este activo ya
 	if (mysql_result($resUsuario,0,'activo') == 'Si') {
 		$cadResultado = 'Usted ya fue dado de alta y esta activo.';
@@ -32,10 +34,21 @@ if (mysql_num_rows($resActivacion) > 0) {
 		$cadResultado = '';
 	}
 
-	$cadEC 			 =	$serviciosFunciones->ComboBoxSelect('EstadoCivil',0);
-	$cadRH 			 =	$serviciosFunciones->ComboBoxSelect('RolHogar',0);
-	$cadTC 			 =	$serviciosFunciones->ComboBoxSelect('TipoClientes',0);
-	$cadEN 			 =	$serviciosFunciones->ComboBoxSelect('EntidadNacimiento',1);
+	$cadEC 			 =	$serviciosReferencias->ComboBoxSelect('EstadoCivil',0);
+	$cadRH 			 =	$serviciosReferencias->ComboBoxSelect('RolHogar',0);
+	$cadTC 			 =	$serviciosReferencias->ComboBoxSelect('TipoClientes',0);
+	$cadEN 			 =	$serviciosReferencias->ComboBoxSelect('EntidadNacimiento',1);
+
+	if (mysql_num_rows($resCliente) > 0) {
+		$nombre = mysql_result($resCliente,0,'nombre');
+		$apellidopaterno = mysql_result($resCliente,0,'apellidopaterno');
+		$apellidomaterno = mysql_result($resCliente,0,'apellidomaterno');
+		$anioNacimiento = mysql_result($resCliente,0,'anioNacimiento');
+		$mesNaciemiento = mysql_result($resCliente,0,'mesNacimiento');
+		$diaNaciemiento = mysql_result($resCliente,0,'diaNacimiento');
+		$sexo				 = mysql_result($resCliente,0,'sexo');
+		$idcliente		 = mysql_result($resCliente,0,'idcliente');
+	}
 
 	//pongo al usuario $activo
 	//$resUsuario = $serviciosUsuario->activarUsuario($idusuario);
@@ -95,9 +108,11 @@ if (mysql_num_rows($resActivacion) > 0) {
 
 <body class="login-page">
     <div class="login-box">
-        <div class="logo" style="background-color:#0F0; padding:10px 10px;">
-            <a href="javascript:void(0);" style="color:#000;">Activación <b>Asesores CREA</b></a>
-            <small style="color:#000;">Administración de Servicios de Clientes</small>
+        <div class="logo" style="background-color:#008AD1; padding:10px 10px; color: white;">
+			   <h4 style="color:white; text-align:center;">Activación</h4>
+				<a href="javascript:void(0);" style="color:white;"><b>Asesores CREA</b></a>
+
+            <small style="color:white;">Administración de Servicios de Clientes</small>
         </div>
         <div class="card">
             <div class="body demo-masked-input">
@@ -108,14 +123,17 @@ if (mysql_num_rows($resActivacion) > 0) {
 							<p>Por favor complete sus datos personales para activar su usuario</p>
 						</div>
 
-
 						<div class="input-group">
 							<span class="input-group-addon">
 								<i class="material-icons">account_box</i>
 							</span>
 							<div class="form-line">
 								<input type="text" class="form-control" name="rfc" id="rfc" maxlength="13" placeholder="RFC" required/>
+
 							</div>
+							<span class="input-group-addon hidden">
+								<button class="btn btn-block bg-blue-grey waves-effect buscarRFC" data-type="" type="button" >RFC</button>
+							</span>
 						</div>
 
 
@@ -124,10 +142,13 @@ if (mysql_num_rows($resActivacion) > 0) {
 								<i class="material-icons">account_circle</i>
 							</span>
 							<div class="form-line">
-								<input type="text" class="form-control" name="curp" id="curp" maxlength="20" placeholder="CURP" required/>
-							</div>
-						</div>
+								<input type="text" class="form-control" name="curp" id="curp" maxlength="18" placeholder="CURP" required/>
 
+							</div>
+							<span class="input-group-addon hidden">
+								<button class="btn btn-block bg-blue-grey waves-effect buscarCURP" data-type="" type="button" >CURP</button>
+							</span>
+						</div>
 
 						<div class="input-group">
 							<span class="input-group-addon">
@@ -145,7 +166,7 @@ if (mysql_num_rows($resActivacion) > 0) {
 							</span>
 							<div class="form-line">
 								<select type="text" class="form-control" name="refrolhogar" id="refrolhogar" placeholder="Rol Hogar">
-									<?php echo $cadEC; ?>
+									<?php echo $cadRH; ?>
 								</select>
 							</div>
 						</div>
@@ -173,19 +194,6 @@ if (mysql_num_rows($resActivacion) > 0) {
 							</div>
 						</div>
 
-						<div class="input-group">
-							<span class="input-group-addon">
-								<i class="material-icons">directions</i>
-							</span>
-							<div class="form-line">
-								<input type="text" class="form-control" name="domicilio" id="domicilio" placeholder="Domicilio Fiscal (Calle, Nro., Piso, Puerta)*" required/>
-							</div>
-						</div>
-
-
-
-
-
 						<div class="row js-sweetalert">
 							<div class="col-xs-7 p-t-5">
 								<a href="index.html">Iniciar sesión</a>
@@ -209,6 +217,7 @@ if (mysql_num_rows($resActivacion) > 0) {
                   </div>
 						<?php } ?>
 						<input type="hidden" name="idusuario" id="idusuario" value="<?php echo $idusuario; ?>" />
+						<input type="hidden" name="idcliente" id="idcliente" value="<?php echo $idcliente; ?>" />
 						<input type="hidden" name="accion" id="accion" value="activarUsuario" />
 						<input type="hidden" name="activacion" id="activacion" value="<?php echo mysql_result($resActivacion,0,0); ?>" />
                </form>
@@ -232,7 +241,7 @@ if (mysql_num_rows($resActivacion) > 0) {
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn bg-riderz waves-effect"><a href="index.html" style="color:white; text-decoration:none;">Iniciar sesión</a></button>
+                    <button type="button" class="btn bg-blue waves-effect"><a href="index.html" style="color:white; text-decoration:none;">Iniciar sesión</a></button>
 
                 </div>
             </div>
@@ -272,7 +281,8 @@ if (mysql_num_rows($resActivacion) > 0) {
         $(document).ready(function(){
 			  var $demoMaskedInput = $('.demo-masked-input');
 
-				$demoMaskedInput.find('#iban').inputmask('aa99 9999 9999 9999 9999 99', { placeholder: '____ ____ ____ ____ ____ __'});
+			  $demoMaskedInput.find('#rfc').inputmask('AAAA9999999A9', { placeholder: '_____________'});
+
 
 				$('body').keyup(function(e) {
                 if(e.keyCode == 13) {
@@ -286,6 +296,48 @@ if (mysql_num_rows($resActivacion) > 0) {
 					weekStart: 1,
 					time: false
 				});
+
+
+
+				function validarCURP(curp) {
+						var re = /^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/,
+						validado = curp.match(re);
+
+				    if (!validado)  //Coincide con el formato general?
+				    	return false;
+
+				    //Validar que coincida el dígito verificador
+				    function digitoVerificador(curp17) {
+				        //Fuente https://consultas.curp.gob.mx/CurpSP/
+				        var diccionario  = "0123456789ABCDEFGHIJKLMNÑOPQRSTUVWXYZ",
+				            lngSuma      = 0.0,
+				            lngDigito    = 0.0;
+				        for(var i=0; i<17; i++)
+				            lngSuma = lngSuma + diccionario.indexOf(curp17.charAt(i)) * (18 - i);
+				        lngDigito = 10 - lngSuma % 10;
+				        if (lngDigito == 10) return 0;
+				        return lngDigito;
+				    }
+
+				    if (validado[2] != digitoVerificador(validado[1]))
+				    	return false;
+
+				    return true; //Validado
+				}
+
+				$('#curp').focusout(function() {
+					if (validarCURP($('#curp').val()) == false) {
+						swal({
+							title: "Respuesta",
+							text: "CURP no valido",
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+						});
+
+						$(this).focus();
+					}
+				})
 
 
             $("#sign_in").submit(function(e){
@@ -308,25 +360,25 @@ if (mysql_num_rows($resActivacion) > 0) {
                        },
                        success:  function (response) {
 
-                               if (isNaN(response)) {
+                            if (isNaN(response)) {
 
-                                   swal({
-                                       title: "Respuesta",
-                                       text: "Se genero un error",
-                                       type: "error",
-                                       timer: 2000,
-                                       showConfirmButton: false
-                                   });
-											  $('#login').show();
+                                swal({
+                                    title: "Respuesta",
+                                    text: "Se genero un error",
+                                    type: "error",
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+										  $('#login').show();
 
-                               } else {
-                                   $('#lgmNuevo').modal();
+                            } else {
+                                $('#lgmNuevo').modal();
 
-											  $('#login').hide();
+										  $('#login').hide();
 
-                                   //url = "dashboard/";
-                                   //$(location).attr('href',url);
-                               }
+                                //url = "dashboard/";
+                                //$(location).attr('href',url);
+                            }
 
                        }
                    });

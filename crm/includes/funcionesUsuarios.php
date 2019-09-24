@@ -435,8 +435,7 @@ function registrarSocio($email, $password,$apellido, $nombre,$refcliente) {
 				refroles,
 				email,
 				nombrecompleto,
-				activo,
-				refclientes)
+				activo)
 			VALUES
 				(null,
 				'".$apellido.' '.$nombre."',
@@ -444,8 +443,7 @@ function registrarSocio($email, $password,$apellido, $nombre,$refcliente) {
 				4,
 				'".$email."',
 				'".$apellido.' '.$nombre."',
-				0,
-				$refcliente)";
+				0)";
 
 	$res = $this->query($sql,1);
 
@@ -453,6 +451,10 @@ function registrarSocio($email, $password,$apellido, $nombre,$refcliente) {
 		return 'Error al insertar datos ';
 	} else {
 		$this->insertarActivacionusuarios($res,$token,'','');
+
+      $sqlUpdateRelacion = "update dbclientes set refusuarios = ".$res." where idcliente =".$refcliente;
+      // actualizo la relacion cliente y usuario
+      $resRelacion = $this->query($sqlUpdateRelacion,0);
 
 		$retorno = $this->enviarEmail($email,'Alta de Usuario',utf8_decode($cuerpo));
 
