@@ -188,10 +188,21 @@ if (mysql_num_rows($resActivacion) > 0) {
 								<i class="material-icons">location_on</i>
 							</span>
 							<div class="form-line">
-								<select type="text" class="form-control" name="refentidadnacimiento" id="refentidadnacimiento" placeholder="Entidad Nacimiento">
+								<select type="text" class="form-control" name="refentidadnacimiento" id="refentidadnacimiento" placeholder="Entidad Nacimiento" required>
 									<?php echo $cadEN; ?>
 								</select>
 							</div>
+						</div>
+
+						<div class="input-group">
+							<span class="input-group-addon">
+								<i class="material-icons">lock</i>
+							</span>
+							<div class="form-line">
+								<input type="password" class="form-control" name="password" id="password" maxlength="10" placeholder="Ingrese un Password" required/>
+
+							</div>
+
 						</div>
 
 						<div class="row js-sweetalert">
@@ -325,6 +336,17 @@ if (mysql_num_rows($resActivacion) > 0) {
 				    return true; //Validado
 				}
 
+
+				function validarPASS(pass) {
+						var re = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{10,})/,
+						validado = pass.match(re);
+
+				    if (!validado)  //Coincide con el formato general?
+				    	return false;
+
+				    return true; //Validado
+				}
+
 				$('#curp').focusout(function() {
 					if (validarCURP($('#curp').val()) == false) {
 						swal({
@@ -337,7 +359,21 @@ if (mysql_num_rows($resActivacion) > 0) {
 
 						$(this).focus();
 					}
-				})
+				});
+
+				$('#password').focusout(function() {
+					if (validarPASS($('#password').val()) == false) {
+						swal({
+							title: "Respuesta",
+							text: "PASSWORD no valido. Recuerde que el PASSWORD debe contener (10 caracteres, al menos una mayuscula, al menos una minuscula y un numero)",
+							type: "error",
+							timer: 10000,
+							showConfirmButton: true
+						});
+
+						$(this).focus();
+					}
+				});
 
 
             $("#sign_in").submit(function(e){

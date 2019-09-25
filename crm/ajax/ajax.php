@@ -334,21 +334,28 @@ function activarUsuario($serviciosUsuarios, $serviciosReferencias) {
    $refentidadnacimiento = $_POST['refentidadnacimiento'];
    $idcliente = $_POST['idcliente'];
 
+   $password = $_POST['password'];
 
-   //pongo al usuario $activo
-	$resUsuario = $serviciosUsuarios->activarUsuario($idusuario);
 
-   // concreto la activacion
-   $resConcretar = $serviciosUsuarios->eliminarActivacionusuarios($activacion);
-
-   $resModUsuario = $serviciosReferencias->modificarClientesCorto($idcliente,$refestadocivil,$rfc,$curp,$nacionalidad,$refrolhogar,$refentidadnacimiento);
-
-   if ($resModUsuario == true) {
-
-      echo '';
+   if ($refentidadnacimiento == 0) {
+      echo 'Debe ingresar una Entidad de Nacimiento!.';
    } else {
-      echo 'Hubo un error al modificar datos';
+      //pongo al usuario $activo
+   	$resUsuario = $serviciosUsuarios->activarUsuario($idusuario,$password);
+
+      // concreto la activacion
+      $resConcretar = $serviciosUsuarios->eliminarActivacionusuarios($activacion);
+
+      $resModUsuario = $serviciosReferencias->modificarClientesCorto($idcliente,$refestadocivil,$rfc,$curp,$nacionalidad,$refrolhogar,$refentidadnacimiento);
+
+      if ($resModUsuario == true) {
+
+         echo '';
+      } else {
+         echo 'Hubo un error al modificar datos';
+      }
    }
+
 
 
 }
@@ -1596,7 +1603,7 @@ function registrarme($serviciosUsuarios, $serviciosReferencias, $serviciosValida
       $usuariomodi = '';
 
 
-      $res = $serviciosReferencias->insertarClientes($nombre,$apellidopaterno,$apellidomaterno,$email,$sexo,$refestadocivil,$rfc,$curp,$fechanacimiento,$numerocliente,$nacionalidad,$refpromotores,$refrolhogar,$reftipoclientes,$refentidadnacimiento,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
+      $res = $serviciosReferencias->insertarClientes($nombre,$apellidopaterno,$apellidomaterno,$email,$sexo,$refestadocivil,$rfc,$curp,$fechanacimiento,$numerocliente,$nacionalidad,$refpromotores,$refrolhogar,$reftipoclientes,$refentidadnacimiento,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,0);
 
       // empiezo la activacion del usuarios
       $resActivacion = $serviciosUsuarios->registrarSocio($email, $pass, $apellidopaterno.' '.$apellidomaterno, $nombre, $res);

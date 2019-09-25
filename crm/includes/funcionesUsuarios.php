@@ -308,7 +308,7 @@ function enviarEmail($destinatario,$asunto,$cuerpo) {
 
 
    $to = $destinatario; //Aquí definimos quien recibirá el formulario
-   $from = 'adminriderz@areariderz.es'; //Aquí definimos que cuenta mandará el correo, generalmente perteneciente al mismo dominio
+   $from = 'clientes@asesorescrea.com'; //Aquí definimos que cuenta mandará el correo, generalmente perteneciente al mismo dominio
    $host = 'smtp.dominioabsoluto.net'; //Aquí definimos cual es el servidor de correo saliente desde el que se enviaran los correos
    $username = 'adminriderz@areariderz.es'; //Aquí se define el usuario de la cuenta de correo
    $password = '_Riderzapp123'; //Aquí se define la contraseña de la cuenta de correo que enviará el mensaje
@@ -557,10 +557,10 @@ return $res;
 }
 
 
-function activarUsuario($refusuario) {
+function activarUsuario($refusuario, $password) {
 	$sql = "update dbusuarios
 	set
-		activo = 1
+		activo = 1, password = '".$password."'
 	where idusuario =".$refusuario;
 	$res = $this->query($sql,0);
 	if ($res == false) {
