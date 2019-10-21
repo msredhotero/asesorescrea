@@ -16,6 +16,7 @@ $start = $_GET['iDisplayStart'];
 $length = $_GET['iDisplayLength'];
 $busqueda = $_GET['sSearch'];
 
+
 $idcliente = 0;
 
 if (isset($_GET['idcliente'])) {
@@ -66,14 +67,14 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 }
 
 switch ($tabla) {
-	case 'lloguers':
+	case 'solicitudes':
 		if ($busqueda == '') {
-			$colSort = 'l.entrada';
+			$colSort = 's.fechacrea';
 			$colSortDir = 'desc';
 		}
 
-		$resAjax = $serviciosReferencias->traerLloguersajax($length, $start, $busqueda,$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerLloguers();
+		$resAjax = $serviciosReferencias->traerSolicitudesajax($length, $start, $busqueda,$colSort,$colSortDir);
+		$res = $serviciosReferencias->traerSolicitudes();
 		$label = array('btnCliente','btnModificar','btnEliminar','btnPagar','btnContratos','btnAgregarPersonas');
 		$class = array('bg-blue','bg-amber','bg-red','bg-green','bg-brown','bg-teal');
 		$icon = array('Client','Modificar','Eliminar','Pagos','Contrats','Persones');
@@ -82,15 +83,100 @@ switch ($tabla) {
 		$termina = 8;
 
 	break;
-	case 'clientes':
-		$resAjax = $serviciosReferencias->traerClientesajax($length, $start, utf8_decode($busqueda),$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerClientes();
-		$label = array('btnVer','btnModificar','btnEliminar');
-		$class = array('bg-green','bg-amber','bg-red');
-		$icon = array('search','create','delete');
+	case 'postulantes':
+		if ($busqueda == '') {
+			$colSort = 'p.fechacrea';
+			$colSortDir = 'desc';
+		}
+
+		$filtro = "where p.nombre like '%_busqueda%' or p.apellidopaterno like '%_busqueda%' or p.apellidomaterno like '%_busqueda%' or p.email like '%_busqueda%' or p.telefonomovil like '%_busqueda%' or ep.estadopostulante like '%_busqueda%' or est.estadocivil like '%_busqueda%' or DATE_FORMAT( p.fechacrea, '%Y-%m-%d') like '%_busqueda%'";
+
+		$consulta = 'select
+			p.idpostulante,
+			p.nombre,
+			p.apellidopaterno,
+			p.apellidomaterno,
+			p.email,
+			p.telefonomovil,
+			p.codigopostal,
+			p.fechacrea,
+			ep.estadopostulante,
+			est.estadocivil,
+			p.curp,
+			p.rfc,
+			p.ine,
+			p.fechanacimiento,
+			p.sexo,
+			p.refescolaridades,
+			p.refestadocivil,
+			p.nacionalidad,
+			p.telefonocasa,
+			p.telefonotrabajo,
+			p.refestadopostulantes,
+			p.urlprueba,
+			p.fechamodi,
+			p.usuariocrea,
+			p.usuariomodi,
+			p.refasesores,
+			p.comision,
+			p.refusuarios,
+			p.refsucursalesinbursa
+		from dbpostulantes p
+		inner join dbusuarios usu ON usu.idusuario = p.refusuarios
+		inner join tbescolaridades esc ON esc.idescolaridad = p.refescolaridades
+		inner join tbestadocivil est ON est.idestadocivil = p.refestadocivil
+		inner join tbestadopostulantes ep ON ep.idestadopostulante = p.refestadopostulantes';
+
+		$resAjax = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta);
+		$res = $serviciosReferencias->traerPostulantes();
+		$label = array('btnCliente','btnModificar','btnEliminar','btnPagar','btnContratos');
+		$class = array('bg-blue','bg-amber','bg-red','bg-green','bg-brown');
+		$icon = array('Ver','Modificar','Eliminar','Entrevistas','Archivos');
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 12;
+		$termina = 8;
+
+	break;
+	case 'entrevistas':
+
+		$id = $_GET['id'];
+
+		$resultado = $serviciosReferencias->traerPostulantesPorId($id);
+
+		if ($busqueda == '') {
+			$colSort = 'e.fechacrea';
+			$colSortDir = 'desc';
+		}
+
+		$filtro = "where e.entrevistador like '%_busqueda%' or cast(e.fecha as unsigned) like '%_busqueda%' or e.domicilio like '%_busqueda%' or e.codigopostal like '%_busqueda%' or est.estadoentrevista like '%_busqueda%'";
+
+		$consulta = 'select
+		e.identrevista,
+		e.entrevistador,
+		e.fecha,
+		e.domicilio,
+		e.codigopostal,
+		est.estadoentrevista,
+		e.fechacrea,
+		e.refestadopostulantes,
+		e.refestadoentrevistas,
+		e.fechamodi,
+		e.usuariocrea,
+		e.usuariomodi,
+		e.refpostulantes
+		from dbentrevistas e
+		inner join dbpostulantes pos ON pos.idpostulante = e.refpostulantes
+		inner join tbestadopostulantes ep ON ep.idestadopostulante = e.refestadopostulantes
+		inner join tbestadoentrevistas est ON est.idestadoentrevista = e.refestadoentrevistas';
+
+		$resAjax = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta);
+		$res = $serviciosReferencias->traerEntrevistasPorEstadoPostulante(mysql_result($resultado,0,'refestadopostulantes'));
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('create','delete');
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 6;
 
 		break;
 	case 'locatarios':
@@ -101,7 +187,7 @@ switch ($tabla) {
 		$icon = array('create','delete');
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 9;
+		$termina = 6;
 
 		break;
 	case 'tipoubicacion':
@@ -182,7 +268,7 @@ $id = 0;
 			array_push($arAux, utf8_encode($row[$i]));
 		}
 
-		if ($tabla == 'lloguers') {
+		if ($tabla == 'postulantes') {
 			array_push($arAux, armarAccionesDropDown($row[0],$label,$class,$icon));
 		} else {
 			array_push($arAux, armarAcciones($row[0],$label,$class,$icon));

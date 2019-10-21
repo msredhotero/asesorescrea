@@ -4,7 +4,7 @@
  * @author Saupurein Marcos
  * @copyright 2018
  */
-date_default_timezone_set('Europe/Madrid');
+date_default_timezone_set('America/Mexico_City');
 
 class Servicios {
 
@@ -418,14 +418,14 @@ class Servicios {
 		$label  = '';
 
 		switch ($tabla) {
-			case 'dbfacturas':
-				$ocultar = array("anio","refmeses","refclientes","reftipofacturas","refestados");
+			case 'dbsolicitudes':
+				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi","reftipoingreso","refusuarios","refclientes",'comision');
 				break;
-			case 'dbarchivos':
-				$ocultar = array("fechacreacion","type","reftipoarchivos","token","anio","mes","refclientes","refcategorias");
+			case 'dbpostulantes':
+				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi","rfc","curp","ine",'refasesores','urlprueba','refsucursalesinbursa','ultimoestado','comision');
 				break;
-			case 'dbtarifas':
-				$ocultar = array("refperiodos","reftipoubicacion");
+			case 'dbentrevistas':
+				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes');
 			break;
 			case 'dblloguersadicional':
 				$ocultar = array("taxapersona","taxaturistica");
@@ -570,15 +570,17 @@ class Servicios {
 								$form	=	$form.'
 
 								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
+								<b>'.$label.'</b>
+								<div class="input-group">
 								<div class="form-line">
-									<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
-									<select class="form-control show-tick" id="'.strtolower($campo).'" name="'.strtolower($campo).'">
+									<select class="show-tick" id="'.strtolower($campo).'" name="'.strtolower($campo).'" '.$lblObligatorio.'>
 
 											';
 
 								$form	=	$form.$option;
 
 								$form	=	$form.'</select>
+								</div>
 								</div>
 								</div>
 
@@ -612,17 +614,18 @@ class Servicios {
 									/*if (($row[0] == "fechabaja2") || ($row[0] == "fechaalta2")){*/
 										$form	=	$form.'
 										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
-                                  <b>'.$label.'</b>
-                                  <div class="input-group">
+										<b>'.$label.'</b>
+										<div class="input-group">
 
-                                      <span class="input-group-addon">
-                                          <i class="material-icons">date_range</i>
-                                      </span>
-                                      <div class="form-line">
-												   	<input readonly="readonly" style="width:200px;" type="text" class="datepicker form-control" id="'.$campo.'" name="'.$campo.'" required />
+										<span class="input-group-addon">
+											 <i class="material-icons">date_range</i>
+										</span>
+                                <div class="form-line">
 
-                                      </div>
-                                  </div>
+										   	<input readonly="readonly" style="width:200px;" type="text" class="datepicker form-control" id="'.$campo.'" name="'.$campo.'" required />
+
+                                </div>
+                              </div>
                               </div>
 										';
 
@@ -675,11 +678,11 @@ class Servicios {
 												$campo = strtolower($row[0]);
 
 												$form	=	$form.'
-												<div class="col-sm-12">
+												<div class="col-sm-12" style="display:'.$lblOculta.'">
 												<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
 													<div class="form-group">
 														<div class="form-line">
-															<textarea rows="4" class="form-control no-resize" id="'.$campo.'" name="'.$campo.'" placeholder="Ingrese el '.$label.'..."></textarea>
+															<textarea rows="2" class="form-control no-resize" id="'.$campo.'" name="'.$campo.'" placeholder="Ingrese el '.$label.'..."></textarea>
 														</div>
 													</div>
 												</div>
@@ -729,22 +732,42 @@ class Servicios {
 														';
 
 													} else {
-														$label = ucwords($label);
-														$campo = strtolower($row[0]);
+														if ($label == 'email') {
+															$label = ucwords($label);
+															$campo = strtolower($row[0]);
 
 
-														$form	=	$form.'
-														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
-															<label class="form-label">'.$label.'</label>
-															<div class="form-group">
-																<div class="form-line">
-																	<input type="text" class="form-control" id="'.$campo.'" name="'.$campo.'" '.$lblObligatorio.'/>
+															$form	=	$form.'
+															<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
+																<label class="form-label">'.$label.'</label>
+																<div class="form-group input-group">
+																	<div class="form-line">
+																		<input type="email" class="form-control" id="'.$campo.'" name="'.$campo.'" '.$lblObligatorio.'/>
 
+																	</div>
 																</div>
 															</div>
-														</div>
 
-														';
+															';
+														} else {
+															$label = ucwords($label);
+															$campo = strtolower($row[0]);
+
+
+															$form	=	$form.'
+															<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
+																<label class="form-label">'.$label.'</label>
+																<div class="form-group input-group">
+																	<div class="form-line">
+																		<input type="text" class="form-control" id="'.$campo.'" name="'.$campo.'" '.$lblObligatorio.'/>
+
+																	</div>
+																</div>
+															</div>
+
+															';
+														}
+
 													}
 
 												}
@@ -1097,13 +1120,7 @@ class Servicios {
 									from ".$tabla." where ".$lblid." = ".$id;
 				$resMod = $this->query($sqlMod,0);
 				break;
-			case 'tbtipostrabajos':
-				$sqlMod = "select idtipotrabajo,
-													tipotrabajo,
-													(case when activo = 1 then 'Si' else 'No' end) activo
-									from ".$tabla." where ".$lblid." = ".$id;
-				$resMod = $this->query($sqlMod,0);
-				break;
+
 			case 'dblloguers':
 				$sqlMod = "select idlloguer,refclientes,refubicaciones,datalloguer,
 				DATE_FORMAT(entrada, '%d/%m/%Y') as entrada,
@@ -1151,21 +1168,16 @@ class Servicios {
 		$sql	=	"show columns from ".$tabla;
 		$res 	=	$this->query($sql,0);
 
-		if ($tabla == 'dbclientes') {
-			$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","idusuario",'fotofrente','fotodorsal');
-		} else {
-			if ($tabla == 'dbusuarios') {
-				$ocultar = array("password");
-			} else {
-				if ($tabla == 'dbarchivos') {
-					$ocultar = array("token","anio","mes","refclientes","refcategorias","imagen");
-				} else {
-					$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","idusuario","imagen","nrolloguer","persset","numpertax");
-				}
-
-			}
+		switch ($tabla) {
+			case 'dbentrevistas':
+				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes');
+			break;
+			default:
+				$ocultar = array();
+				break;
 
 		}
+
 
 
 		$camposEscondido = "";
@@ -1297,7 +1309,7 @@ class Servicios {
 
 									$form	=	$form.'
 
-									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
 										 <b>'.$label.'</b>
 										 <div class="input-group">
 											  <span class="input-group-addon">

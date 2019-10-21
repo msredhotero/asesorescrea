@@ -165,7 +165,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 						<div class="card ">
 							<div class="header bg-blue">
 								<h2 style="color:#fff">
-									SOLICITUDES
+									POSTULANTES
 								</h2>
 								<ul class="header-dropdown m-r--5">
 									<li class="dropdown">

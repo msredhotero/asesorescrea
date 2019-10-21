@@ -49,8 +49,16 @@ $tablasAr	= array('rolhogar' => 'tbrolhogar',
 							'tiposolicitudes' => 'tbtiposolicitudes',
 							'estadosolicitudes' => 'tbestadosolicitudes',
 							'tipoingreso' => 'tbtipoingreso',
+							'documentaciones' => 'dbdocumentaciones',
 							'documentacionsolicitudes' => 'dbdocumentacionsolicitudes',
-							'documentacionsolicitudesarchivos' => 'dbdocumentacionsolicitudesarchivos');
+							'asesores' => 'dbasesores',
+							'documentacionasesores' => 'dbdocumentacionasesores',
+							'postulantes' => 'dbpostulantes',
+							'estadopostulantes' => 'tbestadopostulantes',
+							'estadodocumentaciones' => 'tbestadodocumentaciones',
+							'tipodocumentaciones' => 'tbtipodocumentaciones',
+							'entrevistas' => 'dbentrevistas',
+							'estadoentrevistas' => 'tbestadoentrevistas');
 
 
 function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
@@ -69,8 +77,16 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'tiposolicitudes' => 'tbtiposolicitudes',
 								'estadosolicitudes' => 'tbestadosolicitudes',
 								'tipoingreso' => 'tbtipoingreso',
+								'documentaciones' => 'dbdocumentaciones',
 								'documentacionsolicitudes' => 'dbdocumentacionsolicitudes',
-								'documentacionsolicitudesarchivos' => 'dbdocumentacionsolicitudesarchivos');
+								'asesores' => 'dbasesores',
+								'documentacionasesores' => 'dbdocumentacionasesores',
+								'postulantes' => 'dbpostulantes',
+								'estadopostulantes' => 'tbestadopostulantes',
+								'estadodocumentaciones' => 'tbestadodocumentaciones',
+								'tipodocumentaciones' => 'tbtipodocumentaciones',
+								'entrevistas' => 'dbentrevistas',
+								'estadoentrevistas' => 'tbestadoentrevistas');
 
 	$tablasArAux	= array('rolhogar' => 1,
 								'tipopromotores' => 1,
@@ -86,8 +102,16 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'tiposolicitudes' => 1,
 								'estadosolicitudes' => 1,
 								'tipoingreso' => 1,
-								'documentacionsolicitudes' => 2,
-								'documentacionsolicitudesarchivos' => 4);
+								'documentaciones' => 2,
+								'documentacionsolicitudes' => 4,
+								'asesores' => 2,
+								'documentacionasesores' => 4,
+								'postulantes' => 3,
+								'estadopostulantes' => 1,
+								'estadodocumentaciones' => 1,
+								'tipodocumentaciones' => 1,
+								'entrevistas' => 4,
+								'estadoentrevistas' => 1);
 
 	$inner= '';
 	$sql	=	"show columns from ".$tabla;
@@ -122,6 +146,8 @@ $resMapeo 	=	query($sqlMapaer,0);
 
 $aliasTablaMadre = '';
 
+$includesajax = '';
+
 while ($rowM = mysql_fetch_array($resMapeo)) {
 
 $sql	=	"show columns from ".$rowM[0];
@@ -139,6 +165,7 @@ if ($res == false) {
 
 	$ajax		=	'';
 	$includes	=	'';
+
 
 	$cuerpoVariableComunes = "";
 	$cuerpoVariable = "'',";
@@ -313,7 +340,6 @@ if ($res == false) {
 		} <br>
 
 
-
 	";
 
 
@@ -363,6 +389,31 @@ if ($res == false) {
 			$res = $this->query($sql,0); <br>
 			return $res; <br>
 		} <br>
+		<br>
+
+
+	';
+
+	$includesajax .= '
+		function traer'.$nombre.'ajax($length, $start, $busqueda,$colSort,$colSortDir) { <br>
+			 <br>
+			$where = '."'"."'".'; <br>
+			 <br>
+			$busqueda = str_replace("'."'".'","",$busqueda); <br>
+			if ($busqueda != "") { <br>
+				$where = " where variables "; <br>
+			} <br>
+			 <br>
+			$sql = "select  <br>
+				<br>'.$aliasTablaMadre.".".$clave.',<br>'.$aliasTablaMadre.".".str_replace(",",",<br>".$aliasTablaMadre.".",$cuerpoSQL).'<br> from '.$tabla." ".$aliasTablaMadre." <br>".$inner.'
+			".$where." <br>
+			ORDER BY ".$colSort." ".$colSortDir." <br>
+			limit ".$start.",".$length; <br>
+			 <br>
+			$res = $this->query($sql,0); <br>
+			return $res; <br>
+		} <br>
+		 <br>
 	';
 
 
@@ -377,6 +428,8 @@ if ($res == false) {
 	echo ' /* Fin de la Tabla: '.$rowM[0]."*/<br>";
 
 }
+echo "********************************************************************************<br>";
+//echo "<br><br>/*   PARA AJAX */<br><br>".$includesajax."<br>/* Fin */<br>/*";
 echo "********************************************************************************<br>";
 echo "<br><br>/*   PARA ".$nombre." */<br><br>".$ajaxFunciones."<br>/* Fin */<br>/*";
 echo "<br><br>/*   PARA ".$nombre." */<br><br>".$ajaxFuncionesController."<br>/* Fin */<br>/*";
