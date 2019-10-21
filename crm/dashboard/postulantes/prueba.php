@@ -38,47 +38,55 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
+$id = $_GET['id'];
+
+////////// validar solo que pueda ingrear los perfiles permitidos /////////////////////////
+
+
+//////////////       FIN                  /////////////////////////////////////////////////
+
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Postulante";
+$singular = "URL Prueba Psicometrica";
 
-$plural = "Postulantes";
+$plural = "URL Prueba Psicometrica";
 
-$eliminar = "eliminarPostulantes";
+$eliminar = "eliminarEntrevistas";
 
-$insertar = "insertarPostulantes";
+$insertar = "insertarEntrevistas";
 
-$modificar = "modificarPostulantes";
+$modificar = "modificarEntrevistas";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbpostulantes";
+$resultado 		= 	$serviciosReferencias->traerPostulantesPorId($id);
 
-$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad');
-$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad');
+$urlprueba = mysql_result($resultado,0,'urlprueba');
 
+$postulante = mysql_result($resultado,0,'nombre').' '.mysql_result($resultado,0,'apellidopaterno').' '.mysql_result($resultado,0,'apellidomaterno');
 
-$cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
+$tabla 			= "dbentrevistas";
 
-$resVar2	= $serviciosReferencias->traerEscolaridades();
-$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),'');
+$lblCambio	 	= array('refpostulantes','codigopostal','refestadopostulantes','refestadoentrevistas');
+$lblreemplazo	= array('Postulante','Cod. Postal','Estado Postulante','Estado Entrevista');
 
-$resVar3	= $serviciosReferencias->traerEstadocivil();
+$resVar2	= $serviciosReferencias->traerPostulantesPorId($id);
+$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(2,3,4),' ');
+
+$resVar3	= $serviciosReferencias->traerEstadopostulantesPorId(mysql_result($resultado,0,'refestadopostulantes'));
 $cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
 
-$resVar4	= $serviciosReferencias->traerEstadopostulantesPorId(1);
+$resVar4	= $serviciosReferencias->traerEstadoentrevistasPorId(1);
 $cadRef4 = $serviciosFunciones->devolverSelectBox($resVar4,array(1),'');
 
-$cadRef5 = "<option value=''>-- Seleccionar --</option><option value='1'>Femenino</option><option value='2'>Masculino</option>";
 
-$cadRef6 	= "<option value='Mexico'>Mexico</option>";
-
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6);
-$refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','refestadopostulantes','sexo','nacionalidad');
+$refdescripcion = array(0=> $cadRef2,1=> $cadRef3,2=> $cadRef4);
+$refCampo 	=  array('refpostulantes','refestadopostulantes','refestadoentrevistas');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
+
 
 ?>
 
@@ -112,10 +120,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.bootstrap.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.jqueryui.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.css">
-
-	<link rel="stylesheet" type="text/css" href="../../css/classic.css"/>
-	<link rel="stylesheet" type="text/css" href="../../css/classic.date.css"/>
-
 
 
 	<!-- CSS file -->
@@ -184,7 +188,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								<?php echo strtoupper($plural); ?>
+								<?php echo strtoupper($plural); ?> - POSTULANTE: <?php echo $postulante; ?>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -203,45 +207,37 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
-											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
-												<i class="material-icons">add</i>
-												<span>NUEVO</span>
-											</button>
 
+											<?php if ($urlprueba != '') { ?>
+											<button type="button" class="btn bg-green waves-effect btnContinuar">
+												<i class="material-icons">add</i>
+												<span>CONTINUAR</span>
+											</button>
+											<?php } ?>
 										</div>
 									</div>
 								</div>
 
 								<div class="row" style="padding: 5px 20px;">
 
-									<table id="example" class="display table " style="width:100%">
-										<thead>
-											<tr>
-												<th>Nombre</th>
-												<th>Apellido P.</th>
-												<th>Apellido M.</th>
-												<th>Email</th>
-												<th>Tel.</th>
-												<th>Cod. Postal</th>
-												<th>Fecha</th>
-												<th>Estado</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tfoot>
-											<tr>
-												<th>Nombre</th>
-												<th>Apellido P.</th>
-												<th>Apellido M.</th>
-												<th>Email</th>
-												<th>Tel.</th>
-												<th>Cod. Postal</th>
-												<th>Fecha</th>
-												<th>Estado</th>
-												<th>Acciones</th>
-											</tr>
-										</tfoot>
-									</table>
+									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+										<label class="form-label">URL</label>
+										<div class="form-group input-group">
+											<div class="form-line">
+												<input type="text" class="form-control" id="urlprueba" name="urlprueba" required="" aria-required="true" value="<?php echo $urlprueba; ?>">
+
+											</div>
+										</div>
+									</div>
+									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+										<label class="form-label"> </label>
+										<div class="form-group input-group">
+											<div class="form-line">
+												<button type="button" class="btn btn-primary waves-effect modificarURL">GUARDAR</button>
+
+											</div>
+										</div>
+									</div>
 								</div>
 							</form>
 							</div>
@@ -340,73 +336,25 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 <!-- Bootstrap Material Datetime Picker Plugin Js -->
 <script src="../../plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
 
-<script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
+<!-- Moment Plugin Js -->
+    <script src="../../plugins/momentjs/moment.js"></script>
+	 <script src="../../js/moment-with-locales.js"></script>
 
-<script src="../../js/picker.js"></script>
-<script src="../../js/picker.date.js"></script>
+<script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
+
+
+<script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="../../js/datepicker-es.js"></script>
+
+<script src="../../js/dateFormat.js"></script>
+<script src="../../js/jquery.dateFormat.js"></script>
 
 <script src="../../js/jquery.easy-autocomplete.min.js"></script>
 
 <script>
 	$(document).ready(function(){
 
-		var options = {
-
-			url: "../../json/jsbuscarpostal.php",
-
-			getValue: function(element) {
-				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
-			},
-
-			ajaxSettings: {
-				dataType: "json",
-				method: "POST",
-				data: {
-					busqueda: $("#codigopostal").val()
-				}
-			},
-
-			preparePostData: function (data) {
-				data.busqueda = $("#codigopostal").val();
-				return data;
-			},
-
-			list: {
-				maxNumberOfElements: 20,
-				match: {
-					enabled: true
-				},
-				onClickEvent: function() {
-					var value = $("#codigopostal").getSelectedItemData().codigo;
-					$("#codigopostal").val(value);
-
-				}
-			}
-		};
-
-
-		$("#codigopostal").easyAutocomplete(options);
-
-		$('#usuariocrea').val('marcos');
-		$('#usuariomodi').val('marcos');
-		$('#ultimoestado').val(0);
-
-		$('#fechanacimiento').pickadate({
-			format: 'yyyy-mm-dd',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 100,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-		});
 
 
 		$('.maximizar').click(function() {
@@ -422,59 +370,27 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 		});
 
-		var table = $('#example').DataTable({
-			"bProcessing": true,
-			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=postulantes",
-			"language": {
-				"emptyTable":     "No hay datos cargados",
-				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
-				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
-				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
-				"infoPostFix":    "",
-				"thousands":      ",",
-				"lengthMenu":     "Mostrar _MENU_ filas",
-				"loadingRecords": "Cargando...",
-				"processing":     "Procesando...",
-				"search":         "Buscar:",
-				"zeroRecords":    "No se encontraron resultados",
-				"paginate": {
-					"first":      "Primero",
-					"last":       "Ultimo",
-					"next":       "Siguiente",
-					"previous":   "Anterior"
-				},
-				"aria": {
-					"sortAscending":  ": activate to sort column ascending",
-					"sortDescending": ": activate to sort column descending"
-				}
-			}
-		});
 
-		$("#sign_in").submit(function(e){
-			e.preventDefault();
-		});
 
-		$('#activo').prop('checked',true);
-
-		function frmAjaxModificar(id) {
+		function modificarEstadoPostulante(id, idestado) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {accion: 'frmAjaxModificar',tabla: '<?php echo $tabla; ?>', id: id},
+				data: {accion: 'modificarEstadoPostulante',id: id, idestado: idestado},
 				//mientras enviamos el archivo
 				beforeSend: function(){
-					$('.frmAjaxModificar').html('');
+					$('.btnContinuar').hide();
 				},
 				//una vez finalizado correctamente
 				success: function(data){
 
 					if (data != '') {
-						$('.frmAjaxModificar').html(data);
+						$(location).attr('href',data);
+
 					} else {
-						swal("Error!", data, "warning");
+						swal("Error!", 'Se genero un error al modificar el estado del postulante', "warning");
 
 						$("#load").html('');
 					}
@@ -485,199 +401,66 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 					$("#load").html('');
 				}
 			});
-
 		}
 
 
-		function frmAjaxEliminar(id) {
+		function modificarURLpostulante(id, urlprueba) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {accion: '<?php echo $eliminar; ?>', id: id},
+				data: {accion: 'modificarURLpostulante',idpostulante: id, urlprueba: urlprueba},
 				//mientras enviamos el archivo
 				beforeSend: function(){
-
+					$('.modificarURL').hide();
 				},
 				//una vez finalizado correctamente
 				success: function(data){
 
-					if (data == '') {
+					var var2=data.replace("\n","");
+
+					if (var2 == 'cargado') {
 						swal({
 								title: "Respuesta",
-								text: "Registro Eliminado con exito!!",
+								text: "Registro Cargado con exito!!",
 								type: "success",
 								timer: 1500,
 								showConfirmButton: false
 						});
-						$('#lgmEliminar').modal('toggle');
-						table.ajax.reload();
-					} else {
-						swal({
-								title: "Respuesta",
-								text: data,
-								type: "error",
-								timer: 2000,
-								showConfirmButton: false
-						});
 
+						$('.modificarURL').show();
+
+						if ($('#urlprueba').val() != '') {
+							$('.btnContinuar').show();
+						} else {
+							$('.btnContinuar').hide();
+						}
+
+
+					} else {
+						swal("Error!", 'Se genero un error al modificar el estado del postulante', "warning");
+
+						$("#load").html('');
 					}
 				},
 				//si ha ocurrido un error
 				error: function(){
-					swal({
-							title: "Respuesta",
-							text: 'Actualice la pagina',
-							type: "error",
-							timer: 2000,
-							showConfirmButton: false
-					});
-
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
 				}
 			});
-
 		}
 
-		$("#example").on("click",'.btnEliminar', function(){
-			idTable =  $(this).attr("id");
-			$('#ideliminar').val(idTable);
-			$('#lgmEliminar').modal();
-		});//fin del boton eliminar
-
-		$('.eliminar').click(function() {
-			frmAjaxEliminar($('#ideliminar').val());
+		$('.btnContinuar').click(function() {
+			modificarEstadoPostulante(<?php echo $id; ?>, 5);
 		});
 
-		$("#example").on("click",'.btnModificar', function(){
-			idTable =  $(this).attr("id");
-			frmAjaxModificar(idTable);
-			$('#lgmModificar').modal();
-		});//fin del boton modificar
-
-		$("#example").on("click",'.btnVer', function(){
-			idTable =  $(this).attr("id");
-			$(location).attr('href','ver.php?id=' + idTable);
-
-		});//fin del boton modificar
-
-		$('.frmNuevo').submit(function(e){
-
-			e.preventDefault();
-			if ($('#sign_in')[0].checkValidity()) {
-				//información del formulario
-				var formData = new FormData($(".formulario")[0]);
-				var message = "";
-				//hacemos la petición ajax
-				$.ajax({
-					url: '../../ajax/ajax.php',
-					type: 'POST',
-					// Form data
-					//datos del formulario
-					data: formData,
-					//necesario para subir archivos via ajax
-					cache: false,
-					contentType: false,
-					processData: false,
-					//mientras enviamos el archivo
-					beforeSend: function(){
-
-					},
-					//una vez finalizado correctamente
-					success: function(data){
-
-						if (data == '') {
-							swal({
-									title: "Respuesta",
-									text: "Registro Creado con exito!!",
-									type: "success",
-									timer: 1500,
-									showConfirmButton: false
-							});
-
-							$('#lgmNuevo').modal('hide');
-
-							table.ajax.reload();
-						} else {
-							swal({
-									title: "Respuesta",
-									text: data,
-									type: "error",
-									timer: 2500,
-									showConfirmButton: false
-							});
-
-
-						}
-					},
-					//si ha ocurrido un error
-					error: function(){
-						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-						$("#load").html('');
-					}
-				});
-			}
+		$('.modificarURL').click(function() {
+			modificarURLpostulante(<?php echo $id; ?>, $('#urlprueba').val());
 		});
 
 
-		$('.frmModificar').submit(function(e){
-
-			e.preventDefault();
-			if ($('.frmModificar')[0].checkValidity()) {
-
-
-				//información del formulario
-				var formData = new FormData($(".formulario")[1]);
-				var message = "";
-				//hacemos la petición ajax
-				$.ajax({
-					url: '../../ajax/ajax.php',
-					type: 'POST',
-					// Form data
-					//datos del formulario
-					data: formData,
-					//necesario para subir archivos via ajax
-					cache: false,
-					contentType: false,
-					processData: false,
-					//mientras enviamos el archivo
-					beforeSend: function(){
-
-					},
-					//una vez finalizado correctamente
-					success: function(data){
-
-						if (data == '') {
-							swal({
-									title: "Respuesta",
-									text: "Registro Modificado con exito!!",
-									type: "success",
-									timer: 1500,
-									showConfirmButton: false
-							});
-
-							$('#lgmModificar').modal('hide');
-							table.ajax.reload();
-						} else {
-							swal({
-									title: "Respuesta",
-									text: data,
-									type: "error",
-									timer: 2500,
-									showConfirmButton: false
-							});
-
-
-						}
-					},
-					//si ha ocurrido un error
-					error: function(){
-						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-						$("#load").html('');
-					}
-				});
-			}
-		});
 	});
 </script>
 

@@ -93,7 +93,7 @@
 			}
 
 			// update a la tabla dbplanillasarbitros
-			$resEstado = $serviciosReferencias->modificarEstadoPostulante($idpostulante,3);
+			//$resEstado = $serviciosReferencias->modificarEstadoPostulante($idpostulante,3);
 
 			echo "Archivo guardado correctamente";
 

@@ -86,13 +86,15 @@ class ServiciosReferencias {
 		return $res;
 	}
 
-	function traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir, $filtros, $consulta) {
+	function traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir, $filtros, $consulta, $pre='') {
 
 		$where = '';
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
 			$where = str_replace("\$busqueda",$busqueda,$filtros);
+		} else {
+			$where = $pre;
 		}
 
 		$sql = $consulta.$where."
@@ -245,6 +247,12 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function traerEntrevistasPorPostulante($idpostulante) {
+		$sql = "select identrevista,refpostulantes,entrevistador,fecha,domicilio,codigopostal,refestadopostulantes,refestadoentrevistas,fechacrea,fechamodi,usuariocrea,usuariomodi from dbentrevistas where refpostulantes =".$idpostulante;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 	function traerEntrevistasPorEstado($idestado) {
 		$sql = "select identrevista,refpostulantes,entrevistador,fecha,domicilio,codigopostal,refestadopostulantes,refestadoentrevistas,fechacrea,fechamodi,usuariocrea,usuariomodi from dbentrevistas where refestadoentrevistas =".$idestado;
 		$res = $this->query($sql,0);
@@ -329,6 +337,7 @@ class ServiciosReferencias {
 	}
 
 
+
 	function eliminarEstadopostulantes($id) {
 	$sql = "delete from tbestadopostulantes where idestadopostulante =".$id;
 	$res = $this->query($sql,0);
@@ -385,6 +394,15 @@ class ServiciosReferencias {
 		$sql = "update dbpostulantes
 		set
 		refusuarios = ".$refusuarios.",nombre = '".$nombre."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',email = '".$email."',curp = '".$curp."',rfc = '".$rfc."',ine = '".$ine."',fechanacimiento = '".$fechanacimiento."',sexo = '".$sexo."',codigopostal = '".$codigopostal."',refescolaridades = ".$refescolaridades.",refestadocivil = ".$refestadocivil.",nacionalidad = '".$nacionalidad."',telefonomovil = '".$telefonomovil."',telefonocasa = '".$telefonocasa."',telefonotrabajo = '".$telefonotrabajo."',refestadopostulantes = ".$refestadopostulantes.",urlprueba = '".$urlprueba."',fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."',refasesores = ".$refasesores.",comision = ".$comision.",refsucursalesinbursa = ".$refsucursalesinbursa." where idpostulante =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function modificarURLpostulante($id, $urlprueba, $fechamodi, $usuariomodi) {
+		$sql = "update dbpostulantes
+		set
+		urlprueba = '".$urlprueba."',fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."'
+		where idpostulante =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -497,6 +515,12 @@ class ServiciosReferencias {
 
 	function modificarEstadoPostulante($id,$idestado) {
 		$sql = 'update dbpostulantes set refestadopostulantes = '.$idestado.' where idpostulante = '.$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function modificarUltimoEstadoPostulante($id,$idestado) {
+		$sql = 'update dbpostulantes set ultimoestado = '.$idestado.' where idpostulante = '.$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}

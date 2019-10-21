@@ -190,6 +190,10 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 			<div class="row">
 				<div class="col-xs-12 col-md-12 col-lg-12">
 					<h4>Validar registros previos en SIAP, obtener pantallazo y guardar.</h4>
+					<button type="button" class="btn bg-green waves-effect btnContinuar">
+						<i class="material-icons">add</i>
+						<span>CONTINUAR</span>
+					</button>
 					<a href="javascript:void(0);" class="thumbnail timagen1">
 						<img class="img-responsive">
 					</a>
@@ -366,7 +370,12 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 						$("."+contenedor).show();
 						$('#'+contenedorpdf).hide();
 					}
+				}
 
+				if (response.error) {
+					$('.btnContinuar').hide();
+				} else {
+					$('.btnContinuar').show();
 				}
 
 
@@ -391,7 +400,7 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 					formData.append("iddocumentacion", '2');
 			});
 			this.on('success', function( file, resp ){
-				traerImagen(1,'example1','timagen1');
+				traerImagen('example1','timagen1');
 				$('.lblPlanilla').hide();
 				swal("Correcto!", resp.replace("1", ""), "success");
 				$('.btnGuardar').show();
@@ -450,6 +459,41 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 				}
 			}
 		};
+
+		function modificarEstadoPostulante(id, idestado) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'modificarEstadoPostulante',id: id, idestado: idestado},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.btnContinuar').hide();
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						$(location).attr('href',data);
+
+					} else {
+						swal("Error!", 'Se genero un error al modificar el estado del postulante', "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
+
+		$('.btnContinuar').click(function() {
+			modificarEstadoPostulante(<?php echo $id; ?>, 3);
+		});
 
 
 		$("#codigopostal").easyAutocomplete(options);

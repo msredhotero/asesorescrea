@@ -140,6 +140,7 @@ switch ($tabla) {
 	case 'entrevistas':
 
 		$id = $_GET['id'];
+		$idestado = $_GET['idestado'];
 
 		$resultado = $serviciosReferencias->traerPostulantesPorId($id);
 
@@ -147,8 +148,6 @@ switch ($tabla) {
 			$colSort = 'e.fechacrea';
 			$colSortDir = 'desc';
 		}
-
-		$filtro = "where e.entrevistador like '%_busqueda%' or cast(e.fecha as unsigned) like '%_busqueda%' or e.domicilio like '%_busqueda%' or e.codigopostal like '%_busqueda%' or est.estadoentrevista like '%_busqueda%'";
 
 		$consulta = 'select
 		e.identrevista,
@@ -165,12 +164,31 @@ switch ($tabla) {
 		e.usuariomodi,
 		e.refpostulantes
 		from dbentrevistas e
-		inner join dbpostulantes pos ON pos.idpostulante = e.refpostulantes
+		inner join dbpostulantes pos ON pos.idpostulante = '.$id.'
 		inner join tbestadopostulantes ep ON ep.idestadopostulante = e.refestadopostulantes
 		inner join tbestadoentrevistas est ON est.idestadoentrevista = e.refestadoentrevistas';
 
-		$resAjax = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta);
-		$res = $serviciosReferencias->traerEntrevistasPorEstadoPostulante(mysql_result($resultado,0,'refestadopostulantes'));
+		if ($idestado == '') {
+			$filtro = "where e.entrevistador like '%_busqueda%' or cast(e.fecha as unsigned) like '%_busqueda%' or e.domicilio like '%_busqueda%' or e.codigopostal like '%_busqueda%' or est.estadoentrevista like '%_busqueda%'";
+
+			$resAjax = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta);
+
+			$res = $serviciosReferencias->traerEntrevistasPorPostulante($id);
+		} else {
+			$filtro = "where e.refestadopostulantes = ".$idestado." and (e.entrevistador like '%_busqueda%' or cast(e.fecha as unsigned) like '%_busqueda%' or e.domicilio like '%_busqueda%' or e.codigopostal like '%_busqueda%' or est.estadoentrevista like '%_busqueda%')";
+
+			$pre = " where e.refestadopostulantes = ".$idestado;
+			//die(var_dump($filtro));
+
+			$resAjax = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta,$pre);
+
+			$res = $serviciosReferencias->traerEntrevistasPorEstadoPostulante(mysql_result($resultado,0,'refestadopostulantes'));
+		}
+
+
+
+
+
 		$label = array('btnModificar','btnEliminar');
 		$class = array('bg-amber','bg-red');
 		$icon = array('create','delete');

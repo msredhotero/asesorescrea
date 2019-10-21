@@ -7,7 +7,6 @@ include ('../includes/funcionesReferencias.php');
 include ('../includes/funcionesNotificaciones.php');
 include ('../includes/validadores.php');
 
-
 $serviciosUsuarios  		= new ServiciosUsuarios();
 $serviciosFunciones 		= new Servicios();
 $serviciosHTML				= new ServiciosHTML();
@@ -559,9 +558,85 @@ switch ($accion) {
    case 'traerDocumentacionPorPostulanteDocumentacion':
    traerDocumentacionPorPostulanteDocumentacion($serviciosReferencias);
    break;
+   case 'modificarEstadoPostulante':
+      modificarEstadoPostulante($serviciosReferencias);
+   break;
+   case 'modificarURLpostulante':
+      modificarURLpostulante($serviciosReferencias);
+   break;
 
 }
 /* Fin */
+
+function modificarURLpostulante($serviciosReferencias) {
+   session_start();
+
+   $id = $_POST['idpostulante'];
+   $urlprueba = $_POST['urlprueba'];
+
+   $fechamodi = date('Y-m-d H:i:s');
+   $usuariomodi = $_SESSION['usua_sahilices'];
+
+   $res = $serviciosReferencias->modificarURLpostulante($id, $urlprueba, $fechamodi, $usuariomodi);
+
+   if ($res == true) {
+      echo 'cargado';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+
+function modificarEstadoPostulante($serviciosReferencias) {
+   $id  = $_POST['id'];
+   $idestado      = $_POST['idestado'];
+
+   if ($idestado == 999) {
+      $idestado = 6;
+   }
+
+   $resUltimo = $serviciosReferencias->modificarUltimoEstadoPostulante($id,($idestado - 1));
+
+   $res = $serviciosReferencias->modificarEstadoPostulante($id,$idestado);
+
+   $ruta = '';
+
+   if ($res == true) {
+      switch ($idestado + 1) {
+         case 2:
+            $url = $ruta.'entrevistaveritas.php?id='.$id;
+         break;
+         case 3:
+            $url = $ruta.'siap.php?id='.$id;
+         break;
+         case 4:
+            $url = $ruta.'entrevistaregional.php?id='.$id;
+         break;
+         case 5:
+            $url = $ruta.'prueba.php?id='.$id;
+         break;
+         case 6:
+            $url = $ruta.'entrevistaregionalfinal.php?id='.$id;
+         break;
+         case 7:
+            $url = $ruta.'entrevista.php?id='.$id;
+         break;
+         case 8:
+            $url = $ruta.'entrevista.php?id='.$id;
+         break;
+         case 9:
+            $url = $ruta.'entrevista.php?id='.$id;
+         break;
+         case 99:
+            $url = $ruta.'ver.php?id='.$id;
+         break;
+
+      }
+      echo $url;
+   } else {
+      echo '';
+   }
+}
 
 
 function traerDocumentacionPorPostulanteDocumentacion($serviciosArbitros) {
@@ -587,7 +662,7 @@ function traerDocumentacionPorPostulanteDocumentacion($serviciosArbitros) {
             $imagen = '../../imagenes/sin_img.jpg';
 
             $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
-            $resV['error'] = false;
+            $resV['error'] = true;
          } else {
             $imagen = '../../archivos/postulantes/'.$idpostulante.'/siap/'.mysql_result($resFoto,0,'archivo');
             $resV['datos'] = array('imagen' => $imagen, 'type' => mysql_result($resFoto,0,'type'));
@@ -601,8 +676,8 @@ function traerDocumentacionPorPostulanteDocumentacion($serviciosArbitros) {
          $imagen = '../../imagenes/sin_img.jpg';
 
 
-         $resV['datos'] = array('imagen' => $imagen, 'type' => '');
-         $resV['error'] = false;
+         $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+         $resV['error'] = true;
       }
 
 
@@ -727,33 +802,35 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 
          $url = '';
 
+         $ruta = $_POST['ruta'];
+
          switch ($idestado) {
             case 2:
-               $url = 'entrevistaveritas.php?id='.$id;
+               $url = $ruta.'entrevistaveritas.php?id='.$id;
             break;
             case 3:
-               $url = 'siap.php?id='.$id;
+               $url = $ruta.'siap.php?id='.$id;
             break;
             case 4:
-               $url = 'entrevistaregional.php?id='.$id;
+               $url = $ruta.'entrevistaregional.php?id='.$id;
             break;
             case 5:
-               $url = 'prueba.php?id='.$id;
+               $url = $ruta.'prueba.php?id='.$id;
             break;
             case 6:
-               $url = 'entrevistaregionalfinal.php?id='.$id;
+               $url = $ruta.'entrevistaregionalfinal.php?id='.$id;
             break;
             case 7:
-               $url = 'entrevista.php?id='.$id;
+               $url = $ruta.'entrevistaregionalfinal.php?id='.$id;
             break;
             case 8:
-               $url = 'entrevista.php?id='.$id;
+               $url = $ruta.'entrevista.php?id='.$id;
             break;
             case 9:
-               $url = 'entrevista.php?id='.$id;
+               $url = $ruta.'entrevista.php?id='.$id;
             break;
             case 99:
-               $url = 'ver.php?id='.$id;
+               $url = $ruta.'ver.php?id='.$id;
             break;
 
          }
@@ -1311,10 +1388,11 @@ function insertarEntrevistas($serviciosReferencias) {
    session_start();
 
    $refpostulantes = $_POST['refpostulantes'];
+   $refestadopostulantes = $_POST['refestadopostulantes'];
 
    $resPostulante = $serviciosReferencias->traerPostulantesPorId($refpostulantes);
 
-   $resEntrevista = $serviciosReferencias->traerEntrevistasActivasPorPostulanteEstadoPostulante($refpostulantes,mysql_result($resPostulante,0,'refestadopostulantes'));
+   $resEntrevista = $serviciosReferencias->traerEntrevistasActivasPorPostulanteEstadoPostulante($refpostulantes,$refestadopostulantes);
 
 
    if (mysql_num_rows($resEntrevista) > 0) {
@@ -1325,7 +1403,7 @@ function insertarEntrevistas($serviciosReferencias) {
       $fecha = $_POST['fecha'];
       $domicilio = $_POST['domicilio'];
       $codigopostal = $_POST['codigopostal'];
-      $refestadopostulantes = $_POST['refestadopostulantes'];
+
       $refestadoentrevistas = $_POST['refestadoentrevistas'];
       $fechacrea = date('Y-m-d H:i:s');
       $fechamodi = date('Y-m-d H:i:s');
@@ -1335,7 +1413,7 @@ function insertarEntrevistas($serviciosReferencias) {
       $res = $serviciosReferencias->insertarEntrevistas($refpostulantes,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadopostulantes,$refestadoentrevistas,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
 
       if ((integer)$res > 0) {
-         $resCambioEstado = $serviciosReferencias->modificarEstadoPostulante($refpostulantes,2);
+         //$resCambioEstado = $serviciosReferencias->modificarEstadoPostulante($refpostulantes,2);
          echo '';
       } else {
          echo 'Hubo un error al insertar datos';

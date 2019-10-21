@@ -72,7 +72,7 @@ $lblreemplazo	= array('Postulante','Cod. Postal','Estado Postulante','Estado Ent
 $resVar2	= $serviciosReferencias->traerPostulantesPorId($id);
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(2,3,4),' ');
 
-$resVar3	= $serviciosReferencias->traerEstadopostulantesPorId(mysql_result($resultado,0,'refestadopostulantes'));
+$resVar3	= $serviciosReferencias->traerEstadopostulantesPorId(2);
 $cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
 
 $resVar4	= $serviciosReferencias->traerEstadoentrevistasPorId(1);
@@ -84,6 +84,14 @@ $refCampo 	=  array('refpostulantes','refestadopostulantes','refestadoentrevista
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
+
+$resEntrevista = $serviciosReferencias->traerEntrevistasActivasPorPostulanteEstadoPostulante($id,2);
+
+if (mysql_num_rows($resEntrevista) > 0) {
+	$existe = 1;
+} else {
+	$existe = 0;
+}
 
 ?>
 
@@ -208,7 +216,12 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<i class="material-icons">add</i>
 												<span>NUEVO</span>
 											</button>
-
+											<?php if ($existe == 1) { ?>
+											<button type="button" class="btn bg-green waves-effect btnContinuar">
+												<i class="material-icons">add</i>
+												<span>CONTINUAR</span>
+											</button>
+											<?php } ?>
 										</div>
 									</div>
 								</div>
@@ -457,7 +470,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=entrevistas&id=<?php echo $id; ?>",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=entrevistas&id=<?php echo $id; ?>&idestado=2",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -488,6 +501,41 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		});
 
 		$('#activo').prop('checked',true);
+
+		function modificarEstadoPostulante(id, idestado) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'modificarEstadoPostulante',id: id, idestado: idestado},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.btnContinuar').hide();
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						$(location).attr('href',data);
+
+					} else {
+						swal("Error!", 'Se genero un error al modificar el estado del postulante', "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
+
+		$('.btnContinuar').click(function() {
+			modificarEstadoPostulante(<?php echo $id; ?>, 2);
+		});
 
 		function frmAjaxModificar(id, options2) {
 			$.ajax({
@@ -560,7 +608,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 								showConfirmButton: false
 						});
 						$('#lgmEliminar').modal('toggle');
-						table.ajax.reload();
+						location.reload();
 					} else {
 						swal({
 								title: "Respuesta",
@@ -645,7 +693,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 							$('#lgmNuevo').modal('hide');
 
-							table.ajax.reload();
+							location.reload();
 						} else {
 							swal({
 									title: "Respuesta",
@@ -705,7 +753,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 							});
 
 							$('#lgmModificar').modal('hide');
-							table.ajax.reload();
+							location.reload();
 						} else {
 							swal({
 									title: "Respuesta",

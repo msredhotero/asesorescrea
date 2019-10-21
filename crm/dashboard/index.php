@@ -34,15 +34,43 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "";
+$singular = "Postulante";
 
-$plural = "";
+$plural = "Postulantes";
 
-$eliminar = "";
+$eliminar = "eliminarPostulantes";
 
-$insertar = "";
+$insertar = "insertarPostulantes";
+
+$modificar = "modificarPostulantes";
 
 //$tituloWeb = "Gestión: Talleres";
+
+$tabla 			= "dbpostulantes";
+
+$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad');
+$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad');
+
+
+$cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
+
+$resVar2	= $serviciosReferencias->traerEscolaridades();
+$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),'');
+
+$resVar3	= $serviciosReferencias->traerEstadocivil();
+$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
+
+$resVar4	= $serviciosReferencias->traerEstadopostulantesPorId(1);
+$cadRef4 = $serviciosFunciones->devolverSelectBox($resVar4,array(1),'');
+
+$cadRef5 = "<option value=''>-- Seleccionar --</option><option value='1'>Femenino</option><option value='2'>Masculino</option>";
+
+$cadRef6 	= "<option value='Mexico'>Mexico</option>";
+
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6);
+$refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','refestadopostulantes','sexo','nacionalidad');
+
+$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
@@ -182,7 +210,34 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 								<form class="form" id="formFacturas">
 
 								<div class="row" style="padding: 5px 20px;">
-
+									<table id="example" class="display table " style="width:100%">
+										<thead>
+											<tr>
+												<th>Nombre</th>
+												<th>Apellido P.</th>
+												<th>Apellido M.</th>
+												<th>Email</th>
+												<th>Tel.</th>
+												<th>Cod. Postal</th>
+												<th>Fecha</th>
+												<th>Estado</th>
+												<th>Acciones</th>
+											</tr>
+										</thead>
+										<tfoot>
+											<tr>
+												<th>Nombre</th>
+												<th>Apellido P.</th>
+												<th>Apellido M.</th>
+												<th>Email</th>
+												<th>Tel.</th>
+												<th>Cod. Postal</th>
+												<th>Fecha</th>
+												<th>Estado</th>
+												<th>Acciones</th>
+											</tr>
+										</tfoot>
+									</table>
 
 								</div>
 							</form>
@@ -213,7 +268,34 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 	<script>
 		$(document).ready(function(){
 
-
+			var table = $('#example').DataTable({
+				"bProcessing": true,
+				"bServerSide": true,
+				"sAjaxSource": "../json/jstablasajax.php?tabla=postulantes",
+				"language": {
+					"emptyTable":     "No hay datos cargados",
+					"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+					"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+					"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+					"infoPostFix":    "",
+					"thousands":      ",",
+					"lengthMenu":     "Mostrar _MENU_ filas",
+					"loadingRecords": "Cargando...",
+					"processing":     "Procesando...",
+					"search":         "Buscar:",
+					"zeroRecords":    "No se encontraron resultados",
+					"paginate": {
+						"first":      "Primero",
+						"last":       "Ultimo",
+						"next":       "Siguiente",
+						"previous":   "Anterior"
+					},
+					"aria": {
+						"sortAscending":  ": activate to sort column ascending",
+						"sortDescending": ": activate to sort column descending"
+					}
+				}
+			});
 
 			function frmAjaxModificar(id) {
 				$.ajax({
@@ -221,7 +303,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 					type: 'POST',
 					// Form data
 					//datos del formulario
-					data: {accion: 'frmAjaxModificar',tabla: 'db', id: id},
+					data: {accion: 'frmAjaxModificar',tabla: '<?php echo $tabla; ?>', id: id,ruta:'postulantes/'},
 					//mientras enviamos el archivo
 					beforeSend: function(){
 						$('.frmAjaxModificar').html('');
@@ -230,9 +312,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 					success: function(data){
 
 						if (data != '') {
-							$('.frmAjaxModificar').html(data);
-							$('#fechaingreso').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
-							$('#fechasubido').inputmask('yyyy-mm-dd', { placeholder: '____-__-__' });
+							$(location).attr('href', data);
 
 						} else {
 							swal("Error!", data, "warning");
@@ -252,13 +332,13 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 			$("#example").on("click",'.btnModificar', function(){
 				idTable =  $(this).attr("id");
 				frmAjaxModificar(idTable);
-				$('#lgmModificar').modal();
+
 			});//fin del boton modificar
 
 			$('.maximizar').click(function() {
 				if ($('.icomarcos').text() == 'web') {
 					$('#marcos').show();
-					$('.content').css('marginLeft', '315px');
+					$('.content').css('marginLeft', '275px');
 					$('.icomarcos').html('aspect_ratio');
 				} else {
 					$('#marcos').hide();

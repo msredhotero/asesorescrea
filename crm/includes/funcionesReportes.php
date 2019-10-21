@@ -5,7 +5,7 @@
  * @ABM consultas sobre las tablas de usuarios y usarios-clientes
  */
 
-date_default_timezone_set('America/Buenos_Aires');
+date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReportes {
 
@@ -20,7 +20,7 @@ function GUID()
 }
 
 
-function rptFacturacionGeneralPorEmpresa($empresa) { 
+function rptFacturacionGeneralPorEmpresa($empresa) {
 $sql = "select
 			r.nrofactura,
 			r.cliente,
@@ -31,15 +31,15 @@ $sql = "select
 			r.total - r.abono as saldo
 		from
 		(
-		select 
+		select
 			f.nrofactura,
 			c.razonsocial as cliente,
 			p.referencia,
 			max(p.fechapago) as fechapago,
 			f.total,
 			coalesce(sum(p.montoapagar),0) as abono
-			
-			
+
+
 		from
 			dbfacturas f
 				left join
@@ -58,13 +58,13 @@ $sql = "select
 			p.referencia,
 			f.total
 		) as r
-		order by 2"; 
-$res = $this->query($sql,0); 
-return $res; 
+		order by 2";
+$res = $this->query($sql,0);
+return $res;
 }
 
 
-function rptSaldoCliente($empresa) { 
+function rptSaldoCliente($empresa) {
 $sql = "select
 			r.cliente,
 			r.total,
@@ -72,12 +72,12 @@ $sql = "select
 			r.total - r.abono as saldo
 		from
 		(
-		select 
+		select
 			c.razonsocial as cliente,
 			sum(f.total) as total,
 			coalesce(sum(p.montoapagar),0) as abono
-			
-			
+
+
 		from
 			dbfacturas f
 				left join
@@ -93,13 +93,13 @@ $sql = "select
 		where	e.idempresa = ".$empresa."
 		group by c.razonsocial
 		) as r
-		order by 2"; 
-$res = $this->query($sql,0); 
-return $res; 
-} 
+		order by 2";
+$res = $this->query($sql,0);
+return $res;
+}
 
 
-function rptSaldoPorCliente($empresa,$idcliente) { 
+function rptSaldoPorCliente($empresa,$idcliente) {
 	$sql = "select
 			r.nrofactura,
 			r.referencia,
@@ -109,15 +109,15 @@ function rptSaldoPorCliente($empresa,$idcliente) {
 			r.comentarios
 		from
 		(
-		select 
+		select
 			f.nrofactura,
 			p.referencia,
 			max(p.fechapago) as fechapago,
 			f.total,
 			coalesce(sum(p.montoapagar),0) as abono,
 			p.comentarios
-			
-			
+
+
 		from
 			dbfacturas f
 				left join
@@ -136,13 +136,13 @@ function rptSaldoPorCliente($empresa,$idcliente) {
 			p.referencia,
 			f.total
 		) as r
-		order by 2"; 
-$res = $this->query($sql,0); 
-return $res; 
-} 
+		order by 2";
+$res = $this->query($sql,0);
+return $res;
+}
 
 
-function rptSaldoEmpresa($empresa) { 
+function rptSaldoEmpresa($empresa) {
 $sql = "select
 			r.cliente,
 			r.total,
@@ -150,12 +150,12 @@ $sql = "select
 			r.total - r.abono as saldo
 		from
 		(
-		select 
+		select
 			e.razonsocial as cliente,
 			sum(f.total) as total,
 			coalesce(sum(p.montoapagar),0) as abono
-			
-			
+
+
 		from
 			dbfacturas f
 				left join
@@ -168,33 +168,33 @@ $sql = "select
 			tbestatus et ON et.idestatu = pf.refestatu
 				inner join
 			dbempresas e ON e.idempresa = f.refempresa
-		
+
 		group by e.razonsocial
 		) as r
-		order by 2"; 
-$res = $this->query($sql,0); 
-return $res; 
-} 
+		order by 2";
+$res = $this->query($sql,0);
+return $res;
+}
 
 
 
 function query($sql,$accion) {
-		
-		
-		
+
+
+
 		require_once 'appconfig.php';
 
 		$appconfig	= new appconfig();
-		$datos		= $appconfig->conexion();	
+		$datos		= $appconfig->conexion();
 		$hostname	= $datos['hostname'];
 		$database	= $datos['database'];
 		$username	= $datos['username'];
 		$password	= $datos['password'];
-		
+
 		$conex = mysql_connect($hostname,$username,$password) or die ("no se puede conectar".mysql_error());
-		
+
 		mysql_select_db($database);
-		
+
 		        $error = 0;
 		mysql_query("BEGIN");
 		$result=mysql_query($sql,$conex);
@@ -212,7 +212,7 @@ function query($sql,$accion) {
 			mysql_query("COMMIT");
 			return $result;
 		}
-		
+
 	}
 
 }
