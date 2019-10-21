@@ -183,7 +183,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
     <!-- #Top Bar -->
     <?php echo $baseHTML->cargarSECTION($_SESSION['usua_sahilices'], $_SESSION['nombre_sahilices'], str_replace('..','../dashboard',$resMenu),'../'); ?>
 
-    <section class="content" style="margin-top:-35px;">
+    <section class="content" style="margin-top:-75px;">
 
 		<div class="container-fluid">
 			<!-- Widgets -->
