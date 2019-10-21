@@ -208,12 +208,12 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
 
-											<?php if ($urlprueba != '') { ?>
+
 											<button type="button" class="btn bg-green waves-effect btnContinuar">
 												<i class="material-icons">add</i>
 												<span>CONTINUAR</span>
 											</button>
-											<?php } ?>
+
 										</div>
 									</div>
 								</div>
@@ -355,7 +355,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 <script>
 	$(document).ready(function(){
 
-
+		<?php if ($urlprueba == '') { ?>
+		$('.btnContinuar').hide();
+		<?php } ?>
 
 		$('.maximizar').click(function() {
 			if ($('.icomarcos').text() == 'web') {

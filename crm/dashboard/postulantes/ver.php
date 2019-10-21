@@ -62,36 +62,64 @@ $modificar = "modificarEntrevistas";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $resultado 		= 	$serviciosReferencias->traerPostulantesPorId($id);
 
-$postulante = mysql_result($resultado,0,'nombre').' '.mysql_result($resultado,0,'apellidopaterno').' '.mysql_result($resultado,0,'apellidomaterno');
+$tabla 			= "dbpostulantes";
 
-$tabla 			= "dbentrevistas";
+$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','urlprueba');
+$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','URL Prueba');
 
-$lblCambio	 	= array('refpostulantes','codigopostal','refestadopostulantes','refestadoentrevistas');
-$lblreemplazo	= array('Postulante','Cod. Postal','Estado Postulante','Estado Entrevista');
+$resUsuario = $serviciosUsuario->traerUsuarioId(mysql_result($resultado,0,'refusuarios'));
+$cadRef1 	= $serviciosFunciones->devolverSelectBox($resUsuario,array(1),'');
 
-$resVar2	= $serviciosReferencias->traerPostulantesPorId($id);
-$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(2,3,4),' ');
+$resVar2	= $serviciosReferencias->traerEscolaridades();
+$cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(1),'',mysql_result($resultado,0,'refescolaridades'));
 
-$resVar3	= $serviciosReferencias->traerEstadopostulantesPorId(2);
-$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
+$resVar3	= $serviciosReferencias->traerEstadocivil();
+$cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resVar3,array(1),'',mysql_result($resultado,0,'refestadocivil'));
 
-$resVar4	= $serviciosReferencias->traerEstadoentrevistasPorId(1);
-$cadRef4 = $serviciosFunciones->devolverSelectBox($resVar4,array(1),'');
+$resVar4	= $serviciosReferencias->traerEstadopostulantes();
+$cadRef4 = $serviciosFunciones->devolverSelectBoxActivo($resVar4,array(1),'',mysql_result($resultado,0,'refestadopostulantes'));
+
+if (mysql_result($resultado,0,'refestadopostulantes') == '1') {
+	$cadRef5 = "<option value=''>-- Seleccionar --</option><option value='1' selected>Femenino</option><option value='2'>Masculino</option>";
+} else {
+	$cadRef5 = "<option value=''>-- Seleccionar --</option><option value='1'>Femenino</option><option value='2' selected>Masculino</option>";
+}
 
 
-$refdescripcion = array(0=> $cadRef2,1=> $cadRef3,2=> $cadRef4);
-$refCampo 	=  array('refpostulantes','refestadopostulantes','refestadoentrevistas');
+$cadRef6 	= "<option value='Mexico'>Mexico</option>";
 
-$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6);
+$refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','refestadopostulantes','sexo','nacionalidad');
+
+$frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($id,'idpostulante','modificarPostulantes',$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$resEntrevista = $serviciosReferencias->traerEntrevistasActivasPorPostulanteEstadoPostulante($id,2);
 
-if (mysql_num_rows($resEntrevista) > 0) {
-	$existe = 1;
-} else {
-	$existe = 0;
+$path  = '../../archivos/postulantes/'.$id;
+
+if (!file_exists($path)) {
+	mkdir($path, 0777);
 }
+
+//////////////////////////////////////////////////////////////////////
+$pathSIAP  = '../../archivos/postulantes/'.$id.'/siap';
+
+if (!file_exists($pathSIAP)) {
+	mkdir($pathSIAP, 0777);
+}
+
+$filesSIAP = array_diff(scandir($pathSIAP), array('.', '..'));
+//////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
+$pathVeritas  = '../../archivos/postulantes/'.$id.'/veritas';
+
+if (!file_exists($pathVeritas)) {
+	mkdir($pathVeritas, 0777);
+}
+
+$filesVeritas = array_diff(scandir($pathVeritas), array('.', '..'));
+//////////////////////////////////////////////////////////////////////
 
 ?>
 
@@ -126,6 +154,8 @@ if (mysql_num_rows($resEntrevista) > 0) {
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.jqueryui.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.css">
 
+	<link rel="stylesheet" type="text/css" href="../../css/classic.css"/>
+	<link rel="stylesheet" type="text/css" href="../../css/classic.date.css"/>
 
 	<!-- CSS file -->
 	<link rel="stylesheet" href="../../css/easy-autocomplete.min.css">
@@ -184,16 +214,52 @@ if (mysql_num_rows($resEntrevista) > 0) {
 <section class="content" style="margin-top:-75px;">
 
 	<div class="container-fluid">
+
 		<div class="row clearfix">
-
 			<div class="row">
-
-
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								<?php echo strtoupper($plural); ?> - POSTULANTE: <?php echo $postulante; ?>
+								POSTULANTE
+							</h2>
+							<ul class="header-dropdown m-r--5">
+								<li class="dropdown">
+									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+										<i class="material-icons">more_vert</i>
+									</a>
+									<ul class="dropdown-menu pull-right">
+
+									</ul>
+								</li>
+							</ul>
+						</div>
+						<div class="body table-responsive">
+							<form class="form" id="sign_in" role="form">
+								<div class="row">
+									<?php echo $frmUnidadNegocios; ?>
+								</div>
+								<div class="button-demo">
+									<button type="submit" class="btn bg-light-blue waves-effect modificarPostulante">
+										<i class="material-icons">save</i>
+										<span>GUARDAR</span>
+									</button>
+
+								</div>
+							</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div> <!-- fin del container entrevistas -->
+
+		<div class="row clearfix">
+			<div class="row">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<div class="card ">
+						<div class="header bg-blue">
+							<h2>
+								ENTREVISTAS
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -209,22 +275,7 @@ if (mysql_num_rows($resEntrevista) > 0) {
 						<div class="body table-responsive">
 							<form class="form" id="formCountry">
 
-								<div class="row">
-									<div class="col-lg-12 col-md-12">
-										<div class="button-demo">
-											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
-												<i class="material-icons">add</i>
-												<span>NUEVO</span>
-											</button>
-											<?php if ($existe == 1) { ?>
-											<button type="button" class="btn bg-green waves-effect btnContinuar">
-												<i class="material-icons">add</i>
-												<span>CONTINUAR</span>
-											</button>
-											<?php } ?>
-										</div>
-									</div>
-								</div>
+
 
 								<div class="row" style="padding: 5px 20px;">
 
@@ -236,6 +287,7 @@ if (mysql_num_rows($resEntrevista) > 0) {
 												<th>Domicilio</th>
 												<th>Codigo Postal</th>
 												<th>Estado</th>
+												<th>Est.Entrevista</th>
 												<th>Fecha Crea</th>
 												<th>Acciones</th>
 											</tr>
@@ -247,6 +299,7 @@ if (mysql_num_rows($resEntrevista) > 0) {
 												<th>Domicilio</th>
 												<th>Codigo Postal</th>
 												<th>Estado</th>
+												<th>Est.Entrevista</th>
 												<th>Fecha Crea</th>
 												<th>Acciones</th>
 											</tr>
@@ -258,7 +311,105 @@ if (mysql_num_rows($resEntrevista) > 0) {
 						</div>
 					</div>
 				</div>
-			</div>
+			</div> <!-- fin del container entrevistas -->
+
+			<div class="row clearfix subirImagen">
+				<div class="row">
+					<div class="col-xs-6 col-md-6 col-lg-6">
+						<a href="javascript:void(0);" class="thumbnail timagen1">
+							<img class="img-responsive">
+						</a>
+						<div id="example1"></div>
+
+					</div>
+					<div class="col-xs-6 col-md-6 col-lg-6">
+						<a href="javascript:void(0);" class="thumbnail timagen2">
+							<img class="img-responsive2">
+						</a>
+						<div id="example2"></div>
+
+					</div>
+
+				</div>
+				<div class="row">
+
+					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+						<div class="card">
+							<div class="header">
+								<h2>
+									CARGA/MODIFIQUE EL SIAP AQUI
+								</h2>
+								<ul class="header-dropdown m-r--5">
+									<li class="dropdown">
+										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+											<i class="material-icons">more_vert</i>
+										</a>
+
+									</li>
+								</ul>
+							</div>
+							<div class="body">
+
+								<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+									<div class="dz-message">
+										<div class="drag-icon-cph">
+											<i class="material-icons">touch_app</i>
+										</div>
+										<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+
+									</div>
+									<div class="fallback">
+
+										<input name="file" type="file" id="archivos" />
+										<input type="hidden" id="idpostulante" name="idpostulante" value="<?php echo $id; ?>" />
+
+
+
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+						<div class="card">
+							<div class="header">
+								<h2>
+									CARGA/MODIFIQUE PRUEBA VERITA INBURSA AQUI
+								</h2>
+								<ul class="header-dropdown m-r--5">
+									<li class="dropdown">
+										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+											<i class="material-icons">more_vert</i>
+										</a>
+
+									</li>
+								</ul>
+							</div>
+							<div class="body">
+
+								<form action="subir.php" id="frmFileUpload2" class="dropzone" method="post" enctype="multipart/form-data">
+									<div class="dz-message">
+										<div class="drag-icon-cph">
+											<i class="material-icons">touch_app</i>
+										</div>
+										<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+
+									</div>
+									<div class="fallback">
+
+										<input name="file" type="file" id="archivos2" />
+										<input type="hidden" id="idpostulante" name="idpostulante" value="<?php echo $id; ?>" />
+
+
+
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div> <!-- fin del container veritas -->
 		</div>
 	</div>
 </section>
@@ -274,7 +425,7 @@ if (mysql_num_rows($resEntrevista) > 0) {
 	               </div>
 	               <div class="modal-body">
 							<div class="row">
-								<?php echo $frmUnidadNegocios; ?>
+								<?php echo $frmUnidadNegociosEntrevistas; ?>
 							</div>
 
 	               </div>
@@ -294,7 +445,7 @@ if (mysql_num_rows($resEntrevista) > 0) {
 		       <div class="modal-dialog modal-lg" role="document">
 		           <div class="modal-content">
 		               <div class="modal-header">
-		                   <h4 class="modal-title" id="largeModalLabel">MODIFICAR <?php echo strtoupper($singular); ?></h4>
+		                   <h4 class="modal-title" id="largeModalLabel">MODIFICAR ENTREVISTA</h4>
 		               </div>
 		               <div class="modal-body">
 								<div class="row frmAjaxModificar">
@@ -366,8 +517,142 @@ if (mysql_num_rows($resEntrevista) > 0) {
 
 <script src="../../js/jquery.easy-autocomplete.min.js"></script>
 
+<script src="../../plugins/dropzone/dropzone.js"></script>
+
+<script src="../../js/picker.js"></script>
+<script src="../../js/picker.date.js"></script>
+
 <script>
+
+	function traerImagen(contenedorpdf, contenedor, iddocumentacion) {
+		$.ajax({
+			data:  {idpostulante: <?php echo $id; ?>,
+					iddocumentacion: iddocumentacion,
+					accion: 'traerDocumentacionPorPostulanteDocumentacion'},
+			url:   '../../ajax/ajax.php',
+			type:  'post',
+			beforeSend: function () {
+
+			},
+			success:  function (response) {
+				var cadena = response.datos.type.toLowerCase();
+
+				if (response.datos.type != '') {
+					if (cadena.indexOf("pdf") > -1) {
+						PDFObject.embed(response.datos.imagen, "#"+contenedorpdf);
+						$('#'+contenedorpdf).show();
+						$("."+contenedor).hide();
+
+					} else {
+						$("." + contenedor + " img").attr("src",response.datos.imagen);
+						$("."+contenedor).show();
+						$('#'+contenedorpdf).hide();
+					}
+				}
+
+				if (response.error) {
+					$('.btnContinuar').hide();
+				} else {
+					$('.btnContinuar').show();
+				}
+
+
+
+			}
+		});
+	}
+
+	traerImagen('example1','timagen1',2);
+	traerImagen('example2','timagen2',1);
+
+	Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
+
+	Dropzone.options.frmFileUpload = {
+		maxFilesize: 30,
+		acceptedFiles: ".png,.jpg,.gif,.bmp,.jpeg,.pdf",
+		accept: function(file, done) {
+			done();
+		},
+		init: function() {
+			this.on("sending", function(file, xhr, formData){
+					formData.append("idpostulante", '<?php echo $id; ?>');
+					formData.append("iddocumentacion", '2');
+			});
+			this.on('success', function( file, resp ){
+				traerImagen('example1','timagen1',2);
+				$('.lblPlanilla').hide();
+				swal("Correcto!", resp.replace("1", ""), "success");
+
+			});
+
+			this.on('error', function( file, resp ){
+				swal("Error!", resp.replace("1", ""), "warning");
+			});
+		}
+	};
+
+
+	Dropzone.options.frmFileUpload2 = {
+			maxFilesize: 30,
+			acceptedFiles: ".png,.jpg,.gif,.bmp,.jpeg,.pdf",
+			accept: function(file, done) {
+				done();
+			},
+			init: function() {
+				this.on("sending", function(file, xhr, formData){
+					formData.append("idpostulante", '<?php echo $id; ?>');
+					formData.append("iddocumentacion", '1');
+	         });
+				this.on('success', function( file, resp ){
+					traerImagen('example2','timagen2',1);
+					$('.lblComplemento').hide();
+					swal("Correcto!", resp.replace("1", ""), "success");
+
+				});
+
+				this.on('error', function( file, resp ){
+					swal("Error!", resp.replace("1", ""), "warning");
+				});
+			}
+		};
+
+
+
+	var myDropzone = new Dropzone("#archivos", {
+		params: {
+			idpostulante: <?php echo $id; ?>,
+			iddocumentacion: 2
+		},
+		url: 'subir.php'
+	});
+
+	var myDropzone2 = new Dropzone("#archivos2", {
+			params: {
+				idpostulante: <?php echo $id; ?>,
+				iddocumentacion: 1
+	      },
+			url: 'subir.php'
+		});
+
 	$(document).ready(function(){
+
+
+		$('#fechanacimiento').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		});
 
 		$('#fecha').bootstrapMaterialDatePicker({
 			format: 'YYYY/MM/DD HH:mm',
@@ -470,7 +755,7 @@ if (mysql_num_rows($resEntrevista) > 0) {
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=entrevistas&id=<?php echo $id; ?>&idestado=2",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=entrevistas&id=<?php echo $id; ?>&idestado=",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -543,7 +828,7 @@ if (mysql_num_rows($resEntrevista) > 0) {
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {accion: 'frmAjaxModificar',tabla: '<?php echo $tabla; ?>', id: id},
+				data: {accion: 'frmAjaxModificar',tabla: 'dbentrevistas', id: id},
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('.frmAjaxModificar').html('');
@@ -724,6 +1009,66 @@ if (mysql_num_rows($resEntrevista) > 0) {
 
 				//información del formulario
 				var formData = new FormData($(".formulario")[1]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
+
+					},
+					//una vez finalizado correctamente
+					success: function(data){
+
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Modificado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
+
+							$('#lgmModificar').modal('hide');
+							location.reload();
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
+
+
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
+					}
+				});
+			}
+		});
+
+
+		$('.form').submit(function(e){
+
+			e.preventDefault();
+			if ($('.form')[0].checkValidity()) {
+
+
+				//información del formulario
+				var formData = new FormData($(".form")[0]);
 				var message = "";
 				//hacemos la petición ajax
 				$.ajax({

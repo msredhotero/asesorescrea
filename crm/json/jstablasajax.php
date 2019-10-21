@@ -129,7 +129,7 @@ switch ($tabla) {
 
 		$resAjax = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta);
 		$res = $serviciosReferencias->traerPostulantes();
-		$label = array('btnCliente','btnModificar','btnEliminar','btnPagar','btnContratos');
+		$label = array('btnVer','btnModificar','btnEliminar','btnPagar','btnContratos');
 		$class = array('bg-blue','bg-amber','bg-red','bg-green','bg-brown');
 		$icon = array('Ver','Modificar','Eliminar','Entrevistas','Archivos');
 		$indiceID = 0;
@@ -157,6 +157,7 @@ switch ($tabla) {
 		e.codigopostal,
 		est.estadoentrevista,
 		e.fechacrea,
+		ep.estadopostulante,
 		e.refestadopostulantes,
 		e.refestadoentrevistas,
 		e.fechamodi,
@@ -164,7 +165,7 @@ switch ($tabla) {
 		e.usuariomodi,
 		e.refpostulantes
 		from dbentrevistas e
-		inner join dbpostulantes pos ON pos.idpostulante = '.$id.'
+		inner join dbpostulantes pos ON e.refpostulantes = pos.idpostulante and pos.idpostulante = '.$id.'
 		inner join tbestadopostulantes ep ON ep.idestadopostulante = e.refestadopostulantes
 		inner join tbestadoentrevistas est ON est.idestadoentrevista = e.refestadoentrevistas';
 
@@ -174,6 +175,8 @@ switch ($tabla) {
 			$resAjax = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta);
 
 			$res = $serviciosReferencias->traerEntrevistasPorPostulante($id);
+
+			$termina = 7;
 		} else {
 			$filtro = "where e.refestadopostulantes = ".$idestado." and (e.entrevistador like '%_busqueda%' or cast(e.fecha as unsigned) like '%_busqueda%' or e.domicilio like '%_busqueda%' or e.codigopostal like '%_busqueda%' or est.estadoentrevista like '%_busqueda%')";
 
@@ -182,7 +185,9 @@ switch ($tabla) {
 
 			$resAjax = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta,$pre);
 
-			$res = $serviciosReferencias->traerEntrevistasPorEstadoPostulante(mysql_result($resultado,0,'refestadopostulantes'));
+			$termina = 6;
+
+			$res = $serviciosReferencias->traerEntrevistasPorPostulanteEstado($id,mysql_result($resultado,0,'refestadopostulantes'));
 		}
 
 
@@ -194,7 +199,7 @@ switch ($tabla) {
 		$icon = array('create','delete');
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 6;
+
 
 		break;
 	case 'locatarios':

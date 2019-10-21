@@ -559,14 +559,17 @@ switch ($accion) {
    traerDocumentacionPorPostulanteDocumentacion($serviciosReferencias);
    break;
    case 'modificarEstadoPostulante':
-      modificarEstadoPostulante($serviciosReferencias);
+      modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios);
    break;
    case 'modificarURLpostulante':
       modificarURLpostulante($serviciosReferencias);
    break;
 
+
 }
 /* Fin */
+
+
 
 function modificarURLpostulante($serviciosReferencias) {
    session_start();
@@ -587,12 +590,12 @@ function modificarURLpostulante($serviciosReferencias) {
 }
 
 
-function modificarEstadoPostulante($serviciosReferencias) {
+function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
    $id  = $_POST['id'];
    $idestado      = $_POST['idestado'];
 
    if ($idestado == 999) {
-      $idestado = 6;
+      $idestado = 99;
    }
 
    $resUltimo = $serviciosReferencias->modificarUltimoEstadoPostulante($id,($idestado - 1));
@@ -602,21 +605,26 @@ function modificarEstadoPostulante($serviciosReferencias) {
    $ruta = '';
 
    if ($res == true) {
+      // envio email dependeiendo el estado
+
       switch ($idestado + 1) {
          case 2:
             $url = $ruta.'entrevistaveritas.php?id='.$id;
          break;
          case 3:
             $url = $ruta.'siap.php?id='.$id;
+            $resE = $serviciosUsuarios->enviarCorreosEtapas( $idestado, $id);
          break;
          case 4:
             $url = $ruta.'entrevistaregional.php?id='.$id;
          break;
          case 5:
             $url = $ruta.'prueba.php?id='.$id;
+            $resE = $serviciosUsuarios->enviarCorreosEtapas( $idestado, $id);
          break;
          case 6:
             $url = $ruta.'entrevistaregionalfinal.php?id='.$id;
+            $resE = $serviciosUsuarios->enviarCorreosEtapas( $idestado, $id);
          break;
          case 7:
             $url = $ruta.'entrevista.php?id='.$id;
@@ -629,6 +637,7 @@ function modificarEstadoPostulante($serviciosReferencias) {
          break;
          case 99:
             $url = $ruta.'ver.php?id='.$id;
+            $resE = $serviciosUsuarios->enviarCorreosEtapas( $idestado, $id);
          break;
 
       }
@@ -664,7 +673,15 @@ function traerDocumentacionPorPostulanteDocumentacion($serviciosArbitros) {
             $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
             $resV['error'] = true;
          } else {
-            $imagen = '../../archivos/postulantes/'.$idpostulante.'/siap/'.mysql_result($resFoto,0,'archivo');
+            switch ($iddocumentacion) {
+               case 2:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/siap/'.mysql_result($resFoto,0,'archivo');
+                  break;
+               case 1:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/veritas/'.mysql_result($resFoto,0,'archivo');
+                  break;
+            }
+
             $resV['datos'] = array('imagen' => $imagen, 'type' => mysql_result($resFoto,0,'type'));
 
             $resV['error'] = false;
@@ -1528,6 +1545,9 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
 
 
 function modificarPostulantes($serviciosReferencias) {
+
+   session_start();
+
    $id = $_POST['id'];
    $refusuarios = $_POST['refusuarios'];
    $nombre = $_POST['nombre'];
@@ -1549,12 +1569,12 @@ function modificarPostulantes($serviciosReferencias) {
    $refestadopostulantes = $_POST['refestadopostulantes'];
    $urlprueba = $_POST['urlprueba'];
    $fechacrea = $_POST['fechacrea'];
-   $fechamodi = $_POST['fechamodi'];
+   $fechamodi = date('Y-m-d H:i:s');
    $usuariocrea = $_POST['usuariocrea'];
-   $usuariomodi = $_POST['usuariomodi'];
-   $refasesores = $_POST['refasesores'];
-   $comision = $_POST['comision'];
-   $refsucursalesinbursa = $_POST['refsucursalesinbursa'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+   $refasesores = 0;
+   $comision = 0;
+   $refsucursalesinbursa = 0;
    $ultimoestado = $_POST['ultimoestado'];
 
    $res = $serviciosReferencias->modificarPostulantes($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado);

@@ -247,6 +247,12 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function traerEntrevistasPorPostulanteEstado($id,$idestadopostulante) {
+		$sql = "select identrevista,refpostulantes,entrevistador,fecha,domicilio,codigopostal,refestadopostulantes,refestadoentrevistas,fechacrea,fechamodi,usuariocrea,usuariomodi from dbentrevistas where refpostulantes = ".$id." and refestadopostulantes =".$idestadopostulante;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 	function traerEntrevistasPorPostulante($idpostulante) {
 		$sql = "select identrevista,refpostulantes,entrevistador,fecha,domicilio,codigopostal,refestadopostulantes,refestadoentrevistas,fechacrea,fechamodi,usuariocrea,usuariomodi from dbentrevistas where refpostulantes =".$idpostulante;
 		$res = $this->query($sql,0);
@@ -260,7 +266,20 @@ class ServiciosReferencias {
 	}
 
 	function traerEntrevistasActivasPorPostulanteEstadoPostulante($id,$idestadopostulante) {
-		$sql = "select identrevista,refpostulantes,entrevistador,fecha,domicilio,codigopostal,refestadopostulantes,refestadoentrevistas,fechacrea,fechamodi,usuariocrea,usuariomodi from dbentrevistas where refestadopostulantes = ".$idestadopostulante." and refestadoentrevistas in (1,2,3) and refpostulantes =".$id;
+		$sql = "select e.identrevista,
+		e.refpostulantes,
+		e.entrevistador,
+		e.fecha,
+		e.domicilio,
+		e.codigopostal,
+		e.refestadopostulantes,
+		e.refestadoentrevistas,
+		e.fechacrea,
+		e.fechamodi,e.usuariocrea,e.usuariomodi,
+		concat(pp.estado, ' ', pp.municipio, ' ', pp.colonia, ' ', pp.codigo) as postalcompleto
+		from dbentrevistas e
+		inner join postal pp on pp.codigo = e.codigopostal
+		where e.refestadopostulantes = ".$idestadopostulante." and e.refestadoentrevistas in (1,2,3) and e.refpostulantes =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -508,7 +527,7 @@ class ServiciosReferencias {
 
 
 	function traerPostulantesPorId($id) {
-		$sql = "select idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa from dbpostulantes where idpostulante =".$id;
+		$sql = "select idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa, refestadocivil from dbpostulantes where idpostulante =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}

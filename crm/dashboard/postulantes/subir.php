@@ -42,7 +42,7 @@
 		$resImagen = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacion($idpostulante,$iddocumentacion);
 
 		if (mysql_num_rows($resImagen)>0) {
-			$archivoAnterior = mysql_result($resImagen,0,'imagen');
+			$archivoAnterior = mysql_result($resImagen,0,'archivo');
 		} else {
 			$archivoAnterior = '';
 		}
@@ -53,7 +53,15 @@
 
 
 		// desarrollo
-		$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/siap/';
+		switch ($iddocumentacion) {
+			case 2:
+				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/siap/';
+				break;
+			case 1:
+				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/veritas/';
+				break;
+		}
+
 
 		// produccion
 		//$dir_destino = 'https://www.saupureinconsulting.com.ar/aifzn/data/'.mysql_result($resFoto,0,'iddocumentacionjugadorimagen').'/';

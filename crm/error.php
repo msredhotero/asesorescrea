@@ -40,7 +40,7 @@ session_destroy();
       <div class="logo">
           <div class="row">
              <div class="col-md-12" align="center">
-                <img src="imagenes/logo.png" alt="CASA CALIENTE" width="80%">
+               
              </div>
           </div>
 

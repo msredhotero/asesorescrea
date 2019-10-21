@@ -8,7 +8,7 @@
 <body>
 
 <?php
-	header('Location: http://areariderz.es/');
+	header('Location: http://asesorescrea.com/desarrollo/crm/error.php');
 ?>
 </body>
 </html>

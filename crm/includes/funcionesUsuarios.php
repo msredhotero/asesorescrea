@@ -19,6 +19,80 @@ function GUID()
     return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
 }
 
+function traerPostulantesPorId($id) {
+   $sql = "select idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa, refestadocivil from dbpostulantes where idpostulante =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+}
+
+function traerEntrevistasActivasPorPostulanteEstadoPostulante($id,$idestadopostulante) {
+   $sql = "select e.identrevista,
+   e.refpostulantes,
+   e.entrevistador,
+   e.fecha,
+   e.domicilio,
+   e.codigopostal,
+   e.refestadopostulantes,
+   e.refestadoentrevistas,
+   e.fechacrea,
+   e.fechamodi,e.usuariocrea,e.usuariomodi,
+   concat(pp.estado, ' ', pp.municipio, ' ', pp.colonia, ' ', pp.codigo) as postalcompleto
+   from dbentrevistas e
+   inner join postal pp on pp.codigo = e.codigopostal
+   where e.refestadopostulantes = ".$idestadopostulante." and e.refestadoentrevistas in (1,2,3) and e.refpostulantes =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+}
+
+function enviarCorreosEtapas( $etapa, $id) {
+
+   $asunto = '';
+   $cuerpo = '';
+
+   $cuerpo .= '<img src="http://www.asesorescrea.com/desarrollo/crm/imagenes/logo.png" alt="asesorescrea" width="190">';
+
+   $cuerpo .= '<h2>¡Asesores CREA!</h2>';
+
+   $destinatario = 'msredhotero@gmail.com';
+
+   $resPostulante = $this->traerPostulantesPorId($id);
+
+   $asesor = mysql_result($resPostulante,0,'nombre').' '.mysql_result($resPostulante,0,'apellidopaterno').' '.mysql_result($resPostulante,0,'apellidomaterno');
+
+   $emailAsesor = mysql_result($resPostulante,0,'email');
+
+   $urlprueba = mysql_result($resPostulante,0,'urlprueba');
+
+   switch ($etapa) {
+      case 2:
+         $asunto = 'Entrevista Examen VERITAS';
+         $resEntrevista = $this->traerEntrevistasActivasPorPostulanteEstadoPostulante($id,$etapa);
+         $cuerpo .= '<p>Tiene un Entrevista programada para la fecha: '.mysql_result($resEntrevista,0,'fecha').' con el entrevistador: '.mysql_result($resEntrevista,0,'entrevistador').' en la direccion: '.mysql_result($resEntrevista,0,'domicilio').' , '.mysql_result($resEntrevista,0,'postalcompleto');
+
+         break;
+      case 4:
+         $asunto = 'Entrevista Regional I';
+         $resEntrevista = $this->traerEntrevistasActivasPorPostulanteEstadoPostulante($id,$etapa);
+         $cuerpo .= '<p>Felicitaciones!!, aprobo el examen VERITAS, Tiene un Entrevista programada para la fecha: '.mysql_result($resEntrevista,0,'fecha').' con el entrevistador: '.mysql_result($resEntrevista,0,'entrevistador').' en la direccion: '.mysql_result($resEntrevista,0,'domicilio').' , '.mysql_result($resEntrevista,0,'postalcompleto');
+
+         break;
+      case 5:
+         $asunto = 'URL Prueba Psicometrica';
+         $cuerpo .= 'Felicitaciones!!, continua en el proceso de Reclutamiento. Le enviamos la url para realizar el examen Psicometrico: <a href="'.$urlprueba.'">Examen Psicometrico</a>';
+         break;
+      case 6:
+         $asunto = 'Entrevista Regional II';
+         $resEntrevista = $this->traerEntrevistasActivasPorPostulanteEstadoPostulante($id,$etapa);
+         $cuerpo .= '<p>Felicitaciones!!, continua en el proceso de Reclutamiento, Tiene un Entrevista programada para la fecha: '.mysql_result($resEntrevista,0,'fecha').' con el entrevistador: '.mysql_result($resEntrevista,0,'entrevistador').' en la direccion: '.mysql_result($resEntrevista,0,'domicilio').' , '.mysql_result($resEntrevista,0,'postalcompleto');
+         break;
+
+   }
+
+   $resEmail = $this->enviarEmail($destinatario,$asunto,$cuerpo);
+
+   return $resEmail;
+}
+
 
 function login($usuario,$pass) {
 
