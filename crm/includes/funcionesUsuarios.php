@@ -53,7 +53,7 @@ function enviarCorreosEtapas( $etapa, $id) {
 
    $cuerpo .= '<h2>¡Asesores CREA!</h2>';
 
-   $destinatario = 'msredhotero@gmail.com';
+   $destinatario = 'rlinares@asesorescrea.com';
 
    $resPostulante = $this->traerPostulantesPorId($id);
 
