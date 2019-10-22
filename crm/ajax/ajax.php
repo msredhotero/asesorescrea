@@ -594,13 +594,15 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
    $id  = $_POST['id'];
    $idestado      = $_POST['idestado'];
 
-   if ($idestado == 999) {
-      $idestado = 99;
-   }
-
    $resUltimo = $serviciosReferencias->modificarUltimoEstadoPostulante($id,($idestado - 1));
 
    $res = $serviciosReferencias->modificarEstadoPostulante($id,$idestado);
+
+   if ($idestado == 6) {
+      $idestado = 99;
+   }
+
+
 
    $ruta = '';
 

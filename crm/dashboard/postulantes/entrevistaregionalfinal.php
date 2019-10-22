@@ -541,7 +541,7 @@ if (mysql_num_rows($resEntrevista) > 0) {
 		}
 
 		$('.btnContinuar').click(function() {
-			modificarEstadoPostulante(<?php echo $id; ?>, 999);
+			modificarEstadoPostulante(<?php echo $id; ?>, 6);
 		});
 
 		function frmAjaxModificar(id, options2) {
