@@ -639,7 +639,7 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
          break;
          case 99:
             $url = $ruta.'ver.php?id='.$id;
-            $resE = $serviciosUsuarios->enviarCorreosEtapas( $idestado, $id);
+            $resE = $serviciosUsuarios->enviarCorreosEtapas( 6, $id);
          break;
 
       }
