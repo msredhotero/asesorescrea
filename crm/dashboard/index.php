@@ -348,6 +348,12 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 
 			});
 
+			$("#example").on("click",'.btnVer', function(){
+				idTable =  $(this).attr("id");
+				$(location).attr('href','postulantes/ver.php?id=' + idTable);
+
+			});//fin del boton modificar
+
 			$("#example").on("click",'.btnDescargar', function(){
 				usersid =  $(this).attr("id");
 
