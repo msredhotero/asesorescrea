@@ -599,7 +599,7 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
    $res = $serviciosReferencias->modificarEstadoPostulante($id,$idestado);
 
    if ($idestado == 6) {
-      $idestado = 99;
+      $idestado = 98;
    }
 
 
