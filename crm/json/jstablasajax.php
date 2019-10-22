@@ -129,9 +129,9 @@ switch ($tabla) {
 
 		$resAjax = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta);
 		$res = $serviciosReferencias->traerPostulantes();
-		$label = array('btnVer','btnModificar','btnEliminar','btnPagar','btnContratos');
-		$class = array('bg-blue','bg-amber','bg-red','bg-green','bg-brown');
-		$icon = array('Ver','Modificar','Eliminar','Entrevistas','Archivos');
+		$label = array('btnVer','btnModificar','btnEliminar');
+		$class = array('bg-blue','bg-amber','bg-red');
+		$icon = array('Ver','Modificar','Eliminar');
 		$indiceID = 0;
 		$empieza = 1;
 		$termina = 8;
