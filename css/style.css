@@ -243,17 +243,22 @@ footer {
 }
 .col-1-footer {
 	float:left;
-	width:30%;
+	width:20%;
 	margin-right:2%;
 }
 .col-2-footer {
 	float:left;
-	width:35%;
-	margin-right:3%;
+	width:26%;
+	margin-right:1%;
 }
 .col-3-footer {
 	float:left;
-	width:30%;
+	width:28%;
+	margin-right:1%;
+}
+.col-4-footer {
+	float:left;
+	width:22%;
 }
 .col-2-footer i {
 	font-size: 32px;
@@ -279,7 +284,7 @@ footer {
 	text-transform: uppercase;
 	letter-spacing: 4px;
 	transition: 400ms ease;
-	width: 270px;
+	width: 190px;
 }
 .btn2:hover {
 	background: rgba(27,41,72,0.7);
@@ -295,7 +300,7 @@ footer {
 	letter-spacing: 4px;
 	transition: 400ms ease;
 	font-weight: 300;
-	width: 270px;
+	width: 220px;
 }
 .btn-opinion:hover {
 	background: #1B2948;
@@ -332,7 +337,7 @@ footer {
 	margin: 0;
 }
 .inner {
-	padding: 0 2.5%;
+	padding: 0 1%;
 }
 .btn-mail {
 	font-style: italic;
