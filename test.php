@@ -255,40 +255,41 @@ if (mysql_num_rows($existe)>0) {
 				</div>
 				<div class="row contRespuesta1">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta1 animated bounceInLeft" id="" style="margin-right: 1%;"></button>
+						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta1 animated bounceInLeft" id="1" style="margin-right: 1%;"></button>
 					</div>
 				</div>
 				<div class="row contRespuesta2">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta2 animated bounceInLeft" id="" style="margin-right: 1%;"></button>
+						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta2 animated bounceInLeft" id="2" style="margin-right: 1%;"></button>
 					</div>
 				</div>
 				<div class="row contRespuesta3">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta3 animated bounceInLeft" id="" style="margin-right: 1%;"></button>
+						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta3 animated bounceInLeft" id="3" style="margin-right: 1%;"></button>
 					</div>
 				</div>
 				<div class="row contRespuesta4">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta4 animated bounceInLeft" id="" style="margin-right: 1%;"></button>
+						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta4 animated bounceInLeft" id="4" style="margin-right: 1%;"></button>
 					</div>
 				</div>
 				<div class="row contRespuesta5">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta5 animated bounceInLeft" id="" style="margin-right: 1%;"></button>
+						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta5 animated bounceInLeft" id="5" style="margin-right: 1%;"></button>
 					</div>
 				</div>
 				<div class="row contRespuesta6">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta6 animated bounceInLeft" id="" style="margin-right: 1%;"></button>
+						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta6 animated bounceInLeft" id="6" style="margin-right: 1%;"></button>
 					</div>
 				</div>
 				<div class="row contRespuesta7">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta7 animated bounceInLeft" id="" style="margin-right: 1%;"></button>
+						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta7 animated bounceInLeft" id="7" style="margin-right: 1%;"></button>
 					</div>
 				</div>
 				<input type="hidden" id="idpregunta" name="idpregunta" value="0"/>
+				<input type="hidden" id="idrespuesta" name="idrespuesta" value="0"/>
 
 				<div class="row">
 					<div class="form-group" style="margin-top: 2%;">
@@ -330,6 +331,13 @@ if (mysql_num_rows($existe)>0) {
 
 		$(document).ready(function(){
 
+			$('.btnrespuesta').click(function() {
+				$('.btnrespuesta').removeClass('enjoy-css-active');
+				idResp =  $(this).attr("id");
+				$('#idrespuesta').val(idResp);
+
+			});
+
 			$('.btnComenzar').click(function() {
 				$('.contenedorPreguntas').show();
 				$('.btnComenzar').hide();
@@ -364,6 +372,8 @@ if (mysql_num_rows($existe)>0) {
 
 						for (var clave in datos) {
 							$('#lblpregunta').html('PREGUNTA: ' + datos[clave].pregunta);
+
+							$('#idpregunta').val(datos[clave].idpregunta);
 
 							if (datos[clave].respuesta1 != '') {
 								$('.contRespuesta1').show();
