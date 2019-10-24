@@ -564,12 +564,74 @@ switch ($accion) {
    case 'modificarURLpostulante':
       modificarURLpostulante($serviciosReferencias);
    break;
+   case 'insertarIp':
+      insertarIp($serviciosReferencias);
+   break;
 
 
 }
 /* Fin */
 
+function insertarIp($serviciosReferencias) {
+   $ip = $_POST['ip'];
+   $respuesta = $_POST['respuesta'];
+   $pregunta = $_POST['pregunta'];
 
+   $activo = '1';
+   $verde = '0';
+   $amarillo = '0';
+   $rojo = '0';
+
+   $resPregunta = $serviciosReferencias->traerPreguntasPorId($pregunta);
+
+   $existe = $serviciosReferencias->traerIpPorIP($ip);
+
+   if (mysql_num_rows($existe)>0) {
+      $id = mysql_result($existe, 0,'id');
+   	$secuencia = mysql_result($existe, 0,'secuencia');
+
+      if (($pregunta == 2) && ($respuesta == 3)) {
+         $verde = mysql_result($existe, 0,'verde');
+         $amarillo = mysql_result($existe, 0,'amarillo');
+         $rojo = '1';
+      } else {
+         if (($pregunta == 4) && ($respuesta == 2)) {
+            $verde = mysql_result($existe, 0,'verde');
+            $amarillo = '1';
+            $rojo = mysql_result($existe, 0,'rojo');
+         } else {
+            $verde = '1';
+            $amarillo = mysql_result($existe, 0,'amarillo');
+            $rojo = mysql_result($existe, 0,'rojo');
+         }
+      }
+
+   	if ($secuencia == 7) {
+   		echo 'salir';
+         $activo = '0';
+         $res = modificarIp($id,$ip,$activo,$secuencia,$verde,$amarillo,$rojo);
+   	} else {
+         $activo = '1';
+         $res = modificarIp($id,$ip,$activo,$secuencia,$verde,$amarillo,$rojo);
+   	}
+
+      if ($res == true) {
+         echo '';
+      } else {
+         echo 'Hubo un error al modificar datos';
+      }
+   } else {
+   	$res = $serviciosReferencias->insertarIp($ip,$activo,$secuencia,$verde,$amarillo,$rojo);
+
+      if ((integer)$res > 0) {
+         echo '';
+      } else {
+         echo 'Hubo un error al insertar datos';
+      }
+   }
+
+
+}
 
 function modificarURLpostulante($serviciosReferencias) {
    session_start();

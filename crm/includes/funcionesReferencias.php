@@ -64,6 +64,12 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function traerIpPorIP($ip) {
+		$sql = "select id,ip,activo,secuencia,verde,amarillo,rojo from tbip where ip = '".$ip."'";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 
 	/* Fin */
 	/* /* Fin de la Tabla: tbip*/

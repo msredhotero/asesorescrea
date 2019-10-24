@@ -14,7 +14,7 @@ $serviciosReferencias 	= new ServiciosReferencias();
 
 $fecha = date('Y-m-d');
 
-$secuencia = trim($_POST['secuencia']);
+$secuencia = trim($_GET['secuencia']);
 
 $ar = array();
 
@@ -28,14 +28,14 @@ $cad = '';
 
 		array_push($ar,array('idpregunta'=>$row['idpregunta'],
                            'secuencia'=> $row['secuencia'],
-                           'pregunta'=> ($row['pregunta']),
-                           'respuesta1'=> ($row['respuesta1']),
-                           'respuesta2'=> ($row['respuesta2']),
-                           'respuesta3'=> ($row['respuesta3']),
-                           'respuesta4'=> ($row['respuesta4']),
-                           'respuesta5'=> ($row['respuesta5']),
-                           'respuesta6'=> ($row['respuesta6']),
-                           'respuesta7'=> ($row['respuesta7']),
+                           'pregunta'=> utf8_encode($row['pregunta']),
+                           'respuesta1'=> utf8_encode($row['respuesta1']),
+                           'respuesta2'=> utf8_encode($row['respuesta2']),
+                           'respuesta3'=> utf8_encode($row['respuesta3']),
+                           'respuesta4'=> utf8_encode($row['respuesta4']),
+                           'respuesta5'=> utf8_encode($row['respuesta5']),
+                           'respuesta6'=> utf8_encode($row['respuesta6']),
+                           'respuesta7'=> utf8_encode($row['respuesta7']),
                            'valor'=> ($row['valor']),
                            'depende'=> ($row['depende']),
                            'tiempo'=> ($row['tiempo'])
