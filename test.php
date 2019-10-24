@@ -244,10 +244,8 @@ if (mysql_num_rows($existe)>0) {
       </div>
       <div class="row">
 			<div id="contenedorTiempoAgotado" style="display: none;">
-
-            <h3>TIEMPO AGOTADO</h3>
-
-        </div>
+				<h3>TIEMPO AGOTADO</h3>
+			</div>
 
          <div class="contenedorPreguntas" style="display: none;">
 				<div class="row">
