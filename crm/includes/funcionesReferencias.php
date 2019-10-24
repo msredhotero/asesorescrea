@@ -9,6 +9,130 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+	/* PARA Ip */
+
+	function insertarIp($ip,$activo,$secuencia,$verde,$amarillo,$rojo) {
+		$sql = "insert into tbip(id,ip,activo,secuencia,verde,amarillo,rojo)
+		values ('','".$ip."','".$activo."',".$secuencia.",'".$verde."','".$amarillo."','".$rojo."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarIp($id,$ip,$activo,$secuencia,$verde,$amarillo,$rojo) {
+		$sql = "update tbip
+		set
+		ip = '".$ip."',activo = '".$activo."',secuencia = ".$secuencia.",verde = '".$verde."',amarillo = '".$amarillo."',rojo = '".$rojo."'
+		where id =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarIp($id) {
+		$sql = "delete from tbip where id =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerIp() {
+		$sql = "select
+		i.id,
+		i.ip,
+		i.activo,
+		i.secuencia,
+		i.verde,
+		i.amarillo,
+		i.rojo
+		from tbip i
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerIpPorId($id) {
+		$sql = "select id,ip,activo,secuencia,verde,amarillo,rojo from tbip where id =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerIpPorSecuenciaIP($secuencia, $ip) {
+		$sql = "select id,ip,activo,secuencia,verde,amarillo,rojo from tbip where secuencia =".$secuencia." and ip = '".$ip."'";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbip*/
+
+	/* PARA Preguntas */
+
+	function insertarPreguntas($secuencia,$pregunta,$respuesta1,$respuesta2,$respuesta3,$respuesta4,$respuesta5,$respuesta6,$respuesta7,$valor,$depende,$tiempo) {
+		$sql = "insert into dbpreguntas(idpregunta,secuencia,pregunta,respuesta1,respuesta2,respuesta3,respuesta4,respuesta5,respuesta6,respuesta7,valor,depende,tiempo)
+		values ('',".$secuencia.",'".$pregunta."','".$respuesta1."','".$respuesta2."','".$respuesta3."','".$respuesta4."','".$respuesta5."','".$respuesta6."','".$respuesta7."',".$valor.",".$depende.",".$tiempo.")";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarPreguntas($id,$secuencia,$pregunta,$respuesta1,$respuesta2,$respuesta3,$respuesta4,$respuesta5,$respuesta6,$respuesta7,$valor,$depende,$tiempo) {
+		$sql = "update dbpreguntas
+		set
+		secuencia = ".$secuencia.",pregunta = '".$pregunta."',respuesta1 = '".$respuesta1."',respuesta2 = '".$respuesta2."',respuesta3 = '".$respuesta3."',respuesta4 = '".$respuesta4."',respuesta5 = '".$respuesta5."',respuesta6 = '".$respuesta6."',respuesta7 = '".$respuesta7."',valor = ".$valor.",depende = ".$depende.",tiempo = ".$tiempo."
+		where idpregunta =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarPreguntas($id) {
+		$sql = "delete from dbpreguntas where idpregunta =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerPreguntas() {
+		$sql = "select
+		p.idpregunta,
+		p.secuencia,
+		p.pregunta,
+		p.respuesta1,
+		p.respuesta2,
+		p.respuesta3,
+		p.respuesta4,
+		p.respuesta5,
+		p.respuesta6,
+		p.respuesta7,
+		p.valor,
+		p.depende,
+		p.tiempo
+		from dbpreguntas p
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerPreguntasPorId($id) {
+		$sql = "select idpregunta,secuencia,pregunta,respuesta1,respuesta2,respuesta3,respuesta4,respuesta5,respuesta6,respuesta7,valor,depende,tiempo from dbpreguntas where idpregunta =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerPreguntasPorSecuencia($secuencia) {
+		$sql = "select idpregunta,secuencia,pregunta,respuesta1,respuesta2,respuesta3,respuesta4,respuesta5,respuesta6,respuesta7,valor,depende,tiempo from dbpreguntas where secuencia =".$secuencia;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbpreguntas*/
+
 
 	/* PARA Estadoentrevistas */
 
