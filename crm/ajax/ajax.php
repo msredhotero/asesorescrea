@@ -575,6 +575,9 @@ switch ($accion) {
 function insertarIp($serviciosReferencias) {
    session_start();
 
+   $resV['datos'] = '';
+   $resV['error'] = false;
+
    $ip = $_SESSION['iptest'];
    $respuesta = $_POST['respuesta'];
    $pregunta = $_POST['pregunta'];
@@ -586,42 +589,47 @@ function insertarIp($serviciosReferencias) {
 
    $resPregunta = $serviciosReferencias->traerPreguntasPorId($pregunta);
 
-   $existe = $serviciosReferencias->traerIpPorIP($ip);
+   $lblRespuesta =mysql_result($resPregunta, 0,'respuesta'.$respuesta);
+
+   $existe = $serviciosReferencias->traerIpPorIPultimo($ip);
 
    if (mysql_num_rows($existe)>0) {
-      $id = mysql_result($existe, 0,'id');
+
    	$secuencia = mysql_result($resPregunta, 0,'secuencia');
 
       if (($pregunta == 2) && ($respuesta == 3)) {
-         $verde = mysql_result($existe, 0,'verde');
-         $amarillo = mysql_result($existe, 0,'amarillo');
+         $verde = '0';
+         $amarillo = '0';
          $rojo = '1';
       } else {
          if (($pregunta == 4) && ($respuesta == 2)) {
-            $verde = mysql_result($existe, 0,'verde');
+            $verde = '0';
             $amarillo = '1';
-            $rojo = mysql_result($existe, 0,'rojo');
+            $rojo = '0';
          } else {
             $verde = '1';
-            $amarillo = mysql_result($existe, 0,'amarillo');
-            $rojo = mysql_result($existe, 0,'rojo');
+            $amarillo = '0';
+            $rojo = '0';
          }
       }
 
    	if ($secuencia == 7) {
-   		echo 'salir';
+         $resV['datos'] = array('respuesta' => 'salir');
+
          $activo = '0';
-         $res = $serviciosReferencias->modificarIpActivo($id,$activo);
+         $res = $serviciosReferencias->modificarIpActivo($ip,$activo);
    	} else {
          $activo = '1';
 
-         $res = $serviciosReferencias->modificarIp($id,$ip,$activo,$secuencia,$verde,$amarillo,$rojo);
+         $secuencia += 1;
+         $res = $serviciosReferencias->insertarIp($ip,$activo,$secuencia,$verde,$amarillo,$rojo,$lblRespuesta, $pregunta);
 
-         if ($res == true) {
-            $secuencia += 1;
-            echo $secuencia;
+         if ((integer)$res > 0) {
+
+            $resV['datos'] = array('respuesta' => $secuencia);
          } else {
-            echo 'Hubo un error al modificar datos';
+            $resV['error'] = true;
+            $resV['datos'] = array('respuesta' => 'Hubo un error al insertar datos');
          }
    	}
 
@@ -629,17 +637,22 @@ function insertarIp($serviciosReferencias) {
    } else {
       $secuencia = 2;
 
-   	$res = $serviciosReferencias->insertarIp($ip,$activo,$secuencia,$verde,$amarillo,$rojo);
+   	$res = $serviciosReferencias->insertarIp($ip,$activo,$secuencia,$verde,$amarillo,$rojo,$lblRespuesta, $pregunta);
 
       if ((integer)$res > 0) {
-         if ($respuesta == 2) {
+         if ($lblRespuesta == 'No') {
             $secuencia = 3;
          }
-         echo $secuencia;
+
+         $resV['datos'] = array('respuesta' => $secuencia);
       } else {
-         echo 'Hubo un error al insertar datos';
+         $resV['error'] = true;
+         $resV['datos'] = array('respuesta' => 'Hubo un error al insertar datos');
       }
    }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
 
 
 }

@@ -32,7 +32,7 @@ $_SESSION['iptest'] = $ip;
 
 $intento = 0;
 
-$existe = $serviciosReferencias->traerIpPorIP($ip);
+$existe = $serviciosReferencias->traerIpPorIPultimo($ip);
 
 $yajugo = 0;
 
@@ -43,6 +43,7 @@ if (mysql_num_rows($existe)>0) {
 	} else {
 		$yajugo = 1;
 	}
+   $secuencia += 1;
 } else {
 	$yajugo = 0;
 	$secuencia = 1;
@@ -67,6 +68,8 @@ if (mysql_num_rows($existe)>0) {
 	<script src="crm/plugins/jquery/jquery.min.js"></script>
    <!-- Bootstrap Core Css -->
    <link href="crm/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+   <script src="crm/plugins/bootstrap/js/bootstrap.min.js"></script>
 
    <!-- Waves Effect Css -->
    <link href="crm/plugins/node-waves/waves.css" rel="stylesheet" />
@@ -99,7 +102,7 @@ if (mysql_num_rows($existe)>0) {
 			border: 1px solid rgba(27,41,72,1);
       }
 
-		.contRespuesta1, .contRespuesta2, .contRespuesta3, .contRespuesta4, .contRespuesta5, .contRespuesta6 {
+		.contRespuesta1, .contRespuesta2, .contRespuesta3, .contRespuesta4, .contRespuesta5, .contRespuesta6, .contRespuesta7 {
 			text-align: center;
 		}
 
@@ -327,6 +330,29 @@ if (mysql_num_rows($existe)>0) {
 		<?php } ?>
    </div>
 
+
+   <!-- Modal -->
+        <div id="myModal" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Notificación</h4>
+              </div>
+              <div class="modal-body respuesta">
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <!-- fin modal -->
+
 	<script type="text/javascript">
 
 		$(document).ready(function(){
@@ -367,6 +393,7 @@ if (mysql_num_rows($existe)>0) {
 					data: {secuencia: nivel},
 					beforeSend: function (XMLHttpRequest) {
                   $('#idrespuesta').val(0);
+                  bar.set(0);
 					},
 					success: function(datos) {
 
@@ -450,7 +477,7 @@ if (mysql_num_rows($existe)>0) {
 
 			function volver(){
 				$('#contenedorFinalizo').show();
-				$('#contenedorGanaBotella').hide();
+				$('.contenedorPreguntas').hide();
 			}
 
 			function cargarRespuesta(respuesta, pregunta) {
@@ -466,10 +493,11 @@ if (mysql_num_rows($existe)>0) {
 
 					},
 					success:  function (response) {
-						if (response == 'salir') {
+
+						if (response.datos.respuesta == 'salir') {
 							volver();
 						} else {
-                     traerPregunta(response);
+                     traerPregunta(response.datos.respuesta);
                   }
 
 					}

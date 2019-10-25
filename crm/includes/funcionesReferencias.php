@@ -11,35 +11,35 @@ class ServiciosReferencias {
 
 	/* PARA Ip */
 
-	function insertarIp($ip,$activo,$secuencia,$verde,$amarillo,$rojo) {
-		$sql = "insert into tbip(id,ip,activo,secuencia,verde,amarillo,rojo)
-		values ('','".$ip."','".$activo."',".$secuencia.",'".$verde."','".$amarillo."','".$rojo."')";
+	function insertarIp($ip,$activo,$secuencia,$verde,$amarillo,$rojo,$respuesta,$idpregunta) {
+		$sql = "insert into dbrespuestas(idrespuesta,ip,activo,secuencia,verde,amarillo,rojo,respuesta,idpregunta)
+		values ('','".$ip."','".$activo."',".$secuencia.",'".$verde."','".$amarillo."','".$rojo."','".$respuesta."',".$idpregunta.")";
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarIp($id,$ip,$activo,$secuencia,$verde,$amarillo,$rojo) {
-		$sql = "update tbip
+	function modificarIp($idrespuesta,$ip,$activo,$secuencia,$verde,$amarillo,$rojo,$respuesta,$idpregunta) {
+		$sql = "update dbrespuestas
 		set
-		ip = '".$ip."',activo = '".$activo."',secuencia = ".$secuencia.",verde = '".$verde."',amarillo = '".$amarillo."',rojo = '".$rojo."'
-		where id =".$id;
+		ip = '".$ip."',activo = '".$activo."',secuencia = ".$secuencia.",verde = '".$verde."',amarillo = '".$amarillo."',rojo = '".$rojo."',respuesta = '".$respuesta."',idpregunta = ".$idpregunta."
+		where idrespuesta =".$idrespuesta;
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
-	function modificarIpActivo($id,$activo) {
-		$sql = "update tbip
+	function modificarIpActivo($ip,$activo) {
+		$sql = "update dbrespuestas
 		set
 		activo = '0'
-		where id =".$id;
+		where ip =".$ip;
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
 
-	function eliminarIp($id) {
-		$sql = "delete from tbip where id =".$id;
+	function eliminarIp($idrespuesta) {
+		$sql = "delete from dbrespuestas where idrespuesta =".$idrespuesta;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -47,34 +47,42 @@ class ServiciosReferencias {
 
 	function traerIp() {
 		$sql = "select
-		i.id,
+		i.idrespuesta,
 		i.ip,
 		i.activo,
 		i.secuencia,
 		i.verde,
 		i.amarillo,
-		i.rojo
-		from tbip i
+		i.rojo,
+		i.respuesta,
+		i.idpregunta
+		from dbrespuestas i
 		order by 1";
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
 
-	function traerIpPorId($id) {
-		$sql = "select id,ip,activo,secuencia,verde,amarillo,rojo from tbip where id =".$id;
+	function traerIpPorId($idrespuesta) {
+		$sql = "select idrespuesta,ip,activo,secuencia,verde,amarillo,rojo,respuesta,idpregunta from dbrespuestas where idrespuesta =".$idrespuesta;
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
-	function traerIpPorSecuenciaIP($secuencia, $ip) {
-		$sql = "select id,ip,activo,secuencia,verde,amarillo,rojo from tbip where secuencia =".$secuencia." and ip = '".$ip."'";
+	function traerIpPorSecuenciaIP($secuencia, $idrespuesta) {
+		$sql = "select idrespuesta,ip,activo,secuencia,verde,amarillo,rojo,respuesta,idpregunta from dbrespuestas where secuencia =".$secuencia." and idrespuesta = '".$idrespuesta."'";
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
 	function traerIpPorIP($ip) {
-		$sql = "select id,ip,activo,secuencia,verde,amarillo,rojo from tbip where ip = '".$ip."'";
+		$sql = "select idrespuesta,ip,activo,secuencia,verde,amarillo,rojo,respuesta,idpregunta from dbrespuestas where ip = '".$ip."'";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerIpPorIPultimo($ip) {
+		$sql = "select idrespuesta,ip,activo,secuencia,verde,amarillo,rojo,respuesta,idpregunta from dbrespuestas where ip = '".$ip."' order by idrespuesta desc limit 1";
 		$res = $this->query($sql,0);
 		return $res;
 	}
