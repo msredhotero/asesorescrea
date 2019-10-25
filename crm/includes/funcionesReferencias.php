@@ -28,6 +28,15 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function modificarIpActivo($id,$activo) {
+		$sql = "update tbip
+		set
+		activo = '0'
+		where id =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 
 	function eliminarIp($id) {
 		$sql = "delete from tbip where id =".$id;

@@ -573,7 +573,9 @@ switch ($accion) {
 /* Fin */
 
 function insertarIp($serviciosReferencias) {
-   $ip = $_POST['ip'];
+   session_start();
+
+   $ip = $_SESSION['iptest'];
    $respuesta = $_POST['respuesta'];
    $pregunta = $_POST['pregunta'];
 
@@ -588,7 +590,7 @@ function insertarIp($serviciosReferencias) {
 
    if (mysql_num_rows($existe)>0) {
       $id = mysql_result($existe, 0,'id');
-   	$secuencia = mysql_result($existe, 0,'secuencia');
+   	$secuencia = mysql_result($resPregunta, 0,'secuencia');
 
       if (($pregunta == 2) && ($respuesta == 3)) {
          $verde = mysql_result($existe, 0,'verde');
@@ -609,22 +611,31 @@ function insertarIp($serviciosReferencias) {
    	if ($secuencia == 7) {
    		echo 'salir';
          $activo = '0';
-         $res = modificarIp($id,$ip,$activo,$secuencia,$verde,$amarillo,$rojo);
+         $res = $serviciosReferencias->modificarIpActivo($id,$activo);
    	} else {
          $activo = '1';
-         $res = modificarIp($id,$ip,$activo,$secuencia,$verde,$amarillo,$rojo);
+
+         $res = $serviciosReferencias->modificarIp($id,$ip,$activo,$secuencia,$verde,$amarillo,$rojo);
+
+         if ($res == true) {
+            $secuencia += 1;
+            echo $secuencia;
+         } else {
+            echo 'Hubo un error al modificar datos';
+         }
    	}
 
-      if ($res == true) {
-         echo '';
-      } else {
-         echo 'Hubo un error al modificar datos';
-      }
+
    } else {
+      $secuencia = 2;
+
    	$res = $serviciosReferencias->insertarIp($ip,$activo,$secuencia,$verde,$amarillo,$rojo);
 
       if ((integer)$res > 0) {
-         echo '';
+         if ($respuesta == 2) {
+            $secuencia = 3;
+         }
+         echo $secuencia;
       } else {
          echo 'Hubo un error al insertar datos';
       }

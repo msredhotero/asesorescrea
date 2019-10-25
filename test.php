@@ -366,7 +366,7 @@ if (mysql_num_rows($existe)>0) {
 					url: 'crm/json/jspreguntas.php',
 					data: {secuencia: nivel},
 					beforeSend: function (XMLHttpRequest) {
-
+                  $('#idrespuesta').val(0);
 					},
 					success: function(datos) {
 
@@ -468,11 +468,27 @@ if (mysql_num_rows($existe)>0) {
 					success:  function (response) {
 						if (response == 'salir') {
 							volver();
-						}
+						} else {
+                     traerPregunta(response);
+                  }
 
 					}
 				});
 			}
+
+         $('#responder').click(function() {
+
+            $('.btnrespuesta').removeClass('enjoy-css-active');
+
+            $('.respuesta').html('');
+            if ($('#idrespuesta').val() == 0) {
+               $('.respuesta').html('Debe elegir una respuesta para continuar.');
+               $('#myModal').modal();
+            } else {
+               cargarRespuesta($('#idrespuesta').val(), $('#idpregunta').val());
+            }
+
+         });
 		});/* fin del document ready */
 	</script>
 
