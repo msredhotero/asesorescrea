@@ -36,10 +36,18 @@ $existe = $serviciosReferencias->traerIpPorIPultimo($ip);
 
 $yajugo = 0;
 
+$token = '';
+
 if (mysql_num_rows($existe)>0) {
 	$secuencia = mysql_result($existe, 0,'secuencia');
+
+   $_SESSION['token'] = mysql_result($existe, 0,'token');
+
+
+
 	if ($secuencia == 7) {
 		$yajugo = 2;
+      $arTest = $serviciosReferencias->determinaEstadoTest($_SESSION['token']);
 	} else {
 		$yajugo = 1;
 	}
@@ -81,9 +89,24 @@ if (mysql_num_rows($existe)>0) {
    <link href="crm/plugins/sweetalert/sweetalert.css" rel="stylesheet" />
 
    <!-- Custom Css -->
-   <link href="css/style.css" rel="stylesheet">
+   <link href="crm/css/style.css" rel="stylesheet">
 
    <script src="js/progressbar.min.js"></script>
+
+   <link rel="stylesheet" type="text/css" href="crm/css/classic.css"/>
+	<link rel="stylesheet" type="text/css" href="crm/css/classic.date.css"/>
+
+   <link rel="stylesheet" type="text/css" href="crm/plugins/bootstrap-select/css/bootstrap-select.css"/>
+
+	<!-- CSS file -->
+	<link rel="stylesheet" href="crm/css/easy-autocomplete.min.css">
+	<!-- Additional CSS Themes file - not required-->
+	<link rel="stylesheet" href="crm/css/easy-autocomplete.themes.min.css">
+
+   <link href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.css" rel="stylesheet"/>
+   <script src="crm/plugins/momentjs/moment.js"></script>
+   <script src="crm/js/moment-with-locales.js"></script>
+   <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
 
 	<script type='text/javascript'>
 		//document.oncontextmenu = function(){return false}
@@ -222,6 +245,9 @@ if (mysql_num_rows($existe)>0) {
 			border: 1px solid rgba(53,42,151,1);
 		}
 
+      .easy-autocomplete-container { width: 100%; z-index:999999 !important; margin-top: 35px;}
+
+
    </style>
 
 
@@ -236,7 +262,227 @@ if (mysql_num_rows($existe)>0) {
 
    <div class="container">
 		<?php if ($yajugo == 2) { ?>
+         <div class="row">
+            <h4 style="line-height: 24px;">Un integrante de nuestro equipo profesional en desarrollo de talento, se contactará contigo muy pronto; únicamente te pedimos capturar la siguiente información básica de contacto.
+Para cualquier información adicional, puedes contactarnos y con gusto te atenderemos.</h4>
+            <br>
+            <div class="alert alert-<?php echo $arTest['color']; ?>">
+               <p><?php echo $arTest['lbltest']; ?></p>
+            </div>
+            <?php if ($arTest['test'] != 2) { ?>
+            <form class="formulario frmNuevo" role="form" id="sign_in">
+               <div class="row">
 
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+							<label class="form-label">Nombre</label>
+							<div class="form-group input-group">
+								<div class="form-line">
+									<input type="text" class="form-control" id="nombre" name="nombre"  required />
+
+								</div>
+							</div>
+						</div>
+
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+							<label class="form-label">Apellido Paterno</label>
+							<div class="form-group input-group">
+								<div class="form-line">
+									<input type="text" class="form-control" id="apellidopaterno" name="apellidopaterno"  required />
+
+								</div>
+							</div>
+						</div>
+
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+							<label class="form-label">Apellido Materno</label>
+							<div class="form-group input-group">
+								<div class="form-line">
+									<input type="text" class="form-control" id="apellidomaterno" name="apellidomaterno"  required />
+
+								</div>
+							</div>
+						</div>
+
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+							<label class="form-label">Email</label>
+							<div class="form-group input-group">
+								<div class="form-line">
+									<input type="email" class="form-control" id="email" name="email"  required />
+
+								</div>
+							</div>
+						</div>
+
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+   						<b>Fecha De Nacimiento</b>
+                     <div class="form-group">
+                     <div class='input-group date' id='datetimepicker1'>
+                        <input type='text' class="form-control" id="fechanacimiento" name="fechanacimiento" required />
+                           <span class="input-group-addon">
+                              <span class="glyphicon glyphicon-calendar"></span>
+                           </span>
+                        </div>
+                     </div>
+                  </div>
+
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+   						<b>Sexo</b>
+   						<div class="input-group">
+      						<div class="form-line">
+      							<select class="form-control" id="sexo" name="sexo"  required >
+                              <option value=''>-- Seleccionar --</option>
+                              <option value='1'>Femenino</option>
+                              <option value='2'>Masculino</option>
+                           </select>
+      						</div>
+   						</div>
+						</div>
+
+
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+							<label class="form-label">Cod. Postal</label>
+							<div class="form-group input-group">
+
+								<div class="form-line">
+                           <div class="col-xs-9" style="display:block">
+   									<input type="text" class="form-control" id="codigopostalbuscar" name="codigopostalbuscar"  required />
+                           </div>
+                           <div class="col-xs-3" style="display:block">
+                              <input type="text" class="form-control" id="codigopostal" name="codigopostal"  required readonly />
+                           </div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+   						<b>Escolaridad</b>
+   						<div class="input-group">
+      						<div class="form-line">
+      							<select class="form-control" id="refescolaridades" name="refescolaridades"  required >
+                              <option value="1">Primaria</option>
+                              <option value="2">Secundaria</option>
+                              <option value="3">Preparatoria</option>
+                              <option value="4">Licenciatura</option>
+                              <option value="5">Postgrado</option>
+                           </select>
+      						</div>
+   						</div>
+						</div>
+
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+   						<b>Estado Civil</b>
+   						<div class="input-group">
+      						<div class="form-line">
+      							<select class="form-control" id="refestadocivil" name="refestadocivil"  required >
+                              <option value="1">SOLTERO(A)</option>
+                              <option value="2">CASADO(A)</option>
+                              <option value="3">UNION LIBRE</option>
+                              <option value="4">DIVORCIADO(A)</option>
+                              <option value="6">VIUDO(A)</option>
+                              <option value="7">SEPARADO(A)</option>
+                           </select>
+      						</div>
+   						</div>
+						</div>
+
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+   						<b>Nacionalidad</b>
+   						<div class="input-group">
+      						<div class="form-line">
+      							<select class="form-control" id="nacionalidad" name="nacionalidad"  required >
+                              <option value='Mexico'>Mexico</option>
+                           </select>
+      						</div>
+   						</div>
+						</div>
+
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+							<label class="form-label">Tel. Movil</label>
+							<div class="form-group input-group">
+								<div class="form-line">
+									<input type="text" class="form-control" id="telefonomovil" name="telefonomovil" maxlength="10" />
+
+								</div>
+							</div>
+						</div>
+
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+							<label class="form-label">Tel. Casa</label>
+							<div class="form-group input-group">
+								<div class="form-line">
+									<input type="text" class="form-control" id="telefonocasa" name="telefonocasa" maxlength="10" />
+
+								</div>
+							</div>
+						</div>
+
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+							<label class="form-label">Tel. Trabajo</label>
+							<div class="form-group input-group">
+								<div class="form-line">
+									<input type="text" class="form-control" id="telefonotrabajo" name="telefonotrabajo" maxlength="10" />
+
+								</div>
+							</div>
+						</div>
+
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+							<label class="form-label">¿Cuenta con cédula definitiva para venta de Afore?</label>
+							<div class="form-group input-group">
+								<div class="form-line">
+									<select class="form-control" id="afore" name="afore" />
+                              <option value="1">Si</option>
+                              <option value="0">No</option>
+                           </select>
+								</div>
+							</div>
+						</div>
+
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block;">
+							<label class="form-label">¿Con que compañía vende actualmente?</label>
+							<div class="form-group input-group">
+								<div class="form-line">
+									<input type="text" class="form-control" id="compania" name="compania" />
+
+								</div>
+							</div>
+						</div>
+
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+							<label class="form-label">¿Cuenta Con cedula definitiva para venta de Seguros?</label>
+							<div class="form-group input-group">
+								<div class="form-line">
+                           <select class="form-control" id="cedula" name="cedula" />
+                              <option value="1">Si</option>
+                              <option value="0">No</option>
+                           </select>
+
+								</div>
+							</div>
+						</div>
+
+						<input type="hidden" id="accion" name="accion" value="insertarPostulantes"/>
+
+               </div>
+
+               <div class="row" style="margin-bottom:50px;">
+   					<div class="form-group" style="margin-top: 2%;">
+   					<div class="col-md-3 col-xs-3">
+   					</div>
+
+   					<div class="col-md-6 col-xs-6" style="text-align: center;">
+   						<button type="submit" class="btn btn-success nuevo" id="guardar">ENVIAR</button>
+   					</div>
+
+   					<div class="col-md-3 col-xs-3">
+   					</div>
+   					</div>
+   		      </div>
+
+            </div>
+            </form>
+            <?php } ?>
+         </div>
 		<?php } else { ?>
       <div class="row">
          <p>Esta vacante es lo que buscas y se adpata a tus expactativas económicas? Te pedimo nos regales un máximo de 5 minutos de tu tiempo, para constetar 6 simples preguntas y sabremos si nuestra oferta de trabajo es compatible con tus intereses. Esto también nos apoya para ofrecerte un plan de carrera personalizado.</p>
@@ -332,30 +578,137 @@ if (mysql_num_rows($existe)>0) {
 
 
    <!-- Modal -->
-        <div id="myModal" class="modal fade" role="dialog">
-          <div class="modal-dialog">
+   <div id="myModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
 
-            <!-- Modal content-->
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Notificación</h4>
-              </div>
-              <div class="modal-body respuesta">
-
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-              </div>
+         <!-- Modal content-->
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal">&times;</button>
+               <h4 class="modal-title">Notificación</h4>
             </div>
+            <div class="modal-body respuesta">
 
-          </div>
-        </div>
-        <!-- fin modal -->
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+         </div>
+
+      </div>
+   </div>
+   <!-- fin modal -->
+
+   <!-- Bootstrap Material Datetime Picker Plugin Js -->
+   <script src="crm/plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
+   <script src="crm/js/jquery.easy-autocomplete.min.js"></script>
 
 	<script type="text/javascript">
 
 		$(document).ready(function(){
+
+         $('.frmNuevo').submit(function(e){
+
+   			e.preventDefault();
+   			if ($('#sign_in')[0].checkValidity()) {
+   				//información del formulario
+   				var formData = new FormData($(".formulario")[0]);
+   				var message = "";
+   				//hacemos la petición ajax
+   				$.ajax({
+   					url: 'crm/ajax/ajax.php',
+   					type: 'POST',
+   					// Form data
+   					//datos del formulario
+   					data: formData,
+   					//necesario para subir archivos via ajax
+   					cache: false,
+   					contentType: false,
+   					processData: false,
+   					//mientras enviamos el archivo
+   					beforeSend: function(){
+
+   					},
+   					//una vez finalizado correctamente
+   					success: function(data){
+
+   						if (data == '') {
+   							swal({
+   									title: "Respuesta",
+   									text: "Registro Enviado con exito!!, por favor revise su correo postal para confirmar su correo.",
+   									type: "success",
+   									timer: 1500,
+   									showConfirmButton: false
+   							});
+
+   							$('#lgmNuevo').modal('hide');
+
+   						} else {
+   							swal({
+   									title: "Respuesta",
+   									text: data,
+   									type: "error",
+   									timer: 2500,
+   									showConfirmButton: false
+   							});
+
+
+   						}
+   					},
+   					//si ha ocurrido un error
+   					error: function(){
+   						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+   						$("#load").html('');
+   					}
+   				});
+   			}
+   		});
+
+         var options = {
+
+   			url: "crm/json/jsbuscarpostal.php",
+
+   			getValue: function(element) {
+   				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+   			},
+
+   			ajaxSettings: {
+   				dataType: "json",
+   				method: "POST",
+   				data: {
+   					busqueda: $("#codigopostalbuscar").val()
+   				}
+   			},
+
+   			preparePostData: function (data) {
+   				data.busqueda = $("#codigopostalbuscar").val();
+   				return data;
+   			},
+
+   			list: {
+   				maxNumberOfElements: 20,
+   				match: {
+   					enabled: true
+   				},
+   				onClickEvent: function() {
+   					var value = $("#codigopostalbuscar").getSelectedItemData().codigo;
+   					$("#codigopostal").val(value);
+
+   				}
+   			}
+   		};
+
+
+   		$("#codigopostalbuscar").easyAutocomplete(options);
+
+
+         $('#datetimepicker1').datetimepicker({
+            locale: 'es',
+            format: 'YYYY-MM-DD',
+            maxDate: new Date()
+         });
+
+         <?php if ($yajugo == 1) { ?>
 
 			$('.btnrespuesta').click(function() {
 				$('.btnrespuesta').removeClass('enjoy-css-active');
@@ -517,6 +870,7 @@ if (mysql_num_rows($existe)>0) {
             }
 
          });
+         <?php } ?>
 		});/* fin del document ready */
 	</script>
 

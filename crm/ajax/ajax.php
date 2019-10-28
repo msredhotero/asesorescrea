@@ -583,7 +583,7 @@ function insertarIp($serviciosReferencias) {
    $pregunta = $_POST['pregunta'];
 
    $activo = '1';
-   $verde = '0';
+   $verde = '1';
    $amarillo = '0';
    $rojo = '0';
 
@@ -593,9 +593,12 @@ function insertarIp($serviciosReferencias) {
 
    $existe = $serviciosReferencias->traerIpPorIPultimo($ip);
 
+   $token = '';
+
    if (mysql_num_rows($existe)>0) {
 
    	$secuencia = mysql_result($resPregunta, 0,'secuencia');
+      $token = mysql_result($existe, 0,'token');
 
       if (($pregunta == 2) && ($respuesta == 3)) {
          $verde = '0';
@@ -614,7 +617,7 @@ function insertarIp($serviciosReferencias) {
       }
 
    	if ($secuencia == 7) {
-         $resV['datos'] = array('respuesta' => 'salir');
+         $resV['datos'] = $serviciosReferencias->determinaEstadoTest($token);
 
          $activo = '0';
          $res = $serviciosReferencias->modificarIpActivo($ip,$activo);
@@ -622,7 +625,7 @@ function insertarIp($serviciosReferencias) {
          $activo = '1';
 
          $secuencia += 1;
-         $res = $serviciosReferencias->insertarIp($ip,$activo,$secuencia,$verde,$amarillo,$rojo,$lblRespuesta, $pregunta);
+         $res = $serviciosReferencias->insertarIp($ip,$activo,$secuencia,$verde,$amarillo,$rojo,$lblRespuesta, $pregunta, $token);
 
          if ((integer)$res > 0) {
 
@@ -637,7 +640,7 @@ function insertarIp($serviciosReferencias) {
    } else {
       $secuencia = 2;
 
-   	$res = $serviciosReferencias->insertarIp($ip,$activo,$secuencia,$verde,$amarillo,$rojo,$lblRespuesta, $pregunta);
+   	$res = $serviciosReferencias->insertarIp($ip,$activo,$secuencia,$verde,$amarillo,$rojo,$lblRespuesta, $pregunta, $serviciosReferencias->GUID());
 
       if ((integer)$res > 0) {
          if ($lblRespuesta == 'No') {
@@ -1593,9 +1596,9 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
    if ((integer)$resUsuario > 0) {
       $refusuarios = $resUsuario;
 
+      // envio email de confirmacion para validar cuenta de email. Correr a la noche un CRON
+      // para dar de baja
       // fin de crear usuario
-
-
       $curp = '';
       $rfc = '';
       $ine = '';
@@ -1608,7 +1611,7 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
       $telefonomovil = $_POST['telefonomovil'];
       $telefonocasa = $_POST['telefonocasa'];
       $telefonotrabajo = $_POST['telefonotrabajo'];
-      $refestadopostulantes = $_POST['refestadopostulantes'];
+      $refestadopostulantes = 1;
       $urlprueba = '';
       $fechacrea = date('Y-m-d H:i:s');
       $fechamodi = date('Y-m-d H:i:s');
@@ -1617,7 +1620,7 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
       $refasesores = 0;
       $comision = 0;
       $refsucursalesinbursa = 0;
-      $ultimoestado = $_POST['refestadopostulantes'];
+      $ultimoestado = 1;
 
       $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado);
 

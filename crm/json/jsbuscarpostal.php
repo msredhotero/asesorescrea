@@ -26,13 +26,13 @@ $ar = array();
 
 if ($busqueda != '') {
 
-$res = $serviciosReferencias->buscarPostal($busqueda);
+$res = $serviciosReferencias->buscarPostal(utf8_decode($busqueda));
 
 
 $cad = '';
 	while ($row = mysql_fetch_array($res)) {
 
-		array_push($ar,array('id'=>$row['id'], 'codigo'=> $row['codigo'], 'colonia'=> ($row['colonia']), 'municipio'=> ($row['municipio']), 'estado'=> ($row['estado'])));
+		array_push($ar,array('id'=>$row['id'], 'codigo'=> $row['codigo'], 'colonia'=> utf8_encode($row['colonia']), 'municipio'=> utf8_encode($row['municipio']), 'estado'=> utf8_encode($row['estado'])));
 	}
 
 }

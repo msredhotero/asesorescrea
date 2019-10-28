@@ -11,9 +11,9 @@ class ServiciosReferencias {
 
 	/* PARA Ip */
 
-	function insertarIp($ip,$activo,$secuencia,$verde,$amarillo,$rojo,$respuesta,$idpregunta) {
-		$sql = "insert into dbrespuestas(idrespuesta,ip,activo,secuencia,verde,amarillo,rojo,respuesta,idpregunta)
-		values ('','".$ip."','".$activo."',".$secuencia.",'".$verde."','".$amarillo."','".$rojo."','".$respuesta."',".$idpregunta.")";
+	function insertarIp($ip,$activo,$secuencia,$verde,$amarillo,$rojo,$respuesta,$idpregunta,$token) {
+		$sql = "insert into dbrespuestas(idrespuesta,ip,activo,secuencia,verde,amarillo,rojo,respuesta,idpregunta,token)
+		values ('','".$ip."','".$activo."',".$secuencia.",'".$verde."','".$amarillo."','".$rojo."','".$respuesta."',".$idpregunta.",'".$token."')";
 		$res = $this->query($sql,1);
 		return $res;
 	}
@@ -55,7 +55,8 @@ class ServiciosReferencias {
 		i.amarillo,
 		i.rojo,
 		i.respuesta,
-		i.idpregunta
+		i.idpregunta,
+		i.token
 		from dbrespuestas i
 		order by 1";
 		$res = $this->query($sql,0);
@@ -64,27 +65,55 @@ class ServiciosReferencias {
 
 
 	function traerIpPorId($idrespuesta) {
-		$sql = "select idrespuesta,ip,activo,secuencia,verde,amarillo,rojo,respuesta,idpregunta from dbrespuestas where idrespuesta =".$idrespuesta;
+		$sql = "select idrespuesta,ip,activo,secuencia,verde,amarillo,rojo,respuesta,idpregunta,token from dbrespuestas where idrespuesta =".$idrespuesta;
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
 	function traerIpPorSecuenciaIP($secuencia, $idrespuesta) {
-		$sql = "select idrespuesta,ip,activo,secuencia,verde,amarillo,rojo,respuesta,idpregunta from dbrespuestas where secuencia =".$secuencia." and idrespuesta = '".$idrespuesta."'";
+		$sql = "select idrespuesta,ip,activo,secuencia,verde,amarillo,rojo,respuesta,idpregunta,token from dbrespuestas where secuencia =".$secuencia." and idrespuesta = '".$idrespuesta."'";
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
 	function traerIpPorIP($ip) {
-		$sql = "select idrespuesta,ip,activo,secuencia,verde,amarillo,rojo,respuesta,idpregunta from dbrespuestas where ip = '".$ip."'";
+		$sql = "select idrespuesta,ip,activo,secuencia,verde,amarillo,rojo,respuesta,idpregunta,token from dbrespuestas where ip = '".$ip."'";
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
 	function traerIpPorIPultimo($ip) {
-		$sql = "select idrespuesta,ip,activo,secuencia,verde,amarillo,rojo,respuesta,idpregunta from dbrespuestas where ip = '".$ip."' order by idrespuesta desc limit 1";
+		$sql = "select idrespuesta,ip,activo,secuencia,verde,amarillo,rojo,respuesta,idpregunta,token from dbrespuestas where ip = '".$ip."' order by idrespuesta desc limit 1";
 		$res = $this->query($sql,0);
 		return $res;
+	}
+
+	function determinaEstadoTest($token) {
+		$sql = "SELECT
+		    token, MAX(verde) as verde, MAX(amarillo) as amarillo, MAX(rojo) as rojo
+		FROM
+		    dbrespuestas
+		WHERE
+		    token = '".$token."'
+		GROUP BY token";
+
+		$res = $this->query($sql,0);
+
+		$ar['datos'] = '';
+
+		if (mysql_num_rows($res) > 0 ) {
+
+			if (mysql_result($res,0,'rojo') == '1') {
+				$ar['datos'] = array('respuesta' => 'salir', 'test' => 2, 'lbltest' => ('NO SE ADECÚA A LO QUE ESTÁS BUSCANDO'), 'color' => 'danger');
+			} else {
+				if (mysql_result($res,0,'amarillo') == '1') {
+					$ar['datos'] = array('respuesta' => 'salir', 'test' => 1, 'lbltest' => ('NO PUEDE OFRECERTE UN SUELDO FIJO, SIN EMBARGO SE ADAPTA A TUS EXPECTATIVAS ECONÓMICAS'), 'color' => 'warning');
+				} else {
+					$ar['datos'] = array('respuesta' => 'salir', 'test' => 0, 'lbltest' => ('SE ADECÚA A LO QUE ESTÁS BUSCANDO'), 'color' => 'success');
+				}
+			}
+		}
+		return $ar['datos'];
 	}
 
 
