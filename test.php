@@ -44,7 +44,15 @@ if (mysql_num_rows($existe)>0) {
 
    $_SESSION['token'] = mysql_result($existe, 0,'token');
 
+   // verifico si ya se dio de alta en la tabla dbpostulantes //
+   $resPostulante = $serviciosReferencias->traerPostulantePorToken($_SESSION['token']);
+   if (mysql_num_rows($resPostulante) > 0) {
+      $finalizarAlta = 1;
+   } else {
+      $finalizarAlta = 0;
+   }
 
+   // fin //
 
 	if ($secuencia == 7) {
 		$yajugo = 2;
@@ -113,146 +121,6 @@ if (mysql_num_rows($existe)>0) {
 		//document.oncontextmenu = function(){return false}
 	</script>
 
-   <style>
-      .jumbotron {
-         padding-top: 18px;
-         padding-bottom: 18px;
-      }
-
-      #barraprogreso {
-         margin: 20px;
-         width: 90%;
-         height: 20px;
-			border: 1px solid rgba(27,41,72,1);
-      }
-
-		.contRespuesta1, .contRespuesta2, .contRespuesta3, .contRespuesta4, .contRespuesta5, .contRespuesta6, .contRespuesta7 {
-			text-align: center;
-		}
-
-		.enjoy-css {
-		  display: inline-block;
-		  -webkit-box-sizing: content-box;
-		  -moz-box-sizing: content-box;
-		  box-sizing: content-box;
-		  width: 90%;
-		  padding: 5px 20px;
-		  border: 2px solid rgba(27,41,72,1);
-		  background: rgba(27,41,72,1);
-		  -webkit-border-radius: 22px;
-		  border-radius: 22px;
-		  font: normal 15px/normal Arial Black, Gadget, sans-serif;
-		  color: #fff;
-		  -o-text-overflow: clip;
-		  text-overflow: clip;
-		  -webkit-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
-		  -moz-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
-		  -o-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
-		  transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
-		  margin-bottom: 15px;
-		}
-
-		.enjoy-css-buttom3 {
-		  display: inline-block;
-		  -webkit-box-sizing: content-box;
-		  -moz-box-sizing: content-box;
-		  box-sizing: content-box;
-		  cursor: pointer;
-		  padding: 1px 25px;
-		  border: 1px solid #382d99;
-		  -webkit-border-radius: 23px;
-		  border-radius: 20px;
-		  font: normal 20px BebasNeueRegular;
-		  color: rgba(255,255,255,1);
-		  -o-text-overflow: clip;
-		  text-overflow: clip;
-		  background: rgba(53,42,151,1);
-		  -webkit-box-shadow: 4px 5px 40px -10px rgba(53,42,151,1.8);
-		   -moz-box-shadow: 4px 5px 40px -10px rgba(53,42,151,1.8);
-		   box-shadow: 5px 40px -10px rgba(53,42,151,1.8);
-		}
-
-		.enjoy-css:hover {
-		  color: #FFF;
-		  background: rgba(27,41,72,0.7);
-		}
-
-		.enjoy-css:active {
-		  color: #0f0559;
-		  background: #fff;
-		  border: 2px solid rgba(27,41,72,1);
-		}
-
-		.enjoy-css-active {
-		  color: #0f0559;
-		  background: #fff;
-		  border: 2px solid rgba(27,41,72,1);
-		}
-
-		.enjoy-css:focus {
-		  color: #0f0559;
-		  background: #fff;
-		  border: 2px solid rgba(27,41,72,1);
-		}
-
-		.enjoy-css-buttom {
-		  display: inline-block;
-		  -webkit-box-sizing: content-box;
-		  -moz-box-sizing: content-box;
-		  box-sizing: content-box;
-		  cursor: pointer;
-		  padding: 3px 20px;
-		  border: 1px solid #9298ba;
-		  -webkit-border-radius: 23px;
-		  border-radius: 23px;
-		  font: normal 30px BebasNeueRegular;
-		  color: rgba(255,255,255,1);
-		  -o-text-overflow: clip;
-		  text-overflow: clip;
-		  background: rgba(146,152,186,1);
-		}
-
-		.enjoy-css-buttom-juego {
-		  display: inline-block;
-		  -webkit-box-sizing: content-box;
-		  -moz-box-sizing: content-box;
-		  box-sizing: content-box;
-		  cursor: pointer;
-		  padding: 6px 40px;
-		  border: 1px solid rgba(34,153,84,1);
-		  -webkit-border-radius: 23px;
-		  border-radius: 23px;
-		  font: normal 20px Arial;
-		  color: rgba(255,255,255,1);
-		  -o-text-overflow: clip;
-		  text-overflow: clip;
-		  background: rgba(34,153,84,1);
-		  -webkit-box-shadow: 0px 0px 0px 12px rgba(35,158,82,1);
-		   -moz-box-shadow: 0px 0px 0px 12px rgba(35,158,82,1);
-		   box-shadow: 0px 0px 12px rgba(35,158,82,1);
-		}
-
-		.enjoy-css-buttom:hover {
-			background: rgba(146,152,186,1);
-			color: rgba(255,255,255,1);
-		}
-
-		.enjoy-css:focus{
-			outline:0px;
-		}
-
-		#lblpregunta {
-			padding: 12px;
-			border: 1px solid rgba(53,42,151,1);
-		}
-
-      .easy-autocomplete-container { width: 100%; z-index:999999 !important; margin-top: 35px;}
-
-
-   </style>
-
-
-
 </head>
 
 <body>
@@ -264,13 +132,31 @@ if (mysql_num_rows($existe)>0) {
    <div class="container">
 		<?php if ($yajugo == 2) { ?>
          <div class="row">
+            <?php if ($finalizarAlta == 0) { ?>
             <h4 style="line-height: 24px;">Un integrante de nuestro equipo profesional en desarrollo de talento, se contactará contigo muy pronto; únicamente te pedimos capturar la siguiente información básica de contacto.
 Para cualquier información adicional, puedes contactarnos y con gusto te atenderemos.</h4>
             <br>
+            <?php } ?>
             <div class="alert alert-<?php echo $arTest['color']; ?>">
                <p><?php echo $arTest['lbltest']; ?></p>
             </div>
-            <?php if ($arTest['test'] != 2) { ?>
+            <?php if ($finalizarAlta == 1) { ?>
+               <div class="list-group">
+                  <button type="button" class="list-group-item list-group-item-action active">
+                  <?php
+                  echo '<b>Nombre Completo:</b> '.mysql_result($resPostulante,0,'nombre').' '.mysql_result($resPostulante,0,'apellidopaterno').' '.mysql_result($resPostulante,0,'apellidomaterno');
+                  ?>
+                  </button>
+                  <button type="button" class="list-group-item list-group-item-action"><?php
+                  echo '<b>Email:</b> '.mysql_result($resPostulante,0,'email');
+                  ?></button>
+                  <button type="button" class="list-group-item list-group-item-action"><?php
+                  echo '<b>Estado:</b> '.mysql_result($resPostulante,0,'estadopostulante');
+                  ?></button>
+               </div>
+            <?php } ?>
+            <?php if (($arTest['test'] != 2) && ($finalizarAlta == 0)) { ?>
+            <div class="contAlta">
             <form class="formulario frmNuevo" role="form" id="sign_in">
                <div class="row">
 
@@ -426,10 +312,11 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 
 								<div class="form-line">
                            <div class="col-xs-9" style="display:block">
-   									<input type="text" class="form-control" id="codigopostalbuscar" name="codigopostalbuscar"  required />
+   									<input type="text" class="form-control" id="codigopostalbuscar" name="codigopostalbuscar" autocomplete="off" required />
                            </div>
                            <div class="col-xs-3" style="display:block">
-                              <input type="text" class="form-control" id="codigopostal" name="codigopostal"  required readonly />
+                              <select class="form-control" id="codigopostal" name="codigopostal"  required readonly />
+                              </select>
                            </div>
 								</div>
 							</div>
@@ -488,6 +375,7 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 
             </div>
             </form>
+            </div>
             <?php } ?>
          </div>
 		<?php } else { ?>
@@ -496,7 +384,11 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
       </div>
 		<form role="form" class="formulario">
       <div class="row">
+         <?php if ($yajugo == 1) { ?>
+         <button type="button" class="btn btn-success btnComenzar">CONTINUAR TEST</button>
+         <?php } else { ?>
          <button type="button" class="btn btn-success btnComenzar">COMENZAR TEST</button>
+         <?php } ?>
       </div>
       <div class="row">
 			<div id="contenedorTiempoAgotado" style="display: none;">
@@ -659,7 +551,7 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 
    						if (data == '') {
 
-   							$('#frmNuevo').hide();
+   							$('.contAlta').hide();
                         $('.respuesta').html('Sus datos fueron ingresados correctamente, por favor revise su correo electronico, para seguir con el Proceso de Reclutamiento. Muchas Gracias.');
                         $('#myModal').modal();
 
@@ -706,8 +598,9 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
    					enabled: true
    				},
    				onClickEvent: function() {
-   					var value = $("#codigopostalbuscar").getSelectedItemData().codigo;
-   					$("#codigopostal").val(value);
+   					var idpostal = $("#codigopostalbuscar").getSelectedItemData().id;
+                  var value = $("#codigopostalbuscar").getSelectedItemData().codigo;
+   					$("#codigopostal").html("<option value='" + idpostal + "'>" + value + "</option>");
 
    				}
    			}

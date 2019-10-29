@@ -577,9 +577,9 @@ class ServiciosReferencias {
 
 	/* PARA Postulantes */
 
-	function insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado) {
-		$sql = "insert into dbpostulantes(idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,refestadocivil,nacionalidad,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa,ultimoestado)
-		values ('',".$refusuarios.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$email."','".$curp."','".$rfc."','".$ine."','".$fechanacimiento."','".$sexo."','".$codigopostal."',".$refescolaridades.",".$refestadocivil.",'".$nacionalidad."','".$telefonomovil."','".$telefonocasa."','".$telefonotrabajo."',".$refestadopostulantes.",'".$urlprueba."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."',".$refasesores.",".$comision.",".$refsucursalesinbursa.",".$ultimoestado.")";
+	function insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$compania,$cedula,$token) {
+		$sql = "insert into dbpostulantes(idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,refestadocivil,nacionalidad,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa,ultimoestado,refesquemareclutamiento,afore,compania,cedula,token)
+		values ('',".$refusuarios.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$email."','".$curp."','".$rfc."','".$ine."','".$fechanacimiento."','".$sexo."','".$codigopostal."',".$refescolaridades.",".$refestadocivil.",'".$nacionalidad."','".$telefonomovil."','".$telefonocasa."','".$telefonotrabajo."',".$refestadopostulantes.",'".$urlprueba."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."',".$refasesores.",".$comision.",".$refsucursalesinbursa.",".$ultimoestado.",".$refesquemareclutamiento.",'".$afore."','".$compania."','".$cedula."','".$token."')";
 		$res = $this->query($sql,1);
 		return $res;
 	}
@@ -605,6 +605,53 @@ class ServiciosReferencias {
 
 	function eliminarPostulantes($id) {
 		$sql = "delete from dbpostulantes where idpostulante =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerPostulantePorToken($token) {
+		$sql = "SELECT
+			p.idpostulante,
+			p.refusuarios,
+			p.nombre,
+			p.apellidopaterno,
+			p.apellidomaterno,
+			p.email,
+			p.curp,
+			p.rfc,
+			p.ine,
+			p.fechanacimiento,
+			p.sexo,
+			p.codigopostal,
+			p.refescolaridades,
+			p.telefonomovil,
+			p.telefonocasa,
+			p.telefonotrabajo,
+			p.refestadopostulantes,
+			p.urlprueba,
+			p.fechacrea,
+			p.fechamodi,
+			p.usuariocrea,
+			p.usuariomodi,
+			p.refasesores,
+			p.comision,
+			p.refsucursalesinbursa,
+			p.refestadocivil,
+			p.refesquemareclutamiento,
+			p.afore,
+			p.cedula,
+			p.compania,
+			est.estadopostulante
+		FROM
+			dbpostulantes p
+			INNER JOIN
+	   postal cp ON cp.id = p.codigopostal
+			INNER JOIN
+		tbestadopostulantes est ON est.idestadopostulante = p.refestadopostulantes
+		WHERE
+			token = '".$token."'
+		";
+
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -2295,6 +2342,12 @@ class ServiciosReferencias {
    return $res;
    }
 
+	function eliminarUsuariosDefinitivamente($id) {
+   $sql = "delete from dbusuarios where idusuario =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
 
    function traerUsuarios() {
    $sql = "select
@@ -2322,7 +2375,57 @@ class ServiciosReferencias {
    /* Fin */
    /* /* Fin de la Tabla: dbusuarios*/
 
+	/* PARA Correoselectronicos */
 
+	function insertarCorreoselectronicos($refusuarios,$refpostulantes,$email,$cuerpo,$asunto) {
+	$sql = "insert into dbcorreoselectronicos(iddcorreoelectronico,refusuarios,refpostulantes,email,cuerpo,asunto)
+	values ('',".$refusuarios.",".$refpostulantes.",'".$email."',".$cuerpo.",'".$asunto."')";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarCorreoselectronicos($id,$refusuarios,$refpostulantes,$email,$cuerpo,$asunto) {
+	$sql = "update dbcorreoselectronicos
+	set
+	refusuarios = ".$refusuarios.",refpostulantes = ".$refpostulantes.",email = '".$email."',cuerpo = ".$cuerpo.",asunto = '".$asunto."'
+	where iddcorreoelectronico =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarCorreoselectronicos($id) {
+	$sql = "delete from dbcorreoselectronicos where iddcorreoelectronico =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerCorreoselectronicos() {
+	$sql = "select
+	c.iddcorreoelectronico,
+	c.refusuarios,
+	c.refpostulantes,
+	c.email,
+	c.cuerpo,
+	c.asunto
+	from dbcorreoselectronicos c
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerCorreoselectronicosPorId($id) {
+	$sql = "select iddcorreoelectronico,refusuarios,refpostulantes,email,cuerpo,asunto from dbcorreoselectronicos where iddcorreoelectronico =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbcorreoselectronicos*/
 
 
    /* PARA Predio_menu */

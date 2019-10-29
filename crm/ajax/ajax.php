@@ -1591,15 +1591,17 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
    $apellidomaterno = $_POST['apellidomaterno'];
    $email = $_POST['email'];
 
+   $apellido = $apellidopaterno.' '.$apellidomaterno;
+
    // primer creo el usuario
 
-   $resUsuario = $serviciosUsuarios->insertarUsuario($nombre,$apellidopaterno.$apellidomaterno.date('His'),7,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
+   $password = $apellidopaterno.$apellidomaterno.date('His');
+
+   $resUsuario = $serviciosUsuarios->insertarUsuario($nombre,$password,7,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
 
    if ((integer)$resUsuario > 0) {
       $refusuarios = $resUsuario;
 
-      // envio email de confirmacion para validar cuenta de email. Correr a la noche un CRON
-      // para dar de baja
       // fin de crear usuario
       $curp = '';
       $rfc = '';
@@ -1624,13 +1626,40 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
       $refsucursalesinbursa = 0;
       $ultimoestado = 1;
 
-      $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado);
+      if (isset($_SESSION['token'])) {
+         $token = $_SESSION['token'];
+      } else {
+         $token = $serviciosReferencias->GUID();
+      }
+
+      $afore = $_POST['afore'];
+      $compania = $_POST['compania'];
+      $cedula = $_POST['cedula'];
+
+      if ($cedula == '1') {
+         $refesquemareclutamiento = 1;
+      } else {
+         $refesquemareclutamiento = 2;
+      }
+
+      if ($afore == '1') {
+         $refestadopostulantes = 99;
+         // rechazo la solicitud
+      } else {
+         // envio email de confirmacion para validar cuenta de email. Correr a la noche un CRON
+         // para dar de baja los usuarios basura
+         $resActivacion = $serviciosUsuarios->confirmarEmail($email, $password,$apellido, $nombre, $refusuarios);
+      }
+
+      $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$compania,$cedula,$token);
 
       if ((integer)$res > 0) {
          echo '';
       } else {
          echo 'Hubo un error al insertar datos ';
       }
+
+
    } else {
       echo 'Hubo un error al crear usuario, verificar que no existe ya ese email en la base de datos';
    }

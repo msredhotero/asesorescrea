@@ -522,6 +522,36 @@ function registrarSocio($email, $password,$apellido, $nombre,$refcliente) {
 }
 
 
+function confirmarEmail($email, $password,$apellido, $nombre, $idusuario) {
+
+	$token = $this->GUID();
+	$cuerpo = '';
+
+	$fecha = date_create(date('Y').'-'.date('m').'-'.date('d'));
+	date_add($fecha, date_interval_create_from_date_string('30 days'));
+	$fechaprogramada =  date_format($fecha, 'Y-m-d');
+
+   $cuerpo .= '<img src="http://asesorescrea.com/img/logo.png" alt="RIDERZ" width="190">';
+
+   $cuerpo .= '<h2>¡Bienvenido a Asesores CREA!</h2>';
+
+
+   $cuerpo .= '<p>Usa el siguente <a href="http://asesorescrea.com/crm/activacion.php?token='.$token.'" target="_blank">enlace</a> para confirmar tu cuenta.</p>';
+
+
+
+	$res = $this->insertarActivacionusuarios($idusuario,$token,'','');
+
+
+   $resGuardarMensaje = $this->insertarCorreoselectronicos($idusuario,0,$email,$cuerpo,'Alta de Usuario');
+
+   $retorno = $this->enviarEmail($email,'Alta de Usuario',utf8_decode($cuerpo));
+   return '';
+
+
+}
+
+
 /* PARA Activacionusuarios */
 
 function insertarActivacionusuarios($refusuarios,$token,$vigenciadesde,$vigenciahasta) {
@@ -632,6 +662,57 @@ function activarUsuario($refusuario, $password) {
 /* Fin */
 /* /* Fin de la Tabla: dbactivacionusuarios*/
 
+/* PARA Correoselectronicos */
+
+function insertarCorreoselectronicos($refusuarios,$refpostulantes,$email,$cuerpo,$asunto) {
+$sql = "insert into dbcorreoselectronicos(iddcorreoelectronico,refusuarios,refpostulantes,email,cuerpo,asunto)
+values ('',".$refusuarios.",".$refpostulantes.",'".$email."',".$cuerpo.",'".$asunto."')";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarCorreoselectronicos($id,$refusuarios,$refpostulantes,$email,$cuerpo,$asunto) {
+$sql = "update dbcorreoselectronicos
+set
+refusuarios = ".$refusuarios.",refpostulantes = ".$refpostulantes.",email = '".$email."',cuerpo = ".$cuerpo.",asunto = '".$asunto."'
+where iddcorreoelectronico =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarCorreoselectronicos($id) {
+$sql = "delete from dbcorreoselectronicos where iddcorreoelectronico =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerCorreoselectronicos() {
+$sql = "select
+c.iddcorreoelectronico,
+c.refusuarios,
+c.refpostulantes,
+c.email,
+c.cuerpo,
+c.asunto
+from dbcorreoselectronicos c
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerCorreoselectronicosPorId($id) {
+$sql = "select iddcorreoelectronico,refusuarios,refpostulantes,email,cuerpo,asunto from dbcorreoselectronicos where iddcorreoelectronico =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+/* Fin */
+/* /* Fin de la Tabla: dbcorreoselectronicos*/
 
 
 function query($sql,$accion) {
