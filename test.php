@@ -658,24 +658,14 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
    					success: function(data){
 
    						if (data == '') {
-   							swal({
-   									title: "Respuesta",
-   									text: "Registro Enviado con exito!!, por favor revise su correo postal para confirmar su correo.",
-   									type: "success",
-   									timer: 1500,
-   									showConfirmButton: false
-   							});
 
-   							$('#lgmNuevo').modal('hide');
+   							$('#frmNuevo').hide();
+                        $('.respuesta').html('Sus datos fueron ingresados correctamente, por favor revise su correo electronico, para seguir con el Proceso de Reclutamiento. Muchas Gracias.');
+                        $('#myModal').modal();
 
    						} else {
-   							swal({
-   									title: "Respuesta",
-   									text: data,
-   									type: "error",
-   									timer: 2500,
-   									showConfirmButton: false
-   							});
+                        $('.respuesta').html(data);
+                        $('#myModal').modal();
 
 
    						}
