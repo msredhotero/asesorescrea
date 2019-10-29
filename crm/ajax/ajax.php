@@ -617,6 +617,8 @@ function insertarIp($serviciosReferencias) {
       }
 
    	if ($secuencia == 7) {
+         $res = $serviciosReferencias->insertarIp($ip,$activo,$secuencia,$verde,$amarillo,$rojo,$lblRespuesta, $pregunta, $token);
+
          $resV['datos'] = $serviciosReferencias->determinaEstadoTest($token);
 
          $activo = '0';

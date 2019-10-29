@@ -350,6 +350,11 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 <script>
 	$(document).ready(function(){
 
+		$('#telefonomovil').inputmask('999 9999999', { placeholder: '___ _______' });
+		$('#telefonocasa').inputmask('999 9999999', { placeholder: '___ _______' });
+		$('#telefonotrabajo').inputmask('999 9999999', { placeholder: '___ _______' });
+
+
 		var options = {
 
 			url: "../../json/jsbuscarpostal.php",
@@ -679,13 +684,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		});
 	});
 </script>
-
-
-
-
-
-
-
 
 </body>
 <?php } ?>

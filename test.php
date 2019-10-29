@@ -29,6 +29,7 @@ function getRealIP() {
 $ip = getRealIP();
 
 $_SESSION['iptest'] = $ip;
+$_SESSION['usua_sahilices'] = 'UsuarioWeb';
 
 $intento = 0;
 
@@ -89,7 +90,7 @@ if (mysql_num_rows($existe)>0) {
    <link href="crm/plugins/sweetalert/sweetalert.css" rel="stylesheet" />
 
    <!-- Custom Css -->
-   <link href="crm/css/style.css" rel="stylesheet">
+   <link href="css/style.css" rel="stylesheet">
 
    <script src="js/progressbar.min.js"></script>
 
@@ -275,7 +276,7 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 
 						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
 							<label class="form-label">Nombre</label>
-							<div class="form-group input-group">
+							<div class="form-group">
 								<div class="form-line">
 									<input type="text" class="form-control" id="nombre" name="nombre"  required />
 
@@ -285,17 +286,18 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 
 						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
 							<label class="form-label">Apellido Paterno</label>
-							<div class="form-group input-group">
+							<div class="form-group">
 								<div class="form-line">
 									<input type="text" class="form-control" id="apellidopaterno" name="apellidopaterno"  required />
 
 								</div>
 							</div>
 						</div>
-
+               </div>
+               <div class="row">
 						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
 							<label class="form-label">Apellido Materno</label>
-							<div class="form-group input-group">
+							<div class="form-group">
 								<div class="form-line">
 									<input type="text" class="form-control" id="apellidomaterno" name="apellidomaterno"  required />
 
@@ -305,27 +307,29 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 
 						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
 							<label class="form-label">Email</label>
-							<div class="form-group input-group">
+							<div class="form-group">
 								<div class="form-line">
 									<input type="email" class="form-control" id="email" name="email"  required />
 
 								</div>
 							</div>
 						</div>
-
-						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+               </div>
+               <div class="row">
+						<div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:block">
    						<b>Fecha De Nacimiento</b>
                      <div class="form-group">
-                     <div class='input-group date' id='datetimepicker1'>
-                        <input type='text' class="form-control" id="fechanacimiento" name="fechanacimiento" required />
+                        <div class='input-group date' id='datetimepicker1'>
+                           <input type='text' class="form-control" id="fechanacimiento" name="fechanacimiento" autocomplete="off" required />
                            <span class="input-group-addon">
                               <span class="glyphicon glyphicon-calendar"></span>
                            </span>
                         </div>
+
                      </div>
                   </div>
 
-						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+						<div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:block">
    						<b>Sexo</b>
    						<div class="input-group">
       						<div class="form-line">
@@ -338,23 +342,7 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
    						</div>
 						</div>
 
-
-						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
-							<label class="form-label">Cod. Postal</label>
-							<div class="form-group input-group">
-
-								<div class="form-line">
-                           <div class="col-xs-9" style="display:block">
-   									<input type="text" class="form-control" id="codigopostalbuscar" name="codigopostalbuscar"  required />
-                           </div>
-                           <div class="col-xs-3" style="display:block">
-                              <input type="text" class="form-control" id="codigopostal" name="codigopostal"  required readonly />
-                           </div>
-								</div>
-							</div>
-						</div>
-
-						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+                  <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:block">
    						<b>Escolaridad</b>
    						<div class="input-group">
       						<div class="form-line">
@@ -369,7 +357,7 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
    						</div>
 						</div>
 
-						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+                  <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:block">
    						<b>Estado Civil</b>
    						<div class="input-group">
       						<div class="form-line">
@@ -384,8 +372,11 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
       						</div>
    						</div>
 						</div>
+               </div>
 
-						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+               <div class="row">
+
+						<div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:block">
    						<b>Nacionalidad</b>
    						<div class="input-group">
       						<div class="form-line">
@@ -396,39 +387,57 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
    						</div>
 						</div>
 
-						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+                  <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:block">
 							<label class="form-label">Tel. Movil</label>
-							<div class="form-group input-group">
+							<div class="form-group">
 								<div class="form-line">
-									<input type="text" class="form-control" id="telefonomovil" name="telefonomovil" maxlength="10" />
+									<input type="text" class="form-control" id="telefonomovil" name="telefonomovil" maxlength="11" />
 
 								</div>
 							</div>
 						</div>
 
-						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+						<div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:block">
 							<label class="form-label">Tel. Casa</label>
-							<div class="form-group input-group">
+							<div class="form-group">
 								<div class="form-line">
-									<input type="text" class="form-control" id="telefonocasa" name="telefonocasa" maxlength="10" />
+									<input type="text" class="form-control" id="telefonocasa" name="telefonocasa" maxlength="11" />
 
 								</div>
 							</div>
 						</div>
 
-						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+                  <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:block">
 							<label class="form-label">Tel. Trabajo</label>
-							<div class="form-group input-group">
+							<div class="form-group">
 								<div class="form-line">
-									<input type="text" class="form-control" id="telefonotrabajo" name="telefonotrabajo" maxlength="10" />
+									<input type="text" class="form-control" id="telefonotrabajo" name="telefonotrabajo" maxlength="11" />
 
+								</div>
+							</div>
+						</div>
+               </div>
+
+               <div class="row">
+
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+							<label class="form-label">Cod. Postal</label>
+							<div class="form-group">
+
+								<div class="form-line">
+                           <div class="col-xs-9" style="display:block">
+   									<input type="text" class="form-control" id="codigopostalbuscar" name="codigopostalbuscar"  required />
+                           </div>
+                           <div class="col-xs-3" style="display:block">
+                              <input type="text" class="form-control" id="codigopostal" name="codigopostal"  required readonly />
+                           </div>
 								</div>
 							</div>
 						</div>
 
 						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
 							<label class="form-label">¿Cuenta con cédula definitiva para venta de Afore?</label>
-							<div class="form-group input-group">
+							<div class="form-group">
 								<div class="form-line">
 									<select class="form-control" id="afore" name="afore" />
                               <option value="1">Si</option>
@@ -437,20 +446,20 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 								</div>
 							</div>
 						</div>
-
-                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block;">
+               </div>
+               <div class="row">
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 contCompania" style="display:block;">
 							<label class="form-label">¿Con que compañía vende actualmente?</label>
-							<div class="form-group input-group">
+							<div class="form-group">
 								<div class="form-line">
 									<input type="text" class="form-control" id="compania" name="compania" />
 
 								</div>
 							</div>
 						</div>
-
-						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
 							<label class="form-label">¿Cuenta Con cedula definitiva para venta de Seguros?</label>
-							<div class="form-group input-group">
+							<div class="form-group">
 								<div class="form-line">
                            <select class="form-control" id="cedula" name="cedula" />
                               <option value="1">Si</option>
@@ -460,9 +469,7 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 								</div>
 							</div>
 						</div>
-
-						<input type="hidden" id="accion" name="accion" value="insertarPostulantes"/>
-
+                  <input type="hidden" id="accion" name="accion" value="insertarPostulantes"/>
                </div>
 
                <div class="row" style="margin-bottom:50px;">
@@ -495,6 +502,9 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 			<div id="contenedorTiempoAgotado" style="display: none;">
 				<h3>TIEMPO AGOTADO</h3>
 			</div>
+         <div class="alert infoTest">
+            <p class="lblTest"></p>
+         </div>
 
          <div class="contenedorPreguntas" style="display: none;">
 				<div class="row">
@@ -606,6 +616,21 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 	<script type="text/javascript">
 
 		$(document).ready(function(){
+
+         $('.infoTest').hide();
+
+         $('#afore').change(function() {
+            if ($(this).val() == 1) {
+               $('.contCompania').show();
+            } else {
+               $('.contCompania').hide();
+               $('#compania').val('');
+            }
+         });
+
+         $('#telefonomovil').inputmask('999 9999999', { placeholder: '___ _______' });
+   		$('#telefonocasa').inputmask('999 9999999', { placeholder: '___ _______' });
+   		$('#telefonotrabajo').inputmask('999 9999999', { placeholder: '___ _______' });
 
          $('.frmNuevo').submit(function(e){
 
@@ -828,11 +853,6 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 				});
 			}
 
-			function volver(){
-				$('#contenedorFinalizo').show();
-				$('.contenedorPreguntas').hide();
-			}
-
 			function cargarRespuesta(respuesta, pregunta) {
 				$.ajax({
 						data:  {id: '<?php echo $ip; ?>',
@@ -848,7 +868,11 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 					success:  function (response) {
 
 						if (response.datos.respuesta == 'salir') {
-							volver();
+							$('.contenedorPreguntas').hide();
+                     $('.infoTest').show();
+                     $('.infoTest').addClass('alert-' + response.datos.color);
+                     $('.lblTest').html('<b>RESULTADO DEL TEST DE AFINIDAD: </b>' + response.datos.lbltest + ' haga click <b><a href="test.php">AQUI</a></b> para continuar con la carga de sus datos personales.');
+
 						} else {
                      traerPregunta(response.datos.respuesta);
                   }
