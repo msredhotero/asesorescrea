@@ -925,16 +925,19 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 
          $resEstado = $serviciosReferencias->traerEstadopostulantesEtapas($refestado);
 
-         if (mysql_num_rows($resEstado) > 0) {
-            $idestado = mysql_result($resEstado,0,'orden');
-         } else {
-            $idestado = 99;
-         }
-
-         $url = '';
-
          $ruta = $_POST['ruta'];
 
+         if (mysql_num_rows($resEstado) > 0) {
+            $url = $ruta.mysql_result($resEstado,0,'url').'?id='.$id;
+         } else {
+
+            $url = 'index.php';
+         }
+
+
+
+
+         /*
          switch ($idestado) {
             case 2:
                $url = $ruta.'entrevistaveritas.php?id='.$id;
@@ -965,6 +968,7 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
             break;
 
          }
+         */
 
 
          $modificar = "modificarPostulantes";

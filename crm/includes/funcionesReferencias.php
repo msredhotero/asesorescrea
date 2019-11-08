@@ -532,18 +532,18 @@ class ServiciosReferencias {
 
 	/* PARA Estadopostulantes */
 
-	function insertarEstadopostulantes($estadopostulante,$orden) {
-	$sql = "insert into tbestadopostulantes(idestadopostulante,estadopostulante,orden)
-	values ('','".$estadopostulante."',".$orden.")";
+	function insertarEstadopostulantes($estadopostulante,$orden,$url) {
+	$sql = "insert into tbestadopostulantes(idestadopostulante,estadopostulante,orden,url)
+	values ('','".$estadopostulante."',".$orden.",'".$url."')";
 	$res = $this->query($sql,1);
 	return $res;
 	}
 
 
-	function modificarEstadopostulantes($id,$estadopostulante,$orden) {
+	function modificarEstadopostulantes($id,$estadopostulante,$orden,$url) {
 	$sql = "update tbestadopostulantes
 	set
-	estadopostulante = '".$estadopostulante."',orden = ".$orden."
+	estadopostulante = '".$estadopostulante."',orden = ".$orden.",url = '".$url."'
 	where idestadopostulante =".$id;
 	$res = $this->query($sql,0);
 	return $res;
@@ -562,7 +562,8 @@ class ServiciosReferencias {
 		$sql = "select
 		e.idestadopostulante,
 		e.estadopostulante,
-		e.orden
+		e.orden,
+		e.url
 		from tbestadopostulantes e
 		order by 1";
 		$res = $this->query($sql,0);
@@ -571,7 +572,7 @@ class ServiciosReferencias {
 
 	function traerEstadopostulantesEtapas($id) {
 		$sql = "SELECT
-			    e.idestadopostulante, e.estadopostulante, e.orden
+			    e.idestadopostulante, e.estadopostulante, e.orden, e.url
 			FROM
 			    tbestadopostulantes e
 			    where e.orden = (SELECT
@@ -584,7 +585,7 @@ class ServiciosReferencias {
 
 
 	function traerEstadopostulantesPorId($id) {
-		$sql = "select idestadopostulante,estadopostulante,orden from tbestadopostulantes where idestadopostulante =".$id;
+		$sql = "select idestadopostulante,estadopostulante,orden,url from tbestadopostulantes where idestadopostulante =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}

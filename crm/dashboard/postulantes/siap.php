@@ -138,6 +138,9 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 		    transition: border .2s ease-in-out;
 			 text-align: center;
 		}
+		.progress {
+			background-color: #1b2646;
+		}
 	</style>
 
 
@@ -187,6 +190,46 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 
 	<div class="container-fluid">
 		<div class="row clearfix subirImagen">
+			<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
+
+				<div class="col-xs-3 bs-wizard-step active">
+					<div class="text-center bs-wizard-stepnum">Paso 1</div>
+					<div class="progress">
+						<div class="progress-bar"></div>
+					</div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center">Validación SIAP</div>
+				</div>
+
+				<div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+					<div class="text-center bs-wizard-stepnum">Paso 2</div>
+					<div class="progress">
+						<div class="progress-bar"></div>
+					</div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center">Agendar Entrevista</div>
+				</div>
+
+				<div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+					<div class="text-center bs-wizard-stepnum">Paso 3</div>
+					<div class="progress">
+						<div class="progress-bar"></div>
+					</div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center">Entrevista, Pruebas Psicometricas y VERITAS</div>
+				</div>
+
+				<div class="col-xs-3 bs-wizard-step disabled"><!-- active -->
+					<div class="text-center bs-wizard-stepnum">Paso 4</div>
+					<div class="progress">
+						<div class="progress-bar"></div>
+					</div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center">Resultado Veritas</div>
+				</div>
+
+			</div>
+
 			<div class="row">
 				<div class="col-xs-12 col-md-12 col-lg-12">
 					<h4>Validar registros previos en SIAP, obtener pantallazo y guardar.</h4>
@@ -238,6 +281,8 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 
 								</div>
 							</form>
+
+
 						</div>
 					</div>
 				</div>
@@ -344,6 +389,9 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 
 <script src="../../plugins/dropzone/dropzone.js"></script>
 
+<!-- JQuery Steps Plugin Js -->
+<script src="../../plugins/jquery-steps/jquery.steps.js"></script>
+
 <script>
 
 	function traerImagen(contenedorpdf, contenedor) {
@@ -425,6 +473,20 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 
 
 	$(document).ready(function(){
+
+		function setButtonWavesEffect(event) {
+			$(event.currentTarget).find('[role="menu"] li a').removeClass('waves-effect');
+			$(event.currentTarget).find('[role="menu"] li:not(.disabled) a').addClass('waves-effect');
+		}
+
+		$('#wizard_horizontal').steps({
+			headerTag: 'h2',
+			bodyTag: 'section',
+			transitionEffect: 'slideLeft',
+			onInit: function (event, currentIndex) {
+				setButtonWavesEffect(event);
+			}
+		});
 
 		var options = {
 
