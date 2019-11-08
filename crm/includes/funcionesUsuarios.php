@@ -536,12 +536,12 @@ function confirmarEmail($email, $password,$apellido, $nombre, $idusuario) {
    $cuerpo .= '<h2>¡Bienvenido a Asesores CREA!</h2>';
 
 
-   $cuerpo .= '<p>Usa el siguente <a href="http://asesorescrea.com/crm/activacion.php?token='.$token.'" target="_blank">enlace</a> para confirmar tu cuenta.</p>';
+   $cuerpo .= '<p>Usa el siguente <a href="http://asesorescrea.com/crm/activacionpostulantes.php?token='.$token.'" target="_blank">enlace</a> para confirmar tu cuenta.</p>';
 
 
 
 	$res = $this->insertarActivacionusuarios($idusuario,$token,'','');
-
+   //return $res;
 
    $resGuardarMensaje = $this->insertarCorreoselectronicos($idusuario,0,$email,$cuerpo,'Alta de Usuario');
 
@@ -556,7 +556,7 @@ function confirmarEmail($email, $password,$apellido, $nombre, $idusuario) {
 
 function insertarActivacionusuarios($refusuarios,$token,$vigenciadesde,$vigenciahasta) {
 $sql = "insert into dbactivacionusuarios(idactivacionusuario,refusuarios,token,vigenciadesde,vigenciahasta)
-values (null,".$refusuarios.",'".($token)."',now(),ADDDATE(now(), INTERVAL 2 DAY))";
+values ('',".$refusuarios.",'".($token)."',now(),ADDDATE(now(), INTERVAL 2 DAY))";
 $res = $this->query($sql,1);
 return $res;
 }

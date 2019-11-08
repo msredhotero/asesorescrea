@@ -5,6 +5,8 @@
   margin-top: 5px;
 }
 
+.easy-autocomplete-container { width: 100%; z-index:999999 !important; margin-top: 35px;}
+
 .navbar {
   font-family: "Roboto", sans-serif;
   -webkit-border-radius: 0;
@@ -7773,7 +7775,7 @@ fieldset[disabled] .form-control {
   -o-background-size: cover;
   background-size: cover;
   padding-left: 0;
-  max-width: 360px;
+  max-width: 460px;
   margin: 5% auto;
   overflow-x: hidden; }
 

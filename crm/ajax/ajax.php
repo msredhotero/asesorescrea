@@ -55,6 +55,9 @@ switch ($accion) {
    case 'activarUsuario':
       activarUsuario($serviciosUsuarios, $serviciosReferencias);
    break;
+   case 'activarUsuarioPostulante':
+      activarUsuarioPostulante($serviciosUsuarios, $serviciosReferencias);
+   break;
 
 
    case 'frmAjaxModificar':
@@ -795,43 +798,61 @@ function traerDocumentacionPorPostulanteDocumentacion($serviciosArbitros) {
       echo json_encode($resV);
    }
 
-function activarUsuario($serviciosUsuarios, $serviciosReferencias) {
-   $idusuario = $_POST['idusuario'];
-   $activacion = $_POST['activacion'];
+   function activarUsuario($serviciosUsuarios, $serviciosReferencias) {
+      $idusuario = $_POST['idusuario'];
+      $activacion = $_POST['activacion'];
 
-   $rfc = $_POST['rfc'];
-   $curp = $_POST['curp'];
-   $nacionalidad = $_POST['nacionalidad'];
-   $refrolhogar = $_POST['refrolhogar'];
-   $refestadocivil = $_POST['refestadocivil'];
-   $refentidadnacimiento = $_POST['refentidadnacimiento'];
-   $idcliente = $_POST['idcliente'];
+      $rfc = $_POST['rfc'];
+      $curp = $_POST['curp'];
+      $nacionalidad = $_POST['nacionalidad'];
+      $refrolhogar = $_POST['refrolhogar'];
+      $refestadocivil = $_POST['refestadocivil'];
+      $refentidadnacimiento = $_POST['refentidadnacimiento'];
+      $idcliente = $_POST['idcliente'];
 
-   $password = $_POST['password'];
+      $password = $_POST['password'];
 
 
-   if ($refentidadnacimiento == 0) {
-      echo 'Debe ingresar una Entidad de Nacimiento!.';
-   } else {
+      if ($refentidadnacimiento == 0) {
+         echo 'Debe ingresar una Entidad de Nacimiento!.';
+      } else {
+         //pongo al usuario $activo
+      	$resUsuario = $serviciosUsuarios->activarUsuario($idusuario,$password);
+
+         // concreto la activacion
+         $resConcretar = $serviciosUsuarios->eliminarActivacionusuarios($activacion);
+
+         $resModUsuario = $serviciosReferencias->modificarClientesCorto($idcliente,$refestadocivil,$rfc,$curp,$nacionalidad,$refrolhogar,$refentidadnacimiento);
+
+         if ($resModUsuario == true) {
+
+            echo '';
+         } else {
+            echo 'Hubo un error al modificar datos';
+         }
+      }
+   }
+
+   function activarUsuarioPostulante($serviciosUsuarios, $serviciosReferencias) {
+      $idusuario = $_POST['idusuario'];
+      $activacion = $_POST['activacion'];
+
+      $idpostulante = $_POST['idpostulante'];
+
+      $password = $_POST['password'];
+
       //pongo al usuario $activo
    	$resUsuario = $serviciosUsuarios->activarUsuario($idusuario,$password);
 
       // concreto la activacion
       $resConcretar = $serviciosUsuarios->eliminarActivacionusuarios($activacion);
 
-      $resModUsuario = $serviciosReferencias->modificarClientesCorto($idcliente,$refestadocivil,$rfc,$curp,$nacionalidad,$refrolhogar,$refentidadnacimiento);
-
-      if ($resModUsuario == true) {
-
+      if ($resUsuario == '') {
          echo '';
       } else {
          echo 'Hubo un error al modificar datos';
       }
    }
-
-
-
-}
 
 function generaCURP($serviciosReferencias, $serviciosUsuarios, $serviciosFunciones) {
    $apellidopaterno = $_POST['apellidopaterno'];
@@ -1619,8 +1640,14 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
       $urlprueba = '';
       $fechacrea = date('Y-m-d H:i:s');
       $fechamodi = date('Y-m-d H:i:s');
-      $usuariocrea = $_SESSION['usua_sahilices'];
-      $usuariomodi = $_SESSION['usua_sahilices'];
+      if (isset($_SESSION['usua_sahilices'])) {
+         $usuariocrea = $_SESSION['usua_sahilices'];
+         $usuariomodi = $_SESSION['usua_sahilices'];
+      } else {
+         $usuariocrea = $_SESSION['usua_sahilices_web'];
+         $usuariomodi = $_SESSION['usua_sahilices_web'];
+      }
+
       $refasesores = 0;
       $comision = 0;
       $refsucursalesinbursa = 0;
@@ -1649,6 +1676,7 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
          // envio email de confirmacion para validar cuenta de email. Correr a la noche un CRON
          // para dar de baja los usuarios basura
          $resActivacion = $serviciosUsuarios->confirmarEmail($email, $password,$apellido, $nombre, $refusuarios);
+         //die(var_dump($resActivacion));
       }
 
       $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$compania,$cedula,$token);

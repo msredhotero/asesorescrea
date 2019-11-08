@@ -29,7 +29,7 @@ function getRealIP() {
 $ip = getRealIP();
 
 $_SESSION['iptest'] = $ip;
-$_SESSION['usua_sahilices'] = 'UsuarioWeb';
+$_SESSION['usua_sahilices_web'] = 'UsuarioWeb';
 
 $intento = 0;
 

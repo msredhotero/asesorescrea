@@ -11,7 +11,7 @@ session_destroy();
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>Acceder | CASA CALIENTE</title>
+    <title>Acceder | ASESORES CREA</title>
     <!-- Favicon-->
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 
@@ -39,9 +39,9 @@ session_destroy();
     <div class="login-box">
         <div class="logo">
            <div class="row">
-              <div class="col-md-12" align="center">
-                 <img src="imagenes/logo_casa_caliente.png" alt="CASA CALIENTE">
-              </div>
+             <div class="col-md-12" align="center">
+                 <img src="imagenes/logo.png" alt="CASA CALIENTE" width="80%">
+             </div>
            </div>
         </div>
         <div class="card">

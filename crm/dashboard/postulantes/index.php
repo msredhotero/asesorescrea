@@ -55,8 +55,8 @@ $modificar = "modificarPostulantes";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbpostulantes";
 
-$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad');
-$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad');
+$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento');
+$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento');
 
 
 $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
@@ -70,12 +70,19 @@ $cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
 $resVar4	= $serviciosReferencias->traerEstadopostulantesPorId(1);
 $cadRef4 = $serviciosFunciones->devolverSelectBox($resVar4,array(1),'');
 
+$cadOpcion = "<option value='0'>No</option><option value='1'>Si</option>";
+
 $cadRef5 = "<option value=''>-- Seleccionar --</option><option value='1'>Femenino</option><option value='2'>Masculino</option>";
 
 $cadRef6 	= "<option value='Mexico'>Mexico</option>";
 
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6);
-$refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','refestadopostulantes','sexo','nacionalidad');
+$resVar7 = $serviciosReferencias->traerEsquemareclutamiento();
+$cadRef7 = $serviciosFunciones->devolverSelectBox($resVar7,array(1),'');
+
+$_SESSION['token'] = $serviciosReferencias->GUID();
+
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadOpcion,7=>$cadOpcion,8=>$cadRef7);
+$refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','refestadopostulantes','sexo','nacionalidad','afore','cedula','refesquemareclutamiento');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -265,6 +272,10 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	               <div class="modal-body">
 							<div class="row">
 								<?php echo $frmUnidadNegocios; ?>
+								<div class="col-xs-3" style="display:none">
+									<select class="form-control" id="codigopostalaux" name="codigopostalaux"  required readonly />
+									</select>
+								</div>
 							</div>
 
 	               </div>
@@ -349,6 +360,20 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 <script>
 	$(document).ready(function(){
+
+		$('#compania').prop('readOnly',true);
+
+		$('#token').val('se genera automaticamente');
+		$('#token').prop('readOnly',true);
+
+		$('#afore').change(function() {
+			if ($(this).val() == 1) {
+				$('#compania').prop('readOnly',false);
+			} else {
+				$('#compania').prop('readOnly',true);
+				$('#compania').val('');
+			}
+		});
 
 		$('#telefonomovil').inputmask('999 9999999', { placeholder: '___ _______' });
 		$('#telefonocasa').inputmask('999 9999999', { placeholder: '___ _______' });

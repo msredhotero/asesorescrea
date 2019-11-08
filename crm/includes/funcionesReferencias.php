@@ -9,6 +9,24 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+	function traerEsquemareclutamiento() {
+		$sql = "select idesquemareclutamiento, esquema from tbesquemareclutamiento";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerEsquemareclutamientoPorId($id) {
+		$sql = "select idesquemareclutamiento, esquema from tbesquemareclutamiento where idesquemareclutamiento = ".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerEsquemareclutamientoPorIn($in) {
+		$sql = "select idesquemareclutamiento, esquema from tbesquemareclutamiento where idesquemareclutamiento in (".$id.")";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 	/* PARA Ip */
 
 	function insertarIp($ip,$activo,$secuencia,$verde,$amarillo,$rojo,$respuesta,$idpregunta,$token) {
@@ -751,6 +769,13 @@ class ServiciosReferencias {
 
 	function traerPostulantesPorId($id) {
 		$sql = "select idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa, refestadocivil from dbpostulantes where idpostulante =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerPostulantesPorIdUsuario($idusuario) {
+		$sql = "select idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa, refestadocivil from dbpostulantes where refusuarios =".$idusuario;
 		$res = $this->query($sql,0);
 		return $res;
 	}
