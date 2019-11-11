@@ -192,7 +192,7 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 		<div class="row clearfix subirImagen">
 			<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
 
-				<div class="col-xs-3 bs-wizard-step active">
+				<div class="col-xs-2 bs-wizard-step active">
 					<div class="text-center bs-wizard-stepnum">Paso 1</div>
 					<div class="progress">
 						<div class="progress-bar"></div>
@@ -201,7 +201,7 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 					<div class="bs-wizard-info text-center">Validación SIAP</div>
 				</div>
 
-				<div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+				<div class="col-xs-2 bs-wizard-step disabled"><!-- complete -->
 					<div class="text-center bs-wizard-stepnum">Paso 2</div>
 					<div class="progress">
 						<div class="progress-bar"></div>
@@ -210,7 +210,7 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 					<div class="bs-wizard-info text-center">Agendar Entrevista</div>
 				</div>
 
-				<div class="col-xs-3 bs-wizard-step disabled"><!-- complete -->
+				<div class="col-xs-2 bs-wizard-step disabled"><!-- complete -->
 					<div class="text-center bs-wizard-stepnum">Paso 3</div>
 					<div class="progress">
 						<div class="progress-bar"></div>
@@ -219,13 +219,31 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 					<div class="bs-wizard-info text-center">Entrevista, Pruebas Psicometricas y VERITAS</div>
 				</div>
 
-				<div class="col-xs-3 bs-wizard-step disabled"><!-- active -->
+				<div class="col-xs-2 bs-wizard-step disabled"><!-- active -->
 					<div class="text-center bs-wizard-stepnum">Paso 4</div>
 					<div class="progress">
 						<div class="progress-bar"></div>
 					</div>
 					<a href="#" class="bs-wizard-dot"></a>
 					<div class="bs-wizard-info text-center">Resultado Veritas</div>
+				</div>
+
+				<div class="col-xs-2 bs-wizard-step disabled"><!-- active -->
+					<div class="text-center bs-wizard-stepnum">Paso 5</div>
+					<div class="progress">
+						<div class="progress-bar"></div>
+					</div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center">Documentación I</div>
+				</div>
+
+				<div class="col-xs-2 bs-wizard-step disabled"><!-- active -->
+					<div class="text-center bs-wizard-stepnum">Paso 6</div>
+					<div class="progress">
+						<div class="progress-bar"></div>
+					</div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center">Documentación II</div>
 				</div>
 
 			</div>
