@@ -94,20 +94,6 @@ if (mysql_num_rows($resEntrevista) > 0) {
 }
 
 
-$path  = '../../archivos/postulantes/'.$id;
-
-if (!file_exists($path)) {
-	mkdir($path, 0777);
-}
-
-$pathVeritas  = '../../archivos/postulantes/'.$id.'/veritas';
-
-if (!file_exists($pathVeritas)) {
-	mkdir($pathVeritas, 0777);
-}
-
-$filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
-
 ?>
 
 <!DOCTYPE html>
@@ -131,17 +117,10 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 
 	<!-- Bootstrap Material Datetime Picker Css -->
 	<link href="../../plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet" />
-
-	<!-- Dropzone Css -->
-	<link href="../../plugins/dropzone/dropzone.css" rel="stylesheet">
-
-
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.bootstrap.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.jqueryui.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.css">
-
-
 	<!-- CSS file -->
 	<link rel="stylesheet" href="../../css/easy-autocomplete.min.css">
 	<!-- Additional CSS Themes file - not required-->
@@ -337,81 +316,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 		</div>
 	</div>
 
-	<div class="container-fluid">
-		<div class="row clearfix subirImagen">
-			<div class="row">
-				<div class="col-xs-12 col-md-12 col-lg-12">
-					<div class="card ">
-						<div class="header bg-blue">
-							<h2>
-								Descargar pantallazo con aprobación o no acreditamiento de la prueba VERITAS INBURSA.
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-									<ul class="dropdown-menu pull-right">
 
-									</ul>
-								</li>
-							</ul>
-						</div>
-						<div class="body table-responsive">
-
-							<a href="javascript:void(0);" class="thumbnail timagen1">
-								<img class="img-responsive">
-							</a>
-							<div id="example1"></div>
-						</div>
-				</div>
-				</div>
-
-			</div>
-			<div class="row">
-
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="card">
-						<div class="header">
-							<h2>
-								CARGA/MODIFIQUE PRUEBA VERITA INBURSA AQUI
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-
-								</li>
-							</ul>
-						</div>
-						<div class="body">
-
-							<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
-								<div class="dz-message">
-									<div class="drag-icon-cph">
-										<i class="material-icons">touch_app</i>
-									</div>
-									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
-
-								</div>
-								<div class="fallback">
-
-									<input name="file" type="file" id="archivos" />
-									<input type="hidden" id="idpostulante" name="idpostulante" value="<?php echo $id; ?>" />
-
-
-
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-
-			</div>
-
-		</div>
-	</div>
 </section>
 
 
@@ -517,87 +422,8 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 
 <script src="../../js/jquery.easy-autocomplete.min.js"></script>
 
-<script src="../../plugins/dropzone/dropzone.js"></script>
-
 <script>
 	$(document).ready(function(){
-
-		function traerImagen(contenedorpdf, contenedor) {
-			$.ajax({
-				data:  {idpostulante: <?php echo $id; ?>,
-						iddocumentacion: 1,
-						accion: 'traerDocumentacionPorPostulanteDocumentacion'},
-				url:   '../../ajax/ajax.php',
-				type:  'post',
-				beforeSend: function () {
-
-				},
-				success:  function (response) {
-					var cadena = response.datos.type.toLowerCase();
-
-					if (response.datos.type != '') {
-						if (cadena.indexOf("pdf") > -1) {
-							PDFObject.embed(response.datos.imagen, "#"+contenedorpdf);
-							$('#'+contenedorpdf).show();
-							$("."+contenedor).hide();
-
-						} else {
-							$("." + contenedor + " img").attr("src",response.datos.imagen);
-							$("."+contenedor).show();
-							$('#'+contenedorpdf).hide();
-						}
-					}
-
-					if (response.error) {
-						$('.btnContinuar').hide();
-					} else {
-						$('.btnContinuar').show();
-					}
-
-
-
-				}
-			});
-		}
-
-		traerImagen('example1','timagen1');
-
-		Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
-
-		Dropzone.options.frmFileUpload = {
-			maxFilesize: 30,
-			acceptedFiles: ".png,.jpg,.gif,.bmp,.jpeg,.pdf",
-			accept: function(file, done) {
-				done();
-			},
-			init: function() {
-				this.on("sending", function(file, xhr, formData){
-						formData.append("idpostulante", '<?php echo $id; ?>');
-						formData.append("iddocumentacion", '1');
-				});
-				this.on('success', function( file, resp ){
-					traerImagen('example1','timagen1');
-					$('.lblPlanilla').hide();
-					swal("Correcto!", resp.replace("1", ""), "success");
-					$('.btnGuardar').show();
-					$('.infoPlanilla').hide();
-				});
-
-				this.on('error', function( file, resp ){
-					swal("Error!", resp.replace("1", ""), "warning");
-				});
-			}
-		};
-
-
-
-		var myDropzone = new Dropzone("#archivos", {
-			params: {
-				 idpostulante: <?php echo $id; ?>,
-				 iddocumentacion: 1
-			},
-			url: 'subir.php'
-		});
 
 		$('#fecha').bootstrapMaterialDatePicker({
 			format: 'YYYY/MM/DD HH:mm',

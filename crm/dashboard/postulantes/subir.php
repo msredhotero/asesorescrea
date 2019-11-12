@@ -65,8 +65,11 @@
 
 		// produccion
 		//$dir_destino = 'https://www.saupureinconsulting.com.ar/aifzn/data/'.mysql_result($resFoto,0,'iddocumentacionjugadorimagen').'/';
+		list($base,$extension) = explode('.',$name);
+		$newname = implode('.', ['siap', time(), $extension]);
 
-		$imagen_subida = $dir_destino.'/'.$name;
+
+		$imagen_subida = $dir_destino.'/'.$newname;
 
 		// desarrollo
 		$nuevo_noentrar = '../../archivos/index.php';
@@ -92,7 +95,7 @@
 
 			$resEliminar = $serviciosReferencias->eliminarDocumentacionasesoresPorPostulanteDocumentacion($idpostulante,$iddocumentacion);
 
-			$resInsertar = $serviciosReferencias->insertarDocumentacionasesores($idpostulante,$iddocumentacion,$name,$type,1,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices']);
+			$resInsertar = $serviciosReferencias->insertarDocumentacionasesores($idpostulante,$iddocumentacion,$newname,$type,1,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices']);
 
 			if ($pos === false) {
 				$image = new \Gumlet\ImageResize($imagen_subida);

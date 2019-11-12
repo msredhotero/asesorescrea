@@ -1121,12 +1121,15 @@ class Servicios {
 				$resMod = $this->query($sqlMod,0);
 				break;
 
-			case 'dblloguers':
-				$sqlMod = "select idlloguer,refclientes,refubicaciones,datalloguer,
-				DATE_FORMAT(entrada, '%d/%m/%Y') as entrada,
-				DATE_FORMAT(sortida, '%d/%m/%Y') as sortida,
-				total,numpertax,persset,taxa,maxtaxa,refestados, nrolloguer
-									from ".$tabla." where ".$lblid." = ".$id;
+			case 'tbentrevistasucursales':
+				$sqlMod = "select e.identrevistasucursal,
+				concat(p.estado,' ',p.municipio,' ',p.colonia,' ',p.codigo) as refpostal,
+				e.telefono,
+				e.interno,
+				e.domicilio
+				from tbentrevistasucursales e
+				inner join postal p on p.id = e.refpostal
+				where e.identrevistasucursal = ".$id;
 				$resMod = $this->query($sqlMod,0);
 				break;
 			case 'dbempleados':

@@ -46,9 +46,9 @@ $id = $_GET['id'];
 //////////////       FIN                  /////////////////////////////////////////////////
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Entrevista REGIONAL";
+$singular = "Resultado VERITAS";
 
-$plural = "Entrevista REGIONAL";
+$plural = "Resultado VERITAS";
 
 $eliminar = "eliminarEntrevistas";
 
@@ -64,34 +64,8 @@ $resultado 		= 	$serviciosReferencias->traerPostulantesPorId($id);
 
 $postulante = mysql_result($resultado,0,'nombre').' '.mysql_result($resultado,0,'apellidopaterno').' '.mysql_result($resultado,0,'apellidomaterno');
 
-$tabla 			= "dbentrevistas";
 
-$lblCambio	 	= array('refpostulantes','codigopostal','refestadopostulantes','refestadoentrevistas');
-$lblreemplazo	= array('Postulante','Cod. Postal','Estado Postulante','Estado Entrevista');
-
-$resVar2	= $serviciosReferencias->traerPostulantesPorId($id);
-$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(2,3,4),' ');
-
-$resVar3	= $serviciosReferencias->traerEstadopostulantesPorId(4);
-$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
-
-$resVar4	= $serviciosReferencias->traerEstadoentrevistasPorId(1);
-$cadRef4 = $serviciosFunciones->devolverSelectBox($resVar4,array(1),'');
-
-
-$refdescripcion = array(0=> $cadRef2,1=> $cadRef3,2=> $cadRef4);
-$refCampo 	=  array('refpostulantes','refestadopostulantes','refestadoentrevistas');
-
-$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
-
-$resEntrevista = $serviciosReferencias->traerEntrevistasActivasPorPostulanteEstadoPostulante($id,4);
-
-if (mysql_num_rows($resEntrevista) > 0) {
-	$existe = 1;
-} else {
-	$existe = 0;
-}
 
 
 $path  = '../../archivos/postulantes/'.$id;
@@ -141,16 +115,11 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.jqueryui.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.css">
 
-
-	<!-- CSS file -->
-	<link rel="stylesheet" href="../../css/easy-autocomplete.min.css">
-	<!-- Additional CSS Themes file - not required-->
-	<link rel="stylesheet" href="../../css/easy-autocomplete.themes.min.css">
-
 	<style>
 		.alert > i{ vertical-align: middle !important; }
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		#codigopostal { width: 400px; }
+		.pdfobject-container { height: 30rem; border: 1rem solid rgba(0,0,0,.1); }
 
 		.progress {
 			background-color: #1b2646;
@@ -216,7 +185,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 					<div class="bs-wizard-info text-center">Validación SIAP</div>
 				</div>
 
-				<div class="col-xs-2 bs-wizard-step active"><!-- complete -->
+				<div class="col-xs-2 bs-wizard-step complete"><!-- complete -->
 					<div class="text-center bs-wizard-stepnum">Paso 2</div>
 					<div class="progress">
 						<div class="progress-bar"></div>
@@ -225,7 +194,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 					<div class="bs-wizard-info text-center">Agendar Entrevista</div>
 				</div>
 
-				<div class="col-xs-2 bs-wizard-step disabled"><!-- complete -->
+				<div class="col-xs-2 bs-wizard-step complete"><!-- complete -->
 					<div class="text-center bs-wizard-stepnum">Paso 3</div>
 					<div class="progress">
 						<div class="progress-bar"></div>
@@ -234,7 +203,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 					<div class="bs-wizard-info text-center">Entrevista, Pruebas Psicometricas y VERITAS</div>
 				</div>
 
-				<div class="col-xs-2 bs-wizard-step disabled"><!-- active -->
+				<div class="col-xs-2 bs-wizard-step active"><!-- active -->
 					<div class="text-center bs-wizard-stepnum">Paso 4</div>
 					<div class="progress">
 						<div class="progress-bar"></div>
@@ -263,76 +232,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 
 			</div>
 
-			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="card ">
-						<div class="header bg-blue">
-							<h2>
-								<?php echo strtoupper($plural); ?> - POSTULANTE: <?php echo $postulante; ?>
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-									<ul class="dropdown-menu pull-right">
 
-									</ul>
-								</li>
-							</ul>
-						</div>
-						<div class="body table-responsive">
-							<form class="form" id="formCountry">
-
-								<div class="row">
-									<div class="col-lg-12 col-md-12">
-										<div class="button-demo">
-											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
-												<i class="material-icons">add</i>
-												<span>NUEVO</span>
-											</button>
-											<?php if ($existe == 1) { ?>
-											<button type="button" class="btn bg-green waves-effect btnContinuar">
-												<i class="material-icons">add</i>
-												<span>CONTINUAR</span>
-											</button>
-											<?php } ?>
-										</div>
-									</div>
-								</div>
-
-								<div class="row" style="padding: 5px 20px;">
-
-									<table id="example" class="display table " style="width:100%">
-										<thead>
-											<tr>
-												<th>Entrevistador</th>
-												<th>Fecha</th>
-												<th>Domicilio</th>
-												<th>Codigo Postal</th>
-												<th>Estado</th>
-												<th>Fecha Crea</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tfoot>
-											<tr>
-												<th>Entrevistador</th>
-												<th>Fecha</th>
-												<th>Domicilio</th>
-												<th>Codigo Postal</th>
-												<th>Estado</th>
-												<th>Fecha Crea</th>
-												<th>Acciones</th>
-											</tr>
-										</tfoot>
-									</table>
-								</div>
-							</form>
-							</div>
-						</div>
-					</div>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -344,8 +244,9 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								Descargar pantallazo con aprobación o no acreditamiento de la prueba VERITAS INBURSA.
+								<?php echo strtoupper($plural); ?> - POSTULANTE: <?php echo $postulante; ?>
 							</h2>
+
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
 									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -358,6 +259,15 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 							</ul>
 						</div>
 						<div class="body table-responsive">
+							<h4>Descargar pantallazo con aprobación o no acreditamiento de la prueba VERITAS INBURSA.</h4>
+							<button type="button" class="btn bg-green waves-effect btnContinuar">
+								<i class="material-icons">add</i>
+								<span>CONTINUAR</span>
+							</button>
+							<button type="button" class="btn bg-red waves-effect btnEliminar">
+								<i class="material-icons">remove</i>
+								<span>ELIMINAR</span>
+							</button>
 
 							<a href="javascript:void(0);" class="thumbnail timagen1">
 								<img class="img-responsive">
@@ -415,76 +325,26 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 </section>
 
 
-<!-- NUEVO -->
-	<form class="formulario frmNuevo" role="form" id="sign_in">
-	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
-	       <div class="modal-dialog modal-lg" role="document">
-	           <div class="modal-content">
-	               <div class="modal-header">
-	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular); ?></h4>
-	               </div>
-	               <div class="modal-body">
-							<div class="row">
-								<?php echo $frmUnidadNegocios; ?>
-							</div>
-
-	               </div>
-	               <div class="modal-footer">
-	                   <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
-	                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-	               </div>
-	           </div>
-	       </div>
-	   </div>
-		<input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
-	</form>
-
-	<!-- MODIFICAR -->
-		<form class="formulario frmModificar" role="form" id="sign_in">
-		   <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
-		       <div class="modal-dialog modal-lg" role="document">
-		           <div class="modal-content">
-		               <div class="modal-header">
-		                   <h4 class="modal-title" id="largeModalLabel">MODIFICAR <?php echo strtoupper($singular); ?></h4>
-		               </div>
-		               <div class="modal-body">
-								<div class="row frmAjaxModificar">
-
-								</div>
-		               </div>
-		               <div class="modal-footer">
-		                   <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
-		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-		               </div>
-		           </div>
-		       </div>
-		   </div>
-			<input type="hidden" id="accion" name="accion" value="<?php echo $modificar; ?>"/>
-		</form>
-
-
 	<!-- ELIMINAR -->
-		<form class="formulario" role="form" id="sign_in">
-		   <div class="modal fade" id="lgmEliminar" tabindex="-1" role="dialog">
-		       <div class="modal-dialog modal-lg" role="document">
-		           <div class="modal-content">
-		               <div class="modal-header">
-		                   <h4 class="modal-title" id="largeModalLabel">ELIMINAR <?php echo strtoupper($singular); ?></h4>
-		               </div>
-		               <div class="modal-body">
-										 <p>¿Esta seguro que desea eliminar el registro?</p>
-										 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
-		               </div>
-		               <div class="modal-footer">
-		                   <button type="button" class="btn btn-danger waves-effect eliminar">ELIMINAR</button>
-		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-		               </div>
-		           </div>
-		       </div>
-		   </div>
-			<input type="hidden" id="accion" name="accion" value="<?php echo $eliminar; ?>"/>
-			<input type="hidden" name="ideliminar" id="ideliminar" value="0">
-		</form>
+	<form class="formulario" role="form" id="sign_in">
+		<div class="modal fade" id="lgmEliminar" tabindex="-1" role="dialog">
+			 <div class="modal-dialog modal-lg" role="document">
+				  <div class="modal-content">
+						<div class="modal-header">
+							 <h4 class="modal-title" id="largeModalLabel">ELIMINAR <?php echo strtoupper($singular); ?></h4>
+						</div>
+						<div class="modal-body">
+									 <p>¿Esta seguro que desea eliminar el registro?</p>
+									 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
+						</div>
+						<div class="modal-footer">
+							 <button type="button" class="btn btn-danger waves-effect eliminar" data-dismiss="modal">ELIMINAR</button>
+							 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+						</div>
+				  </div>
+			 </div>
+		</div>
+	</form>
 
 
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
@@ -501,21 +361,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 <!-- Bootstrap Material Datetime Picker Plugin Js -->
 <script src="../../plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
 
-<!-- Moment Plugin Js -->
-    <script src="../../plugins/momentjs/moment.js"></script>
-	 <script src="../../js/moment-with-locales.js"></script>
-
-<script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
-
-
-<script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script src="../../js/datepicker-es.js"></script>
-
-<script src="../../js/dateFormat.js"></script>
-<script src="../../js/jquery.dateFormat.js"></script>
-
-<script src="../../js/jquery.easy-autocomplete.min.js"></script>
+<script src="../../js/pdfobject.min.js"></script>
 
 <script src="../../plugins/dropzone/dropzone.js"></script>
 
@@ -530,7 +376,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 				url:   '../../ajax/ajax.php',
 				type:  'post',
 				beforeSend: function () {
-
+					$("." + contenedor + " img").attr("src",'');
 				},
 				success:  function (response) {
 					var cadena = response.datos.type.toLowerCase();
@@ -676,14 +522,6 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 			}
 		};
 
-
-		$("#codigopostal").easyAutocomplete(options);
-
-		$('#usuariocrea').val('marcos');
-		$('#usuariomodi').val('marcos');
-		$('#ultimoestado').val(0);
-
-
 		$('.maximizar').click(function() {
 			if ($('.icomarcos').text() == 'web') {
 				$('#marcos').show();
@@ -697,40 +535,10 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 
 		});
 
-		var table = $('#example').DataTable({
-			"bProcessing": true,
-			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=entrevistas&id=<?php echo $id; ?>&idestado=4",
-			"language": {
-				"emptyTable":     "No hay datos cargados",
-				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
-				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
-				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
-				"infoPostFix":    "",
-				"thousands":      ",",
-				"lengthMenu":     "Mostrar _MENU_ filas",
-				"loadingRecords": "Cargando...",
-				"processing":     "Procesando...",
-				"search":         "Buscar:",
-				"zeroRecords":    "No se encontraron resultados",
-				"paginate": {
-					"first":      "Primero",
-					"last":       "Ultimo",
-					"next":       "Siguiente",
-					"previous":   "Anterior"
-				},
-				"aria": {
-					"sortAscending":  ": activate to sort column ascending",
-					"sortDescending": ": activate to sort column descending"
-				}
-			}
-		});
 
 		$("#sign_in").submit(function(e){
 			e.preventDefault();
 		});
-
-		$('#activo').prop('checked',true);
 
 		function modificarEstadoPostulante(id, idestado) {
 			$.ajax({
@@ -767,42 +575,28 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 			modificarEstadoPostulante(<?php echo $id; ?>, 4);
 		});
 
-		function frmAjaxModificar(id, options2) {
+		$('.eliminar').click(function() {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {accion: 'frmAjaxModificar',tabla: '<?php echo $tabla; ?>', id: id},
+				data: {accion: 'eliminarDocumentacionPostulante',idpostulante: <?php echo $id; ?>, iddocumentacion: 1},
 				//mientras enviamos el archivo
 				beforeSend: function(){
-					$('.frmAjaxModificar').html('');
+					$('.btnEliminar').hide();
 				},
 				//una vez finalizado correctamente
 				success: function(data){
 
-					if (data != '') {
-						$('.frmAjaxModificar').html(data);
-						$('.show-tick').selectpicker({
-							liveSearch: true
-						});
-						$('.show-tick').selectpicker('refresh');
-
-						$('#fecha').bootstrapMaterialDatePicker({
-							format: 'YYYY/MM/DD HH:mm',
-							lang : 'mx',
-							clearButton: true,
-							weekStart: 1,
-							time: true
-						});
-
-						$("#codigopostal2").easyAutocomplete(options2);
-
+					if (data.error == false) {
+						swal("Ok!", data.leyenda , "success");
+						traerImagen('example1','timagen1');
 
 					} else {
-						swal("Error!", data, "warning");
+						swal("Error!", data.leyenda, "warning");
 
-						$("#load").html('');
+						$('.btnEliminar').show();
 					}
 				},
 				//si ha ocurrido un error
@@ -811,198 +605,11 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 					$("#load").html('');
 				}
 			});
+		});
 
-		}
-
-
-		function frmAjaxEliminar(id) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {accion: '<?php echo $eliminar; ?>', id: id},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data == '') {
-						swal({
-								title: "Respuesta",
-								text: "Registro Eliminado con exito!!",
-								type: "success",
-								timer: 1500,
-								showConfirmButton: false
-						});
-						$('#lgmEliminar').modal('toggle');
-						location.reload();
-					} else {
-						swal({
-								title: "Respuesta",
-								text: data,
-								type: "error",
-								timer: 2000,
-								showConfirmButton: false
-						});
-
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					swal({
-							title: "Respuesta",
-							text: 'Actualice la pagina',
-							type: "error",
-							timer: 2000,
-							showConfirmButton: false
-					});
-
-				}
-			});
-
-		}
-
-		$("#example").on("click",'.btnEliminar', function(){
-			idTable =  $(this).attr("id");
-			$('#ideliminar').val(idTable);
+		$('.btnEliminar').click(function() {
 			$('#lgmEliminar').modal();
-		});//fin del boton eliminar
 
-		$('.eliminar').click(function() {
-			frmAjaxEliminar($('#ideliminar').val());
-		});
-
-		$("#example").on("click",'.btnModificar', function(){
-			idTable =  $(this).attr("id");
-			frmAjaxModificar(idTable, options2);
-			$('#lgmModificar').modal();
-		});//fin del boton modificar
-
-		$("#example").on("click",'.btnVer', function(){
-			idTable =  $(this).attr("id");
-			$(location).attr('href','ver.php?id=' + idTable);
-
-		});//fin del boton modificar
-
-		$('.frmNuevo').submit(function(e){
-
-			e.preventDefault();
-			if ($('#sign_in')[0].checkValidity()) {
-				//información del formulario
-				var formData = new FormData($(".formulario")[0]);
-				var message = "";
-				//hacemos la petición ajax
-				$.ajax({
-					url: '../../ajax/ajax.php',
-					type: 'POST',
-					// Form data
-					//datos del formulario
-					data: formData,
-					//necesario para subir archivos via ajax
-					cache: false,
-					contentType: false,
-					processData: false,
-					//mientras enviamos el archivo
-					beforeSend: function(){
-
-					},
-					//una vez finalizado correctamente
-					success: function(data){
-
-						if (data == '') {
-							swal({
-									title: "Respuesta",
-									text: "Registro Creado con exito!!",
-									type: "success",
-									timer: 1500,
-									showConfirmButton: false
-							});
-
-							$('#lgmNuevo').modal('hide');
-
-							location.reload();
-						} else {
-							swal({
-									title: "Respuesta",
-									text: data,
-									type: "error",
-									timer: 2500,
-									showConfirmButton: false
-							});
-
-
-						}
-					},
-					//si ha ocurrido un error
-					error: function(){
-						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-						$("#load").html('');
-					}
-				});
-			}
-		});
-
-
-		$('.frmModificar').submit(function(e){
-
-			e.preventDefault();
-			if ($('.frmModificar')[0].checkValidity()) {
-
-
-				//información del formulario
-				var formData = new FormData($(".formulario")[1]);
-				var message = "";
-				//hacemos la petición ajax
-				$.ajax({
-					url: '../../ajax/ajax.php',
-					type: 'POST',
-					// Form data
-					//datos del formulario
-					data: formData,
-					//necesario para subir archivos via ajax
-					cache: false,
-					contentType: false,
-					processData: false,
-					//mientras enviamos el archivo
-					beforeSend: function(){
-
-					},
-					//una vez finalizado correctamente
-					success: function(data){
-
-						if (data == '') {
-							swal({
-									title: "Respuesta",
-									text: "Registro Modificado con exito!!",
-									type: "success",
-									timer: 1500,
-									showConfirmButton: false
-							});
-
-							$('#lgmModificar').modal('hide');
-							location.reload();
-						} else {
-							swal({
-									title: "Respuesta",
-									text: data,
-									type: "error",
-									timer: 2500,
-									showConfirmButton: false
-							});
-
-
-						}
-					},
-					//si ha ocurrido un error
-					error: function(){
-						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-						$("#load").html('');
-					}
-				});
-			}
 		});
 	});
 </script>

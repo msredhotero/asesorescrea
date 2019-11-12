@@ -202,9 +202,9 @@ switch ($tabla) {
 
 
 		break;
-	case 'locatarios':
-		$resAjax = $serviciosReferencias->traerLocatariosajax($length, $start, $busqueda,$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerLocatarios();
+	case 'entrevistasucursales':
+		$resAjax = $serviciosReferencias->traerEntrevistasucursalesajax($length, $start, $busqueda,$colSort,$colSortDir);
+		$res = $serviciosReferencias->traerEntrevistasucursales();
 		$label = array('btnModificar','btnEliminar');
 		$class = array('bg-amber','bg-red');
 		$icon = array('create','delete');

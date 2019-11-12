@@ -571,9 +571,75 @@ switch ($accion) {
       insertarIp($serviciosReferencias);
    break;
 
+   case 'eliminarDocumentacionPostulante':
+      eliminarDocumentacionPostulante($serviciosReferencias);
+   break;
+   case 'insertarEntrevistasucursales':
+      insertarEntrevistasucursales($serviciosReferencias);
+   break;
+   case 'modificarEntrevistasucursales':
+      modificarEntrevistasucursales($serviciosReferencias);
+   break;
+   case 'eliminarEntrevistasucursales':
+      eliminarEntrevistasucursales($serviciosReferencias);
+   break;
 
 }
 /* Fin */
+
+
+function insertarEntrevistasucursales($serviciosReferencias) {
+   $refpostal = $_POST['codigopostalaux'];
+   $telefono = $_POST['telefono'];
+   $interno = $_POST['interno'];
+   $domicilio = $_POST['domicilio'];
+
+   $res = $serviciosReferencias->insertarEntrevistasucursales($refpostal,$telefono,$interno,$domicilio);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarEntrevistasucursales($serviciosReferencias) {
+   $id = $_POST['id'];
+   $refpostal = $_POST['codigopostalaux2'];
+   $telefono = $_POST['telefono'];
+   $interno = $_POST['interno'];
+   $domicilio = $_POST['domicilio'];
+
+   $res = $serviciosReferencias->modificarEntrevistasucursales($id,$refpostal,$telefono,$interno,$domicilio);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarEntrevistasucursales($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarEntrevistasucursales($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
+function eliminarDocumentacionPostulante($serviciosReferencias) {
+   $idpostulante = $_POST['idpostulante'];
+   $iddocumentacion = $_POST['iddocumentacion'];
+
+   $res = $serviciosReferencias->eliminarDocumentacionPostulante($idpostulante, $iddocumentacion);
+
+   header('Content-type: application/json');
+   echo json_encode($res);
+}
 
 function insertarIp($serviciosReferencias) {
    session_start();
@@ -934,43 +1000,6 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
             $url = 'index.php';
          }
 
-
-
-
-         /*
-         switch ($idestado) {
-            case 2:
-               $url = $ruta.'entrevistaveritas.php?id='.$id;
-            break;
-            case 3:
-               $url = $ruta.'siap.php?id='.$id;
-            break;
-            case 4:
-               $url = $ruta.'entrevistaregional.php?id='.$id;
-            break;
-            case 5:
-               $url = $ruta.'prueba.php?id='.$id;
-            break;
-            case 6:
-               $url = $ruta.'entrevistaregionalfinal.php?id='.$id;
-            break;
-            case 7:
-               $url = $ruta.'entrevistaregionalfinal.php?id='.$id;
-            break;
-            case 8:
-               $url = $ruta.'entrevista.php?id='.$id;
-            break;
-            case 9:
-               $url = $ruta.'entrevista.php?id='.$id;
-            break;
-            case 99:
-               $url = $ruta.'ver.php?id='.$id;
-            break;
-
-         }
-         */
-
-
          $modificar = "modificarPostulantes";
          $idTabla = "idpostulante";
 
@@ -1030,7 +1059,21 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 
          $refdescripcion = array(0 => $cadRef, 1=>$cadRef2);
          $refCampo 	=  array("refroles","refclientes");
-         break;
+      break;
+      case 'tbentrevistasucursales':
+         $resultado = $serviciosReferencias->traerEntrevistasucursalesPorId($id);
+
+         $modificar = "modificarEntrevistasucursales";
+         $idTabla = "identrevistasucursal";
+
+         $lblCambio	 	= array('refpostal');
+         $lblreemplazo	= array('Cod. Postal');
+
+         $cadRef2 = '';
+
+         $refdescripcion = array();
+         $refCampo 	=  array();
+      break;
 
       default:
          // code...
@@ -1042,7 +1085,15 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    if ($url != '') {
       echo $url;
    } else {
-      echo str_replace('codigopostal','codigopostal2',$formulario);
+      switch ($tabla) {
+         case 'dbentrevistas':
+         echo str_replace('codigopostal','codigopostal2',$formulario);
+         break;
+         case 'tbentrevistasucursales':
+         echo str_replace('refpostal','refpostal2',$formulario);
+         break;
+      }
+
    }
 
 }

@@ -123,8 +123,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	<link rel="stylesheet" type="text/css" href="../../css/classic.css"/>
 	<link rel="stylesheet" type="text/css" href="../../css/classic.date.css"/>
 
-
-
 	<!-- CSS file -->
 	<link rel="stylesheet" href="../../css/easy-autocomplete.min.css">
 	<!-- Additional CSS Themes file - not required-->

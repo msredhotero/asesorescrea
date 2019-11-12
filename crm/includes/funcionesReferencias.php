@@ -9,6 +9,110 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+	/* PARA Entrevistasucursales */
+
+	function insertarEntrevistasucursales($refpostal,$telefono,$interno,$domicilio) {
+		$sql = "insert into tbentrevistasucursales(identrevistasucursal,refpostal,telefono,interno,domicilio)
+		values ('',".$refpostal.",'".$telefono."','".$interno."','".$domicilio."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarEntrevistasucursales($id,$refpostal,$telefono,$interno,$domicilio) {
+		$sql = "update tbentrevistasucursales
+		set
+		refpostal = ".$refpostal.",telefono = '".$telefono."',interno = '".$interno."',domicilio = '".$domicilio."'
+		where identrevistasucursal =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarEntrevistasucursales($id) {
+		$sql = "delete from tbentrevistasucursales where identrevistasucursal =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerEntrevistasucursales() {
+		$sql = "select
+		e.identrevistasucursal,
+		e.refpostal,
+		e.telefono,
+		e.interno,
+		e.domicilio,
+		p.codigo,
+		p.colonia,
+		p.municipio,
+		p.estado
+		from tbentrevistasucursales e
+		inner join postal p on p.id = e.refpostal
+		order by p.estado, p.municipio,p.colonia,p.codigo";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerEntrevistasucursalesajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where p.municipio like '%".$busqueda."%' or p.colonia like '%".$busqueda."%' or p.codigo like '%".$busqueda."%' or e.telefono like '%".$busqueda."%' or e.interno like '%".$busqueda."%' or e.domicilio like '%".$busqueda."%'";
+		}
+
+		$sql = "select
+		e.identrevistasucursal,
+		p.municipio,
+		p.colonia,
+		p.codigo,
+		e.telefono,
+		e.interno,
+		e.domicilio,
+		e.refpostal
+		from tbentrevistasucursales e
+		inner join postal p on p.id = e.refpostal
+		".$where."
+		ORDER BY ".$colSort." ".$colSortDir."
+		limit ".$start.",".$length;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerEntrevistasucursalesPorPostal($id) {
+		$sql = "select
+		e.identrevistasucursal,
+		e.refpostal,
+		e.telefono,
+		e.interno,
+		e.domicilio,
+		p.codigo,
+		p.colonia,
+		p.municipio,
+		p.estado
+		from tbentrevistasucursales e
+		inner join postal p on p.id = e.refpostal
+		where p.id = ".$id."
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerEntrevistasucursalesPorId($id) {
+		$sql = "select identrevistasucursal,refpostal,telefono,interno,domicilio from tbentrevistasucursales where identrevistasucursal =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbentrevistasucursales*/
+
 	function traerEsquemareclutamiento() {
 		$sql = "select idesquemareclutamiento, esquema from tbesquemareclutamiento";
 		$res = $this->query($sql,0);
@@ -834,6 +938,58 @@ class ServiciosReferencias {
 		$sql = "delete from dbdocumentacionasesores where refpostulantes =".$idpostulante." and refdocumentaciones = ".$iddocumentacion;
 		$res = $this->query($sql,0);
 		return $res;
+	}
+
+	function eliminarDocumentacionPostulante($idpostulante,$iddocumentacion) {
+		/*** auditoria ****/
+
+		/*** fin auditoria ***/
+
+		$resFoto = $this->traerDocumentacionPorPostulanteDocumentacion($idpostulante,$iddocumentacion);
+
+		$imagen = '';
+
+      if (mysql_num_rows($resFoto) > 0) {
+         /* produccion
+         $imagen = 'https://www.saupureinconsulting.com.ar/aifzn/'.mysql_result($resFoto,0,'archivo').'/'.mysql_result($resFoto,0,'imagen');
+         */
+
+         //desarrollo
+
+
+
+         if (mysql_result($resFoto,0,'type') == '') {
+
+            $resV['error'] = true;
+				$resV['leyenda'] = 'Archivo perdido';
+         } else {
+            switch ($iddocumentacion) {
+               case 2:
+                  $archivos = '../archivos/postulantes/'.$idpostulante.'/siap/';
+
+                  break;
+               case 1:
+                  $archivos = '../archivos/postulantes/'.$idpostulante.'/veritas/';
+                  break;
+            }
+
+            $resBorrar = $this->borrarDirecctorio($archivos);
+
+				$resUpdate = $this->eliminarDocumentacionasesores(mysql_result($resFoto,0,'iddocumentacionasesor'));
+
+            $resV['error'] = false;
+				$resV['leyenda'] = 'Archivo eliminado correctamente';
+         }
+
+
+
+      } else {
+         $resV['error'] = true;
+			$resV['leyenda'] = 'Archivo no encontrado';
+      }
+
+		return $resV;
+
 	}
 
 
@@ -2660,6 +2816,93 @@ class ServiciosReferencias {
 	/* Fin */
 	/* /* Fin de la Tabla: tbtaxa*/
 
+ /*******************   auditoria   **************************************************************/
+ /* PARA Auditoria */
+
+	function insertarAuditoria($tabla,$operacion,$campo,$valornuevo,$valorviejo,$id,$usuario,$token,$visible,$idpostulante) {
+		$sql = "insert into dbauditoria(idauditoriapostulante,tabla,operacion,campo,valornuevo,valorviejo,id,usuario,fecha,token,idusuario,visible)
+		values ('','".$tabla."','".$operacion."','".$campo."','".$valornuevo."','".$valorviejo."',".$id.",'".$usuario."',now(),'".$token."',".$_SESSION['id_usuariopredio'].",".$visible.",".$idpostulante.")";
+
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+	function insertAuditoria($tabla, $operacion,$id,$usuario, $ar=null,$token=null,$visible,$idpostulante) {
+		$sql = "SHOW COLUMNS FROM ".$tabla;
+		$res = $this->query($sql,0);
+		$resAux = $this->query($sql,0);
+
+		$idnombre = mysql_result($res,0,0);
+
+		if ($token == null) {
+			$token = $this->GUID();
+		}
+
+
+		$i = 0;
+
+		while ($row = mysql_fetch_array($resAux)) {
+
+		//$sqlValor = "SELECT ".$row[0].' from '.$tabla.' where '.$idnombre.' = '.$id;
+
+			if (strpos($row[1],"bit") !== false) {
+				$sqlValor = "SELECT (case when ".$row[0]." = 1 then 'Si' else 'No' end) as ".$row[0]." from ".$tabla.' where '.$idnombre.' = '.$id;
+			} else {
+				$sqlValor = "SELECT ".$row[0].' from '.$tabla.' where '.$idnombre.' = '.$id;
+			}
+
+			$resValor = $this->query($sqlValor,0);
+			$valornuevo = mysql_result($resValor,0,0);
+
+
+			$valorviejo = '';
+			if (count($ar)>0) {
+				$insert = $this->insertarAuditoria($tabla,$operacion,$row[0],$valornuevo,$ar[$i][$row[0]],$id,$usuario,$token,$visible,$idpostulante);
+				$i += 1;
+			} else {
+				$insert = $this->insertarAuditoria($tabla,$operacion,$row[0],$valornuevo,$valorviejo,$id,$usuario,$token,$visible,$idpostulante);
+			}
+
+
+		//array_push($ar,array($row[0]=> $valornuevo));
+		}
+
+		return $insert;
+	}
+
+	function modiAuditoria($tabla, $operacion,$id,$usuario) {
+		$sql = "SHOW COLUMNS FROM ".$tabla;
+		$res = $this->query($sql,0);
+		$resAux = $this->query($sql,0);
+
+		$idnombre = mysql_result($res,0,0);
+
+		$ar = array();
+
+		while ($row = mysql_fetch_array($resAux)) {
+
+			if (strpos($row[1],"bit") !== false) {
+				$sqlValor = "SELECT (case when ".$row[0]." = 1 then 'Si' else 'No' end) as ".$row[0]." from ".$tabla.' where '.$idnombre.' = '.$id;
+			} else {
+				$sqlValor = "SELECT ".$row[0].' from '.$tabla.' where '.$idnombre.' = '.$id;
+			}
+
+
+			$resValor = $this->query($sqlValor,0);
+			$valornuevo = '';
+
+			$valorviejo = mysql_result($resValor,0,0);
+
+			//$insert = $this->insertarAuditoria($tabla,$operacion,$row[0],$valornuevo,$valorviejo,$id,$usuario);
+			array_push($ar,array($row[0]=> $valorviejo));
+
+		}
+
+		return $ar;
+	}
+
+
+ /*****************************       fin         ************************************************/
 
 function query($sql,$accion) {
 

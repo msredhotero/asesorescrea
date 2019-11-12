@@ -141,6 +141,7 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 		.progress {
 			background-color: #1b2646;
 		}
+
 	</style>
 
 
@@ -255,6 +256,10 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 						<i class="material-icons">add</i>
 						<span>CONTINUAR</span>
 					</button>
+					<button type="button" class="btn bg-red waves-effect btnEliminar">
+						<i class="material-icons">remove</i>
+						<span>ELIMINAR</span>
+					</button>
 					<a href="javascript:void(0);" class="thumbnail timagen1">
 						<img class="img-responsive">
 					</a>
@@ -312,76 +317,26 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 </section>
 
 
-<!-- NUEVO -->
-	<form class="formulario frmNuevo" role="form" id="sign_in">
-	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
-	       <div class="modal-dialog modal-lg" role="document">
-	           <div class="modal-content">
-	               <div class="modal-header">
-	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular); ?></h4>
-	               </div>
-	               <div class="modal-body">
-							<div class="row">
-								<?php echo $frmUnidadNegocios; ?>
-							</div>
-
-	               </div>
-	               <div class="modal-footer">
-	                   <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
-	                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-	               </div>
-	           </div>
-	       </div>
-	   </div>
-		<input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
+<!-- ELIMINAR -->
+	<form class="formulario" role="form" id="sign_in">
+		<div class="modal fade" id="lgmEliminar" tabindex="-1" role="dialog">
+			 <div class="modal-dialog modal-lg" role="document">
+				  <div class="modal-content">
+						<div class="modal-header">
+							 <h4 class="modal-title" id="largeModalLabel">ELIMINAR <?php echo strtoupper($singular); ?></h4>
+						</div>
+						<div class="modal-body">
+									 <p>¿Esta seguro que desea eliminar el registro?</p>
+									 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
+						</div>
+						<div class="modal-footer">
+							 <button type="button" class="btn btn-danger waves-effect eliminar" data-dismiss="modal">ELIMINAR</button>
+							 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+						</div>
+				  </div>
+			 </div>
+		</div>
 	</form>
-
-	<!-- MODIFICAR -->
-		<form class="formulario frmModificar" role="form" id="sign_in">
-		   <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
-		       <div class="modal-dialog modal-lg" role="document">
-		           <div class="modal-content">
-		               <div class="modal-header">
-		                   <h4 class="modal-title" id="largeModalLabel">MODIFICAR <?php echo strtoupper($singular); ?></h4>
-		               </div>
-		               <div class="modal-body">
-								<div class="row frmAjaxModificar">
-
-								</div>
-		               </div>
-		               <div class="modal-footer">
-		                   <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
-		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-		               </div>
-		           </div>
-		       </div>
-		   </div>
-			<input type="hidden" id="accion" name="accion" value="<?php echo $modificar; ?>"/>
-		</form>
-
-
-	<!-- ELIMINAR -->
-		<form class="formulario" role="form" id="sign_in">
-		   <div class="modal fade" id="lgmEliminar" tabindex="-1" role="dialog">
-		       <div class="modal-dialog modal-lg" role="document">
-		           <div class="modal-content">
-		               <div class="modal-header">
-		                   <h4 class="modal-title" id="largeModalLabel">ELIMINAR <?php echo strtoupper($singular); ?></h4>
-		               </div>
-		               <div class="modal-body">
-										 <p>¿Esta seguro que desea eliminar el registro?</p>
-										 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
-		               </div>
-		               <div class="modal-footer">
-		                   <button type="button" class="btn btn-danger waves-effect eliminar">ELIMINAR</button>
-		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-		               </div>
-		           </div>
-		       </div>
-		   </div>
-			<input type="hidden" id="accion" name="accion" value="<?php echo $eliminar; ?>"/>
-			<input type="hidden" name="ideliminar" id="ideliminar" value="0">
-		</form>
 
 
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
@@ -407,90 +362,93 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 
 <script src="../../plugins/dropzone/dropzone.js"></script>
 
+<script src="../../js/pdfobject.min.js"></script>
+
 <!-- JQuery Steps Plugin Js -->
 <script src="../../plugins/jquery-steps/jquery.steps.js"></script>
 
 <script>
 
-	function traerImagen(contenedorpdf, contenedor) {
-		$.ajax({
-			data:  {idpostulante: <?php echo $id; ?>,
-					iddocumentacion: 2,
-					accion: 'traerDocumentacionPorPostulanteDocumentacion'},
-			url:   '../../ajax/ajax.php',
-			type:  'post',
-			beforeSend: function () {
+	$(document).ready(function(){
 
-			},
-			success:  function (response) {
-				var cadena = response.datos.type.toLowerCase();
+		function traerImagen(contenedorpdf, contenedor) {
+			$.ajax({
+				data:  {idpostulante: <?php echo $id; ?>,
+						iddocumentacion: 2,
+						accion: 'traerDocumentacionPorPostulanteDocumentacion'},
+				url:   '../../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+					$("." + contenedor + " img").attr("src",'');
+				},
+				success:  function (response) {
+					var cadena = response.datos.type.toLowerCase();
 
-				if (response.datos.type != '') {
-					if (cadena.indexOf("pdf") > -1) {
-						PDFObject.embed(response.datos.imagen, "#"+contenedorpdf);
-						$('#'+contenedorpdf).show();
-						$("."+contenedor).hide();
+					if (response.datos.type != '') {
+						if (cadena.indexOf("pdf") > -1) {
+							PDFObject.embed(response.datos.imagen, "#"+contenedorpdf);
+							$('#'+contenedorpdf).show();
+							$("."+contenedor).hide();
 
-					} else {
-						$("." + contenedor + " img").attr("src",response.datos.imagen);
-						$("."+contenedor).show();
-						$('#'+contenedorpdf).hide();
+						} else {
+							$("." + contenedor + " img").attr("src",response.datos.imagen);
+							$("."+contenedor).show();
+							$('#'+contenedorpdf).hide();
+						}
 					}
+
+					if (response.error) {
+						$('.btnContinuar').hide();
+						$('.btnEliminar').hide();
+					} else {
+						$('.btnContinuar').show();
+						$('.btnEliminar').show();
+					}
+
+
+
 				}
-
-				if (response.error) {
-					$('.btnContinuar').hide();
-				} else {
-					$('.btnContinuar').show();
-				}
-
-
-
-			}
-		});
-	}
-
-	traerImagen('example1','timagen1');
-
-	Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
-
-	Dropzone.options.frmFileUpload = {
-		maxFilesize: 30,
-		acceptedFiles: ".png,.jpg,.gif,.bmp,.jpeg,.pdf",
-		accept: function(file, done) {
-			done();
-		},
-		init: function() {
-			this.on("sending", function(file, xhr, formData){
-					formData.append("idpostulante", '<?php echo $id; ?>');
-					formData.append("iddocumentacion", '2');
-			});
-			this.on('success', function( file, resp ){
-				traerImagen('example1','timagen1');
-				$('.lblPlanilla').hide();
-				swal("Correcto!", resp.replace("1", ""), "success");
-				$('.btnGuardar').show();
-				$('.infoPlanilla').hide();
-			});
-
-			this.on('error', function( file, resp ){
-				swal("Error!", resp.replace("1", ""), "warning");
 			});
 		}
-	};
+
+		traerImagen('example1','timagen1');
+
+		Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
+
+		Dropzone.options.frmFileUpload = {
+			maxFilesize: 30,
+			acceptedFiles: ".png,.jpg,.gif,.bmp,.jpeg,.pdf",
+			accept: function(file, done) {
+				done();
+			},
+			init: function() {
+				this.on("sending", function(file, xhr, formData){
+						formData.append("idpostulante", '<?php echo $id; ?>');
+						formData.append("iddocumentacion", '2');
+				});
+				this.on('success', function( file, resp ){
+					traerImagen('example1','timagen1');
+					$('.lblPlanilla').hide();
+					swal("Correcto!", resp.replace("1", ""), "success");
+					$('.btnGuardar').show();
+					$('.infoPlanilla').hide();
+				});
+
+				this.on('error', function( file, resp ){
+					swal("Error!", resp.replace("1", ""), "warning");
+				});
+			}
+		};
 
 
 
-	var myDropzone = new Dropzone("#archivos", {
-		params: {
-			 idpostulante: <?php echo $id; ?>,
-			 iddocumentacion: 2
-		},
-		url: 'subir.php'
-	});
-
-
-	$(document).ready(function(){
+		var myDropzone = new Dropzone("#archivos", {
+			params: {
+				 idpostulante: <?php echo $id; ?>,
+				 iddocumentacion: 2
+			},
+			url: 'subir.php'
+		});
 
 		function setButtonWavesEffect(event) {
 			$(event.currentTarget).find('[role="menu"] li a').removeClass('waves-effect');
@@ -575,30 +533,42 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 			modificarEstadoPostulante(<?php echo $id; ?>, 3);
 		});
 
+		$('.eliminar').click(function() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'eliminarDocumentacionPostulante',idpostulante: <?php echo $id; ?>, iddocumentacion: 2},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.btnEliminar').hide();
+				},
+				//una vez finalizado correctamente
+				success: function(data){
 
-		$("#codigopostal").easyAutocomplete(options);
+					if (data.error == false) {
+						swal("Ok!", data.leyenda , "success");
+						traerImagen('example1','timagen1');
 
-		$('#usuariocrea').val('marcos');
-		$('#usuariomodi').val('marcos');
-		$('#ultimoestado').val(0);
+					} else {
+						swal("Error!", data.leyenda, "warning");
 
-		$('#fechanacimiento').pickadate({
-			format: 'yyyy-mm-dd',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 100,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+						$('.btnEliminar').show();
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
 		});
 
+		$('.btnEliminar').click(function() {
+			$('#lgmEliminar').modal();
+
+		});
 
 		$('.maximizar').click(function() {
 			if ($('.icomarcos').text() == 'web') {
@@ -613,182 +583,7 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 
 		});
 
-		var table = $('#example').DataTable({
-			"bProcessing": true,
-			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=postulantes",
-			"language": {
-				"emptyTable":     "No hay datos cargados",
-				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
-				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
-				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
-				"infoPostFix":    "",
-				"thousands":      ",",
-				"lengthMenu":     "Mostrar _MENU_ filas",
-				"loadingRecords": "Cargando...",
-				"processing":     "Procesando...",
-				"search":         "Buscar:",
-				"zeroRecords":    "No se encontraron resultados",
-				"paginate": {
-					"first":      "Primero",
-					"last":       "Ultimo",
-					"next":       "Siguiente",
-					"previous":   "Anterior"
-				},
-				"aria": {
-					"sortAscending":  ": activate to sort column ascending",
-					"sortDescending": ": activate to sort column descending"
-				}
-			}
-		});
 
-		$("#sign_in").submit(function(e){
-			e.preventDefault();
-		});
-
-		$('#activo').prop('checked',true);
-
-
-
-		$("#example").on("click",'.btnEliminar', function(){
-			idTable =  $(this).attr("id");
-			$('#ideliminar').val(idTable);
-			$('#lgmEliminar').modal();
-		});//fin del boton eliminar
-
-		$('.eliminar').click(function() {
-			frmAjaxEliminar($('#ideliminar').val());
-		});
-
-		$("#example").on("click",'.btnModificar', function(){
-			idTable =  $(this).attr("id");
-			frmAjaxModificar(idTable);
-			$('#lgmModificar').modal();
-		});//fin del boton modificar
-
-		$("#example").on("click",'.btnVer', function(){
-			idTable =  $(this).attr("id");
-			$(location).attr('href','ver.php?id=' + idTable);
-
-		});//fin del boton modificar
-
-		$('.frmNuevo').submit(function(e){
-
-			e.preventDefault();
-			if ($('#sign_in')[0].checkValidity()) {
-				//información del formulario
-				var formData = new FormData($(".formulario")[0]);
-				var message = "";
-				//hacemos la petición ajax
-				$.ajax({
-					url: '../../ajax/ajax.php',
-					type: 'POST',
-					// Form data
-					//datos del formulario
-					data: formData,
-					//necesario para subir archivos via ajax
-					cache: false,
-					contentType: false,
-					processData: false,
-					//mientras enviamos el archivo
-					beforeSend: function(){
-
-					},
-					//una vez finalizado correctamente
-					success: function(data){
-
-						if (data == '') {
-							swal({
-									title: "Respuesta",
-									text: "Registro Creado con exito!!",
-									type: "success",
-									timer: 1500,
-									showConfirmButton: false
-							});
-
-							$('#lgmNuevo').modal('hide');
-
-							table.ajax.reload();
-						} else {
-							swal({
-									title: "Respuesta",
-									text: data,
-									type: "error",
-									timer: 2500,
-									showConfirmButton: false
-							});
-
-
-						}
-					},
-					//si ha ocurrido un error
-					error: function(){
-						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-						$("#load").html('');
-					}
-				});
-			}
-		});
-
-
-		$('.frmModificar').submit(function(e){
-
-			e.preventDefault();
-			if ($('.frmModificar')[0].checkValidity()) {
-
-
-				//información del formulario
-				var formData = new FormData($(".formulario")[1]);
-				var message = "";
-				//hacemos la petición ajax
-				$.ajax({
-					url: '../../ajax/ajax.php',
-					type: 'POST',
-					// Form data
-					//datos del formulario
-					data: formData,
-					//necesario para subir archivos via ajax
-					cache: false,
-					contentType: false,
-					processData: false,
-					//mientras enviamos el archivo
-					beforeSend: function(){
-
-					},
-					//una vez finalizado correctamente
-					success: function(data){
-
-						if (data == '') {
-							swal({
-									title: "Respuesta",
-									text: "Registro Modificado con exito!!",
-									type: "success",
-									timer: 1500,
-									showConfirmButton: false
-							});
-
-							$('#lgmModificar').modal('hide');
-							table.ajax.reload();
-						} else {
-							swal({
-									title: "Respuesta",
-									text: data,
-									type: "error",
-									timer: 2500,
-									showConfirmButton: false
-							});
-
-
-						}
-					},
-					//si ha ocurrido un error
-					error: function(){
-						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-						$("#load").html('');
-					}
-				});
-			}
-		});
 	});
 </script>
 
