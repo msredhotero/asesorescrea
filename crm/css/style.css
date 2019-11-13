@@ -7,6 +7,8 @@
 
 .easy-autocomplete-container { width: 100%; z-index:999999 !important; margin-top: 35px;}
 
+.dropdown-menu ul li a { z-index: 9999999999 !important; }
+
 .bs-wizard {margin-top: 40px;}
 
 /*Form Wizard*/
@@ -5116,7 +5118,7 @@ section.content {
 
 .form-group {
   width: 100%;
-  margin-bottom: 5px; }
+  margin-bottom: 2px; }
   .form-group .form-control {
     width: 100%;
     border: none;

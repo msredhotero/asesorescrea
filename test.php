@@ -616,7 +616,7 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
             maxDate: new Date()
          });
 
-         <?php if ($yajugo == 1) { ?>
+         <?php if (($yajugo == 1) || ($yajugo == 0)) { ?>
 
 			$('.btnrespuesta').click(function() {
 				$('.btnrespuesta').removeClass('enjoy-css-active');

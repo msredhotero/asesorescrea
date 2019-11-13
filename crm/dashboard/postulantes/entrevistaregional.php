@@ -66,8 +66,8 @@ $postulante = mysql_result($resultado,0,'nombre').' '.mysql_result($resultado,0,
 
 $tabla 			= "dbentrevistas";
 
-$lblCambio	 	= array('refpostulantes','codigopostal','refestadopostulantes','refestadoentrevistas');
-$lblreemplazo	= array('Postulante','Cod. Postal','Estado Postulante','Estado Entrevista');
+$lblCambio	 	= array('refpostulantes','codigopostal','refestadopostulantes','refestadoentrevistas','refentrevistasucursales');
+$lblreemplazo	= array('Postulante','Cod. Postal','Estado Postulante','Estado Entrevista','Entrev. Sucursales');
 
 $resVar2	= $serviciosReferencias->traerPostulantesPorId($id);
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(2,3,4),' ');
@@ -78,9 +78,12 @@ $cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
 $resVar4	= $serviciosReferencias->traerEstadoentrevistasPorId(1);
 $cadRef4 = $serviciosFunciones->devolverSelectBox($resVar4,array(1),'');
 
+$resVar5 = $serviciosReferencias->traerEntrevistasucursales();
+$cadRef5 = "<option value='0'>Manual</option>";
+$cadRef5 .= $serviciosFunciones->devolverSelectBox($resVar5,array(4,5),' - CP: ');
 
-$refdescripcion = array(0=> $cadRef2,1=> $cadRef3,2=> $cadRef4);
-$refCampo 	=  array('refpostulantes','refestadopostulantes','refestadoentrevistas');
+$refdescripcion = array(0=> $cadRef2,1=> $cadRef3,2=> $cadRef4,3=> $cadRef5);
+$refCampo 	=  array('refpostulantes','refestadopostulantes','refestadoentrevistas','refentrevistasucursales');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -134,6 +137,8 @@ if (mysql_num_rows($resEntrevista) > 0) {
 		.progress {
 			background-color: #1b2646;
 		}
+
+		.arriba { z-index:999999 !important; }
 	</style>
 
 

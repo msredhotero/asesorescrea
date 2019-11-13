@@ -573,7 +573,7 @@ class Servicios {
 								<b>'.$label.'</b>
 								<div class="input-group">
 								<div class="form-line">
-									<select class="show-tick" id="'.strtolower($campo).'" name="'.strtolower($campo).'" '.$lblObligatorio.'>
+									<select class="form-control show-tick arriba" id="'.strtolower($campo).'" name="'.strtolower($campo).'" '.$lblObligatorio.'>
 
 											';
 
