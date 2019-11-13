@@ -1132,20 +1132,15 @@ class Servicios {
 				where e.identrevistasucursal = ".$id;
 				$resMod = $this->query($sqlMod,0);
 				break;
-			case 'dbempleados':
-				$sqlMod = "select idempleado,
-										apellido,
-										nombre,
-										nrodocumento,
-										cuit,
-										fechanacimiento,
-										domicilio,
-										telefonofijo,
-										telefonomovil,
-										sexo,
-										email,
-										(case when activo = 1 then 'Si' else 'No' end) as activo
-									from ".$tabla." where ".$lblid." = ".$id;
+			case 'dbentrevistas':
+				$sqlMod = "select
+							e.identrevista,e.refpostulantes,e.entrevistador,e.fecha,e.domicilio,
+							coalesce(pp.codigo,e.codigopostal) as codigopostal,
+							e.refestadopostulantes,e.refestadoentrevistas,e.fechacrea,e.fechamodi,e.usuariocrea,e.usuariomodi,e.refentrevistasucursales
+							from dbentrevistas e
+							left join tbentrevistasucursales es on es.identrevistasucursal = e.refentrevistasucursales
+							left join postal pp on pp.id = es.refpostal
+							where e.identrevista =".$id;
 				$resMod = $this->query($sqlMod,0);
 				break;
 			case 'dbconceptos':

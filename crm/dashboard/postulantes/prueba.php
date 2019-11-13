@@ -46,9 +46,13 @@ $id = $_GET['id'];
 //////////////       FIN                  /////////////////////////////////////////////////
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "URL Prueba Psicometrica";
+$singular2 = "URL Prueba Psicometrica";
 
-$plural = "URL Prueba Psicometrica";
+$plural2 = "URL Prueba Psicometrica";
+
+$singular = "Entrevista VERITAS";
+
+$plural = "Entrevista VERITAS";
 
 $eliminar = "eliminarEntrevistas";
 
@@ -68,8 +72,8 @@ $postulante = mysql_result($resultado,0,'nombre').' '.mysql_result($resultado,0,
 
 $tabla 			= "dbentrevistas";
 
-$lblCambio	 	= array('refpostulantes','codigopostal','refestadopostulantes','refestadoentrevistas');
-$lblreemplazo	= array('Postulante','Cod. Postal','Estado Postulante','Estado Entrevista');
+$lblCambio	 	= array('refpostulantes','codigopostal','refestadopostulantes','refestadoentrevistas','refentrevistasucursales');
+$lblreemplazo	= array('Postulante','Cod. Postal','Estado Postulante','Estado Entrevista','Entrev. Sucursales');
 
 $resVar2	= $serviciosReferencias->traerPostulantesPorId($id);
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(2,3,4),' ');
@@ -80,13 +84,42 @@ $cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
 $resVar4	= $serviciosReferencias->traerEstadoentrevistasPorId(1);
 $cadRef4 = $serviciosFunciones->devolverSelectBox($resVar4,array(1),'');
 
+$resVar5 = $serviciosReferencias->traerEntrevistasucursales();
+$cadRef5 = "<option value='0'>Manual</option>";
+$cadRef5 .= $serviciosFunciones->devolverSelectBox($resVar5,array(4,5),' - CP: ');
 
-$refdescripcion = array(0=> $cadRef2,1=> $cadRef3,2=> $cadRef4);
-$refCampo 	=  array('refpostulantes','refestadopostulantes','refestadoentrevistas');
+$refdescripcion = array(0=> $cadRef2,1=> $cadRef3,2=> $cadRef4,3=> $cadRef5);
+$refCampo 	=  array('refpostulantes','refestadopostulantes','refestadoentrevistas','refentrevistasucursales');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
+$resEntrevista = $serviciosReferencias->traerEntrevistasActivasPorPostulanteEstadoPostulante($id,2);
+
+if (mysql_num_rows($resEntrevista) > 0) {
+	$existe = 1;
+} else {
+	$existe = 0;
+}
+
+$resEntrevistaRegional = $serviciosReferencias->traerEntrevistasActivasPorPostulanteEstadoPostulante($id,4);
+
+if (mysql_num_rows($resEntrevistaRegional) > 0) {
+	$primerEntrevistaDia = substr(str_replace('-','/', mysql_result($resEntrevistaRegional,0,'fecha')),0,10);
+	$fechaPE = date($primerEntrevistaDia);
+	$nuevafecha = strtotime ( '+1 day' , strtotime ( $fechaPE ) ) ;
+	$primerEntrevistaDia = date ( 'Y-m-d' , $nuevafecha );
+	//die(var_dump($primerEntrevistaDia));
+	if (mysql_result($resEntrevistaRegional,0,'refestadoentrevistas') != 2) {
+		$leyendaPrimerEntrevista = 'Recuerde que tiene la Entrevista Regional en estado de :<b> '.mysql_result($resEntrevistaRegional,0,'estadoentrevista').'</b>';
+	} else {
+		$leyendaPrimerEntrevista = 'Entrevista Regional <b>'.mysql_result($resEntrevistaRegional,0,'estadoentrevista').'</b>';
+	}
+
+} else {
+	$primerEntrevistaDia = 'new Date()';
+	$leyendaPrimerEntrevista = 'No se cargo la Entrevista Regional';
+}
 
 ?>
 
@@ -131,6 +164,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		.alert > i{ vertical-align: middle !important; }
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		#codigopostal { width: 400px; }
+		.arriba { z-index:999999 !important; }
 	</style>
 
 
@@ -181,14 +215,70 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	<div class="container-fluid">
 		<div class="row clearfix">
 
+			<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
+
+				<div class="col-xs-2 bs-wizard-step complete">
+					<div class="text-center bs-wizard-stepnum">Paso 1</div>
+					<div class="progress">
+						<div class="progress-bar"></div>
+					</div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center">Validación SIAP</div>
+				</div>
+
+				<div class="col-xs-2 bs-wizard-step complete"><!-- complete -->
+					<div class="text-center bs-wizard-stepnum">Paso 2</div>
+					<div class="progress">
+						<div class="progress-bar"></div>
+					</div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center">Agendar Entrevista</div>
+				</div>
+
+				<div class="col-xs-2 bs-wizard-step active"><!-- complete -->
+					<div class="text-center bs-wizard-stepnum">Paso 3</div>
+					<div class="progress">
+						<div class="progress-bar"></div>
+					</div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center">Entrevista, Pruebas Psicometricas y VERITAS</div>
+				</div>
+
+				<div class="col-xs-2 bs-wizard-step disabled"><!-- active -->
+					<div class="text-center bs-wizard-stepnum">Paso 4</div>
+					<div class="progress">
+						<div class="progress-bar"></div>
+					</div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center">Resultado Veritas</div>
+				</div>
+
+				<div class="col-xs-2 bs-wizard-step disabled"><!-- active -->
+					<div class="text-center bs-wizard-stepnum">Paso 5</div>
+					<div class="progress">
+						<div class="progress-bar"></div>
+					</div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center">Documentación I</div>
+				</div>
+
+				<div class="col-xs-2 bs-wizard-step disabled"><!-- active -->
+					<div class="text-center bs-wizard-stepnum">Paso 6</div>
+					<div class="progress">
+						<div class="progress-bar"></div>
+					</div>
+					<a href="#" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center">Documentación II</div>
+				</div>
+
+			</div>
+
 			<div class="row">
-
-
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								<?php echo strtoupper($plural); ?> - POSTULANTE: <?php echo $postulante; ?>
+								<?php echo strtoupper($plural2); ?> - POSTULANTE: <?php echo $postulante; ?>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -208,12 +298,12 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
 
-
+											<?php if ($existe == 1) { ?>
 											<button type="button" class="btn bg-green waves-effect btnContinuar">
 												<i class="material-icons">add</i>
 												<span>CONTINUAR</span>
 											</button>
-
+											<?php } ?>
 										</div>
 									</div>
 								</div>
@@ -244,6 +334,78 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						</div>
 					</div>
 				</div>
+
+				<div class="row">
+
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+						<div class="card ">
+							<div class="header bg-blue">
+								<h2>
+									<?php echo strtoupper($plural); ?> - POSTULANTE: <?php echo $postulante; ?>
+								</h2>
+								<ul class="header-dropdown m-r--5">
+									<li class="dropdown">
+										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+											<i class="material-icons">more_vert</i>
+										</a>
+										<ul class="dropdown-menu pull-right">
+
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="body table-responsive">
+								<form class="form" id="formCountry">
+
+									<div class="row">
+										<div class="col-lg-12 col-md-12">
+											<div class="button-demo">
+												<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
+													<i class="material-icons">add</i>
+													<span>NUEVO</span>
+												</button>
+
+												<div class="row">
+													<div class="alert alert-info">
+														<?php echo $leyendaPrimerEntrevista; ?>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="row" style="padding: 5px 20px;">
+
+										<table id="example" class="display table " style="width:100%">
+											<thead>
+												<tr>
+													<th>Entrevistador</th>
+													<th>Fecha</th>
+													<th>Domicilio</th>
+													<th>Codigo Postal</th>
+													<th>Estado</th>
+													<th>Fecha Crea</th>
+													<th>Acciones</th>
+												</tr>
+											</thead>
+											<tfoot>
+												<tr>
+													<th>Entrevistador</th>
+													<th>Fecha</th>
+													<th>Domicilio</th>
+													<th>Codigo Postal</th>
+													<th>Estado</th>
+													<th>Fecha Crea</th>
+													<th>Acciones</th>
+												</tr>
+											</tfoot>
+										</table>
+									</div>
+								</form>
+								</div>
+							</div>
+						</div>
+					</div>
 			</div>
 		</div>
 	</div>
@@ -259,8 +421,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular); ?></h4>
 	               </div>
 	               <div class="modal-body">
-							<div class="row">
+							<div class="row frmAjaxNuevo">
 								<?php echo $frmUnidadNegocios; ?>
+								<input type="hidden" class="codipostalaux" id="codipostalaux" name="codipostalaux" value="0"/>
 							</div>
 
 	               </div>
@@ -286,6 +449,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 								<div class="row frmAjaxModificar">
 
 								</div>
+								<input type="hidden" class="codipostalaux" id="codipostalaux" name="codipostalaux" value="0"/>
 		               </div>
 		               <div class="modal-footer">
 		                   <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
@@ -355,6 +519,398 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 <script>
 	$(document).ready(function(){
 
+		$('#fecha').bootstrapMaterialDatePicker({
+			format: 'YYYY/MM/DD HH:mm',
+			lang : 'mx',
+			clearButton: true,
+			weekStart: 1,
+			time: true,
+			minDate : '<?php echo $primerEntrevistaDia; ?>'
+		});
+
+		var options = {
+
+			url: "../../json/jsbuscarpostal.php",
+
+			getValue: function(element) {
+				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					busqueda: $("#codigopostal").val()
+				}
+			},
+
+			preparePostData: function (data) {
+				data.busqueda = $("#codigopostal").val();
+				return data;
+			},
+
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var id = $("#codigopostal").getSelectedItemData().id;
+					var value = $("#codigopostal").getSelectedItemData().codigo;
+					$(".codipostalaux").val(id);
+					$("#codigopostal").val(value);
+
+				}
+			}
+		};
+
+
+		var options2 = {
+
+			url: "../../json/jsbuscarpostal.php",
+
+			getValue: function(element) {
+				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					busqueda: $("#codigopostal2").val()
+				}
+			},
+
+			preparePostData: function (data) {
+				data.busqueda = $("#codigopostal2").val();
+				return data;
+			},
+
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var id = $("#codigopostal2").getSelectedItemData().id;
+					var value = $("#codigopostal2").getSelectedItemData().codigo;
+					$(".codipostalaux").val(id);
+					$("#codigopostal2").val(value);
+
+				}
+			}
+		};
+
+		$("#codigopostal").easyAutocomplete(options);
+
+		$('#usuariocrea').val('marcos');
+		$('#usuariomodi').val('marcos');
+		$('#ultimoestado').val(0);
+
+		var table = $('#example').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=entrevistas&id=<?php echo $id; ?>&idestado=2",
+			"language": {
+				"emptyTable":     "No hay datos cargados",
+				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "Mostrar _MENU_ filas",
+				"loadingRecords": "Cargando...",
+				"processing":     "Procesando...",
+				"search":         "Buscar:",
+				"zeroRecords":    "No se encontraron resultados",
+				"paginate": {
+					"first":      "Primero",
+					"last":       "Ultimo",
+					"next":       "Siguiente",
+					"previous":   "Anterior"
+				},
+				"aria": {
+					"sortAscending":  ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			}
+		});
+
+		traerEntrevistasucursalesPorId(0,'new');
+
+		$(".frmAjaxNuevo").on("change",'#refentrevistasucursales', function(){
+			traerEntrevistasucursalesPorId($(this).val(), 'new');
+		});
+
+		$(".frmAjaxModificar").on("change",'#refentrevistasucursales', function(){
+			traerEntrevistasucursalesPorId($(this).val(), 'edit');
+		});
+
+		function traerEntrevistasucursalesPorId(id, contenedor) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'traerEntrevistasucursalesPorId',id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						if (contenedor == 'new') {
+							$('.frmAjaxNuevo #domicilio').val(data.domicilio);
+							$('.frmAjaxNuevo .codigopostalaux').val(data.refpostal);
+							$('.frmAjaxNuevo #codigopostal').val(data.codigopostal);
+						} else {
+							$('.frmAjaxModificar #domicilio').val(data.domicilio);
+							$('.frmAjaxModificar .codigopostalaux').val(data.refpostal);
+							$('.frmAjaxModificar #codigopostal2').val(data.codigopostal);
+						}
+
+					} else {
+						swal("Error!", 'Se genero un error al traer datos', "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
+
+		function frmAjaxModificar(id, options2) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'frmAjaxModificar',tabla: '<?php echo $tabla; ?>', id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.frmAjaxModificar').html('');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						$('.frmAjaxModificar').html(data);
+						$('.show-tick').selectpicker({
+							liveSearch: true
+						});
+						$('.show-tick').selectpicker('refresh');
+
+						$('#fecha').bootstrapMaterialDatePicker({
+							format: 'YYYY/MM/DD HH:mm',
+							lang : 'mx',
+							clearButton: true,
+							weekStart: 1,
+							time: true
+						});
+
+						$("#codigopostal2").easyAutocomplete(options2);
+
+					} else {
+						swal("Error!", data, "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+
+		}
+
+		function frmAjaxEliminar(id) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: '<?php echo $eliminar; ?>', id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data == '') {
+						swal({
+								title: "Respuesta",
+								text: "Registro Eliminado con exito!!",
+								type: "success",
+								timer: 1500,
+								showConfirmButton: false
+						});
+						$('#lgmEliminar').modal('toggle');
+						location.reload();
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data,
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
+		$("#example").on("click",'.btnEliminar', function(){
+			idTable =  $(this).attr("id");
+			$('#ideliminar').val(idTable);
+			$('#lgmEliminar').modal();
+		});//fin del boton eliminar
+
+		$('.eliminar').click(function() {
+			frmAjaxEliminar($('#ideliminar').val());
+		});
+
+		$("#example").on("click",'.btnModificar', function(){
+			idTable =  $(this).attr("id");
+			frmAjaxModificar(idTable, options2);
+			$('#lgmModificar').modal();
+		});//fin del boton modificar
+
+		$("#example").on("click",'.btnVer', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','ver.php?id=' + idTable);
+
+		});//fin del boton modificar
+
+		$('.frmNuevo').submit(function(e){
+
+			e.preventDefault();
+			if ($('#sign_in')[0].checkValidity()) {
+				//información del formulario
+				var formData = new FormData($(".formulario")[0]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
+
+					},
+					//una vez finalizado correctamente
+					success: function(data){
+
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Creado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
+
+							$('#lgmNuevo').modal('hide');
+
+							location.reload();
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
+					}
+				});
+			}
+		});
+
+		$('.frmModificar').submit(function(e){
+			e.preventDefault();
+			if ($('.frmModificar')[0].checkValidity()) {
+				//información del formulario
+				var formData = new FormData($(".formulario")[1]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
+
+					},
+					//una vez finalizado correctamente
+					success: function(data){
+
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Modificado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
+
+							$('#lgmModificar').modal('hide');
+							location.reload();
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
+					}
+				});
+			}
+		});
+
 		<?php if ($urlprueba == '') { ?>
 		$('.btnContinuar').hide();
 		<?php } ?>
@@ -371,8 +927,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			}
 
 		});
-
-
 
 		function modificarEstadoPostulante(id, idestado) {
 			$.ajax({

@@ -334,8 +334,9 @@ if (mysql_num_rows($resEntrevista) > 0) {
 	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular); ?></h4>
 	               </div>
 	               <div class="modal-body">
-							<div class="row">
+							<div class="row frmAjaxNuevo">
 								<?php echo $frmUnidadNegocios; ?>
+								<input type="hidden" class="codipostalaux" id="codipostalaux" name="codipostalaux" value="0"/>
 							</div>
 
 	               </div>
@@ -361,6 +362,7 @@ if (mysql_num_rows($resEntrevista) > 0) {
 								<div class="row frmAjaxModificar">
 
 								</div>
+								<input type="hidden" class="codipostalaux" id="codipostalaux" name="codipostalaux" value="0"/>
 		               </div>
 		               <div class="modal-footer">
 		                   <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
@@ -435,7 +437,8 @@ if (mysql_num_rows($resEntrevista) > 0) {
 			lang : 'mx',
 			clearButton: true,
 			weekStart: 1,
-			time: true
+			time: true,
+			minDate : new Date()
 		});
 
 		var options = {
@@ -465,7 +468,9 @@ if (mysql_num_rows($resEntrevista) > 0) {
 					enabled: true
 				},
 				onClickEvent: function() {
+					var id = $("#codigopostal").getSelectedItemData().id;
 					var value = $("#codigopostal").getSelectedItemData().codigo;
+					$(".codipostalaux").val(id);
 					$("#codigopostal").val(value);
 
 				}
@@ -500,7 +505,9 @@ if (mysql_num_rows($resEntrevista) > 0) {
 					enabled: true
 				},
 				onClickEvent: function() {
+					var id = $("#codigopostal2").getSelectedItemData().id;
 					var value = $("#codigopostal2").getSelectedItemData().codigo;
+					$(".codipostalaux").val(id);
 					$("#codigopostal2").val(value);
 
 				}
@@ -563,6 +570,55 @@ if (mysql_num_rows($resEntrevista) > 0) {
 
 		$('#activo').prop('checked',true);
 
+		traerEntrevistasucursalesPorId(0,'new');
+
+		$(".frmAjaxNuevo").on("change",'#refentrevistasucursales', function(){
+			traerEntrevistasucursalesPorId($(this).val(), 'new');
+		});
+
+		$(".frmAjaxModificar").on("change",'#refentrevistasucursales', function(){
+			traerEntrevistasucursalesPorId($(this).val(), 'edit');
+		});
+
+		function traerEntrevistasucursalesPorId(id, contenedor) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'traerEntrevistasucursalesPorId',id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						if (contenedor == 'new') {
+							$('.frmAjaxNuevo #domicilio').val(data.domicilio);
+							$('.frmAjaxNuevo .codigopostalaux').val(data.refpostal);
+							$('.frmAjaxNuevo #codigopostal').val(data.codigopostal);
+						} else {
+							$('.frmAjaxModificar #domicilio').val(data.domicilio);
+							$('.frmAjaxModificar .codigopostalaux').val(data.refpostal);
+							$('.frmAjaxModificar #codigopostal2').val(data.codigopostal);
+						}
+
+					} else {
+						swal("Error!", 'Se genero un error al traer datos', "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
+
 		function modificarEstadoPostulante(id, idestado) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
@@ -595,7 +651,7 @@ if (mysql_num_rows($resEntrevista) > 0) {
 		}
 
 		$('.btnContinuar').click(function() {
-			modificarEstadoPostulante(<?php echo $id; ?>, 4);
+			modificarEstadoPostulante(<?php echo $id; ?>, 2);
 		});
 
 		function frmAjaxModificar(id, options2) {

@@ -583,10 +583,35 @@ switch ($accion) {
    case 'eliminarEntrevistasucursales':
       eliminarEntrevistasucursales($serviciosReferencias);
    break;
+   case 'traerEntrevistasucursalesPorId':
+      traerEntrevistasucursalesPorId($serviciosReferencias);
+   break;
 
 }
 /* Fin */
 
+function traerEntrevistasucursalesPorId($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->traerEntrevistasucursalesPorIdCompleto($id);
+
+   if (mysql_num_rows($res) > 0) {
+      $resV['error'] = false;
+      $resV['domicilio'] = mysql_result($res,0,'domicilio');
+      $resV['refpostal'] = mysql_result($res,0,'refpostal');
+      $resV['codigopostal'] = mysql_result($res,0,'codigo');
+      $resV['codigopostalcompleto'] = utf8_encode( mysql_result($res,0,'estado').' '.mysql_result($res,0,'municipio').' '.mysql_result($res,0,'colonia').' '.mysql_result($res,0,'codigo'));
+   } else {
+      $resV['error'] = true;
+      $resV['domicilio'] = '';
+      $resV['codigopostal'] = '';
+      $resV['refpostal'] = 0;
+      $resV['codigopostalcompleto'] = '';
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function insertarEntrevistasucursales($serviciosReferencias) {
    $refpostal = $_POST['codigopostalaux'];
@@ -754,7 +779,7 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
    $id  = $_POST['id'];
    $idestado      = $_POST['idestado'];
 
-   $resUltimo = $serviciosReferencias->modificarUltimoEstadoPostulante($id,($idestado - 1));
+   $resUltimo = $serviciosReferencias->modificarUltimoEstadoPostulante($id,$idestado);
 
    $res = $serviciosReferencias->modificarEstadoPostulante($id,$idestado);
 
@@ -769,39 +794,26 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
    if ($res == true) {
       // envio email dependeiendo el estado
 
-      switch ($idestado + 1) {
-         case 2:
-            $url = $ruta.'entrevistaveritas.php?id='.$id;
-         break;
-         case 3:
-            $url = $ruta.'siap.php?id='.$id;
+      $resEstado = $serviciosReferencias->traerEstadopostulantesEtapas($idestado);
+
+      if (mysql_num_rows($resEstado) > 0) {
+         $url = $ruta.mysql_result($resEstado,0,'url').'?id='.$id;
+      } else {
+
+         $url = 'index.php';
+      }
+
+      switch (mysql_result($resEstado,0,'orden')) {
+
+         case 4:
             $resE = $serviciosUsuarios->enviarCorreosEtapas( $idestado, $id);
          break;
-         case 4:
-            $url = $ruta.'entrevistaregional.php?id='.$id;
-         break;
          case 5:
-            $url = $ruta.'prueba.php?id='.$id;
             $resE = $serviciosUsuarios->enviarCorreosEtapas( $idestado, $id);
          break;
          case 6:
-            $url = $ruta.'entrevistaregionalfinal.php?id='.$id;
             $resE = $serviciosUsuarios->enviarCorreosEtapas( $idestado, $id);
          break;
-         case 7:
-            $url = $ruta.'entrevista.php?id='.$id;
-         break;
-         case 8:
-            $url = $ruta.'entrevista.php?id='.$id;
-         break;
-         case 9:
-            $url = $ruta.'entrevista.php?id='.$id;
-         break;
-         case 99:
-            $url = $ruta.'ver.php?id='.$id;
-            $resE = $serviciosUsuarios->enviarCorreosEtapas( 6, $id);
-         break;
-
       }
       echo $url;
    } else {
@@ -1019,8 +1031,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $modificar = "modificarEntrevistas";
          $idTabla = "identrevista";
 
-         $lblCambio	 	= array('refpostulantes','codigopostal','refestadopostulantes','refestadoentrevistas');
-         $lblreemplazo	= array('Postulante','Cod. Postal','Estado Postulante','Estado Entrevista');
+         $lblCambio	 	= array('refpostulantes','codigopostal','refestadopostulantes','refestadoentrevistas','refentrevistasucursales');
+         $lblreemplazo	= array('Postulante','Cod. Postal','Estado Postulante','Estado Entrevista','Entrev. Sucursales');
 
 
          $resVar2	= $serviciosReferencias->traerPostulantesPorId(mysql_result($resultado,0,'refpostulantes'));
@@ -1032,9 +1044,20 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $resVar4	= $serviciosReferencias->traerEstadoentrevistas();
          $cadRef4 = $serviciosFunciones->devolverSelectBoxActivo($resVar4,array(1),'',mysql_result($resultado,0,'refestadoentrevistas'));
 
+         $resVar5 = $serviciosReferencias->traerEntrevistasucursales();
+         if (mysql_result($resultado,0,'refentrevistasucursales') != 0) {
 
-         $refdescripcion = array(0=> $cadRef2,1=> $cadRef3,2=> $cadRef4);
-         $refCampo 	=  array('refpostulantes','refestadopostulantes','refestadoentrevistas');
+            $cadRef5 = $serviciosFunciones->devolverSelectBoxActivo($resVar5,array(4,5),' - CP: ',mysql_result($resultado,0,'refentrevistasucursales'));
+            $cadRef5 .= "<option value='0'>Manual</option>";
+         } else {
+            $cadRef5 = "<option value='0'>Manual</option>";
+            $cadRef5 .= $serviciosFunciones->devolverSelectBoxActivo($resVar5,array(4,5),' - CP: ',mysql_result($resultado,0,'refentrevistasucursales'));
+         }
+
+
+
+         $refdescripcion = array(0=> $cadRef2,1=> $cadRef3,2=> $cadRef4,3=>$cadRef5);
+         $refCampo 	=  array('refpostulantes','refestadopostulantes','refestadoentrevistas','refentrevistasucursales');
 
 
       break;
@@ -1580,7 +1603,6 @@ function insertarEntrevistas($serviciosReferencias) {
 
    $resEntrevista = $serviciosReferencias->traerEntrevistasActivasPorPostulanteEstadoPostulante($refpostulantes,$refestadopostulantes);
 
-
    if (mysql_num_rows($resEntrevista) > 0) {
       echo 'Ya existe una entrevista pendiente';
    } else {
@@ -1588,15 +1610,16 @@ function insertarEntrevistas($serviciosReferencias) {
       $entrevistador = $_POST['entrevistador'];
       $fecha = $_POST['fecha'];
       $domicilio = $_POST['domicilio'];
-      $codigopostal = $_POST['codigopostal'];
+      $codigopostal = $_POST['codipostalaux'];
 
       $refestadoentrevistas = $_POST['refestadoentrevistas'];
+      $refentrevistasucursales = $_POST['refentrevistasucursales'];
       $fechacrea = date('Y-m-d H:i:s');
       $fechamodi = date('Y-m-d H:i:s');
       $usuariocrea = $_SESSION['usua_sahilices'];
       $usuariomodi = $_SESSION['usua_sahilices'];
 
-      $res = $serviciosReferencias->insertarEntrevistas($refpostulantes,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadopostulantes,$refestadoentrevistas,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
+      $res = $serviciosReferencias->insertarEntrevistas($refpostulantes,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadopostulantes,$refestadoentrevistas,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refentrevistasucursales);
 
       if ((integer)$res > 0) {
          //$resCambioEstado = $serviciosReferencias->modificarEstadoPostulante($refpostulantes,2);
@@ -1619,12 +1642,13 @@ function modificarEntrevistas($serviciosReferencias) {
    $codigopostal = $_POST['codigopostal2'];
    $refestadopostulantes = $_POST['refestadopostulantes'];
    $refestadoentrevistas = $_POST['refestadoentrevistas'];
+   $refentrevistasucursales = $_POST['refentrevistasucursales'];
 
    $fechamodi = date('Y-m-d H:i:s');
 
    $usuariomodi = $_SESSION['usua_sahilices'];
 
-   $res = $serviciosReferencias->modificarEntrevistas($id,$refpostulantes,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadopostulantes,$refestadoentrevistas,$fechamodi,$usuariomodi);
+   $res = $serviciosReferencias->modificarEntrevistas($id,$refpostulantes,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadopostulantes,$refestadoentrevistas,$fechamodi,$usuariomodi,$refentrevistasucursales);
 
    if ($res == true) {
       echo '';

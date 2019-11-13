@@ -80,11 +80,6 @@ function enviarCorreosEtapas( $etapa, $id) {
          $asunto = 'URL Prueba Psicometrica';
          $cuerpo .= 'Felicitaciones!!, continua en el proceso de Reclutamiento. Le enviamos la url para realizar el examen Psicometrico: <a href="'.$urlprueba.'">Examen Psicometrico</a>';
          break;
-      case 6:
-         $asunto = 'Entrevista Regional II';
-         $resEntrevista = $this->traerEntrevistasActivasPorPostulanteEstadoPostulante($id,$etapa);
-         $cuerpo .= '<p>Felicitaciones!!, continua en el proceso de Reclutamiento, Tiene un Entrevista programada para la fecha: '.mysql_result($resEntrevista,0,'fecha').' con el entrevistador: '.mysql_result($resEntrevista,0,'entrevistador').' en la direccion: '.mysql_result($resEntrevista,0,'domicilio').' , '.mysql_result($resEntrevista,0,'postalcompleto');
-         break;
 
    }
 

@@ -40,21 +40,16 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 $id = $_GET['id'];
 
-////////// validar solo que pueda ingrear los perfiles permitidos /////////////////////////
-
-
-//////////////       FIN                  /////////////////////////////////////////////////
-
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Resultado VERITAS";
+$singular = "Documentación I";
 
-$plural = "Resultado VERITAS";
+$plural = "Documentaciones I";
 
-$eliminar = "eliminarEntrevistas";
+$eliminar = "eliminarPostulantes";
 
-$insertar = "insertarEntrevistas";
+$insertar = "insertarPostulantes";
 
-$modificar = "modificarEntrevistas";
+$modificar = "modificarPostulantes";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
@@ -65,22 +60,21 @@ $resultado 		= 	$serviciosReferencias->traerPostulantesPorId($id);
 $postulante = mysql_result($resultado,0,'nombre').' '.mysql_result($resultado,0,'apellidopaterno').' '.mysql_result($resultado,0,'apellidomaterno');
 
 
-//////////////////////////////////////////////  FIN de los opciones //////////////////////////
-
-
 $path  = '../../archivos/postulantes/'.$id;
 
 if (!file_exists($path)) {
 	mkdir($path, 0777);
 }
 
-$pathVeritas  = '../../archivos/postulantes/'.$id.'/veritas';
+$pathSIAP  = '../../archivos/postulantes/'.$id.'/siap';
 
-if (!file_exists($pathVeritas)) {
-	mkdir($pathVeritas, 0777);
+if (!file_exists($pathSIAP)) {
+	mkdir($pathSIAP, 0777);
 }
 
-$filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
+$filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
+
+//////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 ?>
 
@@ -115,15 +109,39 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.jqueryui.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.css">
 
+	<link rel="stylesheet" type="text/css" href="../../css/classic.css"/>
+	<link rel="stylesheet" type="text/css" href="../../css/classic.date.css"/>
+
+
+
+	<!-- CSS file -->
+	<link rel="stylesheet" href="../../css/easy-autocomplete.min.css">
+	<!-- Additional CSS Themes file - not required-->
+	<link rel="stylesheet" href="../../css/easy-autocomplete.themes.min.css">
+
 	<style>
 		.alert > i{ vertical-align: middle !important; }
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		#codigopostal { width: 400px; }
 		.pdfobject-container { height: 30rem; border: 1rem solid rgba(0,0,0,.1); }
 
+		  .thumbnail2 {
+		    display: block;
+		    padding: 4px;
+		    margin-bottom: 20px;
+		    line-height: 1.42857143;
+		    background-color: #fff;
+		    border: 1px solid #ddd;
+		    border-radius: 4px;
+		    -webkit-transition: border .2s ease-in-out;
+		    -o-transition: border .2s ease-in-out;
+		    transition: border .2s ease-in-out;
+			 text-align: center;
+		}
 		.progress {
 			background-color: #1b2646;
 		}
+
 	</style>
 
 
@@ -172,11 +190,10 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 <section class="content" style="margin-top:-75px;">
 
 	<div class="container-fluid">
-		<div class="row clearfix">
-
+		<div class="row clearfix subirImagen">
 			<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
 
-				<div class="col-xs-2 bs-wizard-step complete">
+				<div class="col-xs-2 bs-wizard-step active">
 					<div class="text-center bs-wizard-stepnum">Paso 1</div>
 					<div class="progress">
 						<div class="progress-bar"></div>
@@ -185,7 +202,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 					<div class="bs-wizard-info text-center">Validación SIAP</div>
 				</div>
 
-				<div class="col-xs-2 bs-wizard-step complete"><!-- complete -->
+				<div class="col-xs-2 bs-wizard-step disabled"><!-- complete -->
 					<div class="text-center bs-wizard-stepnum">Paso 2</div>
 					<div class="progress">
 						<div class="progress-bar"></div>
@@ -194,7 +211,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 					<div class="bs-wizard-info text-center">Agendar Entrevista</div>
 				</div>
 
-				<div class="col-xs-2 bs-wizard-step complete"><!-- complete -->
+				<div class="col-xs-2 bs-wizard-step disabled"><!-- complete -->
 					<div class="text-center bs-wizard-stepnum">Paso 3</div>
 					<div class="progress">
 						<div class="progress-bar"></div>
@@ -203,7 +220,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 					<div class="bs-wizard-info text-center">Entrevista, Pruebas Psicometricas y VERITAS</div>
 				</div>
 
-				<div class="col-xs-2 bs-wizard-step active"><!-- active -->
+				<div class="col-xs-2 bs-wizard-step disabled"><!-- active -->
 					<div class="text-center bs-wizard-stepnum">Paso 4</div>
 					<div class="progress">
 						<div class="progress-bar"></div>
@@ -232,49 +249,22 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 
 			</div>
 
-
-			</div>
-		</div>
-	</div>
-
-	<div class="container-fluid">
-		<div class="row clearfix subirImagen">
 			<div class="row">
 				<div class="col-xs-12 col-md-12 col-lg-12">
-					<div class="card ">
-						<div class="header bg-blue">
-							<h2>
-								<?php echo strtoupper($plural); ?> - POSTULANTE: <?php echo $postulante; ?>
-							</h2>
+					<h4>Validar registros previos en SIAP, obtener pantallazo y guardar.</h4>
+					<button type="button" class="btn bg-green waves-effect btnContinuar">
+						<i class="material-icons">add</i>
+						<span>CONTINUAR</span>
+					</button>
+					<button type="button" class="btn bg-red waves-effect btnEliminar">
+						<i class="material-icons">remove</i>
+						<span>ELIMINAR</span>
+					</button>
+					<a href="javascript:void(0);" class="thumbnail timagen1">
+						<img class="img-responsive">
+					</a>
+					<div id="example1"></div>
 
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-									<ul class="dropdown-menu pull-right">
-
-									</ul>
-								</li>
-							</ul>
-						</div>
-						<div class="body table-responsive">
-							<h4>Descargar pantallazo con aprobación o no acreditamiento de la prueba VERITAS INBURSA.</h4>
-							<button type="button" class="btn bg-green waves-effect btnContinuar">
-								<i class="material-icons">add</i>
-								<span>CONTINUAR</span>
-							</button>
-							<button type="button" class="btn bg-red waves-effect btnEliminar">
-								<i class="material-icons">remove</i>
-								<span>ELIMINAR</span>
-							</button>
-
-							<a href="javascript:void(0);" class="thumbnail timagen1">
-								<img class="img-responsive">
-							</a>
-							<div id="example1"></div>
-						</div>
-				</div>
 				</div>
 
 			</div>
@@ -284,7 +274,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 					<div class="card">
 						<div class="header">
 							<h2>
-								CARGA/MODIFIQUE PRUEBA VERITA INBURSA AQUI
+								CARGA/MODIFIQUE EL SIAP AQUI
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -314,6 +304,8 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 
 								</div>
 							</form>
+
+
 						</div>
 					</div>
 				</div>
@@ -325,7 +317,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 </section>
 
 
-	<!-- ELIMINAR -->
+<!-- ELIMINAR -->
 	<form class="formulario" role="form" id="sign_in">
 		<div class="modal fade" id="lgmEliminar" tabindex="-1" role="dialog">
 			 <div class="modal-dialog modal-lg" role="document">
@@ -361,17 +353,28 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 <!-- Bootstrap Material Datetime Picker Plugin Js -->
 <script src="../../plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
 
-<script src="../../js/pdfobject.min.js"></script>
+<script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
+
+<script src="../../js/picker.js"></script>
+<script src="../../js/picker.date.js"></script>
+
+<script src="../../js/jquery.easy-autocomplete.min.js"></script>
 
 <script src="../../plugins/dropzone/dropzone.js"></script>
 
+<script src="../../js/pdfobject.min.js"></script>
+
+<!-- JQuery Steps Plugin Js -->
+<script src="../../plugins/jquery-steps/jquery.steps.js"></script>
+
 <script>
+
 	$(document).ready(function(){
 
 		function traerImagen(contenedorpdf, contenedor) {
 			$.ajax({
 				data:  {idpostulante: <?php echo $id; ?>,
-						iddocumentacion: 1,
+						iddocumentacion: 2,
 						accion: 'traerDocumentacionPorPostulanteDocumentacion'},
 				url:   '../../ajax/ajax.php',
 				type:  'post',
@@ -421,7 +424,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 			init: function() {
 				this.on("sending", function(file, xhr, formData){
 						formData.append("idpostulante", '<?php echo $id; ?>');
-						formData.append("iddocumentacion", '1');
+						formData.append("iddocumentacion", '2');
 				});
 				this.on('success', function( file, resp ){
 					traerImagen('example1','timagen1');
@@ -442,9 +445,23 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 		var myDropzone = new Dropzone("#archivos", {
 			params: {
 				 idpostulante: <?php echo $id; ?>,
-				 iddocumentacion: 1
+				 iddocumentacion: 2
 			},
 			url: 'subir.php'
+		});
+
+		function setButtonWavesEffect(event) {
+			$(event.currentTarget).find('[role="menu"] li a').removeClass('waves-effect');
+			$(event.currentTarget).find('[role="menu"] li:not(.disabled) a').addClass('waves-effect');
+		}
+
+		$('#wizard_horizontal').steps({
+			headerTag: 'h2',
+			bodyTag: 'section',
+			transitionEffect: 'slideLeft',
+			onInit: function (event, currentIndex) {
+				setButtonWavesEffect(event);
+			}
 		});
 
 		var options = {
@@ -481,59 +498,6 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 			}
 		};
 
-
-		var options2 = {
-
-			url: "../../json/jsbuscarpostal.php",
-
-			getValue: function(element) {
-				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
-			},
-
-			ajaxSettings: {
-				dataType: "json",
-				method: "POST",
-				data: {
-					busqueda: $("#codigopostal2").val()
-				}
-			},
-
-			preparePostData: function (data) {
-				data.busqueda = $("#codigopostal2").val();
-				return data;
-			},
-
-			list: {
-				maxNumberOfElements: 20,
-				match: {
-					enabled: true
-				},
-				onClickEvent: function() {
-					var value = $("#codigopostal2").getSelectedItemData().codigo;
-					$("#codigopostal2").val(value);
-
-				}
-			}
-		};
-
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '265px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
-
-		});
-
-
-		$("#sign_in").submit(function(e){
-			e.preventDefault();
-		});
-
 		function modificarEstadoPostulante(id, idestado) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
@@ -566,7 +530,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 		}
 
 		$('.btnContinuar').click(function() {
-			modificarEstadoPostulante(<?php echo $id; ?>, 2);
+			modificarEstadoPostulante(<?php echo $id; ?>, 3);
 		});
 
 		$('.eliminar').click(function() {
@@ -575,7 +539,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {accion: 'eliminarDocumentacionPostulante',idpostulante: <?php echo $id; ?>, iddocumentacion: 1},
+				data: {accion: 'eliminarDocumentacionPostulante',idpostulante: <?php echo $id; ?>, iddocumentacion: 2},
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('.btnEliminar').hide();
@@ -601,10 +565,26 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 			});
 		});
 
+
 		$(".body").on("click",'.btnEliminar', function(){
 			$('#lgmEliminar').modal();
 
 		});
+
+		$('.maximizar').click(function() {
+			if ($('.icomarcos').text() == 'web') {
+				$('#marcos').show();
+				$('.content').css('marginLeft', '265px');
+				$('.icomarcos').html('aspect_ratio');
+			} else {
+				$('#marcos').hide();
+				$('.content').css('marginLeft', '15px');
+				$('.icomarcos').html('web');
+			}
+
+		});
+
+
 	});
 </script>
 

@@ -565,7 +565,8 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 			});
 		});
 
-		$('.btnEliminar').click(function() {
+
+		$(".body").on("click",'.btnEliminar', function(){
 			$('#lgmEliminar').modal();
 
 		});

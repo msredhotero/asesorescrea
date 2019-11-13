@@ -109,6 +109,24 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function traerEntrevistasucursalesPorIdCompleto($id) {
+		$sql = "select
+		e.identrevistasucursal,
+		e.refpostal,
+		e.telefono,
+		e.interno,
+		e.domicilio,
+		p.codigo,
+		p.colonia,
+		p.municipio,
+		p.estado
+		from tbentrevistasucursales e
+		inner join postal p on p.id = e.refpostal
+		where e.identrevistasucursal =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 
 	/* Fin */
 	/* /* Fin de la Tabla: tbentrevistasucursales*/
@@ -484,18 +502,18 @@ class ServiciosReferencias {
 
 	/* PARA Entrevistas */
 
-	function insertarEntrevistas($refpostulantes,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadopostulantes,$refestadoentrevistas,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
-		$sql = "insert into dbentrevistas(identrevista,refpostulantes,entrevistador,fecha,domicilio,codigopostal,refestadopostulantes,refestadoentrevistas,fechacrea,fechamodi,usuariocrea,usuariomodi)
-		values ('',".$refpostulantes.",'".$entrevistador."','".$fecha."','".$domicilio."',".$codigopostal.",".$refestadopostulantes.",".$refestadoentrevistas.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
+	function insertarEntrevistas($refpostulantes,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadopostulantes,$refestadoentrevistas,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refentrevistasucursales) {
+		$sql = "insert into dbentrevistas(identrevista,refpostulantes,entrevistador,fecha,domicilio,codigopostal,refestadopostulantes,refestadoentrevistas,fechacrea,fechamodi,usuariocrea,usuariomodi,refentrevistasucursales)
+		values ('',".$refpostulantes.",'".$entrevistador."','".$fecha."','".$domicilio."',".$codigopostal.",".$refestadopostulantes.",".$refestadoentrevistas.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."',".$refentrevistasucursales.")";
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarEntrevistas($id,$refpostulantes,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadopostulantes,$refestadoentrevistas,$fechamodi,$usuariomodi) {
+	function modificarEntrevistas($id,$refpostulantes,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadopostulantes,$refestadoentrevistas,$fechamodi,$usuariomodi,$refentrevistasucursales) {
 		$sql = "update dbentrevistas
 		set
-		refpostulantes = ".$refpostulantes.",entrevistador = '".$entrevistador."',fecha = '".$fecha."',domicilio = '".$domicilio."',codigopostal = ".$codigopostal.",refestadopostulantes = ".$refestadopostulantes.",refestadoentrevistas = ".$refestadoentrevistas.",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."'
+		refpostulantes = ".$refpostulantes.",entrevistador = '".$entrevistador."',fecha = '".$fecha."',domicilio = '".$domicilio."',codigopostal = ".$codigopostal.",refestadopostulantes = ".$refestadopostulantes.",refestadoentrevistas = ".$refestadoentrevistas.",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."', refentrevistasucursales = ".$refentrevistasucursales."
 		where identrevista =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -534,7 +552,7 @@ class ServiciosReferencias {
 
 
 	function traerEntrevistasPorId($id) {
-		$sql = "select identrevista,refpostulantes,entrevistador,fecha,domicilio,codigopostal,refestadopostulantes,refestadoentrevistas,fechacrea,fechamodi,usuariocrea,usuariomodi from dbentrevistas where identrevista =".$id;
+		$sql = "select identrevista,refpostulantes,entrevistador,fecha,domicilio,codigopostal,refestadopostulantes,refestadoentrevistas,fechacrea,fechamodi,usuariocrea,usuariomodi,refentrevistasucursales from dbentrevistas where identrevista =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -574,9 +592,11 @@ class ServiciosReferencias {
 		e.refestadoentrevistas,
 		e.fechacrea,
 		e.fechamodi,e.usuariocrea,e.usuariomodi,
-		concat(pp.estado, ' ', pp.municipio, ' ', pp.colonia, ' ', pp.codigo) as postalcompleto
+		concat(pp.estado, ' ', pp.municipio, ' ', pp.colonia, ' ', pp.codigo) as postalcompleto,
+		est.estadoentrevista
 		from dbentrevistas e
 		inner join postal pp on pp.codigo = e.codigopostal
+		inner join tbestadoentrevistas est on est.idestadoentrevista = e.refestadoentrevistas
 		where e.refestadopostulantes = ".$idestadopostulante." and e.refestadoentrevistas in (1,2,3) and e.refpostulantes =".$id;
 		$res = $this->query($sql,0);
 		return $res;
