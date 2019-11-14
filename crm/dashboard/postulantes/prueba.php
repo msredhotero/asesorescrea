@@ -78,7 +78,7 @@ $lblreemplazo	= array('Postulante','Cod. Postal','Estado Postulante','Estado Ent
 $resVar2	= $serviciosReferencias->traerPostulantesPorId($id);
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(2,3,4),' ');
 
-$resVar3	= $serviciosReferencias->traerEstadopostulantesPorId(mysql_result($resultado,0,'refestadopostulantes'));
+$resVar3	= $serviciosReferencias->traerEstadopostulantesPorId(2);
 $cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
 
 $resVar4	= $serviciosReferencias->traerEstadoentrevistasPorId(1);

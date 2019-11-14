@@ -39,6 +39,7 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 $id = $_GET['id'];
+$documentacion = $_GET['documentacion'];
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
 $singular = "Documentación I";
@@ -167,7 +168,7 @@ $filesInfonavit = array_diff(scandir($pathInfonavit), array('.', '..'));
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id);
+$resDocumentacion = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacion($id, $iddocumentacion);
 
 ?>
 
@@ -218,25 +219,21 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocu
 		#codigopostal { width: 400px; }
 		.pdfobject-container { height: 30rem; border: 1rem solid rgba(0,0,0,.1); }
 
-		.thumbnail2 {
-			display: block;
-			padding: 4px;
-			margin-bottom: 20px;
-			line-height: 1.42857143;
-			background-color: #fff;
-			border: 1px solid #ddd;
-			border-radius: 4px;
-			-webkit-transition: border .2s ease-in-out;
-			-o-transition: border .2s ease-in-out;
-			transition: border .2s ease-in-out;
-			text-align: center;
+		  .thumbnail2 {
+		    display: block;
+		    padding: 4px;
+		    margin-bottom: 20px;
+		    line-height: 1.42857143;
+		    background-color: #fff;
+		    border: 1px solid #ddd;
+		    border-radius: 4px;
+		    -webkit-transition: border .2s ease-in-out;
+		    -o-transition: border .2s ease-in-out;
+		    transition: border .2s ease-in-out;
+			 text-align: center;
 		}
 		.progress {
 			background-color: #1b2646;
-		}
-
-		.btnDocumentacion {
-			cursor: pointer;
 		}
 
 	</style>
@@ -356,7 +353,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocu
 					while ($row = mysql_fetch_array($resDocumentaciones)) {
 					?>
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-						<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
+						<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnFoto">
 							<div class="icon">
 								<i class="material-icons">face</i>
 							</div>
@@ -409,12 +406,6 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocu
 <script>
 
 	$(document).ready(function(){
-
-		$('.btnDocumentacion').click(function() {
-			idTable =  $(this).attr("id");
-			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&docuemntacion=" + idTable;
-			$(location).attr('href',url);
-		});
 
 		function traerImagen(contenedorpdf, contenedor) {
 			$.ajax({

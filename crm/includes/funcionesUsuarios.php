@@ -31,14 +31,17 @@ function traerEntrevistasActivasPorPostulanteEstadoPostulante($id,$idestadopostu
    e.entrevistador,
    e.fecha,
    e.domicilio,
-   e.codigopostal,
+   coalesce( pp.codigo, e.codigopostal) as codigopostal,
    e.refestadopostulantes,
    e.refestadoentrevistas,
    e.fechacrea,
    e.fechamodi,e.usuariocrea,e.usuariomodi,
-   concat(pp.estado, ' ', pp.municipio, ' ', pp.colonia, ' ', pp.codigo) as postalcompleto
+   concat(pp.estado, ' ', pp.municipio, ' ', pp.colonia, ' ', pp.codigo) as postalcompleto,
+   est.estadoentrevista
    from dbentrevistas e
-   inner join postal pp on pp.codigo = e.codigopostal
+   left join tbentrevistasucursales et on et.identrevistasucursal = e.refentrevistasucursales
+   left join postal pp on pp.id = et.refpostal
+   inner join tbestadoentrevistas est on est.idestadoentrevista = e.refestadoentrevistas
    where e.refestadopostulantes = ".$idestadopostulante." and e.refestadoentrevistas in (1,2,3) and e.refpostulantes =".$id;
    $res = $this->query($sql,0);
    return $res;

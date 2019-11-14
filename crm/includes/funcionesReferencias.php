@@ -587,7 +587,7 @@ class ServiciosReferencias {
 		e.entrevistador,
 		e.fecha,
 		e.domicilio,
-		e.codigopostal,
+		coalesce( pp.codigo, e.codigopostal) as codigopostal,
 		e.refestadopostulantes,
 		e.refestadoentrevistas,
 		e.fechacrea,
@@ -595,7 +595,8 @@ class ServiciosReferencias {
 		concat(pp.estado, ' ', pp.municipio, ' ', pp.colonia, ' ', pp.codigo) as postalcompleto,
 		est.estadoentrevista
 		from dbentrevistas e
-		inner join postal pp on pp.codigo = e.codigopostal
+		left join tbentrevistasucursales et on et.identrevistasucursal = e.refentrevistasucursales
+		left join postal pp on pp.id = et.refpostal
 		inner join tbestadoentrevistas est on est.idestadoentrevista = e.refestadoentrevistas
 		where e.refestadopostulantes = ".$idestadopostulante." and e.refestadoentrevistas in (1,2,3) and e.refpostulantes =".$id;
 		$res = $this->query($sql,0);
@@ -710,6 +711,12 @@ class ServiciosReferencias {
 
 	function traerEstadopostulantesPorId($id) {
 		$sql = "select idestadopostulante,estadopostulante,orden,url from tbestadopostulantes where idestadopostulante =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerEstadopostulantesPorOrden($orden) {
+		$sql = "select idestadopostulante,estadopostulante,orden,url from tbestadopostulantes where orden =".$orden;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -912,7 +919,12 @@ class ServiciosReferencias {
 	}
 
 	function modificarUltimoEstadoPostulante($id,$idestado) {
-		$sql = 'update dbpostulantes set ultimoestado = '.$idestado.' where idpostulante = '.$id;
+
+		$resEstado = $this->traerEstadopostulantesPorId($idestado);
+
+		$resEstadoAux = $this->traerEstadopostulantesPorOrden(mysql_result($resEstado,0,'orden') - 1);
+
+		$sql = 'update dbpostulantes set ultimoestado = '.mysql_result($resEstadoAux,0,0).' where idpostulante = '.$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -1046,6 +1058,30 @@ class ServiciosReferencias {
 		$sql = "select iddocumentacionasesor,refpostulantes,refdocumentaciones,archivo,type,refestadodocumentaciones,fechacrea,fechamodi,usuariocrea,usuariomodi from dbdocumentacionasesores where refpostulantes =".$id." and refdocumentaciones = ".$iddocumentacion;
 		$res = $this->query($sql,0);
 		return $res;
+	}
+
+	function traerDocumentacionPorPostulanteDocumentacionCompleta($idpostulante) {
+		$sql = "SELECT
+					    d.iddocumentacion,
+					    d.documentacion,
+					    d.obligatoria,
+					    da.iddocumentacionasesor,
+					    da.archivo,
+					    da.type,
+					    coalesce( ed.estadodocumentacion, 'Falta') as estadodocumentacion,
+						 ed.color,
+					    ed.idestadodocumentacion
+					FROM
+					    dbdocumentaciones d
+					        LEFT JOIN
+					    dbdocumentacionasesores da ON d.iddocumentacion = da.refdocumentaciones
+					        AND da.refpostulantes = ".$idpostulante."
+					        LEFT JOIN
+					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
+					WHERE
+					    d.iddocumentacion IN (3 , 4, 5, 6, 7, 8, 9, 10, 11, 12)";
+		$res = $this->query($sql,0);
+ 		return $res;
 	}
 
 	/* Fin */

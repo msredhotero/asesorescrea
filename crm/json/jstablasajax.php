@@ -154,7 +154,7 @@ switch ($tabla) {
 		e.entrevistador,
 		e.fecha,
 		e.domicilio,
-		pp.codigo,
+		coalesce( pp.codigo, e.codigopostal) as codigo,
 		est.estadoentrevista,
 		e.fechacrea,
 		ep.estadopostulante,
@@ -167,7 +167,8 @@ switch ($tabla) {
 		from dbentrevistas e
 		inner join dbpostulantes pos ON e.refpostulantes = pos.idpostulante and pos.idpostulante = '.$id.'
 		inner join tbestadopostulantes ep ON ep.idestadopostulante = e.refestadopostulantes
-		inner join postal pp on pp.id = e.codigopostal
+		left join tbentrevistasucursales et on et.identrevistasucursal = e.refentrevistasucursales
+		left join postal pp on pp.id = et.refpostal
 		inner join tbestadoentrevistas est ON est.idestadoentrevista = e.refestadoentrevistas';
 
 		if ($idestado == '') {
