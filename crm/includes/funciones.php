@@ -1171,7 +1171,7 @@ class Servicios {
 				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes');
 			break;
 			case 'dbpostulantes':
-				$ocultar = array("ine","curp","rfc","usuariomodi","fechacrea","fechamodi","usuariocrea","usuariomodi",'refasesores','comision','refsucursalesinbursa','ultimoestado');
+				$ocultar = array("ine","curp","rfc","usuariomodi","fechacrea","fechamodi","usuariocrea","usuariomodi",'refasesores','comision','refsucursalesinbursa','ultimoestado','token');
 			break;
 			default:
 				$ocultar = array();

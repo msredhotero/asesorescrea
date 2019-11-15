@@ -62,10 +62,26 @@ $modificar = "modificarEntrevistas";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $resultado 		= 	$serviciosReferencias->traerPostulantesPorId($id);
 
+/**************  alertas **********************************/
+if (mysql_result($resultado,0,'edad') < 18) {
+	$alertaEdad = '<div class="row"><div class="alert bg-red"><i class="material-icons">warning</i> El postulante es menor de edad!!!</div></div>';
+} else {
+	$alertaEdad = '';
+}
+
+if (mysql_result($resultado,0,'refescolaridades') < 3) {
+	$alertaEscolaridad = '<div class="row"><div class="alert bg-red"><i class="material-icons">warning</i> El postulante no cumple con la Escolaridad Basica!!!</div></div>';
+} else {
+	$alertaEscolaridad = '';
+}
+
+
+/******************** fin *********************************/
+
 $tabla 			= "dbpostulantes";
 
-$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','urlprueba');
-$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Etapa','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','URL Prueba');
+$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','nss');
+$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Nro de Seguro Social');
 
 $resUsuario = $serviciosUsuario->traerUsuarioId(mysql_result($resultado,0,'refusuarios'));
 $cadRef1 	= $serviciosFunciones->devolverSelectBox($resUsuario,array(1),'');
@@ -85,11 +101,29 @@ if (mysql_result($resultado,0,'refestadopostulantes') == '1') {
 	$cadRef5 = "<option value=''>-- Seleccionar --</option><option value='1'>Femenino</option><option value='2' selected>Masculino</option>";
 }
 
+if (mysql_result($resultado,0,'afore') == '1') {
+	$cadRef7 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+} else {
+	$cadRef7 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+}
+
+if (mysql_result($resultado,0,'cedula') == '1') {
+	$cadRef8 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+} else {
+	$cadRef8 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+}
+
+$resVar8 = $serviciosReferencias->traerEsquemareclutamiento();
+$cadRef9 = $serviciosFunciones->devolverSelectBoxActivo($resVar8,array(1),'',mysql_result($resultado,0,'refesquemareclutamiento'));
+
+$resPostal = $serviciosReferencias->traerPostalPorId(mysql_result($resultado,0,'codigopostal'));
+
+$codigopostal = mysql_result($resPostal,0,'codigo');
 
 $cadRef6 	= "<option value='Mexico'>Mexico</option>";
 
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6);
-$refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','refestadopostulantes','sexo','nacionalidad');
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadRef7,7=>$cadRef8,8=>$cadRef9);
+$refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','refestadopostulantes','sexo','nacionalidad','afore','cedula','refesquemareclutamiento');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($id,'idpostulante','modificarPostulantes',$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -235,10 +269,13 @@ $filesVeritas = array_diff(scandir($pathVeritas), array('.', '..'));
 							</ul>
 						</div>
 						<div class="body table-responsive">
+							<?php echo $alertaEdad; ?>
+							<?php echo $alertaEscolaridad; ?>
 							<form class="form" id="sign_in" role="form">
 								<div class="row">
 									<?php echo $frmUnidadNegocios; ?>
 								</div>
+								<input type="hidden" name="codigopostalaux" id="codigopostalaux" value="<?php echo mysql_result($resultado,0,'codigopostal'); ?>" />
 								<div class="button-demo">
 									<button type="submit" class="btn bg-light-blue waves-effect modificarPostulante">
 										<i class="material-icons">save</i>
@@ -519,6 +556,8 @@ $filesVeritas = array_diff(scandir($pathVeritas), array('.', '..'));
 
 <script src="../../plugins/dropzone/dropzone.js"></script>
 
+<script src="../../js/pdfobject.min.js"></script>
+
 <script src="../../js/picker.js"></script>
 <script src="../../js/picker.date.js"></script>
 
@@ -636,6 +675,61 @@ $filesVeritas = array_diff(scandir($pathVeritas), array('.', '..'));
 
 	$(document).ready(function(){
 
+		$('#codigopostal').val('<?php echo $codigopostal; ?>');
+
+		$(".frmAjaxModificar").on("change",'#refentrevistasucursales', function(){
+			traerEntrevistasucursalesPorId($(this).val(), 'edit');
+		});
+
+		function traerEntrevistasucursalesPorId(id, contenedor) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'traerEntrevistasucursalesPorId',id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						if (contenedor == 'new') {
+							$('.frmAjaxNuevo #domicilio').val(data.domicilio);
+							$('.frmAjaxNuevo .codigopostalaux').val(data.refpostal);
+							$('.frmAjaxNuevo #codigopostal').val(data.codigopostal);
+						} else {
+							$('.frmAjaxModificar #domicilio').val(data.domicilio);
+							$('.frmAjaxModificar .codigopostalaux').val(data.refpostal);
+							$('.frmAjaxModificar #codigopostal2').val(data.codigopostal);
+						}
+
+					} else {
+						swal("Error!", 'Se genero un error al traer datos', "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
+
+		$('.img-responsive').click(function() {
+			srcImg =  $(this).attr("src");
+			window.open(srcImg,'_blank');
+		});
+
+		$('.img-responsive2').click(function() {
+			srcImg =  $(this).attr("src");
+			window.open(srcImg,'_blank');
+		});
+
 
 		$('#fechanacimiento').pickadate({
 			format: 'yyyy-mm-dd',
@@ -690,7 +784,9 @@ $filesVeritas = array_diff(scandir($pathVeritas), array('.', '..'));
 				},
 				onClickEvent: function() {
 					var value = $("#codigopostal").getSelectedItemData().codigo;
+					var id = $("#codigopostal").getSelectedItemData().id;
 					$("#codigopostal").val(value);
+					$("#codigopostalaux").val(id);
 
 				}
 			}
