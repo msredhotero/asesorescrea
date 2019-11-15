@@ -410,7 +410,7 @@ class ServiciosReferencias {
 				p.municipio,
 				p.estado
 			from postal p
-			where cast(p.codigo as UNSIGNED) like '%".$busqueda."%' or p.colonia like '%".$busqueda."%' or p.municipio like '%".$busqueda."%' or p.estado like '%".$busqueda."%'
+			where cast(p.codigo as UNSIGNED) like '%".$busqueda."%'
 			order by p.codigo,p.estado,p.municipio,p.colonia";
 		$res = $this->query($sql,0);
 		return $res;
