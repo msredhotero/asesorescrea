@@ -380,7 +380,7 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
          </div>
 		<?php } else { ?>
       <div class="row">
-         <div class='alert alert-info'><h4>Esta vacante es lo que buscas y se adpata a tus expactativas económicas? Te pedimo nos regales un máximo de 5 minutos de tu tiempo, para constetar 6 simples preguntas y sabremos si nuestra oferta de trabajo es compatible con tus intereses. Esto también nos apoya para ofrecerte un plan de carrera personalizado.</h4></div>
+         <div class='alert alert-info'><h4><b>Esta vacante es lo que buscas y se adpata a tus expactativas económicas? Te pedimo nos regales un máximo de 5 minutos de tu tiempo, para constetar 6 simples preguntas y sabremos si nuestra oferta de trabajo es compatible con tus intereses. Esto también nos apoya para ofrecerte un plan de carrera personalizado.</b></h4></div>
       </div>
 		<form role="form" class="formulario">
       <div class="row">
