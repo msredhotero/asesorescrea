@@ -752,6 +752,15 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function modificarPostulanteUnicaDocumentacion($id, $campo, $valor) {
+		$sql = "update dbpostulantes
+		set
+		".$campo." = '".$valor."', fechamodi = '".date('Y-m-d H:i:s')."'
+		where idpostulante =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 
 	function eliminarPostulantes($id) {
 		$sql = "delete from dbpostulantes where idpostulante =".$id;
@@ -791,7 +800,8 @@ class ServiciosReferencias {
 			p.afore,
 			p.cedula,
 			p.compania,
-			est.estadopostulante
+			est.estadopostulante,
+			p.nss
 		FROM
 			dbpostulantes p
 			INNER JOIN
@@ -845,7 +855,8 @@ class ServiciosReferencias {
 			p.refasesores,
 			p.comision,
 			p.refusuarios,
-			p.refsucursalesinbursa
+			p.refsucursalesinbursa,
+			p.nss
 		from dbpostulantes p
 		inner join dbusuarios usu ON usu.idusuario = p.refusuarios
 		inner join tbescolaridades esc ON esc.idescolaridad = p.refescolaridades
@@ -887,7 +898,8 @@ class ServiciosReferencias {
 			p.usuariomodi,
 			p.refasesores,
 			p.comision,
-			p.refsucursalesinbursa
+			p.refsucursalesinbursa,
+			p.nss
 		from dbpostulantes p
 		inner join dbusuarios usu ON usu.idusuario = p.refusuarios
 		inner join tbescolaridades esc ON esc.idescolaridad = p.refescolaridades
@@ -900,14 +912,14 @@ class ServiciosReferencias {
 
 
 	function traerPostulantesPorId($id) {
-		$sql = "select idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa, refestadocivil from dbpostulantes where idpostulante =".$id;
+		$sql = "select idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa, refestadocivil,nss from dbpostulantes where idpostulante =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
 
 	function traerPostulantesPorIdUsuario($idusuario) {
-		$sql = "select idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa, refestadocivil from dbpostulantes where refusuarios =".$idusuario;
+		$sql = "select idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa, refestadocivil,nss from dbpostulantes where refusuarios =".$idusuario;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -959,6 +971,15 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function modificarEstadoDocumentacionPostulante($id, $refestadodocumentaciones,$usuariomodi) {
+		$sql = "update dbdocumentacionasesores
+		set
+		refestadodocumentaciones = ".$refestadodocumentaciones.",fechamodi = '".date('Y-m-d H:i:s')."',usuariomodi = '".$usuariomodi."'
+		where iddocumentacionasesor =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 
 	function eliminarDocumentacionasesores($id) {
 		$sql = "delete from dbdocumentacionasesores where iddocumentacionasesor =".$id;
@@ -998,11 +1019,40 @@ class ServiciosReferencias {
             switch ($iddocumentacion) {
                case 2:
                   $archivos = '../archivos/postulantes/'.$idpostulante.'/siap/';
-
-                  break;
+               break;
                case 1:
                   $archivos = '../archivos/postulantes/'.$idpostulante.'/veritas/';
-                  break;
+               break;
+					case 3:
+                  $archivos = '../archivos/postulantes/'.$idpostulante.'/inef/';
+               break;
+					case 4:
+                  $archivos = '../archivos/postulantes/'.$idpostulante.'/ined/';
+               break;
+					case 5:
+                  $archivos = '../archivos/postulantes/'.$idpostulante.'/actanacimiento/';
+               break;
+					case 6:
+                  $archivos = '../archivos/postulantes/'.$idpostulante.'/curp/';
+               break;
+					case 7:
+                  $archivos = '../archivos/postulantes/'.$idpostulante.'/rfc/';
+               break;
+					case 8:
+                  $archivos = '../archivos/postulantes/'.$idpostulante.'/nss/';
+               break;
+					case 9:
+                  $archivos = '../archivos/postulantes/'.$idpostulante.'/comprobanteestudio/';
+               break;
+					case 10:
+                  $archivos = '../archivos/postulantes/'.$idpostulante.'/comprobantedomicilio/';
+               break;
+					case 11:
+                  $archivos = '../archivos/postulantes/'.$idpostulante.'/cv/';
+               break;
+					case 12:
+                  $archivos = '../archivos/postulantes/'.$idpostulante.'/infonavit/';
+               break;
             }
 
             $resBorrar = $this->borrarDirecctorio($archivos);
@@ -1055,7 +1105,13 @@ class ServiciosReferencias {
 	}
 
 	function traerDocumentacionPorPostulanteDocumentacion($id, $iddocumentacion) {
-		$sql = "select iddocumentacionasesor,refpostulantes,refdocumentaciones,archivo,type,refestadodocumentaciones,fechacrea,fechamodi,usuariocrea,usuariomodi from dbdocumentacionasesores where refpostulantes =".$id." and refdocumentaciones = ".$iddocumentacion;
+		$sql = "select
+		da.iddocumentacionasesor,da.refpostulantes,da.refdocumentaciones,
+		da.archivo,da.type,da.refestadodocumentaciones,da.fechacrea,da.fechamodi,
+		da.usuariocrea,da.usuariomodi , e.estadodocumentacion, e.color
+		from dbdocumentacionasesores da
+		inner join tbestadodocumentaciones e on e.idestadodocumentacion = da.refestadodocumentaciones
+		where da.refpostulantes =".$id." and da.refdocumentaciones = ".$iddocumentacion;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -1079,9 +1135,58 @@ class ServiciosReferencias {
 					        LEFT JOIN
 					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
 					WHERE
-					    d.iddocumentacion IN (3 , 4, 5, 6, 7, 8, 9, 10, 11, 12)";
+					    d.iddocumentacion IN (3 , 4, 5, 6, 7, 8, 9, 10, 11, 12)
+					order by 1";
 		$res = $this->query($sql,0);
  		return $res;
+	}
+
+	function permiteAvanzarDocumentacionI($idpostulante) {
+		$apruebaPrimero = 0;
+		$apruebaSegundo = 0;
+
+		// compruebo que haya cargado los datos en postulantes
+		$sqlPrimero = "SELECT
+				    p.idpostulante
+				FROM
+				    dbpostulantes p
+				WHERE
+				    p.idpostulante = ".$idpostulante." AND ine <> ''
+				        AND curp <> '' and rfc <> '' and nss <> ''";
+
+		$resPrimero = $this->query($sqlPrimero,0);
+
+		if (mysql_num_rows($resPrimero) > 0) {
+			$apruebaPrimero = 1;
+		}
+
+		// compruebo que haya cargado las documentaciones
+		$sqlSegundo = "SELECT
+						COUNT(*) AS documentacionesaceptadas
+					FROM
+						dbdocumentacionasesores da
+					WHERE
+						da.refpostulantes = ".$idpostulante."
+						AND da.refdocumentaciones IN (3 , 4, 5, 6, 7, 8, 9, 10, 11, 12)
+						AND da.refestadodocumentaciones = 5";
+
+		$resSegundo = $this->query($sqlSegundo,0);
+
+  		if (mysql_num_rows($resSegundo) > 0) {
+			if (mysql_result($resSegundo,0,0) == 10) {
+				$apruebaSegundo = 1;
+			}
+  		}
+
+		// compruebo que haya cargado las archivos de las documentaciones
+		// falta
+
+		if (($apruebaPrimero == 1) && ($apruebaSegundo == 1)) {
+			return true;
+		} else {
+			return false;
+		}
+
 	}
 
 	/* Fin */
@@ -2455,6 +2560,17 @@ class ServiciosReferencias {
    e.color,
    e.icono
    from tbestados e
+   order by 1";
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+	function traerEstadodocumentaciones() {
+   $sql = "select
+   e.idestadodocumentacion,
+   e.estadodocumentacion,
+   e.color
+   from tbestadodocumentaciones e
    order by 1";
    $res = $this->query($sql,0);
    return $res;

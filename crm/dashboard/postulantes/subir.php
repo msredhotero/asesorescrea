@@ -56,18 +56,69 @@
 		switch ($iddocumentacion) {
 			case 2:
 				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/siap/';
-				break;
+				list($base,$extension) = explode('.',$name);
+				$newname = implode('.', ['siap', time(), $extension]);
+			break;
 			case 1:
 				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/veritas/';
-				break;
+				list($base,$extension) = explode('.',$name);
+				$newname = implode('.', ['veritas', time(), $extension]);
+			break;
+			case 3:
+				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/inef/';
+				list($base,$extension) = explode('.',$name);
+				$newname = implode('.', ['inef', time(), $extension]);
+			break;
+			case 4:
+				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/ined/';
+				list($base,$extension) = explode('.',$name);
+				$newname = implode('.', ['ined', time(), $extension]);
+			break;
+			case 5:
+				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/actanacimiento/';
+				list($base,$extension) = explode('.',$name);
+				$newname = implode('.', ['actanacimiento', time(), $extension]);
+			break;
+			case 6:
+				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/curp/';
+				list($base,$extension) = explode('.',$name);
+				$newname = implode('.', ['curp', time(), $extension]);
+			break;
+			case 7:
+				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/rfc/';
+				list($base,$extension) = explode('.',$name);
+				$newname = implode('.', ['rfc', time(), $extension]);
+			break;
+			case 8:
+				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/nss/';
+				list($base,$extension) = explode('.',$name);
+				$newname = implode('.', ['nss', time(), $extension]);
+			break;
+			case 9:
+				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/comprobanteestudio/';
+				list($base,$extension) = explode('.',$name);
+				$newname = implode('.', ['comprobanteestudio', time(), $extension]);
+			break;
+			case 10:
+				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/comprobantedomicilio/';
+				list($base,$extension) = explode('.',$name);
+				$newname = implode('.', ['comprobantedomicilio', time(), $extension]);
+			break;
+			case 11:
+				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/cv/';
+				list($base,$extension) = explode('.',$name);
+				$newname = implode('.', ['cv', time(), $extension]);
+			break;
+			case 12:
+				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/infonavit/';
+				list($base,$extension) = explode('.',$name);
+				$newname = implode('.', ['infonavit', time(), $extension]);
+			break;
 		}
 
 
 		// produccion
 		//$dir_destino = 'https://www.saupureinconsulting.com.ar/aifzn/data/'.mysql_result($resFoto,0,'iddocumentacionjugadorimagen').'/';
-		list($base,$extension) = explode('.',$name);
-		$newname = implode('.', ['siap', time(), $extension]);
-
 
 		$imagen_subida = $dir_destino.'/'.$newname;
 

@@ -169,6 +169,8 @@ $filesInfonavit = array_diff(scandir($pathInfonavit), array('.', '..'));
 
 $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id);
 
+$puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
+
 ?>
 
 <!DOCTYPE html>
@@ -347,10 +349,17 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocu
 			</div>
 
 			<div class="row">
-					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-bottom: 10px;">
 						<div class="alert alert-info">
 							<p><b>Importante!</b> Recuerde que debe completar toda la documentacion para poder continuar con la carga de la siguiente documentación</p>
 						</div>
+						<?php if ($puedeAvanzar == true) { ?>
+							<button type="button" class="btn bg-green waves-effect btnContinuar">
+								<i class="material-icons">add</i>
+								<span>CONTINUAR</span>
+							</button>
+
+						<?php } ?>
 					</div>
 					<?php
 					while ($row = mysql_fetch_array($resDocumentaciones)) {
@@ -412,7 +421,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocu
 
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
-			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&docuemntacion=" + idTable;
+			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=" + idTable;
 			$(location).attr('href',url);
 		});
 
@@ -506,7 +515,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocu
 		}
 
 		$('.btnContinuar').click(function() {
-			modificarEstadoPostulante(<?php echo $id; ?>, 3);
+			modificarEstadoPostulante(<?php echo $id; ?>, 7);
 		});
 
 

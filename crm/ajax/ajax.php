@@ -586,9 +586,62 @@ switch ($accion) {
    case 'traerEntrevistasucursalesPorId':
       traerEntrevistasucursalesPorId($serviciosReferencias);
    break;
+   case 'modificarPostulanteUnicaDocumentacion':
+      modificarPostulanteUnicaDocumentacion($serviciosReferencias);
+   break;
+   case 'modificarEstadoDocumentacionPostulante':
+      modificarEstadoDocumentacionPostulante($serviciosReferencias);
+   break;
 
 }
 /* Fin */
+
+function modificarEstadoDocumentacionPostulante($serviciosReferencias) {
+   session_start();
+
+   $iddocumentacionasesor = $_POST['iddocumentacionasesores'];
+   $idestado = $_POST['idestado'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+
+   if ($iddocumentacionasesor == 0) {
+      $resV['leyenda'] = 'Todavia no cargo el archivo, no podra modificar el estado de la documentación';
+      $resV['error'] = true;
+   } else {
+      $res = $serviciosReferencias->modificarEstadoDocumentacionPostulante($iddocumentacionasesor,$idestado,$usuariomodi);
+
+      if ($res == true) {
+         $resV['leyenda'] = '';
+         $resV['error'] = false;
+      } else {
+         $resV['leyenda'] = 'Hubo un error al modificar datos';
+         $resV['error'] = true;
+      }
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function modificarPostulanteUnicaDocumentacion($serviciosReferencias) {
+   $idpostulante = $_POST['idpostulante'];
+   $campo = $_POST['campo'];
+   $valor = $_POST['valor'];
+
+   $res = $serviciosReferencias->modificarPostulanteUnicaDocumentacion($idpostulante, $campo, $valor);
+
+   if ($res == true) {
+      $resV['leyenda'] = '';
+      $resV['error'] = false;
+   } else {
+      $resV['leyenda'] = 'Hubo un error al modificar datos';
+      $resV['error'] = true;
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
 
 function traerEntrevistasucursalesPorId($serviciosReferencias) {
    $id = $_POST['id'];
@@ -850,10 +903,40 @@ function traerDocumentacionPorPostulanteDocumentacion($serviciosArbitros) {
             switch ($iddocumentacion) {
                case 2:
                   $imagen = '../../archivos/postulantes/'.$idpostulante.'/siap/'.mysql_result($resFoto,0,'archivo');
-                  break;
+               break;
                case 1:
                   $imagen = '../../archivos/postulantes/'.$idpostulante.'/veritas/'.mysql_result($resFoto,0,'archivo');
-                  break;
+               break;
+               case 3:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/inef/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 4:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/ined/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 5:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/actanacimiento/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 6:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/curp/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 7:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/rfc/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 8:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/nss/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 9:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/comprobanteestudio/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 10:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/comprobantedomicilio/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 11:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/cv/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 12:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/infonavit/'.mysql_result($resFoto,0,'archivo');
+               break;
             }
 
             $resV['datos'] = array('imagen' => $imagen, 'type' => mysql_result($resFoto,0,'type'));
