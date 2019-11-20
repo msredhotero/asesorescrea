@@ -66,6 +66,32 @@ if (mysql_num_rows($existe)>0) {
 	$secuencia = 1;
 }
 
+$cadAnios = '';
+for ($i=(date('Y') - 18);$i>= 1950;$i--) {
+   $cadAnios .= '<option value="'.$i.'">'.$i.'</option>';
+}
+
+$cadMeses = '';
+
+for ($i2 = 1; $i2 <= 12; $i2++) {
+   $cadMeses .= '<option value="'.$i2.'">'.$i2.'</option>';
+}
+
+$cadDiasA = '';
+for ($i3=1;$i3<= 31;$i3++) {
+   $cadDiasA .= '<option value="'.$i3.'">'.$i3.'</option>';
+}
+
+$cadDiasB = '';
+for ($i4=1;$i4<= 30;$i4++) {
+   $cadDiasB = '<option value="'.$i4.'">'.$i4.'</option>';
+}
+
+$cadDiasC = '';
+for ($i5=1;$i5<= 29;$i5++) {
+   $cadDiasC = '<option value="'.$i5.'">'.$i5.'</option>';
+}
+
 
 ?>
 <!doctype html>
@@ -119,7 +145,14 @@ if (mysql_num_rows($existe)>0) {
 
 	<script type='text/javascript'>
 		//document.oncontextmenu = function(){return false}
+
 	</script>
+   <style>
+      .sinFondo {
+         background-color: #fff !important;
+         border: #fff !important;
+      }
+   </style>
 
 </head>
 
@@ -202,18 +235,33 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 						</div>
                </div>
                <div class="row">
-						<div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:block">
+
+                  <div class="col-xs-6">
+
    						<b>Fecha De Nacimiento</b>
                      <div class="form-group">
-                        <div class='input-group date' id='datetimepicker1'>
-                           <input type='text' class="form-control" id="fechanacimiento" name="fechanacimiento" autocomplete="off" required />
+                        <div class='input-group'>
                            <span class="input-group-addon">
-                              <span class="glyphicon glyphicon-calendar"></span>
+                              <select class="form-control" id="anio" name="anio">
+                                 <?php echo $cadAnios; ?>
+                              </select>
+                           </span>
+                           <span class="input-group-addon">
+                              <select class="form-control" id="mes" name="mes">
+                                 <?php echo $cadMeses; ?>
+                              </select>
+                           </span>
+                           <span class="input-group-addon">
+                              <select class="form-control" id="dia" name="dia">
+                                 <?php echo $cadDiasA; ?>
+                              </select>
                            </span>
                         </div>
 
                      </div>
+
                   </div>
+
 
 						<div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:block">
    						<b>Sexo</b>
@@ -251,9 +299,7 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
                               <option value="1">SOLTERO(A)</option>
                               <option value="2">CASADO(A)</option>
                               <option value="3">UNION LIBRE</option>
-                              <option value="4">DIVORCIADO(A)</option>
                               <option value="6">VIUDO(A)</option>
-                              <option value="7">SEPARADO(A)</option>
                            </select>
       						</div>
    						</div>
@@ -277,13 +323,13 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 							<label class="form-label">Tel. Movil</label>
 							<div class="form-group">
 								<div class="form-line">
-									<input type="text" class="form-control" id="telefonomovil" name="telefonomovil" maxlength="11" />
+									<input type="text" class="form-control" id="telefonomovil" name="telefonomovil" maxlength="11" required />
 
 								</div>
 							</div>
 						</div>
 
-						<div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:block">
+						<div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:none">
 							<label class="form-label">Tel. Casa</label>
 							<div class="form-group">
 								<div class="form-line">
@@ -293,7 +339,7 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 							</div>
 						</div>
 
-                  <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:block">
+                  <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:none">
 							<label class="form-label">Tel. Trabajo</label>
 							<div class="form-group">
 								<div class="form-line">
@@ -406,37 +452,135 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 				</div>
 				<div class="row contRespuesta1">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta1 animated bounceInLeft" id="1" style="margin-right: 1%;"></button>
+                  <div class="form-group" style="margin-bottom: -20px;">
+                     <div class='input-group'>
+                        <span class="input-group-addon sinFondo">
+						         <button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta1 animated bounceInLeft" id="1" style="margin-right: 1%;"></button>
+                        </span>
+                        <span class="input-group-addon sinFondo contSlctRespuesta">
+                           <select class="form-control" id="slctRespuesta1" name="slctRespuesta1">
+                              <option value="1">0 - 300</option>
+                              <option value="2">301 - 500</option>
+                              <option value="3">501 - 900</option>
+                              <option value="4"> > 901</option>
+                           </select>
+                        </span>
+                     </div>
+                  </div>
 					</div>
 				</div>
 				<div class="row contRespuesta2">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta2 animated bounceInLeft" id="2" style="margin-right: 1%;"></button>
+                  <div class="form-group" style="margin-bottom: -20px;">
+                     <div class='input-group'>
+                        <span class="input-group-addon sinFondo">
+						         <button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta2 animated bounceInLeft" id="2" style="margin-right: 1%;"></button>
+                        </span>
+                        <span class="input-group-addon sinFondo contSlctRespuesta">
+                           <select class="form-control" id="slctRespuesta2" name="slctRespuesta2">
+                              <option value="1">0 - 300</option>
+                              <option value="2">301 - 500</option>
+                              <option value="3">501 - 900</option>
+                              <option value="4"> > 901</option>
+                           </select>
+                        </span>
+                     </div>
+                  </div>
 					</div>
 				</div>
 				<div class="row contRespuesta3">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta3 animated bounceInLeft" id="3" style="margin-right: 1%;"></button>
+                  <div class="form-group" style="margin-bottom: -20px;">
+                     <div class='input-group'>
+                        <span class="input-group-addon sinFondo">
+						         <button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta3 animated bounceInLeft" id="3" style="margin-right: 1%;"></button>
+                        </span>
+                        <span class="input-group-addon sinFondo contSlctRespuesta">
+                           <select class="form-control" id="slctRespuesta3" name="slctRespuesta3">
+                              <option value="1">0 - 300</option>
+                              <option value="2">301 - 500</option>
+                              <option value="3">501 - 900</option>
+                              <option value="4"> > 901</option>
+                           </select>
+                        </span>
+                     </div>
+                  </div>
 					</div>
 				</div>
 				<div class="row contRespuesta4">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta4 animated bounceInLeft" id="4" style="margin-right: 1%;"></button>
+                  <div class="form-group" style="margin-bottom: -20px;">
+                     <div class='input-group'>
+                        <span class="input-group-addon sinFondo">
+						         <button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta4 animated bounceInLeft" id="4" style="margin-right: 1%;"></button>
+                        </span>
+                        <span class="input-group-addon sinFondo contSlctRespuesta">
+                           <select class="form-control" id="slctRespuesta4" name="slctRespuesta4">
+                              <option value="1">0 - 300</option>
+                              <option value="2">301 - 500</option>
+                              <option value="3">501 - 900</option>
+                              <option value="4"> > 901</option>
+                           </select>
+                        </span>
+                     </div>
+                  </div>
 					</div>
 				</div>
 				<div class="row contRespuesta5">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta5 animated bounceInLeft" id="5" style="margin-right: 1%;"></button>
+                  <div class="form-group" style="margin-bottom: -20px;">
+                     <div class='input-group'>
+                        <span class="input-group-addon sinFondo">
+						         <button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta5 animated bounceInLeft" id="5" style="margin-right: 1%;"></button>
+                        </span>
+                        <span class="input-group-addon sinFondo contSlctRespuesta">
+                           <select class="form-control" id="slctRespuesta5" name="slctRespuesta5">
+                              <option value="1">0 - 300</option>
+                              <option value="2">301 - 500</option>
+                              <option value="3">501 - 900</option>
+                              <option value="4"> > 901</option>
+                           </select>
+                        </span>
+                     </div>
+                  </div>
 					</div>
 				</div>
 				<div class="row contRespuesta6">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta6 animated bounceInLeft" id="6" style="margin-right: 1%;"></button>
+                  <div class="form-group" style="margin-bottom: -20px;">
+                     <div class='input-group'>
+                        <span class="input-group-addon sinFondo">
+						         <button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta6 animated bounceInLeft" id="6" style="margin-right: 1%;"></button>
+                        </span>
+                        <span class="input-group-addon sinFondo contSlctRespuesta">
+                           <select class="form-control" id="slctRespuesta6" name="slctRespuesta6">
+                              <option value="1">0 - 300</option>
+                              <option value="2">301 - 500</option>
+                              <option value="3">501 - 900</option>
+                              <option value="4"> > 901</option>
+                           </select>
+                        </span>
+                     </div>
+                  </div>
 					</div>
 				</div>
 				<div class="row contRespuesta7">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-						<button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta7 animated bounceInLeft" id="7" style="margin-right: 1%;"></button>
+                  <div class="form-group" style="margin-bottom: -20px;">
+                     <div class='input-group'>
+                        <span class="input-group-addon sinFondo">
+						         <button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta7 animated bounceInLeft" id="7" style="margin-right: 1%;"></button>
+                        </span>
+                        <span class="input-group-addon sinFondo contSlctRespuesta">
+                           <select class="form-control" id="slctRespuesta7" name="slctRespuesta7">
+                              <option value="1">0 - 300</option>
+                              <option value="2">301 - 500</option>
+                              <option value="3">501 - 900</option>
+                              <option value="4"> > 901</option>
+                           </select>
+                        </span>
+                     </div>
+                  </div>
 					</div>
 				</div>
 				<input type="hidden" id="idpregunta" name="idpregunta" value="0"/>
@@ -509,6 +653,8 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 
 		$(document).ready(function(){
 
+         $('.contSlctRespuesta').hide();
+
          $('.infoTest').hide();
 
          $('#afore').change(function() {
@@ -521,8 +667,6 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
          });
 
          $('#telefonomovil').inputmask('999 9999999', { placeholder: '___ _______' });
-   		$('#telefonocasa').inputmask('999 9999999', { placeholder: '___ _______' });
-   		$('#telefonotrabajo').inputmask('999 9999999', { placeholder: '___ _______' });
 
          $('.frmNuevo').submit(function(e){
 
@@ -576,7 +720,7 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
    			url: "crm/json/jsbuscarpostal.php",
 
    			getValue: function(element) {
-   				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+   				return element.colonia + ' ' + element.codigo;
    			},
 
    			ajaxSettings: {
@@ -639,8 +783,8 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 				trailColor: '#eee',
 				trailWidth: 1,
 				svgStyle: {width: '100%', height: '100%'},
-				from: {color: '#0FF354'},
-				to: {color: '#FF0000'},
+				from: {color: '#1b2646'},
+				to: {color: '#1b2646'},
 				step: (state, bar) => {
 					bar.path.setAttribute('stroke', state.color);
 				}
@@ -719,6 +863,10 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 								$('.contRespuesta7').hide();
 								$('.respuesta7').html('');
 							}
+
+                     if (datos[clave].secuencia == 7) {
+                        $('.contSlctRespuesta').show();
+                     }
 
 							$('#secuencia').val(datos[clave].secuencia + 1);
 

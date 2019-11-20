@@ -482,7 +482,7 @@ function registrarSocio($email, $password,$apellido, $nombre,$refcliente) {
    $cuerpo .= '<h2>¡Bienvenido a Asesores CREA!</h2>';
 
 
-   $cuerpo .= '<p>Usa el siguente <a href="http://asesorescrea.com/crm/activacion.php?token='.$token.'" target="_blank">enlace</a> para confirmar tu cuenta.</p>';
+   $cuerpo .= '<p>Usa el siguente <a href="http://asesorescrea.com/desarrollo/crm/activacion.php?token='.$token.'" target="_blank">enlace</a> para confirmar tu cuenta.</p>';
 
 
 	$sql = "INSERT INTO dbusuarios

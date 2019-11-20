@@ -9,6 +9,55 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+	/* PARA Respuestadetalles */
+
+	function insertarRespuestadetalles($refrespuestas,$valor) {
+		$sql = "insert into dbrespuestadetalles(idrespuestadetalle,refrespuestas,valor)
+		values ('',".$refrespuestas.",'".$valor."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarRespuestadetalles($id,$refrespuestas,$valor) {
+		$sql = "update dbrespuestadetalles
+		set
+		refrespuestas = ".$refrespuestas.",valor = '".$valor."'
+		where idrespuestadetalle =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarRespuestadetalles($id) {
+		$sql = "delete from dbrespuestadetalles where idrespuestadetalle =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerRespuestadetalles() {
+		$sql = "select
+		r.idrespuestadetalle,
+		r.refrespuestas,
+		r.valor
+		from dbrespuestadetalles r
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerRespuestadetallesPorId($id) {
+		$sql = "select idrespuestadetalle,refrespuestas,valor from dbrespuestadetalles where idrespuestadetalle =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbrespuestadetalles*/
+
 	/* PARA Entrevistasucursales */
 
 	function insertarEntrevistasucursales($refpostal,$telefono,$interno,$domicilio) {
@@ -1873,6 +1922,12 @@ class ServiciosReferencias {
 
 	function traerEstadocivilPorId($id) {
 	$sql = "select idestadocivil,estadocivil from tbestadocivil where idestadocivil =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	function traerEstadocivilPorIn($in) {
+	$sql = "select idestadocivil,estadocivil from tbestadocivil where idestadocivil in (".$id.")";
 	$res = $this->query($sql,0);
 	return $res;
 	}
