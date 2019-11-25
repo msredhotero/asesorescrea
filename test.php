@@ -92,6 +92,9 @@ for ($i5=1;$i5<= 29;$i5++) {
    $cadDiasC = '<option value="'.$i5.'">'.$i5.'</option>';
 }
 
+$resEmpresasSeguros = $serviciosReferencias->traerSegurosempresas();
+$cadSeguros = $serviciosFunciones->devolverSelectBox($resEmpresasSeguros, array(1),'');
+
 
 ?>
 <!doctype html>
@@ -123,6 +126,9 @@ for ($i5=1;$i5<= 29;$i5++) {
    <!-- Sweetalert Css -->
    <link href="crm/plugins/sweetalert/sweetalert.css" rel="stylesheet" />
 
+   <!-- noUISlider Css -->
+   <link href="crm/plugins/nouislider/nouislider.min.css" rel="stylesheet" />
+
    <!-- Custom Css -->
    <link href="css/style.css" rel="stylesheet">
 
@@ -143,6 +149,8 @@ for ($i5=1;$i5<= 29;$i5++) {
    <script src="crm/js/moment-with-locales.js"></script>
    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
 
+
+
 	<script type='text/javascript'>
 		//document.oncontextmenu = function(){return false}
 
@@ -151,6 +159,10 @@ for ($i5=1;$i5<= 29;$i5++) {
       .sinFondo {
          background-color: #fff !important;
          border: #fff !important;
+      }
+
+      .m-t-20, .font-12 {
+         margin-top: 8px !important;
       }
    </style>
 
@@ -203,7 +215,7 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 							</div>
 						</div>
 
-						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+						<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="display:block">
 							<label class="form-label">Apellido Paterno</label>
 							<div class="form-group">
 								<div class="form-line">
@@ -212,9 +224,8 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 								</div>
 							</div>
 						</div>
-               </div>
-               <div class="row">
-						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="display:block">
 							<label class="form-label">Apellido Materno</label>
 							<div class="form-group">
 								<div class="form-line">
@@ -223,6 +234,9 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 								</div>
 							</div>
 						</div>
+               </div>
+               <div class="row">
+
 
 						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
 							<label class="form-label">Email</label>
@@ -232,6 +246,29 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 
 								</div>
 							</div>
+						</div>
+
+                  <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:block">
+							<label class="form-label">Tel. Movil</label>
+							<div class="form-group">
+								<div class="form-line">
+									<input type="text" class="form-control" id="telefonomovil" name="telefonomovil" maxlength="11" required />
+
+								</div>
+							</div>
+						</div>
+
+                  <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:block">
+   						<b>Sexo</b>
+   						<div class="input-group">
+      						<div class="form-line">
+      							<select class="form-control" id="sexo" name="sexo"  required >
+                              <option value=''>-- Seleccionar --</option>
+                              <option value='1'>Femenino</option>
+                              <option value='2'>Masculino</option>
+                           </select>
+      						</div>
+   						</div>
 						</div>
                </div>
                <div class="row">
@@ -263,20 +300,9 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
                   </div>
 
 
-						<div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:block">
-   						<b>Sexo</b>
-   						<div class="input-group">
-      						<div class="form-line">
-      							<select class="form-control" id="sexo" name="sexo"  required >
-                              <option value=''>-- Seleccionar --</option>
-                              <option value='1'>Femenino</option>
-                              <option value='2'>Masculino</option>
-                           </select>
-      						</div>
-   						</div>
-						</div>
 
-                  <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:block">
+
+                  <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6" style="display:block">
    						<b>Escolaridad</b>
    						<div class="input-group">
       						<div class="form-line">
@@ -291,7 +317,7 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
    						</div>
 						</div>
 
-                  <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:block">
+                  <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6" style="display:block">
    						<b>Estado Civil</b>
    						<div class="input-group">
       						<div class="form-line">
@@ -304,11 +330,8 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
       						</div>
    						</div>
 						</div>
-               </div>
 
-               <div class="row">
-
-						<div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:block">
+                  <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6" style="display:block">
    						<b>Nacionalidad</b>
    						<div class="input-group">
       						<div class="form-line">
@@ -318,16 +341,9 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
       						</div>
    						</div>
 						</div>
+               </div>
 
-                  <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:block">
-							<label class="form-label">Tel. Movil</label>
-							<div class="form-group">
-								<div class="form-line">
-									<input type="text" class="form-control" id="telefonomovil" name="telefonomovil" maxlength="11" required />
-
-								</div>
-							</div>
-						</div>
+               <div class="row">
 
 						<div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" style="display:none">
 							<label class="form-label">Tel. Casa</label>
@@ -369,7 +385,7 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 						</div>
 
 						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
-							<label class="form-label">¿Cuenta con cédula definitiva para venta de Afore?</label>
+							<label class="form-label">¿Estas o haz estado registrado ante la CONSAR para la venta de AFORE?</label>
 							<div class="form-group">
 								<div class="form-line">
 									<select class="form-control" id="afore" name="afore" />
@@ -381,17 +397,9 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 						</div>
                </div>
                <div class="row">
-                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 contCompania" style="display:block;">
-							<label class="form-label">¿Con que compañía vende actualmente?</label>
-							<div class="form-group">
-								<div class="form-line">
-									<input type="text" class="form-control" id="compania" name="compania" />
 
-								</div>
-							</div>
-						</div>
                   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
-							<label class="form-label">¿Cuenta Con cedula definitiva para venta de Seguros?</label>
+							<label class="form-label">¿Tienes o haz tenido cédula definitiva/temporal para vender seguros?</label>
 							<div class="form-group">
 								<div class="form-line">
                            <select class="form-control" id="cedula" name="cedula" />
@@ -399,6 +407,17 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
                               <option value="0">No</option>
                            </select>
 
+								</div>
+							</div>
+						</div>
+
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 contSeguros" style="display:none;">
+							<label class="form-label">¿Con que compañía de seguros vende?</label>
+							<div class="form-group">
+								<div class="form-line">
+									<select class="form-control show-tick" id="lstseguros" name="lstseguros[]" multiple>
+                           <?php echo $cadSeguros; ?>
+                           </select>
 								</div>
 							</div>
 						</div>
@@ -458,12 +477,9 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 						         <button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta1 animated bounceInLeft" id="1" style="margin-right: 1%;"></button>
                         </span>
                         <span class="input-group-addon sinFondo contSlctRespuesta">
-                           <select class="form-control" id="slctRespuesta1" name="slctRespuesta1">
-                              <option value="1">0 - 300</option>
-                              <option value="2">301 - 500</option>
-                              <option value="3">501 - 900</option>
-                              <option value="4"> > 901</option>
-                           </select>
+                           <div id="slctRespuesta1"></div>
+                           <div class="m-t-20 font-12"><b>Valor: </b><span class="js-nouislider-value"></span></div>
+                           <input type="hidden" id="gastos1" name="gastos1" value="0"/>
                         </span>
                      </div>
                   </div>
@@ -477,12 +493,9 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 						         <button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta2 animated bounceInLeft" id="2" style="margin-right: 1%;"></button>
                         </span>
                         <span class="input-group-addon sinFondo contSlctRespuesta">
-                           <select class="form-control" id="slctRespuesta2" name="slctRespuesta2">
-                              <option value="1">0 - 300</option>
-                              <option value="2">301 - 500</option>
-                              <option value="3">501 - 900</option>
-                              <option value="4"> > 901</option>
-                           </select>
+                           <div id="slctRespuesta2"></div>
+                           <div class="m-t-20 font-12"><b>Valor: </b><span class="js-nouislider-value"></span></div>
+                           <input type="hidden" id="gastos2" name="gastos2" value="0"/>
                         </span>
                      </div>
                   </div>
@@ -496,12 +509,9 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 						         <button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta3 animated bounceInLeft" id="3" style="margin-right: 1%;"></button>
                         </span>
                         <span class="input-group-addon sinFondo contSlctRespuesta">
-                           <select class="form-control" id="slctRespuesta3" name="slctRespuesta3">
-                              <option value="1">0 - 300</option>
-                              <option value="2">301 - 500</option>
-                              <option value="3">501 - 900</option>
-                              <option value="4"> > 901</option>
-                           </select>
+                           <div id="slctRespuesta3"></div>
+                           <div class="m-t-20 font-12"><b>Valor: </b><span class="js-nouislider-value"></span></div>
+                           <input type="hidden" id="gastos3" name="gastos3" value="0"/>
                         </span>
                      </div>
                   </div>
@@ -515,12 +525,9 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 						         <button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta4 animated bounceInLeft" id="4" style="margin-right: 1%;"></button>
                         </span>
                         <span class="input-group-addon sinFondo contSlctRespuesta">
-                           <select class="form-control" id="slctRespuesta4" name="slctRespuesta4">
-                              <option value="1">0 - 300</option>
-                              <option value="2">301 - 500</option>
-                              <option value="3">501 - 900</option>
-                              <option value="4"> > 901</option>
-                           </select>
+                           <div id="slctRespuesta4"></div>
+                           <div class="m-t-20 font-12"><b>Valor: </b><span class="js-nouislider-value"></span></div>
+                           <input type="hidden" id="gastos4" name="gastos4" value="0"/>
                         </span>
                      </div>
                   </div>
@@ -534,12 +541,9 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 						         <button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta5 animated bounceInLeft" id="5" style="margin-right: 1%;"></button>
                         </span>
                         <span class="input-group-addon sinFondo contSlctRespuesta">
-                           <select class="form-control" id="slctRespuesta5" name="slctRespuesta5">
-                              <option value="1">0 - 300</option>
-                              <option value="2">301 - 500</option>
-                              <option value="3">501 - 900</option>
-                              <option value="4"> > 901</option>
-                           </select>
+                           <div id="slctRespuesta5"></div>
+                           <div class="m-t-20 font-12"><b>Valor: </b><span class="js-nouislider-value"></span></div>
+                           <input type="hidden" id="gastos5" name="gastos5" value="0"/>
                         </span>
                      </div>
                   </div>
@@ -553,12 +557,9 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 						         <button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta6 animated bounceInLeft" id="6" style="margin-right: 1%;"></button>
                         </span>
                         <span class="input-group-addon sinFondo contSlctRespuesta">
-                           <select class="form-control" id="slctRespuesta6" name="slctRespuesta6">
-                              <option value="1">0 - 300</option>
-                              <option value="2">301 - 500</option>
-                              <option value="3">501 - 900</option>
-                              <option value="4"> > 901</option>
-                           </select>
+                           <div id="slctRespuesta6"></div>
+                           <div class="m-t-20 font-12"><b>Valor: </b><span class="js-nouislider-value"></span></div>
+                           <input type="hidden" id="gastos6" name="gastos6" value="0"/>
                         </span>
                      </div>
                   </div>
@@ -572,15 +573,18 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 						         <button type="button" class="btnrespuesta btn btn-default enjoy-css respuesta7 animated bounceInLeft" id="7" style="margin-right: 1%;"></button>
                         </span>
                         <span class="input-group-addon sinFondo contSlctRespuesta">
-                           <select class="form-control" id="slctRespuesta7" name="slctRespuesta7">
-                              <option value="1">0 - 300</option>
-                              <option value="2">301 - 500</option>
-                              <option value="3">501 - 900</option>
-                              <option value="4"> > 901</option>
-                           </select>
+                           <div id="slctRespuesta7"></div>
+                           <div class="m-t-20 font-12"><b>Valor: </b><span class="js-nouislider-value"></span></div>
+                           <input type="hidden" id="gastos7" name="gastos7" value="0"/>
                         </span>
                      </div>
                   </div>
+					</div>
+				</div>
+
+            <div class="row contRespuesta8 contSlctRespuesta">
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <h4>Sus gastos son de: <span class="lblTotalGastos"></span></h4>
 					</div>
 				</div>
 				<input type="hidden" id="idpregunta" name="idpregunta" value="0"/>
@@ -648,25 +652,33 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
    <!-- Bootstrap Material Datetime Picker Plugin Js -->
    <script src="crm/plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
    <script src="crm/js/jquery.easy-autocomplete.min.js"></script>
+   <!-- noUISlider Plugin Js -->
+   <script src="crm/plugins/nouislider/nouislider.js"></script>
+   <script src="crm/plugins/bootstrap-select/js/bootstrap-select.js"></script>
 
 	<script type="text/javascript">
 
 		$(document).ready(function(){
 
+         $('#telefonomovil').inputmask('999 9999999', { placeholder: '___ _______' });
+
          $('.contSlctRespuesta').hide();
 
          $('.infoTest').hide();
+         $('.contSeguros').show();
 
-         $('#afore').change(function() {
+         $('#lstseguros').selectpicker('refresh');
+
+         $('#cedula').change(function() {
             if ($(this).val() == 1) {
-               $('.contCompania').show();
+               $('.contSeguros').show();
             } else {
-               $('.contCompania').hide();
-               $('#compania').val('');
+               $('.contSeguros').hide();
+
             }
          });
 
-         $('#telefonomovil').inputmask('999 9999999', { placeholder: '___ _______' });
+
 
          $('.frmNuevo').submit(function(e){
 
@@ -761,6 +773,108 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
          });
 
          <?php if (($yajugo == 1) || ($yajugo == 0)) { ?>
+
+            var sliderBasic1 = document.getElementById('slctRespuesta1');
+            var sliderBasic2 = document.getElementById('slctRespuesta2');
+            var sliderBasic3 = document.getElementById('slctRespuesta3');
+            var sliderBasic4 = document.getElementById('slctRespuesta4');
+            var sliderBasic5 = document.getElementById('slctRespuesta5');
+            var sliderBasic6 = document.getElementById('slctRespuesta6');
+            var sliderBasic7 = document.getElementById('slctRespuesta7');
+
+            noUiSlider.create(sliderBasic1, {
+                  start: [500],
+                  connect: 'lower',
+                  step: 1,
+                  range: {
+                  'min': [500],
+                  'max': [50000]
+               }
+            });
+
+            noUiSlider.create(sliderBasic2, {
+                  start: [0],
+                  connect: 'lower',
+                  step: 1,
+                  range: {
+                  'min': [0],
+                  'max': [10000]
+               }
+            });
+
+            noUiSlider.create(sliderBasic3, {
+                  start: [0],
+                  connect: 'lower',
+                  step: 1,
+                  range: {
+                  'min': [0],
+                  'max': [20000]
+               }
+            });
+
+            noUiSlider.create(sliderBasic4, {
+                  start: [0],
+                  connect: 'lower',
+                  step: 1,
+                  range: {
+                  'min': [0],
+                  'max': [10000]
+               }
+            });
+
+            noUiSlider.create(sliderBasic5, {
+                  start: [0],
+                  connect: 'lower',
+                  step: 1,
+                  range: {
+                  'min': [0],
+                  'max': [20000]
+               }
+            });
+
+            noUiSlider.create(sliderBasic6, {
+                  start: [0],
+                  connect: 'lower',
+                  step: 1,
+                  range: {
+                  'min': [0],
+                  'max': [30000]
+               }
+            });
+
+            noUiSlider.create(sliderBasic7, {
+                  start: [0],
+                  connect: 'lower',
+                  step: 1,
+                  range: {
+                  'min': [0],
+                  'max': [50000]
+               }
+            });
+
+            getNoUISliderValue(sliderBasic1, false, 'gastos1');
+            getNoUISliderValue(sliderBasic2, false, 'gastos2');
+            getNoUISliderValue(sliderBasic3, false, 'gastos3');
+            getNoUISliderValue(sliderBasic4, false, 'gastos4');
+            getNoUISliderValue(sliderBasic5, false, 'gastos5');
+            getNoUISliderValue(sliderBasic6, false, 'gastos6');
+            getNoUISliderValue(sliderBasic7, false, 'gastos7');
+
+            $('.lblTotalGastos').html((parseInt($('#gastos1').val()) + parseInt($('#gastos2').val()) + parseInt($('#gastos3').val()) + parseInt($('#gastos4').val()) + parseInt($('#gastos5').val()) + parseInt($('#gastos6').val()) + parseInt($('#gastos7').val())));
+
+            function getNoUISliderValue(slider, percentage, contenedor) {
+               slider.noUiSlider.on('update', function () {
+                  var val = slider.noUiSlider.get();
+                  $('#' + contenedor).val(val);
+
+                  $('.lblTotalGastos').html((parseInt($('#gastos1').val()) + parseInt($('#gastos2').val()) + parseInt($('#gastos3').val()) + parseInt($('#gastos4').val()) + parseInt($('#gastos5').val()) + parseInt($('#gastos6').val()) + parseInt($('#gastos7').val())));
+                  if (percentage) {
+                     val = parseInt(val);
+                     val += '$';
+                  }
+                  $(slider).parent().find('span.js-nouislider-value').text(val);
+               });
+            }
 
 			$('.btnrespuesta').click(function() {
 				$('.btnrespuesta').removeClass('enjoy-css-active');
@@ -875,6 +989,7 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 							}, function() {
 								$('.contenedorPreguntas').hide();
 								$('#contenedorTiempoAgotado').show();
+                        $('.btnComenzar').show();
 
 							});
 
@@ -889,6 +1004,13 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 						data:  {id: '<?php echo $ip; ?>',
 						respuesta: respuesta,
 						pregunta: pregunta,
+                  gasto1: $('#gastos1').val(),
+                  gasto2: $('#gastos2').val(),
+                  gasto3: $('#gastos3').val(),
+                  gasto4: $('#gastos4').val(),
+                  gasto5: $('#gastos5').val(),
+                  gasto6: $('#gastos6').val(),
+                  gasto7: $('#gastos7').val(),
 						accion:     'insertarIp'
 					},
 					url:   'crm/ajax/ajax.php',
@@ -917,12 +1039,17 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
             $('.btnrespuesta').removeClass('enjoy-css-active');
 
             $('.respuesta').html('');
-            if ($('#idrespuesta').val() == 0) {
-               $('.respuesta').html('Debe elegir una respuesta para continuar.');
-               $('#myModal').modal();
+            if ($('#idpregunta').val() == 7) {
+               cargarRespuesta(1, $('#idpregunta').val());
             } else {
-               cargarRespuesta($('#idrespuesta').val(), $('#idpregunta').val());
+               if ($('#idrespuesta').val() == 0) {
+                  $('.respuesta').html('Debe elegir una respuesta para continuar.');
+                  $('#myModal').modal();
+               } else {
+                  cargarRespuesta($('#idrespuesta').val(), $('#idpregunta').val());
+               }
             }
+
 
          });
          <?php } ?>

@@ -766,6 +766,24 @@ function insertarIp($serviciosReferencias) {
    	if ($secuencia == 7) {
          $res = $serviciosReferencias->insertarIp($ip,$activo,$secuencia,$verde,$amarillo,$rojo,$lblRespuesta, $pregunta, $token);
 
+         // cargo las repuestas de los gastos ///////////////////
+         $gasto1 = $_POST['gasto1'];
+         $gasto2 = $_POST['gasto2'];
+         $gasto3 = $_POST['gasto3'];
+         $gasto4 = $_POST['gasto4'];
+         $gasto5 = $_POST['gasto5'];
+         $gasto6 = $_POST['gasto6'];
+         $gasto7 = $_POST['gasto7'];
+
+         $resGasto1 = $serviciosReferencias->insertarRespuestadetalles($res,$gasto1,1);
+         $resGasto2 = $serviciosReferencias->insertarRespuestadetalles($res,$gasto2,2);
+         $resGasto3 = $serviciosReferencias->insertarRespuestadetalles($res,$gasto3,3);
+         $resGasto4 = $serviciosReferencias->insertarRespuestadetalles($res,$gasto4,4);
+         $resGasto5 = $serviciosReferencias->insertarRespuestadetalles($res,$gasto5,5);
+         $resGasto6 = $serviciosReferencias->insertarRespuestadetalles($res,$gasto6,6);
+         $resGasto7 = $serviciosReferencias->insertarRespuestadetalles($res,$gasto7,7);
+         // fin de respuestas de gastos /////////////////
+
          $resV['datos'] = $serviciosReferencias->determinaEstadoTest($token);
 
          $activo = '0';
@@ -1766,6 +1784,14 @@ function traerEntrevistas($serviciosReferencias) {
    echo json_encode($resV);
 }
 
+function validar_fecha_espanol($fecha){
+	$valores = explode('/', $fecha);
+	if(count($valores) == 3 && checkdate($valores[1], $valores[0], $valores[2])){
+		return true;
+    }
+	return false;
+}
+
 function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
    session_start();
 
@@ -1776,82 +1802,96 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
 
    $apellido = $apellidopaterno.' '.$apellidomaterno;
 
-   // primer creo el usuario
+   if (validar_fecha_espanol(substr(('00'.$_POST['dia']),-2).'/'.substr(('00'.$_POST['mes']),-2).'/'.$_POST['anio'])) {
 
-   $password = $apellidopaterno.$apellidomaterno.date('His');
+      // primer creo el usuario
 
-   $resUsuario = $serviciosUsuarios->insertarUsuario($nombre,$password,7,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
+      $password = $apellidopaterno.$apellidomaterno.date('His');
 
-   if ((integer)$resUsuario > 0) {
-      $refusuarios = $resUsuario;
+      $resUsuario = $serviciosUsuarios->insertarUsuario($nombre,$password,7,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
 
-      // fin de crear usuario
-      $curp = '';
-      $rfc = '';
-      $ine = '';
-      $fechanacimiento = $_POST['fechanacimiento'];
-      $sexo = $_POST['sexo'];
-      $codigopostal = $_POST['codigopostal'];
-      $refescolaridades = $_POST['refescolaridades'];
-      $refestadocivil = $_POST['refestadocivil'];
-      $nacionalidad = $_POST['nacionalidad'];
-      $telefonomovil = $_POST['telefonomovil'];
-      $telefonocasa = $_POST['telefonocasa'];
-      $telefonotrabajo = $_POST['telefonotrabajo'];
-      $refestadopostulantes = 1;
-      $urlprueba = '';
-      $fechacrea = date('Y-m-d H:i:s');
-      $fechamodi = date('Y-m-d H:i:s');
-      if (isset($_SESSION['usua_sahilices'])) {
-         $usuariocrea = $_SESSION['usua_sahilices'];
-         $usuariomodi = $_SESSION['usua_sahilices'];
+      //$resUsuario = 6;
+
+      if ((integer)$resUsuario > 0) {
+         $refusuarios = $resUsuario;
+
+         // fin de crear usuario
+         $curp = '';
+         $rfc = '';
+         $ine = '';
+         $fechanacimiento = $_POST['anio'].'-'.substr(('00'.$_POST['mes']),-2).'-'.substr(('00'.$_POST['dia']),-2);
+         $sexo = $_POST['sexo'];
+         $codigopostal = $_POST['codigopostal'];
+         $refescolaridades = $_POST['refescolaridades'];
+         $refestadocivil = $_POST['refestadocivil'];
+         $nacionalidad = $_POST['nacionalidad'];
+         $telefonomovil = $_POST['telefonomovil'];
+         $telefonocasa = $_POST['telefonocasa'];
+         $telefonotrabajo = $_POST['telefonotrabajo'];
+         $refestadopostulantes = 1;
+         $urlprueba = '';
+         $fechacrea = date('Y-m-d H:i:s');
+         $fechamodi = date('Y-m-d H:i:s');
+         if (isset($_SESSION['usua_sahilices'])) {
+            $usuariocrea = $_SESSION['usua_sahilices'];
+            $usuariomodi = $_SESSION['usua_sahilices'];
+         } else {
+            $usuariocrea = $_SESSION['usua_sahilices_web'];
+            $usuariomodi = $_SESSION['usua_sahilices_web'];
+         }
+
+         $refasesores = 0;
+         $comision = 0;
+         $refsucursalesinbursa = 0;
+         $ultimoestado = 1;
+
+         if (isset($_SESSION['token'])) {
+            $token = $_SESSION['token'];
+         } else {
+            $token = $serviciosReferencias->GUID();
+         }
+
+         $afore = $_POST['afore'];
+         $compania = '';
+         $cedula = $_POST['cedula'];
+
+         if ($cedula == '1') {
+            $refesquemareclutamiento = 1;
+         } else {
+            $refesquemareclutamiento = 2;
+         }
+
+         if ($afore == '1') {
+            $refestadopostulantes = 9;
+            // rechazo la solicitud
+         } else {
+            // envio email de confirmacion para validar cuenta de email. Correr a la noche un CRON
+            // para dar de baja los usuarios basura
+            $resActivacion = $serviciosUsuarios->confirmarEmail($email, $password,$apellido, $nombre, $refusuarios);
+            //die(var_dump($resActivacion));
+         }
+
+         $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$compania,$cedula,$token);
+
+         //die(var_dump($res));
+
+         if ((integer)$res > 0) {
+            if ($cedula == '1') {
+               foreach ($_POST['lstseguros'] as $seguros) {
+                  $resSeguro = $serviciosReferencias->insertarPostulanteseguros($res,$seguros);
+               }
+            }
+            echo '';
+         } else {
+            echo 'Hubo un error al insertar datos ';
+         }
+
+
       } else {
-         $usuariocrea = $_SESSION['usua_sahilices_web'];
-         $usuariomodi = $_SESSION['usua_sahilices_web'];
+         echo 'Hubo un error al crear usuario, verificar que no existe ya ese email en la base de datos';
       }
-
-      $refasesores = 0;
-      $comision = 0;
-      $refsucursalesinbursa = 0;
-      $ultimoestado = 1;
-
-      if (isset($_SESSION['token'])) {
-         $token = $_SESSION['token'];
-      } else {
-         $token = $serviciosReferencias->GUID();
-      }
-
-      $afore = $_POST['afore'];
-      $compania = $_POST['compania'];
-      $cedula = $_POST['cedula'];
-
-      if ($cedula == '1') {
-         $refesquemareclutamiento = 1;
-      } else {
-         $refesquemareclutamiento = 2;
-      }
-
-      if ($afore == '1') {
-         $refestadopostulantes = 99;
-         // rechazo la solicitud
-      } else {
-         // envio email de confirmacion para validar cuenta de email. Correr a la noche un CRON
-         // para dar de baja los usuarios basura
-         $resActivacion = $serviciosUsuarios->confirmarEmail($email, $password,$apellido, $nombre, $refusuarios);
-         //die(var_dump($resActivacion));
-      }
-
-      $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$compania,$cedula,$token);
-
-      if ((integer)$res > 0) {
-         echo '';
-      } else {
-         echo 'Hubo un error al insertar datos ';
-      }
-
-
    } else {
-      echo 'Hubo un error al crear usuario, verificar que no existe ya ese email en la base de datos';
+      echo 'Hubo un error la fecha de nacimiento es invalida';
    }
 }
 

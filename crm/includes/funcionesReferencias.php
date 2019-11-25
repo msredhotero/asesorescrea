@@ -9,11 +9,109 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+
+	/* PARA Postulanteseguros */
+
+	function insertarPostulanteseguros($refpostulantes,$refsegurosempresas) {
+	$sql = "insert into dbpostulanteseguros(idpostulanteseguro,refpostulantes,refsegurosempresas)
+	values ('',".$refpostulantes.",".$refsegurosempresas.")";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarPostulanteseguros($id,$refpostulantes,$refsegurosempresas) {
+	$sql = "update dbpostulanteseguros
+	set
+	refpostulantes = ".$refpostulantes.",refsegurosempresas = ".$refsegurosempresas."
+	where idpostulanteseguro =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarPostulanteseguros($id) {
+	$sql = "delete from dbpostulanteseguros where idpostulanteseguro =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerPostulanteseguros() {
+	$sql = "select
+	p.idpostulanteseguro,
+	p.refpostulantes,
+	p.refsegurosempresas
+	from dbpostulanteseguros p
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerPostulantesegurosPorId($id) {
+	$sql = "select idpostulanteseguro,refpostulantes,refsegurosempresas from dbpostulanteseguros where idpostulanteseguro =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbpostulanteseguros*/
+
+	/* PARA Segurosempresas */
+	//622-472
+	function insertarSegurosempresas($razonsocial) {
+	$sql = "insert into tbsegurosempresas(idseguroempresa,razonsocial)
+	values ('','".$razonsocial."')";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarSegurosempresas($id,$razonsocial) {
+	$sql = "update tbsegurosempresas
+	set
+	razonsocial = '".$razonsocial."'
+	where idseguroempresa =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarSegurosempresas($id) {
+	$sql = "delete from tbsegurosempresas where idseguroempresa =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerSegurosempresas() {
+	$sql = "select
+	s.idseguroempresa,
+	s.razonsocial
+	from tbsegurosempresas s
+	order by s.razonsocial";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerSegurosempresasPorId($id) {
+	$sql = "select idseguroempresa,razonsocial from tbsegurosempresas where idseguroempresa =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbsegurosempresas*/
+
 	/* PARA Respuestadetalles */
 
-	function insertarRespuestadetalles($refrespuestas,$valor) {
-		$sql = "insert into dbrespuestadetalles(idrespuestadetalle,refrespuestas,valor)
-		values ('',".$refrespuestas.",'".$valor."')";
+	function insertarRespuestadetalles($refrespuestas,$valor, $respuesta) {
+		$sql = "insert into dbrespuestadetalles(idrespuestadetalle,refrespuestas,valor,respuesta)
+		values ('',".$refrespuestas.",".$valor.",".$respuesta.")";
 		$res = $this->query($sql,1);
 		return $res;
 	}
@@ -200,11 +298,29 @@ class ServiciosReferencias {
 
 	/* PARA Ip */
 
+	function existeIP($ip, $secuencia) {
+		$sql = "select * from dbrespuestas where ip = '".$ip."' and secuencia = ".$secuencia;
+		//die(var_dump($sql));
+		$res = $this->query($sql,0);
+		if (mysql_num_rows($res)>0) {
+			return true;
+		}
+
+		return false;
+
+	}
+
 	function insertarIp($ip,$activo,$secuencia,$verde,$amarillo,$rojo,$respuesta,$idpregunta,$token) {
-		$sql = "insert into dbrespuestas(idrespuesta,ip,activo,secuencia,verde,amarillo,rojo,respuesta,idpregunta,token)
-		values ('','".$ip."','".$activo."',".$secuencia.",'".$verde."','".$amarillo."','".$rojo."','".$respuesta."',".$idpregunta.",'".$token."')";
-		$res = $this->query($sql,1);
-		return $res;
+
+		if ($this->existeIP($ip,$secuencia)) {
+			return '';
+		} else {
+			$sql = "insert into dbrespuestas(idrespuesta,ip,activo,secuencia,verde,amarillo,rojo,respuesta,idpregunta,token)
+			values ('','".$ip."','".$activo."',".$secuencia.",'".$verde."','".$amarillo."','".$rojo."','".$respuesta."',".$idpregunta.",'".$token."')";
+			$res = $this->query($sql,1);
+			return $res;
+		}
+
 	}
 
 

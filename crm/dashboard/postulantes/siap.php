@@ -217,7 +217,7 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 						<div class="progress-bar"></div>
 					</div>
 					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Entrevista, Pruebas Psicometricas y VERITAS</div>
+					<div class="bs-wizard-info text-center">Entrevista y Pruebas Psicometricas</div>
 				</div>
 
 				<div class="col-xs-2 bs-wizard-step disabled"><!-- active -->
@@ -244,7 +244,7 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 						<div class="progress-bar"></div>
 					</div>
 					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Documentación II</div>
+					<div class="bs-wizard-info text-center">Firmar Contratos</div>
 				</div>
 
 			</div>
@@ -254,11 +254,15 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 					<h4>Validar registros previos en SIAP, obtener pantallazo y guardar.</h4>
 					<button type="button" class="btn bg-green waves-effect btnContinuar">
 						<i class="material-icons">add</i>
-						<span>CONTINUAR</span>
+						<span>ACEPTAR - CONTINUAR</span>
+					</button>
+					<button type="button" class="btn bg-red waves-effect btnRechazar">
+						<i class="material-icons">close</i>
+						<span>RECHARZAR</span>
 					</button>
 					<button type="button" class="btn bg-red waves-effect btnEliminar">
 						<i class="material-icons">remove</i>
-						<span>ELIMINAR</span>
+						<span>ELIMINAR - IMAGEN</span>
 					</button>
 					<a href="javascript:void(0);" class="thumbnail timagen1">
 						<img class="img-responsive">
