@@ -71,7 +71,7 @@ $lstContactos = $serviciosContactos->traerContactosCompleto();
 
 </head>
 
-<body class="login-page" style="max-width: 66% !important;">
+<body class="login-page" style="max-width: 90% !important;">
    <div class="row clearfix">
       <div class="row">
          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
