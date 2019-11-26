@@ -11,7 +11,7 @@ $serviciosHTML 			= new ServiciosHTML();
 $serviciosContactos 	= new ServiciosContactos();
 
 $resVar = $serviciosContactos->traerProductos();
-$cadVar = utf8_encode( $serviciosFunciones->devolverSelectBox($resVar,array(1),''));
+$cadVar = utf8_decode( $serviciosFunciones->devolverSelectBox($resVar,array(1),''));
 
 
 ?>
