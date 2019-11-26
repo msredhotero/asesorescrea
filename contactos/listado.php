@@ -103,6 +103,7 @@ $lstContactos = $serviciosContactos->traerContactosCompleto();
                            <th>Apellido</th>
                            <th>Agencia</th>
                            <th>Respuesta</th>
+                           <th>Observaciones</th>
                            <th>Objeto de Interes</th>
                         </thead>
                         <tbody>
@@ -112,6 +113,7 @@ $lstContactos = $serviciosContactos->traerContactosCompleto();
                               <td><?php echo $row['apellido']; ?></td>
                               <td><?php echo $row['nombreagencia']; ?></td>
                               <td><?php echo $row['respuesta']; ?></td>
+                              <td><?php echo $row['observaciones']; ?></td>
                               <td><?php echo $row['producto']; ?></td>
                            </tr>
                         <?php } ?>

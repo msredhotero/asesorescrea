@@ -122,6 +122,7 @@ class ServiciosContactos {
             (case when c.pregunta = 1 then 'Si'
          		 when c.pregunta = 2 then 'Me interesa recibir mas informacion'
                   when c.pregunta = 2 then 'No' end) as respuesta,
+            c.observaciones,
             p.producto
             from dbcontactos c
             left join dbcontactoproductos cp on c.idcontacto = cp.refcontactos
