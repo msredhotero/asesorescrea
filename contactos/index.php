@@ -60,6 +60,16 @@ $cadVar = utf8_decode( $serviciosFunciones->devolverSelectBox($resVar,array(1),'
                   <h2>
                      BIENVENIDOS A ASESORES CREA
                   </h2>
+                  <ul class="header-dropdown m-r--5">
+                     <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                           <i class="material-icons">more_vert</i>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                           <li><a href="listado.php">RESULTADOS</a></li>
+                        </ul>
+                     </li>
+                  </ul>
                </div>
                <div class="body table-responsive">
                   <form class="formulario" role="form" id="sign_in">

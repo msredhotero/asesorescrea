@@ -11,6 +11,17 @@ class ServiciosContactos {
 
    /* PARA Contactoproductos */
 
+   function Resultados() {
+      $sql = "SELECT
+         	 sum(case when pregunta = 1 then 1 end) as 'Si',
+             sum(case when pregunta = 2 then 1 end) as 'Me interesa',
+             sum(case when pregunta = 3 then 1 end) as 'No'
+         	FROM dbcontactos";
+      $res = $this->query($sql,0);
+
+      return $res;
+   }
+
    function insertarContactoproductos($refcontactos,$refproductos) {
    $sql = "insert into dbcontactoproductos(idcontactoproducto,refcontactos,refproductos)
    values ('',".$refcontactos.",".$refproductos.")";
@@ -100,6 +111,23 @@ class ServiciosContactos {
    order by 1";
    $res = $this->query($sql,0);
    return $res;
+   }
+
+   function traerContactosCompleto() {
+      $sql = "select
+            c.idcontacto,
+            c.nombre,
+            c.apellido,
+            c.nombreagencia,
+            (case when c.pregunta = 1 then 'Si'
+         		 when c.pregunta = 2 then 'Me interesa recibir mas informacion'
+                  when c.pregunta = 2 then 'No' end) as respuesta,
+            p.producto
+            from dbcontactos c
+            left join dbcontactoproductos cp on c.idcontacto = cp.refcontactos
+            left join tbproductos p on p.idproducto = cp.refproductos";
+      $res = $this->query($sql,0);
+      return $res;
    }
 
 
