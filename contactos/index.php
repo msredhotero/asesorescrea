@@ -122,7 +122,7 @@ $cadVar = utf8_decode( $serviciosFunciones->devolverSelectBox($resVar,array(1),'
                         <h4>Elije los productos en los que estes más interesado comercializar</h4>
                         <hr>
                      </div>
-                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                     <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
                         <div class="input-group">
 
                            <div class="form-line">
@@ -168,7 +168,7 @@ $cadVar = utf8_decode( $serviciosFunciones->devolverSelectBox($resVar,array(1),'
          					</button>
                      </div>
 
-                     <div class="row" style="margin-bottom: 130px;"></div>
+                     <div class="row" style="margin-bottom: 230px;"></div>
                   </div>
                   <input type="hidden" name="pregunta" id="pregunta" vallue="0"/>
                </form>
