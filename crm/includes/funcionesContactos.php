@@ -121,7 +121,7 @@ class ServiciosContactos {
             c.nombreagencia,
             (case when c.pregunta = 1 then 'Si'
          		 when c.pregunta = 2 then 'Me interesa recibir mas informacion'
-                  when c.pregunta = 2 then 'No' end) as respuesta,
+                  when c.pregunta = 3 then 'No' end) as respuesta,
             c.observaciones,
             p.producto
             from dbcontactos c
