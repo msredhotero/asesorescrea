@@ -118,6 +118,12 @@ $cadVar = utf8_decode( $serviciosFunciones->devolverSelectBox($resVar,array(1),'
                         </div>
                      </div>
 
+
+
+                  </div>
+
+                  <div class="row contDatos2" style="padding: 10px 0px;">
+
                      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <h4>Elije los productos en los que estes más interesado comercializar</h4>
                         <hr>
@@ -130,9 +136,7 @@ $cadVar = utf8_decode( $serviciosFunciones->devolverSelectBox($resVar,array(1),'
                         </div>
                      </div>
 
-                  </div>
 
-                  <div class="row contDatos2" style="padding: 10px 0px;">
                      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-top:15px !important;">
                         <div class="input-group">
                            <span class="input-group-addon">
@@ -146,7 +150,8 @@ $cadVar = utf8_decode( $serviciosFunciones->devolverSelectBox($resVar,array(1),'
                            </div>
                         </div>
                      </div>
-
+                  </div>
+                  <div class="row contDatos1" style="padding: 10px 0px;">
                      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-top:15px !important;">
                         <button type="button" class="btn bg-green waves-effect btnEnviar">
          						<i class="material-icons">send</i>
@@ -210,10 +215,10 @@ $cadVar = utf8_decode( $serviciosFunciones->devolverSelectBox($resVar,array(1),'
          $('.btnEnviar').click(function() {
 
             if ($('#pregunta').val() == 3) {
-               if ($('#observaciones').val() != '') {
+               if (($('#nombre').val() != '') && ($('#apellido').val() != '')) {
                   traerImagen($('#pregunta').val(), $('#nombre').val(), $('#apellido').val(), $('#agencia').val(), $('#refproductos').val(), $('#observaciones').val());
                } else {
-                  swal("Error!", 'Por favor completa las Observaciones', "warning");
+                  swal("Error!", 'Por favor completa las Nombre y Apellido', "warning");
                }
             } else {
                if (($('#nombre').val() != '') && ($('#apellido').val() != '') && ($('#observaciones').val() != '')) {
@@ -293,7 +298,7 @@ $cadVar = utf8_decode( $serviciosFunciones->devolverSelectBox($resVar,array(1),'
          $('.respuestaNO').click(function() {
             $('#pregunta').val(3);
 
-            $('.contDatos2').show();
+            $('.contDatos1').show();
 
             $('.respuestaMI').hide();
             $('.respuestaSI').hide();
