@@ -45,6 +45,10 @@ $cadVar = utf8_decode( $serviciosFunciones->devolverSelectBox($resVar,array(1),'
 
     <!-- Custom Css -->
     <link href="../crm/css/style.css" rel="stylesheet">
+
+    <style>
+    .arriba { z-index:999999 !important; }
+    </style>
 </head>
 
 <body class="login-page" style="max-width: 75% !important;">
@@ -122,7 +126,7 @@ $cadVar = utf8_decode( $serviciosFunciones->devolverSelectBox($resVar,array(1),'
                         <div class="input-group">
 
                            <div class="form-line">
-                              <select class="form-control show-tick" name="refproductos[]" id="refproductos" multiple />
+                              <select class="form-control show-tick arriba" name="refproductos[]" id="refproductos" multiple />
                                  <?php echo $cadVar; ?>
                               </select>
                            </div>
@@ -153,12 +157,18 @@ $cadVar = utf8_decode( $serviciosFunciones->devolverSelectBox($resVar,array(1),'
          					</button>
                      </div>
 
+                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 alert bg-blue" style="margin-top:15px !important; text-align: center;">
+                        <p>¡¡¡ MUCHAS GRACIAS POR ACOMPAÑARNOS !!!</p>
+                     </div>
+
                      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" align="right" style="margin-top:15px !important;">
                         <button type="button" class="btn bg-ORANGE waves-effect btnReiniciar">
          						<i class="material-icons">autorenew</i>
          						<span>REINICIAR</span>
          					</button>
                      </div>
+
+                     <div class="row" style="margin-bottom: 130px;"></div>
                   </div>
                   <input type="hidden" name="pregunta" id="pregunta" vallue="0"/>
                </form>
