@@ -80,7 +80,7 @@ $cadVar = utf8_decode( $serviciosFunciones->devolverSelectBox($resVar,array(1),'
                      </button>
                   </div>
 
-                  <div class="row contDatos1" style="margin-top:3% !important; padding: 10px 25px;">
+                  <div class="row contDatos1" style="margin-top:3% !important; padding: 10px 0px;">
                      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                         <div class="input-group">
                            <span class="input-group-addon">
@@ -133,7 +133,7 @@ $cadVar = utf8_decode( $serviciosFunciones->devolverSelectBox($resVar,array(1),'
 
                   </div>
 
-                  <div class="row contDatos2" style="padding: 10px 25px;">
+                  <div class="row contDatos2" style="padding: 10px 0px;">
                      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-top:15px !important;">
                         <div class="input-group">
                            <span class="input-group-addon">
