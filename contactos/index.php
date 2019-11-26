@@ -65,16 +65,16 @@ $cadVar = utf8_decode( $serviciosFunciones->devolverSelectBox($resVar,array(1),'
                   </div>
 
                   <div class="row" align="center">
-                     <button type="button" class="btn bg-green btn-lg waves-effect respuestaSI animated bounceIn" style="font-size:22px !important;">
+                     <button type="button" class="btn bg-green btn-lg waves-effect respuestaSI animated bounceIn" style="font-size:1em !important;">
                         <i class="material-icons">thumb_up</i>
                         <span>Si</span>
                      </button>
 
-                     <button type="button" class="btn bg-light-blue btn-lg waves-effect respuestaMI animated bounceInRight" style="font-size:22px !important;">
+                     <button type="button" class="btn bg-light-blue btn-lg waves-effect respuestaMI animated bounceInRight" style="font-size:1em !important;">
                         <i class="material-icons">touch_app</i>
                         <span>Me gustaría recibir más información</span>
                      </button>
-                     <button type="button" class="btn bg-red btn-lg waves-effect respuestaNO animated bounceInRight" style="font-size:22px !important;">
+                     <button type="button" class="btn bg-red btn-lg waves-effect respuestaNO animated bounceInRight" style="font-size:1em !important;">
                         <i class="material-icons">thumb_down</i>
                         <span>No</span>
                      </button>
