@@ -47,7 +47,7 @@ $cadVar = utf8_decode( $serviciosFunciones->devolverSelectBox($resVar,array(1),'
     <link href="../crm/css/style.css" rel="stylesheet">
 </head>
 
-<body class="login-page" style="max-width: 66% !important;">
+<body class="login-page" style="max-width: 75% !important;">
    <div class="row clearfix" style="margin-top: -40px !important;">
       <div class="row">
          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
