@@ -253,21 +253,27 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 				<div class="col-xs-12 col-md-12 col-lg-12">
 					<h4>Validar registros previos en SIAP, obtener pantallazo y guardar.</h4>
 					<button type="button" class="btn bg-green waves-effect btnContinuar">
-						<i class="material-icons">add</i>
+						<i class="material-icons">done_all</i>
 						<span>ACEPTAR - CONTINUAR</span>
+					</button>
+					<button type="button" class="btn bg-orange waves-effect btnRechazaHabilita">
+						<i class="material-icons">done</i>
+						<span>RECHAZADA - CONTINUAR</span>
 					</button>
 					<button type="button" class="btn bg-red waves-effect btnRechazar">
 						<i class="material-icons">close</i>
 						<span>RECHARZAR</span>
 					</button>
-					<button type="button" class="btn bg-red waves-effect btnEliminar">
-						<i class="material-icons">remove</i>
-						<span>ELIMINAR - IMAGEN</span>
-					</button>
+
+
 					<a href="javascript:void(0);" class="thumbnail timagen1">
 						<img class="img-responsive">
 					</a>
 					<div id="example1"></div>
+					<button type="button" class="btn bg-red waves-effect btnEliminar">
+						<i class="material-icons">delete</i>
+						<span>ELIMINAR - IMAGEN</span>
+					</button>
 
 				</div>
 
@@ -502,13 +508,19 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 			}
 		};
 
-		function modificarEstadoPostulante(id, idestado) {
+		function modificarEstadoPostulante(id, idestado, estadodocumentacion) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {accion: 'modificarEstadoPostulante',id: id, idestado: idestado},
+				data: {
+					accion: 'modificarEstadoPostulante',
+					id: id,
+					idestado: idestado,
+					estadodocumentacion: estadodocumentacion,
+					iddocumentacion: 2
+				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('.btnContinuar').hide();
@@ -534,7 +546,15 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 		}
 
 		$('.btnContinuar').click(function() {
-			modificarEstadoPostulante(<?php echo $id; ?>, 3);
+			modificarEstadoPostulante(<?php echo $id; ?>, 3, 5);
+		});
+
+		$('.btnRechazar').click(function() {
+			modificarEstadoPostulante(<?php echo $id; ?>, 3, 2);
+		});
+
+		$('.btnRechazaHabilita').click(function() {
+			modificarEstadoPostulante(<?php echo $id; ?>, 3, 6);
 		});
 
 		$('.eliminar').click(function() {

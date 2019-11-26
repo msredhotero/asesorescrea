@@ -850,12 +850,26 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
    $id  = $_POST['id'];
    $idestado      = $_POST['idestado'];
 
+   session_start();
+   if (isset($_POST['estadodocumentacion'])) {
+      $estadoDocumentacion = $_POST['estadodocumentacion'];
+      $iddocumentacion     = $_POST['iddocumentacion'];
+      $usuariomodi         = $_SESSION['usua_sahilices'];
+
+      if (($estadoDocumentacion == 2) || ($estadoDocumentacion == 3) || ($estadoDocumentacion == 4)) {
+         $idestado = 9; // finalizo el proceso de reclutamiento
+      }
+
+      //modifico el estado de la documentacion
+      $resUpdate = $serviciosReferencias->modificarEstadoDocumentacionPostulantePorDocumentacion($iddocumentacion,$id, $estadoDocumentacion,$usuariomodi);
+   }
+
    $resUltimo = $serviciosReferencias->modificarUltimoEstadoPostulante($id,$idestado);
 
    $res = $serviciosReferencias->modificarEstadoPostulante($id,$idestado);
 
    if ($idestado == 6) {
-      $idestado = 98;
+      $idestado = 9;
    }
 
 
@@ -869,23 +883,25 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
 
       if (mysql_num_rows($resEstado) > 0) {
          $url = $ruta.mysql_result($resEstado,0,'url').'?id='.$id;
+
+         switch (mysql_result($resEstado,0,'orden')) {
+
+            case 4:
+               $resE = $serviciosUsuarios->enviarCorreosEtapas( $idestado, $id);
+            break;
+            case 5:
+               $resE = $serviciosUsuarios->enviarCorreosEtapas( $idestado, $id);
+            break;
+            case 6:
+               $resE = $serviciosUsuarios->enviarCorreosEtapas( $idestado, $id);
+            break;
+         }
       } else {
 
          $url = 'index.php';
       }
 
-      switch (mysql_result($resEstado,0,'orden')) {
 
-         case 4:
-            $resE = $serviciosUsuarios->enviarCorreosEtapas( $idestado, $id);
-         break;
-         case 5:
-            $resE = $serviciosUsuarios->enviarCorreosEtapas( $idestado, $id);
-         break;
-         case 6:
-            $resE = $serviciosUsuarios->enviarCorreosEtapas( $idestado, $id);
-         break;
-      }
       echo $url;
    } else {
       echo '';
@@ -1852,7 +1868,7 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
          }
 
          $afore = $_POST['afore'];
-         $compania = '';
+         $folio = '';
          $cedula = $_POST['cedula'];
 
          if ($cedula == '1') {
@@ -1871,7 +1887,7 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
             //die(var_dump($resActivacion));
          }
 
-         $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$compania,$cedula,$token);
+         $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token);
 
          //die(var_dump($res));
 
@@ -2847,10 +2863,13 @@ function insertarEstadopostulantes($serviciosReferencias) {
 
 
 function modificarEstadopostulantes($serviciosReferencias) {
+
    $id = $_POST['id'];
    $estadopostulante = $_POST['estadopostulante'];
    $orden = $_POST['orden'];
-      $res = $serviciosReferencias->modificarEstadopostulantes($id,$estadopostulante,$orden);
+
+   $res = $serviciosReferencias->modificarEstadopostulantes($id,$estadopostulante,$orden);
+
    if ($res == true) {
       echo '';
    } else {

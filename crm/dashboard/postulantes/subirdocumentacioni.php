@@ -474,7 +474,7 @@ switch ($iddocumentacion) {
 						<div class="progress-bar"></div>
 					</div>
 					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Documentación II</div>
+					<div class="bs-wizard-info text-center">Firmar Contratos</div>
 				</div>
 
 			</div>
@@ -573,8 +573,8 @@ switch ($iddocumentacion) {
 										</select>
 									</div>
 									<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
+								</div>
 							</div>
-						</div>
 					</div>
 				</div>
 			</div>

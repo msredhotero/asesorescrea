@@ -155,6 +155,102 @@ if (!file_exists($pathVeritas)) {
 $filesVeritas = array_diff(scandir($pathVeritas), array('.', '..'));
 //////////////////////////////////////////////////////////////////////
 
+$resEstados = $serviciosReferencias->traerEstadodocumentaciones();
+
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id);
+
+
+// documentacion por documentacion //
+$resDocumentacionAsesor1 = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacion($id, 2);
+
+$resDocumentacion1 = $serviciosReferencias->traerDocumentacionesPorId(2);
+
+if (mysql_num_rows($resDocumentacionAsesor1) > 0) {
+	$cadRefEstados1 = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor1,0,'refestadodocumentaciones'));
+
+	$iddocumentacionasesores1 = mysql_result($resDocumentacionAsesor1,0,'iddocumentacionasesor');
+
+	$estadoDocumentacion1 = mysql_result($resDocumentacionAsesor1,0,'estadodocumentacion');
+
+	$color1 = mysql_result($resDocumentacionAsesor1,0,'color');
+
+	$span1 = '';
+	switch (mysql_result($resDocumentacionAsesor1,0,'estadodocumentacion')) {
+		case 1:
+			$span1 = 'text-info glyphicon glyphicon-plus-sign';
+		break;
+		case 2:
+			$span1 = 'text-danger glyphicon glyphicon-remove-sign';
+		break;
+		case 3:
+			$span1 = 'text-danger glyphicon glyphicon-remove-sign';
+		break;
+		case 4:
+			$span1 = 'text-danger glyphicon glyphicon-remove-sign';
+		break;
+		case 5:
+			$span1 = 'text-success glyphicon glyphicon-remove-sign';
+		break;
+	}
+} else {
+	$cadRefEstados1 = $serviciosFunciones->devolverSelectBox($resEstados,array(1),'');
+
+	$iddocumentacionasesores1 = 0;
+
+	$estadoDocumentacion1 = 'Falta Cargar';
+
+	$color1 = 'blue';
+
+	$span1 = 'text-info glyphicon glyphicon-plus-sign';
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+
+// documentacion por documentacion //
+$resDocumentacionAsesor2 = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacion($id, 1);
+
+$resDocumentacion2 = $serviciosReferencias->traerDocumentacionesPorId(1);
+
+if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
+	$cadRefEstados2 = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor2,0,'refestadodocumentaciones'));
+
+	$iddocumentacionasesores2 = mysql_result($resDocumentacionAsesor2,0,'iddocumentacionasesor');
+
+	$estadoDocumentacion2 = mysql_result($resDocumentacionAsesor2,0,'estadodocumentacion');
+
+	$color2 = mysql_result($resDocumentacionAsesor2,0,'color');
+
+	$span2 = '';
+	switch (mysql_result($resDocumentacionAsesor2,0,'estadodocumentacion')) {
+		case 1:
+			$span2 = 'text-info glyphicon glyphicon-plus-sign';
+		break;
+		case 2:
+			$span2 = 'text-danger glyphicon glyphicon-remove-sign';
+		break;
+		case 3:
+			$span2 = 'text-danger glyphicon glyphicon-remove-sign';
+		break;
+		case 4:
+			$span2 = 'text-danger glyphicon glyphicon-remove-sign';
+		break;
+		case 5:
+			$span2 = 'text-success glyphicon glyphicon-remove-sign';
+		break;
+	}
+} else {
+	$cadRefEstados2 = $serviciosFunciones->devolverSelectBox($resEstados,array(1),'');
+
+	$iddocumentacionasesores2 = 0;
+
+	$estadoDocumentacion2 = 'Falta Cargar';
+
+	$color2 = 'blue';
+
+	$span2 = 'text-info glyphicon glyphicon-plus-sign';
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -358,6 +454,8 @@ $filesVeritas = array_diff(scandir($pathVeritas), array('.', '..'));
 						</a>
 						<div id="example1"></div>
 
+
+
 					</div>
 					<div class="col-xs-6 col-md-6 col-lg-6">
 						<a href="javascript:void(0);" class="thumbnail timagen2">
@@ -368,9 +466,13 @@ $filesVeritas = array_diff(scandir($pathVeritas), array('.', '..'));
 					</div>
 
 				</div>
+
+
+
 				<div class="row">
 
 					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+
 						<div class="card">
 							<div class="header">
 								<h2>
@@ -386,6 +488,24 @@ $filesVeritas = array_diff(scandir($pathVeritas), array('.', '..'));
 								</ul>
 							</div>
 							<div class="body">
+
+								<div class="row">
+									<div class="alert bg-<?php echo $color1; ?>">
+										<h4>
+											Estado: <b><?php echo $estadoDocumentacion1; ?></b>
+										</h4>
+									</div>
+									<div class="col-xs-6 col-md-6" style="display:block">
+										<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
+										<div class="input-group col-md-12">
+											<select class="form-control show-tick" id="refestados" name="refestados">
+												<?php echo $cadRefEstados1; ?>
+											</select>
+										</div>
+										<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
+									</div>
+								</div>
+
 
 								<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
 									<div class="dz-message">
@@ -423,6 +543,23 @@ $filesVeritas = array_diff(scandir($pathVeritas), array('.', '..'));
 								</ul>
 							</div>
 							<div class="body">
+
+								<div class="row">
+									<div class="alert bg-<?php echo $color2; ?>">
+										<h4>
+											Estado: <b><?php echo $estadoDocumentacion2; ?></b>
+										</h4>
+									</div>
+									<div class="col-xs-6 col-md-6" style="display:block">
+										<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
+										<div class="input-group col-md-12">
+											<select class="form-control show-tick" id="refestados" name="refestados">
+												<?php echo $cadRefEstados2; ?>
+											</select>
+										</div>
+										<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
+									</div>
+								</div>
 
 								<form action="subir.php" id="frmFileUpload2" class="dropzone" method="post" enctype="multipart/form-data">
 									<div class="dz-message">

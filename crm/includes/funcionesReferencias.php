@@ -906,9 +906,9 @@ class ServiciosReferencias {
 
 	/* PARA Postulantes */
 
-	function insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$compania,$cedula,$token) {
-		$sql = "insert into dbpostulantes(idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,refestadocivil,nacionalidad,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa,ultimoestado,refesquemareclutamiento,afore,compania,cedula,token)
-		values ('',".$refusuarios.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$email."','".$curp."','".$rfc."','".$ine."','".$fechanacimiento."','".$sexo."','".$codigopostal."',".$refescolaridades.",".$refestadocivil.",'".$nacionalidad."','".$telefonomovil."','".$telefonocasa."','".$telefonotrabajo."',".$refestadopostulantes.",'".$urlprueba."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."',".$refasesores.",".$comision.",".$refsucursalesinbursa.",".$ultimoestado.",".$refesquemareclutamiento.",'".$afore."','".$compania."','".$cedula."','".$token."')";
+	function insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token) {
+		$sql = "insert into dbpostulantes(idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,refestadocivil,nacionalidad,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa,ultimoestado,refesquemareclutamiento,afore,folio,cedula,token)
+		values ('',".$refusuarios.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$email."','".$curp."','".$rfc."','".$ine."','".$fechanacimiento."','".$sexo."','".$codigopostal."',".$refescolaridades.",".$refestadocivil.",'".$nacionalidad."','".$telefonomovil."','".$telefonocasa."','".$telefonotrabajo."',".$refestadopostulantes.",'".$urlprueba."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."',".$refasesores.",".$comision.",".$refsucursalesinbursa.",".$ultimoestado.",".$refesquemareclutamiento.",'".$afore."','".$folio."','".$cedula."','".$token."')";
 		$res = $this->query($sql,1);
 		return $res;
 	}
@@ -978,7 +978,7 @@ class ServiciosReferencias {
 			p.refesquemareclutamiento,
 			p.afore,
 			p.cedula,
-			p.compania,
+			p.folio,
 			est.estadopostulante,
 			p.nss
 		FROM
@@ -1091,7 +1091,7 @@ class ServiciosReferencias {
 
 
 	function traerPostulantesPorId($id) {
-		$sql = "select idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa, refestadocivil,nss,afore,cedula,compania,refesquemareclutamiento,
+		$sql = "select idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa, refestadocivil,nss,afore,cedula,folio,refesquemareclutamiento,
 		datediff(now(),fechanacimiento)/365 as edad from dbpostulantes where idpostulante =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -1114,7 +1114,13 @@ class ServiciosReferencias {
 
 		$resEstado = $this->traerEstadopostulantesPorId($idestado);
 
-		$resEstadoAux = $this->traerEstadopostulantesPorOrden(mysql_result($resEstado,0,'orden') - 1);
+		if (mysql_result($resEstado,0,'orden') == 99) {
+			$resEstadoAux = $this->traerEstadopostulantesPorOrden(7);
+		} else {
+			$resEstadoAux = $this->traerEstadopostulantesPorOrden(mysql_result($resEstado,0,'orden') - 1);
+		}
+
+
 
 		$sql = 'update dbpostulantes set ultimoestado = '.mysql_result($resEstadoAux,0,0).' where idpostulante = '.$id;
 		$res = $this->query($sql,0);
@@ -1156,6 +1162,15 @@ class ServiciosReferencias {
 		set
 		refestadodocumentaciones = ".$refestadodocumentaciones.",fechamodi = '".date('Y-m-d H:i:s')."',usuariomodi = '".$usuariomodi."'
 		where iddocumentacionasesor =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function modificarEstadoDocumentacionPostulantePorDocumentacion($iddocumentacion,$idpostulante, $refestadodocumentaciones,$usuariomodi) {
+		$sql = "update dbdocumentacionasesores
+		set
+		refestadodocumentaciones = ".$refestadodocumentaciones.",fechamodi = '".date('Y-m-d H:i:s')."',usuariomodi = '".$usuariomodi."'
+		where refdocumentaciones =".$iddocumentacion." and refpostulantes =".$idpostulante;
 		$res = $this->query($sql,0);
 		return $res;
 	}
