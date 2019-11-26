@@ -120,9 +120,7 @@ $cadVar = utf8_decode( $serviciosFunciones->devolverSelectBox($resVar,array(1),'
                      </div>
                      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <div class="input-group">
-                           <span class="input-group-addon">
-                              <i class="material-icons">star_rate</i>
-                           </span>
+
                            <div class="form-line">
                               <select class="form-control show-tick" name="refproductos[]" id="refproductos" multiple />
                                  <?php echo $cadVar; ?>
