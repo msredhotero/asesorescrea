@@ -122,13 +122,15 @@ $cadVar = utf8_decode( $serviciosFunciones->devolverSelectBox($resVar,array(1),'
                         <h4>Elije los productos en los que estes más interesado comercializar</h4>
                         <hr>
                      </div>
-                     <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
-                        <div class="input-group">
+                     <div class="row">
+                        <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10">
+                           <div class="input-group">
 
-                           <div class="form-line">
-                              <select class="form-control show-tick arriba" name="refproductos[]" id="refproductos" multiple />
-                                 <?php echo $cadVar; ?>
-                              </select>
+                              <div class="form-line">
+                                 <select class="form-control show-tick arriba" name="refproductos[]" id="refproductos" multiple />
+                                    <?php echo $cadVar; ?>
+                                 </select>
+                              </div>
                            </div>
                         </div>
                      </div>
