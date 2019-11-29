@@ -502,7 +502,7 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 												<?php echo $cadRefEstados1; ?>
 											</select>
 										</div>
-										<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
+										<button type="button" id="<?php echo $iddocumentacionasesores1; ?>" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
 									</div>
 								</div>
 
@@ -811,6 +811,46 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 		});
 
 	$(document).ready(function(){
+
+		$('.guardarEstado').click(function() {
+			idDocumentacion = $(this).attr("id");
+			modificarEstadoDocumentacionPostulante($('#refestados').val(), idDocumentacion);
+		});
+
+		function modificarEstadoDocumentacionPostulante(idestado, iddocumentacionasesores) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificarEstadoDocumentacionPostulante',
+					iddocumentacionasesores: iddocumentacionasesores,
+					idestado: idestado
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.guardarEstado').hide();
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error == false) {
+						swal("Ok!", 'Se modifico correctamente el estado de la documentación', "success");
+						$('.guardarEstado').show();
+					} else {
+						swal("Error!", data.leyenda, "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
 
 		$('#codigopostal').val('<?php echo $codigopostal; ?>');
 

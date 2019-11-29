@@ -1236,7 +1236,7 @@ class Servicios {
 						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
 							<label for="'.$label.'" class="control-label" style="text-align:left">'.ucwords($label).'</label>
 							<div class="input-group">
-                        <span class="input-group-addon">€</span>
+                        <span class="input-group-addon">$</span>
                         <div class="form-line">
                            <input type="text" class="form-control" id="'.strtolower($row[0]).'" name="'.strtolower($row[0]).'" value="'.mysql_result($resMod,0,$row[0]).'" '.$lblObligatorio.'>
                         </div>
@@ -1368,7 +1368,7 @@ class Servicios {
 											<div class="form-group col-md-6" style="display:'.$lblOculta.'">
 												<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
 												<div class="input-group col-md-12">
-													<textarea type="text" rows="2" cols="6" class="form-control" id="'.$campo.'" name="'.$campo.'" placeholder="Ingrese el '.$label.'..." required>'.(mysql_result($resMod,0,$row[0])).'</textarea>
+													<textarea type="text" rows="2" cols="6" class="form-control" id="'.$campo.'" name="'.$campo.'" placeholder="Ingrese el '.$label.'..." >'.(mysql_result($resMod,0,$row[0])).'</textarea>
 												</div>
 
 											</div>
@@ -1413,6 +1413,7 @@ class Servicios {
 												</div>
 
 												';
+
 											}
 										}
 									}
