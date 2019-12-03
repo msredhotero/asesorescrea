@@ -8,7 +8,8 @@
 <body>
 
 <?php
-	header('Location: http://areariderz.es/');
+	//header('Location: '.$_SERVER['DOCUMENT_ROOT']);
+	echo $_SERVER['DOCUMENT_ROOT'];
 ?>
 </body>
 </html>
