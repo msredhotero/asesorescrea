@@ -66,68 +66,58 @@ if (!file_exists($path)) {
 	mkdir($path, 0777);
 }
 
-/**** son 10 documentaciones */
-$pathINEf  = '../../archivos/postulantes/'.$id.'/inef';
+/**** son 13 documentaciones */
+$pathCARATULA  = '../../archivos/postulantes/'.$id.'/caratula';
 
-if (!file_exists($pathINEf)) {
-	mkdir($pathINEf, 0777);
+if (!file_exists($pathCARATULA)) {
+	mkdir($pathCARATULA, 0777);
 }
 
-$filesINEf = array_diff(scandir($pathINEf), array('.', '..'));
+$filesCARATULA = array_diff(scandir($pathCARATULA), array('.', '..'));
 
 /****************************************************************/
 
-$pathINEd  = '../../archivos/postulantes/'.$id.'/ined';
+$pathSA  = '../../archivos/postulantes/'.$id.'/solicitud';
 
-if (!file_exists($pathINEd)) {
-	mkdir($pathINEd, 0777);
+if (!file_exists($pathSA)) {
+	mkdir($pathSA, 0777);
 }
 
-$filesINEd = array_diff(scandir($pathINEd), array('.', '..'));
+$filesSA = array_diff(scandir($pathSA), array('.', '..'));
 
 /****************************************************************/
 
-$pathAN  = '../../archivos/postulantes/'.$id.'/actanacimiento';
+$pathFF  = '../../archivos/postulantes/'.$id.'/formatofirma';
 
-if (!file_exists($pathAN)) {
-	mkdir($pathAN, 0777);
+if (!file_exists($pathFF)) {
+	mkdir($pathFF, 0777);
 }
 
-$filesAN = array_diff(scandir($pathAN), array('.', '..'));
+$filesFF = array_diff(scandir($pathFF), array('.', '..'));
 
 /****************************************************************/
 
-$pathCURP  = '../../archivos/postulantes/'.$id.'/curp';
+$pathCC  = '../../archivos/postulantes/'.$id.'/consar';
 
-if (!file_exists($pathCURP)) {
-	mkdir($pathCURP, 0777);
+if (!file_exists($pathCC)) {
+	mkdir($pathCC, 0777);
 }
 
-$filesCURP = array_diff(scandir($pathCURP), array('.', '..'));
+$filesCC = array_diff(scandir($pathCC), array('.', '..'));
 
 /****************************************************************/
 
-$pathRFC  = '../../archivos/postulantes/'.$id.'/rfc';
+$pathNLG  = '../../archivos/postulantes/'.$id.'/nolaborargobierno';
 
-if (!file_exists($pathRFC)) {
-	mkdir($pathRFC, 0777);
+if (!file_exists($pathNLG)) {
+	mkdir($pathNLG, 0777);
 }
 
-$filesRFC = array_diff(scandir($pathRFC), array('.', '..'));
+$filesNLG = array_diff(scandir($pathNLG), array('.', '..'));
 
 /****************************************************************/
 
-$pathNSS  = '../../archivos/postulantes/'.$id.'/nss';
-
-if (!file_exists($pathNSS)) {
-	mkdir($pathNSS, 0777);
-}
-
-$filesNSS = array_diff(scandir($pathNSS), array('.', '..'));
-
-/****************************************************************/
-
-$pathCE  = '../../archivos/postulantes/'.$id.'/comprobanteestudio';
+$pathCE  = '../../archivos/postulantes/'.$id.'/codigoetica';
 
 if (!file_exists($pathCE)) {
 	mkdir($pathCE, 0777);
@@ -137,63 +127,80 @@ $filesCE = array_diff(scandir($pathCE), array('.', '..'));
 
 /****************************************************************/
 
-$pathCD  = '../../archivos/postulantes/'.$id.'/comprobantedomicilio';
+$pathAP  = '../../archivos/postulantes/'.$id.'/aceptacionpoliticas';
 
-if (!file_exists($pathCD)) {
-	mkdir($pathCD, 0777);
+if (!file_exists($pathAP)) {
+	mkdir($pathAP, 0777);
 }
 
-$filesCD = array_diff(scandir($pathCD), array('.', '..'));
+$filesAP = array_diff(scandir($pathAP), array('.', '..'));
 
 /****************************************************************/
 
-$pathCV  = '../../archivos/postulantes/'.$id.'/cv';
+$pathCCC  = '../../archivos/postulantes/'.$id.'/cuentaclave';
 
-if (!file_exists($pathCV)) {
-	mkdir($pathCV, 0777);
+if (!file_exists($pathCCC)) {
+	mkdir($pathCCC, 0777);
 }
 
-$filesCV = array_diff(scandir($pathCV), array('.', '..'));
+$filesCCC = array_diff(scandir($pathCCC), array('.', '..'));
 
 /****************************************************************/
 
-$pathInfonavit  = '../../archivos/postulantes/'.$id.'/infonavit';
+$pathB  = '../../archivos/postulantes/'.$id.'/banco';
 
-if (!file_exists($pathInfonavit)) {
-	mkdir($pathInfonavit, 0777);
+if (!file_exists($pathB)) {
+	mkdir($pathB, 0777);
 }
 
-$filesInfonavit = array_diff(scandir($pathInfonavit), array('.', '..'));
+$filesB = array_diff(scandir($pathB), array('.', '..'));
+
+/****************************************************************/
+
+$pathCF1  = '../../archivos/postulantes/'.$id.'/cf1';
+
+if (!file_exists($pathCF1)) {
+	mkdir($pathCF1, 0777);
+}
+
+$filesCF1 = array_diff(scandir($pathCF1), array('.', '..'));
+
+
+/****************************************************************/
+
+$pathCF2  = '../../archivos/postulantes/'.$id.'/cf2';
+
+if (!file_exists($pathCF2)) {
+	mkdir($pathCF2, 0777);
+}
+
+$filesCF2 = array_diff(scandir($pathCF2), array('.', '..'));
+
+/****************************************************************/
+
+$pathCF3  = '../../archivos/postulantes/'.$id.'/cf3';
+
+if (!file_exists($pathCF3)) {
+	mkdir($pathCF3, 0777);
+}
+
+$filesCF3 = array_diff(scandir($pathCF3), array('.', '..'));
+
+/****************************************************************/
+
+$pathC  = '../../archivos/postulantes/'.$id.'/compromiso';
+
+if (!file_exists($pathC)) {
+	mkdir($pathC, 0777);
+}
+
+$filesC = array_diff(scandir($pathC), array('.', '..'));
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id);
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta2($id);
 
-$puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
-
-if (mysql_result($resultado,0,'rfc') == '') {
-	$alertaRFC = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el RFC!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=7"><b>AQUI</b></a></div>';
-} else {
-	$alertaRFC = '';
-}
-
-if (mysql_result($resultado,0,'curp') == '') {
-	$alertaCURP = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el CURP!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=6"><b>AQUI</b></a></div>';
-} else {
-	$alertaCURP = '';
-}
-
-if (mysql_result($resultado,0,'ine') == '') {
-	$alertaINE = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el INE!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=3"><b>AQUI</b></a></div>';
-} else {
-	$alertaINE = '';
-}
-
-if (mysql_result($resultado,0,'nss') == '') {
-	$alertaNSS = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el Nro de Seguro Social!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=8"><b>AQUI</b></a></div>';
-} else {
-	$alertaNSS = '';
-}
+$puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionII($id);
 
 ?>
 
@@ -352,16 +359,16 @@ if (mysql_result($resultado,0,'nss') == '') {
 					<div class="bs-wizard-info text-center">Resultado Veritas</div>
 				</div>
 
-				<div class="col-xs-2 bs-wizard-step active"><!-- active -->
+				<div class="col-xs-2 bs-wizard-step complete"><!-- active -->
 					<div class="text-center bs-wizard-stepnum">Paso 5</div>
 					<div class="progress">
 						<div class="progress-bar"></div>
 					</div>
 					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Documentación I</div>
+					<div class="bs-wizard-info text-center">Firmar Contratos</div>
 				</div>
 
-				<div class="col-xs-2 bs-wizard-step disabled"><!-- active -->
+				<div class="col-xs-2 bs-wizard-step active"><!-- active -->
 					<div class="text-center bs-wizard-stepnum">Paso 6</div>
 					<div class="progress">
 						<div class="progress-bar"></div>
@@ -377,13 +384,9 @@ if (mysql_result($resultado,0,'nss') == '') {
 						<div class="alert alert-info">
 							<p><b>Importante!</b> Recuerde que debe completar toda la documentacion para poder continuar con la carga de la siguiente documentación</p>
 						</div>
-						<?php echo $alertaINE; ?>
-						<?php echo $alertaCURP; ?>
-						<?php echo $alertaRFC; ?>
-						<?php echo $alertaNSS; ?>
 						<?php if ($puedeAvanzar == true) { ?>
 							<button type="button" class="btn bg-green waves-effect btnContinuar">
-								<i class="material-icons">done_all</i>
+								<i class="material-icons">add</i>
 								<span>CONTINUAR</span>
 							</button>
 
@@ -395,7 +398,7 @@ if (mysql_result($resultado,0,'nss') == '') {
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
 							<div class="icon">
-								<i class="material-icons">face</i>
+								<i class="material-icons">description</i>
 							</div>
 							<div class="content">
 								<div class="text"><?php echo $row['documentacion']; ?></div>
@@ -449,7 +452,7 @@ if (mysql_result($resultado,0,'nss') == '') {
 
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
-			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=" + idTable;
+			url = "subirdocumentacionii.php?id=<?php echo $id; ?>&documentacion=" + idTable;
 			$(location).attr('href',url);
 		});
 

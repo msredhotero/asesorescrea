@@ -1336,6 +1336,32 @@ class ServiciosReferencias {
  		return $res;
 	}
 
+
+	function traerDocumentacionPorPostulanteDocumentacionCompleta2($idpostulante) {
+		$sql = "SELECT
+					    d.iddocumentacion,
+					    d.documentacion,
+					    d.obligatoria,
+					    da.iddocumentacionasesor,
+					    da.archivo,
+					    da.type,
+					    coalesce( ed.estadodocumentacion, 'Falta') as estadodocumentacion,
+						 ed.color,
+					    ed.idestadodocumentacion
+					FROM
+					    dbdocumentaciones d
+					        LEFT JOIN
+					    dbdocumentacionasesores da ON d.iddocumentacion = da.refdocumentaciones
+					        AND da.refpostulantes = ".$idpostulante."
+					        LEFT JOIN
+					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
+					WHERE
+					    d.iddocumentacion IN (13 , 14, 15, 16, 17, 18, 19, 20, 21, 22,23,24,25)
+					order by 1";
+		$res = $this->query($sql,0);
+ 		return $res;
+	}
+
 	function permiteAvanzarDocumentacionI($idpostulante) {
 		$apruebaPrimero = 0;
 		$apruebaSegundo = 0;
@@ -1360,10 +1386,63 @@ class ServiciosReferencias {
 						COUNT(*) AS documentacionesaceptadas
 					FROM
 						dbdocumentacionasesores da
+						inner join dbdocumentaciones d on d.iddocumentacion = da.refdocumentaciones
 					WHERE
 						da.refpostulantes = ".$idpostulante."
 						AND da.refdocumentaciones IN (3 , 4, 5, 6, 7, 8, 9, 10, 11, 12)
-						AND da.refestadodocumentaciones = 5";
+						and d.obligatoria = '1'
+						AND da.refestadodocumentaciones in (5,6)";
+
+		$resSegundo = $this->query($sqlSegundo,0);
+
+  		if (mysql_num_rows($resSegundo) > 0) {
+			if (mysql_result($resSegundo,0,0) == 10) {
+				$apruebaSegundo = 1;
+			}
+  		}
+
+		// compruebo que haya cargado las archivos de las documentaciones
+		// falta
+
+		if (($apruebaPrimero == 1) && ($apruebaSegundo == 1)) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+
+	function permiteAvanzarDocumentacionII($idpostulante) {
+		$apruebaPrimero = 0;
+		$apruebaSegundo = 0;
+
+		// compruebo que haya cargado los datos en postulantes
+		$sqlPrimero = "SELECT
+				    p.idpostulante
+				FROM
+				    dbpostulantes p
+				WHERE
+				    p.idpostulante = ".$idpostulante." AND ine <> ''
+				        AND curp <> '' and rfc <> '' and nss <> ''";
+
+		$resPrimero = $this->query($sqlPrimero,0);
+
+		if (mysql_num_rows($resPrimero) > 0) {
+			$apruebaPrimero = 1;
+		}
+
+		// compruebo que haya cargado las documentaciones
+		$sqlSegundo = "SELECT
+						COUNT(*) AS documentacionesaceptadas
+					FROM
+						dbdocumentacionasesores da
+						inner join dbdocumentaciones d on d.iddocumentacion = da.refdocumentaciones
+					WHERE
+						da.refpostulantes = ".$idpostulante."
+						AND da.refdocumentaciones IN (13 , 14, 15, 16, 17, 18, 19, 20, 21, 22,23,24,25)
+						and d.obligatoria = '1'
+						AND da.refestadodocumentaciones in (5,6)";
 
 		$resSegundo = $this->query($sqlSegundo,0);
 

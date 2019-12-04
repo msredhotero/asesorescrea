@@ -107,7 +107,7 @@ $resEntrevistaRegional = $serviciosReferencias->traerEntrevistasActivasPorPostul
 if (mysql_num_rows($resEntrevistaRegional) > 0) {
 	$primerEntrevistaDia = substr(str_replace('-','/', mysql_result($resEntrevistaRegional,0,'fecha')),0,10);
 	$fechaPE = date($primerEntrevistaDia);
-	$nuevafecha = strtotime ( '+1 day' , strtotime ( $fechaPE ) ) ;
+	$nuevafecha = strtotime ( '+0 day' , strtotime ( $fechaPE ) ) ;
 	$primerEntrevistaDia = date ( 'Y-m-d' , $nuevafecha );
 	//die(var_dump($primerEntrevistaDia));
 	if (mysql_result($resEntrevistaRegional,0,'refestadoentrevistas') != 2) {
@@ -241,7 +241,7 @@ if (mysql_num_rows($resEntrevistaRegional) > 0) {
 						<div class="progress-bar"></div>
 					</div>
 					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Entrevista, Pruebas Psicometricas y VERITAS</div>
+					<div class="bs-wizard-info text-center">Entrevista y Pruebas Psicometricas</div>
 				</div>
 
 				<div class="col-xs-2 bs-wizard-step disabled"><!-- active -->
