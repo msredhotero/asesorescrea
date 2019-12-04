@@ -365,7 +365,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionII($id);
 						<div class="progress-bar"></div>
 					</div>
 					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Firmar Contratos</div>
+					<div class="bs-wizard-info text-center">Documentación I</div>
 				</div>
 
 				<div class="col-xs-2 bs-wizard-step active"><!-- active -->
@@ -374,7 +374,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionII($id);
 						<div class="progress-bar"></div>
 					</div>
 					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Documentación II</div>
+					<div class="bs-wizard-info text-center">Firmar Contratos</div>
 				</div>
 
 			</div>

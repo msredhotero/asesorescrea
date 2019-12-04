@@ -276,51 +276,50 @@ switch ($iddocumentacion) {
 	break;
 	case 16:
 		// code...
-		$input = '';
-		$boton = '';
-		$leyenda = 'Descargue el archivo para completar';
-		$campo = '';
-		$archivo = '';
+		$input = 'Descargue el archivo para completar';
+		$boton = '<button type="button" class="btn btn-primary waves-effect btnDescargar"><i class="material-icons">cloud_download</i><span>Descargar</span></button>';
+		$leyenda = '';
+		$archivo = 'cartaaforeunificada.pdf';
+		$campo = 'Carta CONSAR';
 	break;
 	case 17:
 		// code...
-		$dato = mysql_result($resPostulante,0,'rfc');
-
-		$input = '<input type="text" name="rfc" id="rfc" class="form-control" value="'.$dato.'"/> ';
-		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
-		$leyenda = 'Cargue el Nro de RFC';
-		$campo = 'rfc';
-		$archivo = '';
+		$input = 'Descargue el archivo para completar';
+		$boton = '<button type="button" class="btn btn-primary waves-effect btnDescargar"><i class="material-icons">cloud_download</i><span>Descargar</span></button>';
+		$leyenda = '';
+		$archivo = 'nolaborarengorbierno.pdf';
+		$campo = 'Carta no laborar en gobierno';
 	break;
 	case 18:
 		// code...
-		$dato = mysql_result($resPostulante,0,'nss');
-
-		$input = '<input type="text" name="nss" id="nss" class="form-control" value="'.$dato.'"/> ';
-		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
-		$leyenda = 'Cargue el Nro de Seguro Social';
-		$campo = 'nss';
-		$archivo = '';
+		$input = 'Descargue el archivo para completar';
+		$boton = '<button type="button" class="btn btn-primary waves-effect btnDescargar"><i class="material-icons">cloud_download</i><span>Descargar</span></button>';
+		$leyenda = '';
+		$archivo = 'codigoetica.pdf';
+		$campo = 'Codigo de Etica';
 	break;
 	case 19:
 		// code...
-		$input = '';
-		$boton = '';
+		$input = 'Descargue el archivo para completar';
+		$boton = '<button type="button" class="btn btn-primary waves-effect btnDescargar"><i class="material-icons">cloud_download</i><span>Descargar</span></button>';
 		$leyenda = '';
-		$campo = '';
+		$archivo = 'conocimientopoliticas.pdf';
+		$campo = 'Carta de aceptación de políticas';
 	break;
 	case 20:
 		// code...
-		$input = '';
-		$boton = '';
+		$input = 'Descargue el archivo para completar';
+		$boton = '<button type="button" class="btn btn-primary waves-effect btnDescargar"><i class="material-icons">cloud_download</i><span>Descargar</span></button>';
 		$leyenda = '';
-		$campo = '';
+		$archivo = 'cuentainterbancaria.pdf';
+		$campo = 'Carta Cuenta Clave';
 	break;
 	case 21:
 		// code...
 		$input = '';
 		$boton = '';
 		$leyenda = '';
+		$archivo = '';
 		$campo = '';
 	break;
 	case 22:
@@ -328,6 +327,7 @@ switch ($iddocumentacion) {
 		$input = '';
 		$boton = '';
 		$leyenda = '';
+		$archivo = '';
 		$campo = '';
 	break;
 	case 23:
@@ -335,6 +335,7 @@ switch ($iddocumentacion) {
 		$input = '';
 		$boton = '';
 		$leyenda = '';
+		$archivo = '';
 		$campo = '';
 	break;
 	case 24:
@@ -342,6 +343,7 @@ switch ($iddocumentacion) {
 		$input = '';
 		$boton = '';
 		$leyenda = '';
+		$archivo = '';
 		$campo = '';
 	break;
 	case 25:
@@ -349,6 +351,7 @@ switch ($iddocumentacion) {
 		$input = '';
 		$boton = '';
 		$leyenda = '';
+		$archivo = '';
 		$campo = '';
 	break;
 
@@ -357,6 +360,7 @@ switch ($iddocumentacion) {
 		$input = '';
 		$boton = '';
 		$leyenda = '';
+		$archivo = '';
 		$campo = '';
 	break;
 }
