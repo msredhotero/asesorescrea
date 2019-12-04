@@ -1311,6 +1311,18 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function traerDocumentacionPorPostulanteDocumentacionEspecifica($id, $iddocumentacion, $archivo) {
+		$sql = "select
+		da.iddocumentacionasesor,da.refpostulantes,da.refdocumentaciones,
+		da.archivo,da.type,da.refestadodocumentaciones,da.fechacrea,da.fechamodi,
+		da.usuariocrea,da.usuariomodi , e.estadodocumentacion, e.color
+		from dbdocumentacionasesores da
+		inner join tbestadodocumentaciones e on e.idestadodocumentacion = da.refestadodocumentaciones
+		where da.refpostulantes =".$id." and da.refdocumentaciones = ".$iddocumentacion." and da.archivo = '".$archivo."'";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 	function traerDocumentacionPorPostulanteDocumentacionCompleta($idpostulante) {
 		$sql = "SELECT
 					    d.iddocumentacion,

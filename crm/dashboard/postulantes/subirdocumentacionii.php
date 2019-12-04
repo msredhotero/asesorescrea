@@ -207,46 +207,50 @@ $resPostulante = $serviciosReferencias->traerPostulantesPorId($id);
 
 $resEstados = $serviciosReferencias->traerEstadodocumentaciones();
 
-if (mysql_num_rows($resDocumentacionAsesor) > 0) {
-	$cadRefEstados = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'));
+$cantidadarchivos = mysql_result($resDocumentacion,0,'cantidadarchivos');
 
-	$iddocumentacionasesores = mysql_result($resDocumentacionAsesor,0,'iddocumentacionasesor');
+if ($cantidadarchivos == 0) {
+	if (mysql_num_rows($resDocumentacionAsesor) > 0) {
+		$cadRefEstados = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'));
 
-	$estadoDocumentacion = mysql_result($resDocumentacionAsesor,0,'estadodocumentacion');
+		$iddocumentacionasesores = mysql_result($resDocumentacionAsesor,0,'iddocumentacionasesor');
 
-	$color = mysql_result($resDocumentacionAsesor,0,'color');
+		$estadoDocumentacion = mysql_result($resDocumentacionAsesor,0,'estadodocumentacion');
 
-	$span = '';
-	switch (mysql_result($resDocumentacionAsesor,0,'estadodocumentacion')) {
-		case 1:
-			$span = 'text-info glyphicon glyphicon-plus-sign';
-		break;
-		case 2:
-			$span = 'text-danger glyphicon glyphicon-remove-sign';
-		break;
-		case 3:
-			$span = 'text-danger glyphicon glyphicon-remove-sign';
-		break;
-		case 4:
-			$span = 'text-danger glyphicon glyphicon-remove-sign';
-		break;
-		case 5:
-			$span = 'text-success glyphicon glyphicon-ok';
-		break;
-		case 6:
-			$span = 'text-success glyphicon glyphicon-ok';
-		break;
+		$color = mysql_result($resDocumentacionAsesor,0,'color');
+
+		$span = '';
+		switch (mysql_result($resDocumentacionAsesor,0,'estadodocumentacion')) {
+			case 1:
+				$span = 'text-info glyphicon glyphicon-plus-sign';
+			break;
+			case 2:
+				$span = 'text-danger glyphicon glyphicon-remove-sign';
+			break;
+			case 3:
+				$span = 'text-danger glyphicon glyphicon-remove-sign';
+			break;
+			case 4:
+				$span = 'text-danger glyphicon glyphicon-remove-sign';
+			break;
+			case 5:
+				$span = 'text-success glyphicon glyphicon-ok';
+			break;
+			case 6:
+				$span = 'text-success glyphicon glyphicon-ok';
+			break;
+		}
+	} else {
+		$cadRefEstados = $serviciosFunciones->devolverSelectBox($resEstados,array(1),'');
+
+		$iddocumentacionasesores = 0;
+
+		$estadoDocumentacion = 'Falta Cargar';
+
+		$color = 'blue';
+
+		$span = 'text-info glyphicon glyphicon-plus-sign';
 	}
-} else {
-	$cadRefEstados = $serviciosFunciones->devolverSelectBox($resEstados,array(1),'');
-
-	$iddocumentacionasesores = 0;
-
-	$estadoDocumentacion = 'Falta Cargar';
-
-	$color = 'blue';
-
-	$span = 'text-info glyphicon glyphicon-plus-sign';
 }
 
 switch ($iddocumentacion) {
@@ -257,6 +261,7 @@ switch ($iddocumentacion) {
 		$leyenda = '';
 		$campo = '';
 		$archivo = '';
+		$update = '';
 	break;
 	case 14:
 		// code...
@@ -265,6 +270,7 @@ switch ($iddocumentacion) {
 		$leyenda = '';
 		$campo = '';
 		$archivo = '';
+		$update = '';
 	break;
 	case 15:
 		// code...
@@ -273,6 +279,7 @@ switch ($iddocumentacion) {
 		$leyenda = '';
 		$archivo = 'formatofirma.pdf';
 		$campo = 'Formato Firma';
+		$update = '';
 	break;
 	case 16:
 		// code...
@@ -281,6 +288,7 @@ switch ($iddocumentacion) {
 		$leyenda = '';
 		$archivo = 'cartaaforeunificada.pdf';
 		$campo = 'Carta CONSAR';
+		$update = '';
 	break;
 	case 17:
 		// code...
@@ -289,6 +297,7 @@ switch ($iddocumentacion) {
 		$leyenda = '';
 		$archivo = 'nolaborarengorbierno.pdf';
 		$campo = 'Carta no laborar en gobierno';
+		$update = '';
 	break;
 	case 18:
 		// code...
@@ -297,6 +306,7 @@ switch ($iddocumentacion) {
 		$leyenda = '';
 		$archivo = 'codigoetica.pdf';
 		$campo = 'Codigo de Etica';
+		$update = '';
 	break;
 	case 19:
 		// code...
@@ -305,6 +315,7 @@ switch ($iddocumentacion) {
 		$leyenda = '';
 		$archivo = 'conocimientopoliticas.pdf';
 		$campo = 'Carta de aceptación de políticas';
+		$update = '';
 	break;
 	case 20:
 		// code...
@@ -313,6 +324,7 @@ switch ($iddocumentacion) {
 		$leyenda = '';
 		$archivo = 'cuentainterbancaria.pdf';
 		$campo = 'Carta Cuenta Clave';
+		$update = '';
 	break;
 	case 21:
 		// code...
@@ -321,6 +333,7 @@ switch ($iddocumentacion) {
 		$leyenda = '';
 		$archivo = '';
 		$campo = '';
+		$update = '';
 	break;
 	case 22:
 		// code...
@@ -329,6 +342,7 @@ switch ($iddocumentacion) {
 		$leyenda = '';
 		$archivo = '';
 		$campo = '';
+		$update = 'contratofirmado1_';
 	break;
 	case 23:
 		// code...
@@ -337,6 +351,7 @@ switch ($iddocumentacion) {
 		$leyenda = '';
 		$archivo = '';
 		$campo = '';
+		$update = 'contratofirmado2_';
 	break;
 	case 24:
 		// code...
@@ -345,6 +360,7 @@ switch ($iddocumentacion) {
 		$leyenda = '';
 		$archivo = '';
 		$campo = '';
+		$update = 'contratofirmado3_';
 	break;
 	case 25:
 		// code...
@@ -353,6 +369,7 @@ switch ($iddocumentacion) {
 		$leyenda = '';
 		$archivo = '';
 		$campo = '';
+		$update = '';
 	break;
 
 	default:
@@ -362,6 +379,7 @@ switch ($iddocumentacion) {
 		$leyenda = '';
 		$archivo = '';
 		$campo = '';
+		$update = '';
 	break;
 }
 
@@ -584,7 +602,7 @@ switch ($iddocumentacion) {
 					<div class="card">
 						<div class="header bg-blue">
 							<h2>
-								ARCHIVO CARGADO
+								ARCHIVO/S CARGADO/S
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -602,26 +620,67 @@ switch ($iddocumentacion) {
 								</button>
 							</div>
 							<div class="row">
-								<a href="javascript:void(0);" class="thumbnail timagen1">
-									<img class="img-responsive">
-								</a>
-								<div id="example1"></div>
+								<?php for ($i=1;$i<=$cantidadarchivos;$i++) { ?>
+								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
+									<a href="javascript:void(0);" class="thumbnail timagen<?php echo $i; ?>">
+										<img class="img-responsive">
+									</a>
+									<div id="example<?php echo $i; ?>"></div>
+								</div>
+							<?php } ?>
 							</div>
 							<div class="row">
-								<div class="alert bg-<?php echo $color; ?>">
-									<h4>
-										Estado: <b><?php echo $estadoDocumentacion; ?></b>
-									</h4>
-								</div>
-				            <div class="col-xs-6 col-md-6" style="display:block">
-									<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
-									<div class="input-group col-md-12">
-										<select class="form-control show-tick" id="refestados" name="refestados">
-											<?php echo $cadRefEstados; ?>
-										</select>
+								<?php
+								while ($rowEstados = mysql_fetch_array($resDocumentacionAsesor)) {
+
+									$cadRefEstados = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', $rowEstados['refestadodocumentaciones']);
+
+									$iddocumentacionasesores = $rowEstados['iddocumentacionasesor'];
+
+									$estadoDocumentacion = $rowEstados['estadodocumentacion'];
+
+									$color = $rowEstados['color'];
+
+									$span = '';
+									switch ($rowEstados['estadodocumentacion']) {
+										case 1:
+											$span = 'text-info glyphicon glyphicon-plus-sign';
+										break;
+										case 2:
+											$span = 'text-danger glyphicon glyphicon-remove-sign';
+										break;
+										case 3:
+											$span = 'text-danger glyphicon glyphicon-remove-sign';
+										break;
+										case 4:
+											$span = 'text-danger glyphicon glyphicon-remove-sign';
+										break;
+										case 5:
+											$span = 'text-success glyphicon glyphicon-ok';
+										break;
+										case 6:
+											$span = 'text-success glyphicon glyphicon-ok';
+										break;
+									}
+
+								?>
+								<div class="col-xs-6 col-md-4" style="display:block">
+									<div class="alert bg-<?php echo $color; ?>">
+										<h4>
+											Estado: <b><?php echo $estadoDocumentacion; ?></b>
+										</h4>
 									</div>
-									<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
+					            <div class="col-xs-6 col-md-6" style="display:block">
+										<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
+										<div class="input-group col-md-12">
+											<select class="form-control show-tick" id="refestados" name="refestados">
+												<?php echo $cadRefEstados; ?>
+											</select>
+										</div>
+										<button type="button" id="<?php echo $rowEstados['iddocumentacionasesor']; ?>" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
+									</div>
 								</div>
+								<?php } ?>
 							</div>
 					</div>
 				</div>
@@ -768,10 +827,11 @@ switch ($iddocumentacion) {
 		}
 
 		$('.guardarEstado').click(function() {
-			modificarEstadoDocumentacionPostulante($('#refestados').val());
+			idTable =  $(this).attr("id");
+			modificarEstadoDocumentacionPostulante($('#refestados').val(),idTable);
 		});
 
-		function modificarEstadoDocumentacionPostulante(idestado) {
+		function modificarEstadoDocumentacionPostulante(idestado, id) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
@@ -779,7 +839,7 @@ switch ($iddocumentacion) {
 				//datos del formulario
 				data: {
 					accion: 'modificarEstadoDocumentacionPostulante',
-					iddocumentacionasesores: <?php echo $iddocumentacionasesores; ?>,
+					iddocumentacionasesores: id,
 					idestado: idestado
 				},
 				//mientras enviamos el archivo
@@ -806,11 +866,13 @@ switch ($iddocumentacion) {
 			});
 		}
 
-		function traerImagen(contenedorpdf, contenedor) {
+		<?php if ($cantidadarchivos > 1) { ?>
+		function traerImagenEspecifica(contenedorpdf, contenedor, archivo) {
 			$.ajax({
 				data:  {idpostulante: <?php echo $id; ?>,
 						iddocumentacion: <?php echo $iddocumentacion; ?>,
-						accion: 'traerDocumentacionPorPostulanteDocumentacion'},
+						archivo: archivo,
+						accion: 'traerDocumentacionPorPostulanteDocumentacionEspecifica'},
 				url:   '../../ajax/ajax.php',
 				type:  'post',
 				beforeSend: function () {
@@ -848,7 +910,55 @@ switch ($iddocumentacion) {
 			});
 		}
 
-		traerImagen('example1','timagen1');
+		<?php for ($i=1;$i<=$cantidadarchivos;$i++) { ?>
+			traerImagenEspecifica('example<?php echo $i; ?>','timagen<?php echo $i; ?>','<?php echo $update.$i; ?>');
+		<?php } ?>
+
+		<?php } else { ?>
+			function traerImagen(contenedorpdf, contenedor) {
+				$.ajax({
+					data:  {idpostulante: <?php echo $id; ?>,
+							iddocumentacion: <?php echo $iddocumentacion; ?>,
+							accion: 'traerDocumentacionPorPostulanteDocumentacion'},
+					url:   '../../ajax/ajax.php',
+					type:  'post',
+					beforeSend: function () {
+						$("." + contenedor + " img").attr("src",'');
+					},
+					success:  function (response) {
+						var cadena = response.datos.type.toLowerCase();
+
+						if (response.datos.type != '') {
+							if (cadena.indexOf("pdf") > -1) {
+								PDFObject.embed(response.datos.imagen, "#"+contenedorpdf);
+								$('#'+contenedorpdf).show();
+								$("."+contenedor).hide();
+
+							} else {
+								$("." + contenedor + " img").attr("src",response.datos.imagen);
+								$("."+contenedor).show();
+								$('#'+contenedorpdf).hide();
+							}
+						}
+
+						if (response.error) {
+							$('.btnContinuar').hide();
+							$('.btnEliminar').hide();
+							$('.guardarEstado').hide();
+						} else {
+							$('.btnContinuar').show();
+							$('.btnEliminar').show();
+							$('.guardarEstado').show();
+						}
+
+
+
+					}
+				});
+			}
+
+			traerImagen('example1','timagen1');
+		<?php } ?>
 
 		Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
 

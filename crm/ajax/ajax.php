@@ -561,6 +561,9 @@ switch ($accion) {
    case 'traerDocumentacionPorPostulanteDocumentacion':
    traerDocumentacionPorPostulanteDocumentacion($serviciosReferencias);
    break;
+   case 'traerDocumentacionPorPostulanteDocumentacionEspecifica':
+   traerDocumentacionPorPostulanteDocumentacionEspecifica($serviciosReferencias);
+   break;
    case 'modificarEstadoPostulante':
       modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios);
    break;
@@ -909,7 +912,7 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
 }
 
 
-function traerDocumentacionPorPostulanteDocumentacion($serviciosArbitros) {
+   function traerDocumentacionPorPostulanteDocumentacion($serviciosArbitros) {
 
       $idpostulante = $_POST['idpostulante'];
       $iddocumentacion = $_POST['iddocumentacion'];
@@ -970,6 +973,170 @@ function traerDocumentacionPorPostulanteDocumentacion($serviciosArbitros) {
                break;
                case 12:
                   $imagen = '../../archivos/postulantes/'.$idpostulante.'/infonavit/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 13:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/caratula/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 14:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/solicitud/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 15:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/formatofirma/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 16:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/consar/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 17:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/nolaborargobierno/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 18:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/codigoetica/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 19:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/aceptacionpoliticas/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 20:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/cuentaclave/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 21:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/banco/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 22:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/cf1/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 23:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/cf2/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 24:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/cf3/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 25:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/compromiso/'.mysql_result($resFoto,0,'archivo');
+               break;
+            }
+
+            $resV['datos'] = array('imagen' => $imagen, 'type' => mysql_result($resFoto,0,'type'));
+
+            $resV['error'] = false;
+         }
+
+
+
+      } else {
+         $imagen = '../../imagenes/sin_img.jpg';
+
+
+         $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+         $resV['error'] = true;
+      }
+
+
+      header('Content-type: application/json');
+      echo json_encode($resV);
+   }
+
+
+   function traerDocumentacionPorPostulanteDocumentacionEspecifica($serviciosArbitros) {
+
+      $idpostulante = $_POST['idpostulante'];
+      $iddocumentacion = $_POST['iddocumentacion'];
+      $archivo = $_POST['archivo'];
+
+      $resV['datos'] = '';
+      $resV['error'] = false;
+
+      $resFoto = $serviciosArbitros->traerDocumentacionPorPostulanteDocumentacionEspecifica($idpostulante,$iddocumentacion,$archivo);
+
+      $imagen = '';
+
+      if (mysql_num_rows($resFoto) > 0) {
+         /* produccion
+         $imagen = 'https://www.saupureinconsulting.com.ar/aifzn/'.mysql_result($resFoto,0,'archivo').'/'.mysql_result($resFoto,0,'imagen');
+         */
+
+         //desarrollo
+
+         if (mysql_result($resFoto,0,'type') == '') {
+            $imagen = '../../imagenes/sin_img.jpg';
+
+            $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+            $resV['error'] = true;
+         } else {
+            switch ($iddocumentacion) {
+               case 2:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/siap/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 1:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/veritas/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 3:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/inef/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 4:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/ined/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 5:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/actanacimiento/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 6:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/curp/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 7:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/rfc/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 8:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/nss/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 9:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/comprobanteestudio/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 10:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/comprobantedomicilio/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 11:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/cv/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 12:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/infonavit/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 13:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/caratula/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 14:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/solicitud/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 15:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/formatofirma/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 16:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/consar/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 17:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/nolaborargobierno/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 18:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/codigoetica/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 19:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/aceptacionpoliticas/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 20:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/cuentaclave/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 21:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/banco/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 22:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/cf1/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 23:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/cf2/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 24:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/cf3/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 25:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/compromiso/'.mysql_result($resFoto,0,'archivo');
                break;
             }
 
