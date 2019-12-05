@@ -51,6 +51,7 @@
 		$imagen = $serviciosReferencias->sanear_string(basename($archivo['name']));
 		$type = $archivo["type"];
 
+		$nombreEspecifico = $_POST['archivo'];
 
 		// desarrollo
 		switch ($iddocumentacion) {
@@ -209,7 +210,7 @@
 		if (move_uploaded_file($templocation, $imagen_subida)) {
 			$pos = strpos( strtolower($type), 'pdf');
 
-			$resEliminar = $serviciosReferencias->eliminarDocumentacionasesoresPorPostulanteDocumentacion($idpostulante,$iddocumentacion);
+			$resEliminar = $serviciosReferencias->eliminarDocumentacionasesoresPorPostulanteDocumentacionEspecifico($idpostulante,$iddocumentacion,$nombreEspecifico);
 
 			$resInsertar = $serviciosReferencias->insertarDocumentacionasesores($idpostulante,$iddocumentacion,$newname,$type,1,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices']);
 

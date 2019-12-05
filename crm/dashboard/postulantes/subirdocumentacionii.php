@@ -342,7 +342,7 @@ switch ($iddocumentacion) {
 		$leyenda = '';
 		$archivo = '';
 		$campo = '';
-		$update = 'contratofirmado1_';
+		$update = 'contratofirmado1';
 	break;
 	case 23:
 		// code...
@@ -351,7 +351,7 @@ switch ($iddocumentacion) {
 		$leyenda = '';
 		$archivo = '';
 		$campo = '';
-		$update = 'contratofirmado2_';
+		$update = 'contratofirmado2';
 	break;
 	case 24:
 		// code...
@@ -360,7 +360,7 @@ switch ($iddocumentacion) {
 		$leyenda = '';
 		$archivo = '';
 		$campo = '';
-		$update = 'contratofirmado3_';
+		$update = 'contratofirmado3';
 	break;
 	case 25:
 		// code...
@@ -632,6 +632,8 @@ switch ($iddocumentacion) {
 							<div class="row">
 								<?php
 								while ($rowEstados = mysql_fetch_array($resDocumentacionAsesor)) {
+									$resEstados = $serviciosReferencias->traerEstadodocumentaciones();
+									$cadRefEstados = '';
 
 									$cadRefEstados = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', $rowEstados['refestadodocumentaciones']);
 
@@ -673,7 +675,7 @@ switch ($iddocumentacion) {
 					            <div class="col-xs-6 col-md-6" style="display:block">
 										<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
 										<div class="input-group col-md-12">
-											<select class="form-control show-tick" id="refestados" name="refestados">
+											<select class="form-control show-tick" id="refestados<?php echo $rowEstados['iddocumentacionasesor']; ?>" name="refestados">
 												<?php echo $cadRefEstados; ?>
 											</select>
 										</div>
@@ -702,18 +704,44 @@ switch ($iddocumentacion) {
 							</ul>
 						</div>
 						<div class="body">
-							<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
-								<div class="dz-message">
-									<div class="drag-icon-cph">
-										<i class="material-icons">touch_app</i>
+							<div class="row">
+							<?php if ($cantidadarchivos > 1) { ?>
+								<?php for ($i=1;$i<=$cantidadarchivos;$i++) { ?>
+
+									<div class="col-xs-6 col-sm-4">
+										<h5>Ingrese el archivo <?php echo $i; ?></h5>
+										<form action="subirespecifico.php" id="frmFileUpload<?php echo $i; ?>" class="dropzone" method="post" enctype="multipart/form-data">
+											<div class="dz-message">
+												<div class="drag-icon-cph">
+													<i class="material-icons">touch_app</i>
+												</div>
+												<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+											</div>
+											<div class="fallback">
+												<input name="file" type="file" id="archivos<?php echo $i; ?>" />
+												<input type="hidden" id="idpostulante<?php echo $i; ?>" name="idpostulante" value="<?php echo $id; ?>" />
+												<input type="hidden" id="nombrearchivo<?php echo $i; ?>" name="nombrearchivo" value="<?php echo $update.$i; ?>"/>
+											</div>
+										</form>
 									</div>
-									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
-								</div>
-								<div class="fallback">
-									<input name="file" type="file" id="archivos" />
-									<input type="hidden" id="idpostulante" name="idpostulante" value="<?php echo $id; ?>" />
-								</div>
-							</form>
+
+								<?php } ?>
+							<?php } else { ?>
+								<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+									<div class="dz-message">
+										<div class="drag-icon-cph">
+											<i class="material-icons">touch_app</i>
+										</div>
+										<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+									</div>
+									<div class="fallback">
+										<input name="file" type="file" id="archivos" />
+										<input type="hidden" id="idpostulante" name="idpostulante" value="<?php echo $id; ?>" />
+
+									</div>
+								</form>
+							<?php } ?>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -828,7 +856,7 @@ switch ($iddocumentacion) {
 
 		$('.guardarEstado').click(function() {
 			idTable =  $(this).attr("id");
-			modificarEstadoDocumentacionPostulante($('#refestados').val(),idTable);
+			modificarEstadoDocumentacionPostulante($('#refestados' + idTable).val(),idTable);
 		});
 
 		function modificarEstadoDocumentacionPostulante(idestado, id) {
@@ -852,8 +880,10 @@ switch ($iddocumentacion) {
 					if (data.error == false) {
 						swal("Ok!", 'Se modifico correctamente el estado de la documentación <?php echo $campo; ?>', "success");
 						$('.guardarEstado').show();
+						location.reload();
 					} else {
 						swal("Error!", data.leyenda, "warning");
+
 
 						$("#load").html('');
 					}
@@ -962,41 +992,84 @@ switch ($iddocumentacion) {
 
 		Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
 
-		Dropzone.options.frmFileUpload = {
-			maxFilesize: 30,
-			acceptedFiles: ".png,.jpg,.gif,.bmp,.jpeg,.pdf",
-			accept: function(file, done) {
-				done();
-			},
-			init: function() {
-				this.on("sending", function(file, xhr, formData){
-					formData.append("idpostulante", '<?php echo $id; ?>');
-					formData.append("iddocumentacion", '<?php echo $iddocumentacion; ?>');
-				});
-				this.on('success', function( file, resp ){
-					traerImagen('example1','timagen1');
-					$('.lblPlanilla').hide();
-					swal("Correcto!", resp.replace("1", ""), "success");
-					$('.btnGuardar').show();
-					$('.infoPlanilla').hide();
-					location.reload();
-				});
+		<?php if ($cantidadarchivos > 1) { ?>
+			<?php for ($i=1;$i<=$cantidadarchivos;$i++) { ?>
+			Dropzone.options.frmFileUpload<?php echo $i; ?> = {
+				maxFilesize: 30,
+				acceptedFiles: ".png,.jpg,.gif,.bmp,.jpeg,.pdf",
+				accept: function(file, done) {
+					done();
+				},
+				init: function() {
+					this.on("sending", function(file, xhr, formData){
+						formData.append("idpostulante", '<?php echo $id; ?>');
+						formData.append("iddocumentacion", '<?php echo $iddocumentacion; ?>');
+						formData.append("archivo", '<?php echo $update.$i; ?>');
+					});
+					this.on('success', function( file, resp ){
+						traerImagenEspecifica('example<?php echo $i; ?>','timagen<?php echo $i; ?>','<?php echo $update.$i; ?>');
+						$('.lblPlanilla').hide();
+						swal("Correcto!", resp.replace("1", ""), "success");
+						$('.btnGuardar').show();
+						$('.infoPlanilla').hide();
+						location.reload();
+					});
 
-				this.on('error', function( file, resp ){
-					swal("Error!", resp.replace("1", ""), "warning");
-				});
-			}
-		};
+					this.on('error', function( file, resp ){
+						swal("Error!", resp.replace("1", ""), "warning");
+					});
+				}
+			};
 
 
 
-		var myDropzone = new Dropzone("#archivos", {
-			params: {
-				 idpostulante: <?php echo $id; ?>,
-				 iddocumentacion: <?php echo $iddocumentacion; ?>
-			},
-			url: 'subir.php'
-		});
+			var myDropzone = new Dropzone("#archivos<?php echo $i; ?>", {
+				params: {
+					 idpostulante: <?php echo $id; ?>,
+					 iddocumentacion: <?php echo $iddocumentacion; ?>,
+					 archivo: '<?php echo $update.$i; ?>'
+				},
+				url: 'subirespecifico.php'
+			});
+			<?php } ?>
+		<?php } else { ?>
+			Dropzone.options.frmFileUpload = {
+				maxFilesize: 30,
+				acceptedFiles: ".png,.jpg,.gif,.bmp,.jpeg,.pdf",
+				accept: function(file, done) {
+					done();
+				},
+				init: function() {
+					this.on("sending", function(file, xhr, formData){
+						formData.append("idpostulante", '<?php echo $id; ?>');
+						formData.append("iddocumentacion", '<?php echo $iddocumentacion; ?>');
+					});
+					this.on('success', function( file, resp ){
+						traerImagen('example1','timagen1');
+						$('.lblPlanilla').hide();
+						swal("Correcto!", resp.replace("1", ""), "success");
+						$('.btnGuardar').show();
+						$('.infoPlanilla').hide();
+						location.reload();
+					});
+
+					this.on('error', function( file, resp ){
+						swal("Error!", resp.replace("1", ""), "warning");
+					});
+				}
+			};
+
+
+
+			var myDropzone = new Dropzone("#archivos", {
+				params: {
+					 idpostulante: <?php echo $id; ?>,
+					 iddocumentacion: <?php echo $iddocumentacion; ?>
+				},
+				url: 'subirespecifico.php'
+			});
+
+		<?php } ?>
 
 
 

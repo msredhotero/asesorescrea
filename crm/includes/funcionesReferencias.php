@@ -1188,6 +1188,12 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function eliminarDocumentacionasesoresPorPostulanteDocumentacionEspecifico($idpostulante,$iddocumentacion, $archivo) {
+		$sql = "delete from dbdocumentacionasesores where refpostulantes =".$idpostulante." and refdocumentaciones = ".$iddocumentacion." and archivo like '%".$archivo."%'";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 	function eliminarDocumentacionPostulante($idpostulante,$iddocumentacion) {
 		/*** auditoria ****/
 
@@ -1318,7 +1324,7 @@ class ServiciosReferencias {
 		da.usuariocrea,da.usuariomodi , e.estadodocumentacion, e.color
 		from dbdocumentacionasesores da
 		inner join tbestadodocumentaciones e on e.idestadodocumentacion = da.refestadodocumentaciones
-		where da.refpostulantes =".$id." and da.refdocumentaciones = ".$iddocumentacion." and da.archivo = '".$archivo."'";
+		where da.refpostulantes =".$id." and da.refdocumentaciones = ".$iddocumentacion." and da.archivo like '%".$archivo."%'";
 		$res = $this->query($sql,0);
 		return $res;
 	}

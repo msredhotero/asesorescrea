@@ -188,7 +188,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 		<div class="container-fluid">
 			<!-- Widgets -->
 			<div class="row clearfix">
-
+				<?php if ($_SESSION['idroll_sahilices'] == 1) { ?>
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="card ">
 							<div class="header bg-blue">
@@ -244,7 +244,34 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 						</div>
 					</div>
 				</div>
+			<?php } else { ?>
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<div class="card ">
+						<div class="header bg-blue">
+							<h2 style="color:#fff">
+								BIENVENIDO
+							</h2>
+							<ul class="header-dropdown m-r--5">
+								<li class="dropdown">
+									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+										<i class="material-icons">more_vert</i>
+									</a>
+									<ul class="dropdown-menu pull-right">
+										<li><a href="javascript:void(0);" class="recargar">Recargar</a></li>
+									</ul>
+								</li>
+							</ul>
+						</div>
+						<div class="body table-responsive">
+							<form class="form" id="formFacturas">
+								<h3>Bienvenido al CRM de Asesores Crea</h3>
+								<p>Aqui usted encontrara avisos importantes sobre su estado en el Proceso de Reclutamiento</p>
 
+							</form>
+						</div>
+					</div>
+				</div>
+			<?php } ?>
 			</div>
 		</div>
 
