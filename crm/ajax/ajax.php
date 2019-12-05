@@ -1985,10 +1985,7 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
 
    $apellido = $apellidopaterno.' '.$apellidomaterno;
 
-   if (validar_fecha_espanol(substr(('00'.$_POST['dia']),-2).'/'.substr(('00'.$_POST['mes']),-2).'/'.$_POST['anio'])) {
-
-      // primer creo el usuario
-
+   if (isset($_POST['fechanacimiento'])) {
       $password = $apellidopaterno.$apellidomaterno.date('His');
 
       $resUsuario = $serviciosUsuarios->insertarUsuario($nombre,$password,7,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
@@ -2002,7 +1999,7 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
          $curp = '';
          $rfc = '';
          $ine = '';
-         $fechanacimiento = $_POST['anio'].'-'.substr(('00'.$_POST['mes']),-2).'-'.substr(('00'.$_POST['dia']),-2);
+         $fechanacimiento = $_POST['fechanacimiento'];
          $sexo = $_POST['sexo'];
          $codigopostal = $_POST['codigopostal'];
          $refescolaridades = $_POST['refescolaridades'];
@@ -2074,8 +2071,99 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
          echo 'Hubo un error al crear usuario, verificar que no existe ya ese email en la base de datos';
       }
    } else {
-      echo 'Hubo un error la fecha de nacimiento es invalida';
+      if (validar_fecha_espanol(substr(('00'.$_POST['dia']),-2).'/'.substr(('00'.$_POST['mes']),-2).'/'.$_POST['anio'])) {
+
+         // primer creo el usuario
+
+         $password = $apellidopaterno.$apellidomaterno.date('His');
+
+         $resUsuario = $serviciosUsuarios->insertarUsuario($nombre,$password,7,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
+
+         //$resUsuario = 6;
+
+         if ((integer)$resUsuario > 0) {
+            $refusuarios = $resUsuario;
+
+            // fin de crear usuario
+            $curp = '';
+            $rfc = '';
+            $ine = '';
+            $fechanacimiento = $_POST['anio'].'-'.substr(('00'.$_POST['mes']),-2).'-'.substr(('00'.$_POST['dia']),-2);
+            $sexo = $_POST['sexo'];
+            $codigopostal = $_POST['codigopostal'];
+            $refescolaridades = $_POST['refescolaridades'];
+            $refestadocivil = $_POST['refestadocivil'];
+            $nacionalidad = $_POST['nacionalidad'];
+            $telefonomovil = $_POST['telefonomovil'];
+            $telefonocasa = $_POST['telefonocasa'];
+            $telefonotrabajo = $_POST['telefonotrabajo'];
+            $refestadopostulantes = 1;
+            $urlprueba = '';
+            $fechacrea = date('Y-m-d H:i:s');
+            $fechamodi = date('Y-m-d H:i:s');
+            if (isset($_SESSION['usua_sahilices'])) {
+               $usuariocrea = $_SESSION['usua_sahilices'];
+               $usuariomodi = $_SESSION['usua_sahilices'];
+            } else {
+               $usuariocrea = $_SESSION['usua_sahilices_web'];
+               $usuariomodi = $_SESSION['usua_sahilices_web'];
+            }
+
+            $refasesores = 0;
+            $comision = 0;
+            $refsucursalesinbursa = 0;
+            $ultimoestado = 1;
+
+            if (isset($_SESSION['token'])) {
+               $token = $_SESSION['token'];
+            } else {
+               $token = $serviciosReferencias->GUID();
+            }
+
+            $afore = $_POST['afore'];
+            $folio = '';
+            $cedula = $_POST['cedula'];
+
+            if ($cedula == '1') {
+               $refesquemareclutamiento = 1;
+            } else {
+               $refesquemareclutamiento = 2;
+            }
+
+            if ($afore == '1') {
+               $refestadopostulantes = 9;
+               // rechazo la solicitud
+            } else {
+               // envio email de confirmacion para validar cuenta de email. Correr a la noche un CRON
+               // para dar de baja los usuarios basura
+               $resActivacion = $serviciosUsuarios->confirmarEmail($email, $password,$apellido, $nombre, $refusuarios);
+               //die(var_dump($resActivacion));
+            }
+
+            $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token);
+
+            //die(var_dump($res));
+
+            if ((integer)$res > 0) {
+               if ($cedula == '1') {
+                  foreach ($_POST['lstseguros'] as $seguros) {
+                     $resSeguro = $serviciosReferencias->insertarPostulanteseguros($res,$seguros);
+                  }
+               }
+               echo '';
+            } else {
+               echo 'Hubo un error al insertar datos ';
+            }
+
+
+         } else {
+            echo 'Hubo un error al crear usuario, verificar que no existe ya ese email en la base de datos';
+         }
+      } else {
+         echo 'Hubo un error la fecha de nacimiento es invalida';
+      }
    }
+
 }
 
 
