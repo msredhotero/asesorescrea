@@ -367,7 +367,7 @@ if (mysql_result($resultado,0,'nss') == '') {
 						<div class="progress-bar"></div>
 					</div>
 					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Documentación II</div>
+					<div class="bs-wizard-info text-center">Firma de Contratos</div>
 				</div>
 
 			</div>

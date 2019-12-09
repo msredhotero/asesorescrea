@@ -524,7 +524,7 @@ switch ($iddocumentacion) {
 						<div class="progress-bar"></div>
 					</div>
 					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Entrevista, Pruebas Psicometricas y VERITAS</div>
+					<div class="bs-wizard-info text-center">Entrevista y Pruebas Psicometricas</div>
 				</div>
 
 				<div class="col-xs-2 bs-wizard-step complete"><!-- active -->
@@ -551,7 +551,7 @@ switch ($iddocumentacion) {
 						<div class="progress-bar"></div>
 					</div>
 					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Firmar Contratos</div>
+					<div class="bs-wizard-info text-center">Firmar de Contratos</div>
 				</div>
 
 			</div>

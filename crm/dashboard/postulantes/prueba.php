@@ -50,9 +50,9 @@ $singular2 = "URL Prueba Psicometrica";
 
 $plural2 = "URL Prueba Psicometrica";
 
-$singular = "Entrevista VERITAS";
+$singular = "Evaluación VERITAS";
 
-$plural = "Entrevista VERITAS";
+$plural = "Evaluación VERITAS";
 
 $eliminar = "eliminarEntrevistas";
 
@@ -268,7 +268,7 @@ if (mysql_num_rows($resEntrevistaRegional) > 0) {
 						<div class="progress-bar"></div>
 					</div>
 					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Documentación II</div>
+					<div class="bs-wizard-info text-center">Firma de Contratos</div>
 				</div>
 
 			</div>

@@ -374,7 +374,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionII($id);
 						<div class="progress-bar"></div>
 					</div>
 					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Firmar Contratos</div>
+					<div class="bs-wizard-info text-center">Firmar de Contratos</div>
 				</div>
 
 			</div>

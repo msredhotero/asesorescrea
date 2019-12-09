@@ -242,7 +242,7 @@ if (mysql_num_rows($resEntrevista) > 0) {
 						<div class="progress-bar"></div>
 					</div>
 					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Documentación II</div>
+					<div class="bs-wizard-info text-center">Firma de Contratos</div>
 				</div>
 
 			</div>
