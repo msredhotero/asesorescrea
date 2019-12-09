@@ -693,7 +693,7 @@ switch ($iddocumentacion) {
 					<div class="card">
 						<div class="header bg-blue">
 							<h2>
-								CARGA/MODIFIQUE EL SIAP AQUI
+								CARGA/MODIFIQUE LA DOCUMENTACIÓN <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?> AQUI
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">

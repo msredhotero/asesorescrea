@@ -155,7 +155,7 @@ if (!file_exists($pathVeritas)) {
 $filesVeritas = array_diff(scandir($pathVeritas), array('.', '..'));
 //////////////////////////////////////////////////////////////////////
 
-$resEstados = $serviciosReferencias->traerEstadodocumentaciones();
+
 
 $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id);
 
@@ -166,6 +166,7 @@ $resDocumentacionAsesor1 = $serviciosReferencias->traerDocumentacionPorPostulant
 $resDocumentacion1 = $serviciosReferencias->traerDocumentacionesPorId(2);
 
 if (mysql_num_rows($resDocumentacionAsesor1) > 0) {
+	$resEstados = $serviciosReferencias->traerEstadodocumentaciones();
 	$cadRefEstados1 = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor1,0,'refestadodocumentaciones'));
 
 	$iddocumentacionasesores1 = mysql_result($resDocumentacionAsesor1,0,'iddocumentacionasesor');
@@ -213,6 +214,7 @@ $resDocumentacionAsesor2 = $serviciosReferencias->traerDocumentacionPorPostulant
 $resDocumentacion2 = $serviciosReferencias->traerDocumentacionesPorId(1);
 
 if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
+	$resEstados = $serviciosReferencias->traerEstadodocumentaciones();
 	$cadRefEstados2 = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor2,0,'refestadodocumentaciones'));
 
 	$iddocumentacionasesores2 = mysql_result($resDocumentacionAsesor2,0,'iddocumentacionasesor');
@@ -498,7 +500,7 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 									<div class="col-xs-6 col-md-6" style="display:block">
 										<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
 										<div class="input-group col-md-12">
-											<select class="form-control show-tick" id="refestados" name="refestados">
+											<select class="form-control show-tick" id="refestados<?php echo $iddocumentacionasesores1; ?>" name="refestados">
 												<?php echo $cadRefEstados1; ?>
 											</select>
 										</div>
@@ -553,11 +555,11 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 									<div class="col-xs-6 col-md-6" style="display:block">
 										<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
 										<div class="input-group col-md-12">
-											<select class="form-control show-tick" id="refestados" name="refestados">
+											<select class="form-control show-tick" id="refestados<?php echo $iddocumentacionasesores2; ?>" name="refestados">
 												<?php echo $cadRefEstados2; ?>
 											</select>
 										</div>
-										<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
+										<button type="button" id="<?php echo $iddocumentacionasesores2; ?>" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
 									</div>
 								</div>
 
@@ -812,9 +814,10 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 
 	$(document).ready(function(){
 
+
 		$('.guardarEstado').click(function() {
-			idDocumentacion = $(this).attr("id");
-			modificarEstadoDocumentacionPostulante($('#refestados').val(), idDocumentacion);
+			idTable =  $(this).attr("id");
+			modificarEstadoDocumentacionPostulante($('#refestados' + idTable).val(),idTable);
 		});
 
 		function modificarEstadoDocumentacionPostulante(idestado, iddocumentacionasesores) {

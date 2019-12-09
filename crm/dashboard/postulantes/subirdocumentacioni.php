@@ -220,7 +220,7 @@ switch ($iddocumentacion) {
 		// code...
 		$dato = mysql_result($resPostulante,0,'ine');
 
-		$input = '<input type="text" name="ine" id="ine" class="form-control" value="'.$dato.'"/> ';
+		$input = '<input type="text" name="ine" maxlength="10" id="ine" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
 		$leyenda = 'Cargue el Nro de INE';
 		$campo = 'ine';
@@ -229,7 +229,7 @@ switch ($iddocumentacion) {
 		// code...
 		$dato = mysql_result($resPostulante,0,'ine');
 
-		$input = '<input type="text" name="ine" id="ine" class="form-control" value="'.$dato.'"/> ';
+		$input = '<input type="text" name="ine" maxlength="10" id="ine" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
 		$leyenda = 'Cargue el Nro de INE';
 		$campo = 'ine';
@@ -245,7 +245,7 @@ switch ($iddocumentacion) {
 		// code...
 		$dato = mysql_result($resPostulante,0,'curp');
 
-		$input = '<input type="text" name="curp" id="curp" class="form-control" value="'.$dato.'"/> ';
+		$input = '<input type="text" name="curp" maxlength="18" id="curp" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
 		$leyenda = 'Cargue el Nro de CURP';
 		$campo = 'curp';
@@ -254,7 +254,7 @@ switch ($iddocumentacion) {
 		// code...
 		$dato = mysql_result($resPostulante,0,'rfc');
 
-		$input = '<input type="text" name="rfc" id="rfc" class="form-control" value="'.$dato.'"/> ';
+		$input = '<input type="text" maxlength="13" name="rfc" id="rfc" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
 		$leyenda = 'Cargue el Nro de RFC';
 		$campo = 'rfc';
@@ -263,7 +263,7 @@ switch ($iddocumentacion) {
 		// code...
 		$dato = mysql_result($resPostulante,0,'nss');
 
-		$input = '<input type="text" name="nss" id="nss" class="form-control" value="'.$dato.'"/> ';
+		$input = '<input type="text" maxlength="11" name="nss" id="nss" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
 		$leyenda = 'Cargue el Nro de Seguro Social';
 		$campo = 'nss';
@@ -584,7 +584,7 @@ switch ($iddocumentacion) {
 					<div class="card">
 						<div class="header bg-blue">
 							<h2>
-								CARGA/MODIFIQUE EL SIAP AQUI
+								CARGA/MODIFIQUE LA DOCUMENTACIÓN <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?> AQUI
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
