@@ -570,17 +570,15 @@ class Servicios {
 								$form	=	$form.'
 
 								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
-								<b>'.$label.'</b>
-								<div class="input-group">
-								<div class="form-line">
-									<select class="form-control show-tick arriba" id="'.strtolower($campo).'" name="'.strtolower($campo).'" '.$lblObligatorio.'>
+								<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
+								<div class="input-group col-md-12">
+									<select class="form-control" id="'.strtolower($campo).'" name="'.strtolower($campo).'" '.$lblObligatorio.'>
 
 											';
 
 								$form	=	$form.$option;
 
 								$form	=	$form.'</select>
-								</div>
 								</div>
 								</div>
 

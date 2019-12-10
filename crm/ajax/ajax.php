@@ -1284,8 +1284,9 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $resultado = $serviciosReferencias->traerPostulantesPorId($id);
 
          $refestado = mysql_result($resultado,0,'refestadopostulantes');
+         $refesquemareclutamiento  = mysql_result($resultado,0,'refesquemareclutamiento');
 
-         $resEstado = $serviciosReferencias->traerEstadopostulantesEtapas($refestado);
+         $resEstado = $serviciosReferencias->traerGuiasPorEsquemaSiguiente($refesquemareclutamiento, $refestado);
 
          $ruta = $_POST['ruta'];
 
@@ -2036,9 +2037,19 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
          $cedula = $_POST['cedula'];
 
          if ($cedula == '1') {
-            $refesquemareclutamiento = 1;
+            if (isset($_POST['refesquemareclutamiento'])) {
+               $refesquemareclutamiento = $_POST['refesquemareclutamiento'];
+            } else {
+               $refesquemareclutamiento = 2;
+            }
+
          } else {
-            $refesquemareclutamiento = 2;
+            if (isset($_POST['refesquemareclutamiento'])) {
+               $refesquemareclutamiento = $_POST['refesquemareclutamiento'];
+            } else {
+               $refesquemareclutamiento = 1;
+            }
+
          }
 
          if ($afore == '1') {
@@ -2061,6 +2072,15 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
                   $resSeguro = $serviciosReferencias->insertarPostulanteseguros($res,$seguros);
                }
             }
+
+            /* marco el primer seguimiento */
+            $resGuia = $serviciosReferencias->traerGuiasPorEsquema($refesquemareclutamiento);
+            if ($refestadopostulantes == 9) {
+               $resSeguimiento = $serviciosReferencias->insertarSeguimientos($res,mysql_result($resGuia,0,0),$usuariomodi,3);
+            } else {
+               $resSeguimiento = $serviciosReferencias->insertarSeguimientos($res,mysql_result($resGuia,0,0),$usuariomodi,2);
+            }
+            /* fin del seguimiento */
             echo '';
          } else {
             echo 'Hubo un error al insertar datos ';

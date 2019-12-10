@@ -9,6 +9,243 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+	/* PARA Seguimientos */
+
+	function insertarSeguimientos($refpostulantes,$refguias,$usuariomodi,$refestados) {
+		$sql = "insert into dbseguimientos(idseguimiento,refpostulantes,refguias,usuariomodi,fechamodi,refestados)
+		values ('',".$refpostulantes.",".$refguias.",'".$usuariomodi."','".date('Y-m-d H:i:s')."',".$refestados.")";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarSeguimientos($id,$refpostulantes,$refguias,$usuariomodi,$fechamodi,$refestados) {
+		$sql = "update dbseguimientos
+		set
+		refpostulantes = ".$refpostulantes.",refguias = ".$refguias.",usuariomodi = '".$usuariomodi."',fechamodi = '".$fechamodi."',refestados = ".$refestados."
+		where idseguimiento =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarSeguimientos($id) {
+		$sql = "delete from dbseguimientos where idseguimiento =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerSeguimientos() {
+		$sql = "select
+		s.idseguimiento,
+		s.refpostulantes,
+		s.refguias,
+		s.usuariomodi,
+		s.fechamodi,
+		s.refestados
+		from dbseguimientos s
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerSeguimientosPorId($id) {
+		$sql = "select idseguimiento,refpostulantes,refguias,usuariomodi,fechamodi,refestados from dbseguimientos where idseguimiento =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerSeguimientosPorPostulanteGuia($idpostulante, $idguia) {
+		$sql = "select idseguimiento,refpostulantes,refguias,usuariomodi,fechamodi,refestados
+			from dbseguimientos where refpostulantes =".$idpostulante." and refguias = ".$idguia;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerSeguimientosPorPostulante($idpostulante) {
+		$sql = "select idseguimiento,refpostulantes,refguias,usuariomodi,fechamodi,refestados
+			from dbseguimientos where refpostulantes =".$idpostulante;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbseguimientos*/
+
+	/* PARA Esquemadocumentosestados */
+
+	function insertarEsquemadocumentosestados($refesquemareclutamiento,$refdocumentaciones,$refestadopostulantes) {
+		$sql = "insert into dbesquemadocumentosestados(idesquemadocumentoestado,refesquemareclutamiento,refdocumentaciones,refestadopostulantes)
+		values ('',".$refesquemareclutamiento.",".$refdocumentaciones.",".$refestadopostulantes.")";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarEsquemadocumentosestados($id,$refesquemareclutamiento,$refdocumentaciones,$refestadopostulantes) {
+		$sql = "update dbesquemadocumentosestados
+		set
+		refesquemareclutamiento = ".$refesquemareclutamiento.",refdocumentaciones = ".$refdocumentaciones.",refestadopostulantes = ".$refestadopostulantes."
+		where idesquemadocumentoestado =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarEsquemadocumentosestados($id) {
+		$sql = "delete from dbesquemadocumentosestados where idesquemadocumentoestado =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerEsquemadocumentosestados() {
+		$sql = "select
+		e.idesquemadocumentoestado,
+		e.refesquemareclutamiento,
+		e.refdocumentaciones,
+		e.refestadopostulantes
+		from dbesquemadocumentosestados e
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerEsquemadocumentosestadosPorId($id) {
+		$sql = "select idesquemadocumentoestado,refesquemareclutamiento,refdocumentaciones,refestadopostulantes from dbesquemadocumentosestados where idesquemadocumentoestado =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerEsquemadocumentosestadosPorDocumentacionesEsquema($iddocumentacion, $idesquema) {
+		$sql = "select idesquemadocumentoestado,refesquemareclutamiento,refdocumentaciones,refestadopostulantes from dbesquemadocumentosestados where refesquemareclutamiento =".$idesquema." and refdocumentaciones = ".$iddocumentacion;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerEsquemadocumentosestadosPorEsquema( $idesquema) {
+		$sql = "select idesquemadocumentoestado,refesquemareclutamiento,refdocumentaciones,refestadopostulantes from dbesquemadocumentosestados where refesquemareclutamiento =".$idesquema;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbesquemadocumentosestados*/
+
+
+	/* PARA Guias */
+
+	function insertarGuias($refesquemareclutamiento,$refestadopostulantes) {
+		$sql = "insert into dbguias(idguia,refesquemareclutamiento,refestadopostulantes)
+		values ('',".$refesquemareclutamiento.",".$refestadopostulantes.")";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarGuias($id,$refesquemareclutamiento,$refestadopostulantes) {
+		$sql = "update dbguias
+		set
+		refesquemareclutamiento = ".$refesquemareclutamiento.",refestadopostulantes = ".$refestadopostulantes."
+		where idguia =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarGuias($id) {
+		$sql = "delete from dbguias where idguia =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerGuias() {
+		$sql = "select
+		g.idguia,
+		g.refesquemareclutamiento,
+		g.refestadopostulantes
+		from dbguias g
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerGuiasPorId($id) {
+		$sql = "select idguia,refesquemareclutamiento,refestadopostulantes from dbguias where idguia =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerGuiasPorEsquema($idesquema) {
+		$sql = "select
+					g.idguia,
+					g.refesquemareclutamiento,
+					g.refestadopostulantes,
+					ep.estadopostulante,
+					ep.orden,
+					ep.url
+				from dbguias g
+				inner join tbestadopostulantes ep on ep.idestadopostulante = g.refestadopostulantes
+				where refesquemareclutamiento =".$idesquema." order by ep.orden";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerGuiasPorEsquemaEspecial($idesquema) {
+		$sql = "select
+					g.idguia,
+					g.refesquemareclutamiento,
+					g.refestadopostulantes,
+					ep.estadopostulante,
+					ep.orden,
+					ep.url
+				from dbguias g
+				inner join tbestadopostulantes ep on ep.idestadopostulante = g.refestadopostulantes
+				where refesquemareclutamiento =".$idesquema." and g.refestadopostulantes not in (1,9)
+				order by ep.orden";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerGuiasPorEsquemaSiguiente($idesquema, $idestado) {
+		$sql = "SELECT
+					    g.idguia,
+					    g.refesquemareclutamiento,
+					    g.refestadopostulantes,
+					    ep.estadopostulante,
+					    ep.orden,
+					    ep.url
+					FROM
+					    dbguias g
+					        INNER JOIN
+					    tbestadopostulantes ep ON ep.idestadopostulante = g.refestadopostulantes
+					WHERE
+					    refesquemareclutamiento = ".$idesquema."
+					        and ep.orden > (SELECT
+									ep.orden
+								FROM
+									dbguias g
+										INNER JOIN
+									tbestadopostulantes ep ON ep.idestadopostulante = g.refestadopostulantes
+								WHERE
+									refesquemareclutamiento = ".$idesquema."
+										AND g.refestadopostulantes = ".$idestado.")
+					limit 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbguias*/
+
 
 	/* PARA Postulanteseguros */
 
@@ -575,7 +812,7 @@ class ServiciosReferencias {
 				p.municipio,
 				p.estado
 			from postal p
-			where cast(p.codigo as UNSIGNED) like '%".$busqueda."%'
+			where SUBSTRING(concat('00000', cast(p.codigo as UNSIGNED)),-5,5) like '%".$busqueda."%'
 			order by p.codigo,p.estado,p.municipio,p.colonia";
 		$res = $this->query($sql,0);
 		return $res;
@@ -2863,6 +3100,19 @@ class ServiciosReferencias {
    return $res;
    }
 
+	function traerEstadosPorId($id) {
+   $sql = "select
+   e.idestado,
+   e.estado,
+   e.color,
+   e.icono
+   from tbestados e
+	where e.idestado = ".$id."
+   order by 1";
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
 	function traerEstadodocumentaciones() {
    $sql = "select
    e.idestadodocumentacion,
@@ -2874,12 +3124,6 @@ class ServiciosReferencias {
    return $res;
    }
 
-
-   function traerEstadosPorId($id) {
-   $sql = "select idestado,estado,color,icono from tbestados where idestado =".$id;
-   $res = $this->query($sql,0);
-   return $res;
-   }
 
    /* Fin */
    /* /* Fin de la Tabla: tbestados*/

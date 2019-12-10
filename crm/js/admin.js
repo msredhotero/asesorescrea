@@ -306,11 +306,13 @@ $.AdminBSB.input = {
 *  You can manage the 'select' of form elements
 *
 */
-$.AdminBSB.select = {
-    activate: function () {
-        if ($.fn.selectpicker) { $('select:not(.ms)').selectpicker(); }
-    }
-}
+/*** lo saque marcos para tener el selectbox de bootstrap */
+/*$.AdminBSB.select = {*/
+    /*activate: function () {*/
+        /*if ($.fn.selectpicker) { $('select:not(.ms)').selectpicker(); }*/
+    /*}
+}*/
+
 //==========================================================================================================================
 
 /* DropdownMenu - Function =================================================================================================
@@ -462,7 +464,7 @@ $(function () {
     $.AdminBSB.navbar.activate();
     $.AdminBSB.dropdownMenu.activate();
     $.AdminBSB.input.activate();
-    $.AdminBSB.select.activate();
+    /*$.AdminBSB.select.activate();*/ /** lo saque marcos para que funcione el selectbox de bootstrap*/
     $.AdminBSB.search.activate();
 
     setTimeout(function () { $('.page-loader-wrapper').fadeOut(); }, 50);
