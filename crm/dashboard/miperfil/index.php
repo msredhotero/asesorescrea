@@ -38,7 +38,7 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
-$id = $_GET['id'];
+$id = $_SESSION['usuaid_sahilices'];
 
 ////////// validar solo que pueda ingrear los perfiles permitidos /////////////////////////
 

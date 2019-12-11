@@ -32,54 +32,65 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 
-
-/////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Postulante";
-
-$plural = "Postulantes";
-
-$eliminar = "eliminarPostulantes";
-
-$insertar = "insertarPostulantes";
-
-$modificar = "modificarPostulantes";
-
-//$tituloWeb = "Gestión: Talleres";
-
-$tabla 			= "dbpostulantes";
-
-$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad');
-$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad');
-
-
-$cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
-
-$resVar2	= $serviciosReferencias->traerEscolaridades();
-$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),'');
-
-$resVar3	= $serviciosReferencias->traerEstadocivil();
-$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
-
-$resVar4	= $serviciosReferencias->traerEstadopostulantesPorId(1);
-$cadRef4 = $serviciosFunciones->devolverSelectBox($resVar4,array(1),'');
-
-$cadRef5 = "<option value=''>-- Seleccionar --</option><option value='1'>Femenino</option><option value='2'>Masculino</option>";
-
-$cadRef6 	= "<option value='Mexico'>Mexico</option>";
-
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6);
-$refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','refestadopostulantes','sexo','nacionalidad');
-
-$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
-//////////////////////// Fin opciones ////////////////////////////////////////////////
-
-
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 
-if ($_SESSION['idroll_sahilices'] == 1) {
+if ($_SESSION['idroll_sahilices'] == 7) {
+	$resultado = $serviciosReferencias->traerPostulantesPorIdUsuario($_SESSION['usuaid_sahilices']);
 
+	$refestado = mysql_result($resultado,0,'refestadopostulantes');
+	$refesquemareclutamiento  = mysql_result($resultado,0,'refesquemareclutamiento');
+
+	$resEstado = $serviciosReferencias->traerGuiasPorEsquemaSiguiente($refesquemareclutamiento, $refestado);
+
+	$idestado = mysql_result($resEstado,0,'refestadopostulantes');
+
+	$leyendaDocumentacion = '';
+	switch ($idestado) {
+		case 7:
+			$leyendaDocumentacion = '<div class="alert bg-light-green"><i class="material-icons">warning</i> Ya tiene habilitado el sistema para cargar su documentación, ingrese <a style="color: white;" href="miperfil/index.php"><b>AQUI</b></a></div>';
+			break;
+
+	}
 } else {
+	/////////////////////// Opciones pagina ///////////////////////////////////////////////
+	$singular = "Postulante";
 
+	$plural = "Postulantes";
+
+	$eliminar = "eliminarPostulantes";
+
+	$insertar = "insertarPostulantes";
+
+	$modificar = "modificarPostulantes";
+
+	//$tituloWeb = "Gestión: Talleres";
+
+	$tabla 			= "dbpostulantes";
+
+	$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad');
+	$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad');
+
+
+	$cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
+
+	$resVar2	= $serviciosReferencias->traerEscolaridades();
+	$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),'');
+
+	$resVar3	= $serviciosReferencias->traerEstadocivil();
+	$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
+
+	$resVar4	= $serviciosReferencias->traerEstadopostulantesPorId(1);
+	$cadRef4 = $serviciosFunciones->devolverSelectBox($resVar4,array(1),'');
+
+	$cadRef5 = "<option value=''>-- Seleccionar --</option><option value='1'>Femenino</option><option value='2'>Masculino</option>";
+
+	$cadRef6 	= "<option value='Mexico'>Mexico</option>";
+
+	$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6);
+	$refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','refestadopostulantes','sexo','nacionalidad');
+
+	$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+	//////////////////////// Fin opciones ////////////////////////////////////////////////
 
 }
 
@@ -188,7 +199,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 		<div class="container-fluid">
 			<!-- Widgets -->
 			<div class="row clearfix">
-				<?php if ($_SESSION['idroll_sahilices'] == 1) { ?>
+				<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="card ">
 							<div class="header bg-blue">
@@ -266,6 +277,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 							<form class="form" id="formFacturas">
 								<h3>Bienvenido al CRM de Asesores Crea</h3>
 								<p>Aqui usted encontrara avisos importantes sobre su estado en el Proceso de Reclutamiento</p>
+								<?php echo $leyendaDocumentacion; ?>
 
 							</form>
 						</div>
@@ -294,6 +306,10 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 
 	<script>
 		$(document).ready(function(){
+
+			<?php
+			if ($_SESSION['idroll_sahilices'] != 7) {
+			?>
 
 			var table = $('#example').DataTable({
 				"bProcessing": true,
@@ -446,6 +462,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 			}
 
 			});
+			<?php } ?>
 
 
 		});

@@ -619,7 +619,7 @@ function presentarDocumentacionI($serviciosReferencias, $serviciosUsuarios) {
       $cuerpo = '';
       $cuerpo .= '<h4>Nombre Completo: '.mysql_result($resPostulante,0,'nombre').' '.mysql_result($resPostulante,0,'apellidopaterno').' '.mysql_result($resPostulante,0,'apellidomaterno').'</h4><br>';
       $cuerpo .= "Acceda por este link: <a href='asesorescrea.com/desarrollo/crm/potulantes/documentacioni.php?id=".$id."'>ACCEDER</a>";
-      
+
       $res = $serviciosUsuarios->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
       echo '';
    } else {
@@ -909,8 +909,11 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
 
    if ($res == true) {
       // envio email dependeiendo el estado
+      $resultado = $serviciosReferencias->traerPostulantesPorId($id);
+		$refesquemareclutamiento  = mysql_result($resultado,0,'refesquemareclutamiento');
 
-      $resEstado = $serviciosReferencias->traerEstadopostulantesEtapas($idestado);
+      //$resEstado = $serviciosReferencias->traerEstadopostulantesEtapas($idestado);
+      $resEstado = $serviciosReferencias->traerGuiasPorEsquemaSiguiente($refesquemareclutamiento, $idestado);
 
       if (mysql_num_rows($resEstado) > 0) {
          $url = $ruta.mysql_result($resEstado,0,'url').'?id='.$id;

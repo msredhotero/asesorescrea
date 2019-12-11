@@ -157,6 +157,8 @@ $filesVeritas = array_diff(scandir($pathVeritas), array('.', '..'));
 
 $resTest = $serviciosReferencias->traerRespuestasPorPostulante($id);
 
+//die(var_dump(mysql_num_rows($resTest)));
+
 $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,mysql_result($resultado,0,'refestadopostulantes'));
 
 
@@ -413,7 +415,7 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 						<div class="body table-responsive">
 
 							<div class="row" style="padding: 5px 20px;">
-								<table id="example" class="display table " style="width:100%">
+								<table class="table table-stripped table-bordered" style="width:100%">
 									<thead>
 										<tr>
 											<th>Pregunta</th>
@@ -422,16 +424,15 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 									</thead>
 									<tbody>
 										<?php
-										while ($rowT = mysql_fetch_array($resTest)) {
-											if ($rowT['idpregunta'] == 7) {
-												
-											}
+										while ($rowTT = mysql_fetch_array($resTest)) {
+											//die();
 										?>
 										<tr>
-											<td></td>
-											<td></td>
+											<td><?php echo $rowTT['pregunta']; ?></td>
+											<td><?php echo $rowTT['respuesta']; ?></td>
 										</tr>
 										<?php
+
 										}
 										?>
 									</tbody>

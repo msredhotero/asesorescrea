@@ -391,7 +391,9 @@ class ServiciosReferencias {
 
 	function traerRespuestasPorPostulante($id) {
 		$sql = "select
-					r.respuesta
+					r.respuesta,
+					p.pregunta,
+					p.idpregunta
 				from dbrespuestas r
 				inner join dbpreguntas p on p.idpregunta = r.idpregunta
 				inner join dbpostulantes pp on pp.token = r.token
@@ -1348,7 +1350,7 @@ class ServiciosReferencias {
 
 
 	function traerPostulantesPorIdUsuario($idusuario) {
-		$sql = "select idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa, refestadocivil,nss from dbpostulantes where refusuarios =".$idusuario;
+		$sql = "select idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa, refestadocivil,nss,refesquemareclutamiento from dbpostulantes where refusuarios =".$idusuario;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -1645,6 +1647,21 @@ class ServiciosReferencias {
 
 		$apruebaSegundo = 0;
 
+		$count = 0;
+
+		$sqlcount = "SELECT
+						COUNT(*) AS cantidad
+					FROM
+						dbpostulantes p
+						inner join dbesquemadocumentosestados ese on ese.refesquemareclutamiento = p.refesquemareclutamiento and p.idpostulante = ".$idpostulante."
+						inner join dbdocumentaciones d on d.iddocumentacion = ese.refdocumentaciones
+					WHERE
+						ese.refestadopostulantes in (7)
+						and d.obligatoria = '1'";
+		$resCount = $this->query($sqlcount,0);
+
+		$count = mysql_result($resCount,0,0);
+
 		// compruebo que haya cargado las documentaciones
 		$sqlSegundo = "SELECT
 						COUNT(*) AS documentacionesaceptadas
@@ -1663,7 +1680,7 @@ class ServiciosReferencias {
 		$resSegundo = $this->query($sqlSegundo,0);
 
   		if (mysql_num_rows($resSegundo) > 0) {
-			if (mysql_result($resSegundo,0,0) == 10) {
+			if (mysql_result($resSegundo,0,0) == $count) {
 				$apruebaSegundo = 1;
 			}
   		}
@@ -1682,6 +1699,21 @@ class ServiciosReferencias {
 	function permiteAvanzarDocumentacionI($idpostulante) {
 		$apruebaPrimero = 0;
 		$apruebaSegundo = 0;
+
+		$count = 0;
+
+		$sqlcount = "SELECT
+						COUNT(*) AS cantidad
+					FROM
+						dbpostulantes p
+						inner join dbesquemadocumentosestados ese on ese.refesquemareclutamiento = p.refesquemareclutamiento and p.idpostulante = ".$idpostulante."
+						inner join dbdocumentaciones d on d.iddocumentacion = ese.refdocumentaciones
+					WHERE
+						ese.refestadopostulantes in (7)
+						and d.obligatoria = '1'";
+		$resCount = $this->query($sqlcount,0);
+
+		$count = mysql_result($resCount,0,0);
 
 		// compruebo que haya cargado los datos en postulantes
 		$sqlPrimero = "SELECT
@@ -1716,7 +1748,7 @@ class ServiciosReferencias {
 		$resSegundo = $this->query($sqlSegundo,0);
 
   		if (mysql_num_rows($resSegundo) > 0) {
-			if (mysql_result($resSegundo,0,0) == 10) {
+			if (mysql_result($resSegundo,0,0) == $count) {
 				$apruebaSegundo = 1;
 			}
   		}
@@ -1736,6 +1768,21 @@ class ServiciosReferencias {
 	function permiteAvanzarDocumentacionII($idpostulante) {
 		$apruebaPrimero = 0;
 		$apruebaSegundo = 0;
+
+		$count = 0;
+
+		$sqlcount = "SELECT
+						COUNT(*) AS cantidad
+					FROM
+						dbpostulantes p
+						inner join dbesquemadocumentosestados ese on ese.refesquemareclutamiento = p.refesquemareclutamiento and p.idpostulante = ".$idpostulante."
+						inner join dbdocumentaciones d on d.iddocumentacion = ese.refdocumentaciones
+					WHERE
+						ese.refestadopostulantes in (8)
+						and d.obligatoria = '1'";
+		$resCount = $this->query($sqlcount,0);
+
+		$count = mysql_result($resCount,0,0);
 
 		// compruebo que haya cargado los datos en postulantes
 		$sqlPrimero = "SELECT
@@ -1770,7 +1817,7 @@ class ServiciosReferencias {
 		$resSegundo = $this->query($sqlSegundo,0);
 
   		if (mysql_num_rows($resSegundo) > 0) {
-			if (mysql_result($resSegundo,0,0) == 10) {
+			if (mysql_result($resSegundo,0,0) == $count) {
 				$apruebaSegundo = 1;
 			}
   		}
