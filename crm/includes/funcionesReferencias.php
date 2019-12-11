@@ -389,6 +389,18 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function traerRespuestasPorPostulante($id) {
+		$sql = "select
+					r.respuesta
+				from dbrespuestas r
+				inner join dbpreguntas p on p.idpregunta = r.idpregunta
+				inner join dbpostulantes pp on pp.token = r.token
+				where pp.idpostulante = ".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 
 	/* Fin */
 	/* /* Fin de la Tabla: dbrespuestadetalles*/
@@ -1616,6 +1628,18 @@ class ServiciosReferencias {
  		return $res;
 	}
 
+	function presentarDocumentacionI($id) {
+		$sql = "update dbdocumentacionasesores da
+					inner join dbpostulantes p on p.idpostulante = da.refpostulantes
+					inner join dbesquemadocumentosestados ese on ese.refdocumentaciones = da.refdocumentaciones
+					and ese.refesquemareclutamiento = p.refesquemareclutamiento and ese.refestadopostulantes = 7
+				set da.refestadodocumentaciones = 7
+				where da.refpostulantes = ".$id;
+
+		$res = $this->query($sql,0);
+ 		return $res;
+	}
+
 
 	function permitePresentarDocumentacionI($idpostulante) {
 
@@ -1627,11 +1651,14 @@ class ServiciosReferencias {
 					FROM
 						dbdocumentacionasesores da
 						inner join dbdocumentaciones d on d.iddocumentacion = da.refdocumentaciones
+						inner join dbpostulantes p on p.idpostulante = da.refpostulantes
+						inner join dbesquemadocumentosestados ese on ese.refesquemareclutamiento = p.refesquemareclutamiento
+						and ese.refdocumentaciones = d.iddocumentacion
 					WHERE
 						da.refpostulantes = ".$idpostulante."
-						AND da.refdocumentaciones IN (3 , 4, 5, 6, 7, 8, 9, 10, 11, 12)
+						AND ese.refestadopostulantes in (7)
 						and d.obligatoria = '1'
-						AND da.refestadodocumentaciones in (5,6)";
+						AND da.refestadodocumentaciones in (1)";
 
 		$resSegundo = $this->query($sqlSegundo,0);
 
@@ -1644,7 +1671,7 @@ class ServiciosReferencias {
 		// compruebo que haya cargado las archivos de las documentaciones
 		// falta
 
-		if (($apruebaPrimero == 1) && ($apruebaSegundo == 1)) {
+		if ($apruebaSegundo == 1) {
 			return true;
 		} else {
 			return false;
@@ -1677,9 +1704,12 @@ class ServiciosReferencias {
 					FROM
 						dbdocumentacionasesores da
 						inner join dbdocumentaciones d on d.iddocumentacion = da.refdocumentaciones
+						inner join dbpostulantes p on p.idpostulante = da.refpostulantes
+						inner join dbesquemadocumentosestados ese on ese.refesquemareclutamiento = p.refesquemareclutamiento
+						and ese.refdocumentaciones = d.iddocumentacion
 					WHERE
 						da.refpostulantes = ".$idpostulante."
-						AND da.refdocumentaciones IN (3 , 4, 5, 6, 7, 8, 9, 10, 11, 12)
+						AND ese.refestadopostulantes in (7)
 						and d.obligatoria = '1'
 						AND da.refestadodocumentaciones in (5,6)";
 
@@ -1728,9 +1758,12 @@ class ServiciosReferencias {
 					FROM
 						dbdocumentacionasesores da
 						inner join dbdocumentaciones d on d.iddocumentacion = da.refdocumentaciones
+						inner join dbpostulantes p on p.idpostulante = da.refpostulantes
+						inner join dbesquemadocumentosestados ese on ese.refesquemareclutamiento = p.refesquemareclutamiento
+						and ese.refdocumentaciones = d.iddocumentacion
 					WHERE
 						da.refpostulantes = ".$idpostulante."
-						AND da.refdocumentaciones IN (13 , 14, 15, 16, 17, 18, 19, 20, 21, 22,23,24,25)
+						AND ese.refestadopostulantes in (8)
 						and d.obligatoria = '1'
 						AND da.refestadodocumentaciones in (5,6)";
 

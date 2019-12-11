@@ -596,8 +596,36 @@ switch ($accion) {
       modificarEstadoDocumentacionPostulante($serviciosReferencias);
    break;
 
+   case 'presentarDocumentacionI':
+      presentarDocumentacionI($serviciosReferencias, $serviciosUsuarios);
+   break;
+
 }
 /* Fin */
+
+function presentarDocumentacionI($serviciosReferencias, $serviciosUsuarios) {
+   session_start();
+
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->presentarDocumentacionI($id);
+
+   if ($res == true) {
+      $destinatario = 'rlinares@asesorescrea.com';
+      $asunto = 'Se presento la documentacion completa de un postulante';
+
+      $resPostulante = $serviciosReferencias->traerPostulantesPorId($id);
+
+      $cuerpo = '';
+      $cuerpo .= '<h4>Nombre Completo: '.mysql_result($resPostulante,0,'nombre').' '.mysql_result($resPostulante,0,'apellidopaterno').' '.mysql_result($resPostulante,0,'apellidomaterno').'</h4><br>';
+      $cuerpo .= "Acceda por este link: <a href='asesorescrea.com/desarrollo/crm/potulantes/documentacioni.php?id=".$id."'>ACCEDER</a>";
+      
+      $res = $serviciosUsuarios->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
+      echo '';
+   } else {
+      echo 'Hubo un error al presentar la documentación';
+   }
+}
 
 function modificarEstadoDocumentacionPostulante($serviciosReferencias) {
    session_start();

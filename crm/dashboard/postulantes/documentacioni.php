@@ -180,6 +180,7 @@ $filesInfonavit = array_diff(scandir($pathInfonavit), array('.', '..'));
 $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,$estadoSiguiente);
 
 $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
+$permitePresentar = $serviciosReferencias->permitePresentarDocumentacionI($id);
 
 if (mysql_result($resultado,0,'rfc') == '') {
 	$alertaRFC = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el RFC!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=7"><b>AQUI</b></a></div>';
@@ -378,6 +379,13 @@ if (mysql_result($resultado,0,'nss') == '') {
 							</button>
 
 						<?php } ?>
+						<?php if ($permitePresentar == true) { ?>
+							<button type="button" class="btn bg-amber waves-effect btnPresentar">
+								<i class="material-icons">done_all</i>
+								<span>PRESENTAR DOCUMENTACION</span>
+							</button>
+
+						<?php } ?>
 					</div>
 					<?php
 					while ($row = mysql_fetch_array($resDocumentaciones)) {
@@ -532,8 +540,44 @@ if (mysql_result($resultado,0,'nss') == '') {
 			});
 		}
 
+		function presentarDocumentacionI(id) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'presentarDocumentacionI',id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.btnPresentar').hide();
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data == '') {
+						swal("Ok!", 'Ya presento su documentacion, sera evaluada para luego continuar con el proceso', "success");
+						$('.btnPresentar').show();
+						setTimeout(function(){ location.reload() }, 5000);
+					} else {
+						swal("Error!", data, "warning");
+
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
+
 		$('.btnContinuar').click(function() {
 			modificarEstadoPostulante(<?php echo $id; ?>, 7);
+		});
+
+		$('.btnPresentar').click(function() {
+			presentarDocumentacionI(<?php echo $id; ?>);
 		});
 
 

@@ -155,7 +155,7 @@ if (!file_exists($pathVeritas)) {
 $filesVeritas = array_diff(scandir($pathVeritas), array('.', '..'));
 //////////////////////////////////////////////////////////////////////
 
-
+$resTest = $serviciosReferencias->traerRespuestasPorPostulante($id);
 
 $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,mysql_result($resultado,0,'refestadopostulantes'));
 
@@ -389,6 +389,61 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 					</div>
 				</div>
 			</div> <!-- fin del container entrevistas -->
+
+
+		<div class="row clearfix">
+			<div class="row">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<div class="card ">
+						<div class="header bg-blue">
+							<h2>
+								TEST
+							</h2>
+							<ul class="header-dropdown m-r--5">
+								<li class="dropdown">
+									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+										<i class="material-icons">more_vert</i>
+									</a>
+									<ul class="dropdown-menu pull-right">
+
+									</ul>
+								</li>
+							</ul>
+						</div>
+						<div class="body table-responsive">
+
+							<div class="row" style="padding: 5px 20px;">
+								<table id="example" class="display table " style="width:100%">
+									<thead>
+										<tr>
+											<th>Pregunta</th>
+											<th>Respuesta</th>
+										</tr>
+									</thead>
+									<tbody>
+										<?php
+										while ($rowT = mysql_fetch_array($resTest)) {
+											if ($rowT['idpregunta'] == 7) {
+												
+											}
+										?>
+										<tr>
+											<td></td>
+											<td></td>
+										</tr>
+										<?php
+										}
+										?>
+									</tbody>
+
+								</table>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div> <!-- fin del container entrevistas -->
 
 		<div class="row clearfix">
 			<div class="row">
