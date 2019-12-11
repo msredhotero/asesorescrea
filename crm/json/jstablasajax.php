@@ -199,7 +199,7 @@ switch ($tabla) {
 			$label = array();
 			$class = array();
 			$icon = array();
-			$termina = 7;
+			$termina = 6;
 			$indiceID = 0;
 			$empieza = 1;
 		} else {

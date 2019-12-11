@@ -1658,7 +1658,7 @@ class ServiciosReferencias {
 					inner join dbesquemadocumentosestados ese on ese.refdocumentaciones = da.refdocumentaciones
 					and ese.refesquemareclutamiento = p.refesquemareclutamiento and ese.refestadopostulantes = 7
 				set da.refestadodocumentaciones = 7
-				where da.refpostulantes = ".$id;
+				where da.refpostulantes = ".$id." and da.refestadodocumentaciones = 1";
 
 		$res = $this->query($sql,0);
  		return $res;
@@ -1702,15 +1702,35 @@ class ServiciosReferencias {
 		$resSegundo = $this->query($sqlSegundo,0);
 
   		if (mysql_num_rows($resSegundo) > 0) {
+			$countSegundo = mysql_result($resSegundo,0,0);
 			if (mysql_result($resSegundo,0,0) == $count) {
 				$apruebaSegundo = 1;
 			}
   		}
 
+
+		// compruebo que haya cargado las documentaciones aceptadas
+		$sqlTercero = "SELECT
+						COUNT(*) AS documentacionesaceptadas
+					FROM
+						dbdocumentacionasesores da
+						inner join dbdocumentaciones d on d.iddocumentacion = da.refdocumentaciones
+						inner join dbpostulantes p on p.idpostulante = da.refpostulantes
+						inner join dbesquemadocumentosestados ese on ese.refesquemareclutamiento = p.refesquemareclutamiento
+						and ese.refdocumentaciones = d.iddocumentacion
+					WHERE
+						da.refpostulantes = ".$idpostulante."
+						AND ese.refestadopostulantes in (7)
+						and d.obligatoria = '1'
+						AND da.refestadodocumentaciones in (5,6)";
+
+		$resTercero = $this->query($sqlTercero,0);
+
+		$countTercero = mysql_result($resTercero,0,0);
 		// compruebo que haya cargado las archivos de las documentaciones
 		// falta
 
-		if ($apruebaSegundo == 1) {
+		if (($apruebaSegundo == 1) || (($countSegundo > 0) && ($countTercero > 0))) {
 			return true;
 		} else {
 			return false;

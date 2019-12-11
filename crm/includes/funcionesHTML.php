@@ -57,6 +57,7 @@ function menu($usuario,$titulo,$rol,$empresa) {
 	$sql = "select idmenu,url,icono, nombre, permiso from predio_menu where permiso like '%".$rol."%' and grupo = 3 order by orden";
 	$res = $this->query($sql,0);
 
+	if (mysql_num_rows($res) > 0) {
 	$cadmenu .= '<a href="javascript:void(0);" class="menu-toggle">
                             <i class="material-icons">build</i>
                             <span>General</span>
@@ -105,7 +106,7 @@ function menu($usuario,$titulo,$rol,$empresa) {
 	}
 
 	$cadmenu .= '</ul>';
-
+	}
 
 
 

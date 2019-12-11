@@ -24,13 +24,15 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../postulantes/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../miperfil/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
+$idusuario = $_SESSION['usuaid_sahilices'];
+
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Postulantes",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Mi Perfil",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -38,7 +40,10 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
-$id = $_GET['id'];
+$resultado 		= 	$serviciosReferencias->traerPostulantesPorIdUsuario($idusuario);
+
+$id = mysql_result($resultado,0,'idpostulante');
+
 $iddocumentacion = $_GET['documentacion'];
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
@@ -437,44 +442,11 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 
 	<div class="container-fluid">
 		<div class="row clearfix subirImagen">
-			<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
-
-				<?php
-				$lblEstado = 'complete';
-				$i = 0;
-				while ($rowG = mysql_fetch_array($resGuia)) {
-					$i += 1;
-
-					if ($rowG['refestadopostulantes'] == $estadoSiguiente) {
-						$lblEstado = 'active';
-					}
-
-					if (($lblEstado == 'complete') || ($lblEstado == 'active')) {
-						$urlAcceso = $rowG['url'].'?id='.$id;
-					} else {
-						$urlAcceso = 'javascript:void(0)';
-					}
-				?>
-				<div class="col-xs-2 bs-wizard-step <?php echo $lblEstado; ?>">
-					<div class="text-center bs-wizard-stepnum">Paso <?php echo $i; ?></div>
-					<div class="progress">
-						<div class="progress-bar"></div>
-					</div>
-					<a href="<?php echo $urlAcceso; ?>" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center"><?php echo $rowG['estadopostulante']; ?></div>
-				</div>
-				<?php
-					if ($lblEstado == 'active') {
-						$lblEstado = 'disabled';
-					}
-				}
-				?>
-
-			</div>
 
 			<div class="row">
 				<?php
 				while ($row = mysql_fetch_array($resDocumentaciones)) {
+					if (($row['idestadodocumentacion'] != 5) && ($row['idestadodocumentacion'] != 6) && ($row['idestadodocumentacion'] != 7)) {
 				?>
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
@@ -487,7 +459,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 							</div>
 						</div>
 					</div>
-				<?php } ?>
+				<?php } } ?>
 			</div>
 
 			<div class="row">
@@ -576,15 +548,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 										Estado: <b><?php echo $estadoDocumentacion; ?></b>
 									</h4>
 								</div>
-				            <div class="col-xs-6 col-md-6" style="display:block">
-									<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
-									<div class="input-group col-md-12">
-										<select class="form-control show-tick" id="refestados" name="refestados">
-											<?php echo $cadRefEstados; ?>
-										</select>
-									</div>
-									<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
-								</div>
+
 							</div>
 					</div>
 				</div>
@@ -683,7 +647,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
-			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=" + idTable;
+			url = "subirdocumentacioni.php?documentacion=" + idTable;
 			$(location).attr('href',url);
 		});
 
@@ -692,7 +656,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 		});
 
 		$('.btnVolver').click(function() {
-			url = "documentacioni.php?id=<?php echo $id; ?>";
+			url = "index.php";
 			$(location).attr('href',url);
 		});
 

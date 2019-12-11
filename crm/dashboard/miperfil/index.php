@@ -253,6 +253,158 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 	$span2 = 'text-info glyphicon glyphicon-plus-sign';
 }
 
+
+$resultado 		= 	$serviciosReferencias->traerPostulantesPorId($id);
+
+$postulante = mysql_result($resultado,0,'nombre').' '.mysql_result($resultado,0,'apellidopaterno').' '.mysql_result($resultado,0,'apellidomaterno');
+
+
+$resGuia = $serviciosReferencias->traerGuiasPorEsquemaEspecial(mysql_result($resultado,0,'refesquemareclutamiento'));
+
+$resEstadoSiguiente = $serviciosReferencias->traerGuiasPorEsquemaSiguiente(mysql_result($resultado,0,'refesquemareclutamiento'), mysql_result($resultado,0,'refestadopostulantes'));
+
+if (mysql_num_rows($resEstadoSiguiente) > 0) {
+	$estadoSiguiente = mysql_result($resEstadoSiguiente,0,'refestadopostulantes');
+} else {
+	$estadoSiguiente = 1;
+}
+
+$path  = '../../archivos/postulantes/'.$id;
+
+if (!file_exists($path)) {
+	mkdir($path, 0777);
+}
+
+/**** son 10 documentaciones */
+$pathINEf  = '../../archivos/postulantes/'.$id.'/inef';
+
+if (!file_exists($pathINEf)) {
+	mkdir($pathINEf, 0777);
+}
+
+$filesINEf = array_diff(scandir($pathINEf), array('.', '..'));
+
+/****************************************************************/
+
+$pathINEd  = '../../archivos/postulantes/'.$id.'/ined';
+
+if (!file_exists($pathINEd)) {
+	mkdir($pathINEd, 0777);
+}
+
+$filesINEd = array_diff(scandir($pathINEd), array('.', '..'));
+
+/****************************************************************/
+
+$pathAN  = '../../archivos/postulantes/'.$id.'/actanacimiento';
+
+if (!file_exists($pathAN)) {
+	mkdir($pathAN, 0777);
+}
+
+$filesAN = array_diff(scandir($pathAN), array('.', '..'));
+
+/****************************************************************/
+
+$pathCURP  = '../../archivos/postulantes/'.$id.'/curp';
+
+if (!file_exists($pathCURP)) {
+	mkdir($pathCURP, 0777);
+}
+
+$filesCURP = array_diff(scandir($pathCURP), array('.', '..'));
+
+/****************************************************************/
+
+$pathRFC  = '../../archivos/postulantes/'.$id.'/rfc';
+
+if (!file_exists($pathRFC)) {
+	mkdir($pathRFC, 0777);
+}
+
+$filesRFC = array_diff(scandir($pathRFC), array('.', '..'));
+
+/****************************************************************/
+
+$pathNSS  = '../../archivos/postulantes/'.$id.'/nss';
+
+if (!file_exists($pathNSS)) {
+	mkdir($pathNSS, 0777);
+}
+
+$filesNSS = array_diff(scandir($pathNSS), array('.', '..'));
+
+/****************************************************************/
+
+$pathCE  = '../../archivos/postulantes/'.$id.'/comprobanteestudio';
+
+if (!file_exists($pathCE)) {
+	mkdir($pathCE, 0777);
+}
+
+$filesCE = array_diff(scandir($pathCE), array('.', '..'));
+
+/****************************************************************/
+
+$pathCD  = '../../archivos/postulantes/'.$id.'/comprobantedomicilio';
+
+if (!file_exists($pathCD)) {
+	mkdir($pathCD, 0777);
+}
+
+$filesCD = array_diff(scandir($pathCD), array('.', '..'));
+
+/****************************************************************/
+
+$pathCV  = '../../archivos/postulantes/'.$id.'/cv';
+
+if (!file_exists($pathCV)) {
+	mkdir($pathCV, 0777);
+}
+
+$filesCV = array_diff(scandir($pathCV), array('.', '..'));
+
+/****************************************************************/
+
+$pathInfonavit  = '../../archivos/postulantes/'.$id.'/infonavit';
+
+if (!file_exists($pathInfonavit)) {
+	mkdir($pathInfonavit, 0777);
+}
+
+$filesInfonavit = array_diff(scandir($pathInfonavit), array('.', '..'));
+
+//////////////////////////////////////////////  FIN de los opciones //////////////////////////
+
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,$estadoSiguiente);
+
+$puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
+$permitePresentar = $serviciosReferencias->permitePresentarDocumentacionI($id);
+
+if (mysql_result($resultado,0,'rfc') == '') {
+	$alertaRFC = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el RFC!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=7"><b>AQUI</b></a></div>';
+} else {
+	$alertaRFC = '';
+}
+
+if (mysql_result($resultado,0,'curp') == '') {
+	$alertaCURP = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el CURP!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=6"><b>AQUI</b></a></div>';
+} else {
+	$alertaCURP = '';
+}
+
+if (mysql_result($resultado,0,'ine') == '') {
+	$alertaINE = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el INE!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=3"><b>AQUI</b></a></div>';
+} else {
+	$alertaINE = '';
+}
+
+if (mysql_result($resultado,0,'nss') == '') {
+	$alertaNSS = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el Nro de Seguro Social!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=8"><b>AQUI</b></a></div>';
+} else {
+	$alertaNSS = '';
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -298,6 +450,27 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 		.alert > i{ vertical-align: middle !important; }
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		#codigopostal { width: 400px; }
+		.pdfobject-container { height: 30rem; border: 1rem solid rgba(0,0,0,.1); }
+		.thumbnail2 {
+			display: block;
+			padding: 4px;
+			margin-bottom: 20px;
+			line-height: 1.42857143;
+			background-color: #fff;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			-webkit-transition: border .2s ease-in-out;
+			-o-transition: border .2s ease-in-out;
+			transition: border .2s ease-in-out;
+			text-align: center;
+		}
+		.progress {
+			background-color: #1b2646;
+		}
+
+		.btnDocumentacion {
+			cursor: pointer;
+		}
 	</style>
 
 
@@ -417,7 +590,6 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 												<th>Codigo Postal</th>
 												<th>Estado</th>
 												<th>Est.Entrevista</th>
-												<th>Fecha Crea</th>
 											</tr>
 										</thead>
 										<tfoot>
@@ -428,7 +600,6 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 												<th>Codigo Postal</th>
 												<th>Estado</th>
 												<th>Est.Entrevista</th>
-												<th>Fecha Crea</th>
 											</tr>
 										</tfoot>
 									</table>
@@ -447,26 +618,17 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 							<img class="img-responsive">
 						</a>
 						<div id="example1"></div>
-
-
-
 					</div>
 					<div class="col-xs-6 col-md-6 col-lg-6">
 						<a href="javascript:void(0);" class="thumbnail timagen2">
 							<img class="img-responsive2">
 						</a>
 						<div id="example2"></div>
-
 					</div>
-
 				</div>
 
-
-
 				<div class="row">
-
 					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-
 						<div class="card">
 							<div class="header">
 								<h2>
@@ -477,23 +639,17 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 											<i class="material-icons">more_vert</i>
 										</a>
-
 									</li>
 								</ul>
 							</div>
 							<div class="body">
-
 								<div class="row">
 									<div class="alert bg-<?php echo $color1; ?>">
 										<h4>
 											Estado: <b><?php echo $estadoDocumentacion1; ?></b>
 										</h4>
 									</div>
-
 								</div>
-
-
-
 							</div>
 						</div>
 					</div>
@@ -508,28 +664,92 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 											<i class="material-icons">more_vert</i>
 										</a>
-
 									</li>
 								</ul>
 							</div>
 							<div class="body">
-
 								<div class="row">
 									<div class="alert bg-<?php echo $color2; ?>">
 										<h4>
 											Estado: <b><?php echo $estadoDocumentacion2; ?></b>
 										</h4>
 									</div>
-
 								</div>
-
-								
 							</div>
 						</div>
 					</div>
 				</div>
-
 			</div> <!-- fin del container veritas -->
+
+			<div class="row clearfix">
+				<div class="row">
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+						<div class="card ">
+							<div class="header bg-blue">
+								<h2>
+									DOCUMENTACIONES
+								</h2>
+								<ul class="header-dropdown m-r--5">
+									<li class="dropdown">
+										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+											<i class="material-icons">more_vert</i>
+										</a>
+										<ul class="dropdown-menu pull-right">
+
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="body table-responsive">
+								<div class="row">
+										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-bottom: 10px;">
+											<div class="alert alert-info">
+												<p><b>Importante!</b> Recuerde que debe completar toda la documentacion para poder continuar con el Proceso de Reclutamieno</p>
+											</div>
+
+											<?php echo $alertaINE; ?>
+											<?php echo $alertaCURP; ?>
+											<?php echo $alertaRFC; ?>
+											<?php echo $alertaNSS; ?>
+
+											<?php if ($permitePresentar == true) { ?>
+												<button type="button" class="btn bg-amber waves-effect btnPresentar">
+													<i class="material-icons">done_all</i>
+													<span>PRESENTAR DOCUMENTACION</span>
+												</button>
+
+											<?php } ?>
+										</div>
+										<?php
+										$noHabilitaCambio = '';
+										while ($row = mysql_fetch_array($resDocumentaciones)) {
+
+											if (($row['idestadodocumentacion'] == 5) || ($row['idestadodocumentacion'] == 6) || ($row['idestadodocumentacion'] == 7)) {
+												$noHabilitaCambio .= $row['iddocumentacion'].',';
+											}
+										?>
+										<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+											<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
+												<div class="icon">
+													<i class="material-icons">face</i>
+												</div>
+												<div class="content">
+													<div class="text"><?php echo $row['documentacion']; ?></div>
+													<div class="number"><?php echo $row['estadodocumentacion']; ?></div>
+												</div>
+											</div>
+										</div>
+									<?php }
+									if (strlen($noHabilitaCambio) > 0) {
+										$noHabilitaCambio = substr($noHabilitaCambio,0,-1);
+									}
+									?>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div> <!-- fin del container entrevistas -->
 		</div>
 	</div>
 </section>
@@ -687,107 +907,32 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 	traerImagen('example1','timagen1',2);
 	traerImagen('example2','timagen2',1);
 
-	Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
-
-	Dropzone.options.frmFileUpload = {
-		maxFilesize: 30,
-		acceptedFiles: ".png,.jpg,.gif,.bmp,.jpeg,.pdf",
-		accept: function(file, done) {
-			done();
-		},
-		init: function() {
-			this.on("sending", function(file, xhr, formData){
-					formData.append("idpostulante", '<?php echo $id; ?>');
-					formData.append("iddocumentacion", '2');
-			});
-			this.on('success', function( file, resp ){
-				traerImagen('example1','timagen1',2);
-				$('.lblPlanilla').hide();
-				swal("Correcto!", resp.replace("1", ""), "success");
-
-			});
-
-			this.on('error', function( file, resp ){
-				swal("Error!", resp.replace("1", ""), "warning");
-			});
-		}
-	};
-
-
-	Dropzone.options.frmFileUpload2 = {
-			maxFilesize: 30,
-			acceptedFiles: ".png,.jpg,.gif,.bmp,.jpeg,.pdf",
-			accept: function(file, done) {
-				done();
-			},
-			init: function() {
-				this.on("sending", function(file, xhr, formData){
-					formData.append("idpostulante", '<?php echo $id; ?>');
-					formData.append("iddocumentacion", '1');
-	         });
-				this.on('success', function( file, resp ){
-					traerImagen('example2','timagen2',1);
-					$('.lblComplemento').hide();
-					swal("Correcto!", resp.replace("1", ""), "success");
-
-				});
-
-				this.on('error', function( file, resp ){
-					swal("Error!", resp.replace("1", ""), "warning");
-				});
-			}
-		};
-
-
-
-	var myDropzone = new Dropzone("#archivos", {
-		params: {
-			idpostulante: <?php echo $id; ?>,
-			iddocumentacion: 2
-		},
-		url: 'subir.php'
-	});
-
-	var myDropzone2 = new Dropzone("#archivos2", {
-			params: {
-				idpostulante: <?php echo $id; ?>,
-				iddocumentacion: 1
-	      },
-			url: 'subir.php'
-		});
+	var arNoHabilita = [<?php echo $noHabilitaCambio; ?>];
 
 	$(document).ready(function(){
 
-		$('.guardarEstado').click(function() {
-			idDocumentacion = $(this).attr("id");
-			modificarEstadoDocumentacionPostulante($('#refestados').val(), idDocumentacion);
-		});
-
-		function modificarEstadoDocumentacionPostulante(idestado, iddocumentacionasesores) {
+		function presentarDocumentacionI(id) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {
-					accion: 'modificarEstadoDocumentacionPostulante',
-					iddocumentacionasesores: iddocumentacionasesores,
-					idestado: idestado
-				},
+				data: {accion: 'presentarDocumentacionI',id: id},
 				//mientras enviamos el archivo
 				beforeSend: function(){
-					$('.guardarEstado').hide();
+					$('.btnPresentar').hide();
 				},
 				//una vez finalizado correctamente
 				success: function(data){
 
-					if (data.error == false) {
-						swal("Ok!", 'Se modifico correctamente el estado de la documentación', "success");
-						$('.guardarEstado').show();
+					if (data == '') {
+						swal("Ok!", 'Ya presento su documentacion, sera evaluada para luego continuar con el proceso', "success");
+						$('.btnPresentar').show();
+						setTimeout(function(){ location.reload() }, 4000);
 					} else {
-						swal("Error!", data.leyenda, "warning");
+						swal("Error!", data, "warning");
 
-						$("#load").html('');
+
 					}
 				},
 				//si ha ocurrido un error
@@ -797,51 +942,27 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 				}
 			});
 		}
+
+		$('.btnPresentar').click(function() {
+			presentarDocumentacionI(<?php echo $id; ?>);
+		});
+
+		$('.btnDocumentacion').click(function() {
+
+			idTable =  $(this).attr("id");
+
+			if (arNoHabilita.indexOf(parseInt(idTable))>0) {
+				swal("Error!", 'No puede modificarse una documentaciones Presentada o Aceptada', "warning");
+			} else {
+				url = "subirdocumentacioni.php?documentacion=" + idTable;
+				$(location).attr('href',url);
+			}
+
+
+		});
 
 		$('#codigopostal').val('<?php echo $codigopostal; ?>');
 
-		$(".frmAjaxModificar").on("change",'#refentrevistasucursales', function(){
-			traerEntrevistasucursalesPorId($(this).val(), 'edit');
-		});
-
-		function traerEntrevistasucursalesPorId(id, contenedor) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {accion: 'traerEntrevistasucursalesPorId',id: id},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data != '') {
-						if (contenedor == 'new') {
-							$('.frmAjaxNuevo #domicilio').val(data.domicilio);
-							$('.frmAjaxNuevo .codigopostalaux').val(data.refpostal);
-							$('.frmAjaxNuevo #codigopostal').val(data.codigopostal);
-						} else {
-							$('.frmAjaxModificar #domicilio').val(data.domicilio);
-							$('.frmAjaxModificar .codigopostalaux').val(data.refpostal);
-							$('.frmAjaxModificar #codigopostal2').val(data.codigopostal);
-						}
-
-					} else {
-						swal("Error!", 'Se genero un error al traer datos', "warning");
-
-						$("#load").html('');
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
-		}
 
 		$('.img-responsive').click(function() {
 			srcImg =  $(this).attr("src");
@@ -1139,27 +1260,7 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 
 		}
 
-		$("#example").on("click",'.btnEliminar', function(){
-			idTable =  $(this).attr("id");
-			$('#ideliminar').val(idTable);
-			$('#lgmEliminar').modal();
-		});//fin del boton eliminar
 
-		$('.eliminar').click(function() {
-			frmAjaxEliminar($('#ideliminar').val());
-		});
-
-		$("#example").on("click",'.btnModificar', function(){
-			idTable =  $(this).attr("id");
-			frmAjaxModificar(idTable, options2);
-			$('#lgmModificar').modal();
-		});//fin del boton modificar
-
-		$("#example").on("click",'.btnVer', function(){
-			idTable =  $(this).attr("id");
-			$(location).attr('href','ver.php?id=' + idTable);
-
-		});//fin del boton modificar
 
 		$('.frmNuevo').submit(function(e){
 
