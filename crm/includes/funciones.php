@@ -1114,7 +1114,7 @@ class Servicios {
 
 			case 'dbusuarios':
 				$sqlMod = "select
-								idusuario,usuario,password,refroles,email,nombrecompleto,(case when activo = 1 then 'Si' else 'No' end) as activo,refclientes
+								idusuario,usuario,password,refroles,email,nombrecompleto,(case when activo = 1 then 'Si' else 'No' end) as activo
 									from ".$tabla." where ".$lblid." = ".$id;
 				$resMod = $this->query($sqlMod,0);
 				break;
@@ -1169,7 +1169,7 @@ class Servicios {
 				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes');
 			break;
 			case 'dbpostulantes':
-				$ocultar = array("ine","curp","rfc","usuariomodi","fechacrea","fechamodi","usuariocrea","usuariomodi",'refasesores','comision','refsucursalesinbursa','ultimoestado','token');
+				$ocultar = array("usuariomodi","fechacrea","fechamodi","usuariocrea","usuariomodi",'refasesores','comision','refsucursalesinbursa','ultimoestado','token');
 			break;
 			default:
 				$ocultar = array();

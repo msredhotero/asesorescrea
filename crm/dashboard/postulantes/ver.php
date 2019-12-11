@@ -80,8 +80,8 @@ if (mysql_result($resultado,0,'refescolaridades') < 3) {
 
 $tabla 			= "dbpostulantes";
 
-$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','nss');
-$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Nro de Seguro Social');
+$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','nss','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta','urlprueba');
+$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Nro de Seguro Social','Clave Interbancaria','ID Cliente Inbursa','Clave Asesor','Fecha de Alta','URL Prueba');
 
 $resUsuario = $serviciosUsuario->traerUsuarioId(mysql_result($resultado,0,'refusuarios'));
 $cadRef1 	= $serviciosFunciones->devolverSelectBox($resUsuario,array(1),'');
@@ -157,7 +157,7 @@ $filesVeritas = array_diff(scandir($pathVeritas), array('.', '..'));
 
 
 
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id);
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,mysql_result($resultado,0,'refestadopostulantes'));
 
 
 // documentacion por documentacion //
@@ -165,8 +165,10 @@ $resDocumentacionAsesor1 = $serviciosReferencias->traerDocumentacionPorPostulant
 
 $resDocumentacion1 = $serviciosReferencias->traerDocumentacionesPorId(2);
 
+$resEstados = $serviciosReferencias->traerEstadodocumentaciones();
+
 if (mysql_num_rows($resDocumentacionAsesor1) > 0) {
-	$resEstados = $serviciosReferencias->traerEstadodocumentaciones();
+
 	$cadRefEstados1 = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor1,0,'refestadodocumentaciones'));
 
 	$iddocumentacionasesores1 = mysql_result($resDocumentacionAsesor1,0,'iddocumentacionasesor');
@@ -814,6 +816,14 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 
 	$(document).ready(function(){
 
+		$("#claveinterbancaria").attr('maxlength','18');
+		$("#idclienteinbursa").attr('maxlength','8');
+		$("#claveasesor").attr('maxlength','22');
+		$("#nss").attr('maxlength','11');
+		$("#ine").attr('maxlength','10');
+		$("#curp").attr('maxlength','13');
+		$("#rfc").attr('maxlength','18');
+
 
 		$('.guardarEstado').click(function() {
 			idTable =  $(this).attr("id");
@@ -930,6 +940,14 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 
 		$('#fecha').bootstrapMaterialDatePicker({
 			format: 'YYYY/MM/DD HH:mm',
+			lang : 'mx',
+			clearButton: true,
+			weekStart: 1,
+			time: true
+		});
+
+		$('#fechaalta').bootstrapMaterialDatePicker({
+			format: 'YYYY-MM-DD HH:mm:ss',
 			lang : 'mx',
 			clearButton: true,
 			weekStart: 1,

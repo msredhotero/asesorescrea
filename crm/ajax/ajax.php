@@ -1352,12 +1352,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $modificar = "modificarUsuario";
          $idTabla = "idusuario";
 
-         $lblCambio	 	= array('nombrecompleto','refclientes','refroles');
-         $lblreemplazo	= array('Nombre Completo','Cliente','Perfil');
-
-         $refClientes = $serviciosReferencias->traerClientesPorId(mysql_result($resultado,0,'refclientes'));
-         $cadRef2 = $serviciosFunciones->devolverSelectBox($refClientes,array(2,3),' ');
-
+         $lblCambio	 	= array('nombrecompleto','refroles');
+         $lblreemplazo	= array('Nombre Completo','Perfil');
 
 
          $resRoles 	= $serviciosUsuarios->traerRoles();
@@ -1365,8 +1361,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 
          $cadRef = $serviciosFunciones->devolverSelectBoxActivo($resRoles,array(1),'',mysql_result($resultado,0,'refroles'));
 
-         $refdescripcion = array(0 => $cadRef, 1=>$cadRef2);
-         $refCampo 	=  array("refroles","refclientes");
+         $refdescripcion = array(0 => $cadRef);
+         $refCampo 	=  array("refroles");
       break;
       case 'tbentrevistasucursales':
          $resultado = $serviciosReferencias->traerEntrevistasucursalesPorId($id);
@@ -1399,6 +1395,9 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          break;
          case 'tbentrevistasucursales':
          echo str_replace('refpostal','refpostal2',$formulario);
+         break;
+         default:
+            echo $formulario;
          break;
       }
 
@@ -2222,7 +2221,13 @@ function modificarPostulantes($serviciosReferencias) {
    $nss = $_POST['nss'];
    $refesquemareclutamiento = $_POST['refesquemareclutamiento'];
 
-   $res = $serviciosReferencias->modificarPostulantes($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$nss,$refesquemareclutamiento);
+   $claveinterbancaria = $_POST['claveinterbancaria'];
+   $idclienteinbursa = $_POST['idclienteinbursa'];
+   $claveasesor = $_POST['claveasesor'];
+   $fechaalta = $_POST['fechaalta'];
+
+
+   $res = $serviciosReferencias->modificarPostulantes($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$nss,$refesquemareclutamiento,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta);
 
    if ($res == true) {
       echo '';

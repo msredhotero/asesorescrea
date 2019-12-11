@@ -60,6 +60,16 @@ $resultado 		= 	$serviciosReferencias->traerPostulantesPorId($id);
 $postulante = mysql_result($resultado,0,'nombre').' '.mysql_result($resultado,0,'apellidopaterno').' '.mysql_result($resultado,0,'apellidomaterno');
 
 
+$resGuia = $serviciosReferencias->traerGuiasPorEsquemaEspecial(mysql_result($resultado,0,'refesquemareclutamiento'));
+
+$resEstadoSiguiente = $serviciosReferencias->traerGuiasPorEsquemaSiguiente(mysql_result($resultado,0,'refesquemareclutamiento'), mysql_result($resultado,0,'refestadopostulantes'));
+
+if (mysql_num_rows($resEstadoSiguiente) > 0) {
+	$estadoSiguiente = mysql_result($resEstadoSiguiente,0,'refestadopostulantes');
+} else {
+	$estadoSiguiente = 1;
+}
+
 $path  = '../../archivos/postulantes/'.$id;
 
 if (!file_exists($path)) {
@@ -198,7 +208,7 @@ $filesC = array_diff(scandir($pathC), array('.', '..'));
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta2($id);
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,$estadoSiguiente);
 
 $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionII($id);
 
@@ -323,59 +333,36 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionII($id);
 		<div class="row clearfix subirImagen">
 			<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
 
-				<div class="col-xs-2 bs-wizard-step complete">
-					<div class="text-center bs-wizard-stepnum">Paso 1</div>
-					<div class="progress">
-						<div class="progress-bar"></div>
-					</div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Validación SIAP</div>
-				</div>
+				<?php
+				$lblEstado = 'complete';
+				$i = 0;
+				while ($rowG = mysql_fetch_array($resGuia)) {
+					$i += 1;
 
-				<div class="col-xs-2 bs-wizard-step complete"><!-- complete -->
-					<div class="text-center bs-wizard-stepnum">Paso 2</div>
-					<div class="progress">
-						<div class="progress-bar"></div>
-					</div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Agendar Entrevista</div>
-				</div>
+					if ($rowG['refestadopostulantes'] == $estadoSiguiente) {
+						$lblEstado = 'active';
+					}
 
-				<div class="col-xs-2 bs-wizard-step complete"><!-- complete -->
-					<div class="text-center bs-wizard-stepnum">Paso 3</div>
+					if (($lblEstado == 'complete') || ($lblEstado == 'active')) {
+						$urlAcceso = $rowG['url'].'?id='.$id;
+					} else {
+						$urlAcceso = 'javascript:void(0)';
+					}
+				?>
+				<div class="col-xs-2 bs-wizard-step <?php echo $lblEstado; ?>">
+					<div class="text-center bs-wizard-stepnum">Paso <?php echo $i; ?></div>
 					<div class="progress">
 						<div class="progress-bar"></div>
 					</div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Entrevista y Pruebas Psicometricas</div>
+					<a href="<?php echo $urlAcceso; ?>" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center"><?php echo $rowG['estadopostulante']; ?></div>
 				</div>
-
-				<div class="col-xs-2 bs-wizard-step complete"><!-- active -->
-					<div class="text-center bs-wizard-stepnum">Paso 4</div>
-					<div class="progress">
-						<div class="progress-bar"></div>
-					</div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Resultado Veritas</div>
-				</div>
-
-				<div class="col-xs-2 bs-wizard-step complete"><!-- active -->
-					<div class="text-center bs-wizard-stepnum">Paso 5</div>
-					<div class="progress">
-						<div class="progress-bar"></div>
-					</div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Documentación I</div>
-				</div>
-
-				<div class="col-xs-2 bs-wizard-step active"><!-- active -->
-					<div class="text-center bs-wizard-stepnum">Paso 6</div>
-					<div class="progress">
-						<div class="progress-bar"></div>
-					</div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Firmar de Contratos</div>
-				</div>
+				<?php
+					if ($lblEstado == 'active') {
+						$lblEstado = 'disabled';
+					}
+				}
+				?>
 
 			</div>
 

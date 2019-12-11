@@ -1151,10 +1151,10 @@ class ServiciosReferencias {
 	}
 
 
-	function modificarPostulantes($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$nss,$refesquemareclutamiento) {
+	function modificarPostulantes($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$nss,$refesquemareclutamiento,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta) {
 		$sql = "update dbpostulantes
 		set
-		refusuarios = ".$refusuarios.",nombre = '".$nombre."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',email = '".$email."',curp = '".$curp."',rfc = '".$rfc."',ine = '".$ine."',fechanacimiento = '".$fechanacimiento."',sexo = '".$sexo."',codigopostal = '".$codigopostal."',refescolaridades = ".$refescolaridades.",refestadocivil = ".$refestadocivil.",nacionalidad = '".$nacionalidad."',telefonomovil = '".$telefonomovil."',telefonocasa = '".$telefonocasa."',telefonotrabajo = '".$telefonotrabajo."',refestadopostulantes = ".$refestadopostulantes.",urlprueba = '".$urlprueba."',fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."',refasesores = ".$refasesores.",comision = ".$comision.",refsucursalesinbursa = ".$refsucursalesinbursa.",ultimoestado = ".$ultimoestado.",nss = '".$nss."',refesquemareclutamiento = ".$refesquemareclutamiento." where idpostulante =".$id;
+		refusuarios = ".$refusuarios.",nombre = '".$nombre."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',email = '".$email."',curp = '".$curp."',rfc = '".$rfc."',ine = '".$ine."',fechanacimiento = '".$fechanacimiento."',sexo = '".$sexo."',codigopostal = '".$codigopostal."',refescolaridades = ".$refescolaridades.",refestadocivil = ".$refestadocivil.",nacionalidad = '".$nacionalidad."',telefonomovil = '".$telefonomovil."',telefonocasa = '".$telefonocasa."',telefonotrabajo = '".$telefonotrabajo."',refestadopostulantes = ".$refestadopostulantes.",urlprueba = '".$urlprueba."',fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."',refasesores = ".$refasesores.",comision = ".$comision.",refsucursalesinbursa = ".$refsucursalesinbursa.",ultimoestado = ".$ultimoestado.",nss = '".$nss."',refesquemareclutamiento = ".$refesquemareclutamiento.",claveinterbancaria = '".$claveinterbancaria."',idclienteinbursa = '".$idclienteinbursa."',claveasesor = '".$claveasesor."',fechaalta = ".($fechaalta == '' ? 'null' : "'".$fechaalta."'")." where idpostulante =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -1349,17 +1349,14 @@ class ServiciosReferencias {
 
 	function modificarUltimoEstadoPostulante($id,$idestado) {
 
-		$resEstado = $this->traerEstadopostulantesPorId($idestado);
+		//$resEstado = $this->traerEstadopostulantesPorId($idestado);
 
-		if (mysql_result($resEstado,0,'orden') == 99) {
-			$resEstadoAux = $this->traerEstadopostulantesPorOrden(7);
-		} else {
-			$resEstadoAux = $this->traerEstadopostulantesPorOrden(mysql_result($resEstado,0,'orden') - 1);
-		}
+		$resultado = $this->traerPostulantesPorId($id);
+		$refesquemareclutamiento  = mysql_result($resultado,0,'refesquemareclutamiento');
 
+		$resEstado = $this->traerGuiasPorEsquemaSiguiente($refesquemareclutamiento, $idestado);
 
-
-		$sql = 'update dbpostulantes set ultimoestado = '.mysql_result($resEstadoAux,0,0).' where idpostulante = '.$id;
+		$sql = 'update dbpostulantes set ultimoestado = '.mysql_result($resEstado,0,'refestadopostulantes').' where idpostulante = '.$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -1566,7 +1563,7 @@ class ServiciosReferencias {
 		return $res;
 	}
 
-	function traerDocumentacionPorPostulanteDocumentacionCompleta($idpostulante) {
+	function traerDocumentacionPorPostulanteDocumentacionCompleta($idpostulante, $idestado) {
 		$sql = "SELECT
 					    d.iddocumentacion,
 					    d.documentacion,
@@ -1584,8 +1581,10 @@ class ServiciosReferencias {
 					        AND da.refpostulantes = ".$idpostulante."
 					        LEFT JOIN
 					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
-					WHERE
-					    d.iddocumentacion IN (3 , 4, 5, 6, 7, 8, 9, 10, 11, 12)
+						 	  inner join
+						 dbesquemadocumentosestados ede on ede.refdocumentaciones = d.iddocumentacion
+						 and ede.refesquemareclutamiento = (select refesquemareclutamiento from dbpostulantes where idpostulante = ".$idpostulante.") and ede.refestadopostulantes = ".$idestado."
+
 					order by 1";
 		$res = $this->query($sql,0);
  		return $res;
@@ -1615,6 +1614,42 @@ class ServiciosReferencias {
 					order by 1";
 		$res = $this->query($sql,0);
  		return $res;
+	}
+
+
+	function permitePresentarDocumentacionI($idpostulante) {
+
+		$apruebaSegundo = 0;
+
+		// compruebo que haya cargado las documentaciones
+		$sqlSegundo = "SELECT
+						COUNT(*) AS documentacionesaceptadas
+					FROM
+						dbdocumentacionasesores da
+						inner join dbdocumentaciones d on d.iddocumentacion = da.refdocumentaciones
+					WHERE
+						da.refpostulantes = ".$idpostulante."
+						AND da.refdocumentaciones IN (3 , 4, 5, 6, 7, 8, 9, 10, 11, 12)
+						and d.obligatoria = '1'
+						AND da.refestadodocumentaciones in (5,6)";
+
+		$resSegundo = $this->query($sqlSegundo,0);
+
+  		if (mysql_num_rows($resSegundo) > 0) {
+			if (mysql_result($resSegundo,0,0) == 10) {
+				$apruebaSegundo = 1;
+			}
+  		}
+
+		// compruebo que haya cargado las archivos de las documentaciones
+		// falta
+
+		if (($apruebaPrimero == 1) && ($apruebaSegundo == 1)) {
+			return true;
+		} else {
+			return false;
+		}
+
 	}
 
 	function permiteAvanzarDocumentacionI($idpostulante) {
@@ -3263,7 +3298,7 @@ class ServiciosReferencias {
 
 
    function traerUsuariosPorId($id) {
-   $sql = "select idusuario,usuario,password,refroles,email,nombrecompleto,(case when activo = 1 then 'Si' else 'No' end) as activo,reflocatarios from dbusuarios where idusuario =".$id;
+   $sql = "select idusuario,usuario,password,refroles,email,nombrecompleto,(case when activo = 1 then 'Si' else 'No' end) as activo from dbusuarios where idusuario =".$id;
    $res = $this->query($sql,0);
    return $res;
    }

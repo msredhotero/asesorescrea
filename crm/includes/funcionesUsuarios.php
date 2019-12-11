@@ -279,7 +279,7 @@ function traerUsuario($email) {
 }
 
 function traerUsuarios() {
-	$sql = "select u.idusuario,u.usuario, u.password, r.descripcion, u.email , u.nombrecompleto, u.refroles, u.reflocatarios
+	$sql = "select u.idusuario,u.usuario, u.password, r.descripcion, u.email , u.nombrecompleto, u.refroles
 			from dbusuarios u
 			inner join tbroles r on u.refroles = r.idrol
 			order by nombrecompleto";
@@ -303,11 +303,9 @@ function traerUsuariosajax($length, $start, $busqueda) {
                   u.email ,
                   u.nombrecompleto,
                   (case when u.activo = 1 then 'Si' else 'No' end) as activo,
-                  concat(l.cognom, ' ', l.nom) as locatario,
                   u.refroles
 			from dbusuarios u
 			inner join tbroles r on u.refroles = r.idrol
-         left join dblocatarios l on l.idlocatario = u.reflocatarios
          ".$where."
       	order by u.nombrecompleto
       	limit ".$start.",".$length;

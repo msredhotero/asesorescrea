@@ -60,6 +60,16 @@ $resultado 		= 	$serviciosReferencias->traerPostulantesPorId($id);
 
 $postulante = mysql_result($resultado,0,'nombre').' '.mysql_result($resultado,0,'apellidopaterno').' '.mysql_result($resultado,0,'apellidomaterno');
 
+$resGuia = $serviciosReferencias->traerGuiasPorEsquemaEspecial(mysql_result($resultado,0,'refesquemareclutamiento'));
+
+$resEstadoSiguiente = $serviciosReferencias->traerGuiasPorEsquemaSiguiente(mysql_result($resultado,0,'refesquemareclutamiento'), mysql_result($resultado,0,'refestadopostulantes'));
+
+if (mysql_num_rows($resEstadoSiguiente) > 0) {
+	$estadoSiguiente = mysql_result($resEstadoSiguiente,0,'refestadopostulantes');
+} else {
+	$estadoSiguiente = 1;
+}
+
 
 $path  = '../../archivos/postulantes/'.$id;
 
@@ -306,7 +316,9 @@ switch ($iddocumentacion) {
 	break;
 }
 
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,$estadoSiguiente);
 
+$puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 
 ?>
 
@@ -372,6 +384,10 @@ switch ($iddocumentacion) {
 			background-color: #1b2646;
 		}
 
+		.btnDocumentacion {
+			cursor: pointer;
+		}
+
 	</style>
 
 
@@ -423,60 +439,55 @@ switch ($iddocumentacion) {
 		<div class="row clearfix subirImagen">
 			<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
 
-				<div class="col-xs-2 bs-wizard-step complete">
-					<div class="text-center bs-wizard-stepnum">Paso 1</div>
+				<?php
+				$lblEstado = 'complete';
+				$i = 0;
+				while ($rowG = mysql_fetch_array($resGuia)) {
+					$i += 1;
+
+					if ($rowG['refestadopostulantes'] == $estadoSiguiente) {
+						$lblEstado = 'active';
+					}
+
+					if (($lblEstado == 'complete') || ($lblEstado == 'active')) {
+						$urlAcceso = $rowG['url'].'?id='.$id;
+					} else {
+						$urlAcceso = 'javascript:void(0)';
+					}
+				?>
+				<div class="col-xs-2 bs-wizard-step <?php echo $lblEstado; ?>">
+					<div class="text-center bs-wizard-stepnum">Paso <?php echo $i; ?></div>
 					<div class="progress">
 						<div class="progress-bar"></div>
 					</div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Validación SIAP</div>
+					<a href="<?php echo $urlAcceso; ?>" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center"><?php echo $rowG['estadopostulante']; ?></div>
 				</div>
+				<?php
+					if ($lblEstado == 'active') {
+						$lblEstado = 'disabled';
+					}
+				}
+				?>
 
-				<div class="col-xs-2 bs-wizard-step complete"><!-- complete -->
-					<div class="text-center bs-wizard-stepnum">Paso 2</div>
-					<div class="progress">
-						<div class="progress-bar"></div>
+			</div>
+
+			<div class="row">
+				<?php
+				while ($row = mysql_fetch_array($resDocumentaciones)) {
+				?>
+					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+						<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
+							<div class="icon">
+								<i class="material-icons">face</i>
+							</div>
+							<div class="content">
+								<div class="text"><?php echo $row['documentacion']; ?></div>
+								<div class="number"><?php echo $row['estadodocumentacion']; ?></div>
+							</div>
+						</div>
 					</div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Agendar Entrevista</div>
-				</div>
-
-				<div class="col-xs-2 bs-wizard-step complete"><!-- complete -->
-					<div class="text-center bs-wizard-stepnum">Paso 3</div>
-					<div class="progress">
-						<div class="progress-bar"></div>
-					</div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Entrevista y Pruebas Psicometricas</div>
-				</div>
-
-				<div class="col-xs-2 bs-wizard-step complete"><!-- active -->
-					<div class="text-center bs-wizard-stepnum">Paso 4</div>
-					<div class="progress">
-						<div class="progress-bar"></div>
-					</div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Resultado Veritas</div>
-				</div>
-
-				<div class="col-xs-2 bs-wizard-step active"><!-- active -->
-					<div class="text-center bs-wizard-stepnum">Paso 5</div>
-					<div class="progress">
-						<div class="progress-bar"></div>
-					</div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Documentación I</div>
-				</div>
-
-				<div class="col-xs-2 bs-wizard-step disabled"><!-- active -->
-					<div class="text-center bs-wizard-stepnum">Paso 6</div>
-					<div class="progress">
-						<div class="progress-bar"></div>
-					</div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Firmar de Contratos</div>
-				</div>
-
+				<?php } ?>
 			</div>
 
 			<div class="row">
@@ -670,6 +681,12 @@ switch ($iddocumentacion) {
 
 	$(document).ready(function(){
 
+		$('.btnDocumentacion').click(function() {
+			idTable =  $(this).attr("id");
+			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=" + idTable;
+			$(location).attr('href',url);
+		});
+
 		$('.btnModificar').click(function() {
 			modificarPostulanteUnicaDocumentacion($('#<?php echo $campo; ?>').val());
 		});
@@ -740,6 +757,7 @@ switch ($iddocumentacion) {
 					if (data.error == false) {
 						swal("Ok!", 'Se modifico correctamente el estado de la documentación <?php echo $campo; ?>', "success");
 						$('.guardarEstado').show();
+						location.reload();
 					} else {
 						swal("Error!", data.leyenda, "warning");
 

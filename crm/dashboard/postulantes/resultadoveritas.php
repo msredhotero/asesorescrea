@@ -64,6 +64,17 @@ $resultado 		= 	$serviciosReferencias->traerPostulantesPorId($id);
 
 $postulante = mysql_result($resultado,0,'nombre').' '.mysql_result($resultado,0,'apellidopaterno').' '.mysql_result($resultado,0,'apellidomaterno');
 
+$postulante = mysql_result($resultado,0,'nombre').' '.mysql_result($resultado,0,'apellidopaterno').' '.mysql_result($resultado,0,'apellidomaterno');
+
+$resGuia = $serviciosReferencias->traerGuiasPorEsquemaEspecial(mysql_result($resultado,0,'refesquemareclutamiento'));
+
+$resEstadoSiguiente = $serviciosReferencias->traerGuiasPorEsquemaSiguiente(mysql_result($resultado,0,'refesquemareclutamiento'), mysql_result($resultado,0,'refestadopostulantes'));
+
+if (mysql_num_rows($resEstadoSiguiente) > 0) {
+	$estadoSiguiente = mysql_result($resEstadoSiguiente,0,'refestadopostulantes');
+} else {
+	$estadoSiguiente = 1;
+}
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
@@ -176,59 +187,36 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 
 			<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
 
-				<div class="col-xs-2 bs-wizard-step complete">
-					<div class="text-center bs-wizard-stepnum">Paso 1</div>
-					<div class="progress">
-						<div class="progress-bar"></div>
-					</div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Validación SIAP</div>
-				</div>
+				<?php
+				$lblEstado = 'complete';
+				$i = 0;
+				while ($rowG = mysql_fetch_array($resGuia)) {
+					$i += 1;
 
-				<div class="col-xs-2 bs-wizard-step complete"><!-- complete -->
-					<div class="text-center bs-wizard-stepnum">Paso 2</div>
-					<div class="progress">
-						<div class="progress-bar"></div>
-					</div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Agendar Entrevista</div>
-				</div>
+					if ($rowG['refestadopostulantes'] == $estadoSiguiente) {
+						$lblEstado = 'active';
+					}
 
-				<div class="col-xs-2 bs-wizard-step complete"><!-- complete -->
-					<div class="text-center bs-wizard-stepnum">Paso 3</div>
+					if (($lblEstado == 'complete') || ($lblEstado == 'active')) {
+						$urlAcceso = $rowG['url'].'?id='.$id;
+					} else {
+						$urlAcceso = 'javascript:void(0)';
+					}
+				?>
+				<div class="col-xs-2 bs-wizard-step <?php echo $lblEstado; ?>">
+					<div class="text-center bs-wizard-stepnum">Paso <?php echo $i; ?></div>
 					<div class="progress">
 						<div class="progress-bar"></div>
 					</div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Entrevista y Pruebas Psicometricas</div>
+					<a href="<?php echo $urlAcceso; ?>" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center"><?php echo $rowG['estadopostulante']; ?></div>
 				</div>
-
-				<div class="col-xs-2 bs-wizard-step active"><!-- active -->
-					<div class="text-center bs-wizard-stepnum">Paso 4</div>
-					<div class="progress">
-						<div class="progress-bar"></div>
-					</div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Resultado Veritas</div>
-				</div>
-
-				<div class="col-xs-2 bs-wizard-step disabled"><!-- active -->
-					<div class="text-center bs-wizard-stepnum">Paso 5</div>
-					<div class="progress">
-						<div class="progress-bar"></div>
-					</div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Documentación I</div>
-				</div>
-
-				<div class="col-xs-2 bs-wizard-step disabled"><!-- active -->
-					<div class="text-center bs-wizard-stepnum">Paso 6</div>
-					<div class="progress">
-						<div class="progress-bar"></div>
-					</div>
-					<a href="#" class="bs-wizard-dot"></a>
-					<div class="bs-wizard-info text-center">Firma de Contratos</div>
-				</div>
+				<?php
+					if ($lblEstado == 'active') {
+						$lblEstado = 'disabled';
+					}
+				}
+				?>
 
 			</div>
 
@@ -264,10 +252,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 								<i class="material-icons">done_all</i>
 								<span>ACEPTAR - CONTINUAR</span>
 							</button>
-							<button type="button" class="btn bg-orange waves-effect btnRechazaHabilita">
-								<i class="material-icons">done</i>
-								<span>RECHAZADA - CONTINUAR</span>
-							</button>
+
 							<button type="button" class="btn bg-red waves-effect btnRechazar">
 								<i class="material-icons">close</i>
 								<span>RECHARZAR</span>
@@ -405,9 +390,11 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 
 					if (response.error) {
 						$('.btnContinuar').hide();
+						$('.btnRechazar').hide();
 						$('.btnEliminar').hide();
 					} else {
 						$('.btnContinuar').show();
+						$('.btnRechazar').show();
 						$('.btnEliminar').show();
 					}
 
@@ -567,7 +554,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 					id: id,
 					idestado: idestado,
 					estadodocumentacion: estadodocumentacion,
-					iddocumentacion: 2
+					iddocumentacion: 1
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){

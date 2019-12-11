@@ -55,15 +55,10 @@ $modificar = "modificarUsuario";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbusuarios";
 
-$lblCambio	 	= array('nombrecompleto','reflocatarios','refroles');
-$lblreemplazo	= array('Nombre Completo','Llogater','Perfil');
+$lblCambio	 	= array('nombrecompleto','refroles');
+$lblreemplazo	= array('Nombre Completo','Perfil');
 
-if ($_SESSION['idroll_sahilices'] == 1) {
-	$refLocatario = $serviciosReferencias->traerLocatarios();
-}	else {
-	$refLocatario = $serviciosReferencias->traerLocatariosPorId($_SESSION['idlocatario_sahilices']);
-}
-$cadRef = $serviciosFunciones->devolverSelectBox($refLocatario,array(1,2),' ');
+
 
 if ($_SESSION['idroll_sahilices'] == 1) {
 	$resRoles 	= $serviciosUsuario->traerRoles();
@@ -73,8 +68,8 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resRoles,array(1),'');
 
-$refdescripcion = array(0=>$cadRef, 1 => $cadRef2);
-$refCampo 	=  array('reflocatarios','refroles');
+$refdescripcion = array(0 => $cadRef2);
+$refCampo 	=  array('refroles');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -129,7 +124,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 
 
-<body class="theme-red">
+<body class="theme-blue">
 
 <!-- Page Loader -->
 <div class="page-loader-wrapper">
@@ -167,7 +162,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 <!-- #Top Bar -->
 <?php echo $baseHTML->cargarSECTION($_SESSION['usua_sahilices'], $_SESSION['nombre_sahilices'], $resMenu,'../../'); ?>
 
-<section class="content" style="margin-top:-15px;">
+<section class="content" style="margin-top:-75px;">
 
 	<div class="container-fluid">
 		<div class="row clearfix">
@@ -177,7 +172,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
-						<div class="header bg-indigo">
+						<div class="header bg-blue">
 							<h2 style="color:white;">
 								<?php echo strtoupper($plural); ?>
 							</h2>
@@ -200,7 +195,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										<div class="button-demo">
 											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
 												<i class="material-icons">add</i>
-												<span>NOU</span>
+												<span>NUEVO</span>
 											</button>
 
 										</div>
@@ -218,7 +213,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Email</th>
 												<th>Nombre Completo</th>
 												<th>Activo</th>
-												<th>Llogater</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -229,7 +223,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Email</th>
 												<th>Nombre Completo</th>
 												<th>Activo</th>
-												<th>Llogater</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>

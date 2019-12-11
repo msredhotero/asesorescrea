@@ -211,13 +211,19 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 					if ($rowG['refestadopostulantes'] == $estadoSiguiente) {
 						$lblEstado = 'active';
 					}
+
+					if (($lblEstado == 'complete') || ($lblEstado == 'active')) {
+						$urlAcceso = $rowG['url'].'?id='.$id;
+					} else {
+						$urlAcceso = 'javascript:void(0)';
+					}
 				?>
 				<div class="col-xs-2 bs-wizard-step <?php echo $lblEstado; ?>">
 					<div class="text-center bs-wizard-stepnum">Paso <?php echo $i; ?></div>
 					<div class="progress">
 						<div class="progress-bar"></div>
 					</div>
-					<a href="#" class="bs-wizard-dot"></a>
+					<a href="<?php echo $urlAcceso; ?>" class="bs-wizard-dot"></a>
 					<div class="bs-wizard-info text-center"><?php echo $rowG['estadopostulante']; ?></div>
 				</div>
 				<?php
