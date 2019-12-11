@@ -7,9 +7,9 @@ class appconfig {
 function conexion() {
 
 	$hostname = "localhost";
-	$database = "u115752684_asesores";
-	$username = "root";
-	$password = "";
+	$database = "u115752684_desa";
+	$username = "u115752684_desa";
+	$password = "@Chivas11";
 
 /*
 		$hostname = "PMYSQL105.dns-servicio.com:3306";
