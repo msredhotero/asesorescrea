@@ -195,12 +195,21 @@ switch ($tabla) {
 
 
 
+		if ($_SESSION['idroll_sahilices'] == 7) {
+			$label = array();
+			$class = array();
+			$icon = array();
+			$termina = 7;
+			$indiceID = 0;
+			$empieza = 1;
+		} else {
+			$label = array('btnModificar','btnEliminar');
+			$class = array('bg-amber','bg-red');
+			$icon = array('create','delete');
+			$indiceID = 0;
+			$empieza = 1;
+		}
 
-		$label = array('btnModificar','btnEliminar');
-		$class = array('bg-amber','bg-red');
-		$icon = array('create','delete');
-		$indiceID = 0;
-		$empieza = 1;
 
 
 		break;

@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../postulantes/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../miperfil/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Postulantes",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Mi Perfil",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -38,7 +38,7 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
-$id = $_SESSION['usuaid_sahilices'];
+$idusuario = $_SESSION['usuaid_sahilices'];
 
 ////////// validar solo que pueda ingrear los perfiles permitidos /////////////////////////
 
@@ -60,7 +60,9 @@ $modificar = "modificarEntrevistas";
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$resultado 		= 	$serviciosReferencias->traerPostulantesPorId($id);
+$resultado 		= 	$serviciosReferencias->traerPostulantesPorIdUsuario($idusuario);
+
+$id = mysql_result($resultado,0,'idpostulante');
 
 /**************  alertas **********************************/
 if (mysql_result($resultado,0,'edad') < 18) {
@@ -157,7 +159,7 @@ $filesVeritas = array_diff(scandir($pathVeritas), array('.', '..'));
 
 $resEstados = $serviciosReferencias->traerEstadodocumentaciones();
 
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id);
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,mysql_result($resultado,0,'refestadopostulantes'));
 
 
 // documentacion por documentacion //
@@ -372,13 +374,7 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 									<?php echo $frmUnidadNegocios; ?>
 								</div>
 								<input type="hidden" name="codigopostalaux" id="codigopostalaux" value="<?php echo mysql_result($resultado,0,'codigopostal'); ?>" />
-								<div class="button-demo">
-									<button type="submit" class="btn bg-light-blue waves-effect modificarPostulante">
-										<i class="material-icons">save</i>
-										<span>GUARDAR</span>
-									</button>
 
-								</div>
 							</form>
 							</div>
 						</div>
@@ -422,7 +418,6 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 												<th>Estado</th>
 												<th>Est.Entrevista</th>
 												<th>Fecha Crea</th>
-												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
@@ -434,7 +429,6 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 												<th>Estado</th>
 												<th>Est.Entrevista</th>
 												<th>Fecha Crea</th>
-												<th>Acciones</th>
 											</tr>
 										</tfoot>
 									</table>
@@ -495,35 +489,11 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 											Estado: <b><?php echo $estadoDocumentacion1; ?></b>
 										</h4>
 									</div>
-									<div class="col-xs-6 col-md-6" style="display:block">
-										<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
-										<div class="input-group col-md-12">
-											<select class="form-control show-tick" id="refestados" name="refestados">
-												<?php echo $cadRefEstados1; ?>
-											</select>
-										</div>
-										<button type="button" id="<?php echo $iddocumentacionasesores1; ?>" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
-									</div>
+
 								</div>
 
 
-								<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
-									<div class="dz-message">
-										<div class="drag-icon-cph">
-											<i class="material-icons">touch_app</i>
-										</div>
-										<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
 
-									</div>
-									<div class="fallback">
-
-										<input name="file" type="file" id="archivos" />
-										<input type="hidden" id="idpostulante" name="idpostulante" value="<?php echo $id; ?>" />
-
-
-
-									</div>
-								</form>
 							</div>
 						</div>
 					</div>
@@ -550,34 +520,10 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 											Estado: <b><?php echo $estadoDocumentacion2; ?></b>
 										</h4>
 									</div>
-									<div class="col-xs-6 col-md-6" style="display:block">
-										<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
-										<div class="input-group col-md-12">
-											<select class="form-control show-tick" id="refestados" name="refestados">
-												<?php echo $cadRefEstados2; ?>
-											</select>
-										</div>
-										<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
-									</div>
+
 								</div>
 
-								<form action="subir.php" id="frmFileUpload2" class="dropzone" method="post" enctype="multipart/form-data">
-									<div class="dz-message">
-										<div class="drag-icon-cph">
-											<i class="material-icons">touch_app</i>
-										</div>
-										<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
-
-									</div>
-									<div class="fallback">
-
-										<input name="file" type="file" id="archivos2" />
-										<input type="hidden" id="idpostulante" name="idpostulante" value="<?php echo $id; ?>" />
-
-
-
-									</div>
-								</form>
+								
 							</div>
 						</div>
 					</div>
