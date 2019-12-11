@@ -403,6 +403,27 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function traerRespuestasPorPostulanteDetalle($id) {
+		$sql = "select
+					rd.valor,
+						  (case when rd.respuesta = 1 then p.respuesta1
+						  when rd.respuesta = 2 then p.respuesta2
+								  when rd.respuesta = 3 then p.respuesta3
+								  when rd.respuesta = 4 then p.respuesta4
+								  when rd.respuesta = 5 then p.respuesta5
+								  when rd.respuesta = 6 then p.respuesta6
+								  when rd.respuesta = 7 then p.respuesta7
+					end) as pregunta
+				from dbrespuestas r
+				inner join dbpreguntas p on p.idpregunta = r.idpregunta
+				inner join dbpostulantes pp on pp.token = r.token
+				inner join dbrespuestadetalles rd on rd.refrespuestas = r.idrespuesta
+				where pp.idpostulante =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 
 	/* Fin */
 	/* /* Fin de la Tabla: dbrespuestadetalles*/

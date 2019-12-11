@@ -425,14 +425,24 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 									<tbody>
 										<?php
 										while ($rowTT = mysql_fetch_array($resTest)) {
-											//die();
+											if ($rowTT['idpregunta'] != 7) {
 										?>
 										<tr>
 											<td><?php echo $rowTT['pregunta']; ?></td>
 											<td><?php echo $rowTT['respuesta']; ?></td>
 										</tr>
 										<?php
-
+											} else {
+												$resTestDetalle = $serviciosReferencias->traerRespuestasPorPostulanteDetalle($id);
+												while ($rowTTD = mysql_fetch_array($resTestDetalle)) {
+										?>
+										<tr>
+											<td><?php echo $rowTTD['pregunta']; ?></td>
+											<td><?php echo '$ '.$rowTTD['valor']; ?></td>
+										</tr>
+										<?php
+												}
+											}
 										}
 										?>
 									</tbody>
