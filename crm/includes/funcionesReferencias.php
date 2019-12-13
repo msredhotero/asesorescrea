@@ -1275,7 +1275,7 @@ class ServiciosReferencias {
 
 
 	function eliminarPostulantes($id) {
-		$sql = "delete from dbpostulantes where idpostulante =".$id;
+		$sql = "update dbpostulantes set refestadopostulantes= 9 where idpostulante =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
