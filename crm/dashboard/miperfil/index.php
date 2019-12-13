@@ -376,7 +376,7 @@ $filesInfonavit = array_diff(scandir($pathInfonavit), array('.', '..'));
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,$estadoSiguiente);
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,7);
 
 $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 $permitePresentar = $serviciosReferencias->permitePresentarDocumentacionI($id);
@@ -632,7 +632,7 @@ if (mysql_result($resultado,0,'nss') == '') {
 						<div class="card">
 							<div class="header">
 								<h2>
-									CARGA/MODIFIQUE EL SIAP AQUI
+									SIAP
 								</h2>
 								<ul class="header-dropdown m-r--5">
 									<li class="dropdown">
@@ -657,7 +657,7 @@ if (mysql_result($resultado,0,'nss') == '') {
 						<div class="card">
 							<div class="header">
 								<h2>
-									CARGA/MODIFIQUE PRUEBA VERITA INBURSA AQUI
+									PRUEBA VERITA INBURSA
 								</h2>
 								<ul class="header-dropdown m-r--5">
 									<li class="dropdown">
@@ -681,6 +681,7 @@ if (mysql_result($resultado,0,'nss') == '') {
 				</div>
 			</div> <!-- fin del container veritas -->
 
+			<?php if ($estadoSiguiente == 7) { ?>
 			<div class="row clearfix">
 				<div class="row">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -749,7 +750,8 @@ if (mysql_result($resultado,0,'nss') == '') {
 						</div>
 					</div>
 				</div>
-			</div> <!-- fin del container entrevistas -->
+			</div> <!-- fin del container documentaciones -->
+		<?php } ?>
 		</div>
 	</div>
 </section>
