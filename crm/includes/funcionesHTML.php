@@ -7,7 +7,10 @@ class ServiciosHTML {
 
 function menu($usuario,$titulo,$rol,$empresa) {
 
+	$rol = str_replace(' ','',$rol);
 	$sql = "select idmenu,url,icono, nombre, permiso from predio_menu where permiso like '%".$rol."%' and grupo = 0 order by orden";
+
+	//die(var_dump($sql));
 	$res = $this->query($sql,0);
 
 	$cadmenu = "";

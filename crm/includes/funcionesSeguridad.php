@@ -21,6 +21,8 @@ class ServiciosSeguridad {
 
 
 	function seguridadRuta($rol, $ruta) {
+		$rol = str_replace(' ','',$rol);
+		
 		$sql = "select idmenu,url,icono, nombre, permiso from predio_menu where permiso like '%".$rol."%' and url = '".$ruta."'";
 		$res = $this->query($sql,0);
 

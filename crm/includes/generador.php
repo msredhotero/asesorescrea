@@ -71,7 +71,8 @@ $tablasAr	= array('rolhogar' => 'tbrolhogar',
 							'contactoproductos' => 'dbcontactoproductos',
 							'esquemadocumentosestados' => 'dbesquemadocumentosestados',
 							'guias' => 'dbguias',
-							'seguimientos' => 'dbseguimientos');
+							'seguimientos' => 'dbseguimientos',
+							'reclutadorasores' => 'dbreclutadorasores');
 
 
 function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
@@ -112,7 +113,8 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'contactoproductos' => 'dbcontactoproductos',
 								'esquemadocumentosestados' => 'dbesquemadocumentosestados',
 								'guias' => 'dbguias',
-								'seguimientos' => 'dbseguimientos');
+								'seguimientos' => 'dbseguimientos',
+								'reclutadorasores' => 'dbreclutadorasores');
 
 	$tablasArAux	= array('rolhogar' => 1,
 								'tipopromotores' => 1,
@@ -150,7 +152,8 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'contactoproductos' => 1,
 								'esquemadocumentosestados' => 1,
 								'guias' => 1,
-								'seguimientos' => 1);
+								'seguimientos' => 1,
+								'reclutadorasores' => 3);
 
 	$inner= '';
 	$sql	=	"show columns from ".$tabla;

@@ -177,7 +177,7 @@ $filesInfonavit = array_diff(scandir($pathInfonavit), array('.', '..'));
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,$estadoSiguiente);
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,7);
 
 $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 $permitePresentar = $serviciosReferencias->permitePresentarDocumentacionI($id);
@@ -372,19 +372,22 @@ if (mysql_result($resultado,0,'nss') == '') {
 						<?php echo $alertaCURP; ?>
 						<?php echo $alertaRFC; ?>
 						<?php echo $alertaNSS; ?>
-						<?php if ($puedeAvanzar == true) { ?>
-							<button type="button" class="btn bg-green waves-effect btnContinuar">
-								<i class="material-icons">done_all</i>
-								<span>CONTINUAR</span>
-							</button>
 
-						<?php } ?>
-						<?php if ($permitePresentar == true) { ?>
-							<button type="button" class="btn bg-amber waves-effect btnPresentar">
-								<i class="material-icons">done_all</i>
-								<span>PRESENTAR DOCUMENTACION</span>
-							</button>
+						<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+							<?php if ($puedeAvanzar == true) { ?>
+								<button type="button" class="btn bg-green waves-effect btnContinuar">
+									<i class="material-icons">done_all</i>
+									<span>CONTINUAR</span>
+								</button>
 
+							<?php } ?>
+							<?php if ($permitePresentar == true) { ?>
+								<button type="button" class="btn bg-amber waves-effect btnPresentar">
+									<i class="material-icons">done_all</i>
+									<span>PRESENTAR DOCUMENTACION</span>
+								</button>
+
+							<?php } ?>
 						<?php } ?>
 					</div>
 					<?php
@@ -445,11 +448,13 @@ if (mysql_result($resultado,0,'nss') == '') {
 
 	$(document).ready(function(){
 
+		<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
 			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=" + idTable;
 			$(location).attr('href',url);
 		});
+		<?php } ?>
 
 		function traerImagen(contenedorpdf, contenedor) {
 			$.ajax({

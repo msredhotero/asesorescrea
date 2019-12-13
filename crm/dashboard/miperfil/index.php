@@ -976,6 +976,17 @@ if (mysql_result($resultado,0,'nss') == '') {
 			window.open(srcImg,'_blank');
 		});
 
+		$(".form-control").attr("disabled", true);
+		/*
+		$("#sexo").attr("disabled", true);
+		$("#codigopostal").attr("disabled", true);
+		$("#refestadocivil").attr("disabled", true);
+		$("#refescolaridades").attr("disabled", true);
+		$("#refestadopostulantes").attr("disabled", true);
+		$("#refesquemareclutamiento").attr("disabled", true);
+		$("#afore").attr("disabled", true);
+		$("#cedula").attr("disabled", true);
+		*/
 
 		$('#fechanacimiento').pickadate({
 			format: 'yyyy-mm-dd',

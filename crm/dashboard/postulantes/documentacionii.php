@@ -211,6 +211,9 @@ $filesC = array_diff(scandir($pathC), array('.', '..'));
 $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,$estadoSiguiente);
 
 $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionII($id);
+$puedeImportarFinalizar = $serviciosReferencias->permiteAvanzarDocumentacionIII($id);
+
+//die(var_dump($puedeAvanzar));
 
 ?>
 
@@ -371,12 +374,21 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionII($id);
 						<div class="alert alert-info">
 							<p><b>Importante!</b> Recuerde que debe completar toda la documentacion para poder continuar con la carga de la siguiente documentación</p>
 						</div>
-						<?php if ($puedeAvanzar == true) { ?>
-							<button type="button" class="btn bg-green waves-effect btnContinuar">
-								<i class="material-icons">add</i>
-								<span>CONTINUAR</span>
-							</button>
+						<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+							<?php if ($puedeAvanzar == true) { ?>
+								<button type="button" class="btn btn-lg bg-orange waves-effect btnGenerar">
+									<i class="material-icons">class</i>
+									<span>GENERAR FOLIO</span>
+								</button>
 
+							<?php } ?>
+							<?php if ($puedeImportarFinalizar == true) { ?>
+								<button type="button" class="btn btn-lg bg-deep-orange waves-effect btnImportar">
+									<i class="material-icons">build</i>
+									<span>GENERAR ASESOR</span>
+								</button>
+
+							<?php } ?>
 						<?php } ?>
 					</div>
 					<?php
@@ -437,11 +449,13 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionII($id);
 
 	$(document).ready(function(){
 
+		<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
 			url = "subirdocumentacionii.php?id=<?php echo $id; ?>&documentacion=" + idTable;
 			$(location).attr('href',url);
 		});
+		<?php } ?>
 
 		function traerImagen(contenedorpdf, contenedor) {
 			$.ajax({

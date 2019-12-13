@@ -39,13 +39,7 @@
 		$idpostulante = $_POST['idpostulante'];
 		$iddocumentacion = $_POST['iddocumentacion'];
 
-		$resImagen = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacion($idpostulante,$iddocumentacion);
 
-		if (mysql_num_rows($resImagen)>0) {
-			$archivoAnterior = mysql_result($resImagen,0,'archivo');
-		} else {
-			$archivoAnterior = '';
-		}
 
 
 		$imagen = $serviciosReferencias->sanear_string(basename($archivo['name']));
@@ -123,7 +117,8 @@
 			case 14:
 				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/solicitud/';
 				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['solicitud', time(), $extension]);
+				$nombreEspecifico = 'solicitud'.$nombreEspecifico;
+				$newname = implode('.', [$nombreEspecifico, time(), $extension]);
 			break;
 			case 15:
 				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/formatofirma/';
@@ -163,16 +158,19 @@
 			case 22:
 				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/cf1/';
 				list($base,$extension) = explode('.',$name);
+				$nombreEspecifico = 'contratofirmado1'.$nombreEspecifico;
 				$newname = implode('.', [$nombreEspecifico, $extension]);
 			break;
 			case 23:
 				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/cf2/';
 				list($base,$extension) = explode('.',$name);
+				$nombreEspecifico = 'contratofirmado2'.$nombreEspecifico;
 				$newname = implode('.', [$nombreEspecifico, $extension]);
 			break;
 			case 24:
 				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/cf3/';
 				list($base,$extension) = explode('.',$name);
+				$nombreEspecifico = 'contratofirmado3'.$nombreEspecifico;
 				$newname = implode('.', [$nombreEspecifico, $extension]);
 			break;
 			case 25:
@@ -180,6 +178,14 @@
 				list($base,$extension) = explode('.',$name);
 				$newname = implode('.', ['compromiso', time(), $extension]);
 			break;
+		}
+
+		$resImagen = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionEspecifica($idpostulante,$iddocumentacion,$nombreEspecifico);
+
+		if (mysql_num_rows($resImagen)>0) {
+			$archivoAnterior = mysql_result($resImagen,0,'archivo');
+		} else {
+			$archivoAnterior = '';
 		}
 
 

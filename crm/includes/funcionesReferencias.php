@@ -9,6 +9,67 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+	/* PARA Reclutadorasores */
+
+	function insertarReclutadorasores($refusuarios,$refpostulantes) {
+		$sql = "insert into dbreclutadorasores(idreclutadorasor,refusuarios,refpostulantes)
+		values ('',".$refusuarios.",".$refpostulantes.")";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarReclutadorasores($id,$refusuarios,$refpostulantes) {
+		$sql = "update dbreclutadorasores
+		set
+		refusuarios = ".$refusuarios.",refpostulantes = ".$refpostulantes."
+		where idreclutadorasor =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarReclutadorasores($id) {
+		$sql = "delete from dbreclutadorasores where idreclutadorasor =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerReclutadorasores() {
+		$sql = "select
+		r.idreclutadorasor,
+		r.refusuarios,
+		r.refpostulantes
+		from dbreclutadorasores r
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerReclutadorasoresPorId($id) {
+		$sql = "select idreclutadorasor,refusuarios,refpostulantes from dbreclutadorasores where idreclutadorasor =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerReclutadorasoresPorPostulante($id) {
+		$sql = "SELECT
+				    r.idreclutadorasor, r.refusuarios, r.refpostulantes, u.email, u.refroles
+				FROM
+				    dbreclutadorasores r
+				    inner join dbusuarios u on u.idusuario = r.refusuarios
+				WHERE
+				    r.refpostulantes =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbreclutadorasores*/
+
 	/* PARA Seguimientos */
 
 	function insertarSeguimientos($refpostulantes,$refguias,$usuariomodi,$refestados) {
@@ -1364,7 +1425,7 @@ class ServiciosReferencias {
 
 	function traerPostulantesPorId($id) {
 		$sql = "select idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa, refestadocivil,nss,afore,cedula,folio,refesquemareclutamiento,
-		datediff(now(),fechanacimiento)/365 as edad from dbpostulantes where idpostulante =".$id;
+		datediff(now(),fechanacimiento)/365 as edad, fechaalta from dbpostulantes where idpostulante =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -1583,6 +1644,19 @@ class ServiciosReferencias {
 		from dbdocumentacionasesores da
 		inner join tbestadodocumentaciones e on e.idestadodocumentacion = da.refestadodocumentaciones
 		where da.refpostulantes =".$id." and da.refdocumentaciones = ".$iddocumentacion;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerDocumentacionPorPostulanteDocumentacionPostulante($id) {
+		$sql = "select
+		da.iddocumentacionasesor,da.refpostulantes,da.refdocumentaciones,
+		da.archivo,da.type,da.refestadodocumentaciones,da.fechacrea,da.fechamodi,
+		da.usuariocrea,da.usuariomodi , e.estadodocumentacion, e.color, dd.carpeta
+		from dbdocumentacionasesores da
+		inner join dbdocumentaciones dd on dd.iddocumentacion = da.refdocumentaciones
+		inner join tbestadodocumentaciones e on e.idestadodocumentacion = da.refestadodocumentaciones
+		where da.refpostulantes =".$id." and dd.orden is not null order by dd.orden,da.archivo";
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -1807,7 +1881,7 @@ class ServiciosReferencias {
 	}
 
 
-	function permiteAvanzarDocumentacionII($idpostulante) {
+	function permiteAvanzarDocumentacionIII($idpostulante) {
 		$apruebaPrimero = 0;
 		$apruebaSegundo = 0;
 
@@ -1833,7 +1907,11 @@ class ServiciosReferencias {
 				    dbpostulantes p
 				WHERE
 				    p.idpostulante = ".$idpostulante." AND ine <> ''
-				        AND curp <> '' and rfc <> '' and nss <> ''";
+				        AND curp <> '' and rfc <> '' and nss <> ''
+						  and claveinterbancaria <> ''
+						  and idclienteinbursa <> ''
+						  and claveasesor <> ''
+						  and fechaalta <> ''";
 
 		$resPrimero = $this->query($sqlPrimero,0);
 
@@ -1859,7 +1937,64 @@ class ServiciosReferencias {
 		$resSegundo = $this->query($sqlSegundo,0);
 
   		if (mysql_num_rows($resSegundo) > 0) {
-			if (mysql_result($resSegundo,0,0) == $count) {
+			if (mysql_result($resSegundo,0,0) >= $count) {
+				$apruebaSegundo = 1;
+			}
+  		}
+
+		// compruebo que haya cargado las archivos de las documentaciones
+		// falta
+
+		if (($apruebaPrimero == 1) && ($apruebaSegundo == 1)) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+
+	function permiteAvanzarDocumentacionII($idpostulante) {
+		$apruebaPrimero = 0;
+		$apruebaSegundo = 0;
+
+		$count = 0;
+
+		$sqlcount = "SELECT
+						COUNT(*) AS cantidad
+					FROM
+						dbpostulantes p
+						inner join dbesquemadocumentosestados ese on ese.refesquemareclutamiento = p.refesquemareclutamiento and p.idpostulante = ".$idpostulante."
+						inner join dbdocumentaciones d on d.iddocumentacion = ese.refdocumentaciones
+					WHERE
+						ese.refestadopostulantes in (8)
+						and d.obligatoria = '1'";
+		$resCount = $this->query($sqlcount,0);
+
+		$count = mysql_result($resCount,0,0);
+
+		// compruebo que haya cargado los datos en postulantes
+		$apruebaPrimero = 1;
+
+		// compruebo que haya cargado las documentaciones
+		$sqlSegundo = "SELECT
+						COUNT(*) AS documentacionesaceptadas
+					FROM
+						dbdocumentacionasesores da
+						inner join dbdocumentaciones d on d.iddocumentacion = da.refdocumentaciones
+						inner join dbpostulantes p on p.idpostulante = da.refpostulantes
+						inner join dbesquemadocumentosestados ese on ese.refesquemareclutamiento = p.refesquemareclutamiento
+						and ese.refdocumentaciones = d.iddocumentacion
+					WHERE
+						da.refpostulantes = ".$idpostulante."
+						AND ese.refestadopostulantes in (8)
+						and d.obligatoria = '1'
+						AND da.refestadodocumentaciones in (5,6)";
+
+		$resSegundo = $this->query($sqlSegundo,0);
+
+  		if (mysql_num_rows($resSegundo) > 0) {
+			if (mysql_result($resSegundo,0,0) >= $count) {
 				$apruebaSegundo = 1;
 			}
   		}

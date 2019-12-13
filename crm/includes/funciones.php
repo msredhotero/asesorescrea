@@ -422,7 +422,7 @@ class Servicios {
 				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi","reftipoingreso","refusuarios","refclientes",'comision');
 				break;
 			case 'dbpostulantes':
-				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi","rfc","curp","ine",'refasesores','urlprueba','refsucursalesinbursa','ultimoestado','comision');
+				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi","rfc","curp","ine",'refasesores','urlprueba','refsucursalesinbursa','ultimoestado','comision','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta');
 				break;
 			case 'dbentrevistas':
 				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes');

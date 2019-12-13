@@ -204,7 +204,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 						<div class="card ">
 							<div class="header bg-blue">
 								<h2 style="color:#fff">
-									POSTULANTES
+									BIENVENIDO
 								</h2>
 								<ul class="header-dropdown m-r--5">
 									<li class="dropdown">
@@ -219,41 +219,12 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 							</div>
 							<div class="body table-responsive">
 								<form class="form" id="formFacturas">
+									<h3>Bienvenido al CRM de Asesores Crea</h3>
+									<p>Aqui usted encontrara avisos importantes sobre su estado en el Proceso de Reclutamiento</p>
 
-								<div class="row" style="padding: 5px 20px;">
-									<table id="example" class="display table " style="width:100%">
-										<thead>
-											<tr>
-												<th>Nombre</th>
-												<th>Apellido P.</th>
-												<th>Apellido M.</th>
-												<th>Email</th>
-												<th>Tel.</th>
-												<th>Cod. Postal</th>
-												<th>Fecha</th>
-												<th>Estado</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tfoot>
-											<tr>
-												<th>Nombre</th>
-												<th>Apellido P.</th>
-												<th>Apellido M.</th>
-												<th>Email</th>
-												<th>Tel.</th>
-												<th>Cod. Postal</th>
-												<th>Fecha</th>
-												<th>Estado</th>
-												<th>Acciones</th>
-											</tr>
-										</tfoot>
-									</table>
-
-								</div>
-							</form>
+								</form>
+							</div>
 						</div>
-					</div>
 				</div>
 			<?php } else { ?>
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">

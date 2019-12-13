@@ -1232,6 +1232,18 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
 
       $idpostulante = $_POST['idpostulante'];
 
+      $resPostulante = $serviciosReferencias->traerPostulantesPorId($idpostulante);
+
+      if (mysql_num_rows($resPostulante) > 0) {
+         $nombre           = mysql_result($resPostulante,0,'nombre');
+         $apellidopaterno  = mysql_result($resPostulante,0,'apellidopaterno');
+         $apellidomaterno  = mysql_result($resPostulante,0,'apellidomaterno');
+      } else {
+         $nombre           = '';
+         $apellidopaterno  = '';
+         $apellidomaterno  = '';
+      }
+
       $password = $_POST['password'];
 
       //pongo al usuario $activo
@@ -1241,6 +1253,18 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
       $resConcretar = $serviciosUsuarios->eliminarActivacionusuarios($activacion);
 
       if ($resUsuario == '') {
+         /* email base */
+         $destinatario = 'rlinares@asesorescrea.com';
+         $asunto = 'Activacion de Usuario';
+         $cuerpo = 'El usuario '.$nombre.' '.$apellidopaterno.' '.$apellidomaterno.' se dio de alta al sistema';
+
+         $resEmail = $serviciosUsuarios->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
+         /* email referencte si existiera */
+         $resReferente = $serviciosReferencias->traerReclutadorasoresPorPostulante($idpostulante);
+         if (mysql_num_rows($resReferente) > 0) {
+            $destinatario = mysql_result($resReferente,0,'email');
+            $resEmailReferente = $serviciosUsuarios->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
+         }
          echo '';
       } else {
          echo 'Hubo un error al modificar datos';
@@ -2103,6 +2127,13 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
                }
             }
 
+            if (isset($_SESSION['idroll_sahilices'])) {
+               if (($_SESSION['idroll_sahilices'] == 2) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 5) || ($_SESSION['idroll_sahilices'] == 6)) {
+                  $resRelacionRP = $serviciosReferencias->insertarReclutadorasores($_SESSION['usuaid_sahilices'],$res);
+               }
+            }
+
+
             /* marco el primer seguimiento */
             $resGuia = $serviciosReferencias->traerGuiasPorEsquema($refesquemareclutamiento);
             if ($refestadopostulantes == 9) {
@@ -2222,6 +2253,9 @@ function modificarPostulantes($serviciosReferencias) {
    session_start();
 
    $id = $_POST['id'];
+
+   $resPostulante = $serviciosReferencias->traerPostulantesPorId($id);
+
    $refusuarios = $_POST['refusuarios'];
    $nombre = $_POST['nombre'];
    $apellidopaterno = $_POST['apellidopaterno'];
@@ -2255,7 +2289,24 @@ function modificarPostulantes($serviciosReferencias) {
    $claveinterbancaria = $_POST['claveinterbancaria'];
    $idclienteinbursa = $_POST['idclienteinbursa'];
    $claveasesor = $_POST['claveasesor'];
-   $fechaalta = $_POST['fechaalta'];
+
+   if ($_SESSION['idroll_sahilices'] == 1) {
+      $fechaalta = $_POST['fechaalta'];
+   } else {
+      if ($claveasesor != '') {
+
+         if (mysql_result($resPostulante,0,'fechaalta') == '') {
+            $fechaalta = date('Y-m-d H:i:s');
+         } else {
+            $fechaalta = mysql_result($resPostulante,0,'fechaalta');
+         }
+
+      } else {
+         $fechaalta = '';
+      }
+   }
+
+
 
 
    $res = $serviciosReferencias->modificarPostulantes($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$nss,$refesquemareclutamiento,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta);

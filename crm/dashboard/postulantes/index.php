@@ -205,7 +205,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						</div>
 						<div class="body table-responsive">
 							<form class="form" id="formCountry">
-
+								<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
@@ -217,6 +217,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										</div>
 									</div>
 								</div>
+								<?php } ?>
 
 								<div class="row" style="padding: 5px 20px;">
 
@@ -227,10 +228,12 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Apellido P.</th>
 												<th>Apellido M.</th>
 												<th>Email</th>
-												<th>Tel.</th>
 												<th>Cod. Postal</th>
 												<th>Fecha</th>
 												<th>Estado</th>
+												<?php if ($_SESSION['idroll_sahilices'] == 1) { ?>
+												<th>Tel.</th>
+												<?php } ?>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -240,10 +243,12 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Apellido P.</th>
 												<th>Apellido M.</th>
 												<th>Email</th>
-												<th>Tel.</th>
 												<th>Cod. Postal</th>
 												<th>Fecha</th>
 												<th>Estado</th>
+												<?php if ($_SESSION['idroll_sahilices'] == 1) { ?>
+												<th>Tel.</th>
+												<?php } ?>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -615,13 +620,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 					success: function(data){
 
 						if (data == '') {
-							swal({
-									title: "Respuesta",
-									text: "Registro Creado con exito!!",
-									type: "success",
-									timer: 1500,
-									showConfirmButton: false
-							});
+							swal("Ok!", 'Se guardo correctamente el formulario, cuando el Prospecto para Asesor confirme su email podra continuar con el Proceso de Reclutamiento', "success");
 
 							$('#lgmNuevo').modal('hide');
 

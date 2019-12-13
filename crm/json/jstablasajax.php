@@ -97,10 +97,10 @@ switch ($tabla) {
 			p.apellidopaterno,
 			p.apellidomaterno,
 			p.email,
-			p.telefonomovil,
 			p.codigopostal,
 			p.fechacrea,
 			ep.estadopostulante,
+			p.telefonomovil,
 			est.estadocivil,
 			p.curp,
 			p.rfc,
@@ -129,12 +129,62 @@ switch ($tabla) {
 
 		$resAjax = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta);
 		$res = $serviciosReferencias->traerPostulantes();
-		$label = array('btnVer','btnModificar','btnEliminar');
-		$class = array('bg-blue','bg-amber','bg-red');
-		$icon = array('Ver','Modificar','Eliminar');
-		$indiceID = 0;
-		$empieza = 1;
-		$termina = 8;
+
+		switch ($_SESSION['idroll_sahilices']) {
+			case 1:
+				$label = array('btnVer','btnModificar','btnEliminar');
+				$class = array('bg-blue','bg-amber','bg-red');
+				$icon = array('Ver','Modificar','Eliminar');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 8;
+			break;
+			case 2:
+				$label = array('btnVer','btnModificar');
+				$class = array('bg-blue','bg-amber');
+				$icon = array('Ver','Modificar');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 7;
+			break;
+			case 3:
+				$label = array('btnVer','btnModificar');
+				$class = array('bg-blue','bg-amber');
+				$icon = array('Ver','Modificar');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 7;
+			break;
+			case 4:
+				$label = array('btnVer','btnModificar');
+				$class = array('bg-blue','bg-amber');
+				$icon = array('Ver','Modificar');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 7;
+			break;
+			case 5:
+				$label = array('btnVer','btnModificar');
+				$class = array('bg-blue','bg-amber');
+				$icon = array('Ver','Modificar');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 7;
+			break;
+			case 6:
+				$label = array('btnVer','btnModificar');
+				$class = array('bg-blue','bg-amber');
+				$icon = array('Ver','Modificar');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 7;
+			break;
+
+			default:
+				// code...
+				break;
+		}
+
 
 	break;
 	case 'entrevistas':
@@ -194,22 +244,64 @@ switch ($tabla) {
 
 
 
+		switch ($_SESSION['idroll_sahilices']) {
+			case 1:
+				$label = array('btnModificar','btnEliminar');
+				$class = array('bg-amber','bg-red');
+				$icon = array('create','delete');
+				$indiceID = 0;
+				$empieza = 1;
+			break;
+			case 2:
+				$label = array();
+				$class = array();
+				$icon = array();
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 6;
+			break;
+			case 3:
+				$label = array('btnModificar','btnEliminar');
+				$class = array('bg-amber','bg-red');
+				$icon = array('create','delete');
+				$indiceID = 0;
+				$empieza = 1;
+			break;
+			case 4:
+				$label = array('btnModificar','btnEliminar');
+				$class = array('bg-amber','bg-red');
+				$icon = array('create','delete');
+				$indiceID = 0;
+				$empieza = 1;
+			break;
+			case 5:
+				$label = array('btnModificar','btnEliminar');
+				$class = array('bg-amber','bg-red');
+				$icon = array('create','delete');
+				$indiceID = 0;
+				$empieza = 1;
+			break;
+			case 6:
+				$label = array();
+				$class = array();
+				$icon = array();
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 6;
+			break;
+			case 7:
+				$label = array();
+				$class = array();
+				$icon = array();
+				$termina = 6;
+				$indiceID = 0;
+				$empieza = 1;
+			break;
 
-		if ($_SESSION['idroll_sahilices'] == 7) {
-			$label = array();
-			$class = array();
-			$icon = array();
-			$termina = 6;
-			$indiceID = 0;
-			$empieza = 1;
-		} else {
-			$label = array('btnModificar','btnEliminar');
-			$class = array('bg-amber','bg-red');
-			$icon = array('create','delete');
-			$indiceID = 0;
-			$empieza = 1;
+			default:
+				// code...
+				break;
 		}
-
 
 
 		break;

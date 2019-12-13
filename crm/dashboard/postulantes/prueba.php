@@ -284,12 +284,13 @@ if (mysql_num_rows($resEntrevistaRegional) > 0) {
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
-
+											<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 											<?php if ($existe == 1) { ?>
 											<button type="button" class="btn bg-green waves-effect btnContinuar">
 												<i class="material-icons">add</i>
 												<span>CONTINUAR</span>
 											</button>
+											<?php } ?>
 											<?php } ?>
 										</div>
 									</div>
@@ -310,8 +311,9 @@ if (mysql_num_rows($resEntrevistaRegional) > 0) {
 										<label class="form-label"> </label>
 										<div class="form-group input-group">
 											<div class="form-line">
+												<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 												<button type="button" class="btn btn-primary waves-effect modificarURL">GUARDAR</button>
-
+												<?php } ?>
 											</div>
 										</div>
 									</div>
@@ -347,11 +349,12 @@ if (mysql_num_rows($resEntrevistaRegional) > 0) {
 									<div class="row">
 										<div class="col-lg-12 col-md-12">
 											<div class="button-demo">
+												<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 												<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
 													<i class="material-icons">add</i>
 													<span>NUEVO</span>
 												</button>
-
+												<?php } ?>
 												<div class="row">
 													<div class="alert alert-info">
 														<?php echo $leyendaPrimerEntrevista; ?>
@@ -371,8 +374,10 @@ if (mysql_num_rows($resEntrevistaRegional) > 0) {
 													<th>Domicilio</th>
 													<th>Codigo Postal</th>
 													<th>Estado</th>
+													<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 													<th>Fecha Crea</th>
 													<th>Acciones</th>
+													<?php } ?>
 												</tr>
 											</thead>
 											<tfoot>
@@ -382,8 +387,10 @@ if (mysql_num_rows($resEntrevistaRegional) > 0) {
 													<th>Domicilio</th>
 													<th>Codigo Postal</th>
 													<th>Estado</th>
+													<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 													<th>Fecha Crea</th>
 													<th>Acciones</th>
+													<?php } ?>
 												</tr>
 											</tfoot>
 										</table>

@@ -378,13 +378,16 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 									<?php echo $frmUnidadNegocios; ?>
 								</div>
 								<input type="hidden" name="codigopostalaux" id="codigopostalaux" value="<?php echo mysql_result($resultado,0,'codigopostal'); ?>" />
+
+								<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+								<div class="row"><div class="alert bg-orange"><i class="material-icons">warning</i> Recuerde que una vez cargada la Clave del Asesor, se guardara automaticamente la Fecha y Hora, y no se podrá modificar</div></div>
 								<div class="button-demo">
 									<button type="submit" class="btn bg-light-blue waves-effect modificarPostulante">
 										<i class="material-icons">save</i>
 										<span>GUARDAR</span>
 									</button>
-
 								</div>
+								<?php } ?>
 							</form>
 							</div>
 						</div>
@@ -491,8 +494,10 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 												<th>Codigo Postal</th>
 												<th>Estado</th>
 												<th>Est.Entrevista</th>
+												<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 												<th>Fecha Crea</th>
 												<th>Acciones</th>
+												<?php } ?>
 											</tr>
 										</thead>
 										<tfoot>
@@ -503,8 +508,10 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 												<th>Codigo Postal</th>
 												<th>Estado</th>
 												<th>Est.Entrevista</th>
+												<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 												<th>Fecha Crea</th>
 												<th>Acciones</th>
+												<?php } ?>
 											</tr>
 										</tfoot>
 									</table>
@@ -565,6 +572,7 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 											Estado: <b><?php echo $estadoDocumentacion1; ?></b>
 										</h4>
 									</div>
+									<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 									<div class="col-xs-6 col-md-6" style="display:block">
 										<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
 										<div class="input-group col-md-12">
@@ -574,9 +582,10 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 										</div>
 										<button type="button" id="<?php echo $iddocumentacionasesores1; ?>" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
 									</div>
+									<?php } ?>
 								</div>
 
-
+								<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 								<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
 									<div class="dz-message">
 										<div class="drag-icon-cph">
@@ -594,6 +603,7 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 
 									</div>
 								</form>
+								<?php } ?>
 							</div>
 						</div>
 					</div>
@@ -620,6 +630,7 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 											Estado: <b><?php echo $estadoDocumentacion2; ?></b>
 										</h4>
 									</div>
+									<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 									<div class="col-xs-6 col-md-6" style="display:block">
 										<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
 										<div class="input-group col-md-12">
@@ -629,8 +640,9 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 										</div>
 										<button type="button" id="<?php echo $iddocumentacionasesores2; ?>" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
 									</div>
+									<?php } ?>
 								</div>
-
+								<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 								<form action="subir.php" id="frmFileUpload2" class="dropzone" method="post" enctype="multipart/form-data">
 									<div class="dz-message">
 										<div class="drag-icon-cph">
@@ -648,6 +660,7 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 
 									</div>
 								</form>
+								<?php } ?>
 							</div>
 						</div>
 					</div>
@@ -811,11 +824,12 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 	traerImagen('example1','timagen1',2);
 	traerImagen('example2','timagen2',1);
 
+	<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 	Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
 
 	Dropzone.options.frmFileUpload = {
 		maxFilesize: 30,
-		acceptedFiles: ".png,.jpg,.gif,.bmp,.jpeg,.pdf",
+		acceptedFiles: ".jpg,.jpeg,.pdf",
 		accept: function(file, done) {
 			done();
 		},
@@ -840,7 +854,7 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 
 	Dropzone.options.frmFileUpload2 = {
 			maxFilesize: 30,
-			acceptedFiles: ".png,.jpg,.gif,.bmp,.jpeg,.pdf",
+			acceptedFiles: ".jpg,.jpeg,.pdf",
 			accept: function(file, done) {
 				done();
 			},
@@ -879,6 +893,7 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 	      },
 			url: 'subir.php'
 		});
+	<?php } ?>
 
 	$(document).ready(function(){
 
@@ -1012,6 +1027,8 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 			time: true
 		});
 
+		<?php if ($_SESSION['idroll_sahilices'] == 1) { ?>
+
 		$('#fechaalta').bootstrapMaterialDatePicker({
 			format: 'YYYY-MM-DD HH:mm:ss',
 			lang : 'mx',
@@ -1019,6 +1036,10 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 			weekStart: 1,
 			time: true
 		});
+
+		<?php } else { ?>
+		$('#fechaalta').attr('disabled', true);
+		<?php } ?>
 
 		var options = {
 

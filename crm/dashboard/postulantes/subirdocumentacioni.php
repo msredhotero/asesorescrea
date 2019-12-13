@@ -41,6 +41,10 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 $id = $_GET['id'];
 $iddocumentacion = $_GET['documentacion'];
 
+if (($_SESSION['idroll_sahilices'] == 2) || ($_SESSION['idroll_sahilices'] == 6) || ($_SESSION['idroll_sahilices'] == 7)) {
+	header('Location: documentacioni.php?id='.$id);
+}
+
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
 $singular = "Documentación I";
 
@@ -316,7 +320,7 @@ switch ($iddocumentacion) {
 	break;
 }
 
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,$estadoSiguiente);
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,7);
 
 $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 
@@ -820,7 +824,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 
 		Dropzone.options.frmFileUpload = {
 			maxFilesize: 30,
-			acceptedFiles: ".png,.jpg,.gif,.bmp,.jpeg,.pdf",
+			acceptedFiles: ".jpg,.jpeg,.pdf",
 			accept: function(file, done) {
 				done();
 			},

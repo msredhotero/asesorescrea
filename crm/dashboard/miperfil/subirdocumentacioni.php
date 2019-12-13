@@ -784,7 +784,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 
 		Dropzone.options.frmFileUpload = {
 			maxFilesize: 30,
-			acceptedFiles: ".png,.jpg,.gif,.bmp,.jpeg,.pdf",
+			acceptedFiles: ".jpg,.jpeg,.pdf",
 			accept: function(file, done) {
 				done();
 			},

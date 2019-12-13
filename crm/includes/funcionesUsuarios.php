@@ -532,7 +532,7 @@ function confirmarEmail($email, $password,$apellido, $nombre, $idusuario) {
    $cuerpo .= '<h2>¡Bienvenido a Asesores CREA!</h2>';
 
 
-   $cuerpo .= '<p>Usa el siguente <a href="http://asesorescrea.com/crm/activacionpostulantes.php?token='.$token.'" target="_blank">enlace</a> para confirmar tu cuenta.</p>';
+   $cuerpo .= '<p>Usa el siguente <a href="http://asesorescrea.com/desarrollo/crm/activacionpostulantes.php?token='.$token.'" target="_blank">enlace</a> para confirmar tu cuenta.</p>';
 
 
 
