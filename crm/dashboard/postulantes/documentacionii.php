@@ -450,6 +450,11 @@ $puedeImportarFinalizar = $serviciosReferencias->permiteAvanzarDocumentacionIII(
 	$(document).ready(function(){
 
 		<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+
+		$('.btnGenerar').click(function() {
+			window.open("../../reportes/rptFolio.php?id=<?php echo $id; ?>" ,'_blank');
+		});
+
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
 			url = "subirdocumentacionii.php?id=<?php echo $id; ?>&documentacion=" + idTable;
