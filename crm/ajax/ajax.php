@@ -2091,12 +2091,7 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
          $cedula = $_POST['cedula'];
 
          if ($cedula == '1') {
-            if (isset($_POST['refesquemareclutamiento'])) {
-               $refesquemareclutamiento = $_POST['refesquemareclutamiento'];
-            } else {
-               $refesquemareclutamiento = 2;
-            }
-
+            $refesquemareclutamiento = 2;
          } else {
             if (isset($_POST['refesquemareclutamiento'])) {
                $refesquemareclutamiento = $_POST['refesquemareclutamiento'];
