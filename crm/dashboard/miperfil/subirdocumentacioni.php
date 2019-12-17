@@ -321,7 +321,7 @@ switch ($iddocumentacion) {
 	break;
 }
 
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,$estadoSiguiente);
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,7);
 
 $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 

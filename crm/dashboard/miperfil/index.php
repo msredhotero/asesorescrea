@@ -681,7 +681,7 @@ if (mysql_result($resultado,0,'nss') == '') {
 				</div>
 			</div> <!-- fin del container veritas -->
 
-			<?php if ($estadoSiguiente == 7) { ?>
+
 			<div class="row clearfix">
 				<div class="row">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -751,7 +751,7 @@ if (mysql_result($resultado,0,'nss') == '') {
 					</div>
 				</div>
 			</div> <!-- fin del container documentaciones -->
-		<?php } ?>
+		
 		</div>
 	</div>
 </section>
