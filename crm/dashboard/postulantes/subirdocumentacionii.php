@@ -270,12 +270,15 @@ if ($cantidadarchivos == 0) {
 switch ($iddocumentacion) {
 	case 13:
 		// code...
-		$input = '';
-		$boton = '';
-		$leyenda = '';
-		$campo = '';
+		$dato = mysql_result($resPostulante,0,'folio');
+
 		$archivo = '';
 		$update = '';
+
+		$input = '<input type="text" name="folio" maxlength="10" id="folio" class="form-control" value="'.$dato.'"/> ';
+		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
+		$leyenda = 'Cargue el Nro de FOLIO';
+		$campo = 'folio';
 	break;
 	case 14:
 		// code...
@@ -333,11 +336,14 @@ switch ($iddocumentacion) {
 	break;
 	case 20:
 		// code...
-		$input = 'Descargue el archivo para completar';
-		$boton = '<button type="button" class="btn btn-primary waves-effect btnDescargar"><i class="material-icons">cloud_download</i><span>Descargar</span></button>';
-		$leyenda = '';
+		$dato = mysql_result($resPostulante,0,'claveinterbancaria');
+
+		$input = '<input type="text" name="claveinterbancaria" maxlength="18" id="claveinterbancaria" class="form-control" value="'.$dato.'"/> ';
+		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
+		$leyenda = 'Cargue la Clave Interbancaria';
+		$campo = 'claveinterbancaria';
+
 		$archivo = 'cuentainterbancaria.pdf';
-		$campo = 'Carta Cuenta Clave';
 		$update = '';
 	break;
 	case 21:
@@ -590,7 +596,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocu
 						<div class="body table-responsive">
 							<button type="button" class="btn bg-green waves-effect btnVolver">
 								<i class="material-icons">undo</i>
-								<span>VOLVER</span>
+								<span>GUARDAR</span>
 							</button>
 							<form class="form" id="formCountry">
 
@@ -846,7 +852,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocu
 				data: {
 					accion: 'modificarPostulanteUnicaDocumentacion',
 					idpostulante: <?php echo $id; ?>,
-					campo: '<?php echo $campo; ?>',
+					campo: '<?php echo strtolower($campo); ?>',
 					valor: valor
 				},
 				//mientras enviamos el archivo

@@ -515,7 +515,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 						<div class="body table-responsive">
 							<button type="button" class="btn bg-green waves-effect btnVolver">
 								<i class="material-icons">undo</i>
-								<span>VOLVER</span>
+								<span>GUARDAR</span>
 							</button>
 							<form class="form" id="formCountry">
 

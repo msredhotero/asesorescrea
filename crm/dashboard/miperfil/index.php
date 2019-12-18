@@ -137,6 +137,15 @@ if (!file_exists($path)) {
 	mkdir($path, 0777);
 }
 
+
+$pathFOLIOC  = '../../archivos/postulantes/'.$id.'/foliocompleto';
+
+if (!file_exists($pathFOLIOC)) {
+	mkdir($pathFOLIOC, 0777);
+}
+
+$filesFOLIOC = array_diff(scandir($pathFOLIOC), array('.', '..'));
+
 //////////////////////////////////////////////////////////////////////
 $pathSIAP  = '../../archivos/postulantes/'.$id.'/siap';
 
@@ -751,7 +760,7 @@ if (mysql_result($resultado,0,'nss') == '') {
 					</div>
 				</div>
 			</div> <!-- fin del container documentaciones -->
-		
+
 		</div>
 	</div>
 </section>

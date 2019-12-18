@@ -5,6 +5,7 @@ include ('../includes/funciones.php');
 include ('../includes/funcionesHTML.php');
 include ('../includes/funcionesReferencias.php');
 include ('../includes/funcionesNotificaciones.php');
+include ('../includes/funcionesMensajes.php');
 include ('../includes/validadores.php');
 
 $serviciosUsuarios  		= new ServiciosUsuarios();
@@ -12,6 +13,7 @@ $serviciosFunciones 		= new Servicios();
 $serviciosHTML				= new ServiciosHTML();
 $serviciosReferencias		= new ServiciosReferencias();
 $serviciosNotificaciones	= new ServiciosNotificaciones();
+$serviciosMensajes	= new ServiciosMensajes();
 $serviciosValidador        = new serviciosValidador();
 
 
@@ -918,16 +920,19 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
       if (mysql_num_rows($resEstado) > 0) {
          $url = $ruta.mysql_result($resEstado,0,'url').'?id='.$id;
 
-         switch (mysql_result($resEstado,0,'orden')) {
+         switch ($idestado) {
 
+            case 2:
+               $resE = $serviciosMensajes->msgExamenVeritas($id);
+            break;
             case 4:
-               $resE = $serviciosUsuarios->enviarCorreosEtapas( $idestado, $id);
+               $resE = $serviciosMensajes->msgEntrevistaRegional($id);
             break;
             case 5:
-               $resE = $serviciosUsuarios->enviarCorreosEtapas( $idestado, $id);
+               $resE = $serviciosMensajes->msgURL($id);
             break;
             case 6:
-               $resE = $serviciosUsuarios->enviarCorreosEtapas( $idestado, $id);
+               $resE = $serviciosMensajes->msgFirmarContratos($id);
             break;
          }
       } else {

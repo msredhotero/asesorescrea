@@ -814,7 +814,15 @@ class ServiciosReferencias {
 	}
 
 	function traerPreguntasPorSecuencia($secuencia) {
-		$sql = "select idpregunta,secuencia,pregunta,respuesta1,respuesta2,respuesta3,respuesta4,respuesta5,respuesta6,respuesta7,valor,depende,tiempo from dbpreguntas where secuencia =".$secuencia;
+		$sql = "select idpregunta,secuencia,pregunta,respuesta1,respuesta2,
+		coalesce(respuesta3,'') as respuesta3,
+		coalesce(respuesta4,'') as respuesta4,
+		coalesce(respuesta5,'') as respuesta5,
+		coalesce(respuesta6,'') as respuesta6,
+		coalesce(respuesta7,'') as respuesta7,
+		valor,depende,tiempo
+		from dbpreguntas where secuencia =".$secuencia;
+
 		$res = $this->query($sql,0);
 		return $res;
 	}

@@ -162,17 +162,17 @@
 			case 22:
 				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/cf1/';
 				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', [$nombreEspecifico, $extension]);
+				$newname = implode('.', ['firma1', $extension]);
 			break;
 			case 23:
 				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/cf2/';
 				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', [$nombreEspecifico, $extension]);
+				$newname = implode('.', ['firma2', $extension]);
 			break;
 			case 24:
 				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/cf3/';
 				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', [$nombreEspecifico, $extension]);
+				$newname = implode('.', ['firma3', $extension]);
 			break;
 			case 25:
 				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/compromiso/';

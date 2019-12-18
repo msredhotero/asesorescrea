@@ -77,6 +77,18 @@ if (!file_exists($path)) {
 }
 
 /**** son 10 documentaciones */
+
+
+$pathFOLIOC  = '../../archivos/postulantes/'.$id.'/foliocompleto';
+
+if (!file_exists($pathFOLIOC)) {
+	mkdir($pathFOLIOC, 0777);
+}
+
+$filesFOLIOC = array_diff(scandir($pathFOLIOC), array('.', '..'));
+
+/***********************************************************************/
+
 $pathINEf  = '../../archivos/postulantes/'.$id.'/inef';
 
 if (!file_exists($pathINEf)) {

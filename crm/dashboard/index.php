@@ -42,6 +42,14 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 	$resEstado = $serviciosReferencias->traerGuiasPorEsquemaSiguiente($refesquemareclutamiento, $refestado);
 
+	if (mysql_num_rows($resEstado) > 0) {
+		$estadoSiguiente = mysql_result($resEstado,0,'refestadopostulantes');
+	} else {
+		$estadoSiguiente = 1;
+	}
+
+	$resGuia = $serviciosReferencias->traerGuiasPorEsquemaEspecial(mysql_result($resultado,0,'refesquemareclutamiento'));
+
 	$idestado = mysql_result($resEstado,0,'refestadopostulantes');
 
 	$leyendaDocumentacion = '';
@@ -152,6 +160,10 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 				color: white;
 				font-weight: bold;
         }
+
+		  .progress {
+	  			background-color: #1b2646;
+	  		}
     </style>
 
 </head>
@@ -247,8 +259,48 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 						<div class="body table-responsive">
 							<form class="form" id="formFacturas">
 								<h3>Bienvenido al CRM de Asesores Crea</h3>
+								<h4>Gracias por tu interés en unirte a nuestra fuerza de ventas, espera una llamada en breve para continuar con el proceso de reclutamiento.</h4>
+								<p>Puedes contactarnos en el Tel fijo: <b><span style="color:#5DC1FD;">55 51 35 02 59</span></b></p>
+								<p>Correo: <a href="mailto:reclutamiento@asesorescrea.com" style="color:#5DC1FD !important;"><b>reclutamiento@asesorescrea.com</b></a></p>
+								<br>
 								<p>Aqui usted encontrara avisos importantes sobre su estado en el Proceso de Reclutamiento</p>
 								<?php echo $leyendaDocumentacion; ?>
+
+								<div class="row">
+									<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
+										<?php
+										$lblEstado = 'complete';
+										$i = 0;
+										while ($rowG = mysql_fetch_array($resGuia)) {
+											$i += 1;
+
+											if ($rowG['refestadopostulantes'] == $estadoSiguiente) {
+												$lblEstado = 'active';
+											}
+
+											if (($lblEstado == 'complete') || ($lblEstado == 'active')) {
+												$urlAcceso = 'javascript:void(0)';
+											} else {
+												$urlAcceso = 'javascript:void(0)';
+											}
+										?>
+										<div class="col-xs-2 bs-wizard-step <?php echo $lblEstado; ?>">
+											<div class="text-center bs-wizard-stepnum">Paso <?php echo $i; ?></div>
+											<div class="progress">
+												<div class="progress-bar"></div>
+											</div>
+											<a href="<?php echo $urlAcceso; ?>" class="bs-wizard-dot"></a>
+											<div class="bs-wizard-info text-center"><?php echo $rowG['estadopostulante']; ?></div>
+										</div>
+										<?php
+											if ($lblEstado == 'active') {
+												$lblEstado = 'disabled';
+											}
+										}
+										?>
+
+									</div>
+								</div>
 
 							</form>
 						</div>
