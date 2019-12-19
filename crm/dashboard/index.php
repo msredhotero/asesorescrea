@@ -42,15 +42,19 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 	$resEstado = $serviciosReferencias->traerGuiasPorEsquemaSiguiente($refesquemareclutamiento, $refestado);
 
+	//die(var_dump($refestado));
+
 	if (mysql_num_rows($resEstado) > 0) {
 		$estadoSiguiente = mysql_result($resEstado,0,'refestadopostulantes');
+		$idestado = mysql_result($resEstado,0,'refestadopostulantes');
 	} else {
-		$estadoSiguiente = 1;
+		$estadoSiguiente = 8;
+		$idestado = 8;
 	}
 
 	$resGuia = $serviciosReferencias->traerGuiasPorEsquemaEspecial(mysql_result($resultado,0,'refesquemareclutamiento'));
 
-	$idestado = mysql_result($resEstado,0,'refestadopostulantes');
+
 
 	$leyendaDocumentacion = '';
 	switch ($idestado) {
@@ -266,41 +270,53 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 								<p>Aqui usted encontrara avisos importantes sobre su estado en el Proceso de Reclutamiento</p>
 								<?php echo $leyendaDocumentacion; ?>
 
-								<div class="row">
-									<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
-										<?php
-										$lblEstado = 'complete';
-										$i = 0;
-										while ($rowG = mysql_fetch_array($resGuia)) {
-											$i += 1;
+								<?php
+								if ($refestado == 10) {
+								?>
+								<div class="alert bg-light-green"><i class="material-icons">done_all</i> Su Proceso de Reclutamiento finalizo correctamente.</div>
 
-											if ($rowG['refestadopostulantes'] == $estadoSiguiente) {
-												$lblEstado = 'active';
-											}
+							<?php }  else { ?>
+								<?php if ($refestado == 9) { ?>
+									<div class="alert bg-red"><i class="material-icons">remove</i> Su Proceso de Reclutamiento fue rechazado.</div>
 
-											if (($lblEstado == 'complete') || ($lblEstado == 'active')) {
-												$urlAcceso = 'javascript:void(0)';
-											} else {
-												$urlAcceso = 'javascript:void(0)';
-											}
-										?>
-										<div class="col-xs-2 bs-wizard-step <?php echo $lblEstado; ?>">
-											<div class="text-center bs-wizard-stepnum">Paso <?php echo $i; ?></div>
-											<div class="progress">
-												<div class="progress-bar"></div>
+								<?php }  else { ?>
+									<div class="row">
+										<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
+											<?php
+											$lblEstado = 'complete';
+											$i = 0;
+											while ($rowG = mysql_fetch_array($resGuia)) {
+												$i += 1;
+
+												if ($rowG['refestadopostulantes'] == $estadoSiguiente) {
+													$lblEstado = 'active';
+												}
+
+												if (($lblEstado == 'complete') || ($lblEstado == 'active')) {
+													$urlAcceso = 'javascript:void(0)';
+												} else {
+													$urlAcceso = 'javascript:void(0)';
+												}
+											?>
+											<div class="col-xs-2 bs-wizard-step <?php echo $lblEstado; ?>">
+												<div class="text-center bs-wizard-stepnum">Paso <?php echo $i; ?></div>
+												<div class="progress">
+													<div class="progress-bar"></div>
+												</div>
+												<a href="<?php echo $urlAcceso; ?>" class="bs-wizard-dot"></a>
+												<div class="bs-wizard-info text-center"><?php echo $rowG['estadopostulante']; ?></div>
 											</div>
-											<a href="<?php echo $urlAcceso; ?>" class="bs-wizard-dot"></a>
-											<div class="bs-wizard-info text-center"><?php echo $rowG['estadopostulante']; ?></div>
-										</div>
-										<?php
-											if ($lblEstado == 'active') {
-												$lblEstado = 'disabled';
+											<?php
+												if ($lblEstado == 'active') {
+													$lblEstado = 'disabled';
+												}
 											}
-										}
-										?>
+											?>
 
+										</div>
 									</div>
-								</div>
+								<?php } ?>
+							<?php } ?>
 
 							</form>
 						</div>

@@ -62,6 +62,10 @@ $modificar = "modificarEntrevistas";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $resultado 		= 	$serviciosReferencias->traerPostulantesPorIdUsuario($idusuario);
 
+if (mysql_result($resultado,0,'refestadopostulantes') == 9) {
+	header('Location: ../index.php');
+}
+
 $id = mysql_result($resultado,0,'idpostulante');
 
 /**************  alertas **********************************/
@@ -88,13 +92,13 @@ $lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal
 $resUsuario = $serviciosUsuario->traerUsuarioId(mysql_result($resultado,0,'refusuarios'));
 $cadRef1 	= $serviciosFunciones->devolverSelectBox($resUsuario,array(1),'');
 
-$resVar2	= $serviciosReferencias->traerEscolaridades();
+$resVar2	= $serviciosReferencias->traerEscolaridadesPorId(mysql_result($resultado,0,'refescolaridades'));
 $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(1),'',mysql_result($resultado,0,'refescolaridades'));
 
 $resVar3	= $serviciosReferencias->traerEstadocivil();
 $cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resVar3,array(1),'',mysql_result($resultado,0,'refestadocivil'));
 
-$resVar4	= $serviciosReferencias->traerEstadopostulantes();
+$resVar4	= $serviciosReferencias->traerEstadopostulantesPorId(mysql_result($resultado,0,'refestadopostulantes'));
 $cadRef4 = $serviciosFunciones->devolverSelectBoxActivo($resVar4,array(1),'',mysql_result($resultado,0,'refestadopostulantes'));
 
 if (mysql_result($resultado,0,'refestadopostulantes') == '1') {
@@ -115,7 +119,7 @@ if (mysql_result($resultado,0,'cedula') == '1') {
 	$cadRef8 = "<option value='1'>Si</option><option value='0' selected>No</option>";
 }
 
-$resVar8 = $serviciosReferencias->traerEsquemareclutamiento();
+$resVar8 = $serviciosReferencias->traerEsquemareclutamientoPorId(mysql_result($resultado,0,'refesquemareclutamiento'));
 $cadRef9 = $serviciosFunciones->devolverSelectBoxActivo($resVar8,array(1),'',mysql_result($resultado,0,'refesquemareclutamiento'));
 
 $resPostal = $serviciosReferencias->traerPostalPorId(mysql_result($resultado,0,'codigopostal'));
