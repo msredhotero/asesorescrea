@@ -602,8 +602,28 @@ switch ($accion) {
       presentarDocumentacionI($serviciosReferencias, $serviciosUsuarios);
    break;
 
+   case 'migrarPostulante':
+      migrarPostulante($serviciosReferencias);
+   break;
+
 }
 /* Fin */
+
+function migrarPostulante($serviciosReferencias) {
+   session_start();
+   $id = $_POST['id'];
+   $usuario = $_SESSION['usua_sahilices'];
+
+   $res = $serviciosReferencias->migrarPostulante($id,$usuario);
+
+   if ((integer)$res > 0) {
+      $res = $serviciosReferencias->modificarEstadoPostulante($id,10);
+
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos: '.$res;
+   }
+}
 
 function presentarDocumentacionI($serviciosReferencias, $serviciosUsuarios) {
    session_start();
@@ -933,6 +953,9 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
             break;
             case 6:
                $resE = $serviciosMensajes->msgFirmarContratos($id);
+            break;
+            case 8:
+               $resE = $serviciosMensajes->msgAsesor($id);
             break;
          }
       } else {

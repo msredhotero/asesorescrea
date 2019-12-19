@@ -2140,8 +2140,77 @@ class ServiciosReferencias {
 
 
 	/* PARA Asesores */
+	function existeAsesor($rfc) {
+		$sql = "select * from dbasesores where rfc = '".$rfc."'";
+		$res = $this->query($sql,0);
 
-	function insertarAsesores($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$escolaridad,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+		if (mysql_num_rows($res) > 0) {
+			return true;
+		}
+
+		return false;
+	}
+
+	function migrarPostulante($id,$usuario) {
+
+		$resPostulante = $this->traerPostulantesPorId($id);
+
+		if ($this->existeAsesor(mysql_result($resPostulante,0,'rfc')) == false) {
+
+
+			$sql = "INSERT INTO dbasesores
+						(idasesor,
+						refusuarios,
+						nombre,
+						apellidopaterno,
+						apellidomaterno,
+						email,
+						curp,
+						rfc,
+						ine,
+						fechanacimiento,
+						sexo,
+						codigopostal,
+						refescolaridades,
+						telefonomovil,
+						telefonocasa,
+						telefonotrabajo,
+						fechacrea,
+						fechamodi,
+						usuariocrea,
+						usuariomodi)
+						select
+						'',
+						p.refusuarios,
+						p.nombre,
+						p.apellidopaterno,
+						p.apellidomaterno,
+						p.email,
+						p.curp,
+						p.rfc,
+						p.ine,
+						p.fechanacimiento,
+						p.sexo,
+						p.codigopostal,
+						p.refescolaridades,
+						p.telefonomovil,
+						p.telefonocasa,
+						p.telefonotrabajo,
+						now(),
+						now(),
+						'".$usuario."',
+						'".$usuario."'
+						from		dbpostulantes p where idpostulante =".$id;
+
+			$res = $this->query($sql,1);
+			return $res;
+
+		} else {
+			return 'Ya existe el RFC';
+		}
+	}
+
+	function insertarAsesores($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
 		$sql = "insert into 		dbasesores(idasesor,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigoposta	l,escolaridad,telefonomovil,telefonocasa,telefonotrabajo,fechacrea,fechamodi,usuariocrea,usuariomodi)
 		values ('',".$refusuarios.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$email."','".$curp."','".$rfc."','".$ine."','".$fechanacimiento."','".$sexo."','".$codigopostal."','".$escolaridad."','".$telefonomovil."','".$telefonocasa."','".$telefonotrabajo."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
 

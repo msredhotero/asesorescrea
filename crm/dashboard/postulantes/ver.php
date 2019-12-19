@@ -257,6 +257,16 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 	$span2 = 'text-info glyphicon glyphicon-plus-sign';
 }
 
+$resGuia = $serviciosReferencias->traerGuiasPorEsquemaEspecial(mysql_result($resultado,0,'refesquemareclutamiento'));
+
+$resEstadoSiguiente = $serviciosReferencias->traerGuiasPorEsquemaSiguiente(mysql_result($resultado,0,'refesquemareclutamiento'), mysql_result($resultado,0,'refestadopostulantes'));
+
+if (mysql_num_rows($resEstadoSiguiente) > 0) {
+	$estadoSiguiente = mysql_result($resEstadoSiguiente,0,'refestadopostulantes');
+} else {
+	$estadoSiguiente = 1;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -389,6 +399,42 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 								</div>
 								<?php } ?>
 							</form>
+
+							<div class="row">
+								<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
+									<?php
+									$lblEstado = 'complete';
+									$i = 0;
+									while ($rowG = mysql_fetch_array($resGuia)) {
+										$i += 1;
+
+										if ($rowG['refestadopostulantes'] == $estadoSiguiente) {
+											$lblEstado = 'active';
+										}
+
+										if (($lblEstado == 'complete') || ($lblEstado == 'active')) {
+											$urlAcceso = 'javascript:void(0)';
+										} else {
+											$urlAcceso = 'javascript:void(0)';
+										}
+									?>
+									<div class="col-xs-2 bs-wizard-step <?php echo $lblEstado; ?>">
+										<div class="text-center bs-wizard-stepnum">Paso <?php echo $i; ?></div>
+										<div class="progress">
+											<div class="progress-bar"></div>
+										</div>
+										<a href="<?php echo $urlAcceso; ?>" class="bs-wizard-dot"></a>
+										<div class="bs-wizard-info text-center"><?php echo $rowG['estadopostulante']; ?></div>
+									</div>
+									<?php
+										if ($lblEstado == 'active') {
+											$lblEstado = 'disabled';
+										}
+									}
+									?>
+
+								</div>
+							</div>
 							</div>
 						</div>
 					</div>

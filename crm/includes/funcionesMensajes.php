@@ -244,6 +244,31 @@ class ServiciosMensajes {
    }
 
 
+	function msgAsesor($idpostulante) {
+      $asunto = 'Proceso de Reclutamiento - Finalizado';
+      $cuerpo = '';
+
+      $cuerpo .= '<img src="http://www.asesorescrea.com/desarrollo/crm/imagenes/logo.png" alt="asesorescrea" width="190">';
+
+      $cuerpo .= '<h2>¡Asesores CREA!</h2>';
+
+      //$destinatario = 'rlinares@asesorescrea.com';
+
+      $resPostulante = $this->traerPostulantesPorId($idpostulante);
+
+      $asesor = mysql_result($resPostulante,0,'nombre').' '.mysql_result($resPostulante,0,'apellidopaterno').' '.mysql_result($resPostulante,0,'apellidomaterno');
+
+      $destinatario = mysql_result($resPostulante,0,'email');
+
+      $cuerpo .= 'Felicitaciones!!, ya es parte de nuestro equipo de Fuerza de Ventas.';
+
+
+      $resEmail = $this->enviarEmail($destinatario,$asunto,$cuerpo);
+
+      return '';
+   }
+
+
 
 
 

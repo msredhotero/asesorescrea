@@ -460,6 +460,11 @@ $puedeImportarFinalizar = $serviciosReferencias->permiteAvanzarDocumentacionIII(
 			url = "subirdocumentacionii.php?id=<?php echo $id; ?>&documentacion=" + idTable;
 			$(location).attr('href',url);
 		});
+
+
+		$('.btnImportar').click(function() {
+			migrarPostulante(<?php echo $id; ?>, 8);
+		});
 		<?php } ?>
 
 		function traerImagen(contenedorpdf, contenedor) {
@@ -520,27 +525,27 @@ $puedeImportarFinalizar = $serviciosReferencias->permiteAvanzarDocumentacionIII(
 
 
 
-		function modificarEstadoPostulante(id, idestado) {
+		function migrarPostulante(id) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {accion: 'modificarEstadoPostulante',id: id, idestado: idestado},
+				data: {accion: 'migrarPostulante',id: id},
 				//mientras enviamos el archivo
 				beforeSend: function(){
-					$('.btnContinuar').hide();
+					$('.btnImportar').hide();
 				},
 				//una vez finalizado correctamente
 				success: function(data){
 
-					if (data != '') {
-						$(location).attr('href',data);
+					if (data == '') {
+						swal("Ok!", 'Se genero un correctamente el asesor', "success");
 
 					} else {
-						swal("Error!", 'Se genero un error al modificar el estado del postulante', "warning");
+						swal("Error!", 'Se genero un error al modificar el estado del postulante ' + data, "warning");
 
-						$("#load").html('');
+						$(".btnImportar").show();
 					}
 				},
 				//si ha ocurrido un error
@@ -550,10 +555,6 @@ $puedeImportarFinalizar = $serviciosReferencias->permiteAvanzarDocumentacionIII(
 				}
 			});
 		}
-
-		$('.btnContinuar').click(function() {
-			modificarEstadoPostulante(<?php echo $id; ?>, 7);
-		});
 
 
 		$('.maximizar').click(function() {
