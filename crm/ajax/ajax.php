@@ -606,8 +606,35 @@ switch ($accion) {
       migrarPostulante($serviciosReferencias);
    break;
 
+   case 'enviarAlerta':
+      enviarAlerta($serviciosReferencias, $serviciosUsuarios);
+   break;
+
 }
 /* Fin */
+
+function enviarAlerta($serviciosReferencias,$serviciosUsuarios) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->traerPostulantesPorId($id);
+
+   if (mysql_num_rows($res) > 0) {
+      $email = mysql_result($res,0,'email');
+      $refusuarios = mysql_result($res,0,'refusuarios');
+      $resActivacion = $serviciosUsuarios->confirmarEmail($email, '','', '', $refusuarios);
+
+      $resV['leyenda'] = $email;
+      $resV['error'] = false;
+   } else {
+      $resV['leyenda'] = 'Todavia no cargo el archivo, no podra modificar el estado de la documentación';
+      $resV['error'] = true;
+   }
+
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function migrarPostulante($serviciosReferencias) {
    session_start();

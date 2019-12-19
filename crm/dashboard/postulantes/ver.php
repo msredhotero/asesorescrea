@@ -75,6 +75,24 @@ if (mysql_result($resultado,0,'refescolaridades') < 3) {
 	$alertaEscolaridad = '';
 }
 
+if (mysql_result($resultado,0,'afore') == '1') {
+	$alertaAfore = '<div class="row"><div class="alert bg-red"><i class="material-icons">warning</i><b>ATENCION</b> El postulante cuenta con cedula definitiva para venta de afore, verificar!!!</div></div>';
+} else {
+	$alertaAfore = '';
+}
+
+$resUsuario = $serviciosReferencias->traerUsuariosPorId(mysql_result($resultado,0,'refusuarios'));
+
+if (mysql_result($resUsuario,0,'activo') == 'No') {
+	$alertaUsuario = '<div class="row"><div class="alert bg-orange"><i class="material-icons">warning</i><b>ATENCION</b> El postulante aun no verifico su email!!!. Desea enviarle nuevamente la confirmación?
+	<button type="button" class="btn bg-light-green waves-effect btnAlerta">
+												<i class="material-icons">add</i>
+												<span>ENVIAR</span>
+											</button></div></div>';
+} else {
+	$alertaUsuario = '';
+}
+
 
 /******************** fin *********************************/
 
@@ -383,6 +401,8 @@ if (mysql_num_rows($resEstadoSiguiente) > 0) {
 						<div class="body table-responsive">
 							<?php echo $alertaEdad; ?>
 							<?php echo $alertaEscolaridad; ?>
+							<?php echo $alertaAfore; ?>
+							<?php echo $alertaUsuario; ?>
 							<form class="form" id="sign_in" role="form">
 								<div class="row">
 									<?php echo $frmUnidadNegocios; ?>
@@ -942,6 +962,44 @@ if (mysql_num_rows($resEstadoSiguiente) > 0) {
 	<?php } ?>
 
 	$(document).ready(function(){
+
+		function enviarAlerta() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'enviarAlerta',
+					id: <?php echo $id; ?>
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error == false) {
+						swal("Ok!", 'Se envio nuevamente la activacion al email: ' + data.leyenda, "success");
+						$('.guardarEstado').show();
+					} else {
+						swal("Error!", data.leyenda, "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
+
+		$('.btnAlerta').click(function() {
+			enviarAlerta();
+		});
 
 		$("#claveinterbancaria").attr('maxlength','18');
 		$("#idclienteinbursa").attr('maxlength','8');
