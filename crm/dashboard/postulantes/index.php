@@ -280,6 +280,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									<select class="form-control" id="codigopostalaux" name="codigopostalaux"  required readonly />
 									</select>
 								</div>
+								<input type="hidden" id="origen" name="origen" value="crm"/>
 							</div>
 
 	               </div>

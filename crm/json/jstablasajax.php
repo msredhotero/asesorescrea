@@ -122,7 +122,7 @@ switch ($tabla) {
 			p.refusuarios,
 			p.refsucursalesinbursa
 		from dbpostulantes p
-		inner join dbusuarios usu ON usu.idusuario = p.refusuarios and usu.activo = 1
+		inner join dbusuarios usu ON usu.idusuario = p.refusuarios 
 		inner join tbescolaridades esc ON esc.idescolaridad = p.refescolaridades
 		inner join tbestadocivil est ON est.idestadocivil = p.refestadocivil
 		inner join tbestadopostulantes ep ON ep.idestadopostulante = p.refestadopostulantes';

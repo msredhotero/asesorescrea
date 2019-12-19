@@ -152,7 +152,13 @@ $cadSeguros = $serviciosFunciones->devolverSelectBox($resEmpresasSeguros, array(
 
 
 	<script type='text/javascript'>
-		//document.oncontextmenu = function(){return false}
+		document.oncontextmenu = function(){return false}
+
+      window.addEventListener("keypress", function(event){
+         if (event.keyCode == 13){
+            event.preventDefault();
+         }
+      }, false);
 
 	</script>
    <style>
@@ -422,6 +428,7 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
 							</div>
 						</div>
                   <input type="hidden" id="accion" name="accion" value="insertarPostulantes"/>
+                  <input type="hidden" id="origen" name="origen" value="web"/>
                </div>
 
                <div class="row" style="margin-bottom:50px;">

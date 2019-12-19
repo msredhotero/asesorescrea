@@ -98,6 +98,17 @@ if (mysql_num_rows($resActivacion) > 0) {
 
     <!-- Custom Css -->
     <link href="css/style.css" rel="stylesheet">
+
+	 <script type='text/javascript'>
+ 		document.oncontextmenu = function(){return false}
+
+       window.addEventListener("keypress", function(event){
+          if (event.keyCode == 13){
+             event.preventDefault();
+          }
+       }, false);
+
+ 	</script>
 </head>
 
 <body class="login-page">
@@ -145,7 +156,18 @@ if (mysql_num_rows($resActivacion) > 0) {
 								<i class="material-icons">lock</i>
 							</span>
 							<div class="form-line">
-								<input type="password" class="form-control" name="password" id="password" maxlength="10" placeholder="Ingrese un Password" required/>
+								<input type="password" class="form-control" name="password" id="password" maxlength="8" placeholder="Ingrese un Password" required/>
+
+							</div>
+
+						</div>
+
+						<div class="input-group">
+							<span class="input-group-addon">
+								<i class="material-icons">lock</i>
+							</span>
+							<div class="form-line">
+								<input type="passwordaux" class="form-control" name="passwordaux" id="passwordaux" maxlength="8" placeholder="Confirme su Password" required/>
 
 							</div>
 
@@ -238,11 +260,6 @@ if (mysql_num_rows($resActivacion) > 0) {
         $(document).ready(function(){
 			  var $demoMaskedInput = $('.demo-masked-input');
 
-				$('body').keyup(function(e) {
-                if(e.keyCode == 13) {
-                    $("#login").click();
-                }
-            });
 
 				$('.datepicker').bootstrapMaterialDatePicker({
 					format: 'YYYY-MM-DD',
@@ -253,7 +270,7 @@ if (mysql_num_rows($resActivacion) > 0) {
 
 
 				function validarPASS(pass) {
-						var re = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{10,})/,
+						var re = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/,
 						validado = pass.match(re);
 
 				    if (!validado)  //Coincide con el formato general?
@@ -262,18 +279,56 @@ if (mysql_num_rows($resActivacion) > 0) {
 				    return true; //Validado
 				}
 
+				function validaIgualdad(pass, passaux) {
+					if (pass <> passaux) {
+						return false;
+					}
+
+					return true;
+				}
+
+
+				$('#passwordaux').focusout(function() {
+					if (validaIgualdad($('#password').val(),$('#passwordaux').val()) == false) {
+						swal({
+							title: "Error",
+							text: "Los PASSWORDs no coinciden",
+							type: "error",
+							timer: 10000,
+							showConfirmButton: true
+						});
+
+						$('#login').hide();
+					} else {
+						$('#login').show();
+					}
+				});
 
 				$('#password').focusout(function() {
 					if (validarPASS($('#password').val()) == false) {
 						swal({
 							title: "Respuesta",
-							text: "PASSWORD no valido. Recuerde que el PASSWORD debe contener (10 caracteres, al menos una mayuscula, al menos una minuscula y un numero)",
+							text: "PASSWORD no valido. Recuerde que el PASSWORD debe contener (8 caracteres, al menos una mayuscula, al menos una minuscula y un numero)",
 							type: "error",
 							timer: 10000,
 							showConfirmButton: true
 						});
 
 						$(this).focus();
+					} else {
+						if (validaIgualdad($('#password').val(),$('#passwordaux').val()) == false) {
+							swal({
+								title: "Error",
+								text: "Los PASSWORDs no coinciden",
+								type: "error",
+								timer: 10000,
+								showConfirmButton: true
+							});
+
+							$('#login').hide();
+						} else {
+							$('#login').show();
+						}
 					}
 				});
 

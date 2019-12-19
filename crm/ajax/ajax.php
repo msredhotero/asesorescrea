@@ -2095,20 +2095,25 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
          $folio = '';
          $cedula = $_POST['cedula'];
 
-         if ($cedula == '1') {
-            $refesquemareclutamiento = 2;
-         } else {
-            if (isset($_POST['refesquemareclutamiento'])) {
-               $refesquemareclutamiento = $_POST['refesquemareclutamiento'];
+         if ($_POST['origen'] == 'web') {
+            if ($cedula == '1') {
+               $refesquemareclutamiento = 4;
             } else {
                $refesquemareclutamiento = 1;
             }
-
+         } else {
+            $refesquemareclutamiento = $_POST['refesquemareclutamiento'];
          }
 
+
          if ($afore == '1') {
-            $refestadopostulantes = 9;
+            //$refestadopostulantes = 9; // lo saco por orden de javier 19/12/2019
+
             // rechazo la solicitud
+
+            // envio email de confirmacion para validar cuenta de email. Correr a la noche un CRON
+            // para dar de baja los usuarios basura
+            $resActivacion = $serviciosUsuarios->confirmarEmail($email, $password,$apellido, $nombre, $refusuarios);
          } else {
             // envio email de confirmacion para validar cuenta de email. Correr a la noche un CRON
             // para dar de baja los usuarios basura
