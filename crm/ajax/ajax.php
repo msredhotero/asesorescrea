@@ -2038,6 +2038,14 @@ function modificarEntrevistas($serviciosReferencias) {
    $refestadoentrevistas = $_POST['refestadoentrevistas'];
    $refentrevistasucursales = $_POST['refentrevistasucursales'];
 
+   if (($refestadoentrevistas == 4) || ($refestadoentrevistas == 5)) {
+      if (isset($_POST['observaciones'])) {
+         $resObservaciones = $serviciosReferencias->agregarObservacionPostulante($refpostulantes, $_POST['observaciones']);
+      }
+
+      $resPostulante = $serviciosReferencias->modificarEstadoPostulante($refpostulantes,9);
+   }
+
    $fechamodi = date('Y-m-d H:i:s');
 
    $usuariomodi = $_SESSION['usua_sahilices'];

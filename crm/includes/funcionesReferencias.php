@@ -1433,7 +1433,13 @@ class ServiciosReferencias {
 
 	function traerPostulantesPorId($id) {
 		$sql = "select idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa, refestadocivil,nss,afore,cedula,folio,refesquemareclutamiento,
-		datediff(now(),fechanacimiento)/365 as edad, fechaalta from dbpostulantes where idpostulante =".$id;
+		datediff(now(),fechanacimiento)/365 as edad, fechaalta, observaciones from dbpostulantes where idpostulante =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function agregarObservacionPostulante($id, $observaciones) {
+		$sql = "update dbpostulantes set observaciones = '".$observaciones."' where idpostulante =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}

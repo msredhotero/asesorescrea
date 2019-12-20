@@ -62,6 +62,8 @@ $modificar = "modificarEntrevistas";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $resultado 		= 	$serviciosReferencias->traerPostulantesPorId($id);
 
+$observaciones = mysql_result($resultado,0,'observaciones');
+
 $postulante = mysql_result($resultado,0,'nombre').' '.mysql_result($resultado,0,'apellidopaterno').' '.mysql_result($resultado,0,'apellidomaterno');
 
 $resGuia = $serviciosReferencias->traerGuiasPorEsquemaEspecial(mysql_result($resultado,0,'refesquemareclutamiento'));
@@ -211,6 +213,10 @@ if (mysql_num_rows($resEntrevista) > 0) {
 						$lblEstado = 'active';
 					}
 
+					if (mysql_result($resVar2,0,'refestadopostulantes') == 9) {
+						$lblEstado = 'disabled';
+					}
+
 					if (($lblEstado == 'complete') || ($lblEstado == 'active')) {
 						$urlAcceso = $rowG['url'].'?id='.$id;
 					} else {
@@ -329,6 +335,12 @@ if (mysql_num_rows($resEntrevista) > 0) {
 	               <div class="modal-body">
 							<div class="row frmAjaxNuevo">
 								<?php echo $frmUnidadNegocios; ?>
+								<div class="row contObservacionesA">
+									<div class="col-xs-12">
+										<label class="label-control">Observaciones - Si cancela o rechaza la entrevista ingrese una observación</label>
+										<textarea class="form-control" row="3" id="observacionesN" name="observaciones"><?php echo $observaciones; ?></textarea>
+									</div>
+								</div>
 								<input type="hidden" class="codipostalaux" id="codipostalaux" name="codipostalaux" value="0"/>
 							</div>
 
@@ -355,6 +367,12 @@ if (mysql_num_rows($resEntrevista) > 0) {
 								<div class="row frmAjaxModificar">
 
 								</div>
+								<div class="row contObservacionesM">
+									<div class="col-xs-12">
+										<label class="label-control">Observaciones - Si cancela o rechaza la entrevista ingrese una observación</label>
+										<textarea class="form-control" row="3" id="observacionesM" name="observaciones"><?php echo $observaciones; ?></textarea>
+									</div>
+								</div>
 								<input type="hidden" class="codipostalaux" id="codipostalaux" name="codipostalaux" value="0"/>
 		               </div>
 		               <div class="modal-footer">
@@ -377,8 +395,8 @@ if (mysql_num_rows($resEntrevista) > 0) {
 		                   <h4 class="modal-title" id="largeModalLabel">ELIMINAR <?php echo strtoupper($singular); ?></h4>
 		               </div>
 		               <div class="modal-body">
-										 <p>¿Esta seguro que desea eliminar el registro?</p>
-										 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
+								 <p>¿Esta seguro que desea eliminar el registro?</p>
+								 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
 		               </div>
 		               <div class="modal-footer">
 		                   <button type="button" class="btn btn-danger waves-effect eliminar">ELIMINAR</button>
@@ -424,6 +442,16 @@ if (mysql_num_rows($resEntrevista) > 0) {
 
 <script>
 	$(document).ready(function(){
+
+
+
+		$(".frmAjaxModificar").on("change",'#refestadoentrevistas', function(){
+			if (($(this).val() == 4) || ($(this).val() == 5)) {
+				$('#observacionesM').prop('required','required');
+			} else {
+				$('#observacionesM').prop('required',false);
+			}
+		});
 
 		$('#fecha').bootstrapMaterialDatePicker({
 			format: 'YYYY/MM/DD HH:mm',
@@ -566,7 +594,9 @@ if (mysql_num_rows($resEntrevista) > 0) {
 		traerEntrevistasucursalesPorId(0,'new');
 
 		$(".frmAjaxNuevo").on("change",'#refentrevistasucursales', function(){
+
 			traerEntrevistasucursalesPorId($(this).val(), 'new');
+
 		});
 
 		$(".frmAjaxModificar").on("change",'#refentrevistasucursales', function(){
@@ -592,6 +622,7 @@ if (mysql_num_rows($resEntrevista) > 0) {
 							$('.frmAjaxNuevo #domicilio').val(data.domicilio);
 							$('.frmAjaxNuevo .codigopostalaux').val(data.refpostal);
 							$('.frmAjaxNuevo #codigopostal').val(data.codigopostal);
+
 						} else {
 							$('.frmAjaxModificar #domicilio').val(data.domicilio);
 							$('.frmAjaxModificar .codigopostalaux').val(data.refpostal);
@@ -657,6 +688,7 @@ if (mysql_num_rows($resEntrevista) > 0) {
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('.frmAjaxModificar').html('');
+
 				},
 				//una vez finalizado correctamente
 				success: function(data){
