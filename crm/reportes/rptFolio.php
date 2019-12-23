@@ -23,6 +23,23 @@ require 'PDFMerger.php';
 
 $pdfi = new PDFMerger;
 
+function rrmdir($src) {
+    $dir = opendir($src);
+    while(false !== ( $file = readdir($dir)) ) {
+        if (( $file != '.' ) && ( $file != '..' )) {
+            $full = $src . '/' . $file;
+            if ( is_dir($full) ) {
+                rrmdir($full);
+            }
+            else {
+                unlink($full);
+            }
+        }
+    }
+    closedir($dir);
+    //rmdir($src);
+}
+
 //$header = array("Hora", "Cancha 1", "Cancha 2", "Cancha 3");
 
 ////***** Parametros ****////////////////////////////////
@@ -33,6 +50,20 @@ $resFolio = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionP
 
 $pdf = new FPDF();
 
+/* desarrollo   ****************************************/
+$directorio = $_SERVER['DOCUMENT_ROOT']."desarrollo/crm";
+
+
+/* local  **************************
+$directorio = $_SERVER['DOCUMENT_ROOT']."asesorescrea.git/trunk/crm";
+*/
+
+
+/***** produccion  ******
+$directorio = $_SERVER['DOCUMENT_ROOT']."crm";
+*/
+
+rrmdir($directorio.'/archivos/postulantes/'.$id.'/foliocompleto');
 
 #Establecemos el margen inferior:
 $pdf->SetAutoPageBreak(false,1);
@@ -43,14 +74,18 @@ while ($row = mysql_fetch_array($resFolio)) {
    $pos = strpos( strtolower($row['type']), 'pdf');
    if ($pos === false) {
       $pdf->Image('../archivos/postulantes/'.$id.'/'.$row['carpeta'].'/'.$row['archivo'],10,10,190);
-   } else {
-      //array_push($ar,$_SERVER['DOCUMENT_ROOT'].'asesorescrea.git/trunk/crm/archivos/postulantes/'.$id.'/'.$row['carpeta'].'/'.$row['archivo']);
-      $nombreTurno = $_SERVER['DOCUMENT_ROOT']."desarrollo/crm/reportes/folioPrevio".$fecha.".pdf";
+
+      $nombreTurno = $directorio."/archivos/postulantes/".$id."/foliocompleto/".$row['carpeta']."folioPrevio".$fecha.".pdf";
+
       $pdf->Output($nombreTurno,'F');
 
       array_push($ar,$nombreTurno);
 
-      array_push($ar,$_SERVER['DOCUMENT_ROOT'].'desarrollo/crm/archivos/postulantes/'.$id.'/'.$row['carpeta'].'/'.$row['archivo']);
+      $pdf = new FPDF();
+   } else {
+      //array_push($ar,$_SERVER['DOCUMENT_ROOT'].'asesorescrea.git/trunk/crm/archivos/postulantes/'.$id.'/'.$row['carpeta'].'/'.$row['archivo']);
+      array_push($ar,$directorio.'/archivos/postulantes/'.$id.'/'.$row['carpeta'].'/'.$row['archivo']);
+      //$pdf = new FPDF();
    }
 
 
@@ -66,6 +101,9 @@ while ($row = mysql_fetch_array($resFolio)) {
 
 //$pdf->Output($nombreTurno,'F');
 
+//$pdf->Output($nombreTurno,'F');
+
+
 if (count($ar)>0) {
 
 
@@ -77,21 +115,14 @@ if (count($ar)>0) {
       $pdfi->addPDF($value, 'all');
    }
 
-   //C:/xampp/htdocs/asesorescrea.git/trunk/crm/archivos/postulantes/5/cf2/firma2.pdf
 
-   /*
-   $pdfi->addPDF("C:/xampp/htdocs/asesorescrea.git/trunk/crm/archivos/postulantes/5/cf2/firma2.pdf", 'all')
-   ->merge('file', $_SERVER['DOCUMENT_ROOT'].'asesorescrea.git/trunk/crm/archivos/postulantes/'.$id.'/foliocompleto/pagina3.pdf');
-   */
-
-   //$pdfi->merge('browser', $_SERVER['DOCUMENT_ROOT'].'asesorescrea.git/trunk/crm/archivos/postulantes/'.$id.'/foliocompleto/pagina3.pdf');
-
-   $pdfi->merge('browser', $_SERVER['DOCUMENT_ROOT'].'desarrollo/crm/archivos/postulantes/'.$id.'/foliocompleto/pagina3.pdf');
+   $pdfi->merge('browser', $directorio.'/archivos/postulantes/'.$id.'/foliocompleto/pagina3.pdf');
 
 } else {
    $pdf->Output($nombreTurno,'I');
 }
 
+$pdfi->Output($nombreTurno,'I');
 
 //$pdf->Output($nombreTurno,'I');
 
