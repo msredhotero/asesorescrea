@@ -62,6 +62,8 @@ $modificar = "modificarEntrevistas";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $resultado 		= 	$serviciosReferencias->traerPostulantesPorId($id);
 
+$observaciones = mysql_result($resultado,0,'observaciones');
+
 /**************  alertas **********************************/
 if (mysql_result($resultado,0,'edad') < 18) {
 	$alertaEdad = '<div class="row"><div class="alert bg-red"><i class="material-icons">warning</i> El postulante es menor de edad!!!</div></div>';
@@ -773,6 +775,12 @@ if (mysql_num_rows($resEstadoSiguiente) > 0) {
 		               <div class="modal-body">
 								<div class="row frmAjaxModificar">
 
+								</div>
+								<div class="row contObservacionesM">
+									<div class="col-xs-12">
+										<label class="label-control">Observaciones - Si cancela o rechaza la entrevista ingrese una observación</label>
+										<textarea class="form-control" row="3" id="observacionesM" name="observaciones"><?php echo $observaciones; ?></textarea>
+									</div>
 								</div>
 		               </div>
 		               <div class="modal-footer">

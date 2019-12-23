@@ -45,6 +45,10 @@ while ($row = mysql_fetch_array($resFolio)) {
       $pdf->Image('../archivos/postulantes/'.$id.'/'.$row['carpeta'].'/'.$row['archivo'],10,10,190);
    } else {
       //array_push($ar,$_SERVER['DOCUMENT_ROOT'].'asesorescrea.git/trunk/crm/archivos/postulantes/'.$id.'/'.$row['carpeta'].'/'.$row['archivo']);
+      $nombreTurno = $_SERVER['DOCUMENT_ROOT']."desarrollo/crm/reportes/folioPrevio".$fecha.".pdf";
+      $pdf->Output($nombreTurno,'F');
+
+      array_push($ar,$nombreTurno);
 
       array_push($ar,$_SERVER['DOCUMENT_ROOT'].'desarrollo/crm/archivos/postulantes/'.$id.'/'.$row['carpeta'].'/'.$row['archivo']);
    }
@@ -59,11 +63,11 @@ while ($row = mysql_fetch_array($resFolio)) {
 //$nombreTurno = $_SERVER['DOCUMENT_ROOT'].'asesorescrea/trunk/crm/reportes/folioPrevio'.$fecha.".pdf";
 
 //$nombreTurno = $_SERVER['DOCUMENT_ROOT']."asesorescrea.git/trunk/crm/reportes/folioPrevio".$fecha.".pdf";
-$nombreTurno = $_SERVER['DOCUMENT_ROOT']."desarrollo/crm/reportes/folioPrevio".$fecha.".pdf";
+
 //$pdf->Output($nombreTurno,'F');
 
 if (count($ar)>0) {
-   $pdf->Output($nombreTurno,'F');
+
 
    $pdfi->addPDF($nombreTurno, 'all');
 

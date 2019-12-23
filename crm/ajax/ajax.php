@@ -2029,7 +2029,13 @@ function modificarEntrevistas($serviciosReferencias) {
    session_start();
 
    $id = $_POST['id'];
+
    $refpostulantes = $_POST['refpostulantes'];
+
+   $resPostulante = $serviciosReferencias->traerPostulantesPorId($refpostulantes);
+   $estadoUltimo = mysql_result($resPostulante,0,'ultimoestado');
+   $estadoActual = mysql_result($resPostulante,0,'refestadopostulantes');
+
    $entrevistador = $_POST['entrevistador'];
    $fecha = $_POST['fecha'];
    $domicilio = $_POST['domicilio'];
@@ -2043,7 +2049,13 @@ function modificarEntrevistas($serviciosReferencias) {
          $resObservaciones = $serviciosReferencias->agregarObservacionPostulante($refpostulantes, $_POST['observaciones']);
       }
 
-      $resPostulante = $serviciosReferencias->modificarEstadoPostulante($refpostulantes,9);
+      $resEstadoPostulante = $serviciosReferencias->modificarEstadoPostulante($refpostulantes,9);
+   } else {
+      if ($estadoActual == 9) { // estado rechazado, lo vuelvo al estado que estaba cuando fue rechazado
+         $resEstadoPostulante = $serviciosReferencias->modificarEstadoPostulante($refpostulantes,$estadoUltimo);
+
+         $resObservaciones = $serviciosReferencias->agregarObservacionPostulante($refpostulantes, $_POST['observaciones']);
+      }
    }
 
    $fechamodi = date('Y-m-d H:i:s');
