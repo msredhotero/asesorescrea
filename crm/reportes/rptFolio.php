@@ -52,7 +52,7 @@ $pdf = new FPDF();
 
 /* desarrollo   ****************************************/
 $directorio = $_SERVER['DOCUMENT_ROOT']."desarrollo/crm";
-die(var_dump($directorio));
+//die(var_dump($directorio));
 
 /* local  **************************
 $directorio = $_SERVER['DOCUMENT_ROOT']."asesorescrea.git/trunk/crm";
@@ -63,7 +63,7 @@ $directorio = $_SERVER['DOCUMENT_ROOT']."asesorescrea.git/trunk/crm";
 $directorio = $_SERVER['DOCUMENT_ROOT']."crm";
 */
 
-rrmdir($directorio.'/archivos/postulantes/'.$id.'/foliocompleto');
+//rrmdir($directorio.'/archivos/postulantes/'.$id.'/foliocompleto');
 
 #Establecemos el margen inferior:
 $pdf->SetAutoPageBreak(false,1);
