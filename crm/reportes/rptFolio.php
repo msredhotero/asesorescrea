@@ -23,22 +23,7 @@ require 'PDFMerger.php';
 
 $pdfi = new PDFMerger;
 
-function rrmdir($src) {
-    $dir = opendir($src);
-    while(false !== ( $file = readdir($dir)) ) {
-        if (( $file != '.' ) && ( $file != '..' )) {
-            $full = $src . '/' . $file;
-            if ( is_dir($full) ) {
-                rrmdir($full);
-            }
-            else {
-                unlink($full);
-            }
-        }
-    }
-    closedir($dir);
-    //rmdir($src);
-}
+
 
 //$header = array("Hora", "Cancha 1", "Cancha 2", "Cancha 3");
 
@@ -64,6 +49,7 @@ $directorio = $_SERVER['DOCUMENT_ROOT']."crm";
 */
 
 //rrmdir($directorio.'/archivos/postulantes/'.$id.'/foliocompleto');
+$borrarAr = $serviciosReferencias->borrarDirecctorio($directorio.'/archivos/postulantes/'.$id.'/foliocompleto');
 
 #Establecemos el margen inferior:
 $pdf->SetAutoPageBreak(false,1);
