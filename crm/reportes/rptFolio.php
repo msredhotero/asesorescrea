@@ -52,7 +52,7 @@ $pdf = new FPDF();
 
 /* desarrollo   ****************************************/
 $directorio = $_SERVER['DOCUMENT_ROOT']."desarrollo/crm";
-
+die(var_dump($directorio));
 
 /* local  **************************
 $directorio = $_SERVER['DOCUMENT_ROOT']."asesorescrea.git/trunk/crm";
