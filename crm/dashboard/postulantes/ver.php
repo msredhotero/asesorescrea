@@ -115,7 +115,7 @@ $cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resVar3,array(1),'',mys
 $resVar4	= $serviciosReferencias->traerEstadopostulantes();
 $cadRef4 = $serviciosFunciones->devolverSelectBoxActivo($resVar4,array(1),'',mysql_result($resultado,0,'refestadopostulantes'));
 
-if (mysql_result($resultado,0,'refestadopostulantes') == '1') {
+if (mysql_result($resultado,0,'sexo') == '1') {
 	$cadRef5 = "<option value=''>-- Seleccionar --</option><option value='1' selected>Femenino</option><option value='2'>Masculino</option>";
 } else {
 	$cadRef5 = "<option value=''>-- Seleccionar --</option><option value='1'>Femenino</option><option value='2' selected>Masculino</option>";

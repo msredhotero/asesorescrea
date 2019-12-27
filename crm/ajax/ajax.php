@@ -1389,6 +1389,39 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+
+      case 'dbasesores':
+         $resultado = $serviciosReferencias->traerAsesoresPorId($id);
+
+         $lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad');
+         $lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad');
+
+
+
+         $modificar = "modificarAsesores";
+         $idTabla = "idasesor";
+
+         $resUsuario = $serviciosUsuarios->traerUsuarioId(mysql_result($resultado,0,'refusuarios'));
+         $cadRef1 	= $serviciosFunciones->devolverSelectBox($resUsuario,array(1),'');
+
+         $resVar2	= $serviciosReferencias->traerEscolaridades();
+         $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(1),'',mysql_result($resultado,0,'refescolaridades'));
+
+         if (mysql_result($resultado,0,'sexo') == '1') {
+         	$cadRef5 = "<option value=''>-- Seleccionar --</option><option value='1' selected>Femenino</option><option value='2'>Masculino</option>";
+         } else {
+         	$cadRef5 = "<option value=''>-- Seleccionar --</option><option value='1'>Femenino</option><option value='2' selected>Masculino</option>";
+         }
+
+         $resPostal = $serviciosReferencias->traerPostalPorId(mysql_result($resultado,0,'codigopostal'));
+
+         $codigopostal = mysql_result($resPostal,0,'codigo');
+
+         $cadRef6 	= "<option value='Mexico'>Mexico</option>";
+
+         $refdescripcion = array(0=> $cadRef1,1=> $cadRef2, 2=>$cadRef5,3=>$cadRef6);
+         $refCampo 	=  array('refusuarios','refescolaridades','sexo','codigopostal');
+      break;
       case 'dbpostulantes':
 
          $resultado = $serviciosReferencias->traerPostulantesPorId($id);

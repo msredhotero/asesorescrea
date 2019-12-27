@@ -67,6 +67,80 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 }
 
 switch ($tabla) {
+	case 'asesores':
+		$filtro = "where p.nombre like '%_busqueda%' or p.apellidopaterno like '%_busqueda%' or p.apellidomaterno like '%_busqueda%' or p.email like '%_busqueda%' or p.idclienteinbursa like '%_busqueda%' or p.claveinterbancaria like '%_busqueda%' or p.claveasesor like '%_busqueda%' or  DATE_FORMAT( p.fechaalta, '%Y-%m-%d') like '%_busqueda%'";
+
+		$consulta = 'select
+			p.idasesor,
+			p.nombre,
+			p.apellidopaterno,
+			p.apellidomaterno,
+			p.email,
+			p.idclienteinbursa,
+			p.claveinterbancaria,
+			p.claveasesor,
+			p.fechaalta
+		from dbasesores p
+		inner join dbusuarios usu ON usu.idusuario = p.refusuarios';
+
+		$resAjax = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta);
+		$res = $serviciosReferencias->traerAsesores();
+
+		switch ($_SESSION['idroll_sahilices']) {
+			case 1:
+				$label = array('btnModificar','btnEliminar');
+				$class = array('bg-amber','bg-red');
+				$icon = array('Modificar','Eliminar');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 8;
+			break;
+			case 2:
+				$label = array('btnModificar');
+				$class = array('bg-amber');
+				$icon = array('Modificar');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 8;
+			break;
+			case 3:
+				$label = array('btnModificar');
+				$class = array('bg-amber');
+				$icon = array('Modificar');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 8;
+			break;
+			case 4:
+				$label = array('btnModificar');
+				$class = array('bg-amber');
+				$icon = array('Modificar');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 8;
+			break;
+			case 5:
+				$label = array('btnModificar');
+				$class = array('bg-amber');
+				$icon = array('Modificar');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 8;
+			break;
+			case 6:
+				$label = array('btnModificar');
+				$class = array('bg-amber');
+				$icon = array('Modificar');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 8;
+			break;
+
+			default:
+				// code...
+			break;
+		}
+	break;
 	case 'solicitudes':
 		if ($busqueda == '') {
 			$colSort = 's.fechacrea';
@@ -395,7 +469,7 @@ $id = 0;
 			array_push($arAux, utf8_encode($row[$i]));
 		}
 
-		if ($tabla == 'postulantes') {
+		if (($tabla == 'postulantes') || ($tabla == 'asesores')) {
 			array_push($arAux, armarAccionesDropDown($row[0],$label,$class,$icon));
 		} else {
 			array_push($arAux, armarAcciones($row[0],$label,$class,$icon));

@@ -2184,7 +2184,14 @@ class ServiciosReferencias {
 						fechacrea,
 						fechamodi,
 						usuariocrea,
-						usuariomodi)
+						usuariomodi,
+						nss,
+						claveinterbancaria,
+						idclienteinbursa,
+						claveasesor,
+						fechaalta,
+						observaciones
+						)
 						select
 						'',
 						p.refusuarios,
@@ -2205,7 +2212,13 @@ class ServiciosReferencias {
 						now(),
 						now(),
 						'".$usuario."',
-						'".$usuario."'
+						'".$usuario."',
+						p.nss,
+						p.claveinterbancaria,
+						p.idclienteinbursa,
+						p.claveasesor,
+						p.fechaalta,
+						p.observaciones
 						from		dbpostulantes p where idpostulante =".$id;
 
 			$res = $this->query($sql,1);
@@ -2216,8 +2229,8 @@ class ServiciosReferencias {
 		}
 	}
 
-	function insertarAsesores($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
-		$sql = "insert into 		dbasesores(idasesor,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigoposta	l,escolaridad,telefonomovil,telefonocasa,telefonotrabajo,fechacrea,fechamodi,usuariocrea,usuariomodi)
+	function insertarAsesores($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$nss,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$observaciones) {
+		$sql = "insert into 		dbasesores(idasesor,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigoposta	l,escolaridad,telefonomovil,telefonocasa,telefonotrabajo,fechacrea,fechamodi,usuariocrea,usuariomodi,nss,claveinterbancaria,idclienteinbursa,claveasesor,fechaalta,observaciones)
 		values ('',".$refusuarios.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$email."','".$curp."','".$rfc."','".$ine."','".$fechanacimiento."','".$sexo."','".$codigopostal."','".$escolaridad."','".$telefonomovil."','".$telefonocasa."','".$telefonotrabajo."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
 
 		$res = $this->query($sql,1);
@@ -2235,7 +2248,7 @@ class ServiciosReferencias {
 
 
 	function eliminarAsesores($id) {
-		$sql = "delete from dbasesores where idasesor =".$id;
+		$sql = "update dbasesores set fechaalta = '2099-01-01' where idasesor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -2255,7 +2268,7 @@ class ServiciosReferencias {
 			a.fechanacimiento,
 			a.sexo,
 			a.codigopostal,
-			a.escolaridad,
+			a.refescolaridades,
 			a.telefonomovil,
 			a.telefonocasa,
 			a.telefonotrabajo,
@@ -2264,7 +2277,7 @@ class ServiciosReferencias {
 			a.usuariocrea,
 			a.usuariomodi
 			from dbasesores a
-			inner join usu ON usu. = a.refusuarios
+			inner join dbusuarios u ON u.idusuario = a.refusuarios
 			order by 1";
 		$res = $this->query($sql,0);
 		return $res;
@@ -2272,7 +2285,7 @@ class ServiciosReferencias {
 
 
 	function traerAsesoresPorId($id) {
-	$sql = "select idasesor,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,escolaridad,telefonomovil,telefonocasa,telefonotrabajo,fechacrea,fechamodi,usuariocrea,usuariomodi from dbasesores where idasesor =".$id;
+	$sql = "select idasesor,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,fechacrea,fechamodi,usuariocrea,usuariomodi from dbasesores where idasesor =".$id;
 	$res = $this->query($sql,0);
 	return $res;
 	}
