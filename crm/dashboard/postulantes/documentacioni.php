@@ -187,6 +187,26 @@ if (!file_exists($pathInfonavit)) {
 
 $filesInfonavit = array_diff(scandir($pathInfonavit), array('.', '..'));
 
+/****************************************************************/
+
+$pathCedulaseguros  = '../../archivos/postulantes/'.$id.'/cedulaseguros';
+
+if (!file_exists($pathCedulaseguros)) {
+	mkdir($pathCedulaseguros, 0777);
+}
+
+$filesCedulaseguros = array_diff(scandir($pathCedulaseguros), array('.', '..'));
+
+/****************************************************************/
+
+$pathRC  = '../../archivos/postulantes/'.$id.'/rc';
+
+if (!file_exists($pathRC)) {
+	mkdir($pathRC, 0777);
+}
+
+$filesRC = array_diff(scandir($pathRC), array('.', '..'));
+
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,7);

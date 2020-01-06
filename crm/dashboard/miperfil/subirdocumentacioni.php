@@ -173,13 +173,25 @@ $filesCV = array_diff(scandir($pathCV), array('.', '..'));
 
 /****************************************************************/
 
-$pathInfonavit  = '../../archivos/postulantes/'.$id.'/infonavit';
+$pathCedulaseguros  = '../../archivos/postulantes/'.$id.'/cedulaseguros';
 
-if (!file_exists($pathInfonavit)) {
-	mkdir($pathInfonavit, 0777);
+if (!file_exists($pathCedulaseguros)) {
+	mkdir($pathCedulaseguros, 0777);
 }
 
-$filesInfonavit = array_diff(scandir($pathInfonavit), array('.', '..'));
+$filesCedulaseguros = array_diff(scandir($pathCedulaseguros), array('.', '..'));
+
+/****************************************************************/
+
+$pathRC  = '../../archivos/postulantes/'.$id.'/rc';
+
+if (!file_exists($pathRC)) {
+	mkdir($pathRC, 0777);
+}
+
+$filesRC = array_diff(scandir($pathRC), array('.', '..'));
+
+
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
@@ -310,6 +322,22 @@ switch ($iddocumentacion) {
 		$boton = '';
 		$leyenda = '';
 		$campo = '';
+	break;
+	case 26:
+		// code...
+		$input = '';
+		$boton = '';
+		$leyenda = '';
+		$campo = '';
+	break;
+	case 27:
+		// code...
+		$dato = mysql_result($resPostulante,0,'nropoliza');
+
+		$input = '<input type="text" maxlength="25" name="nropoliza" id="nropoliza" class="form-control" value="'.$dato.'"/> ';
+		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
+		$leyenda = 'Cargue el Nro de Poliza';
+		$campo = 'nropoliza';
 	break;
 
 	default:

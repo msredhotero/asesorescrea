@@ -111,7 +111,17 @@
 				list($base,$extension) = explode('.',$name);
 				$newname = implode('.', ['infonavit', time(), $extension]);
 			break;
-			
+			case 26:
+				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/cedulaseguros/';
+				list($base,$extension) = explode('.',$name);
+				$newname = implode('.', ['cedulaseguros', time(), $extension]);
+			break;
+			case 27:
+				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/rc/';
+				list($base,$extension) = explode('.',$name);
+				$newname = implode('.', ['rc', time(), $extension]);
+			break;
+
 		}
 
 

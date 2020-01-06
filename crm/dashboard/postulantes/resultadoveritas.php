@@ -200,7 +200,12 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 					if (($lblEstado == 'complete') || ($lblEstado == 'active')) {
 						$urlAcceso = $rowG['url'].'?id='.$id;
 					} else {
-						$urlAcceso = 'javascript:void(0)';
+						if ($rowG['refestadopostulantes'] == 7) {
+							$urlAcceso = $rowG['url'].'?id='.$id;
+							$lblEstado = 'active';
+						} else {
+							$urlAcceso = 'javascript:void(0)';
+						}
 					}
 				?>
 				<div class="col-xs-2 bs-wizard-step <?php echo $lblEstado; ?>">

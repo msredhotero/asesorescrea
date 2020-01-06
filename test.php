@@ -206,7 +206,7 @@ Para cualquier información adicional, puedes contactarnos y con gusto te atende
                   ?></button>
                </div>
             <?php } ?>
-            <?php if (($arTest['test'] != 2) && ($finalizarAlta == 0)) { ?>
+            <?php if (($finalizarAlta == 0)) { ?>
             <div class="contAlta">
             <form class="formulario frmNuevo" role="form" id="sign_in">
                <div class="row">

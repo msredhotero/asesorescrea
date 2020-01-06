@@ -2224,16 +2224,18 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
             //die(var_dump($resActivacion));
          }
 
-         $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token);
+         $vigdesdecedulaseguro = '';
+         $vighastacedulaseguro = '';
+         $vigdesdeafore = '';
+         $vighastaafore = '';
+
+         // desde el crm
+         $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore);
 
          //die(var_dump($res));
 
          if ((integer)$res > 0) {
-            if ($cedula == '1') {
-               foreach ($_POST['lstseguros'] as $seguros) {
-                  $resSeguro = $serviciosReferencias->insertarPostulanteseguros($res,$seguros);
-               }
-            }
+
 
             if (isset($_SESSION['idroll_sahilices'])) {
                if (($_SESSION['idroll_sahilices'] == 2) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 5) || ($_SESSION['idroll_sahilices'] == 6)) {
@@ -2320,7 +2322,7 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
             }
 
             if ($afore == '1') {
-               $refestadopostulantes = 9;
+               $resActivacion = $serviciosUsuarios->confirmarEmail($email, $password,$apellido, $nombre, $refusuarios);
                // rechazo la solicitud
             } else {
                // envio email de confirmacion para validar cuenta de email. Correr a la noche un CRON
@@ -2329,7 +2331,13 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
                //die(var_dump($resActivacion));
             }
 
-            $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token);
+            $vigdesdecedulaseguro = '';
+            $vighastacedulaseguro = '';
+            $vigdesdeafore = '';
+            $vighastaafore = '';
+
+            // desde el test
+            $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore);
 
             //die(var_dump($res));
 
@@ -2398,6 +2406,12 @@ function modificarPostulantes($serviciosReferencias) {
    $idclienteinbursa = $_POST['idclienteinbursa'];
    $claveasesor = $_POST['claveasesor'];
 
+   $vigdesdeafore = $_POST['vigdesdeafore'];
+   $vighastaafore = $_POST['vighastaafore'];
+   $vigdesdecedulaseguro = $_POST['vigdesdecedulaseguro'];
+   $vighastacedulaseguro = $_POST['vighastacedulaseguro'];
+   $nropoliza = $_POST['nropoliza'];
+
    if ($_SESSION['idroll_sahilices'] == 1) {
       $fechaalta = $_POST['fechaalta'];
    } else {
@@ -2417,7 +2431,7 @@ function modificarPostulantes($serviciosReferencias) {
 
 
 
-   $res = $serviciosReferencias->modificarPostulantes($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$nss,$refesquemareclutamiento,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta);
+   $res = $serviciosReferencias->modificarPostulantes($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$nss,$refesquemareclutamiento,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore,$nropoliza);
 
    if ($res == true) {
       echo '';

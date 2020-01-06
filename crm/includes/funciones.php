@@ -620,7 +620,7 @@ class Servicios {
 										</span>
                                 <div class="form-line">
 
-										   	<input readonly="readonly" style="width:200px;" type="text" class="datepicker form-control" id="'.$campo.'" name="'.$campo.'" required />
+										   	<input readonly="readonly" style="width:200px;" type="text" class="datepicker form-control" id="'.$campo.'" name="'.$campo.'" '.$lblObligatorio.' />
 
                                 </div>
                               </div>
