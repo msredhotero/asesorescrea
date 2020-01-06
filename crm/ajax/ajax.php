@@ -2224,10 +2224,10 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
             //die(var_dump($resActivacion));
          }
 
-         $vigdesdecedulaseguro = '';
-         $vighastacedulaseguro = '';
-         $vigdesdeafore = '';
-         $vighastaafore = '';
+         $vigdesdecedulaseguro = $_POST['vigdesdecedulaseguro'];
+         $vighastacedulaseguro = $_POST['vighastacedulaseguro'];
+         $vigdesdeafore = $_POST['vigdesdeafore'];
+         $vighastaafore = $_POST['vighastaafore'];
 
          // desde el crm
          $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore);
