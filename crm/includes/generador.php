@@ -72,7 +72,12 @@ $tablasAr	= array('rolhogar' => 'tbrolhogar',
 							'esquemadocumentosestados' => 'dbesquemadocumentosestados',
 							'guias' => 'dbguias',
 							'seguimientos' => 'dbseguimientos',
-							'reclutadorasores' => 'dbreclutadorasores');
+							'reclutadorasores' => 'dbreclutadorasores',
+							'oportunidades' => 'dboportunidades',
+							'entrevistaoportunidades' => 'dbentrevistaoportunidades',
+							'referentes' => 'tbreferentes',
+							'estadooportunidad' => 'tbestadooportunidad'
+							);
 
 
 function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
@@ -114,7 +119,11 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'esquemadocumentosestados' => 'dbesquemadocumentosestados',
 								'guias' => 'dbguias',
 								'seguimientos' => 'dbseguimientos',
-								'reclutadorasores' => 'dbreclutadorasores');
+								'reclutadorasores' => 'dbreclutadorasores',
+								'oportunidades' => 'dboportunidades',
+								'entrevistaoportunidades' => 'dbentrevistaoportunidades',
+								'referentes' => 'tbreferentes',
+								'estadooportunidad' => 'tbestadooportunidad');
 
 	$tablasArAux	= array('rolhogar' => 1,
 								'tipopromotores' => 1,
@@ -153,7 +162,11 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'esquemadocumentosestados' => 1,
 								'guias' => 1,
 								'seguimientos' => 1,
-								'reclutadorasores' => 3);
+								'reclutadorasores' => 3,
+								'oportunidades' => 3,
+								'entrevistaoportunidades' => 2,
+								'referentes' => 1,
+								'estadooportunidad' => 1);
 
 	$inner= '';
 	$sql	=	"show columns from ".$tabla;
