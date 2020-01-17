@@ -746,10 +746,19 @@ function modificarEntrevistaoportunidades($serviciosReferencias) {
 
 function eliminarEntrevistaoportunidades($serviciosReferencias) {
    $id = $_POST['id'];
+   session_start();
 
-   $res = $serviciosReferencias->eliminarEntrevistaoportunidades($id);
+   $res = $serviciosReferencias->traerEntrevistaoportunidadesPorId($id);
+   $idoportunidad = mysql_result($res,0,'refoportunidades');
 
+   if ($_SESSION['idroll_sahilices'] == 3) {
+
+      $res = $serviciosReferencias->cancelarEntrevistaoportunidades($id);
+   } else {
+      $res = $serviciosReferencias->eliminarEntrevistaoportunidades($id);
+   }
    if ($res == true) {
+      $resOpo = $serviciosReferencias->modificarOportunidadesEstado($idoportunidad,4);
       echo '';
    } else {
       echo 'Hubo un error al eliminar datos';

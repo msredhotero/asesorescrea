@@ -413,8 +413,14 @@ switch ($tabla) {
 
 		break;
 	case 'entrevistaoportunidades':
-		$resAjax = $serviciosReferencias->traerEntrevistaoportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerEntrevistaoportunidades();
+		if ($_SESSION['idroll_sahilices'] == 3) {
+			$resAjax = $serviciosReferencias->traerEntrevistaoportunidadesPorUsuarioajax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+			$res = $serviciosReferencias->traerEntrevistaoportunidadesPorUsuario($_SESSION['usuaid_sahilices']);
+		} else {
+			$resAjax = $serviciosReferencias->traerEntrevistaoportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir);
+			$res = $serviciosReferencias->traerEntrevistaoportunidades();
+		}
+
 		$label = array('btnModificar','btnEliminar');
 		$class = array('bg-amber','bg-red');
 		$icon = array('create','delete');

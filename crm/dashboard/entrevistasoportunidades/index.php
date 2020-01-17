@@ -284,7 +284,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		               <div class="modal-body">
 								<div class="row frmAjaxModificar">
 								</div>
-								<input type="hidden" class="codipostalaux" id="codipostalaux" name="codipostalaux" value="0"/>
+								<input type="hidden" class="codipostalaux" id="codipostalaux2" name="codipostalaux" value="0"/>
 
 		               </div>
 		               <div class="modal-footer">
@@ -471,14 +471,16 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 				success: function(data){
 
 					if (data != '') {
+						$('.frmAjaxNuevo .codigopostalaux').val(data.refpostal);
+						$('#codipostalaux2').val(data.refpostal);
 						if (contenedor == 'new') {
 							$('.frmAjaxNuevo #domicilio').val(data.domicilio);
-							$('.frmAjaxNuevo .codigopostalaux').val(data.refpostal);
+
 							$('.frmAjaxNuevo #codigopostal').val(data.codigopostal);
 
 						} else {
 							$('.frmAjaxModificar #domicilio').val(data.domicilio);
-							$('.frmAjaxModificar .codigopostalaux').val(data.refpostal);
+
 							$('.frmAjaxModificar #codigopostal2').val(data.codigopostal);
 						}
 
@@ -690,6 +692,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 		$("#example").on("click",'.btnModificar', function(){
 			idTable =  $(this).attr("id");
+			traerEntrevistasucursalesPorId(idTable, 'edit');
 			frmAjaxModificar(idTable);
 			$('#lgmModificar').modal();
 		});//fin del boton modificar

@@ -51,6 +51,12 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function cancelarEntrevistaoportunidades($id) {
+		$sql = "update dbentrevistaoportunidades set refestadoentrevistas = 4 where identrevistaoportunidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 
 	function traerEntrevistaoportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir) {
 
@@ -84,6 +90,46 @@ class ServiciosReferencias {
 		inner join tbestadooportunidad es ON es.idestadooportunidad = opo.refestadooportunidad
 		inner join tbestadoentrevistas est ON est.idestadoentrevista = e.refestadoentrevistas
 		".$where."
+		ORDER BY ".$colSort." ".$colSortDir."
+		limit ".$start.",".$length;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerEntrevistaoportunidadesPorUsuarioajax($length, $start, $busqueda,$colSort,$colSortDir, $idusuario) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (opo.persona like '%".$busqueda."%' or e.entrevistador like '%".$busqueda."%' or cast(e.fecha as unsigned) like '%".$busqueda."%' or e.domicilio like '%".$busqueda."%' or pp.codigo like '%".$busqueda."%' or est.estadoentrevista like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+		e.identrevistaoportunidad,
+		opo.persona,
+		e.entrevistador,
+		e.fecha,
+		e.domicilio,
+		pp.codigo,
+		est.estadoentrevista,
+		e.fechamodi,
+		e.codigopostal,
+		e.refoportunidades,
+		e.refestadoentrevistas,
+		e.fechacrea,
+		e.usuariocrea,
+		e.usuariomodi
+		from dbentrevistaoportunidades e
+		inner join postal pp on pp.id = e.codigopostal
+		inner join dboportunidades opo ON opo.idoportunidad = e.refoportunidades
+		inner join dbusuarios us ON us.idusuario = opo.refusuarios
+		inner join tbestadooportunidad es ON es.idestadooportunidad = opo.refestadooportunidad
+		inner join tbestadoentrevistas est ON est.idestadoentrevista = e.refestadoentrevistas
+		where us.idusuario = ".$idusuario.$where."
 		ORDER BY ".$colSort." ".$colSortDir."
 		limit ".$start.",".$length;
 
@@ -179,6 +225,7 @@ class ServiciosReferencias {
 		p.municipio,
 		p.estado
 		from dbentrevistaoportunidades  e
+		inner join postal p on e.codigopostal = p.id
 		where identrevistaoportunidad =".$id;
 		$res = $this->query($sql,0);
 		return $res;
