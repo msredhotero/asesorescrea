@@ -70,6 +70,21 @@ $refCampo 	=  array('refoportunidades','refestadoentrevistas');
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
+
+if ($_SESSION['idroll_sahilices'] == 3) {
+
+	$res = $serviciosReferencias->traerEntrevistaoportunidadesPorUsuario($_SESSION['usuaid_sahilices']);
+
+	if (mysql_num_rows($res)>0) {
+		$habilitaNuevo = 1;
+	} else {
+		$habilitaNuevo = 0;
+	}
+} else {
+	$habilitaNuevo = 1;
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -197,7 +212,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						</div>
 						<div class="body table-responsive">
 							<form class="form" id="formCountry">
-
+								<?php if ($habilitaNuevo == 1) { ?>
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
@@ -209,7 +224,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										</div>
 									</div>
 								</div>
-
+								<?php } ?>
 
 								<div class="row" style="padding: 5px 20px;">
 
