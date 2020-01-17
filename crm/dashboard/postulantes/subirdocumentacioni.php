@@ -254,7 +254,7 @@ switch ($iddocumentacion) {
 		// code...
 		$dato = mysql_result($resPostulante,0,'ine');
 
-		$input = '<input type="text" name="ine" maxlength="10" id="ine" class="form-control" value="'.$dato.'"/> ';
+		$input = '<input type="text" name="ine" maxlength="13" id="ine" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
 		$leyenda = 'Cargue el Nro de INE';
 		$campo = 'ine';
@@ -263,7 +263,7 @@ switch ($iddocumentacion) {
 		// code...
 		$dato = mysql_result($resPostulante,0,'ine');
 
-		$input = '<input type="text" name="ine" maxlength="10" id="ine" class="form-control" value="'.$dato.'"/> ';
+		$input = '<input type="text" name="ine" maxlength="13" id="ine" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
 		$leyenda = 'Cargue el Nro de INE';
 		$campo = 'ine';

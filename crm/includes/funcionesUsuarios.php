@@ -329,6 +329,20 @@ function traerUsuariosSimple() {
 	}
 }
 
+function traerUsuariosPorRol($idrol) {
+	$sql = "select u.idusuario,u.usuario, u.email , u.nombrecompleto
+			from dbusuarios u
+			inner join tbroles r on u.refroles = r.idrol
+			where r.idrol = ".$idrol."
+			order by nombrecompleto";
+	$res = $this->query($sql,0);
+	if ($res == false) {
+		return 'Error al traer datos';
+	} else {
+		return $res;
+	}
+}
+
 function traerTodosUsuarios() {
 	$sql = "select u.idusuario,u.usuario,u.nombrecompleto,u.refroll,u.email,u.password
 			from se_usuarios u

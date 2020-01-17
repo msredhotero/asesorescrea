@@ -427,6 +427,9 @@ class Servicios {
 			case 'dbentrevistas':
 				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes');
 			break;
+			case 'dbentrevistaoportunidades':
+				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes');
+			break;
 			case 'dblloguersadicional':
 				$ocultar = array("taxapersona","taxaturistica");
 			break;
@@ -1141,6 +1144,16 @@ class Servicios {
 							where e.identrevista =".$id;
 				$resMod = $this->query($sqlMod,0);
 				break;
+			case 'dbentrevistaoportunidades':
+				$sqlMod = "select
+							e.identrevistaoportunidad,e.refoportunidades,e.entrevistador,e.fecha,e.domicilio,
+							SUBSTRING(concat('00000', pp.codigo),-5,5) as codigopostal,
+							e.refestadoentrevistas,e.fechacrea,e.fechamodi,e.usuariocrea,e.usuariomodi
+							from dbentrevistaoportunidades e
+							left join postal pp on pp.id = e.codigopostal
+							where e.identrevistaoportunidad =".$id;
+				$resMod = $this->query($sqlMod,0);
+				break;
 			case 'dbconceptos':
 				$sqlMod = "select idconcepto,
 										concepto,
@@ -1166,6 +1179,9 @@ class Servicios {
 
 		switch ($tabla) {
 			case 'dbentrevistas':
+				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes');
+			break;
+			case 'dbentrevistaoportunidades':
 				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes');
 			break;
 			case 'dbpostulantes':

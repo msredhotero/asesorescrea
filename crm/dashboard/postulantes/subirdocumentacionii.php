@@ -275,7 +275,7 @@ switch ($iddocumentacion) {
 		$archivo = '';
 		$update = '';
 
-		$input = '<input type="text" name="folio" maxlength="10" id="folio" class="form-control" value="'.$dato.'"/> ';
+		$input = '<input type="text" name="folio" maxlength="15" id="folio" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
 		$leyenda = 'Cargue el Nro de FOLIO';
 		$campo = 'folio';

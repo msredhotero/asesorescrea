@@ -9,6 +9,471 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+	/*
+	INSERT INTO `tbroles` (`descripcion`, `activo`) VALUES ('Javelly', '1');
+	*/
+
+
+	/* PARA Entrevistaoportunidades */
+
+	function existeEntrevistaOportunidad($refoportunidades) {
+		$sql = "select identrevistaoportunidad from dbentrevistaoportunidades where refoportunidades = ".$refoportunidades;
+		$res = $this->query($sql,0);
+
+		if (mysql_num_rows($res) > 0) {
+			return 1;
+		}
+
+		return 0;
+	}
+
+	function insertarEntrevistaoportunidades($refoportunidades,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadoentrevistas,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+		$sql = "insert into dbentrevistaoportunidades(identrevistaoportunidad,refoportunidades,entrevistador,fecha,domicilio,codigopostal,refestadoentrevistas,fechacrea,fechamodi,usuariocrea,usuariomodi)
+		values ('',".$refoportunidades.",'".$entrevistador."','".$fecha."','".$domicilio."',".$codigopostal.",".$refestadoentrevistas.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarEntrevistaoportunidades($id,$refoportunidades,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadoentrevistas,$fechamodi,$usuariomodi) {
+		$sql = "update dbentrevistaoportunidades
+		set
+		refoportunidades = ".$refoportunidades.",entrevistador = '".$entrevistador."',fecha = '".$fecha."',domicilio = '".$domicilio."',codigopostal = ".$codigopostal.",refestadoentrevistas = ".$refestadoentrevistas.",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."'
+		where identrevistaoportunidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarEntrevistaoportunidades($id) {
+		$sql = "delete from dbentrevistaoportunidades where identrevistaoportunidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerEntrevistaoportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where opo.persona like '%".$busqueda."%' or e.entrevistador like '%".$busqueda."%' or cast(e.fecha as unsigned) like '%".$busqueda."%' or e.domicilio like '%".$busqueda."%' or pp.codigo like '%".$busqueda."%' or est.estadoentrevista like '%".$busqueda."%'";
+		}
+
+
+		$sql = "select
+		e.identrevistaoportunidad,
+		opo.persona,
+		e.entrevistador,
+		e.fecha,
+		e.domicilio,
+		pp.codigo,
+		est.estadoentrevista,
+		e.fechamodi,
+		e.codigopostal,
+		e.refoportunidades,
+		e.refestadoentrevistas,
+		e.fechacrea,
+		e.usuariocrea,
+		e.usuariomodi
+		from dbentrevistaoportunidades e
+		inner join postal pp on pp.id = e.codigopostal
+		inner join dboportunidades opo ON opo.idoportunidad = e.refoportunidades
+		inner join dbusuarios us ON us.idusuario = opo.refusuarios
+		inner join tbestadooportunidad es ON es.idestadooportunidad = opo.refestadooportunidad
+		inner join tbestadoentrevistas est ON est.idestadoentrevista = e.refestadoentrevistas
+		".$where."
+		ORDER BY ".$colSort." ".$colSortDir."
+		limit ".$start.",".$length;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerEntrevistaoportunidades() {
+		$sql = "select
+		e.identrevistaoportunidad,
+		e.refoportunidades,
+		e.entrevistador,
+		e.fecha,
+		e.domicilio,
+		e.codigopostal,
+		e.refestadoentrevistas,
+		e.fechacrea,
+		e.fechamodi,
+		e.usuariocrea,
+		e.usuariomodi
+		from dbentrevistaoportunidades e
+		inner join dboportunidades opo ON opo.idoportunidad = e.refoportunidades
+		inner join dbusuarios us ON us.idusuario = opo.refusuarios
+		inner join tbestadooportunidad es ON es.idestadooportunidad = opo.refestadooportunidad
+		inner join tbestadoentrevistas est ON est.idestadoentrevista = e.refestadoentrevistas
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerEntrevistaoportunidadesPorOportunidad($id) {
+		$sql = "select
+		e.identrevistaoportunidad,
+		e.refoportunidades,
+		e.entrevistador,
+		e.fecha,
+		e.domicilio,
+		e.codigopostal,
+		e.refestadoentrevistas,
+		e.fechacrea,
+		e.fechamodi,
+		e.usuariocrea,
+		e.usuariomodi
+		from dbentrevistaoportunidades e
+		inner join dboportunidades opo ON opo.idoportunidad = e.refoportunidades
+		inner join dbusuarios us ON us.idusuario = opo.refusuarios
+		inner join tbestadooportunidad es ON es.idestadooportunidad = opo.refestadooportunidad
+		inner join tbestadoentrevistas est ON est.idestadoentrevista = e.refestadoentrevistas
+		where opo.idoportunidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerEntrevistaoportunidadesPorUsuario($id) {
+		$sql = "select
+		e.identrevistaoportunidad,
+		e.refoportunidades,
+		e.entrevistador,
+		e.fecha,
+		e.domicilio,
+		e.codigopostal,
+		e.refestadoentrevistas,
+		e.fechacrea,
+		e.fechamodi,
+		e.usuariocrea,
+		e.usuariomodi
+		from dbentrevistaoportunidades e
+		inner join dboportunidades opo ON opo.idoportunidad = e.refoportunidades
+		inner join dbusuarios us ON us.idusuario = opo.refusuarios
+		inner join tbestadooportunidad es ON es.idestadooportunidad = opo.refestadooportunidad
+		inner join tbestadoentrevistas est ON est.idestadoentrevista = e.refestadoentrevistas
+		where us.idusuario =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerEntrevistaoportunidadesPorId($id) {
+		$sql = "select identrevistaoportunidad,refoportunidades,entrevistador,fecha,domicilio,codigopostal,refestadoentrevistas,fechacrea,fechamodi,usuariocrea,usuariomodi from dbentrevistaoportunidades where identrevistaoportunidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerEntrevistaoportunidadesPorIdCompleto($id) {
+		$sql = "select
+		e.identrevistaoportunidad,e.codigopostal,e.entrevistador,e.fecha,
+		e.domicilio,e.refestadoentrevistas,e.fechacrea,e.fechamodi,
+		e.usuariocrea,e.usuariomodi , p.codigo,
+		p.colonia,
+		p.municipio,
+		p.estado
+		from dbentrevistaoportunidades  e
+		where identrevistaoportunidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbentrevistaoportunidades*/
+
+
+
+	/* PARA Oportunidades */
+
+	function insertarOportunidades($nombredespacho,$persona,$telefono,$email,$refusuarios,$refreferentes,$refestadooportunidad) {
+		$sql = "insert into dboportunidades(idoportunidad,nombredespacho,persona,telefono,email,refusuarios,refreferentes,refestadooportunidad)
+		values ('','".$nombredespacho."','".$persona."','".$telefono."','".$email."',".$refusuarios.",".$refreferentes.",".$refestadooportunidad.")";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarOportunidades($id,$nombredespacho,$persona,$telefono,$email,$refusuarios,$refreferentes,$refestadooportunidad) {
+		$sql = "update dboportunidades
+		set
+		nombredespacho = '".$nombredespacho."',persona = '".$persona."',telefono = '".$telefono."',email = '".$email."',refusuarios = ".$refusuarios.",refreferentes = ".$refreferentes.",refestadooportunidad = ".$refestadooportunidad."
+		where idoportunidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function modificarOportunidadesEstado($id,$refestadooportunidad) {
+		$sql = "update dboportunidades
+		set
+		refestadooportunidad = ".$refestadooportunidad."
+		where idoportunidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarOportunidades($id) {
+		$sql = "delete from dboportunidades where idoportunidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerOportunidades() {
+		$sql = "select
+		o.idoportunidad,
+		o.nombredespacho,
+		o.persona,
+		o.telefono,
+		o.email,
+		o.refusuarios,
+		o.refreferentes,
+		o.refestadooportunidad
+		from dboportunidades o
+		inner join dbusuarios usu ON usu.idusuario = o.refusuarios
+		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerOportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where o.nombredespacho like '%".$busqueda."%' or o.persona like '%".$busqueda."%' or o.telefono like '%".$busqueda."%' or o.email like '%".$busqueda."%' or usu.nombrecompleto like '%".$busqueda."%' or est.estadooportunidad like '%".$busqueda."%'";
+		}
+
+
+		$sql = "select
+		o.idoportunidad,
+		o.nombredespacho,
+		o.persona,
+		o.telefono,
+		o.email,
+		usu.nombrecompleto,
+		est.estadooportunidad,
+		concat(rr.apellidopaterno, ' ', rr.nombre) as referente,
+		o.refusuarios,
+		o.refreferentes,
+		o.refestadooportunidad
+		from dboportunidades o
+		inner join dbusuarios usu ON usu.idusuario = o.refusuarios
+		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
+		left join tbreferentes rr on rr.idreferente = o.refreferentes
+		".$where."
+		ORDER BY ".$colSort." ".$colSortDir."
+		limit ".$start.",".$length;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerOportunidadesajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir, $idusuario) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (o.nombredespacho like '%".$busqueda."%' or o.persona like '%".$busqueda."%' or o.telefono like '%".$busqueda."%' or o.email like '%".$busqueda."%' or usu.nombrecompleto like '%".$busqueda."%' or est.estadooportunidad like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+		o.idoportunidad,
+		o.nombredespacho,
+		o.persona,
+		o.telefono,
+		o.email,
+		usu.nombrecompleto,
+		est.estadooportunidad,
+		concat(rr.apellidopaterno, ' ', rr.nombre) as referente,
+		o.refusuarios,
+		o.refreferentes,
+		o.refestadooportunidad
+		from dboportunidades o
+		inner join dbusuarios usu ON usu.idusuario = o.refusuarios
+		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
+		left join tbreferentes rr on rr.idreferente = o.refreferentes
+		where usu.idusuario = ".$idusuario.$where."
+		ORDER BY ".$colSort." ".$colSortDir."
+		limit ".$start.",".$length;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerOportunidadesPorUsuario($idusuario) {
+		$sql = "select
+		o.idoportunidad,
+		o.nombredespacho,
+		o.persona,
+		o.telefono,
+		o.email,
+		o.refusuarios,
+		o.refreferentes,
+		o.refestadooportunidad
+		from dboportunidades o
+		inner join dbusuarios usu ON usu.idusuario = o.refusuarios
+		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
+		where usu.idusuario = ".$idusuario."
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerOportunidadesPorId($id) {
+		$sql = "select idoportunidad,nombredespacho,persona,telefono,email,refusuarios,refreferentes,refestadooportunidad from dboportunidades where idoportunidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dboportunidades*/
+
+
+	/* PARA Estadooportunidad */
+
+	function insertarEstadooportunidad($estadooportunidad) {
+		$sql = "insert into tbestadooportunidad(idestadooportunidad,estadooportunidad)
+		values ('','".$estadooportunidad."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarEstadooportunidad($id,$estadooportunidad) {
+		$sql = "update tbestadooportunidad
+		set
+		estadooportunidad = '".$estadooportunidad."'
+		where idestadooportunidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarEstadooportunidad($id) {
+		$sql = "delete from tbestadooportunidad where idestadooportunidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerEstadooportunidad() {
+		$sql = "select
+		e.idestadooportunidad,
+		e.estadooportunidad
+		from tbestadooportunidad e
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerEstadooportunidadPorId($id) {
+		$sql = "select idestadooportunidad,estadooportunidad from tbestadooportunidad where idestadooportunidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbestadooportunidad*/
+
+
+	/* PARA Referentes */
+
+	function insertarReferentes($apellidopaterno,$apellidomaterno,$nombre,$telefono,$email,$observaciones) {
+		$sql = "insert into tbreferentes(idreferente,apellidopaterno,apellidomaterno,nombre,telefono,email,observaciones)
+		values ('','".$apellidopaterno."','".$apellidomaterno."','".$nombre."','".$telefono."','".$email."','".$observaciones."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarReferentes($id,$apellidopaterno,$apellidomaterno,$nombre,$telefono,$email,$observaciones) {
+		$sql = "update tbreferentes
+		set
+		apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',nombre = '".$nombre."',telefono = '".$telefono."',email = '".$email."',observaciones = '".$observaciones."'
+		where idreferente =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarReferentes($id) {
+		$sql = "delete from tbreferentes where idreferente =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerReferentesajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where r.apellidopaterno like '%".$busqueda."%' or r.apellidomaterno like '%".$busqueda."%' or r.nombre like '%".$busqueda."%' or r.telefono like '%".$busqueda."%' or r.email like '%".$busqueda."%'";
+		}
+
+
+		$sql = "select
+		r.idreferente,
+		r.apellidopaterno,
+		r.apellidomaterno,
+		r.nombre,
+		r.telefono,
+		r.email,
+		r.observaciones
+		from tbreferentes r
+		".$where."
+		ORDER BY ".$colSort." ".$colSortDir."
+		limit ".$start.",".$length;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerReferentes() {
+		$sql = "select
+		r.idreferente,
+		r.apellidopaterno,
+		r.apellidomaterno,
+		r.nombre,
+		r.telefono,
+		r.email,
+		r.observaciones
+		from tbreferentes r
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerReferentesPorId($id) {
+		$sql = "select idreferente,apellidopaterno,apellidomaterno,nombre,telefono,email,observaciones from tbreferentes where idreferente =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbreferentes*/
+
 	/* PARA Reclutadorasores */
 
 	function insertarReclutadorasores($refusuarios,$refpostulantes) {

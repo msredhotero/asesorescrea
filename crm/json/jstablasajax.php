@@ -380,6 +380,49 @@ switch ($tabla) {
 
 
 		break;
+	case 'referentes':
+		$resAjax = $serviciosReferencias->traerReferentesajax($length, $start, $busqueda,$colSort,$colSortDir);
+		$res = $serviciosReferencias->traerReferentes();
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('create','delete');
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 5;
+
+		break;
+	case 'oportunidades':
+
+		if ($_SESSION['idroll_sahilices'] == 3) {
+			$resAjax = $serviciosReferencias->traerOportunidadesajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+			$res = $serviciosReferencias->traerOportunidadesPorUsuario($_SESSION['usuaid_sahilices']);
+			$label = array('btnEntrevista');
+			$class = array('bg-green');
+			$icon = array('assignment');
+		} else {
+			$resAjax = $serviciosReferencias->traerOportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir);
+			$res = $serviciosReferencias->traerOportunidades();
+			$label = array('btnModificar','btnEliminar');
+			$class = array('bg-amber','bg-red');
+			$icon = array('create','delete');
+		}
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 7;
+
+		break;
+	case 'entrevistaoportunidades':
+		$resAjax = $serviciosReferencias->traerEntrevistaoportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir);
+		$res = $serviciosReferencias->traerEntrevistaoportunidades();
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('create','delete');
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 6;
+
+		break;
 	case 'entrevistasucursales':
 		$resAjax = $serviciosReferencias->traerEntrevistasucursalesajax($length, $start, $busqueda,$colSort,$colSortDir);
 		$res = $serviciosReferencias->traerEntrevistasucursales();

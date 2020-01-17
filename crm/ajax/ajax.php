@@ -609,9 +609,251 @@ switch ($accion) {
    case 'enviarAlerta':
       enviarAlerta($serviciosReferencias, $serviciosUsuarios);
    break;
+   /* nuevo 15/01/2020 */
+   case 'insertarReferentes':
+      insertarReferentes($serviciosReferencias);
+   break;
+   case 'modificarReferentes':
+      modificarReferentes($serviciosReferencias);
+   break;
+   case 'eliminarReferentes':
+      eliminarReferentes($serviciosReferencias);
+   break;
+   case 'insertarOportunidades':
+      insertarOportunidades($serviciosReferencias);
+   break;
+   case 'modificarOportunidades':
+      modificarOportunidades($serviciosReferencias);
+   break;
+   case 'eliminarOportunidades':
+      eliminarOportunidades($serviciosReferencias);
+   break;
+   case 'insertarEntrevistaoportunidades':
+      insertarEntrevistaoportunidades($serviciosReferencias);
+   break;
+   case 'modificarEntrevistaoportunidades':
+      modificarEntrevistaoportunidades($serviciosReferencias);
+   break;
+   case 'eliminarEntrevistaoportunidades':
+      eliminarEntrevistaoportunidades($serviciosReferencias);
+   break;
+   case 'traerEntrevistaoportunidadesPorId':
+      traerEntrevistaoportunidadesPorId($serviciosReferencias);
+   break;
+
+   case 'frmAjaxNuevo':
+      frmAjaxNuevo($serviciosReferencias, $serviciosFunciones);
+   break;
 
 }
 /* Fin */
+
+/* nuevo 16/01/2020 */
+
+function traerEntrevistaoportunidadesPorId($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->traerEntrevistaoportunidadesPorIdCompleto($id);
+
+   if (mysql_num_rows($res) > 0) {
+      $resV['error'] = false;
+      $resV['domicilio'] = mysql_result($res,0,'domicilio');
+      $resV['refpostal'] = mysql_result($res,0,'codigopostal');
+      $resV['codigopostal'] = mysql_result($res,0,'codigo');
+      $resV['codigopostalcompleto'] = utf8_encode( mysql_result($res,0,'estado').' '.mysql_result($res,0,'municipio').' '.mysql_result($res,0,'colonia').' '.mysql_result($res,0,'codigo'));
+   } else {
+      $resV['error'] = true;
+      $resV['domicilio'] = '';
+      $resV['codigopostal'] = '';
+      $resV['refpostal'] = 0;
+      $resV['codigopostalcompleto'] = '';
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
+function insertarEntrevistaoportunidades($serviciosReferencias) {
+   session_start();
+
+   $refoportunidades = $_POST['refoportunidades'];
+   $entrevistador = $_POST['entrevistador'];
+   $fecha = $_POST['fecha'];
+   $domicilio = $_POST['domicilio'];
+   $codigopostal = $_POST['codipostalaux'];
+   $refestadoentrevistas = $_POST['refestadoentrevistas'];
+   $fechacrea = date('Y-m-d H:i:s');
+   $fechamodi = date('Y-m-d H:i:s');
+   $usuariocrea = $_SESSION['usua_sahilices'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+
+   $existe = $serviciosReferencias->existeEntrevistaOportunidad($refoportunidades);
+
+   if ($existe == 0) {
+      $res = $serviciosReferencias->insertarEntrevistaoportunidades($refoportunidades,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadoentrevistas,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
+
+      if ((integer)$res > 0) {
+         $resOpo = $serviciosReferencias->modificarOportunidadesEstado($refoportunidades,2);
+         echo '';
+      } else {
+         echo 'Hubo un error al insertar datos';
+      }
+   } else {
+      echo 'Ya existe una entrevista';
+   }
+
+}
+
+function modificarEntrevistaoportunidades($serviciosReferencias) {
+   session_start();
+
+   $id = $_POST['id'];
+   $refoportunidades = $_POST['refoportunidades'];
+   $entrevistador = $_POST['entrevistador'];
+   $fecha = $_POST['fecha'];
+   $domicilio = $_POST['domicilio'];
+   $codigopostal = $_POST['codipostalaux'];
+   $refestadoentrevistas = $_POST['refestadoentrevistas'];
+   $fechamodi = date('Y-m-d H:i:s');
+   $usuariomodi = $_SESSION['usua_sahilices'];
+
+   $res = $serviciosReferencias->modificarEntrevistaoportunidades($id,$refoportunidades,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadoentrevistas,$fechamodi,$usuariomodi);
+
+   if ($res == true) {
+      switch ($refestadoentrevistas) {
+         case 1:
+            $resOpo = $serviciosReferencias->modificarOportunidadesEstado($refoportunidades,2);
+         break;
+         case 2:
+            $resOpo = $serviciosReferencias->modificarOportunidadesEstado($refoportunidades,3);
+         break;
+         case 3:
+            $resOpo = $serviciosReferencias->modificarOportunidadesEstado($refoportunidades,2);
+         break;
+         case 4:
+            $resOpo = $serviciosReferencias->modificarOportunidadesEstado($refoportunidades,4);
+         break;
+         case 5:
+            $resOpo = $serviciosReferencias->modificarOportunidadesEstado($refoportunidades,4);
+         break;
+      }
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarEntrevistaoportunidades($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarEntrevistaoportunidades($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
+function insertarOportunidades($serviciosReferencias) {
+
+   $nombredespacho = $_POST['nombredespacho'];
+   $persona = $_POST['persona'];
+   $telefono = $_POST['telefono'];
+   $email = $_POST['email'];
+   $refusuarios = $_POST['refusuarios'];
+   $refreferentes = ($_POST['refreferentes'] == '' ? 'null' : $_POST['refreferentes']);
+   $refestadooportunidad = $_POST['refestadooportunidad'];
+
+   $res = $serviciosReferencias->insertarOportunidades($nombredespacho,$persona,$telefono,$email,$refusuarios,$refreferentes,$refestadooportunidad);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarOportunidades($serviciosReferencias) {
+   $id = $_POST['id'];
+   $nombredespacho = $_POST['nombredespacho'];
+   $persona = $_POST['persona'];
+   $telefono = $_POST['telefono'];
+   $email = $_POST['email'];
+   $refusuarios = $_POST['refusuarios'];
+   $refreferentes = ($_POST['refreferentes'] == '' ? 'null' : $_POST['refreferentes']);
+   $refestadooportunidad = $_POST['refestadooportunidad'];
+
+   $res = $serviciosReferencias->modificarOportunidades($id,$nombredespacho,$persona,$telefono,$email,$refusuarios,$refreferentes,$refestadooportunidad);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarOportunidades($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarOportunidades($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
+function insertarReferentes($serviciosReferencias) {
+   $apellidopaterno = $_POST['apellidopaterno'];
+   $apellidomaterno = $_POST['apellidomaterno'];
+   $nombre = $_POST['nombre'];
+   $telefono = $_POST['telefono'];
+   $email = $_POST['email'];
+   $observaciones = $_POST['observaciones'];
+
+   $res = $serviciosReferencias->insertarReferentes($apellidopaterno,$apellidomaterno,$nombre,$telefono,$email,$observaciones);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarReferentes($serviciosReferencias) {
+   $id = $_POST['id'];
+   $apellidopaterno = $_POST['apellidopaterno'];
+   $apellidomaterno = $_POST['apellidomaterno'];
+   $nombre = $_POST['nombre'];
+   $telefono = $_POST['telefono'];
+   $email = $_POST['email'];
+   $observaciones = $_POST['observaciones'];
+
+   $res = $serviciosReferencias->modificarReferentes($id,$apellidopaterno,$apellidomaterno,$nombre,$telefono,$email,$observaciones);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarReferentes($serviciosReferencias) {
+   $id = $_POST['id'];
+   $res = $serviciosReferencias->eliminarReferentes($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
+
+/* fin nuevo 16/01/2020 */
 
 function enviarAlerta($serviciosReferencias,$serviciosUsuarios) {
    $id = $_POST['id'];
@@ -1099,6 +1341,12 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
                case 25:
                   $imagen = '../../archivos/postulantes/'.$idpostulante.'/compromiso/'.mysql_result($resFoto,0,'archivo');
                break;
+               case 26:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/cedulaseguros/'.mysql_result($resFoto,0,'archivo');
+               break;
+               case 27:
+                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/rc/'.mysql_result($resFoto,0,'archivo');
+               break;
             }
 
             $resV['datos'] = array('imagen' => $imagen, 'type' => mysql_result($resFoto,0,'type'));
@@ -1521,6 +1769,65 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $refdescripcion = array();
          $refCampo 	=  array();
       break;
+      case 'tbreferentes':
+         $resultado = $serviciosReferencias->traerReferentesPorId($id);
+
+         $modificar = "modificarReferentes";
+         $idTabla = "idreferente";
+
+         $lblCambio	 	= array('apellidopaterno','apellidomaterno');
+         $lblreemplazo	= array('Apellido Paterno','Apellido Materno');
+
+         $cadRef2 = '';
+
+         $refdescripcion = array();
+         $refCampo 	=  array();
+      break;
+      case 'dbentrevistaoportunidades':
+         $resultado = $serviciosReferencias->traerEntrevistaoportunidadesPorId($id);
+
+         $modificar = "modificarEntrevistaoportunidades";
+         $idTabla = "identrevistaoportunidad";
+
+         $lblCambio	 	= array('refoportunidades','codigopostal','refestadoentrevistas');
+         $lblreemplazo	= array('Persona','Cod. Postal','Estado Entrevista');
+
+
+         $resVar2	= $serviciosReferencias->traerOportunidadesPorId(mysql_result($resultado,0,'refoportunidades'));
+         $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(2),'');
+
+         $resVar4	= $serviciosReferencias->traerEstadoentrevistas();
+         $cadRef4 = $serviciosFunciones->devolverSelectBoxActivo($resVar4,array(1),'',mysql_result($resultado,0,'refestadoentrevistas'));
+
+
+         $refdescripcion = array(0=> $cadRef2,1=> $cadRef4);
+         $refCampo 	=  array('refoportunidades','refestadoentrevistas');
+
+      break;
+      case 'dboportunidades':
+         $resultado = $serviciosReferencias->traerOportunidadesPorId($id);
+
+         $modificar = "modificarOportunidades";
+         $idTabla = "idoportunidad";
+
+         $lblCambio	 	= array('nombredespacho','refusuarios','refreferentes','refestadooportunidad');
+         $lblreemplazo	= array('Nombre del Despacho','Asignar a Reclutador','Persona que Recomendo','Estado');
+
+
+
+         $resRoles 	= $serviciosUsuarios->traerUsuariosPorRol(3);
+         $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resRoles,array(3),'',mysql_result($resultado,0,'refusuarios'));
+
+         $resReferentes 	= $serviciosReferencias->traerReferentes();
+         $cadRef2 = "<option value=''>-- Seleccionar --</option>";
+         $cadRef2 .= $serviciosFunciones->devolverSelectBoxActivo($resReferentes,array(1,2,3),' ',mysql_result($resultado,0,'refreferentes'));
+
+         $resEstado 	= $serviciosReferencias->traerEstadooportunidad();
+         $cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resEstado,array(1),' ',mysql_result($resultado,0,'refestadooportunidad'));
+
+         $refdescripcion = array(0 => $cadRef1,1=>$cadRef2,2=>$cadRef3);
+         $refCampo 	=  array('refusuarios','refreferentes','refestadooportunidad');
+      break;
 
       default:
          // code...
@@ -1534,6 +1841,9 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    } else {
       switch ($tabla) {
          case 'dbentrevistas':
+         echo str_replace('codigopostal','codigopostal2',$formulario);
+         break;
+         case 'dbentrevistaoportunidades':
          echo str_replace('codigopostal','codigopostal2',$formulario);
          break;
          case 'tbentrevistasucursales':
@@ -1553,56 +1863,25 @@ function frmAjaxNuevo($serviciosReferencias,$serviciosFunciones) {
    $tabla = $_POST['tabla'];
    $id = $_POST['id'];
 
+   //die(var_dump($tabla));
+
    switch ($tabla) {
-      case 'dblloguersadicional':
+      case 'dbentrevistaoportunidades':
 
-         $insertar = "insertarLloguersadicional";
-         $idTabla = "idllogueradicional";
+         $insertar = "insertarEntrevistaoportunidades";
+         $idTabla = "identrevistaoportunidad";
 
-         $lblCambio	 	= array("reflloguers",'personas');
-         $lblreemplazo	= array("Lloguer",'Adultos');
+         $lblCambio	 	= array('refoportunidades','codigopostal','refestadoentrevistas');
+   		$lblreemplazo	= array('Nombre Completo','CP','Estado');
 
-         $resVar1 = $serviciosReferencias->traerLloguersPorIdAux($id);
-         $cadRef1 	= $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(4,5),' - ', $id);
+   		$resOportunidad = $serviciosReferencias->traerOportunidadesPorId($id);
+   		$cadRef1 = $serviciosFunciones->devolverSelectBox($resOportunidad,array(1),'');
 
+   		$resEstado = $serviciosReferencias->traerEstadoentrevistasPorId(1);
+   		$cadRef2 = $serviciosFunciones->devolverSelectBox($resEstado,array(1),'');
 
-         $refdescripcion = array(0=>$cadRef1);
-         $refCampo 	=  array('reflloguers');
-
-         $resLA = $serviciosReferencias->traerLloguersadicionalPorLloguer($id);
-         $cadTabla = "<table class='table table-hover'>
-                     <thead>
-                     <th>Adultos</th>
-                     <th>Menores</th>
-                     <th>Entrada</th>
-                     <th>Sortida</th>
-                     <th>Taxa Per</th>
-                     <th>Taxa Tur.</th>
-                     <th>Total</th>
-                     <th>Accions</th>
-                     </thead>
-                     <tbody>";
-         while ($row = mysql_fetch_array($resLA)) {
-            $cadTabla .= "<tr>";
-            $cadTabla .= "<td>".$row['personas']."</td>";
-            $cadTabla .= "<td>".$row['menores']."</td>";
-            $cadTabla .= "<td>".$row['entrada']."</td>";
-            $cadTabla .= "<td>".$row['sortida']."</td>";
-            $cadTabla .= "<td>".$row['taxapersona']."</td>";
-            $cadTabla .= "<td>".$row['taxaturistica']."</td>";
-            $cadTabla .= "<td>".($row['taxaturistica'] + $row['taxapersona'])."</td>";
-            $cadTabla .= '<td><button type="button" class="btn bg-red btn-circle waves-effect waves-circle waves-float btnEliminarLA" id="'.$row['idllogueradicional'].'">
-				<i class="material-icons">delete</i>
-			</button></td>';
-            $cadTabla .= "</tr>";
-         }
-         $cadTabla .= "</tbody></table>";
-
-         $resV['aux'] = array(
-                        'desde' => mysql_result($resVar1,0,'entrada'),
-                        'hasta' => mysql_result($resVar1,0,'sortida'),
-                        'vista' => $cadTabla
-                     );
+   		$refdescripcion = array(0 => $cadRef1,1 => $cadRef2);
+   		$refCampo 	=  array('refoportunidades','refestadoentrevistas');
 
       break;
 
@@ -1613,6 +1892,7 @@ function frmAjaxNuevo($serviciosReferencias,$serviciosFunciones) {
 
    $formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
+   //die(var_dump($formulario));
    $resV['formulario'] = $formulario;
 
    header('Content-type: application/json');

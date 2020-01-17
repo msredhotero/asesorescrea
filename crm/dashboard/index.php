@@ -64,44 +64,34 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 	}
 } else {
-	/////////////////////// Opciones pagina ///////////////////////////////////////////////
-	$singular = "Postulante";
 
-	$plural = "Postulantes";
+	if ($_SESSION['idroll_sahilices'] == 3) {
+		$singular = "Entrev. Oportnidad";
 
-	$eliminar = "eliminarPostulantes";
+		$plural = "Entrev. Oportnidades";
 
-	$insertar = "insertarPostulantes";
+		$eliminar = "eliminarEntrevistaoportunidades";
 
-	$modificar = "modificarPostulantes";
+		$insertar = "insertarEntrevistaoportunidades";
 
-	//$tituloWeb = "Gestión: Talleres";
+		$modificar = "modificarEntrevistaoportunidades";
 
-	$tabla 			= "dbpostulantes";
+		$tabla 			= "dbentrevistaoportunidades";
 
-	$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad');
-	$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad');
+		$lblCambio	 	= array('refoportunidades','codigopostal','refestadoentrevistas');
+		$lblreemplazo	= array('Nombre Completo','CP','Estado');
 
+		$resOportunidad = $serviciosReferencias->traerOportunidadesPorUsuario($_SESSION['usuaid_sahilices']);
+		$cadRef1 = $serviciosFunciones->devolverSelectBox($resOportunidad,array(1),'');
 
-	$cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
+		$resEstado = $serviciosReferencias->traerEstadoentrevistasPorId(1);
+		$cadRef2 = $serviciosFunciones->devolverSelectBox($resEstado,array(1),'');
 
-	$resVar2	= $serviciosReferencias->traerEscolaridades();
-	$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),'');
+		$refdescripcion = array(0 => $cadRef1,1 => $cadRef2);
+		$refCampo 	=  array('refoportunidades','refestadoentrevistas');
 
-	$resVar3	= $serviciosReferencias->traerEstadocivil();
-	$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
-
-	$resVar4	= $serviciosReferencias->traerEstadopostulantesPorId(1);
-	$cadRef4 = $serviciosFunciones->devolverSelectBox($resVar4,array(1),'');
-
-	$cadRef5 = "<option value=''>-- Seleccionar --</option><option value='1'>Femenino</option><option value='2'>Masculino</option>";
-
-	$cadRef6 	= "<option value='Mexico'>Mexico</option>";
-
-	$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6);
-	$refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','refestadopostulantes','sexo','nacionalidad');
-
-	$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+		$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+	}
 	//////////////////////// Fin opciones ////////////////////////////////////////////////
 
 }
@@ -144,19 +134,21 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
     <!-- AdminBSB Themes. You can choose a theme from css/themes instead of get all themes -->
     <link href="../css/themes/all-themes.css" rel="stylesheet" />
+	 <link href="../plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet" />
 
 	 <link rel="stylesheet" href="../DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
  	<link rel="stylesheet" href="../DataTables/DataTables-1.10.18/css/dataTables.bootstrap.css">
  	<link rel="stylesheet" href="../DataTables/DataTables-1.10.18/css/dataTables.jqueryui.min.css">
  	<link rel="stylesheet" href="../DataTables/DataTables-1.10.18/css/jquery.dataTables.css">
 
+	<!-- CSS file -->
+	<link rel="stylesheet" href="../css/easy-autocomplete.min.css">
+	<!-- Additional CSS Themes file - not required-->
+	<link rel="stylesheet" href="../css/easy-autocomplete.themes.min.css">
+
     <style>
         .alert > i{ vertical-align: middle !important; }
-		  .contDisponibilidad table { table-layout: fixed !important; }
-		  .contDisponibilidad table tbody tr td { border: 1px solid #444; padding: 0 !important; width: 100px !important;overflow: auto !important; text-align: center;}
-		  .contDisponibilidad table thead tr th { border: 1px solid #222 !important;width: 100px !important; overflow: auto !important;}
-		  .tablaInterna tbody tr td { padding: 0; width: 100px !important; height: 20px; text-align: center;}
-		  .disponibilidadLloguer { cursor: pointer; }
+
 		  .modal-header-ver {
 				padding:9px 15px;
 				border-bottom:1px solid #eee;
@@ -165,9 +157,14 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 				font-weight: bold;
         }
 
-		  .progress {
-	  			background-color: #1b2646;
-	  		}
+			.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
+			#codigopostal { width: 400px; }
+
+			.progress {
+				background-color: #1b2646;
+			}
+
+			.arriba { z-index:999999 !important; }
     </style>
 
 </head>
@@ -237,6 +234,42 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 								<form class="form" id="formFacturas">
 									<h3>Bienvenido al CRM de Asesores Crea</h3>
 									<p>Aqui usted encontrara avisos importantes sobre su estado en el Proceso de Reclutamiento</p>
+
+									<?php if ($_SESSION['idroll_sahilices'] == 3) { ?>
+										<hr>
+										<h4>Oportunidades Asigandas</h4>
+										<hr>
+										<div class="row" style="padding: 5px 20px;">
+
+											<table id="example" class="display table " style="width:100%">
+												<thead>
+													<tr>
+														<th>Nombre Despacho</th>
+														<th>Persona</th>
+														<th>Tel.</th>
+														<th>Email</th>
+														<th>Reclutador</th>
+														<th>Estado</th>
+														<th>Ref.</th>
+														<th>Acciones</th>
+													</tr>
+												</thead>
+												<tfoot>
+													<tr>
+														<th>Nombre Despacho</th>
+														<th>Persona</th>
+														<th>Tel.</th>
+														<th>Email</th>
+														<th>Reclutador</th>
+														<th>Estado</th>
+														<th>Ref.</th>
+														<th>Acciones</th>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+
+									<?php } ?>
 
 								</form>
 							</div>
@@ -329,7 +362,33 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
     </section>
 
+	 <?php 	if ($_SESSION['idroll_sahilices'] == 3) { ?>
+		 <!-- NUEVO -->
+ 			<form class="formulario frmNuevo" role="form" id="sign_in">
+ 			   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
+ 			       <div class="modal-dialog modal-lg" role="document">
+ 			           <div class="modal-content">
+ 			               <div class="modal-header">
+ 			                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular); ?></h4>
+ 			               </div>
+ 			               <div class="modal-body">
+ 									<div class="row frmAjaxNuevo">
 
+
+ 									</div>
+									<input type="hidden" class="codipostalaux" id="codipostalaux" name="codipostalaux" value="0"/>
+ 			               </div>
+ 			               <div class="modal-footer">
+ 			                   <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
+ 			                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+ 			               </div>
+ 			           </div>
+ 			       </div>
+ 			   </div>
+ 				<input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
+ 			</form>
+
+	 <?php }  ?>
 
 
     <?php echo $baseHTML->cargarArchivosJS('../'); ?>
@@ -341,167 +400,260 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 	 <!-- Bootstrap Material Datetime Picker Plugin Js -->
 	 <script src="../plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
 
+	 <script src="../plugins/momentjs/moment.js"></script>
+	 <script src="../js/moment-with-locales.js"></script>
+
+	 <script src="../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
+
+	 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	 <script src="../js/datepicker-es.js"></script>
+
+	 <script src="../js/dateFormat.js"></script>
+	 <script src="../js/jquery.dateFormat.js"></script>
+
+	 <script src="../js/jquery.easy-autocomplete.min.js"></script>
+
 
 
 	<script>
 		$(document).ready(function(){
 
-			<?php
-			if ($_SESSION['idroll_sahilices'] != 7) {
-			?>
+			<?php 	if ($_SESSION['idroll_sahilices'] == 3) { ?>
 
-			var table = $('#example').DataTable({
-				"bProcessing": true,
-				"bServerSide": true,
-				"sAjaxSource": "../json/jstablasajax.php?tabla=postulantes",
-				"language": {
-					"emptyTable":     "No hay datos cargados",
-					"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
-					"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
-					"infoFiltered":   "(filtrados del total de _MAX_ filas)",
-					"infoPostFix":    "",
-					"thousands":      ",",
-					"lengthMenu":     "Mostrar _MENU_ filas",
-					"loadingRecords": "Cargando...",
-					"processing":     "Procesando...",
-					"search":         "Buscar:",
-					"zeroRecords":    "No se encontraron resultados",
-					"paginate": {
-						"first":      "Primero",
-						"last":       "Ultimo",
-						"next":       "Siguiente",
-						"previous":   "Anterior"
-					},
-					"aria": {
-						"sortAscending":  ": activate to sort column ascending",
-						"sortDescending": ": activate to sort column descending"
+				$('.frmNuevo').submit(function(e){
+
+					e.preventDefault();
+					if ($('#sign_in')[0].checkValidity()) {
+						//información del formulario
+						var formData = new FormData($(".formulario")[0]);
+						var message = "";
+						//hacemos la petición ajax
+						$.ajax({
+							url: '../ajax/ajax.php',
+							type: 'POST',
+							// Form data
+							//datos del formulario
+							data: formData,
+							//necesario para subir archivos via ajax
+							cache: false,
+							contentType: false,
+							processData: false,
+							//mientras enviamos el archivo
+							beforeSend: function(){
+
+							},
+							//una vez finalizado correctamente
+							success: function(data){
+
+								if (data == '') {
+									swal({
+											title: "Respuesta",
+											text: "Registro Creado con exito!!",
+											type: "success",
+											timer: 1500,
+											showConfirmButton: false
+									});
+
+									$('#lgmNuevo').modal('hide');
+
+									location.reload();
+								} else {
+									swal({
+											title: "Respuesta",
+											text: data,
+											type: "error",
+											timer: 2500,
+											showConfirmButton: false
+									});
+
+
+								}
+							},
+							//si ha ocurrido un error
+							error: function(){
+								$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+								$("#load").html('');
+							}
+						});
 					}
-				}
-			});
+				});
 
-			function frmAjaxModificar(id) {
-				$.ajax({
-					url: '../ajax/ajax.php',
-					type: 'POST',
-					// Form data
-					//datos del formulario
-					data: {accion: 'frmAjaxModificar',tabla: '<?php echo $tabla; ?>', id: id,ruta:'postulantes/'},
-					//mientras enviamos el archivo
-					beforeSend: function(){
-						$('.frmAjaxModificar').html('');
-					},
-					//una vez finalizado correctamente
-					success: function(data){
+				function frmAjaxNuevo(id, tabla) {
+					$.ajax({
+						url: '../ajax/ajax.php',
+						type: 'POST',
+						// Form data
+						//datos del formulario
+						data: {accion: 'frmAjaxNuevo',tabla: tabla, id: id},
+						//mientras enviamos el archivo
+						beforeSend: function(){
 
-						if (data != '') {
-							$(location).attr('href', data);
+							$('.frmAjaxNuevo').html('');
 
-						} else {
-							swal("Error!", data, "warning");
+						},
+						//una vez finalizado correctamente
+						success: function(data){
 
+							if (data != '') {
+								$('.frmAjaxNuevo').html(data.formulario);
+
+								$('#fecha').bootstrapMaterialDatePicker({
+									format: 'YYYY/MM/DD HH:mm',
+									lang : 'mx',
+									clearButton: true,
+									weekStart: 1,
+									time: true,
+									minDate : new Date()
+								});
+
+								$(".frmAjaxNuevo #codigopostal").easyAutocomplete(options);
+
+								$('.frmAjaxNuevo #usuariocrea').val('marcos');
+								$('.frmAjaxNuevo #usuariomodi').val('marcos');
+
+							} else {
+								swal("Error!", data, "warning");
+
+								$("#load").html('');
+							}
+						},
+						//si ha ocurrido un error
+						error: function(){
+							$(".alert").html('<strong>Error!</strong> Actualice la pagina');
 							$("#load").html('');
 						}
-					},
-					//si ha ocurrido un error
-					error: function(){
-						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-						$("#load").html('');
-					}
-				});
+					});
 
-			}
-
-			$("#example").on("click",'.btnModificar', function(){
-				idTable =  $(this).attr("id");
-				frmAjaxModificar(idTable);
-
-			});//fin del boton modificar
-
-			$('.maximizar').click(function() {
-				if ($('.icomarcos').text() == 'web') {
-					$('#marcos').show();
-					$('.content').css('marginLeft', '275px');
-					$('.icomarcos').html('aspect_ratio');
-				} else {
-					$('#marcos').hide();
-					$('.content').css('marginLeft', '15px');
-					$('.icomarcos').html('web');
 				}
 
-			});
+				var options = {
 
-			$("#example").on("click",'.btnVer', function(){
-				idTable =  $(this).attr("id");
-				$(location).attr('href','postulantes/ver.php?id=' + idTable);
+					url: "../json/jsbuscarpostal.php",
 
-			});//fin del boton modificar
-
-			$("#example").on("click",'.btnDescargar', function(){
-				usersid =  $(this).attr("id");
-
-				url = "descargaradmin.php?token=" + usersid;
-				$(location).attr('href',url);
-
-			});//fin del boton modificar
-
-			$('.guardar').click(function(e){
-
-				e.preventDefault();
-		      if ($('.formulario')[0].checkValidity()) {
-				//información del formulario
-				var formData = new FormData($(".formulario")[0]);
-				var message = "";
-				//hacemos la petición ajax
-				$.ajax({
-					url: '../ajax/ajax.php',
-					type: 'POST',
-					// Form data
-					//datos del formulario
-					data: formData,
-					//necesario para subir archivos via ajax
-					cache: false,
-					contentType: false,
-					processData: false,
-					//mientras enviamos el archivo
-					beforeSend: function(){
-
+					getValue: function(element) {
+						return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
 					},
-					//una vez finalizado correctamente
-					success: function(data){
 
-						if (data == '') {
-							swal({
-									title: "Respuesta",
-									text: "Registro Modificado con exito!!",
-									type: "success",
-									timer: 1500,
-									showConfirmButton: false
-							});
-
-							$('#lgmModificar').modal('hide');
-							table.ajax.reload();
-						} else {
-							swal({
-									title: "Respuesta",
-									text: data,
-									type: "error",
-									timer: 2500,
-									showConfirmButton: false
-							});
-
-
+					ajaxSettings: {
+						dataType: "json",
+						method: "POST",
+						data: {
+							busqueda: $("#codigopostal").val()
 						}
 					},
-					//si ha ocurrido un error
-					error: function(){
-						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-						$("#load").html('');
+
+					preparePostData: function (data) {
+						data.busqueda = $("#codigopostal").val();
+						return data;
+					},
+
+					list: {
+						maxNumberOfElements: 20,
+						match: {
+							enabled: true
+						},
+						onClickEvent: function() {
+							var id = $("#codigopostal").getSelectedItemData().id;
+							var value = $("#codigopostal").getSelectedItemData().codigo;
+							$(".codipostalaux").val(id);
+							$("#codigopostal").val(value);
+
+						}
+					}
+				};
+
+
+
+
+				traerEntrevistasucursalesPorId(0,'new');
+
+
+				$(".frmAjaxNuevo").on("change",'#refentrevistasucursales', function(){
+
+					traerEntrevistasucursalesPorId($(this).val(), 'new');
+
+				});
+
+				function traerEntrevistasucursalesPorId(id, contenedor) {
+					$.ajax({
+						url: '../ajax/ajax.php',
+						type: 'POST',
+						// Form data
+						//datos del formulario
+						data: {accion: 'traerEntrevistaoportunidadesPorId',id: id},
+						//mientras enviamos el archivo
+						beforeSend: function(){
+
+						},
+						//una vez finalizado correctamente
+						success: function(data){
+
+							if (data != '') {
+								if (contenedor == 'new') {
+									$('.frmAjaxNuevo #domicilio').val(data.domicilio);
+									$('.frmAjaxNuevo .codigopostalaux').val(data.refpostal);
+									$('.frmAjaxNuevo #codigopostal').val(data.codigopostal);
+
+								}
+
+							} else {
+								swal("Error!", 'Se genero un error al traer datos', "warning");
+
+								$("#load").html('');
+							}
+						},
+						//si ha ocurrido un error
+						error: function(){
+							$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+							$("#load").html('');
+						}
+					});
+				}
+
+				$("#example").on("click",'.btnEntrevista', function(){
+
+					var tabla =  'dbentrevistaoportunidades';
+					var id = $(this).attr("id");
+					$('.tituloNuevo').html('Entrevista');
+					$('#accion').html('insertarEntrevistaoportunidades');
+					$('#lgmNuevo').modal();
+					frmAjaxNuevo(id, tabla);
+
+				});//fin del boton nuevo planata
+
+				var table = $('#example').DataTable({
+					"bProcessing": true,
+					"bServerSide": true,
+					"sAjaxSource": "../json/jstablasajax.php?tabla=oportunidades",
+					"language": {
+						"emptyTable":     "No hay datos cargados",
+						"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+						"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+						"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+						"infoPostFix":    "",
+						"thousands":      ",",
+						"lengthMenu":     "Mostrar _MENU_ filas",
+						"loadingRecords": "Cargando...",
+						"processing":     "Procesando...",
+						"search":         "Buscar:",
+						"zeroRecords":    "No se encontraron resultados",
+						"paginate": {
+							"first":      "Primero",
+							"last":       "Ultimo",
+							"next":       "Siguiente",
+							"previous":   "Anterior"
+						},
+						"aria": {
+							"sortAscending":  ": activate to sort column ascending",
+							"sortDescending": ": activate to sort column descending"
+						}
 					}
 				});
-			}
+			<?php
+				}
+			?>
 
-			});
-			<?php } ?>
+
 
 
 		});
