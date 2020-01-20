@@ -74,7 +74,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 		$insertar = "insertarEntrevistaoportunidades";
 
-		$modificar = "modificarEntrevistaoportunidades";
+		$modificar = "modificarOportunidades";
 
 		$tabla 			= "dbentrevistaoportunidades";
 
@@ -251,6 +251,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 														<th>Reclutador</th>
 														<th>Estado</th>
 														<th>Ref.</th>
+														<th>Fecha</th>
 														<th>Acciones</th>
 													</tr>
 												</thead>
@@ -263,6 +264,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 														<th>Reclutador</th>
 														<th>Estado</th>
 														<th>Ref.</th>
+														<th>Fecha</th>
 														<th>Acciones</th>
 													</tr>
 												</tfoot>
@@ -275,6 +277,64 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 							</div>
 						</div>
 				</div>
+				<?php if ($_SESSION['idroll_sahilices'] == 3) { ?>
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+						<div class="card ">
+							<div class="header bg-blue">
+								<h2 style="color:#fff">
+									HISTORICO OPORTUNIDADES
+								</h2>
+								<ul class="header-dropdown m-r--5">
+									<li class="dropdown">
+										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+											<i class="material-icons">more_vert</i>
+										</a>
+										<ul class="dropdown-menu pull-right">
+											<li><a href="javascript:void(0);" class="recargar">Recargar</a></li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="body table-responsive">
+								<form class="form" id="formFacturas">
+
+									<div class="row" style="padding: 5px 20px;">
+
+										<table id="example2" class="display table " style="width:100%">
+											<thead>
+												<tr>
+													<th>Nombre Despacho</th>
+													<th>Persona</th>
+													<th>Tel.</th>
+													<th>Email</th>
+													<th>Reclutador</th>
+													<th>Estado</th>
+													<th>Ref.</th>
+													<th>Fecha</th>
+													<th>Acciones</th>
+												</tr>
+											</thead>
+											<tfoot>
+												<tr>
+													<th>Nombre Despacho</th>
+													<th>Persona</th>
+													<th>Tel.</th>
+													<th>Email</th>
+													<th>Reclutador</th>
+													<th>Estado</th>
+													<th>Ref.</th>
+													<th>Fecha</th>
+													<th>Acciones</th>
+												</tr>
+											</tfoot>
+										</table>
+									</div>
+
+								</form>
+							</div>
+						</div>
+					</div>
+			<?php } ?>
 			<?php } else { ?>
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
@@ -387,6 +447,28 @@ if ($_SESSION['idroll_sahilices'] == 7) {
  			   </div>
  				<input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
  			</form>
+
+		<!-- MODIFICAR -->
+			<form class="formulario" role="form" id="sign_in">
+			   <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
+			       <div class="modal-dialog modal-lg" role="document">
+			           <div class="modal-content">
+			               <div class="modal-header">
+			                   <h4 class="modal-title" id="largeModalLabel">MODIFICAR OPORTUNIDAD</h4>
+			               </div>
+			               <div class="modal-body">
+									<div class="row frmAjaxModificar">
+									</div>
+			               </div>
+			               <div class="modal-footer">
+			                   <button type="button" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
+			                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+			               </div>
+			           </div>
+			       </div>
+			   </div>
+				<input type="hidden" id="accion" name="accion" value="<?php echo $modificar; ?>"/>
+			</form>
 
 	 <?php }  ?>
 
@@ -526,6 +608,98 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 				}
 
+
+				function frmAjaxModificar(id) {
+					$.ajax({
+						url: '../ajax/ajax.php',
+						type: 'POST',
+						// Form data
+						//datos del formulario
+						data: {accion: 'frmAjaxModificar',tabla: 'dboportunidades', id: id},
+						//mientras enviamos el archivo
+						beforeSend: function(){
+							$('.frmAjaxModificar').html('');
+						},
+						//una vez finalizado correctamente
+						success: function(data){
+
+							if (data != '') {
+								$('.frmAjaxModificar').html(data);
+							} else {
+								swal("Error!", data, "warning");
+
+								$("#load").html('');
+							}
+						},
+						//si ha ocurrido un error
+						error: function(){
+							$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+							$("#load").html('');
+						}
+					});
+
+				}
+
+				$("#example").on("click",'.btnModificar', function(){
+					idTable =  $(this).attr("id");
+					frmAjaxModificar(idTable);
+					$('#lgmModificar').modal();
+				});//fin del boton modificar
+
+				$('.modificar').click(function(){
+
+					//información del formulario
+					var formData = new FormData($(".formulario")[1]);
+					var message = "";
+					//hacemos la petición ajax
+					$.ajax({
+						url: '../ajax/ajax.php',
+						type: 'POST',
+						// Form data
+						//datos del formulario
+						data: formData,
+						//necesario para subir archivos via ajax
+						cache: false,
+						contentType: false,
+						processData: false,
+						//mientras enviamos el archivo
+						beforeSend: function(){
+
+						},
+						//una vez finalizado correctamente
+						success: function(data){
+
+							if (data == '') {
+								swal({
+										title: "Respuesta",
+										text: "Registro Modificado con exito!!",
+										type: "success",
+										timer: 1500,
+										showConfirmButton: false
+								});
+
+								$('#lgmModificar').modal('hide');
+								table.ajax.reload();
+							} else {
+								swal({
+										title: "Respuesta",
+										text: data,
+										type: "error",
+										timer: 2500,
+										showConfirmButton: false
+								});
+
+
+							}
+						},
+						//si ha ocurrido un error
+						error: function(){
+							$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+							$("#load").html('');
+						}
+					});
+				});
+
 				var options = {
 
 					url: "../json/jsbuscarpostal.php",
@@ -625,6 +799,35 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 					"bProcessing": true,
 					"bServerSide": true,
 					"sAjaxSource": "../json/jstablasajax.php?tabla=oportunidades",
+					"language": {
+						"emptyTable":     "No hay datos cargados",
+						"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+						"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+						"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+						"infoPostFix":    "",
+						"thousands":      ",",
+						"lengthMenu":     "Mostrar _MENU_ filas",
+						"loadingRecords": "Cargando...",
+						"processing":     "Procesando...",
+						"search":         "Buscar:",
+						"zeroRecords":    "No se encontraron resultados",
+						"paginate": {
+							"first":      "Primero",
+							"last":       "Ultimo",
+							"next":       "Siguiente",
+							"previous":   "Anterior"
+						},
+						"aria": {
+							"sortAscending":  ": activate to sort column ascending",
+							"sortDescending": ": activate to sort column descending"
+						}
+					}
+				});
+
+				var table2 = $('#example2').DataTable({
+					"bProcessing": true,
+					"bServerSide": true,
+					"sAjaxSource": "../json/jstablasajax.php?tabla=oportunidadeshistorico",
 					"language": {
 						"emptyTable":     "No hay datos cargados",
 						"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",

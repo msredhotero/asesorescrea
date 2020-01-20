@@ -87,6 +87,16 @@ $refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','refestado
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
+if ($_SESSION['idroll_sahilices'] == 3) {
+	$resOportunidades = $serviciosReferencias->traerOportunidadesPorUsuario($_SESSION['usuaid_sahilices']);
+	$cadRefOportunidades = $serviciosFunciones->devolverSelectBox($resOportunidades,array(1,2),' - ');
+
+} else {
+	$resOportunidades = $serviciosReferencias->traerOportunidadesDisponiles();
+	$cadRefOportunidades = $serviciosFunciones->devolverSelectBox($resOportunidades,array(1,2),' - ');
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -274,6 +284,18 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular); ?></h4>
 	               </div>
 	               <div class="modal-body">
+							<div class="row">
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+									<label for="oportunidades" class="control-label" style="text-align:left">Defina si el Prospecto proviene de una Oportunidad cargada</label>
+									<div class="input-group col-md-12">
+										<select class="form-control" id="refoportunidades" name="refoportunidades">
+											<option value=''>-- Seleccionar --</option>
+											<?php echo $cadRefOportunidades; ?>
+										</select>
+									</div>
+								</div>
+							</div>
+							<hr>
 							<div class="row">
 								<?php echo $frmUnidadNegocios; ?>
 								<div class="col-xs-3" style="display:none">

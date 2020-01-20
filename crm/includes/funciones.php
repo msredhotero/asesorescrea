@@ -428,7 +428,7 @@ class Servicios {
 				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes');
 			break;
 			case 'dbentrevistaoportunidades':
-				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes');
+				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes','domicilio','codigopostal','ententrevistador');
 			break;
 			case 'dblloguersadicional':
 				$ocultar = array("taxapersona","taxaturistica");
@@ -1182,6 +1182,9 @@ class Servicios {
 				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes');
 			break;
 			case 'dbentrevistaoportunidades':
+				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi","domicilio","entrevistador",'codigopostal');
+			break;
+			case 'dboportunidades':
 				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes');
 			break;
 			case 'dbpostulantes':

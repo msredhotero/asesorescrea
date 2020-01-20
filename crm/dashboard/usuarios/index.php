@@ -209,7 +209,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										<thead>
 											<tr>
 												<th>Usuario</th>
-												<th>Perfil</th>
+												<th></th>
 												<th>Email</th>
 												<th>Nombre Completo</th>
 												<th>Activo</th>
@@ -219,7 +219,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										<tfoot>
 											<tr>
 												<th>Usuario</th>
-												<th>Perfil</th>
+												<th class="perfilS">Perfil</th>
 												<th>Email</th>
 												<th>Nombre Completo</th>
 												<th>Activo</th>
@@ -353,6 +353,19 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 				}
 			}
 		});
+
+		$("#example .perfilS").each( function ( i ) {
+			var select = $('<select><option value="">-- Seleccione Perfil --</option><?php echo $cadRef2; ?></select>')
+				.appendTo( $(this).empty() )
+				.on( 'change', function () {
+					table.column( i )
+						.search( $(this).val() )
+						.draw();
+				} );
+			table.column( i ).data().unique().sort().each( function ( d, j ) {
+				select.append( '<option value="'+d+'">'+d+'</option>' )
+			} );
+		} );
 
 		$("#sign_in").submit(function(e){
 			e.preventDefault();

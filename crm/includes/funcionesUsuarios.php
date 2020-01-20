@@ -287,14 +287,25 @@ function traerUsuarios() {
 	return $res;
 }
 
-function traerUsuariosajax($length, $start, $busqueda) {
+function traerUsuariosajax($length, $start, $busqueda,$colSort,$colSortDir, $perfil) {
 
    $where = '';
+   $roles = '';
+
+   if ($perfil != '') {
+      $roles = " u.refroles = ".$perfil." and ";
+   } else {
+      $roles = '';
+   }
 
 	$busqueda = str_replace("'","",$busqueda);
 	if ($busqueda != '') {
-		$where = "where u.usuario like '%".$busqueda."%' or r.descripcion like '%".$busqueda."%' or u.email like '%".$busqueda."%' or u.nombrecompleto like '%".$busqueda."%'";
-	}
+		$where = "where ".$roles." (u.usuario like '%".$busqueda."%' or r.descripcion like '%".$busqueda."%' or u.email like '%".$busqueda."%' or u.nombrecompleto like '%".$busqueda."%')";
+	} else {
+      if ($perfil != '') {
+         $where = " where u.refroles = ".$perfil;
+      }
+   }
 
 
 	$sql = "select u.idusuario,
@@ -307,8 +318,10 @@ function traerUsuariosajax($length, $start, $busqueda) {
 			from dbusuarios u
 			inner join tbroles r on u.refroles = r.idrol
          ".$where."
-      	order by u.nombrecompleto
+      	order by ".$colSort." ".$colSortDir."
       	limit ".$start.",".$length;
+
+   //die(var_dump($sql));
 
 	$res = $this->query($sql,0);
 	return $res;

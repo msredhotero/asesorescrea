@@ -55,8 +55,8 @@ $modificar = "modificarOportunidades";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dboportunidades";
 
-$lblCambio	 	= array('nombredespacho','refusuarios','refreferentes','refestadooportunidad');
-$lblreemplazo	= array('Nombre del Despacho','Asignar a Reclutador','Persona que Recomendo','Estado');
+$lblCambio	 	= array('nombredespacho','refusuarios','refreferentes','refestadooportunidad','persona');
+$lblreemplazo	= array('Nombre del Despacho','Asignar a Reclutador','Persona que Recomendo','Estado','Persona de Contacto');
 
 
 
@@ -217,6 +217,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Reclutador</th>
 												<th>Estado</th>
 												<th>Ref.</th>
+												<th>Fecha</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -229,6 +230,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Reclutador</th>
 												<th>Estado</th>
 												<th>Ref.</th>
+												<th>Fecha</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>

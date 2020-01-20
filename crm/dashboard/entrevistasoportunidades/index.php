@@ -59,7 +59,7 @@ $lblCambio	 	= array('refoportunidades','codigopostal','refestadoentrevistas');
 $lblreemplazo	= array('Nombre Completo','CP','Estado');
 
 $resOportunidad = $serviciosReferencias->traerOportunidades();
-$cadRef1 = $serviciosFunciones->devolverSelectBox($resOportunidad,array(1),'');
+$cadRef1 = $serviciosFunciones->devolverSelectBox($resOportunidad,array(1,2),' - ');
 
 $resEstado = $serviciosReferencias->traerEstadoentrevistasPorId(1);
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resEstado,array(1),'');
@@ -234,8 +234,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 												<th>Persona</th>
 												<th>Entrevistador</th>
 												<th>Fecha</th>
-												<th>Domicilio</th>
-												<th>Codigo Postal</th>
 												<th>Estado</th>
 												<th>Acciones</th>
 											</tr>
@@ -245,8 +243,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 												<th>Persona</th>
 												<th>Entrevistador</th>
 												<th>Fecha</th>
-												<th>Domicilio</th>
-												<th>Codigo Postal</th>
 												<th>Estado</th>
 												<th>Acciones</th>
 											</tr>
@@ -371,6 +367,10 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 <script>
 	$(document).ready(function(){
 
+		$('#codipostalaux').val(547);
+		$('#codipostalaux').val(547);
+		$('#codigopostal').val(547);
+
 		$('#fecha').bootstrapMaterialDatePicker({
 			format: 'YYYY/MM/DD HH:mm',
 			lang : 'mx',
@@ -467,6 +467,12 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 		});
 
+		$(".frmAjaxNuevo").on("change",'#refoportunidades', function(){
+
+			traerOportunidadesPorId($(this).val());
+
+		});
+
 		$(".frmAjaxModificar").on("change",'#refentrevistasucursales', function(){
 			traerEntrevistasucursalesPorId($(this).val(), 'edit');
 		});
@@ -503,6 +509,38 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 						swal("Error!", 'Se genero un error al traer datos', "warning");
 
 						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
+
+
+		function traerOportunidadesPorId(id) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'traerOportunidadesPorId',id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error === false) {
+						$('.frmAjaxNuevo #domicilio').val('sin domicilio');
+						$('.frmAjaxNuevo #entrevistador').val(data.persona);
+
+					} else {
+						$('.frmAjaxNuevo #domicilio').val('sin domicilio');
+						$('.frmAjaxNuevo #entrevistador').val('Gerente Regional');
 					}
 				},
 				//si ha ocurrido un error
@@ -590,6 +628,8 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			});
 
 		}
+
+		traerOportunidadesPorId($('#refoportunidades').val());
 
 
 		function frmAjaxEliminar(id) {

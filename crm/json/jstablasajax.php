@@ -396,9 +396,9 @@ switch ($tabla) {
 		if ($_SESSION['idroll_sahilices'] == 3) {
 			$resAjax = $serviciosReferencias->traerOportunidadesajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
 			$res = $serviciosReferencias->traerOportunidadesPorUsuario($_SESSION['usuaid_sahilices']);
-			$label = array('btnEntrevista');
-			$class = array('bg-green');
-			$icon = array('assignment');
+			$label = array('btnModificar','btnEntrevista');
+			$class = array('bg-amber','bg-green');
+			$icon = array('create','assignment');
 		} else {
 			$resAjax = $serviciosReferencias->traerOportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir);
 			$res = $serviciosReferencias->traerOportunidades();
@@ -409,9 +409,20 @@ switch ($tabla) {
 
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 7;
+		$termina = 8;
 
 		break;
+	case 'oportunidadeshistorico':
+		$resAjax = $serviciosReferencias->traerOportunidadesajaxPorUsuarioHistorico($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+		$res = $serviciosReferencias->traerOportunidadesPorUsuario($_SESSION['usuaid_sahilices']);
+		$label = array();
+		$class = array();
+		$icon = array();
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 8;
+	break;
 	case 'entrevistaoportunidades':
 		if ($_SESSION['idroll_sahilices'] == 3) {
 			$resAjax = $serviciosReferencias->traerEntrevistaoportunidadesPorUsuarioajax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
@@ -426,7 +437,7 @@ switch ($tabla) {
 		$icon = array('create','delete');
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 6;
+		$termina = 4;
 
 		break;
 	case 'entrevistasucursales':
@@ -485,8 +496,16 @@ switch ($tabla) {
 
 	break;
 	case 'usuarios':
-		$resAjax = $serviciosUsuarios->traerUsuariosajax($length, $start, $busqueda,$colSort,$colSortDir);
-		$res = $serviciosUsuarios->traerUsuarios();
+
+		//die(var_dump($_GET['sSearch_0']));
+
+		$resAjax = $serviciosUsuarios->traerUsuariosajax($length, $start, $busqueda,$colSort,$colSortDir, $_GET['sSearch_0']);
+		if ($_GET['sSearch_0'] != '') {
+			$res = $serviciosUsuarios->traerUsuariosPorRol($_GET['sSearch_0']);
+		} else {
+			$res = $serviciosUsuarios->traerUsuarios();
+		}
+
 		$label = array('btnModificar','btnEliminar');
 		$class = array('bg-amber','bg-red');
 		$icon = array('create','delete');

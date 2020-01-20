@@ -11,6 +11,12 @@ class ServiciosReferencias {
 
 	/*
 	INSERT INTO `tbroles` (`descripcion`, `activo`) VALUES ('Javelly', '1');
+	UPDATE `tbroles` SET `descripcion`='Gerente Regional' WHERE `idrol`='3';
+	UPDATE `tbroles` SET `descripcion`='Grupo Javelly' WHERE `idrol`='8';
+	ALTER TABLE `dbpostulantes`
+	CHANGE COLUMN `ine` `ine` VARCHAR(13) CHARACTER SET 'utf8' COLLATE 'utf8_spanish_ci' NULL DEFAULT NULL ,
+	CHANGE COLUMN `folio` `folio` VARCHAR(15) CHARACTER SET 'utf8' COLLATE 'utf8_spanish_ci' NULL DEFAULT NULL ;
+
 	*/
 
 
@@ -73,9 +79,12 @@ class ServiciosReferencias {
 		opo.persona,
 		e.entrevistador,
 		e.fecha,
+		(case when est.idestadoentrevista = 3 then 'Re-Programado'
+				when est.idestadoentrevista = 2 then 'Visitado con exito'
+				when est.idestadoentrevista = 4 then 'Visitado sin exito'
+				else est.estadoentrevista end) as estadoentrevista,
 		e.domicilio,
 		pp.codigo,
-		est.estadoentrevista,
 		e.fechamodi,
 		e.codigopostal,
 		e.refoportunidades,
@@ -113,9 +122,13 @@ class ServiciosReferencias {
 		opo.persona,
 		e.entrevistador,
 		e.fecha,
+
+		(case when est.idestadoentrevista = 3 then 'Re-Programado'
+				when est.idestadoentrevista = 2 then 'Visitado con exito'
+				when est.idestadoentrevista = 4 then 'Visitado sin exito'
+				else est.estadoentrevista end) as estadoentrevista,
 		e.domicilio,
 		pp.codigo,
-		est.estadoentrevista,
 		e.fechamodi,
 		e.codigopostal,
 		e.refoportunidades,
@@ -240,8 +253,8 @@ class ServiciosReferencias {
 	/* PARA Oportunidades */
 
 	function insertarOportunidades($nombredespacho,$persona,$telefono,$email,$refusuarios,$refreferentes,$refestadooportunidad) {
-		$sql = "insert into dboportunidades(idoportunidad,nombredespacho,persona,telefono,email,refusuarios,refreferentes,refestadooportunidad)
-		values ('','".$nombredespacho."','".$persona."','".$telefono."','".$email."',".$refusuarios.",".$refreferentes.",".$refestadooportunidad.")";
+		$sql = "insert into dboportunidades(idoportunidad,nombredespacho,persona,telefono,email,refusuarios,refreferentes,refestadooportunidad,fechacrea)
+		values ('','".$nombredespacho."','".$persona."','".$telefono."','".$email."',".$refusuarios.",".$refreferentes.",".$refestadooportunidad.",'".date('Y-m-d H:i:s')."')";
 		$res = $this->query($sql,1);
 		return $res;
 	}
@@ -291,6 +304,26 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function traerOportunidadesDisponibles() {
+		$sql = "select
+		o.idoportunidad,
+		o.nombredespacho,
+		o.persona,
+		o.telefono,
+		o.email,
+		o.refusuarios,
+		o.refreferentes,
+		o.refestadooportunidad
+		from dboportunidades o
+		inner join dbusuarios usu ON usu.idusuario = o.refusuarios
+		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
+		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
+		where r.idreclutadorasor is null
+		order by o.persona";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 	function traerOportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir) {
 
 		$where = '';
@@ -310,6 +343,7 @@ class ServiciosReferencias {
 		usu.nombrecompleto,
 		est.estadooportunidad,
 		concat(rr.apellidopaterno, ' ', rr.nombre) as referente,
+		o.fechacrea,
 		o.refusuarios,
 		o.refreferentes,
 		o.refestadooportunidad
@@ -345,6 +379,7 @@ class ServiciosReferencias {
 		usu.nombrecompleto,
 		est.estadooportunidad,
 		concat(rr.apellidopaterno, ' ', rr.nombre) as referente,
+		o.fechacrea,
 		o.refusuarios,
 		o.refreferentes,
 		o.refestadooportunidad
@@ -352,8 +387,45 @@ class ServiciosReferencias {
 		inner join dbusuarios usu ON usu.idusuario = o.refusuarios
 		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
 		left join tbreferentes rr on rr.idreferente = o.refreferentes
+		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
+		where r.idreclutadorasor is null and usu.idusuario = ".$idusuario.$where."
+		ORDER BY o.fechacrea desc
+		limit ".$start.",".$length;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerOportunidadesajaxPorUsuarioHistorico($length, $start, $busqueda,$colSort,$colSortDir, $idusuario) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (o.nombredespacho like '%".$busqueda."%' or o.persona like '%".$busqueda."%' or o.telefono like '%".$busqueda."%' or o.email like '%".$busqueda."%' or usu.nombrecompleto like '%".$busqueda."%' or est.estadooportunidad like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+		o.idoportunidad,
+		o.nombredespacho,
+		o.persona,
+		o.telefono,
+		o.email,
+		usu.nombrecompleto,
+		est.estadooportunidad,
+		concat(rr.apellidopaterno, ' ', rr.nombre) as referente,
+		o.fechacrea,
+		o.refusuarios,
+		o.refreferentes,
+		o.refestadooportunidad
+		from dboportunidades o
+		inner join dbusuarios usu ON usu.idusuario = o.refusuarios
+		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
+		left join tbreferentes rr on rr.idreferente = o.refreferentes
+		inner join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
 		where usu.idusuario = ".$idusuario.$where."
-		ORDER BY ".$colSort." ".$colSortDir."
+		ORDER BY o.fechacrea desc
 		limit ".$start.",".$length;
 
 		$res = $this->query($sql,0);
@@ -374,12 +446,32 @@ class ServiciosReferencias {
 		from dboportunidades o
 		inner join dbusuarios usu ON usu.idusuario = o.refusuarios
 		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
-		where usu.idusuario = ".$idusuario."
+		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
+		where r.idreclutadorasor is null and usu.idusuario = ".$idusuario."
 		order by 1";
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
+
+	function traerOportunidadesPorIdCompleto($id) {
+		$sql = "select
+		o.idoportunidad,
+		o.nombredespacho,
+		o.persona,
+		o.telefono,
+		o.email,
+		o.refusuarios,
+		o.refreferentes,
+		o.refestadooportunidad,
+		usu.nombrecompleto
+		from dboportunidades o
+		inner join dbusuarios usu ON usu.idusuario = o.refusuarios
+		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
+		where o.idoportunidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
 
 	function traerOportunidadesPorId($id) {
 		$sql = "select idoportunidad,nombredespacho,persona,telefono,email,refusuarios,refreferentes,refestadooportunidad from dboportunidades where idoportunidad =".$id;
@@ -523,9 +615,9 @@ class ServiciosReferencias {
 
 	/* PARA Reclutadorasores */
 
-	function insertarReclutadorasores($refusuarios,$refpostulantes) {
-		$sql = "insert into dbreclutadorasores(idreclutadorasor,refusuarios,refpostulantes)
-		values ('',".$refusuarios.",".$refpostulantes.")";
+	function insertarReclutadorasores($refusuarios,$refpostulantes,$refoportunidades) {
+		$sql = "insert into dbreclutadorasores(idreclutadorasor,refusuarios,refpostulantes,refoportunidades)
+		values ('',".$refusuarios.",".$refpostulantes.",".($refoportunidades == '' ? null : $refoportunidades).")";
 		$res = $this->query($sql,1);
 		return $res;
 	}
@@ -1388,6 +1480,18 @@ class ServiciosReferencias {
 	return $res;
 	}
 
+	function traerEstadoentrevistasPorIn($in) {
+	$sql = "select
+					idestadoentrevista,
+					(case when idestadoentrevista = 3 then 'Re-Programado'
+					 		when idestadoentrevista = 2 then 'Visitado con exito'
+							when idestadoentrevista = 4 then 'Visitado sin exito'
+							else estadoentrevista end) as estadoentrevista
+			from tbestadoentrevistas where idestadoentrevista in (".$in.")";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
 
 	/* Fin */
 	/* /* Fin de la Tabla: tbestadoentrevistas*/
@@ -1762,6 +1866,8 @@ class ServiciosReferencias {
 	function insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore) {
 		$sql = "insert into dbpostulantes(idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,refestadocivil,nacionalidad,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa,ultimoestado,refesquemareclutamiento,afore,folio,cedula,token,vigdesdecedulaseguro,vighastacedulaseguro,vigdesdeafore,vighastaafore)
 		values ('',".$refusuarios.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$email."','".$curp."','".$rfc."','".$ine."','".$fechanacimiento."','".$sexo."','".$codigopostal."',".$refescolaridades.",".$refestadocivil.",'".$nacionalidad."','".$telefonomovil."','".$telefonocasa."','".$telefonotrabajo."',".$refestadopostulantes.",'".$urlprueba."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."',".$refasesores.",".$comision.",".$refsucursalesinbursa.",".$ultimoestado.",".$refesquemareclutamiento.",'".$afore."','".$folio."','".$cedula."','".$token."','".($vigdesdecedulaseguro == '' ? 'null' : "'".$vigdesdecedulaseguro."'")."','".($vighastacedulaseguro == '' ? 'null' : "'".$vighastacedulaseguro."'")."','".($vigdesdeafore == '' ? 'null' : "'".$vigdesdeafore."'")."','".($vighastaafore == '' ? 'null' : "'".$vighastaafore."'")."')";
+
+		//die(var_dump($sql));
 		$res = $this->query($sql,1);
 		return $res;
 	}

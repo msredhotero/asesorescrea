@@ -645,10 +645,31 @@ switch ($accion) {
       frmAjaxNuevo($serviciosReferencias, $serviciosFunciones);
    break;
 
+   case 'traerOportunidadesPorId':
+      traerOportunidadesPorId($serviciosReferencias);
+   break;
+
 }
 /* Fin */
 
 /* nuevo 16/01/2020 */
+
+function traerOportunidadesPorId($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->traerOportunidadesPorIdCompleto($id);
+
+   if (mysql_num_rows($res) > 0) {
+      $resV['error'] = false;
+      $resV['persona'] = mysql_result($res,0,'nombrecompleto');
+   } else {
+      $resV['error'] = true;
+      $resV['persona'] = '';
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function traerEntrevistaoportunidadesPorId($serviciosReferencias) {
    $id = $_POST['id'];
@@ -1803,9 +1824,9 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 
 
          $resVar2	= $serviciosReferencias->traerOportunidadesPorId(mysql_result($resultado,0,'refoportunidades'));
-         $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(2),'');
+         $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1,2),' - ');
 
-         $resVar4	= $serviciosReferencias->traerEstadoentrevistas();
+         $resVar4	= $serviciosReferencias->traerEstadoentrevistasPorIn('1,2,3,4');
          $cadRef4 = $serviciosFunciones->devolverSelectBoxActivo($resVar4,array(1),'',mysql_result($resultado,0,'refestadoentrevistas'));
 
 
@@ -1823,8 +1844,12 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $lblreemplazo	= array('Nombre del Despacho','Asignar a Reclutador','Persona que Recomendo','Estado');
 
 
+         if ($_SESSION['idroll_sahilices'] == 3) {
+            $resRoles 	= $serviciosUsuarios->traerUsuarioId($_SESSION['usuaid_sahilices']);
+         } else {
+            $resRoles 	= $serviciosUsuarios->traerUsuariosPorRol(3);
+         }
 
-         $resRoles 	= $serviciosUsuarios->traerUsuariosPorRol(3);
          $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resRoles,array(3),'',mysql_result($resultado,0,'refusuarios'));
 
          $resReferentes 	= $serviciosReferencias->traerReferentes();
@@ -2513,10 +2538,29 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
             //die(var_dump($resActivacion));
          }
 
-         $vigdesdecedulaseguro = $_POST['vigdesdecedulaseguro'];
-         $vighastacedulaseguro = $_POST['vighastacedulaseguro'];
-         $vigdesdeafore = $_POST['vigdesdeafore'];
-         $vighastaafore = $_POST['vighastaafore'];
+         if (isset($_POST['vigdesdecedulaseguro'])) {
+            $vigdesdecedulaseguro = $_POST['vigdesdecedulaseguro'];
+         } else {
+            $vigdesdecedulaseguro = '';
+         }
+
+         if (isset($_POST['vighastacedulaseguro'])) {
+            $vighastacedulaseguro = $_POST['vighastacedulaseguro'];
+         } else {
+            $vighastacedulaseguro = '';
+         }
+
+         if (isset($_POST['vigdesdeafore'])) {
+            $vigdesdeafore = $_POST['vigdesdeafore'];
+         } else {
+            $vigdesdeafore = '';
+         }
+
+         if (isset($_POST['vighastaafore'])) {
+            $vighastaafore = $_POST['vighastaafore'];
+         } else {
+            $vighastaafore = '';
+         }
 
          // desde el crm
          $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore);
@@ -2528,7 +2572,12 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
 
             if (isset($_SESSION['idroll_sahilices'])) {
                if (($_SESSION['idroll_sahilices'] == 2) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 5) || ($_SESSION['idroll_sahilices'] == 6)) {
-                  $resRelacionRP = $serviciosReferencias->insertarReclutadorasores($_SESSION['usuaid_sahilices'],$res);
+                  if (isset($_POST['refoportunidades'])) {
+                     $resRelacionRP = $serviciosReferencias->insertarReclutadorasores($_SESSION['usuaid_sahilices'],$res,$_POST['refoportunidades']);
+                  } else {
+                     $resRelacionRP = $serviciosReferencias->insertarReclutadorasores($_SESSION['usuaid_sahilices'],$res,'');
+                  }
+
                }
             }
 
