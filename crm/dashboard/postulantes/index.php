@@ -92,7 +92,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 	$cadRefOportunidades = $serviciosFunciones->devolverSelectBox($resOportunidades,array(1,2),' - ');
 
 } else {
-	$resOportunidades = $serviciosReferencias->traerOportunidadesDisponiles();
+	$resOportunidades = $serviciosReferencias->traerOportunidadesDisponibles();
 	$cadRefOportunidades = $serviciosFunciones->devolverSelectBox($resOportunidades,array(1,2),' - ');
 }
 
