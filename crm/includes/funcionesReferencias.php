@@ -19,6 +19,114 @@ class ServiciosReferencias {
 
 	*/
 
+	function graficoActualmente() {
+		$sql = "select
+						r.nombrecompleto,
+						count(r.poratender) as poratender,
+						count(r.citaprogramada) as citaprogramada
+					from (
+						SELECT
+							usu.nombrecompleto,
+							(case when opo.refestadooportunidad = 1 then 1 end) as poratender,
+							(case when opo.refestadooportunidad = 2 then 1 end) as citaprogramada
+						FROM
+							dboportunidades opo
+								INNER JOIN
+							dbusuarios usu ON usu.idusuario = opo.refusuarios
+						WHERE
+							opo.refestadooportunidad IN (1 , 2)
+					    ) r
+					group by r.nombrecompleto
+					order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function graficoIndiceAceptacion() {
+		$sql = "select
+						r.nombrecompleto,
+						count(r.aceptado) as aceptado,
+						count(r.rechazado) as rechazado
+					from (
+						SELECT
+							usu.nombrecompleto,
+							(case when opo.refestadooportunidad = 3 then 1 end) as aceptado,
+							(case when opo.refestadooportunidad = 4 then 1 end) as rechazado
+						FROM
+							dboportunidades opo
+								INNER JOIN
+							dbusuarios usu ON usu.idusuario = opo.refusuarios
+						WHERE
+							opo.refestadooportunidad IN (3 , 4)
+					    ) r
+					group by r.nombrecompleto
+					order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerReferentesPorUsuario($idusuario) {
+		$sql = "select idreferente,apellidopaterno,apellidomaterno,nombre,telefono,email,observaciones,refusuarios from tbreferentes where refusuarios =".$idusuario;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerComisionesReferentes($idreferente) {
+		$sql = "SELECT
+				r.idreferente,
+			    p.apellidopaterno,
+			    p.apellidomaterno,
+			    p.nombre,
+			    2000 AS comision
+			FROM
+			    tbreferentes r
+			        INNER JOIN
+			    dboportunidades opo ON opo.refreferentes = r.idreferente
+			        INNER JOIN
+			    dbreclutadorasores rr ON rr.refoportunidades = opo.idoportunidad
+			        INNER JOIN
+			    dbpostulantes p ON p.idpostulante = rr.refpostulantes
+			WHERE
+			    p.refestadopostulantes = 10 and r.idreferente = ".$idreferente;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerComisionesReferentesajax($length, $start, $busqueda,$colSort,$colSortDir, $idreferente) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (p.apellidopaterno like '%".$busqueda."%' or p.apellidomaterno like '%".$busqueda."%' or p.nombre like '%".$busqueda."%')";
+		}
+
+
+		$sql = "SELECT
+				r.idreferente,
+			    p.apellidopaterno,
+			    p.apellidomaterno,
+			    p.nombre,
+			    2000 AS comision
+			FROM
+			    tbreferentes r
+			        INNER JOIN
+			    dboportunidades opo ON opo.refreferentes = r.idreferente
+			        INNER JOIN
+			    dbreclutadorasores rr ON rr.refoportunidades = opo.idoportunidad
+			        INNER JOIN
+			    dbpostulantes p ON p.idpostulante = rr.refpostulantes
+			WHERE
+			    p.refestadopostulantes = 10 and r.idreferente = ".$idreferente."
+		".$where."
+		ORDER BY ".$colSort." ".$colSortDir."
+		limit ".$start.",".$length;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
 
 	/* PARA Entrevistaoportunidades */
 
@@ -535,18 +643,18 @@ class ServiciosReferencias {
 
 	/* PARA Referentes */
 
-	function insertarReferentes($apellidopaterno,$apellidomaterno,$nombre,$telefono,$email,$observaciones) {
-		$sql = "insert into tbreferentes(idreferente,apellidopaterno,apellidomaterno,nombre,telefono,email,observaciones)
-		values ('','".$apellidopaterno."','".$apellidomaterno."','".$nombre."','".$telefono."','".$email."','".$observaciones."')";
+	function insertarReferentes($apellidopaterno,$apellidomaterno,$nombre,$telefono,$email,$observaciones,$refusuarios) {
+		$sql = "insert into tbreferentes(idreferente,apellidopaterno,apellidomaterno,nombre,telefono,email,observaciones,refusuarios)
+		values ('','".$apellidopaterno."','".$apellidomaterno."','".$nombre."','".$telefono."','".$email."','".$observaciones."',".$refusuarios.")";
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarReferentes($id,$apellidopaterno,$apellidomaterno,$nombre,$telefono,$email,$observaciones) {
+	function modificarReferentes($id,$apellidopaterno,$apellidomaterno,$nombre,$telefono,$email,$observaciones,$refusuarios) {
 		$sql = "update tbreferentes
 		set
-		apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',nombre = '".$nombre."',telefono = '".$telefono."',email = '".$email."',observaciones = '".$observaciones."'
+		apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',nombre = '".$nombre."',telefono = '".$telefono."',email = '".$email."',observaciones = '".$observaciones."', refusuarios= ".$refusuarios."
 		where idreferente =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -576,8 +684,10 @@ class ServiciosReferencias {
 		r.nombre,
 		r.telefono,
 		r.email,
+		usu.nombrecompleto,
 		r.observaciones
 		from tbreferentes r
+		left join dbusuarios usu on usu.idusuario = r.refusuarios
 		".$where."
 		ORDER BY ".$colSort." ".$colSortDir."
 		limit ".$start.",".$length;
@@ -597,6 +707,7 @@ class ServiciosReferencias {
 		r.email,
 		r.observaciones
 		from tbreferentes r
+		left join dbusuarios usu on usu.idusuario = r.refusuarios
 		order by 1";
 		$res = $this->query($sql,0);
 		return $res;
@@ -604,7 +715,7 @@ class ServiciosReferencias {
 
 
 	function traerReferentesPorId($id) {
-		$sql = "select idreferente,apellidopaterno,apellidomaterno,nombre,telefono,email,observaciones from tbreferentes where idreferente =".$id;
+		$sql = "select idreferente,apellidopaterno,apellidomaterno,nombre,telefono,email,observaciones,refusuarios from tbreferentes where idreferente =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -623,10 +734,10 @@ class ServiciosReferencias {
 	}
 
 
-	function modificarReclutadorasores($id,$refusuarios,$refpostulantes) {
+	function modificarReclutadorasores($id,$refusuarios,$refpostulantes,$refoportunidades) {
 		$sql = "update dbreclutadorasores
 		set
-		refusuarios = ".$refusuarios.",refpostulantes = ".$refpostulantes."
+		refusuarios = ".$refusuarios.",refpostulantes = ".$refpostulantes.",refoportunidades = ".$refoportunidades."
 		where idreclutadorasor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -639,6 +750,36 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function traerReclutadorasoresajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where usu.nombrecompleto like '%".$busqueda."%' or concat(p.apellidopaterno, ' ', p.apellidomaterno, ' ', p.nombre) like '%".$busqueda."%' or opo.persona like '%".$busqueda."%'";
+		}
+
+
+		$sql = "select
+		r.idreclutadorasor,
+		usu.nombrecompleto,
+		concat(p.apellidopaterno, ' ', p.apellidomaterno, ' ', p.nombre) as postulantes,
+		opo.persona,
+		r.refusuarios,
+		r.refpostulantes,
+		r.refoportunidades
+		from dbreclutadorasores r
+		inner join dbusuarios usu ON usu.idusuario = r.refusuarios
+		inner join dbpostulantes p on p.idpostulante = r.refpostulantes
+		left join dboportunidades opo on opo.idoportunidad = r.refoportunidades
+		".$where."
+		ORDER BY ".$colSort." ".$colSortDir."
+		limit ".$start.",".$length;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 
 	function traerReclutadorasores() {
 		$sql = "select
@@ -646,6 +787,9 @@ class ServiciosReferencias {
 		r.refusuarios,
 		r.refpostulantes
 		from dbreclutadorasores r
+		inner join dbusuarios usu ON usu.idusuario = r.refusuarios
+		inner join dbpostulantes p on p.idpostulante = r.refpostulantes
+		left join dboportunidades opo on opo.idoportunidad = r.refoportunidades
 		order by 1";
 		$res = $this->query($sql,0);
 		return $res;
@@ -653,7 +797,7 @@ class ServiciosReferencias {
 
 
 	function traerReclutadorasoresPorId($id) {
-		$sql = "select idreclutadorasor,refusuarios,refpostulantes from dbreclutadorasores where idreclutadorasor =".$id;
+		$sql = "select idreclutadorasor,refusuarios,refpostulantes,refoportunidades from dbreclutadorasores where idreclutadorasor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}

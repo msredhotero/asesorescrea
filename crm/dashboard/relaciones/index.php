@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../referentes/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../relaciones/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Recomendadores",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Relaciones",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -39,32 +39,37 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Recomendador";
+$singular = "Relacion";
 
-$plural = "Recomendadores";
+$plural = "Relaciones";
 
-$eliminar = "eliminarReferentes";
+$eliminar = "eliminarReclutadorasores";
 
-$insertar = "insertarReferentes";
+$insertar = "insertarReclutadorasores";
 
-$modificar = "modificarReferentes";
+$modificar = "modificarReclutadorasores";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "tbreferentes";
+$tabla 			= "dbreclutadorasores";
 
-$lblCambio	 	= array('apellidopaterno','apellidomaterno','refusuarios');
-$lblreemplazo	= array('Apellido Paterno','Apellido Materno','Usuario Asignado');
+$lblCambio	 	= array('refusuarios','refpostulantes','refoportunidades');
+$lblreemplazo	= array('Usuarios','Postulantes','Oportunidades');
 
+$resRoles 	= $serviciosUsuario->traerUsuariosPorRol(3);
+$cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
 
-$resUsuario = $serviciosUsuario->traerUsuariosPorRol(9);
+$resPostulantes = $serviciosReferencias->traerPostulantes();
+$cadRef2 = $serviciosFunciones->devolverSelectBox($resPostulantes,array(3,4,2),' ');
+
+$resOportunidades 	= $serviciosReferencias->traerOportunidadesDisponibles();
 $cadRef3 = "<option value='0'>-- Seleccionar --</option>";
-$cadRef3 .= $serviciosFunciones->devolverSelectBox($resUsuario,array(2),'');
+$cadRef3 .= $serviciosFunciones->devolverSelectBox($resOportunidades,array(2),'');
 
-$refdescripcion = array(0=>$cadRef3);
-$refCampo 	=  array('refusuarios');
+$refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3);
+$refCampo 	=  array('refusuarios','refpostulantes','refoportunidades');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -203,23 +208,17 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
-												<th>Apellido Pa.</th>
-												<th>Apellido Ma.</th>
-												<th>Nombre</th>
-												<th>Telefono</th>
-												<th>Email</th>
 												<th>Usuario</th>
+												<th>Postulante</th>
+												<th>Oportunidad</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
-												<th>Apellido Pa.</th>
-												<th>Apellido Ma.</th>
-												<th>Nombre</th>
-												<th>Telefono</th>
-												<th>Email</th>
 												<th>Usuario</th>
+												<th>Postulante</th>
+												<th>Oportunidad</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -328,7 +327,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=referentes",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=relaciones",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",

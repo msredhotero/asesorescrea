@@ -649,10 +649,61 @@ switch ($accion) {
       traerOportunidadesPorId($serviciosReferencias);
    break;
 
+   case 'insertarReclutadorasores':
+      insertarReclutadorasores($serviciosReferencias);
+   break;
+   case 'modificarReclutadorasores':
+      modificarReclutadorasores($serviciosReferencias);
+   break;
+   case 'eliminarReclutadorasores':
+      eliminarReclutadorasores($serviciosReferencias);
+   break;
+
 }
 /* Fin */
 
 /* nuevo 16/01/2020 */
+
+function insertarReclutadorasores($serviciosReferencias) {
+   $refusuarios = $_POST['refusuarios'];
+   $refpostulantes = $_POST['refpostulantes'];
+   $refoportunidades = $_POST['refoportunidades'];
+
+   $res = $serviciosReferencias->insertarReclutadorasores($refusuarios,$refpostulantes,$refoportunidades);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos - verifique las relaciones seleccionadas';
+   }
+}
+
+function modificarReclutadorasores($serviciosReferencias) {
+   $id = $_POST['id'];
+   $refusuarios = $_POST['refusuarios'];
+   $refpostulantes = $_POST['refpostulantes'];
+   $refoportunidades = $_POST['refoportunidades'];
+
+   $res = $serviciosReferencias->modificarReclutadorasores($id,$refusuarios,$refpostulantes,$refoportunidades);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarReclutadorasores($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarReclutadorasores($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
 
 function traerOportunidadesPorId($serviciosReferencias) {
    $id = $_POST['id'];
@@ -843,8 +894,9 @@ function insertarReferentes($serviciosReferencias) {
    $telefono = $_POST['telefono'];
    $email = $_POST['email'];
    $observaciones = $_POST['observaciones'];
+   $refusuarios = $_POST['refusuarios'];
 
-   $res = $serviciosReferencias->insertarReferentes($apellidopaterno,$apellidomaterno,$nombre,$telefono,$email,$observaciones);
+   $res = $serviciosReferencias->insertarReferentes($apellidopaterno,$apellidomaterno,$nombre,$telefono,$email,$observaciones,$refusuarios);
 
    if ((integer)$res > 0) {
       echo '';
@@ -861,8 +913,9 @@ function modificarReferentes($serviciosReferencias) {
    $telefono = $_POST['telefono'];
    $email = $_POST['email'];
    $observaciones = $_POST['observaciones'];
+   $refusuarios = $_POST['refusuarios'];
 
-   $res = $serviciosReferencias->modificarReferentes($id,$apellidopaterno,$apellidomaterno,$nombre,$telefono,$email,$observaciones);
+   $res = $serviciosReferencias->modificarReferentes($id,$apellidopaterno,$apellidomaterno,$nombre,$telefono,$email,$observaciones,$refusuarios);
 
    if ($res == true) {
       echo '';
@@ -1799,19 +1852,43 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $refdescripcion = array();
          $refCampo 	=  array();
       break;
+      case 'dbreclutadorasores':
+         $resultado = $serviciosReferencias->traerReclutadorasoresPorId($id);
+
+         $modificar = "modificarReclutadorasores";
+         $idTabla = "idreclutadorasor";
+
+         $lblCambio	 	= array('refusuarios','refpostulantes','refoportunidades');
+         $lblreemplazo	= array('Usuarios','Postulantes','Oportunidades');
+
+         $resRoles 	= $serviciosUsuarios->traerUsuariosPorRol(3);
+         $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resRoles,array(3),'',mysql_result($resultado,0,'refusuarios'));
+
+         $resPostulantes = $serviciosReferencias->traerPostulantes();
+         $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resPostulantes,array(3,4,2),' ',mysql_result($resultado,0,'refpostulantes'));
+
+         $resOportunidades 	= $serviciosReferencias->traerOportunidades();
+         $cadRef3 = "<option value='0'>-- Seleccionar --</option>";
+         $cadRef3 .= $serviciosFunciones->devolverSelectBoxActivo($resOportunidades,array(2),'',mysql_result($resultado,0,'refoportunidades'));
+
+         $refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3);
+         $refCampo 	=  array('refusuarios','refpostulantes','refoportunidades');
+      break;
       case 'tbreferentes':
          $resultado = $serviciosReferencias->traerReferentesPorId($id);
 
          $modificar = "modificarReferentes";
          $idTabla = "idreferente";
 
-         $lblCambio	 	= array('apellidopaterno','apellidomaterno');
-         $lblreemplazo	= array('Apellido Paterno','Apellido Materno');
+         $lblCambio	 	= array('apellidopaterno','apellidomaterno','refusuarios');
+         $lblreemplazo	= array('Apellido Paterno','Apellido Materno','Usuario Asignado');
 
-         $cadRef2 = '';
+         $resUsuario = $serviciosUsuarios->traerUsuariosPorRol(9);
+         $cadRef3 = "<option value='0'>-- Seleccionar --</option>";
+         $cadRef3 .= $serviciosFunciones->devolverSelectBoxActivo($resUsuario,array(2),'',mysql_result($resultado,0,'refusuarios'));
 
-         $refdescripcion = array();
-         $refCampo 	=  array();
+         $refdescripcion = array(0=>$cadRef3);
+         $refCampo 	=  array('refusuarios');
       break;
       case 'dbentrevistaoportunidades':
          $resultado = $serviciosReferencias->traerEntrevistaoportunidadesPorId($id);

@@ -96,6 +96,54 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 }
 
+$resGrafico = $serviciosReferencias->graficoIndiceAceptacion();
+$ar = array();
+$nombres = '';
+$aceptado = '';
+$rechazado = '';
+while ($rowG = mysql_fetch_array($resGrafico)) {
+	$nombres .= "'".$rowG['nombrecompleto']."',";
+	$aceptado .= $rowG['aceptado'].",";
+	$rechazado .= $rowG['rechazado'].",";
+}
+
+if (strlen($nombres) > 0 ) {
+	$nombres = substr($nombres,0,-1);
+}
+
+if (strlen($aceptado) > 0 ) {
+	$aceptado = substr($aceptado,0,-1);
+}
+
+if (strlen($rechazado) > 0 ) {
+	$rechazado = substr($rechazado,0,-1);
+}
+
+/***************************************************************/
+
+$resGraficoA = $serviciosReferencias->graficoActualmente();
+
+$nombresA = '';
+$poratender = '';
+$citaprogramada = '';
+while ($rowG = mysql_fetch_array($resGraficoA)) {
+	$nombresA .= "'".$rowG['nombrecompleto']."',";
+	$poratender .= $rowG['poratender'].",";
+	$citaprogramada .= $rowG['citaprogramada'].",";
+}
+
+if (strlen($nombresA) > 0 ) {
+	$nombresA = substr($nombresA,0,-1);
+}
+
+if (strlen($poratender) > 0 ) {
+	$poratender = substr($poratender,0,-1);
+}
+
+if (strlen($citaprogramada) > 0 ) {
+	$citaprogramada = substr($citaprogramada,0,-1);
+}
+
 ///////////////////////////              fin                   ////////////////////////
 
 ?>
@@ -213,6 +261,8 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 			<!-- Widgets -->
 			<div class="row clearfix">
 				<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
+
+
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="card ">
 							<div class="header bg-blue">
@@ -277,6 +327,53 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 							</div>
 						</div>
 				</div>
+
+				<?php if ($_SESSION['idroll_sahilices'] == 8) { ?>
+					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+						<div class="card ">
+							<div class="header bg-blue">
+								<h2 style="color:#fff">
+									ASIGNACION TOTAL DE OPORTUNIDADES INDICE DE ACEPTACION
+								</h2>
+								<ul class="header-dropdown m-r--5">
+									<li class="dropdown">
+										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+											<i class="material-icons">more_vert</i>
+										</a>
+										<ul class="dropdown-menu pull-right">
+											<li><a href="javascript:void(0);" class="recargar">Recargar</a></li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="body table-responsive">
+								<canvas id="radar_chart" height="150"></canvas>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+						<div class="card ">
+							<div class="header bg-blue">
+								<h2 style="color:#fff">
+									ASIGNACION TOTAL DE OPORTUNIDADES ACTUALES
+								</h2>
+								<ul class="header-dropdown m-r--5">
+									<li class="dropdown">
+										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+											<i class="material-icons">more_vert</i>
+										</a>
+										<ul class="dropdown-menu pull-right">
+											<li><a href="javascript:void(0);" class="recargar">Recargar</a></li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="body table-responsive">
+								<canvas id="line_chart" height="150"></canvas>
+							</div>
+						</div>
+					</div>
+				<?php } ?>
 				<?php if ($_SESSION['idroll_sahilices'] == 3) { ?>
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="card ">
@@ -495,10 +592,128 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 	 <script src="../js/jquery.easy-autocomplete.min.js"></script>
 
+	 <!-- Chart Plugins Js -->
+    <script src="../plugins/chartjs/Chart.bundle.js"></script>
+
 
 
 	<script>
 		$(document).ready(function(){
+			<?php if ($_SESSION['idroll_sahilices'] == 8) { ?>
+			new Chart(document.getElementById("radar_chart").getContext("2d"), getChartJs('radar'));
+			new Chart(document.getElementById("line_chart").getContext("2d"), getChartJs('line'));
+			
+			function getChartJs(type) {
+			    var config = null;
+
+			    if (type === 'line') {
+			        config = {
+			            type: 'line',
+			            data: {
+			                labels: [<?php echo $nombresA; ?>],
+			                datasets: [{
+			                    label: "Por Atender",
+			                    data: [<?php echo $poratender; ?>],
+			                    borderColor: 'rgba(0, 188, 212, 0.75)',
+			                    backgroundColor: 'rgba(0, 188, 212, 0.3)',
+			                    pointBorderColor: 'rgba(0, 188, 212, 0)',
+			                    pointBackgroundColor: 'rgba(0, 188, 212, 0.9)',
+			                    pointBorderWidth: 1
+			                }, {
+			                        label: "Cita Programada",
+			                        data: [<?php echo $citaprogramada; ?>],
+			                        borderColor: 'rgba(233, 30, 99, 0.75)',
+			                        backgroundColor: 'rgba(233, 30, 99, 0.3)',
+			                        pointBorderColor: 'rgba(233, 30, 99, 0)',
+			                        pointBackgroundColor: 'rgba(233, 30, 99, 0.9)',
+			                        pointBorderWidth: 1
+			                    }]
+			            },
+			            options: {
+			                responsive: true,
+			                legend: false
+			            }
+			        }
+			    }
+			    else if (type === 'bar') {
+			        config = {
+			            type: 'bar',
+			            data: {
+			                labels: ["January", "February", "March", "April", "May", "June", "July"],
+			                datasets: [{
+			                    label: "My First dataset",
+			                    data: [65, 59, 80, 81, 56, 55, 40],
+			                    backgroundColor: 'rgba(0, 188, 212, 0.8)'
+			                }, {
+			                        label: "My Second dataset",
+			                        data: [28, 48, 40, 19, 86, 27, 90],
+			                        backgroundColor: 'rgba(233, 30, 99, 0.8)'
+			                    }]
+			            },
+			            options: {
+			                responsive: true,
+			                legend: false
+			            }
+			        }
+			    }
+			    else if (type === 'radar') {
+			        config = {
+			            type: 'radar',
+			            data: {
+			                labels: [<?php echo $nombres; ?>],
+			                datasets: [{
+			                    label: "Aceptados",
+			                    data: [<?php echo $aceptado; ?>],
+			                    borderColor: 'rgba(0, 188, 212, 0.8)',
+			                    backgroundColor: 'rgba(0, 188, 212, 0.5)',
+			                    pointBorderColor: 'rgba(0, 188, 212, 0)',
+			                    pointBackgroundColor: 'rgba(0, 188, 212, 0.8)',
+			                    pointBorderWidth: 1
+			                }, {
+			                        label: "Rechazados",
+			                        data: [<?php echo $rechazado; ?>],
+			                        borderColor: 'rgba(233, 30, 99, 0.8)',
+			                        backgroundColor: 'rgba(233, 30, 99, 0.5)',
+			                        pointBorderColor: 'rgba(233, 30, 99, 0)',
+			                        pointBackgroundColor: 'rgba(233, 30, 99, 0.8)',
+			                        pointBorderWidth: 1
+			                    }]
+			            },
+			            options: {
+			                responsive: true,
+			                legend: false
+			            }
+			        }
+			    }
+			    else if (type === 'pie') {
+			        config = {
+			            type: 'pie',
+			            data: {
+			                datasets: [{
+			                    data: [225, 50, 100, 40],
+			                    backgroundColor: [
+			                        "rgb(233, 30, 99)",
+			                        "rgb(255, 193, 7)",
+			                        "rgb(0, 188, 212)",
+			                        "rgb(139, 195, 74)"
+			                    ],
+			                }],
+			                labels: [
+			                    "Pink",
+			                    "Amber",
+			                    "Cyan",
+			                    "Light Green"
+			                ]
+			            },
+			            options: {
+			                responsive: true,
+			                legend: false
+			            }
+			        }
+			    }
+			    return config;
+			}
+			<?php } ?>
 
 			<?php 	if ($_SESSION['idroll_sahilices'] == 3) { ?>
 

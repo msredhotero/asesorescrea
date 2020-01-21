@@ -388,9 +388,28 @@ switch ($tabla) {
 		$icon = array('create','delete');
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 5;
+		$termina = 6;
 
-		break;
+	break;
+	case 'referentescomisiones':
+		$resReferente = $serviciosReferencias->traerReferentesPorUsuario($_SESSION['usuaid_sahilices']);
+
+		if (mysql_num_rows($resReferente) > 0) {
+			$idreferente = mysql_result($resReferente,0,'idreferente');
+		} else {
+			$idreferente = 0;
+		}
+
+		$resAjax = $serviciosReferencias->traerComisionesReferentesajax($length, $start, $busqueda,$colSort,$colSortDir,$idreferente);
+		$res = $serviciosReferencias->traerComisionesReferentes($idreferente);
+		$label = array();
+		$class = array();
+		$icon = array();
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 4;
+
+	break;
 	case 'oportunidades':
 
 		if ($_SESSION['idroll_sahilices'] == 3) {
@@ -422,6 +441,17 @@ switch ($tabla) {
 		$indiceID = 0;
 		$empieza = 1;
 		$termina = 8;
+	break;
+	case 'relaciones':
+		$resAjax = $serviciosReferencias->traerReclutadorasoresajax($length, $start, $busqueda,$colSort,$colSortDir);
+		$res = $serviciosReferencias->traerReclutadorasores();
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('create','delete');
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 3;
 	break;
 	case 'entrevistaoportunidades':
 		if ($_SESSION['idroll_sahilices'] == 3) {
