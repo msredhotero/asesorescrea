@@ -762,18 +762,23 @@ function insertarEntrevistaoportunidades($serviciosReferencias) {
 
    $existe = $serviciosReferencias->existeEntrevistaOportunidad($refoportunidades);
 
-   if ($existe == 0) {
-      $res = $serviciosReferencias->insertarEntrevistaoportunidades($refoportunidades,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadoentrevistas,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
-
-      if ((integer)$res > 0) {
-         $resOpo = $serviciosReferencias->modificarOportunidadesEstado($refoportunidades,2);
-         echo '';
-      } else {
-         echo 'Hubo un error al insertar datos';
-      }
+   if ($fecha == '' || $fecha == '0000-00-00 00:00:00') {
+      echo 'Es obligatorio el campo Fecha de la entrevista';
    } else {
-      echo 'Ya existe una entrevista';
+      if ($existe == 0) {
+         $res = $serviciosReferencias->insertarEntrevistaoportunidades($refoportunidades,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadoentrevistas,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
+
+         if ((integer)$res > 0) {
+            $resOpo = $serviciosReferencias->modificarOportunidadesEstado($refoportunidades,2);
+            echo '';
+         } else {
+            echo 'Hubo un error al insertar datos';
+         }
+      } else {
+         echo 'Ya existe una entrevista';
+      }
    }
+
 
 }
 
