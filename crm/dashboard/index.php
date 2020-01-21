@@ -295,7 +295,7 @@ if (strlen($citaprogramada) > 0 ) {
 												<thead>
 													<tr>
 														<th>Nombre Despacho</th>
-														<th>Persona</th>
+														<th>Persona de Contacto</th>
 														<th>Tel.</th>
 														<th>Email</th>
 														<th>Reclutador</th>
@@ -308,7 +308,7 @@ if (strlen($citaprogramada) > 0 ) {
 												<tfoot>
 													<tr>
 														<th>Nombre Despacho</th>
-														<th>Persona</th>
+														<th>Persona de Contacto</th>
 														<th>Tel.</th>
 														<th>Email</th>
 														<th>Reclutador</th>
@@ -602,7 +602,7 @@ if (strlen($citaprogramada) > 0 ) {
 			<?php if ($_SESSION['idroll_sahilices'] == 8) { ?>
 			new Chart(document.getElementById("radar_chart").getContext("2d"), getChartJs('radar'));
 			new Chart(document.getElementById("line_chart").getContext("2d"), getChartJs('line'));
-			
+
 			function getChartJs(type) {
 			    var config = null;
 

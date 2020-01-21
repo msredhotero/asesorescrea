@@ -211,7 +211,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										<thead>
 											<tr>
 												<th>Nombre Despacho</th>
-												<th>Persona</th>
+												<th>Persona de Contacto</th>
 												<th>Tel.</th>
 												<th>Email</th>
 												<th>Reclutador</th>
@@ -224,7 +224,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										<tfoot>
 											<tr>
 												<th>Nombre Despacho</th>
-												<th>Persona</th>
+												<th>Persona de Contacto</th>
 												<th>Tel.</th>
 												<th>Email</th>
 												<th>Reclutador</th>
