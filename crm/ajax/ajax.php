@@ -901,13 +901,18 @@ function insertarReferentes($serviciosReferencias) {
    $observaciones = $_POST['observaciones'];
    $refusuarios = $_POST['refusuarios'];
 
-   $res = $serviciosReferencias->insertarReferentes($apellidopaterno,$apellidomaterno,$nombre,$telefono,$email,$observaciones,$refusuarios);
-
-   if ((integer)$res > 0) {
-      echo '';
+   if ($apellidopaterno == '' || $apellidomaterno == '' || $nombre == '') {
+      echo 'Los campos Apellido Paterno y Materno, y el Nombre son obligatorios';
    } else {
-      echo 'Hubo un error al insertar datos';
+      $res = $serviciosReferencias->insertarReferentes($apellidopaterno,$apellidomaterno,$nombre,$telefono,$email,$observaciones,$refusuarios);
+
+      if ((integer)$res > 0) {
+         echo '';
+      } else {
+         echo 'Hubo un error al insertar datos';
+      }
    }
+
 }
 
 function modificarReferentes($serviciosReferencias) {
