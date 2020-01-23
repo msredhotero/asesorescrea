@@ -468,4 +468,18 @@ $(function () {
     $.AdminBSB.search.activate();
 
     setTimeout(function () { $('.page-loader-wrapper').fadeOut(); }, 50);
+
+
+});
+
+$('.maximizar').click(function() {
+  if ($('.icomarcos').text() == 'web') {
+      $('#marcos').show();
+      $('.content').css('marginLeft', '275px');
+      $('.icomarcos').html('aspect_ratio');
+  } else {
+      $('#marcos').hide();
+      $('.content').css('marginLeft', '15px');
+      $('.icomarcos').html('web');
+  }
 });

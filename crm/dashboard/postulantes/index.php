@@ -88,7 +88,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 if ($_SESSION['idroll_sahilices'] == 3) {
-	$resOportunidades = $serviciosReferencias->traerOportunidadesPorUsuario($_SESSION['usuaid_sahilices']);
+	$resOportunidades = $serviciosReferencias->traerOportunidadesPorUsuarioDisponibles($_SESSION['usuaid_sahilices']);
 	$cadRefOportunidades = $serviciosFunciones->devolverSelectBox($resOportunidades,array(1,2),' - ');
 
 } else {
@@ -544,7 +544,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 				$('.content').css('marginLeft', '15px');
 				$('.icomarcos').html('web');
 			}
-
 		});
 
 		var table = $('#example').DataTable({

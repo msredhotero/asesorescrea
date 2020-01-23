@@ -428,19 +428,29 @@ switch ($tabla) {
 
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 8;
+		$termina = 11;
 
 		break;
 	case 'oportunidadeshistorico':
-		$resAjax = $serviciosReferencias->traerOportunidadesajaxPorUsuarioHistorico($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
-		$res = $serviciosReferencias->traerOportunidadesPorUsuario($_SESSION['usuaid_sahilices']);
-		$label = array();
-		$class = array();
-		$icon = array();
+
+		if ($_SESSION['idroll_sahilices'] == 3) {
+			$resAjax = $serviciosReferencias->traerOportunidadesajaxPorUsuarioHistorico($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+			$res = $serviciosReferencias->traerOportunidadesPorUsuarioEstadoH($_SESSION['usuaid_sahilices'],'3');
+			$label = array();
+			$class = array();
+			$icon = array();
+		} else {
+			$resAjax = $serviciosReferencias->traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir);
+			$res = $serviciosReferencias->traerOportunidadesPorEstadoH($_SESSION['usuaid_sahilices'],'3');
+			$label = array();
+			$class = array();
+			$icon = array();
+		}
+
 
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 8;
+		$termina = 11;
 	break;
 	case 'relaciones':
 		$resAjax = $serviciosReferencias->traerReclutadorasoresajax($length, $start, $busqueda,$colSort,$colSortDir);

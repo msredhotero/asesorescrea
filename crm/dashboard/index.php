@@ -96,20 +96,16 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 }
 
-$resGrafico = $serviciosReferencias->graficoIndiceAceptacion();
+$resGrafico = $serviciosReferencias->graficoTotalFinalizados();
 $ar = array();
-$nombres = '';
+
 $aceptado = '';
 $rechazado = '';
 while ($rowG = mysql_fetch_array($resGrafico)) {
-	$nombres .= "'".$rowG['nombrecompleto']."',";
 	$aceptado .= $rowG['aceptado'].",";
 	$rechazado .= $rowG['rechazado'].",";
 }
 
-if (strlen($nombres) > 0 ) {
-	$nombres = substr($nombres,0,-1);
-}
 
 if (strlen($aceptado) > 0 ) {
 	$aceptado = substr($aceptado,0,-1);
@@ -121,15 +117,22 @@ if (strlen($rechazado) > 0 ) {
 
 /***************************************************************/
 
-$resGraficoA = $serviciosReferencias->graficoActualmente();
+$resGraficoA = $serviciosReferencias->graficoTotalActuales();
 
 $nombresA = '';
 $poratender = '';
 $citaprogramada = '';
+$mayor = 5;
 while ($rowG = mysql_fetch_array($resGraficoA)) {
-	$nombresA .= "'".$rowG['nombrecompleto']."',";
+	$nombresA .= "'".$rowG['meses']."',";
 	$poratender .= $rowG['poratender'].",";
 	$citaprogramada .= $rowG['citaprogramada'].",";
+	if ($mayor < $rowG['poratender']) {
+		$mayor = $rowG['poratender'];
+	}
+	if ($mayor < $rowG['citaprogramada']) {
+		$mayor = $rowG['citaprogramada'];
+	}
 }
 
 if (strlen($nombresA) > 0 ) {
@@ -144,6 +147,11 @@ if (strlen($citaprogramada) > 0 ) {
 	$citaprogramada = substr($citaprogramada,0,-1);
 }
 
+/*
+$poratender = '144,0,0,0,0,0,0,0,0,0,0,0';
+$citaprogramada = '67,0,0,0,0,0,0,0,0,0,0,0';
+$mayor = 144;
+*/
 ///////////////////////////              fin                   ////////////////////////
 
 ?>
@@ -295,8 +303,11 @@ if (strlen($citaprogramada) > 0 ) {
 												<thead>
 													<tr>
 														<th>Nombre Despacho</th>
-														<th>Persona de Contacto</th>
-														<th>Tel.</th>
+														<th>Apellido Paterno</th>
+														<th>Apellido Materno</th>
+														<th>Nombre</th>
+														<th>Tel. Movil</th>
+														<th>Tel. Trabajo</th>
 														<th>Email</th>
 														<th>Reclutador</th>
 														<th>Estado</th>
@@ -308,8 +319,11 @@ if (strlen($citaprogramada) > 0 ) {
 												<tfoot>
 													<tr>
 														<th>Nombre Despacho</th>
-														<th>Persona de Contacto</th>
-														<th>Tel.</th>
+														<th>Apellido Paterno</th>
+														<th>Apellido Materno</th>
+														<th>Nombre</th>
+														<th>Tel. Movil</th>
+														<th>Tel. Trabajo</th>
 														<th>Email</th>
 														<th>Reclutador</th>
 														<th>Estado</th>
@@ -347,7 +361,7 @@ if (strlen($citaprogramada) > 0 ) {
 								</ul>
 							</div>
 							<div class="body table-responsive">
-								<canvas id="radar_chart" height="150"></canvas>
+								<canvas id="pie_chart" height="150"></canvas>
 							</div>
 						</div>
 					</div>
@@ -369,7 +383,7 @@ if (strlen($citaprogramada) > 0 ) {
 								</ul>
 							</div>
 							<div class="body table-responsive">
-								<canvas id="line_chart" height="150"></canvas>
+								<canvas id="bar_chart" height="150"></canvas>
 							</div>
 						</div>
 					</div>
@@ -401,8 +415,10 @@ if (strlen($citaprogramada) > 0 ) {
 											<thead>
 												<tr>
 													<th>Nombre Despacho</th>
-													<th>Persona</th>
-													<th>Tel.</th>
+													<th>Apellido Paterno</th>
+													<th>Apellido Materno</th>
+													<th>Tel. Movil</th>
+													<th>Tel. Trabajo</th>
 													<th>Email</th>
 													<th>Reclutador</th>
 													<th>Estado</th>
@@ -414,8 +430,10 @@ if (strlen($citaprogramada) > 0 ) {
 											<tfoot>
 												<tr>
 													<th>Nombre Despacho</th>
-													<th>Persona</th>
-													<th>Tel.</th>
+													<th>Apellido Paterno</th>
+													<th>Apellido Materno</th>
+													<th>Tel. Movil</th>
+													<th>Tel. Trabajo</th>
 													<th>Email</th>
 													<th>Reclutador</th>
 													<th>Estado</th>
@@ -600,8 +618,8 @@ if (strlen($citaprogramada) > 0 ) {
 	<script>
 		$(document).ready(function(){
 			<?php if ($_SESSION['idroll_sahilices'] == 8) { ?>
-			new Chart(document.getElementById("radar_chart").getContext("2d"), getChartJs('radar'));
-			new Chart(document.getElementById("line_chart").getContext("2d"), getChartJs('line'));
+			new Chart(document.getElementById("pie_chart").getContext("2d"), getChartJs('pie'));
+			new Chart(document.getElementById("bar_chart").getContext("2d"), getChartJs('bar'));
 
 			function getChartJs(type) {
 			    var config = null;
@@ -622,10 +640,10 @@ if (strlen($citaprogramada) > 0 ) {
 			                }, {
 			                        label: "Cita Programada",
 			                        data: [<?php echo $citaprogramada; ?>],
-			                        borderColor: 'rgba(233, 30, 99, 0.75)',
-			                        backgroundColor: 'rgba(233, 30, 99, 0.3)',
-			                        pointBorderColor: 'rgba(233, 30, 99, 0)',
-			                        pointBackgroundColor: 'rgba(233, 30, 99, 0.9)',
+			                        borderColor: 'rgba(252, 248, 12, 0.75)',
+			                        backgroundColor: 'rgba(252, 248, 12, 0.3)',
+			                        pointBorderColor: 'rgba(252, 248, 12, 0)',
+			                        pointBackgroundColor: 'rgba(252, 248, 12, 0.9)',
 			                        pointBorderWidth: 1
 			                    }]
 			            },
@@ -639,15 +657,15 @@ if (strlen($citaprogramada) > 0 ) {
 			        config = {
 			            type: 'bar',
 			            data: {
-			                labels: ["January", "February", "March", "April", "May", "June", "July"],
+			                labels: [<?php echo $nombresA; ?>],
 			                datasets: [{
-			                    label: "My First dataset",
-			                    data: [65, 59, 80, 81, 56, 55, 40],
+			                    label: "Por Atender",
+			                    data: [<?php echo $poratender; ?>],
 			                    backgroundColor: 'rgba(0, 188, 212, 0.8)'
 			                }, {
-			                        label: "My Second dataset",
-			                        data: [28, 48, 40, 19, 86, 27, 90],
-			                        backgroundColor: 'rgba(233, 30, 99, 0.8)'
+			                        label: "Cita Programada",
+			                        data: [<?php echo $citaprogramada; ?>],
+			                        backgroundColor: 'rgba(252, 248, 12, 0.8)'
 			                    }]
 			            },
 			            options: {
@@ -660,22 +678,22 @@ if (strlen($citaprogramada) > 0 ) {
 			        config = {
 			            type: 'radar',
 			            data: {
-			                labels: [<?php echo $nombres; ?>],
+			                labels: [<?php echo ''; ?>],
 			                datasets: [{
 			                    label: "Aceptados",
 			                    data: [<?php echo $aceptado; ?>],
-			                    borderColor: 'rgba(0, 188, 212, 0.8)',
-			                    backgroundColor: 'rgba(0, 188, 212, 0.5)',
-			                    pointBorderColor: 'rgba(0, 188, 212, 0)',
-			                    pointBackgroundColor: 'rgba(0, 188, 212, 0.8)',
+			                    borderColor: 'rgba(12, 241, 8, 0.8)',
+			                    backgroundColor: 'rgba(12, 241, 8, 0.5)',
+			                    pointBorderColor: 'rgba(12, 241, 8, 0)',
+			                    pointBackgroundColor: 'rgba(12, 241, 8, 0.8)',
 			                    pointBorderWidth: 1
 			                }, {
 			                        label: "Rechazados",
 			                        data: [<?php echo $rechazado; ?>],
-			                        borderColor: 'rgba(233, 30, 99, 0.8)',
-			                        backgroundColor: 'rgba(233, 30, 99, 0.5)',
-			                        pointBorderColor: 'rgba(233, 30, 99, 0)',
-			                        pointBackgroundColor: 'rgba(233, 30, 99, 0.8)',
+			                        borderColor: 'rgba(252, 12, 12, 0.8)',
+			                        backgroundColor: 'rgba(252, 12, 12, 0.5)',
+			                        pointBorderColor: 'rgba(252, 12, 12, 0)',
+			                        pointBackgroundColor: 'rgba(252, 12, 12, 0.8)',
 			                        pointBorderWidth: 1
 			                    }]
 			            },
@@ -690,17 +708,17 @@ if (strlen($citaprogramada) > 0 ) {
 			            type: 'pie',
 			            data: {
 			                datasets: [{
-			                    data: [225, 50, 100, 40],
+			                    data: [<?php echo $aceptado; ?>,<?php echo $rechazado; ?>],
 			                    backgroundColor: [
-			                        "rgb(233, 30, 99)",
-			                        "rgb(255, 193, 7)",
+			                        "rgb(12, 241, 8)",
+			                        "rgb(252, 12, 12)",
 			                        "rgb(0, 188, 212)",
 			                        "rgb(139, 195, 74)"
 			                    ],
 			                }],
 			                labels: [
-			                    "Pink",
-			                    "Amber",
+			                    "Aceptados",
+			                    "Rechazados",
 			                    "Cyan",
 			                    "Light Green"
 			                ]

@@ -19,6 +19,40 @@ class ServiciosReferencias {
 
 	*/
 
+	function graficoTotalFinalizados() {
+		$sql = "SELECT
+				    coalesce(sum(CASE
+				        WHEN opo.refestadooportunidad = 3 THEN 1
+				    END),0) AS aceptado,
+				    coalesce(sum(CASE
+				        WHEN opo.refestadooportunidad = 4 THEN 1
+				    END),0) AS rechazado
+				FROM
+				    dboportunidades opo
+				WHERE
+				    opo.refestadooportunidad IN (3 , 4)";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function graficoTotalActuales() {
+		$sql = "SELECT
+					m.meses,
+				    coalesce(sum(CASE
+				        WHEN opo.refestadooportunidad = 1 THEN 1
+				    END),0) AS poratender,
+				    coalesce(sum(CASE
+				        WHEN opo.refestadooportunidad = 2 THEN 1
+				    END),0) AS citaprogramada
+				FROM
+					tbmeses m
+				    left join dboportunidades opo on month(opo.fechacrea) = m.idmes and opo.refestadooportunidad IN (1 , 2)
+				group by m.meses
+				order by m.idmes";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 	function graficoActualmente() {
 		$sql = "select
 						r.nombrecompleto,
@@ -360,18 +394,18 @@ class ServiciosReferencias {
 
 	/* PARA Oportunidades */
 
-	function insertarOportunidades($nombredespacho,$persona,$telefono,$email,$refusuarios,$refreferentes,$refestadooportunidad) {
-		$sql = "insert into dboportunidades(idoportunidad,nombredespacho,persona,telefono,email,refusuarios,refreferentes,refestadooportunidad,fechacrea)
-		values ('','".$nombredespacho."','".$persona."','".$telefono."','".$email."',".$refusuarios.",".$refreferentes.",".$refestadooportunidad.",'".date('Y-m-d H:i:s')."')";
+	function insertarOportunidades($nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$telefonomovil,$telefonotrabajo,$email,$refusuarios,$refreferentes,$refestadooportunidad) {
+		$sql = "insert into dboportunidades(idoportunidad,nombredespacho,apellidopaterno,apellidomaterno,nombre,telefonomovil,telefonotrabajo,email,refusuarios,refreferentes,refestadooportunidad,fechacrea)
+		values ('','".$nombredespacho."','".$apellidopaterno."','".$apellidomaterno."','".$nombre."','".$telefonomovil."','".$telefonotrabajo."','".$email."',".$refusuarios.",".$refreferentes.",".$refestadooportunidad.",'".date('Y-m-d H:i:s')."')";
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarOportunidades($id,$nombredespacho,$persona,$telefono,$email,$refusuarios,$refreferentes,$refestadooportunidad) {
+	function modificarOportunidades($id,$nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$telefonomovil,$telefonotrabajo,$email,$refusuarios,$refreferentes,$refestadooportunidad) {
 		$sql = "update dboportunidades
 		set
-		nombredespacho = '".$nombredespacho."',persona = '".$persona."',telefono = '".$telefono."',email = '".$email."',refusuarios = ".$refusuarios.",refreferentes = ".$refreferentes.",refestadooportunidad = ".$refestadooportunidad."
+		nombredespacho = '".$nombredespacho."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',nombre = '".$nombre."',telefonomovil = '".$telefonomovil."',telefonotrabajo = '".$telefonotrabajo."',email = '".$email."',refusuarios = ".$refusuarios.",refreferentes = ".$refreferentes.",refestadooportunidad = ".$refestadooportunidad."
 		where idoportunidad =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -398,8 +432,11 @@ class ServiciosReferencias {
 		$sql = "select
 		o.idoportunidad,
 		o.nombredespacho,
-		o.persona,
-		o.telefono,
+		o.apellidopaterno,
+		o.apellidomaterno,
+		o.nombre,
+		o.telefonomovil,
+		o.telefonotrabajo,
 		o.email,
 		o.refusuarios,
 		o.refreferentes,
@@ -416,8 +453,11 @@ class ServiciosReferencias {
 		$sql = "select
 		o.idoportunidad,
 		o.nombredespacho,
-		o.persona,
-		o.telefono,
+		o.apellidopaterno,
+		o.apellidomaterno,
+		o.nombre,
+		o.telefonomovil,
+		o.telefonotrabajo,
 		o.email,
 		o.refusuarios,
 		o.refreferentes,
@@ -426,7 +466,7 @@ class ServiciosReferencias {
 		inner join dbusuarios usu ON usu.idusuario = o.refusuarios
 		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
 		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
-		where r.idreclutadorasor is null
+		where r.idreclutadorasor is null and o.refestadooportunidad = 3
 		order by o.persona";
 		$res = $this->query($sql,0);
 		return $res;
@@ -438,15 +478,18 @@ class ServiciosReferencias {
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " where o.nombredespacho like '%".$busqueda."%' or o.persona like '%".$busqueda."%' or o.telefono like '%".$busqueda."%' or o.email like '%".$busqueda."%' or usu.nombrecompleto like '%".$busqueda."%' or est.estadooportunidad like '%".$busqueda."%'";
+			$where = " where o.nombredespacho like '%".$busqueda."%' or o.apellidopaterno like '%".$busqueda."%' or o.apellidomaterno like '%".$busqueda."%' or o.nombre like '%".$busqueda."%' or o.telefonomovil like '%".$busqueda."%' or o.telefonotrabajo like '%".$busqueda."%' or o.email like '%".$busqueda."%' or usu.nombrecompleto like '%".$busqueda."%' or est.estadooportunidad like '%".$busqueda."%'";
 		}
 
 
 		$sql = "select
 		o.idoportunidad,
 		o.nombredespacho,
-		o.persona,
-		o.telefono,
+		o.apellidopaterno,
+		o.apellidomaterno,
+		o.nombre,
+		o.telefonomovil,
+		o.telefonotrabajo,
 		o.email,
 		usu.nombrecompleto,
 		est.estadooportunidad,
@@ -474,15 +517,18 @@ class ServiciosReferencias {
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and (o.nombredespacho like '%".$busqueda."%' or o.persona like '%".$busqueda."%' or o.telefono like '%".$busqueda."%' or o.email like '%".$busqueda."%' or usu.nombrecompleto like '%".$busqueda."%' or est.estadooportunidad like '%".$busqueda."%')";
+			$where = " and (o.nombredespacho like '%".$busqueda."%' or o.apellidopaterno like '%".$busqueda."%' or o.apellidomaterno like '%".$busqueda."%' or o.nombre like '%".$busqueda."%' or o.telefonomovil like '%".$busqueda."%' or o.telefonotrabajo like '%".$busqueda."%' or o.email like '%".$busqueda."%' or usu.nombrecompleto like '%".$busqueda."%' or est.estadooportunidad like '%".$busqueda."%')";
 		}
 
 
 		$sql = "select
 		o.idoportunidad,
 		o.nombredespacho,
-		o.persona,
-		o.telefono,
+		o.apellidopaterno,
+		o.apellidomaterno,
+		o.nombre,
+		o.telefonomovil,
+		o.telefonotrabajo,
 		o.email,
 		usu.nombrecompleto,
 		est.estadooportunidad,
@@ -510,15 +556,18 @@ class ServiciosReferencias {
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and (o.nombredespacho like '%".$busqueda."%' or o.persona like '%".$busqueda."%' or o.telefono like '%".$busqueda."%' or o.email like '%".$busqueda."%' or usu.nombrecompleto like '%".$busqueda."%' or est.estadooportunidad like '%".$busqueda."%')";
+			$where = " and (o.nombredespacho like '%".$busqueda."%' or o.apellidopaterno like '%".$busqueda."%' or o.apellidomaterno like '%".$busqueda."%' or o.nombre like '%".$busqueda."%' or o.telefonomovil like '%".$busqueda."%' or o.telefonotrabajo like '%".$busqueda."%' or o.email like '%".$busqueda."%' or usu.nombrecompleto like '%".$busqueda."%' or est.estadooportunidad like '%".$busqueda."%')";
 		}
 
 
 		$sql = "select
 		o.idoportunidad,
 		o.nombredespacho,
-		o.persona,
-		o.telefono,
+		o.apellidopaterno,
+		o.apellidomaterno,
+		o.nombre,
+		o.telefonomovil,
+		o.telefonotrabajo,
 		o.email,
 		usu.nombrecompleto,
 		est.estadooportunidad,
@@ -541,12 +590,55 @@ class ServiciosReferencias {
 	}
 
 
+	function traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where (o.nombredespacho like '%".$busqueda."%' or o.apellidopaterno like '%".$busqueda."%' or o.apellidomaterno like '%".$busqueda."%' or o.nombre like '%".$busqueda."%' or o.telefonomovil like '%".$busqueda."%' or o.telefonotrabajo like '%".$busqueda."%' or o.email like '%".$busqueda."%' or usu.nombrecompleto like '%".$busqueda."%' or est.estadooportunidad like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+		o.idoportunidad,
+		o.nombredespacho,
+		o.apellidopaterno,
+		o.apellidomaterno,
+		o.nombre,
+		o.telefonomovil,
+		o.telefonotrabajo,
+		o.email,
+		usu.nombrecompleto,
+		est.estadooportunidad,
+		concat(rr.apellidopaterno, ' ', rr.nombre) as referente,
+		o.fechacrea,
+		o.refusuarios,
+		o.refreferentes,
+		o.refestadooportunidad
+		from dboportunidades o
+		inner join dbusuarios usu ON usu.idusuario = o.refusuarios
+		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
+		left join tbreferentes rr on rr.idreferente = o.refreferentes
+		inner join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
+		".$where."
+		ORDER BY o.fechacrea desc
+		limit ".$start.",".$length;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
 	function traerOportunidadesPorUsuario($idusuario) {
 		$sql = "select
 		o.idoportunidad,
 		o.nombredespacho,
-		o.persona,
-		o.telefono,
+		o.apellidopaterno,
+		o.apellidomaterno,
+		o.nombre,
+		o.telefonomovil,
+		o.telefonotrabajo,
 		o.email,
 		o.refusuarios,
 		o.refreferentes,
@@ -561,13 +653,85 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function traerOportunidadesPorUsuarioEstadoH($idusuario, $idestado) {
+		$sql = "select
+		o.idoportunidad,
+		o.nombredespacho,
+		o.apellidopaterno,
+		o.apellidomaterno,
+		o.nombre,
+		o.telefonomovil,
+		o.telefonotrabajo,
+		o.email,
+		o.refusuarios,
+		o.refreferentes,
+		o.refestadooportunidad
+		from dboportunidades o
+		inner join dbusuarios usu ON usu.idusuario = o.refusuarios
+		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
+		inner join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
+		where usu.idusuario = ".$idusuario." and o.refestadooportunidad in (".$idestado.")
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerOportunidadesPorEstadoH($idestado) {
+		$sql = "select
+		o.idoportunidad,
+		o.nombredespacho,
+		o.apellidopaterno,
+		o.apellidomaterno,
+		o.nombre,
+		o.telefonomovil,
+		o.telefonotrabajo,
+		o.email,
+		o.refusuarios,
+		o.refreferentes,
+		o.refestadooportunidad
+		from dboportunidades o
+		inner join dbusuarios usu ON usu.idusuario = o.refusuarios
+		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
+		inner join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
+		where r.idreclutadorasor is null and o.refestadooportunidad in (".$idestado.")
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerOportunidadesPorUsuarioDisponibles($idusuario) {
+		$sql = "select
+		o.idoportunidad,
+		o.nombredespacho,
+		o.apellidopaterno,
+		o.apellidomaterno,
+		o.nombre,
+		o.telefonomovil,
+		o.telefonotrabajo,
+		o.email,
+		o.refusuarios,
+		o.refreferentes,
+		o.refestadooportunidad
+		from dboportunidades o
+		inner join dbusuarios usu ON usu.idusuario = o.refusuarios
+		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
+		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
+		where r.idreclutadorasor is null and usu.idusuario = ".$idusuario." and o.refestadooportunidad = 3
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 
 	function traerOportunidadesPorIdCompleto($id) {
 		$sql = "select
 		o.idoportunidad,
 		o.nombredespacho,
-		o.persona,
-		o.telefono,
+		o.apellidopaterno,
+		o.apellidomaterno,
+		o.nombre,
+		o.telefonomovil,
+		o.telefonotrabajo,
 		o.email,
 		o.refusuarios,
 		o.refreferentes,
@@ -582,7 +746,7 @@ class ServiciosReferencias {
 	}
 
 	function traerOportunidadesPorId($id) {
-		$sql = "select idoportunidad,nombredespacho,persona,telefono,email,refusuarios,refreferentes,refestadooportunidad from dboportunidades where idoportunidad =".$id;
+		$sql = "select idoportunidad,nombredespacho,apellidopaterno,apellidomaterno,nombre,telefonomovil,telefonotrabajo,email,refusuarios,refreferentes,refestadooportunidad from dboportunidades where idoportunidad =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}

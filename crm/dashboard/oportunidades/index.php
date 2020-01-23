@@ -55,8 +55,8 @@ $modificar = "modificarOportunidades";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dboportunidades";
 
-$lblCambio	 	= array('nombredespacho','refusuarios','refreferentes','refestadooportunidad','persona');
-$lblreemplazo	= array('Nombre del Despacho','Asignar a Reclutador','Persona que Recomendo','Estado','Persona de Contacto');
+$lblCambio	 	= array('nombredespacho','refusuarios','refreferentes','refestadooportunidad','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo');
+$lblreemplazo	= array('Nombre del Despacho','Asignar a Reclutador','Persona que Recomendo','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo');
 
 
 
@@ -199,20 +199,32 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<i class="material-icons">add</i>
 												<span>NUEVO</span>
 											</button>
+											<button type="button" class="btn bg-blue waves-effect btnVigente">
+												<i class="material-icons">timeline</i>
+												<span>VIGENTE</span>
+											</button>
+											<button type="button" class="btn bg-grey waves-effect btnHistorico">
+												<i class="material-icons">history</i>
+												<span>HISTORICO</span>
+											</button>
 
 										</div>
 									</div>
 								</div>
 
 
-								<div class="row" style="padding: 5px 20px;">
-
+								<div class="row contActuales" style="padding: 5px 20px;">
+									<h4>VIGENTE</h4>
+									<hr>
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
 												<th>Nombre Despacho</th>
-												<th>Persona de Contacto</th>
-												<th>Tel.</th>
+												<th>Apellido Paterno</th>
+												<th>Apellido Materno</th>
+												<th>Nombre</th>
+												<th>Tel. Movil</th>
+												<th>Tel. Trabajo</th>
 												<th>Email</th>
 												<th>Reclutador</th>
 												<th>Estado</th>
@@ -224,8 +236,50 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										<tfoot>
 											<tr>
 												<th>Nombre Despacho</th>
-												<th>Persona de Contacto</th>
-												<th>Tel.</th>
+												<th>Apellido Paterno</th>
+												<th>Apellido Materno</th>
+												<th>Nombre</th>
+												<th>Tel. Movil</th>
+												<th>Tel. Trabajo</th>
+												<th>Email</th>
+												<th>Reclutador</th>
+												<th>Estado</th>
+												<th>Ref.</th>
+												<th>Fecha</th>
+												<th>Acciones</th>
+											</tr>
+										</tfoot>
+									</table>
+
+								</div>
+								<div class="row contHistorico" style="padding: 5px 20px;">
+									<h4>HISTORICO</h4>
+									<hr>
+									<table id="example2" class="display table " style="width:100%">
+										<thead>
+											<tr>
+												<th>Nombre Despacho</th>
+												<th>Apellido Paterno</th>
+												<th>Apellido Materno</th>
+												<th>Nombre</th>
+												<th>Tel. Movil</th>
+												<th>Tel. Trabajo</th>
+												<th>Email</th>
+												<th>Reclutador</th>
+												<th>Estado</th>
+												<th>Ref.</th>
+												<th>Fecha</th>
+												<th>Acciones</th>
+											</tr>
+										</thead>
+										<tfoot>
+											<tr>
+												<th>Nombre Despacho</th>
+												<th>Apellido Paterno</th>
+												<th>Apellido Materno</th>
+												<th>Nombre</th>
+												<th>Tel. Movil</th>
+												<th>Tel. Trabajo</th>
 												<th>Email</th>
 												<th>Reclutador</th>
 												<th>Estado</th>
@@ -248,7 +302,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 
 <!-- NUEVO -->
-	<form class="formulario" role="form" id="sign_in">
+	<form class="formulario frmNuevo" role="form" id="sign_in">
 	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
 	       <div class="modal-dialog modal-lg" role="document">
 	           <div class="modal-content">
@@ -258,6 +312,11 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	               <div class="modal-body">
 							<div class="row">
 	                  	<?php echo $frmUnidadNegocios; ?>
+							</div>
+							<div class="row">
+								<div class="alert bg-orange">
+									* El campo email no es requerido pero es un campo relevante
+								</div>
 							</div>
 	               </div>
 	               <div class="modal-footer">
@@ -271,7 +330,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	</form>
 
 	<!-- MODIFICAR -->
-		<form class="formulario" role="form" id="sign_in">
+		<form class="formulario frmModificar" role="form" id="sign_in">
 		   <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
 		       <div class="modal-dialog modal-lg" role="document">
 		           <div class="modal-content">
@@ -283,7 +342,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 								</div>
 		               </div>
 		               <div class="modal-footer">
-		                   <button type="button" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
+		                   <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
 		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
 		               </div>
 		           </div>
@@ -336,10 +395,51 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 <script>
 	$(document).ready(function(){
+		$('.contHistorico').hide();
+
+		$('.btnHistorico').click(function() {
+			$('.contHistorico').show();
+			$('.contActuales').hide();
+		});
+
+		$('.btnVigente').click(function() {
+			$('.contActuales').show();
+			$('.contHistorico').hide();
+		});
+
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=oportunidades",
+			"language": {
+				"emptyTable":     "No hay datos cargados",
+				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "Mostrar _MENU_ filas",
+				"loadingRecords": "Cargando...",
+				"processing":     "Procesando...",
+				"search":         "Buscar:",
+				"zeroRecords":    "No se encontraron resultados",
+				"paginate": {
+					"first":      "Primero",
+					"last":       "Ultimo",
+					"next":       "Siguiente",
+					"previous":   "Anterior"
+				},
+				"aria": {
+					"sortAscending":  ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			}
+		});
+
+		var table2 = $('#example2').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=oportunidadeshistorico",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -522,114 +622,121 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			$('#lgmModificar').modal();
 		});//fin del boton modificar
 
-		$('.nuevo').click(function(){
+		$('.frmNuevo').submit(function(e){
 
-			//información del formulario
-			var formData = new FormData($(".formulario")[0]);
-			var message = "";
-			//hacemos la petición ajax
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: formData,
-				//necesario para subir archivos via ajax
-				cache: false,
-				contentType: false,
-				processData: false,
-				//mientras enviamos el archivo
-				beforeSend: function(){
+			e.preventDefault();
+			if ($('#sign_in')[0].checkValidity()) {
+				//información del formulario
+				var formData = new FormData($(".formulario")[0]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
 
-				},
-				//una vez finalizado correctamente
-				success: function(data){
+					},
+					//una vez finalizado correctamente
+					success: function(data){
 
-					if (data == '') {
-						swal({
-								title: "Respuesta",
-								text: "Registro Creado con exito!!",
-								type: "success",
-								timer: 1500,
-								showConfirmButton: false
-						});
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Creado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
 
-						$('#lgmNuevo').modal('hide');
-						$('#unidadnegocio').val('');
-						table.ajax.reload();
-					} else {
-						swal({
-								title: "Respuesta",
-								text: data,
-								type: "error",
-								timer: 2500,
-								showConfirmButton: false
-						});
+							$('#lgmNuevo').modal('hide');
+							$('#unidadnegocio').val('');
+							table.ajax.reload();
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
 
 
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
 					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
+				});
+			}
 		});
 
 
-		$('.modificar').click(function(){
+		$('.frmModificar').submit(function(e){
 
-			//información del formulario
-			var formData = new FormData($(".formulario")[1]);
-			var message = "";
-			//hacemos la petición ajax
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: formData,
-				//necesario para subir archivos via ajax
-				cache: false,
-				contentType: false,
-				processData: false,
-				//mientras enviamos el archivo
-				beforeSend: function(){
+			e.preventDefault();
+			if ($('.frmModificar')[0].checkValidity()) {
 
-				},
-				//una vez finalizado correctamente
-				success: function(data){
+				//información del formulario
+				var formData = new FormData($(".formulario")[1]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
 
-					if (data == '') {
-						swal({
-								title: "Respuesta",
-								text: "Registro Modificado con exito!!",
-								type: "success",
-								timer: 1500,
-								showConfirmButton: false
-						});
+					},
+					//una vez finalizado correctamente
+					success: function(data){
 
-						$('#lgmModificar').modal('hide');
-						table.ajax.reload();
-					} else {
-						swal({
-								title: "Respuesta",
-								text: data,
-								type: "error",
-								timer: 2500,
-								showConfirmButton: false
-						});
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Modificado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
+
+							$('#lgmModificar').modal('hide');
+							table.ajax.reload();
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
 
 
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
 					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
+				});
+			}
 		});
 	});
 </script>

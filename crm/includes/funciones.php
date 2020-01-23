@@ -422,7 +422,7 @@ class Servicios {
 				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi","reftipoingreso","refusuarios","refclientes",'comision');
 				break;
 			case 'dbpostulantes':
-				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi","rfc","curp","ine",'refasesores','urlprueba','refsucursalesinbursa','ultimoestado','comision','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta');
+				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi","rfc","curp","ine",'refasesores','urlprueba','refsucursalesinbursa','ultimoestado','comision','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta','telefonofijo');
 				break;
 			case 'dbentrevistas':
 				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes');
@@ -1185,7 +1185,7 @@ class Servicios {
 				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi","domicilio","entrevistador",'codigopostal');
 			break;
 			case 'dboportunidades':
-				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes');
+				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes','telefonofijo');
 			break;
 			case 'dbpostulantes':
 				$ocultar = array("usuariomodi","fechacrea","fechamodi","usuariocrea","usuariomodi",'refasesores','comision','refsucursalesinbursa','ultimoestado','token');

@@ -845,38 +845,53 @@ function eliminarEntrevistaoportunidades($serviciosReferencias) {
 function insertarOportunidades($serviciosReferencias) {
 
    $nombredespacho = $_POST['nombredespacho'];
-   $persona = $_POST['persona'];
-   $telefono = $_POST['telefono'];
+   $apellidopaterno = $_POST['apellidopaterno'];
+   $apellidomaterno = $_POST['apellidomaterno'];
+   $nombre = $_POST['nombre'];
+   $telefonomovil = $_POST['telefonomovil'];
+   $telefonotrabajo = $_POST['telefonotrabajo'];
    $email = $_POST['email'];
    $refusuarios = $_POST['refusuarios'];
    $refreferentes = ($_POST['refreferentes'] == '' ? 'null' : $_POST['refreferentes']);
    $refestadooportunidad = $_POST['refestadooportunidad'];
 
-   $res = $serviciosReferencias->insertarOportunidades($nombredespacho,$persona,$telefono,$email,$refusuarios,$refreferentes,$refestadooportunidad);
-
-   if ((integer)$res > 0) {
-      echo '';
+   if (($telefonotrabajo == '') && ($telefonomovil == '')) {
+      echo 'Hubo un error al insertar datos - Debe cargar por lo menos un telefono';
    } else {
-      echo 'Hubo un error al insertar datos';
+      $res = $serviciosReferencias->insertarOportunidades($nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$telefonomovil,$telefonotrabajo,$email,$refusuarios,$refreferentes,$refestadooportunidad);
+
+      if ((integer)$res > 0) {
+         echo '';
+      } else {
+         echo 'Hubo un error al insertar datos';
+      }
    }
+
 }
 
 function modificarOportunidades($serviciosReferencias) {
    $id = $_POST['id'];
    $nombredespacho = $_POST['nombredespacho'];
-   $persona = $_POST['persona'];
-   $telefono = $_POST['telefono'];
+   $apellidopaterno = $_POST['apellidopaterno'];
+   $apellidomaterno = $_POST['apellidomaterno'];
+   $nombre = $_POST['nombre'];
+   $telefonomovil = $_POST['telefonomovil'];
+   $telefonotrabajo = $_POST['telefonotrabajo'];
    $email = $_POST['email'];
    $refusuarios = $_POST['refusuarios'];
    $refreferentes = ($_POST['refreferentes'] == '' ? 'null' : $_POST['refreferentes']);
    $refestadooportunidad = $_POST['refestadooportunidad'];
 
-   $res = $serviciosReferencias->modificarOportunidades($id,$nombredespacho,$persona,$telefono,$email,$refusuarios,$refreferentes,$refestadooportunidad);
-
-   if ($res == true) {
-      echo '';
+   if (($telefonotrabajo == '') && ($telefonomovil == '')) {
+      echo 'Hubo un error al insertar datos - Debe cargar por lo menos un telefono';
    } else {
-      echo 'Hubo un error al modificar datos';
+      $res = $serviciosReferencias->modificarOportunidades($id,$nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$telefonomovil,$telefonotrabajo,$email,$refusuarios,$refreferentes,$refestadooportunidad);
+
+      if ($res == true) {
+         echo '';
+      } else {
+         echo 'Hubo un error al modificar datos';
+      }
    }
 }
 
@@ -1927,8 +1942,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $modificar = "modificarOportunidades";
          $idTabla = "idoportunidad";
 
-         $lblCambio	 	= array('nombredespacho','refusuarios','refreferentes','refestadooportunidad');
-         $lblreemplazo	= array('Nombre del Despacho','Asignar a Reclutador','Persona que Recomendo','Estado');
+         $lblCambio	 	= array('nombredespacho','refusuarios','refreferentes','refestadooportunidad','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo');
+         $lblreemplazo	= array('Nombre del Despacho','Asignar a Reclutador','Persona que Recomendo','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo');
 
 
          if ($_SESSION['idroll_sahilices'] == 3) {
