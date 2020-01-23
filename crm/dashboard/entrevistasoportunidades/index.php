@@ -371,6 +371,10 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('#codipostalaux').val(547);
 		$('#codigopostal').val(547);
 
+		$('.frmAjaxNuevo #domicilio').val('sin domicilio');
+
+		$('.frmAjaxNuevo #codigopostal').val(547);
+
 		$('#fecha').bootstrapMaterialDatePicker({
 			format: 'YYYY/MM/DD HH:mm',
 			lang : 'mx',
@@ -611,6 +615,10 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 							weekStart: 1,
 							time: true
 						});
+
+						$('.frmAjaxModificar #domicilio').val('sin domicilio');
+
+						$('.frmAjaxModificar #codigopostal2').val(547);
 
 						$("#codigopostal2").easyAutocomplete(options2);
 

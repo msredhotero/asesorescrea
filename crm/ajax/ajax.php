@@ -776,8 +776,8 @@ function insertarEntrevistaoportunidades($serviciosReferencias) {
    $refoportunidades = $_POST['refoportunidades'];
    $entrevistador = $_POST['entrevistador'];
    $fecha = $_POST['fecha'];
-   $domicilio = $_POST['domicilio'];
-   $codigopostal = $_POST['codipostalaux'];
+   $domicilio = 'sin domicilio';
+   $codigopostal = 547;
    $refestadoentrevistas = $_POST['refestadoentrevistas'];
    $fechacrea = date('Y-m-d H:i:s');
    $fechamodi = date('Y-m-d H:i:s');
@@ -813,8 +813,8 @@ function modificarEntrevistaoportunidades($serviciosReferencias) {
    $refoportunidades = $_POST['refoportunidades'];
    $entrevistador = $_POST['entrevistador'];
    $fecha = $_POST['fecha'];
-   $domicilio = $_POST['domicilio'];
-   $codigopostal = $_POST['codipostalaux'];
+   $domicilio = 'sin domicilio';
+   $codigopostal = 547;
    $refestadoentrevistas = $_POST['refestadoentrevistas'];
    $fechamodi = date('Y-m-d H:i:s');
    $usuariomodi = $_SESSION['usua_sahilices'];
