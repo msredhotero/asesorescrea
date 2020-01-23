@@ -153,6 +153,30 @@ $citaprogramada = '67,0,0,0,0,0,0,0,0,0,0,0';
 $mayor = 144;
 */
 ///////////////////////////              fin                   ////////////////////////
+$resComparativo = $serviciosReferencias->graficoIndiceAceptacion();
+
+$aceptadoC = '';
+$rechazadoC = '';
+$nombresC = '';
+while ($rowG = mysql_fetch_array($resComparativo)) {
+	$aceptadoC .= $rowG['aceptado'].",";
+	$rechazadoC .= $rowG['rechazado'].",";
+	$nombresC .= "'".$rowG['nombrecompleto']."',";
+}
+
+if (strlen($nombresC) > 0 ) {
+	$nombresC = substr($nombresC,0,-1);
+}
+
+if (strlen($aceptadoC) > 0 ) {
+	$aceptadoC = substr($aceptadoC,0,-1);
+}
+
+if (strlen($rechazadoC) > 0 ) {
+	$rechazadoC = substr($rechazadoC,0,-1);
+}
+
+/********************* fin ********************************************/
 
 ?>
 <!DOCTYPE html>
@@ -342,7 +366,7 @@ $mayor = 144;
 						</div>
 				</div>
 
-				<?php if ($_SESSION['idroll_sahilices'] == 8) { ?>
+				<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 1)) { ?>
 					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 						<div class="card ">
 							<div class="header bg-blue">
@@ -387,7 +411,31 @@ $mayor = 144;
 							</div>
 						</div>
 					</div>
-				<?php } ?>
+					<?php } ?>
+					<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 1)) { ?>
+					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+						<div class="card ">
+							<div class="header bg-blue">
+								<h2 style="color:#fff">
+									ASIGNACION TOTAL DE OPORTUNIDADES COMPARATIVO
+								</h2>
+								<ul class="header-dropdown m-r--5">
+									<li class="dropdown">
+										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+											<i class="material-icons">more_vert</i>
+										</a>
+										<ul class="dropdown-menu pull-right">
+											<li><a href="javascript:void(0);" class="recargar">Recargar</a></li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="body table-responsive">
+								<canvas id="bar_chart2" height="150"></canvas>
+							</div>
+						</div>
+					</div>
+					<?php } ?>
 				<?php if ($_SESSION['idroll_sahilices'] == 3) { ?>
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="card ">
@@ -617,9 +665,13 @@ $mayor = 144;
 
 	<script>
 		$(document).ready(function(){
-			<?php if ($_SESSION['idroll_sahilices'] == 8) { ?>
+			<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 1)) { ?>
 			new Chart(document.getElementById("pie_chart").getContext("2d"), getChartJs('pie'));
 			new Chart(document.getElementById("bar_chart").getContext("2d"), getChartJs('bar'));
+
+			<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 1)) { ?>
+			new Chart(document.getElementById("bar_chart2").getContext("2d"), getChartJs('bar2'));
+			<?php } ?>
 
 			function getChartJs(type) {
 			    var config = null;
@@ -666,6 +718,27 @@ $mayor = 144;
 			                        label: "Cita Programada",
 			                        data: [<?php echo $citaprogramada; ?>],
 			                        backgroundColor: 'rgba(252, 248, 12, 0.8)'
+			                    }]
+			            },
+			            options: {
+			                responsive: true,
+			                legend: false
+			            }
+			        }
+			    }
+				 else if (type === 'bar2') {
+			        config = {
+			            type: 'bar',
+			            data: {
+			                labels: [<?php echo $nombresC; ?>],
+			                datasets: [{
+			                    label: "Aceptados",
+			                    data: [<?php echo $aceptadoC; ?>],
+			                    backgroundColor: 'rgba(12, 241, 8, 0.8)'
+			                }, {
+			                        label: "Rechazados",
+			                        data: [<?php echo $rechazadoC; ?>],
+			                        backgroundColor: 'rgba(252, 12, 12, 0.8)'
 			                    }]
 			            },
 			            options: {

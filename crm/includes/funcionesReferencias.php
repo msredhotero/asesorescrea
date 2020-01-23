@@ -19,6 +19,54 @@ class ServiciosReferencias {
 
 	*/
 
+	function graficoGerenteRendimiento($idusuario) {
+		$sql = "select
+					r.nombrecompleto,
+					sum(r.completosoportunidades) as completosoportunidades,
+					sum(r.completos) as completos,
+					sum(r.abandonaron) as abandonaron
+					from (
+					    select
+							usu.nombrecompleto,
+					        count(*) as completosoportunidades,
+					        0 as completos,
+					        0 as abandonaron
+							from dboportunidades o
+							inner join dbusuarios usu ON usu.idusuario = o.refusuarios
+							inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
+							inner join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
+					        inner join dbpostulantes pp on pp.idpostulante = r.refpostulantes and pp.refestadopostulantes = 10
+							where o.refestadooportunidad = 3 and usu.idusuario = ".$idusuario."
+
+					union all
+						select
+							usu.nombrecompleto,
+					        0 as completosoportunidades,
+					        count(*) as completos,
+					        0 as abandonaron
+							from dbpostulantes pp
+					        inner join dbreclutadorasores r on r.refpostulantes = pp.idpostulante
+					        inner join dbusuarios usu on usu.idusuario = r.refusuarios
+							where pp.refestadopostulantes = 10 and usu.idusuario = ".$idusuario." and r.refoportunidades = 0
+
+					union all
+						select
+							usu.nombrecompleto,
+					        0 as completosoportunidades,
+					        0 as completos,
+					        count(*) as abandonaron
+							from dbpostulantes pp
+					        inner join dbreclutadorasores r on r.refpostulantes = pp.idpostulante
+					        inner join dbusuarios usu on usu.idusuario = r.refusuarios
+							where pp.refestadopostulantes <> 10 and usu.idusuario = ".$idusuario."
+						) r
+					group by r.nombrecompleto";
+
+		$res = $this->query($sql,0);
+		return $res;
+
+	}
+
 	function graficoTotalFinalizados() {
 		$sql = "SELECT
 				    coalesce(sum(CASE
@@ -87,11 +135,10 @@ class ServiciosReferencias {
 							(case when opo.refestadooportunidad = 3 then 1 end) as aceptado,
 							(case when opo.refestadooportunidad = 4 then 1 end) as rechazado
 						FROM
-							dboportunidades opo
-								INNER JOIN
-							dbusuarios usu ON usu.idusuario = opo.refusuarios
-						WHERE
-							opo.refestadooportunidad IN (3 , 4)
+						dbusuarios usu
+						 left JOIN dboportunidades opo ON usu.idusuario = opo.refusuarios
+						 		and opo.refestadooportunidad IN (3 , 4)
+						 where usu.refroles = 3
 					    ) r
 					group by r.nombrecompleto
 					order by 1";

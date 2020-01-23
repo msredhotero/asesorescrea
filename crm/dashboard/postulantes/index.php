@@ -91,6 +91,30 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 	$resOportunidades = $serviciosReferencias->traerOportunidadesPorUsuarioDisponibles($_SESSION['usuaid_sahilices']);
 	$cadRefOportunidades = $serviciosFunciones->devolverSelectBox($resOportunidades,array(1,2),' - ');
 
+	$resGrafico = $serviciosReferencias->graficoGerenteRendimiento($_SESSION['usuaid_sahilices']);
+
+	$completos = '';
+	$completosoportunidad = '';
+	$rechazados = '';
+	while ($rowG = mysql_fetch_array($resGrafico)) {
+		$completosoportunidad .= $rowG['completosoportunidades'].",";
+		$completos .= $rowG['completos'].",";
+		$rechazados .= $rowG['abandonaron'].",";
+	}
+
+
+	if (strlen($completosoportunidad) > 0 ) {
+		$completosoportunidad = substr($completosoportunidad,0,-1);
+	}
+
+	if (strlen($completos) > 0 ) {
+		$completos = substr($completos,0,-1);
+	}
+
+	if (strlen($rechazados) > 0 ) {
+		$rechazados = substr($rechazados,0,-1);
+	}
+
 } else {
 	$resOportunidades = $serviciosReferencias->traerOportunidadesDisponibles();
 	$cadRefOportunidades = $serviciosFunciones->devolverSelectBox($resOportunidades,array(1,2),' - ');
@@ -264,10 +288,35 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 										</tfoot>
 									</table>
 								</div>
+
 							</form>
 							</div>
 						</div>
 					</div>
+					<?php if ($_SESSION['idroll_sahilices'] == 3) { ?>
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+						<div class="card ">
+							<div class="header bg-blue">
+								<h2 style="color:#fff">
+									ESTADISTICA POSTULANTES COMPLETOS Y ABANDONADOS
+								</h2>
+								<ul class="header-dropdown m-r--5">
+									<li class="dropdown">
+										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+											<i class="material-icons">more_vert</i>
+										</a>
+										<ul class="dropdown-menu pull-right">
+											<li><a href="javascript:void(0);" class="recargar">Recargar</a></li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="body table-responsive">
+								<canvas id="pie_chart" height="150"></canvas>
+							</div>
+						</div>
+					</div>
+					<?php } ?>
 				</div>
 			</div>
 		</div>
@@ -385,8 +434,45 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 <script src="../../js/jquery.easy-autocomplete.min.js"></script>
 
+<!-- Chart Plugins Js -->
+<script src="../../plugins/chartjs/Chart.bundle.js"></script>
+
 <script>
 	$(document).ready(function(){
+
+		new Chart(document.getElementById("pie_chart").getContext("2d"), getChartJs('pie'));
+
+		function getChartJs(type) {
+			 var config = null;
+
+			 if (type === 'pie') {
+				config = {
+					 type: 'pie',
+					 data: {
+						  datasets: [{
+							   data: [<?php echo $completosoportunidad; ?>,<?php echo $rechazados; ?>,<?php echo $completos; ?>],
+							   backgroundColor: [
+									 "rgb(12, 241, 8)",
+									 "rgb(252, 12, 12)",
+									 "rgb(5, 187, 5)",
+									 "rgb(139, 195, 74)"
+							   ],
+						  }],
+						  labels: [
+							   "Concluidos x Oportunidad",
+							   "Rechazados",
+							   "Concluidos",
+							   "Light Green"
+						  ]
+					 },
+					 options: {
+						  responsive: true,
+						  legend: false
+					 }
+				}
+			}
+			return config;
+		}
 
 		$('#refoportunidades').change(function() {
 			traerOportunidadesPorId($(this).val());
