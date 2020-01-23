@@ -604,7 +604,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 					if (data != '') {
 						$('.frmAjaxModificar').html(data);
 
-						$('#fecha').bootstrapMaterialDatePicker({
+						$('.frmAjaxModificar #fecha').bootstrapMaterialDatePicker({
 							format: 'YYYY/MM/DD HH:mm',
 							lang : 'mx',
 							clearButton: true,

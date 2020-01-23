@@ -898,6 +898,11 @@ if (strlen($rechazadoC) > 0 ) {
 
 								$(".frmAjaxNuevo #entrevistador").val('<?php echo $_SESSION['nombre_sahilices']; ?>');
 
+								$('.frmAjaxNuevo #codipostalaux').val(547);
+								$('.frmAjaxNuevo #codipostalaux').val(547);
+								$('.frmAjaxNuevo #codigopostal').val(547);
+								$('.frmAjaxNuevo #domicilio').val('javelly');
+
 								$(".frmAjaxNuevo #codigopostal").easyAutocomplete(options);
 
 								$('.frmAjaxNuevo #usuariocrea').val('marcos');
