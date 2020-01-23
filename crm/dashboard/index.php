@@ -465,6 +465,7 @@ if (strlen($rechazadoC) > 0 ) {
 													<th>Nombre Despacho</th>
 													<th>Apellido Paterno</th>
 													<th>Apellido Materno</th>
+													<th>Nombre</th>
 													<th>Tel. Movil</th>
 													<th>Tel. Trabajo</th>
 													<th>Email</th>
@@ -808,6 +809,7 @@ if (strlen($rechazadoC) > 0 ) {
 
 			<?php 	if ($_SESSION['idroll_sahilices'] == 3) { ?>
 
+
 				$('.frmNuevo').submit(function(e){
 
 					e.preventDefault();
@@ -893,6 +895,8 @@ if (strlen($rechazadoC) > 0 ) {
 									time: true,
 									minDate : new Date()
 								});
+
+								$(".frmAjaxNuevo #entrevistador").val('<?php echo $_SESSION['nombre_sahilices']; ?>');
 
 								$(".frmAjaxNuevo #codigopostal").easyAutocomplete(options);
 
