@@ -388,6 +388,50 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 <script>
 	$(document).ready(function(){
 
+		$('#refoportunidades').change(function() {
+			traerOportunidadesPorId($(this).val());
+		});
+
+		function traerOportunidadesPorId(id) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'traerOportunidadesPorId',id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error === false) {
+						$('#apellidopaterno').val(data.apellidopaterno);
+						$('#apellidomaterno').val(data.apellidomaterno);
+						$('#nombre').val(data.nombre);
+						$('#telefonomovil').val(data.telefonomovil);
+						$('#telefonotrabajo').val(data.telefonotrabajo);
+						$('#email').val(data.email);
+
+
+					} else {
+						$('#apellidopaterno').val('');
+						$('#apellidomaterno').val('');
+						$('#nombre').val('');
+						$('#telefonomovil').val('');
+						$('#telefonotrabajo').val('');
+						$('#email').val('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
+
 		$('#compania').prop('readOnly',true);
 
 		$('#token').val('se genera automaticamente');

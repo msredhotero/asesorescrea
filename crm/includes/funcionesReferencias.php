@@ -212,13 +212,13 @@ class ServiciosReferencias {
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " where opo.persona like '%".$busqueda."%' or e.entrevistador like '%".$busqueda."%' or cast(e.fecha as unsigned) like '%".$busqueda."%' or e.domicilio like '%".$busqueda."%' or pp.codigo like '%".$busqueda."%' or est.estadoentrevista like '%".$busqueda."%'";
+			$where = " where concat(opo.apellidopaterno, ' ', opo.apellidomaterno, ' ', opo.nombre) like '%".$busqueda."%' or e.entrevistador like '%".$busqueda."%' or cast(e.fecha as unsigned) like '%".$busqueda."%' or e.domicilio like '%".$busqueda."%' or pp.codigo like '%".$busqueda."%' or est.estadoentrevista like '%".$busqueda."%'";
 		}
 
 
 		$sql = "select
 		e.identrevistaoportunidad,
-		opo.persona,
+		concat(opo.apellidopaterno, ' ', opo.apellidomaterno, ' ', opo.nombre) as persona,
 		e.entrevistador,
 		e.fecha,
 		(case when est.idestadoentrevista = 3 then 'Re-Programado'
@@ -255,13 +255,13 @@ class ServiciosReferencias {
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and (opo.persona like '%".$busqueda."%' or e.entrevistador like '%".$busqueda."%' or cast(e.fecha as unsigned) like '%".$busqueda."%' or e.domicilio like '%".$busqueda."%' or pp.codigo like '%".$busqueda."%' or est.estadoentrevista like '%".$busqueda."%')";
+			$where = " and (concat(opo.apellidopaterno, ' ', opo.apellidomaterno, ' ', opo.nombre) like '%".$busqueda."%' or e.entrevistador like '%".$busqueda."%' or cast(e.fecha as unsigned) like '%".$busqueda."%' or e.domicilio like '%".$busqueda."%' or pp.codigo like '%".$busqueda."%' or est.estadoentrevista like '%".$busqueda."%')";
 		}
 
 
 		$sql = "select
 		e.identrevistaoportunidad,
-		opo.persona,
+		concat(opo.apellidopaterno, ' ', opo.apellidomaterno, ' ', opo.nombre) as persona,
 		e.entrevistador,
 		e.fecha,
 
@@ -467,7 +467,7 @@ class ServiciosReferencias {
 		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
 		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
 		where r.idreclutadorasor is null and o.refestadooportunidad = 3
-		order by o.persona";
+		order by o.apellidopaterno,o.apellidomaterno,o.nombre";
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -920,7 +920,7 @@ class ServiciosReferencias {
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " where usu.nombrecompleto like '%".$busqueda."%' or concat(p.apellidopaterno, ' ', p.apellidomaterno, ' ', p.nombre) like '%".$busqueda."%' or opo.persona like '%".$busqueda."%'";
+			$where = " where usu.nombrecompleto like '%".$busqueda."%' or concat(p.apellidopaterno, ' ', p.apellidomaterno, ' ', p.nombre) like '%".$busqueda."%' or concat(opo.apellidopaterno, ' ', opo.apellidomaterno, ' ', opo.nombre) like '%".$busqueda."%'";
 		}
 
 
@@ -928,7 +928,7 @@ class ServiciosReferencias {
 		r.idreclutadorasor,
 		usu.nombrecompleto,
 		concat(p.apellidopaterno, ' ', p.apellidomaterno, ' ', p.nombre) as postulantes,
-		opo.persona,
+		concat(opo.apellidopaterno, ' ', opo.apellidomaterno, ' ', opo.nombre) as persona,
 		r.refusuarios,
 		r.refpostulantes,
 		r.refoportunidades

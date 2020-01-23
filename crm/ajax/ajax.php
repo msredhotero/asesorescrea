@@ -708,15 +708,39 @@ function eliminarReclutadorasores($serviciosReferencias) {
 function traerOportunidadesPorId($serviciosReferencias) {
    $id = $_POST['id'];
 
-   $res = $serviciosReferencias->traerOportunidadesPorIdCompleto($id);
+   if ($id != '') {
+      $res = $serviciosReferencias->traerOportunidadesPorIdCompleto($id);
 
-   if (mysql_num_rows($res) > 0) {
-      $resV['error'] = false;
-      $resV['persona'] = mysql_result($res,0,'nombrecompleto');
+      if (mysql_num_rows($res) > 0) {
+         $resV['error'] = false;
+         $resV['persona'] = mysql_result($res,0,'nombrecompleto');
+         $resV['apellidopaterno'] = mysql_result($res,0,'apellidopaterno');
+         $resV['apellidomaterno'] = mysql_result($res,0,'apellidomaterno');
+         $resV['nombre'] = mysql_result($res,0,'nombre');
+         $resV['telefonomovil'] = mysql_result($res,0,'telefonomovil');
+         $resV['telefonotrabajo'] = mysql_result($res,0,'telefonotrabajo');
+         $resV['email'] = mysql_result($res,0,'email');
+      } else {
+         $resV['error'] = true;
+         $resV['persona'] = '';
+         $resV['apellidopaterno'] = '';
+         $resV['apellidomaterno'] = '';
+         $resV['nombre'] = '';
+         $resV['telefonomovil'] = '';
+         $resV['telefonotrabajo'] = '';
+         $resV['email'] = '';
+      }
    } else {
       $resV['error'] = true;
       $resV['persona'] = '';
+      $resV['apellidopaterno'] = '';
+      $resV['apellidomaterno'] = '';
+      $resV['nombre'] = '';
+      $resV['telefonomovil'] = '';
+      $resV['telefonotrabajo'] = '';
+      $resV['email'] = '';
    }
+
 
    header('Content-type: application/json');
    echo json_encode($resV);
