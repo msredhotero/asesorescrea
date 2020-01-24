@@ -666,17 +666,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		});
 
 
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '265px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
-		});
+
 
 		var table = $('#example').DataTable({
 			"bProcessing": true,
