@@ -440,6 +440,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 <script>
 	$(document).ready(function(){
 
+		<?php if ($_SESSION['idroll_sahilices'] == 3) { ?>
 		new Chart(document.getElementById("pie_chart").getContext("2d"), getChartJs('pie'));
 
 		function getChartJs(type) {
@@ -473,6 +474,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			}
 			return config;
 		}
+		<?php } ?>
 
 		$('#refoportunidades').change(function() {
 			traerOportunidadesPorId($(this).val());
