@@ -192,7 +192,8 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 				$i = 0;
 				while ($rowG = mysql_fetch_array($resGuia)) {
 					$i += 1;
-
+					$urlAcceso = $rowG['url'].'?id='.$id;
+					/*
 					if ($rowG['refestadopostulantes'] == $estadoSiguiente) {
 						$lblEstado = 'active';
 					}
@@ -207,6 +208,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 							$urlAcceso = 'javascript:void(0)';
 						}
 					}
+					*/
 				?>
 				<div class="col-xs-2 bs-wizard-step <?php echo $lblEstado; ?>">
 					<div class="text-center bs-wizard-stepnum">Paso <?php echo $i; ?></div>

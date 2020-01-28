@@ -484,7 +484,8 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 				$i = 0;
 				while ($rowG = mysql_fetch_array($resGuia)) {
 					$i += 1;
-
+					$urlAcceso = $rowG['url'].'?id='.$id;
+					/*
 					if ($rowG['refestadopostulantes'] == $estadoSiguiente) {
 						$lblEstado = 'active';
 					}
@@ -492,8 +493,14 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 					if (($lblEstado == 'complete') || ($lblEstado == 'active')) {
 						$urlAcceso = $rowG['url'].'?id='.$id;
 					} else {
-						$urlAcceso = 'javascript:void(0)';
+						if ($rowG['refestadopostulantes'] == 7) {
+							$urlAcceso = $rowG['url'].'?id='.$id;
+							$lblEstado = 'active';
+						} else {
+							$urlAcceso = 'javascript:void(0)';
+						}
 					}
+					*/
 				?>
 				<div class="col-xs-2 bs-wizard-step <?php echo $lblEstado; ?>">
 					<div class="text-center bs-wizard-stepnum">Paso <?php echo $i; ?></div>
@@ -535,7 +542,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								DOCUMENTACION - <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?>
+								DOCUMENTACION - <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?> - POSTULANTE: <?php echo $postulante; ?>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">

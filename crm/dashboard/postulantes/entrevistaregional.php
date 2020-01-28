@@ -208,13 +208,10 @@ if (mysql_num_rows($resEntrevista) > 0) {
 				$i = 0;
 				while ($rowG = mysql_fetch_array($resGuia)) {
 					$i += 1;
-
+					$urlAcceso = $rowG['url'].'?id='.$id;
+					/*
 					if ($rowG['refestadopostulantes'] == $estadoSiguiente) {
 						$lblEstado = 'active';
-					}
-
-					if (mysql_result($resVar2,0,'refestadopostulantes') == 9) {
-						$lblEstado = 'disabled';
 					}
 
 					if (($lblEstado == 'complete') || ($lblEstado == 'active')) {
@@ -227,6 +224,7 @@ if (mysql_num_rows($resEntrevista) > 0) {
 							$urlAcceso = 'javascript:void(0)';
 						}
 					}
+					*/
 				?>
 				<div class="col-xs-2 bs-wizard-step <?php echo $lblEstado; ?>">
 					<div class="text-center bs-wizard-stepnum">Paso <?php echo $i; ?></div>

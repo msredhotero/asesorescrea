@@ -207,7 +207,8 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 				$i = 0;
 				while ($rowG = mysql_fetch_array($resGuia)) {
 					$i += 1;
-
+					$urlAcceso = $rowG['url'].'?id='.$id;
+					/*
 					if ($rowG['refestadopostulantes'] == $estadoSiguiente) {
 						$lblEstado = 'active';
 					}
@@ -222,6 +223,7 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 							$urlAcceso = 'javascript:void(0)';
 						}
 					}
+					*/
 				?>
 				<div class="col-xs-2 bs-wizard-step <?php echo $lblEstado; ?>">
 					<div class="text-center bs-wizard-stepnum">Paso <?php echo $i; ?></div>
@@ -242,7 +244,7 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 
 			<div class="row">
 				<div class="col-xs-12 col-md-12 col-lg-12">
-					<h4>Validar registros previos en SIAP, obtener pantallazo y guardar.</h4>
+					<h4>Postulante: <?php echo $postulante; ?> - Validar registros previos en SIAP, obtener pantallazo y guardar.</h4>
 					<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 					<button type="button" class="btn bg-green waves-effect btnContinuar">
 						<i class="material-icons">done_all</i>

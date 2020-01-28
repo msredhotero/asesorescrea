@@ -364,7 +364,8 @@ if (mysql_result($resultado,0,'nss') == '') {
 				$i = 0;
 				while ($rowG = mysql_fetch_array($resGuia)) {
 					$i += 1;
-
+					$urlAcceso = $rowG['url'].'?id='.$id;
+					/*
 					if ($rowG['refestadopostulantes'] == $estadoSiguiente) {
 						$lblEstado = 'active';
 					}
@@ -372,8 +373,14 @@ if (mysql_result($resultado,0,'nss') == '') {
 					if (($lblEstado == 'complete') || ($lblEstado == 'active')) {
 						$urlAcceso = $rowG['url'].'?id='.$id;
 					} else {
-						$urlAcceso = 'javascript:void(0)';
+						if ($rowG['refestadopostulantes'] == 7) {
+							$urlAcceso = $rowG['url'].'?id='.$id;
+							$lblEstado = 'active';
+						} else {
+							$urlAcceso = 'javascript:void(0)';
+						}
 					}
+					*/
 				?>
 				<div class="col-xs-2 bs-wizard-step <?php echo $lblEstado; ?>">
 					<div class="text-center bs-wizard-stepnum">Paso <?php echo $i; ?></div>
@@ -404,6 +411,8 @@ if (mysql_result($resultado,0,'nss') == '') {
 						<?php echo $alertaCURP; ?>
 						<?php echo $alertaRFC; ?>
 						<?php echo $alertaNSS; ?>
+
+						<div class="alert bg-blue">Postulante: <?php echo $postulante; ?></div>
 
 						<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 							<?php if ($puedeAvanzar == true) { ?>

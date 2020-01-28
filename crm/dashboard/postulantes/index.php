@@ -694,7 +694,14 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 					"sortAscending":  ": activate to sort column ascending",
 					"sortDescending": ": activate to sort column descending"
 				}
-			}
+			},
+			"columnDefs": [
+              {
+                  "targets": [ 4 ],
+                  "visible": false,
+                  "searchable": false
+              }
+          ]
 		});
 
 		$("#sign_in").submit(function(e){

@@ -318,12 +318,66 @@ if (strlen($rechazadoC) > 0 ) {
 									<p>Aqui usted encontrara avisos importantes sobre su estado en el Proceso de Reclutamiento</p>
 
 									<?php if ($_SESSION['idroll_sahilices'] == 3) { ?>
+										<div class="row">
+											<div class="col-lg-12 col-md-12">
+												<div class="button-demo">
+
+													<button type="button" class="btn bg-blue waves-effect btnVigente">
+														<i class="material-icons">timeline</i>
+														<span>VIGENTE</span>
+													</button>
+													<button type="button" class="btn bg-grey waves-effect btnHistorico">
+														<i class="material-icons">history</i>
+														<span>HISTORICO</span>
+													</button>
+
+												</div>
+											</div>
+										</div>
 										<hr>
 										<h4>Oportunidades Asigandas</h4>
 										<hr>
-										<div class="row" style="padding: 5px 20px;">
+										<div class="row contActuales" style="padding: 5px 20px;">
 
 											<table id="example" class="display table " style="width:100%">
+												<thead>
+													<tr>
+														<th>Nombre Despacho</th>
+														<th>Apellido Paterno</th>
+														<th>Apellido Materno</th>
+														<th>Nombre</th>
+														<th>Tel. Movil</th>
+														<th>Tel. Trabajo</th>
+														<th>Email</th>
+														<th>Reclutador</th>
+														<th>Estado</th>
+														<th>Ref.</th>
+														<th>Fecha</th>
+														<th>Acciones</th>
+													</tr>
+												</thead>
+												<tfoot>
+													<tr>
+														<th>Nombre Despacho</th>
+														<th>Apellido Paterno</th>
+														<th>Apellido Materno</th>
+														<th>Nombre</th>
+														<th>Tel. Movil</th>
+														<th>Tel. Trabajo</th>
+														<th>Email</th>
+														<th>Reclutador</th>
+														<th>Estado</th>
+														<th>Ref.</th>
+														<th>Fecha</th>
+														<th>Acciones</th>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+										<div class="row contHistorico" style="padding: 5px 20px;">
+											<h4>HISTORICO</h4>
+											<hr>
+											<table id="example2" class="display table " style="width:100%">
 												<thead>
 													<tr>
 														<th>Nombre Despacho</th>
@@ -436,69 +490,7 @@ if (strlen($rechazadoC) > 0 ) {
 						</div>
 					</div>
 					<?php } ?>
-				<?php if ($_SESSION['idroll_sahilices'] == 3) { ?>
-					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-						<div class="card ">
-							<div class="header bg-blue">
-								<h2 style="color:#fff">
-									HISTORICO OPORTUNIDADES
-								</h2>
-								<ul class="header-dropdown m-r--5">
-									<li class="dropdown">
-										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-											<i class="material-icons">more_vert</i>
-										</a>
-										<ul class="dropdown-menu pull-right">
-											<li><a href="javascript:void(0);" class="recargar">Recargar</a></li>
-										</ul>
-									</li>
-								</ul>
-							</div>
-							<div class="body table-responsive">
-								<form class="form" id="formFacturas">
-
-									<div class="row" style="padding: 5px 20px;">
-
-										<table id="example2" class="display table " style="width:100%">
-											<thead>
-												<tr>
-													<th>Nombre Despacho</th>
-													<th>Apellido Paterno</th>
-													<th>Apellido Materno</th>
-													<th>Nombre</th>
-													<th>Tel. Movil</th>
-													<th>Tel. Trabajo</th>
-													<th>Email</th>
-													<th>Reclutador</th>
-													<th>Estado</th>
-													<th>Ref.</th>
-													<th>Fecha</th>
-													<th>Acciones</th>
-												</tr>
-											</thead>
-											<tfoot>
-												<tr>
-													<th>Nombre Despacho</th>
-													<th>Apellido Paterno</th>
-													<th>Apellido Materno</th>
-													<th>Tel. Movil</th>
-													<th>Tel. Trabajo</th>
-													<th>Email</th>
-													<th>Reclutador</th>
-													<th>Estado</th>
-													<th>Ref.</th>
-													<th>Fecha</th>
-													<th>Acciones</th>
-												</tr>
-											</tfoot>
-										</table>
-									</div>
-
-								</form>
-							</div>
-						</div>
-					</div>
-			<?php } ?>
+				
 			<?php } else { ?>
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
@@ -1166,6 +1158,18 @@ if (strlen($rechazadoC) > 0 ) {
 							"sortDescending": ": activate to sort column descending"
 						}
 					}
+				});
+
+				$('.contHistorico').hide();
+
+				$('.btnHistorico').click(function() {
+					$('.contHistorico').show();
+					$('.contActuales').hide();
+				});
+
+				$('.btnVigente').click(function() {
+					$('.contActuales').show();
+					$('.contHistorico').hide();
 				});
 			<?php
 				}

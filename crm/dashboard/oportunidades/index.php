@@ -55,23 +55,35 @@ $modificar = "modificarOportunidades";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dboportunidades";
 
-$lblCambio	 	= array('nombredespacho','refusuarios','refreferentes','refestadooportunidad','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo');
-$lblreemplazo	= array('Nombre del Despacho','Asignar a Reclutador','Persona que Recomendo','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo');
+$lblCambio	 	= array('nombredespacho','refusuarios','refreferentes','refestadooportunidad','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refmotivorechazos');
+$lblreemplazo	= array('Nombre del Despacho','Asignar a Reclutador','Persona que Recomendo','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Motivos de Rechazos');
 
 
 
 $resRoles 	= $serviciosUsuario->traerUsuariosPorRol(3);
 $cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
 
-$resReferentes 	= $serviciosReferencias->traerReferentes();
-$cadRef2 = "<option value=''>-- Seleccionar --</option>";
+
+if ($_SESSION['idroll_sahilices'] != 9) {
+	$resReferentes 	= $serviciosReferencias->traerReferentes();
+	$cadRef2 = "<option value=''>-- Seleccionar --</option>";
+} else {
+	$resReferentes 	= $serviciosReferencias->traerReferentesPorUsuario($_SESSION['usuaid_sahilices']);
+	$cadRef2 = "";
+}
+
+
 $cadRef2 .= $serviciosFunciones->devolverSelectBox($resReferentes,array(1,2,3),' ');
 
 $resEstado 	= $serviciosReferencias->traerEstadooportunidadPorId(1);
 $cadRef3 = $serviciosFunciones->devolverSelectBox($resEstado,array(1),' ');
 
-$refdescripcion = array(0 => $cadRef1,1=>$cadRef2,2=>$cadRef3);
-$refCampo 	=  array('refusuarios','refreferentes','refestadooportunidad');
+$resMotivos = $serviciosReferencias->traerMotivorechazos();
+$cadRef4 = "<option value=''>-- Seleccionar --</option>";
+$cadRef4 .= $serviciosFunciones->devolverSelectBox($resMotivos,array(1),' ');
+
+$refdescripcion = array(0 => $cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef4);
+$refCampo 	=  array('refusuarios','refreferentes','refestadooportunidad','refmotivorechazos');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////

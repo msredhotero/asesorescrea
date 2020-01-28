@@ -878,17 +878,25 @@ function insertarOportunidades($serviciosReferencias) {
    $refusuarios = $_POST['refusuarios'];
    $refreferentes = ($_POST['refreferentes'] == '' ? 'null' : $_POST['refreferentes']);
    $refestadooportunidad = $_POST['refestadooportunidad'];
+   $refmotivorechazos = ($_POST['refmotivorechazos'] == '' ? 'null' : $_POST['refmotivorechazos']);
+   $observaciones = $_POST['observaciones'];
 
    if (($telefonotrabajo == '') && ($telefonomovil == '')) {
       echo 'Hubo un error al insertar datos - Debe cargar por lo menos un telefono';
    } else {
-      $res = $serviciosReferencias->insertarOportunidades($nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$telefonomovil,$telefonotrabajo,$email,$refusuarios,$refreferentes,$refestadooportunidad);
+      $existe = $serviciosReferencias->existeOportunidad($apellidopaterno,$apellidomaterno,$nombre);
+      if ($existe == 0) {
+         $res = $serviciosReferencias->insertarOportunidades($nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$telefonomovil,$telefonotrabajo,$email,$refusuarios,$refreferentes,$refestadooportunidad,$refmotivorechazos,$observaciones);
 
-      if ((integer)$res > 0) {
-         echo '';
+         if ((integer)$res > 0) {
+            echo '';
+         } else {
+            echo 'Hubo un error al insertar datos';
+         }
       } else {
-         echo 'Hubo un error al insertar datos';
+         echo 'Hubo un error al insertar datos - Ya existe esta persona';
       }
+
    }
 
 }
@@ -905,11 +913,16 @@ function modificarOportunidades($serviciosReferencias) {
    $refusuarios = $_POST['refusuarios'];
    $refreferentes = ($_POST['refreferentes'] == '' ? 'null' : $_POST['refreferentes']);
    $refestadooportunidad = $_POST['refestadooportunidad'];
+   $refmotivorechazos = ($_POST['refmotivorechazos'] == '' ? 'null' : $_POST['refmotivorechazos']);
+   $observaciones = $_POST['observaciones'];
+   if ($refmotivorechazos != '') {
+      $refestadooportunidad = 4;
+   }
 
    if (($telefonotrabajo == '') && ($telefonomovil == '')) {
       echo 'Hubo un error al insertar datos - Debe cargar por lo menos un telefono';
    } else {
-      $res = $serviciosReferencias->modificarOportunidades($id,$nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$telefonomovil,$telefonotrabajo,$email,$refusuarios,$refreferentes,$refestadooportunidad);
+      $res = $serviciosReferencias->modificarOportunidades($id,$nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$telefonomovil,$telefonotrabajo,$email,$refusuarios,$refreferentes,$refestadooportunidad,$refmotivorechazos,$observaciones);
 
       if ($res == true) {
          echo '';
@@ -1966,8 +1979,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $modificar = "modificarOportunidades";
          $idTabla = "idoportunidad";
 
-         $lblCambio	 	= array('nombredespacho','refusuarios','refreferentes','refestadooportunidad','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo');
-         $lblreemplazo	= array('Nombre del Despacho','Asignar a Reclutador','Persona que Recomendo','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo');
+         $lblCambio	 	= array('nombredespacho','refusuarios','refreferentes','refestadooportunidad','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refmotivorechazos');
+         $lblreemplazo	= array('Nombre del Despacho','Asignar a Reclutador','Persona que Recomendo','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Motivos de Rechazos');
 
 
          if ($_SESSION['idroll_sahilices'] == 3) {
@@ -1985,8 +1998,12 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $resEstado 	= $serviciosReferencias->traerEstadooportunidad();
          $cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resEstado,array(1),' ',mysql_result($resultado,0,'refestadooportunidad'));
 
-         $refdescripcion = array(0 => $cadRef1,1=>$cadRef2,2=>$cadRef3);
-         $refCampo 	=  array('refusuarios','refreferentes','refestadooportunidad');
+         $resMotivos = $serviciosReferencias->traerMotivorechazos();
+         $cadRef4 = "<option value=''>-- Seleccionar --</option>";
+         $cadRef4 .= $serviciosFunciones->devolverSelectBoxActivo($resMotivos,array(1),' ',mysql_result($resultado,0,'refmotivorechazos'));
+
+         $refdescripcion = array(0 => $cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef4);
+         $refCampo 	=  array('refusuarios','refreferentes','refestadooportunidad','refmotivorechazos');
       break;
 
       default:

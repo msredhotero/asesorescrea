@@ -163,7 +163,9 @@ switch ($tabla) {
 			$colSortDir = 'desc';
 		}
 
-		$filtro = "where p.nombre like '%_busqueda%' or p.apellidopaterno like '%_busqueda%' or p.apellidomaterno like '%_busqueda%' or p.email like '%_busqueda%' or p.telefonomovil like '%_busqueda%' or ep.estadopostulante like '%_busqueda%' or est.estadocivil like '%_busqueda%' or DATE_FORMAT( p.fechacrea, '%Y-%m-%d') like '%_busqueda%'";
+		$filtro = "where rr.idasesor is null and (p.nombre like '%_busqueda%' or p.apellidopaterno like '%_busqueda%' or p.apellidomaterno like '%_busqueda%' or p.email like '%_busqueda%' or p.telefonomovil like '%_busqueda%' or ep.estadopostulante like '%_busqueda%' or est.estadocivil like '%_busqueda%' or DATE_FORMAT( p.fechacrea, '%Y-%m-%d') like '%_busqueda%')";
+
+		$pre = "where rr.idasesor is null";
 
 		$consulta = 'select
 			p.idpostulante,
@@ -199,10 +201,17 @@ switch ($tabla) {
 		inner join dbusuarios usu ON usu.idusuario = p.refusuarios
 		inner join tbescolaridades esc ON esc.idescolaridad = p.refescolaridades
 		inner join tbestadocivil est ON est.idestadocivil = p.refestadocivil
-		inner join tbestadopostulantes ep ON ep.idestadopostulante = p.refestadopostulantes';
+		inner join tbestadopostulantes ep ON ep.idestadopostulante = p.refestadopostulantes
+		left join dbasesores rr on rr.refusuarios = p.refusuarios ';
+		if ($_SESSION['idroll_sahilices'] == 3) {
+			$consulta .= 'inner join dbreclutadorasores rrr on rrr.refpostulantes = p.idpostulante and rrr.refusuarios = '.$_SESSION['usuaid_sahilices'].' ';
+			$res = $serviciosReferencias->traerPostulantesPorGerente($_SESSION['usuaid_sahilices']);
+		} else {
+			$res = $serviciosReferencias->traerPostulantes();
+		}
 
-		$resAjax = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta);
-		$res = $serviciosReferencias->traerPostulantes();
+		$resAjax = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta,$pre);
+
 
 		switch ($_SESSION['idroll_sahilices']) {
 			case 1:
@@ -419,11 +428,22 @@ switch ($tabla) {
 			$class = array('bg-amber','bg-green');
 			$icon = array('create','assignment');
 		} else {
-			$resAjax = $serviciosReferencias->traerOportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir);
-			$res = $serviciosReferencias->traerOportunidades();
-			$label = array('btnModificar','btnEliminar');
-			$class = array('bg-amber','bg-red');
-			$icon = array('create','delete');
+			if ($_SESSION['idroll_sahilices'] == 9) {
+				$resReferentes 	= $serviciosReferencias->traerReferentesPorUsuario($_SESSION['usuaid_sahilices']);
+				// traigo el recomendador o referente a traves del usuario para filtrar
+				$resAjax = $serviciosReferencias->traerOportunidadesajaxPorRecomendador($length, $start, $busqueda,$colSort,$colSortDir, mysql_result($resReferentes,0,0));
+				$res = $serviciosReferencias->traerOportunidadesPorRecomendador(mysql_result($resReferentes,0,0));
+				$label = array('btnModificar','btnEliminar');
+				$class = array('bg-amber','bg-red');
+				$icon = array('create','delete');
+			} else {
+				$resAjax = $serviciosReferencias->traerOportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir);
+				$res = $serviciosReferencias->traerOportunidades();
+				$label = array('btnModificar','btnEliminar');
+				$class = array('bg-amber','bg-red');
+				$icon = array('create','delete');
+			}
+
 		}
 
 		$indiceID = 0;
@@ -440,11 +460,22 @@ switch ($tabla) {
 			$class = array();
 			$icon = array();
 		} else {
-			$resAjax = $serviciosReferencias->traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir);
-			$res = $serviciosReferencias->traerOportunidadesPorEstadoH($_SESSION['usuaid_sahilices'],'3');
-			$label = array();
-			$class = array();
-			$icon = array();
+			if ($_SESSION['idroll_sahilices'] == 9) {
+				$resReferentes 	= $serviciosReferencias->traerReferentesPorUsuario($_SESSION['usuaid_sahilices']);
+				// traigo el recomendador o referente a traves del usuario para filtrar
+				$resAjax = $serviciosReferencias->traerOportunidadesajaxPorRecomendadorHistorico($length, $start, $busqueda,$colSort,$colSortDir,mysql_result($resReferentes,0,0));
+				$res = $serviciosReferencias->traerOportunidadesPorRecomendadorEstadoH(mysql_result($resReferentes,0,0),'3');
+				$label = array();
+				$class = array();
+				$icon = array();
+			} else {
+				$resAjax = $serviciosReferencias->traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir);
+				$res = $serviciosReferencias->traerOportunidadesPorEstadoH('3');
+				$label = array();
+				$class = array();
+				$icon = array();
+			}
+
 		}
 
 

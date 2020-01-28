@@ -208,7 +208,7 @@ $filesC = array_diff(scandir($pathC), array('.', '..'));
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,$estadoSiguiente);
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,8);
 
 $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionII($id);
 $puedeImportarFinalizar = $serviciosReferencias->permiteAvanzarDocumentacionIII($id);
@@ -341,7 +341,8 @@ $puedeImportarFinalizar = $serviciosReferencias->permiteAvanzarDocumentacionIII(
 				$i = 0;
 				while ($rowG = mysql_fetch_array($resGuia)) {
 					$i += 1;
-
+					$urlAcceso = $rowG['url'].'?id='.$id;
+					/*
 					if ($rowG['refestadopostulantes'] == $estadoSiguiente) {
 						$lblEstado = 'active';
 					}
@@ -349,8 +350,14 @@ $puedeImportarFinalizar = $serviciosReferencias->permiteAvanzarDocumentacionIII(
 					if (($lblEstado == 'complete') || ($lblEstado == 'active')) {
 						$urlAcceso = $rowG['url'].'?id='.$id;
 					} else {
-						$urlAcceso = 'javascript:void(0)';
+						if ($rowG['refestadopostulantes'] == 7) {
+							$urlAcceso = $rowG['url'].'?id='.$id;
+							$lblEstado = 'active';
+						} else {
+							$urlAcceso = 'javascript:void(0)';
+						}
 					}
+					*/
 				?>
 				<div class="col-xs-2 bs-wizard-step <?php echo $lblEstado; ?>">
 					<div class="text-center bs-wizard-stepnum">Paso <?php echo $i; ?></div>
@@ -371,6 +378,7 @@ $puedeImportarFinalizar = $serviciosReferencias->permiteAvanzarDocumentacionIII(
 
 			<div class="row">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-bottom: 10px;">
+						<div class="alert bg-blue">Postulante: <?php echo $postulante; ?></div>
 						<div class="alert alert-info">
 							<p><b>Importante!</b> Recuerde que debe completar toda la documentacion para poder continuar con la carga de la siguiente documentación</p>
 						</div>
