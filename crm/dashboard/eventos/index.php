@@ -253,8 +253,8 @@ $resEntrevistasOportunidades = $serviciosReferencias->traerEntrevistaoportunidad
 
 <style>
 	#calendar {
-		max-width: 92%;
-		margin: 40px auto;
+		max-width: 98%;
+		margin: 20px auto;
 		padding: 0 10px;
 	}
 
