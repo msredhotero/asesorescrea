@@ -1,6 +1,6 @@
 <?php
 
-date_default_timezone_set('Europe/Madrid');
+date_default_timezone_set('America/Mexico_City');
 
 class appconfig {
 
@@ -10,6 +10,7 @@ function conexion() {
 	$database = "u115752684_desa";
 	$username = "u115752684_desa";
 	$password = "@Chivas11";
+	
 	/*
 	$hostname = "localhost";
 	$database = "u115752684_asesores";
