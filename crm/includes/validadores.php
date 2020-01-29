@@ -1,6 +1,6 @@
 <?php
 
-date_default_timezone_set('America/Buenos_Aires');
+date_default_timezone_set('America/Mexico');
 
 class serviciosValidador {
 

@@ -4,7 +4,7 @@
  * @mensajes y configuracion del correo
  */
 
-date_default_timezone_set('America/Mexico_City');
+date_default_timezone_set('America/Mexico');
 
 class ServiciosMensajes {
 
