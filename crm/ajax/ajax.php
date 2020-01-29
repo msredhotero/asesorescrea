@@ -915,7 +915,7 @@ function modificarOportunidades($serviciosReferencias) {
    $refestadooportunidad = $_POST['refestadooportunidad'];
    $refmotivorechazos = ($_POST['refmotivorechazos'] == '' ? 'null' : $_POST['refmotivorechazos']);
    $observaciones = $_POST['observaciones'];
-   if ($refmotivorechazos != '') {
+   if ($refmotivorechazos != 'null') {
       $refestadooportunidad = 4;
    }
 
