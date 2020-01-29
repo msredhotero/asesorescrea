@@ -5,7 +5,7 @@ session_start();
 
 date_default_timezone_set('America/Mexico');
 
-$fecha = date('Y-m-d');
+$fecha = date('Y-m-d H:i:s');
 
 if (!isset($_SESSION['usua_sahilices']))
 {
@@ -42,7 +42,7 @@ $configuracion = $serviciosReferencias->traerConfiguracion();
 
 $tituloWeb = mysql_result($configuracion,0,'sistema');
 
-$breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
+$breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard - Fecha: '.$fecha.'</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
 $singular = "Oportunidad";
