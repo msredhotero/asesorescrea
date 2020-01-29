@@ -3,6 +3,16 @@
 
 session_start();
 
+date_default_timezone_set('America/Mexico_City');
+
+$script_tz = date_default_timezone_get();
+
+if (strcmp($script_tz, ini_get('date.timezone'))){
+    echo 'La zona horaria del script difiere de la zona horaria de la configuracion ini.';
+} else {
+    echo 'La zona horaria del script y la zona horaria de la configuración ini coinciden.';
+}
+
 if (!isset($_SESSION['usua_sahilices']))
 {
 	header('Location: ../../error.php');
@@ -28,6 +38,8 @@ $serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../oportunid
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
+
+
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
 $resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Oportunidades",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
