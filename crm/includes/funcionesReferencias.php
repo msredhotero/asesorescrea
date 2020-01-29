@@ -5,7 +5,7 @@
  * @ABM consultas sobre las tablas de usuarios y usarios-clientes
  */
 
-date_default_timezone_set('America/Mexico');
+date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 

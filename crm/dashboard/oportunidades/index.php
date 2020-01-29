@@ -3,7 +3,7 @@
 
 session_start();
 
-date_default_timezone_set('America/Mexico');
+date_default_timezone_set('America/Mexico_City');
 
 $fecha = date('Y-m-d H:i:s');
 
@@ -42,7 +42,7 @@ $configuracion = $serviciosReferencias->traerConfiguracion();
 
 $tituloWeb = mysql_result($configuracion,0,'sistema');
 
-$breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard - Fecha: '.$fecha.'</a>';
+$breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
 $singular = "Oportunidad";

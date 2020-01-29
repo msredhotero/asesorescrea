@@ -4,7 +4,7 @@
  * @author Saupurein Marcos
  * @copyright 2018
  */
-date_default_timezone_set('America/Mexico');
+date_default_timezone_set('America/Mexico_City');
 
 class Servicios {
 
