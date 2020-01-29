@@ -22,7 +22,7 @@ $accion = $_POST['accion'];
 $resV['error'] = '';
 $resV['mensaje'] = '';
 
-date_default_timezone_set('America/Mexico');
+date_default_timezone_set('America/Mexico_City');
 
 
 
