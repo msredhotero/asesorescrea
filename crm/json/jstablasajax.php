@@ -158,10 +158,7 @@ switch ($tabla) {
 
 	break;
 	case 'postulantes':
-		if ($busqueda == '') {
-			$colSort = 'p.fechacrea';
-			$colSortDir = 'desc';
-		}
+
 
 		$filtro = "where rr.idasesor is null and (p.nombre like '%_busqueda%' or p.apellidopaterno like '%_busqueda%' or p.apellidomaterno like '%_busqueda%' or p.email like '%_busqueda%' or p.telefonomovil like '%_busqueda%' or ep.estadopostulante like '%_busqueda%' or est.estadocivil like '%_busqueda%' or DATE_FORMAT( p.fechacrea, '%Y-%m-%d') like '%_busqueda%')";
 
