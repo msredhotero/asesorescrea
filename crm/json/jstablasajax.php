@@ -81,10 +81,26 @@ switch ($tabla) {
 			p.claveasesor,
 			p.fechaalta
 		from dbasesores p
-		inner join dbusuarios usu ON usu.idusuario = p.refusuarios';
+		';
+		if ($_SESSION['idroll_sahilices'] == 3) {
+			$consulta .= ' inner join dbusuarios usu ON usu.idusuario = p.refusuarios
+			inner join dbpostulantes pp on pp.refusuarios = usu.idusuario
+			inner join dbreclutadorasores rrr on rrr.refpostulantes = pp.idpostulante and rrr.refusuarios = '.$_SESSION['usuaid_sahilices'].' ';
+			$res = $serviciosReferencias->traerAsesoresPorGerente($_SESSION['usuaid_sahilices']);
+		} else {
+			if ($_SESSION['idroll_sahilices'] == 7) {
+				$consulta .= ' inner join dbusuarios usu ON p.refusuarios = '.$_SESSION['usuaid_sahilices'].' ';
+				$res = $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
+			} else {
+				$consulta .= ' inner join dbusuarios usu ON usu.idusuario = p.refusuarios ';
+				$res = $serviciosReferencias->traerAsesores();
+			}
+
+		}
+
 
 		$resAjax = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta);
-		$res = $serviciosReferencias->traerAsesores();
+
 
 		switch ($_SESSION['idroll_sahilices']) {
 			case 1:
@@ -137,7 +153,12 @@ switch ($tabla) {
 			break;
 
 			default:
-				// code...
+				$label = array();
+				$class = array();
+				$icon = array();
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 8;
 			break;
 		}
 	break;
@@ -419,6 +440,7 @@ switch ($tabla) {
 	case 'oportunidades':
 
 		if ($_SESSION['idroll_sahilices'] == 3) {
+
 			$resAjax = $serviciosReferencias->traerOportunidadesajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
 			$res = $serviciosReferencias->traerOportunidadesPorUsuario($_SESSION['usuaid_sahilices']);
 			$label = array('btnModificar','btnEntrevista');

@@ -1175,7 +1175,7 @@ class ServiciosReferencias {
 
 	function insertarReclutadorasores($refusuarios,$refpostulantes,$refoportunidades) {
 		$sql = "insert into dbreclutadorasores(idreclutadorasor,refusuarios,refpostulantes,refoportunidades)
-		values ('',".$refusuarios.",".$refpostulantes.",".($refoportunidades == '' ? null : $refoportunidades).")";
+		values ('',".$refusuarios.",".$refpostulantes.",".$refoportunidades.")";
 		$res = $this->query($sql,1);
 		return $res;
 	}
@@ -3584,6 +3584,68 @@ class ServiciosReferencias {
 			a.usuariomodi
 			from dbasesores a
 			inner join dbusuarios u ON u.idusuario = a.refusuarios
+			order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerAsesoresPorUsuario($idusuario) {
+		$sql = "select
+			a.idasesor,
+			a.refusuarios,
+			a.nombre,
+			a.apellidopaterno,
+			a.apellidomaterno,
+			a.email,
+			a.curp,
+			a.rfc,
+			a.ine,
+			a.fechanacimiento,
+			a.sexo,
+			a.codigopostal,
+			a.refescolaridades,
+			a.telefonomovil,
+			a.telefonocasa,
+			a.telefonotrabajo,
+			a.fechacrea,
+			a.fechamodi,
+			a.usuariocrea,
+			a.usuariomodi
+			from dbasesores a
+			inner join dbusuarios u ON u.idusuario = a.refusuarios
+			where u.idusuario = ".$idusuario."
+			order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerAsesoresPorGerente($idusuario) {
+		$sql = "select
+			a.idasesor,
+			a.refusuarios,
+			a.nombre,
+			a.apellidopaterno,
+			a.apellidomaterno,
+			a.email,
+			a.curp,
+			a.rfc,
+			a.ine,
+			a.fechanacimiento,
+			a.sexo,
+			a.codigopostal,
+			a.refescolaridades,
+			a.telefonomovil,
+			a.telefonocasa,
+			a.telefonotrabajo,
+			a.fechacrea,
+			a.fechamodi,
+			a.usuariocrea,
+			a.usuariomodi
+			from dbasesores a
+			inner join dbusuarios u ON u.idusuario = a.refusuarios
+			inner join dbpostulantes pp on pp.refusuarios = u.idusuario
+		   inner join dbreclutadorasores rrr on rrr.refpostulantes = pp.idpostulante
+			and rrr.refusuarios = ".$idusuario."
 			order by 1";
 		$res = $this->query($sql,0);
 		return $res;

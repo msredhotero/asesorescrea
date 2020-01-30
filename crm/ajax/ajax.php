@@ -2718,9 +2718,10 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
             if (isset($_SESSION['idroll_sahilices'])) {
                if (($_SESSION['idroll_sahilices'] == 2) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 5) || ($_SESSION['idroll_sahilices'] == 6)) {
                   if (isset($_POST['refoportunidades'])) {
-                     $resRelacionRP = $serviciosReferencias->insertarReclutadorasores($_SESSION['usuaid_sahilices'],$res,$_POST['refoportunidades']);
+
+                     $resRelacionRP = $serviciosReferencias->insertarReclutadorasores($_SESSION['usuaid_sahilices'],$res,($_POST['refoportunidades'] == '' ? 0 : $_POST['refoportunidades']));
                   } else {
-                     $resRelacionRP = $serviciosReferencias->insertarReclutadorasores($_SESSION['usuaid_sahilices'],$res,'');
+                     $resRelacionRP = $serviciosReferencias->insertarReclutadorasores($_SESSION['usuaid_sahilices'],$res,0);
                   }
 
                }
