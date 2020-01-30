@@ -705,7 +705,11 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocu
 												<?php echo $cadRefEstados; ?>
 											</select>
 										</div>
+										<?php
+										if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4)) {
+										?>
 										<button type="button" id="<?php echo $rowEstados['iddocumentacionasesor']; ?>" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
+										<?php } ?>
 									</div>
 								</div>
 								<?php } ?>
