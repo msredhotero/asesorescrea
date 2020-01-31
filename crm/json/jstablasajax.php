@@ -233,9 +233,9 @@ switch ($tabla) {
 
 		switch ($_SESSION['idroll_sahilices']) {
 			case 1:
-				$label = array('btnVer','btnModificar','btnEliminar');
-				$class = array('bg-blue','bg-amber','bg-red');
-				$icon = array('Ver','Modificar','Eliminar');
+				$label = array('btnVer','btnModificar','btnEliminar','btnEliminarDefinitivo');
+				$class = array('bg-blue','bg-amber','bg-red','bg-red');
+				$icon = array('Ver','Modificar','Eliminar','Eliminar Def.');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 8;

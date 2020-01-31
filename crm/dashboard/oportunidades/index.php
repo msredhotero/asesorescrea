@@ -62,7 +62,7 @@ $modificar = "modificarOportunidades";
 $tabla 			= "dboportunidades";
 
 $lblCambio	 	= array('nombredespacho','refusuarios','refreferentes','refestadooportunidad','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refmotivorechazos');
-$lblreemplazo	= array('Nombre del Despacho','Asignar a Reclutador','Persona que Recomendo','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Motivos de Rechazos');
+$lblreemplazo	= array('Nombre del Despacho','Asignar a Gerente','Persona que Recomendo','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Motivos de Rechazos');
 
 
 

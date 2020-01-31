@@ -2552,6 +2552,12 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function eliminarPostulantesDefinitivo($id) {
+		$sql = "delete from dbpostulantes where idpostulante =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 	function traerPostulantePorToken($token) {
 		$sql = "SELECT
 			p.idpostulante,

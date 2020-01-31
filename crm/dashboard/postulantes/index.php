@@ -412,6 +412,29 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			<input type="hidden" name="ideliminar" id="ideliminar" value="0">
 		</form>
 
+	<!-- ELIMINAR DEFINITIVO -->
+		<form class="formulario" role="form" id="sign_in">
+		   <div class="modal fade" id="lgmEliminarDefinitivo" tabindex="-1" role="dialog">
+		       <div class="modal-dialog modal-lg" role="document">
+		           <div class="modal-content">
+		               <div class="modal-header">
+		                   <h4 class="modal-title" id="largeModalLabel">ELIMINAR DEFINITIVO <?php echo strtoupper($singular); ?></h4>
+		               </div>
+		               <div class="modal-body">
+										 <p>¿Esta seguro que desea eliminar el registro?</p>
+										 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
+		               </div>
+		               <div class="modal-footer">
+		                   <button type="button" class="btn btn-danger waves-effect eliminarDefinitivo">ELIMINAR</button>
+		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+		               </div>
+		           </div>
+		       </div>
+		   </div>
+			<input type="hidden" id="accion" name="accion" value="eliminarPostulantesDefinitivo"/>
+			<input type="hidden" name="ideliminarDefinitivo" id="ideliminarDefinitivo" value="0">
+		</form>
+
 
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
@@ -756,7 +779,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 				},
 				//una vez finalizado correctamente
 				success: function(data){
-
 					if (data == '') {
 						swal({
 								title: "Respuesta",
@@ -775,7 +797,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 								timer: 2000,
 								showConfirmButton: false
 						});
-
 					}
 				},
 				//si ha ocurrido un error
@@ -790,7 +811,53 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 				}
 			});
+		}
 
+		function frmAjaxEliminarDefinitivo(id) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'eliminarPostulantesDefinitivo', id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					if (data == '') {
+						swal({
+								title: "Respuesta",
+								text: "Registro Eliminado con exito!!",
+								type: "success",
+								timer: 1500,
+								showConfirmButton: false
+						});
+						$('#lgmEliminarDefinitivo').modal('toggle');
+						table.ajax.reload();
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data,
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
 		}
 
 		$("#example").on("click",'.btnEliminar', function(){
@@ -799,8 +866,19 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			$('#lgmEliminar').modal();
 		});//fin del boton eliminar
 
+		$("#example").on("click",'.btnEliminarDefinitivo', function(){
+			idTable =  $(this).attr("id");
+			$('#ideliminarDefinitivo').val(idTable);
+			$('#lgmEliminarDefinitivo').modal();
+		});//fin del boton eliminar
+
+
 		$('.eliminar').click(function() {
 			frmAjaxEliminar($('#ideliminar').val());
+		});
+
+		$('.eliminarDefinitivo').click(function() {
+			frmAjaxEliminarDefinitivo($('#ideliminarDefinitivo').val());
 		});
 
 		$("#example").on("click",'.btnModificar', function(){

@@ -178,6 +178,9 @@ switch ($accion) {
    case 'eliminarPostulantes':
    eliminarPostulantes($serviciosReferencias);
    break;
+   case 'eliminarPostulantesDefinitivo':
+   eliminarPostulantesDefinitivo($serviciosReferencias);
+   break;
    case 'traerPostulantes':
    traerPostulantes($serviciosReferencias);
    break;
@@ -2928,6 +2931,16 @@ function modificarPostulantes($serviciosReferencias) {
 function eliminarPostulantes($serviciosReferencias) {
    $id = $_POST['id'];
       $res = $serviciosReferencias->eliminarPostulantes($id);
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
+function eliminarPostulantesDefinitivo($serviciosReferencias) {
+   $id = $_POST['id'];
+      $res = $serviciosReferencias->eliminarPostulantesDefinitivo($id);
    if ($res == true) {
       echo '';
    } else {
