@@ -663,9 +663,83 @@ switch ($accion) {
    case 'eliminarReclutadorasores':
       eliminarReclutadorasores($serviciosReferencias);
    break;
+   case 'insertarAsociados':
+      insertarAsociados($serviciosReferencias,$serviciosUsuarios);
+   break;
+   case 'modificarAsociados':
+      modificarAsociados($serviciosReferencias,$serviciosUsuarios);
+   break;
+   case 'eliminarAsociados':
+      eliminarAsociados($serviciosReferencias);
+   break;
 
 }
 /* Fin */
+
+/* nuevo 31/01/2020 */
+
+function insertarAsociados($serviciosReferencias,$serviciosUsuarios) {
+
+   $apellidopaterno = $_POST['apellidopaterno'];
+   $apellidomaterno = $_POST['apellidomaterno'];
+   $nombre = $_POST['nombre'];
+   $ine = $_POST['ine'];
+   $email = $_POST['email'];
+   $fechanacimiento = $_POST['fechanacimiento'];
+   $telefonomovil = $_POST['telefonomovil'];
+   $telefonotrabajo = $_POST['telefonotrabajo'];
+   $refbancos = $_POST['refbancos'];
+   $claveinterbancaria = $_POST['claveinterbancaria'];
+   $domicilio = $_POST['domicilio'];
+
+   $password = $apellidopaterno.$apellidomaterno.date('His');
+
+   $refusuarios = $serviciosUsuarios->insertarUsuario($nombre,$password,10,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
+
+   $res = $serviciosReferencias->insertarAsociados($refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarAsociados($serviciosReferencias) {
+   $id = $_POST['id'];
+   $refusuarios = $_POST['refusuarios'];
+   $apellidopaterno = $_POST['apellidopaterno'];
+   $apellidomaterno = $_POST['apellidomaterno'];
+   $nombre = $_POST['nombre'];
+   $ine = $_POST['ine'];
+   $email = $_POST['email'];
+   $fechanacimiento = $_POST['fechanacimiento'];
+   $telefonomovil = $_POST['telefonomovil'];
+   $telefonotrabajo = $_POST['telefonotrabajo'];
+   $refbancos = $_POST['refbancos'];
+   $claveinterbancaria = $_POST['claveinterbancaria'];
+   $domicilio = $_POST['domicilio'];
+
+   $res = $serviciosReferencias->modificarAsociados($id,$refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarAsociados($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarAsociados($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
 
 /* nuevo 16/01/2020 */
 
@@ -1918,6 +1992,24 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 
          $refdescripcion = array();
          $refCampo 	=  array();
+      break;
+      case 'dbasociados':
+         $resultado = $serviciosReferencias->traerAsociadosPorId($id);
+
+         $modificar = "modificarAsociados";
+         $idTabla = "idasociado";
+
+         $lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refbancos','claveinterbancaria');
+         $lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Sucursal Bancaria','Clave Interbancaria');
+
+         $resVar1 = $serviciosUsuarios->traerUsuarioId(mysql_result($resultado,0,'refusuarios'));
+         $cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
+
+         $resVar2	= $serviciosReferencias->traerBancos();
+         $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(1),'',mysql_result($resultado,0,'refbancos'));
+
+         $refdescripcion = array(0=> $cadRef1,1=> $cadRef2);
+         $refCampo 	=  array('refusuarios','refbancos');
       break;
       case 'dbreclutadorasores':
          $resultado = $serviciosReferencias->traerReclutadorasoresPorId($id);

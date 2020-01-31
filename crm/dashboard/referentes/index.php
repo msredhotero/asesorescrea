@@ -59,9 +59,9 @@ $lblCambio	 	= array('apellidopaterno','apellidomaterno','refusuarios');
 $lblreemplazo	= array('Apellido Paterno','Apellido Materno','Usuario Asignado');
 
 
-$resUsuario = $serviciosUsuario->traerUsuariosPorRol(9);
+$resUsuario = $serviciosUsuario->traerUsuariosPorRolIn('9,6');
 $cadRef3 = "<option value='0'>-- Seleccionar --</option>";
-$cadRef3 .= $serviciosFunciones->devolverSelectBox($resUsuario,array(2),'');
+$cadRef3 .= $serviciosFunciones->devolverSelectBox($resUsuario,array(2,4),' - ');
 
 $refdescripcion = array(0=>$cadRef3);
 $refCampo 	=  array('refusuarios');

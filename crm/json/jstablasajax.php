@@ -162,20 +162,18 @@ switch ($tabla) {
 			break;
 		}
 	break;
-	case 'solicitudes':
-		if ($busqueda == '') {
-			$colSort = 's.fechacrea';
-			$colSortDir = 'desc';
-		}
 
-		$resAjax = $serviciosReferencias->traerSolicitudesajax($length, $start, $busqueda,$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerSolicitudes();
-		$label = array('btnCliente','btnModificar','btnEliminar','btnPagar','btnContratos','btnAgregarPersonas');
-		$class = array('bg-blue','bg-amber','bg-red','bg-green','bg-brown','bg-teal');
-		$icon = array('Client','Modificar','Eliminar','Pagos','Contrats','Persones');
+	case 'asociados':
+
+
+		$resAjax = $serviciosReferencias->traerAsociadosajax($length, $start, $busqueda,$colSort,$colSortDir);
+		$res = $serviciosReferencias->traerAsociados();
+		$label = array('btnModificar','btnEliminar','btnDocumentacion');
+		$class = array('bg-amber','bg-red','bg-blue');
+		$icon = array('Modificar','Eliminar','Documentaciones');
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 8;
+		$termina = 7;
 
 	break;
 	case 'postulantes':
@@ -622,12 +620,12 @@ $cad = '';
 $id = 0;
 	while ($row = mysql_fetch_array($resAjax)) {
 		//$id = $row[$indiceID];
-
+		// forma local utf8_decode
 		for ($i=$empieza;$i<=$termina;$i++) {
-			array_push($arAux, ($row[$i]));
+			array_push($arAux, utf8_decode($row[$i]));
 		}
 
-		if (($tabla == 'postulantes') || ($tabla == 'asesores')) {
+		if (($tabla == 'postulantes') || ($tabla == 'asesores') || ($tabla == 'asociados')) {
 			array_push($arAux, armarAccionesDropDown($row[0],$label,$class,$icon));
 		} else {
 			array_push($arAux, armarAcciones($row[0],$label,$class,$icon));

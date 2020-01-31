@@ -9,6 +9,157 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+
+	/* PARA Bancos */
+
+	function insertarBancos($banco) {
+	$sql = "insert into tbbancos(idbanco,banco)
+	values ('','".$banco."')";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarBancos($id,$banco) {
+	$sql = "update tbbancos
+	set
+	banco = '".$banco."'
+	where idbanco =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarBancos($id) {
+	$sql = "delete from tbbancos where idbanco =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerBancos() {
+	$sql = "select
+	b.idbanco,
+	b.banco
+	from tbbancos b
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerBancosPorId($id) {
+	$sql = "select idbanco,banco from tbbancos where idbanco =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbbancos*/
+
+	/* PARA Asociados */
+
+	function insertarAsociados($refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio) {
+		$sql = "insert into dbasociados(idasociado,refusuarios,apellidopaterno,apellidomaterno,nombre,ine,email,fechanacimiento,telefonomovil,telefonotrabajo,refbancos,claveinterbancaria,domicilio)
+		values ('',".$refusuarios.",'".$apellidopaterno."','".$apellidomaterno."','".$nombre."','".$ine."','".$email."','".$fechanacimiento."','".$telefonomovil."','".$telefonotrabajo."',".$refbancos.",'".$claveinterbancaria."','".$domicilio."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarAsociados($id,$refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio) {
+		$sql = "update dbasociados
+		set
+		refusuarios = ".$refusuarios.",apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',nombre = '".$nombre."',ine = '".$ine."',email = '".$email."',fechanacimiento = '".$fechanacimiento."',telefonomovil = '".$telefonomovil."',telefonotrabajo = '".$telefonotrabajo."',refbancos = ".$refbancos.",claveinterbancaria = '".$claveinterbancaria."',domicilio = '".$domicilio."'
+		where idasociado =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarAsociados($id) {
+		$sql = "delete from dbasociados where idasociado =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerAsociadosajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where (a.apellidopaterno like '%".$busqueda."%' or a.apellidomaterno like '%".$busqueda."%' or p.nombre like '%".$busqueda."%' or p.email like '%".$busqueda."%' or p.ine like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+		a.idasociado,
+		a.apellidopaterno,
+		a.apellidomaterno,
+		a.nombre,
+		a.ine,
+		a.email,
+		a.fechanacimiento,
+		a.telefonomovil,
+		a.telefonotrabajo,
+		a.refbancos,
+		a.claveinterbancaria,
+		a.domicilio,
+		a.refusuarios
+		from dbasociados a
+		inner join dbusuarios usu ON usu.idusuario = a.refusuarios
+		inner join tbbancos ban ON ban.idbanco = a.refbancos
+		".$where."
+		ORDER BY ".$colSort." ".$colSortDir."
+		limit ".$start.",".$length;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerAsociados() {
+		$sql = "select
+		a.idasociado,
+		a.refusuarios,
+		a.apellidopaterno,
+		a.apellidomaterno,
+		a.nombre,
+		a.ine,
+		a.email,
+		a.fechanacimiento,
+		a.telefonomovil,
+		a.telefonotrabajo,
+		a.refbancos,
+		a.claveinterbancaria,
+		a.domicilio
+		from dbasociados a
+		inner join dbusuarios usu ON usu.idusuario = a.refusuarios
+		inner join tbbancos ban ON ban.idbanco = a.refbancos
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerAsociadosPorId($id) {
+		$sql = "select idasociado,refusuarios,apellidopaterno,apellidomaterno,nombre,ine,email,fechanacimiento,telefonomovil,telefonotrabajo,refbancos,claveinterbancaria,domicilio from dbasociados where idasociado =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerAsociadosPorUsuario($id) {
+		$sql = "select idasociado,refusuarios,apellidopaterno,apellidomaterno,nombre,ine,email,fechanacimiento,telefonomovil,telefonotrabajo,refbancos,claveinterbancaria,domicilio from dbasociados where refusuarios =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbasociados*/
+
 	/* PARA Motivorechazos */
 
 	function insertarMotivorechazos($motivorechazo) {

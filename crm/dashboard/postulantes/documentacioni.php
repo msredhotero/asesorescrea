@@ -489,7 +489,7 @@ if (mysql_result($resultado,0,'nss') == '') {
 
 	$(document).ready(function(){
 
-		<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+		<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 6)) { ?>
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
 			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=" + idTable;

@@ -70,12 +70,13 @@ $resRoles 	= $serviciosUsuario->traerUsuariosPorRol(3);
 $cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
 
 
-if ($_SESSION['idroll_sahilices'] != 9) {
-	$resReferentes 	= $serviciosReferencias->traerReferentes();
-	$cadRef2 = "<option value=''>-- Seleccionar --</option>";
-} else {
+if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)) {
 	$resReferentes 	= $serviciosReferencias->traerReferentesPorUsuario($_SESSION['usuaid_sahilices']);
 	$cadRef2 = "";
+
+} else {
+	$resReferentes 	= $serviciosReferencias->traerReferentes();
+	$cadRef2 = "<option value=''>-- Seleccionar --</option>";
 }
 
 

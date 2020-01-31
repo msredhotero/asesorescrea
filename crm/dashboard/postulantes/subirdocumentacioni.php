@@ -41,7 +41,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 $id = $_GET['id'];
 $iddocumentacion = $_GET['documentacion'];
 
-if (($_SESSION['idroll_sahilices'] == 2) || ($_SESSION['idroll_sahilices'] == 6) || ($_SESSION['idroll_sahilices'] == 7)) {
+if (($_SESSION['idroll_sahilices'] == 2) || ($_SESSION['idroll_sahilices'] == 7)) {
 	header('Location: documentacioni.php?id='.$id);
 }
 
