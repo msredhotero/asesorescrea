@@ -9,7 +9,213 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+	/* PARA Documentacionasesores */
 
+	function traerDocumentacionPorAsociadoDocumentacionCompleta($idasociado) {
+		$sql = "SELECT
+					    d.iddocumentacion,
+					    d.documentacion,
+					    d.obligatoria,
+					    da.iddocumentacionasociado,
+					    da.archivo,
+					    da.type,
+					    coalesce( ed.estadodocumentacion, 'Falta') as estadodocumentacion,
+						 ed.color,
+					    ed.idestadodocumentacion
+					FROM
+					    dbdocumentaciones d
+					        LEFT JOIN
+					    dbdocumentacionasociados da ON d.iddocumentacion = da.refdocumentaciones
+					        AND da.refasociados = ".$idasociado."
+					        LEFT JOIN
+					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
+					where d.iddocumentacion in (3,4,10,29)
+
+					order by 1";
+		$res = $this->query($sql,0);
+ 		return $res;
+	}
+
+	function insertarDocumentacionasociados($refasociados,$refdocumentaciones,$archivo,$type,$refestadodocumentaciones,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+		$sql = "insert into dbdocumentacionasociados(iddocumentacionasociado,refasociados,refdocumentaciones,archivo,type,refestadodocumentaciones,fechacrea,fechamodi,usuariocrea,usuariomodi)
+		values ('',".$refasociados.",".$refdocumentaciones.",'".$archivo."','".$type."',".$refestadodocumentaciones.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarDocumentacionasociados($id,$refasociados,$refdocumentaciones,$archivo,$type,$refestadodocumentaciones,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+		$sql = "update dbdocumentacionasociados
+		set
+		refasociados = ".$refasociados.",refdocumentaciones = ".$refdocumentaciones.",archivo = '".$archivo."',type = '".$type."',refestadodocumentaciones = ".$refestadodocumentaciones.",fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."'
+		where iddocumentacionasociado =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function modificarEstadoDocumentacionAsociados($id, $refestadodocumentaciones,$usuariomodi) {
+		$sql = "update dbdocumentacionasociados
+		set
+		refestadodocumentaciones = ".$refestadodocumentaciones.",fechamodi = '".date('Y-m-d H:i:s')."',usuariomodi = '".$usuariomodi."'
+		where iddocumentacionasociado =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function modificarEstadoDocumentacionAsociadosPorDocumentacion($iddocumentacion,$idasociado, $refestadodocumentaciones,$usuariomodi) {
+		$sql = "update dbdocumentacionasociados
+		set
+		refestadodocumentaciones = ".$refestadodocumentaciones.",fechamodi = '".date('Y-m-d H:i:s')."',usuariomodi = '".$usuariomodi."'
+		where refdocumentaciones =".$iddocumentacion." and refasociados =".$idasociado;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarDocumentacionasociados($id) {
+		$sql = "delete from dbdocumentacionasociados where iddocumentacionasociado =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function eliminarDocumentacionasesoresPorAsociadoDocumentacion($idasociado,$iddocumentacion) {
+		$sql = "delete from dbdocumentacionasociados where refasociados =".$idasociado." and refdocumentaciones = ".$iddocumentacion;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function eliminarDocumentacionasesoresPorAsociadoDocumentacionEspecifico($idasociado,$iddocumentacion, $archivo) {
+		$sql = "delete from dbdocumentacionasociados where refasociados =".$idasociado." and refdocumentaciones = ".$iddocumentacion." and archivo like '%".$archivo."%'";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function eliminarDocumentacionAsociado($idasociado,$iddocumentacion) {
+		/*** auditoria ****/
+
+		/*** fin auditoria ***/
+
+		$resFoto = $this->traerDocumentacionPorAsociadoDocumentacion($idasociado,$iddocumentacion);
+
+		$imagen = '';
+
+      if (mysql_num_rows($resFoto) > 0) {
+         /* produccion
+         $imagen = 'https://www.saupureinconsulting.com.ar/aifzn/'.mysql_result($resFoto,0,'archivo').'/'.mysql_result($resFoto,0,'imagen');
+         */
+
+         //desarrollo
+
+
+
+         if (mysql_result($resFoto,0,'type') == '') {
+
+            $resV['error'] = true;
+				$resV['leyenda'] = 'Archivo perdido';
+         } else {
+            switch ($iddocumentacion) {
+               case 3:
+                  $archivos = '../archivos/asociados/'.$idpostulante.'/inef/';
+               break;
+               case 4:
+                  $archivos = '../archivos/asociados/'.$idpostulante.'/ined/';
+               break;
+					case 10:
+                  $archivos = '../archivos/asociados/'.$idpostulante.'/comprobantedomicilio/';
+               break;
+					case 29:
+                  $archivos = '../archivos/asociados/'.$idpostulante.'/mercantil/';
+               break;
+
+            }
+
+            $resBorrar = $this->borrarDirecctorio($archivos);
+
+				$resUpdate = $this->eliminarDocumentacionasociados(mysql_result($resFoto,0,'iddocumentacionasociado'));
+
+            $resV['error'] = false;
+				$resV['leyenda'] = 'Archivo eliminado correctamente';
+         }
+
+
+
+      } else {
+         $resV['error'] = true;
+			$resV['leyenda'] = 'Archivo no encontrado';
+      }
+
+		return $resV;
+
+	}
+
+
+	function traerDocumentacionasociados() {
+		$sql = "select
+		d.iddocumentacionasociado,
+		d.refasociados,
+		d.refdocumentaciones,
+		d.archivo,
+		d.type,
+		d.refestadodocumentaciones,
+		d.fechacrea,
+		d.fechamodi,
+		d.usuariocrea,
+		d.usuariomodi
+		from dbdocumentacionasociados d
+		inner join dbasociados ase ON ase.idasociado = d.refasociados
+		inner join dbdocumentaciones doc ON doc.iddocumentacion = d.refdocumentaciones
+		inner join tbtipodocumentaciones ti ON ti.idtipodocumentacion = doc.reftipodocumentaciones
+		inner join tbestadodocumentaciones est ON est.idestadodocumentacion = d.refestadodocumentaciones
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerDocumentacionasociadosPorId($id) {
+		$sql = "select iddocumentacionasociado,refasociados,refdocumentaciones,archivo,type,refestadodocumentaciones,fechacrea,fechamodi,usuariocrea,usuariomodi from dbdocumentacionasociados where iddocumentacionasesor =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerDocumentacionPorAsociadoDocumentacion($id, $iddocumentacion) {
+		$sql = "select
+		da.iddocumentacionasociado,da.refasociados,da.refdocumentaciones,
+		da.archivo,da.type,da.refestadodocumentaciones,da.fechacrea,da.fechamodi,
+		da.usuariocrea,da.usuariomodi , e.estadodocumentacion, e.color
+		from dbdocumentacionasociados da
+		inner join tbestadodocumentaciones e on e.idestadodocumentacion = da.refestadodocumentaciones
+		where da.refasociados =".$id." and da.refdocumentaciones = ".$iddocumentacion;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerDocumentacionPorPostulanteDocumentacionAsociado($id) {
+		$sql = "select
+		da.iddocumentacionasociado,da.refasociados,da.refdocumentaciones,
+		da.archivo,da.type,da.refestadodocumentaciones,da.fechacrea,da.fechamodi,
+		da.usuariocrea,da.usuariomodi , e.estadodocumentacion, e.color, dd.carpeta
+		from dbdocumentacionasociados da
+		inner join dbdocumentaciones dd on dd.iddocumentacion = da.refdocumentaciones
+		inner join tbestadodocumentaciones e on e.idestadodocumentacion = da.refestadodocumentaciones
+		where da.refasociados =".$id." and dd.orden is not null order by dd.orden,da.archivo";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerDocumentacionPorAsociadoDocumentacionEspecifica($id, $iddocumentacion, $archivo) {
+		$sql = "select
+		da.iddocumentacionasociado,da.refasociados,da.refdocumentaciones,
+		da.archivo,da.type,da.refestadodocumentaciones,da.fechacrea,da.fechamodi,
+		da.usuariocrea,da.usuariomodi , e.estadodocumentacion, e.color
+		from dbdocumentacionasociados da
+		inner join tbestadodocumentaciones e on e.idestadodocumentacion = da.refestadodocumentaciones
+		where da.refasociados =".$id." and da.refdocumentaciones = ".$iddocumentacion." and da.archivo like '%".$archivo."%'";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	/* fin para documentaciones de asociados */
 	/* PARA Bancos */
 
 	function insertarBancos($banco) {

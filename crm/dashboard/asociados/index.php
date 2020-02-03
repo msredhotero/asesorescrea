@@ -523,9 +523,10 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			});
 		}
 
-		$("#example").on("click",'.btnEnviar', function(){
+		$("#example").on("click",'.btnDocumentacion', function(){
 			idTable =  $(this).attr("id");
-			reenviarActivacion(idTable);
+			url = "subirdocumentacioni.php?id=" + idTable + "&documentacion=3";
+			$(location).attr('href',url);
 		});//fin del boton eliminar
 
 		$("#example").on("click",'.btnEliminar', function(){

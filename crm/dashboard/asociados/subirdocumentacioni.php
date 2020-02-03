@@ -34,7 +34,7 @@ if ($_SESSION['idroll_sahilices'] == 10) {
 	$resultado 		= 	$serviciosReferencias->traerAsociadosPorUsuario($idusuario);
 } else {
 	$id = $_GET['id'];
-	$resultado 		= 	$serviciosReferencias->traerAsociadosPorId($idusuario);
+	$resultado 		= 	$serviciosReferencias->traerAsociadosPorId($id);
 }
 
 
@@ -131,11 +131,9 @@ $filesRC = array_diff(scandir($pathRC), array('.', '..'));
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacion($id, $iddocumentacion);
+$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorAsociadoDocumentacion($id, $iddocumentacion);
 
 $resDocumentacion = $serviciosReferencias->traerDocumentacionesPorId($iddocumentacion);
-
-$resPostulante = $serviciosReferencias->traerPostulantesPorId($id);
 
 $resEstados = $serviciosReferencias->traerEstadodocumentaciones();
 
@@ -181,7 +179,7 @@ if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 switch ($iddocumentacion) {
 	case 3:
 		// code...
-		$dato = mysql_result($resPostulante,0,'ine');
+		$dato = mysql_result($resultado,0,'ine');
 
 		$input = '<input type="text" name="ine" maxlength="13" id="ine" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
@@ -190,90 +188,21 @@ switch ($iddocumentacion) {
 	break;
 	case 4:
 		// code...
-		$dato = mysql_result($resPostulante,0,'ine');
+		$dato = mysql_result($resultado,0,'ine');
 
 		$input = '<input type="text" name="ine" maxlength="13" id="ine" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
 		$leyenda = 'Cargue el Nro de INE';
 		$campo = 'ine';
 	break;
-	case 5:
+	case 10:
 		// code...
-		$input = '';
-		$boton = '';
-		$leyenda = '';
-		$campo = '';
-	break;
-	case 6:
-		// code...
-		$dato = mysql_result($resPostulante,0,'curp');
+		$dato = mysql_result($resultado,0,'domicilio');
 
 		$input = '<input type="text" name="curp" maxlength="18" id="curp" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
 		$leyenda = 'Cargue el Nro de CURP';
 		$campo = 'curp';
-	break;
-	case 7:
-		// code...
-		$dato = mysql_result($resPostulante,0,'rfc');
-
-		$input = '<input type="text" maxlength="13" name="rfc" id="rfc" class="form-control" value="'.$dato.'"/> ';
-		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
-		$leyenda = 'Cargue el Nro de RFC';
-		$campo = 'rfc';
-	break;
-	case 8:
-		// code...
-		$dato = mysql_result($resPostulante,0,'nss');
-
-		$input = '<input type="text" maxlength="11" name="nss" id="nss" class="form-control" value="'.$dato.'"/> ';
-		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
-		$leyenda = 'Cargue el Nro de Seguro Social';
-		$campo = 'nss';
-	break;
-	case 9:
-		// code...
-		$input = '';
-		$boton = '';
-		$leyenda = '';
-		$campo = '';
-	break;
-	case 10:
-		// code...
-		$input = '';
-		$boton = '';
-		$leyenda = '';
-		$campo = '';
-	break;
-	case 11:
-		// code...
-		$input = '';
-		$boton = '';
-		$leyenda = '';
-		$campo = '';
-	break;
-	case 12:
-		// code...
-		$input = '';
-		$boton = '';
-		$leyenda = '';
-		$campo = '';
-	break;
-	case 26:
-		// code...
-		$input = '';
-		$boton = '';
-		$leyenda = '';
-		$campo = '';
-	break;
-	case 27:
-		// code...
-		$dato = mysql_result($resPostulante,0,'nropoliza');
-
-		$input = '<input type="text" maxlength="25" name="nropoliza" id="nropoliza" class="form-control" value="'.$dato.'"/> ';
-		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
-		$leyenda = 'Cargue el Nro de Poliza';
-		$campo = 'nropoliza';
 	break;
 
 	default:
@@ -285,9 +214,7 @@ switch ($iddocumentacion) {
 	break;
 }
 
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,7);
-
-$puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorAsociadoDocumentacionCompleta($id);
 
 ?>
 
@@ -611,7 +538,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
-			url = "subirdocumentacioni.php?documentacion=" + idTable;
+			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=" + idTable;
 			$(location).attr('href',url);
 		});
 
