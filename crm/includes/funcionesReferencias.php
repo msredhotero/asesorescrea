@@ -11,6 +11,15 @@ class ServiciosReferencias {
 
 	/* PARA Documentacionasesores */
 
+	function modificarAsociadoUnicaDocumentacion($id, $campo, $valor) {
+		$sql = "update dbasociados
+		set
+		".$campo." = '".$valor."'
+		where idasociado =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 	function traerDocumentacionPorAsociadoDocumentacionCompleta($idasociado) {
 		$sql = "SELECT
 					    d.iddocumentacion,
@@ -106,8 +115,6 @@ class ServiciosReferencias {
 
          //desarrollo
 
-
-
          if (mysql_result($resFoto,0,'type') == '') {
 
             $resV['error'] = true;
@@ -182,8 +189,9 @@ class ServiciosReferencias {
 		$sql = "select
 		da.iddocumentacionasociado,da.refasociados,da.refdocumentaciones,
 		da.archivo,da.type,da.refestadodocumentaciones,da.fechacrea,da.fechamodi,
-		da.usuariocrea,da.usuariomodi , e.estadodocumentacion, e.color
+		da.usuariocrea,da.usuariomodi , e.estadodocumentacion, e.color, d.carpeta
 		from dbdocumentacionasociados da
+		inner join dbdocumentaciones d on d.iddocumentacion = da.refdocumentaciones
 		inner join tbestadodocumentaciones e on e.idestadodocumentacion = da.refestadodocumentaciones
 		where da.refasociados =".$id." and da.refdocumentaciones = ".$iddocumentacion;
 		$res = $this->query($sql,0);
@@ -3744,7 +3752,7 @@ class ServiciosReferencias {
 
 
 	function traerDocumentacionesPorId($id) {
-		$sql = "select iddocumentacion,reftipodocumentaciones,documentacion,obligatoria,cantidadarchivos,fechacrea,fechamodi,usuariocrea,usuariomodi from dbdocumentaciones where iddocumentacion =".$id;
+		$sql = "select iddocumentacion,reftipodocumentaciones,documentacion,obligatoria,cantidadarchivos,fechacrea,fechamodi,usuariocrea,usuariomodi,carpeta from dbdocumentaciones where iddocumentacion =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}

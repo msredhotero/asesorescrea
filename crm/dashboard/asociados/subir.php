@@ -36,16 +36,18 @@
 
 		$noentrar = '../../imagenes/index.php';
 
-		$idusuario = $_SESSION['usuaid_sahilices'];
+		if ($_SESSION['idroll_sahilices'] == 10) {
+			$idusuario = $_SESSION['usuaid_sahilices'];
+			$resultado 		= 	$serviciosReferencias->traerAsociadosPorUsuario($idusuario);
+			$id = mysql_result($resultado,0,'idpostulante');
+		} else {
+			$id = $_POST['idasociado'];
+			$resultado 		= 	$serviciosReferencias->traerAsociadosPorId($id);
+		}
 
-		$resultado 		= 	$serviciosReferencias->traerPostulantesPorIdUsuario($idusuario);
-
-		$id = mysql_result($resultado,0,'idpostulante');
-
-		$idpostulante = $id;
 		$iddocumentacion = $_POST['iddocumentacion'];
 
-		$resImagen = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacion($idpostulante,$iddocumentacion);
+		$resImagen = $serviciosReferencias->traerDocumentacionPorAsociadoDocumentacion($id,$iddocumentacion);
 
 		if (mysql_num_rows($resImagen)>0) {
 			$archivoAnterior = mysql_result($resImagen,0,'archivo');
@@ -57,73 +59,13 @@
 		$imagen = $serviciosReferencias->sanear_string(basename($archivo['name']));
 		$type = $archivo["type"];
 
+		$resDocumentacion = $serviciosReferencias->traerDocumentacionesPorId($iddocumentacion);
+
 
 		// desarrollo
-		switch ($iddocumentacion) {
-
-			case 3:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/inef/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['inef', time(), $extension]);
-			break;
-			case 4:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/ined/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['ined', time(), $extension]);
-			break;
-			case 5:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/actanacimiento/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['actanacimiento', time(), $extension]);
-			break;
-			case 6:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/curp/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['curp', time(), $extension]);
-			break;
-			case 7:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/rfc/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['rfc', time(), $extension]);
-			break;
-			case 8:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/nss/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['nss', time(), $extension]);
-			break;
-			case 9:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/comprobanteestudio/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['comprobanteestudio', time(), $extension]);
-			break;
-			case 10:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/comprobantedomicilio/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['comprobantedomicilio', time(), $extension]);
-			break;
-			case 11:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/cv/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['cv', time(), $extension]);
-			break;
-			case 12:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/infonavit/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['infonavit', time(), $extension]);
-			break;
-			case 26:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/cedulaseguros/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['cedulaseguros', time(), $extension]);
-			break;
-			case 27:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/rc/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['rc', time(), $extension]);
-			break;
-
-		}
-
+		$dir_destino = '../../archivos/asociados/'.$id.'/'.mysql_result($resDocumentacion,0,'carpeta').'/';
+		list($base,$extension) = explode('.',$name);
+		$newname = implode('.', [mysql_result($resDocumentacion,0,'carpeta'), time(), $extension]);
 
 		// produccion
 		//$dir_destino = 'https://www.saupureinconsulting.com.ar/aifzn/data/'.mysql_result($resFoto,0,'iddocumentacionjugadorimagen').'/';
@@ -152,9 +94,9 @@
 		if (move_uploaded_file($templocation, $imagen_subida)) {
 			$pos = strpos( strtolower($type), 'pdf');
 
-			$resEliminar = $serviciosReferencias->eliminarDocumentacionasesoresPorPostulanteDocumentacion($idpostulante,$iddocumentacion);
+			$resEliminar = $serviciosReferencias->eliminarDocumentacionasesoresPorAsociadoDocumentacion($id,$iddocumentacion);
 
-			$resInsertar = $serviciosReferencias->insertarDocumentacionasesores($idpostulante,$iddocumentacion,$newname,$type,1,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices']);
+			$resInsertar = $serviciosReferencias->insertarDocumentacionasociados($id,$iddocumentacion,$newname,$type,1,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices']);
 
 			if ($pos === false) {
 				$image = new \Gumlet\ImageResize($imagen_subida);

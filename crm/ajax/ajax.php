@@ -673,10 +673,130 @@ switch ($accion) {
       eliminarAsociados($serviciosReferencias);
    break;
 
+   case 'eliminarDocumentacionAsociado':
+      eliminarDocumentacionAsociado($serviciosReferencias);
+   break;
+   case 'traerDocumentacionPorAsociadoDocumentacion':
+      traerDocumentacionPorAsociadoDocumentacion($serviciosReferencias);
+   break;
+   case 'modificarEstadoDocumentacionAsociados':
+      modificarEstadoDocumentacionAsociados($serviciosReferencias);
+   break;
+   case 'modificarAsociadoUnicaDocumentacion':
+      modificarAsociadoUnicaDocumentacion($serviciosReferencias);
+   break;
+
+
 }
 /* Fin */
 
 /* nuevo 31/01/2020 */
+
+function modificarAsociadoUnicaDocumentacion($serviciosReferencias) {
+   $idasociado = $_POST['idasociado'];
+   $campo = $_POST['campo'];
+   $valor = $_POST['valor'];
+
+   $res = $serviciosReferencias->modificarAsociadoUnicaDocumentacion($idasociado, $campo, $valor);
+
+   if ($res == true) {
+      $resV['leyenda'] = '';
+      $resV['error'] = false;
+   } else {
+      $resV['leyenda'] = 'Hubo un error al modificar datos';
+      $resV['error'] = true;
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
+
+function modificarEstadoDocumentacionAsociados($serviciosReferencias) {
+   session_start();
+
+   $iddocumentacionasociado = $_POST['iddocumentacionasociado'];
+   $idestado = $_POST['idestado'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+
+   if ($iddocumentacionasesor == 0) {
+      $resV['leyenda'] = 'Todavia no cargo el archivo, no podra modificar el estado de la documentación';
+      $resV['error'] = true;
+   } else {
+      $res = $serviciosReferencias->modificarEstadoDocumentacionAsociados($iddocumentacionasociado,$idestado,$usuariomodi);
+
+      if ($res == true) {
+         $resV['leyenda'] = '';
+         $resV['error'] = false;
+      } else {
+         $resV['leyenda'] = 'Hubo un error al modificar datos';
+         $resV['error'] = true;
+      }
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function traerDocumentacionPorAsociadoDocumentacion($serviciosReferencias) {
+
+   $idasociado = $_POST['idasociado'];
+   $iddocumentacion = $_POST['iddocumentacion'];
+
+   $resV['datos'] = '';
+   $resV['error'] = false;
+
+   $resFoto = $serviciosReferencias->traerDocumentacionPorAsociadoDocumentacion($idasociado,$iddocumentacion);
+
+   $imagen = '';
+
+   if (mysql_num_rows($resFoto) > 0) {
+      /* produccion
+      $imagen = 'https://www.saupureinconsulting.com.ar/aifzn/'.mysql_result($resFoto,0,'archivo').'/'.mysql_result($resFoto,0,'imagen');
+      */
+
+      //desarrollo
+
+      if (mysql_result($resFoto,0,'type') == '') {
+         $imagen = '../../imagenes/sin_img.jpg';
+
+         $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+         $resV['error'] = true;
+      } else {
+         $imagen = '../../archivos/asociados/'.$idasociado.'/'.mysql_result($resFoto,0,'carpeta').'/'.mysql_result($resFoto,0,'archivo');
+
+         $resV['datos'] = array('imagen' => $imagen, 'type' => mysql_result($resFoto,0,'type'));
+
+         $resV['error'] = false;
+      }
+
+
+
+   } else {
+      $imagen = '../../imagenes/sin_img.jpg';
+
+
+      $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+      $resV['error'] = true;
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
+
+function eliminarDocumentacionAsociado($serviciosReferencias) {
+   $idasociado = $_POST['idasociado'];
+   $iddocumentacion = $_POST['iddocumentacion'];
+
+   $res = $serviciosReferencias->eliminarDocumentacionAsociado($idasociado, $iddocumentacion);
+
+   header('Content-type: application/json');
+   echo json_encode($res);
+}
 
 function insertarAsociados($serviciosReferencias,$serviciosUsuarios) {
 

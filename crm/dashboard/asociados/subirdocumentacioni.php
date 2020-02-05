@@ -109,16 +109,6 @@ $filesCD = array_diff(scandir($pathCD), array('.', '..'));
 
 /****************************************************************/
 
-$pathRC  = '../../archivos/asociados/'.$id.'/comprobantedomicilio';
-
-if (!file_exists($pathRC)) {
-	mkdir($pathRC, 0777);
-}
-
-$filesRC = array_diff(scandir($pathRC), array('.', '..'));
-
-/****************************************************************/
-
 $pathRC  = '../../archivos/asociados/'.$id.'/mercantil';
 
 if (!file_exists($pathRC)) {
@@ -140,7 +130,7 @@ $resEstados = $serviciosReferencias->traerEstadodocumentaciones();
 if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 	$cadRefEstados = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'));
 
-	$iddocumentacionasesores = mysql_result($resDocumentacionAsesor,0,'iddocumentacionasesor');
+	$iddocumentacionasociado = mysql_result($resDocumentacionAsesor,0,'iddocumentacionasociado');
 
 	$estadoDocumentacion = mysql_result($resDocumentacionAsesor,0,'estadodocumentacion');
 
@@ -167,7 +157,7 @@ if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 } else {
 	$cadRefEstados = $serviciosFunciones->devolverSelectBox($resEstados,array(1),'');
 
-	$iddocumentacionasesores = 0;
+	$iddocumentacionasociado = 0;
 
 	$estadoDocumentacion = 'Falta Cargar';
 
@@ -199,10 +189,10 @@ switch ($iddocumentacion) {
 		// code...
 		$dato = mysql_result($resultado,0,'domicilio');
 
-		$input = '<input type="text" name="curp" maxlength="18" id="curp" class="form-control" value="'.$dato.'"/> ';
+		$input = '<input type="text" name="domicilio" maxlength="250" id="domicilio" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
-		$leyenda = 'Cargue el Nro de CURP';
-		$campo = 'curp';
+		$leyenda = 'Cargue el Domicilio';
+		$campo = 'domicilio';
 	break;
 
 	default:
@@ -470,7 +460,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorAsociadoDocume
 								</div>
 								<div class="fallback">
 									<input name="file" type="file" id="archivos" />
-									<input type="hidden" id="idpostulante" name="idpostulante" value="<?php echo $id; ?>" />
+									<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
 								</div>
 							</form>
 						</div>
@@ -543,7 +533,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorAsociadoDocume
 		});
 
 		$('.btnModificar').click(function() {
-			modificarPostulanteUnicaDocumentacion($('#<?php echo $campo; ?>').val());
+			modificarAsociadoUnicaDocumentacion($('#<?php echo $campo; ?>').val());
 		});
 
 		$('.btnVolver').click(function() {
@@ -551,15 +541,15 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorAsociadoDocume
 			$(location).attr('href',url);
 		});
 
-		function modificarPostulanteUnicaDocumentacion(valor) {
+		function modificarAsociadoUnicaDocumentacion(valor) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
 				data: {
-					accion: 'modificarPostulanteUnicaDocumentacion',
-					idpostulante: <?php echo $id; ?>,
+					accion: 'modificarAsociadoUnicaDocumentacion',
+					idasociado: <?php echo $id; ?>,
 					campo: '<?php echo $campo; ?>',
 					valor: valor
 				},
@@ -588,18 +578,18 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorAsociadoDocume
 		}
 
 		$('.guardarEstado').click(function() {
-			modificarEstadoDocumentacionPostulante($('#refestados').val());
+			modificarEstadoDocumentacionAsociados($('#refestados').val());
 		});
 
-		function modificarEstadoDocumentacionPostulante(idestado) {
+		function modificarEstadoDocumentacionAsociados(idestado) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
 				data: {
-					accion: 'modificarEstadoDocumentacionPostulante',
-					iddocumentacionasesores: <?php echo $iddocumentacionasesores; ?>,
+					accion: 'modificarEstadoDocumentacionAsociados',
+					iddocumentacionasociado: <?php echo $iddocumentacionasociado; ?>,
 					idestado: idestado
 				},
 				//mientras enviamos el archivo
@@ -629,9 +619,9 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorAsociadoDocume
 
 		function traerImagen(contenedorpdf, contenedor) {
 			$.ajax({
-				data:  {idpostulante: <?php echo $id; ?>,
+				data:  {idasociado: <?php echo $id; ?>,
 						iddocumentacion: <?php echo $iddocumentacion; ?>,
-						accion: 'traerDocumentacionPorPostulanteDocumentacion'},
+						accion: 'traerDocumentacionPorAsociadoDocumentacion'},
 				url:   '../../ajax/ajax.php',
 				type:  'post',
 				beforeSend: function () {
@@ -654,11 +644,11 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorAsociadoDocume
 					}
 
 					if (response.error) {
-						$('.btnContinuar').hide();
+
 						$('.btnEliminar').hide();
 						$('.guardarEstado').hide();
 					} else {
-						$('.btnContinuar').show();
+
 						$('.btnEliminar').show();
 						$('.guardarEstado').show();
 					}
@@ -681,7 +671,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorAsociadoDocume
 			},
 			init: function() {
 				this.on("sending", function(file, xhr, formData){
-					formData.append("idpostulante", '<?php echo $id; ?>');
+					formData.append("idasociado", '<?php echo $id; ?>');
 					formData.append("iddocumentacion", '<?php echo $iddocumentacion; ?>');
 				});
 				this.on('success', function( file, resp ){
@@ -703,7 +693,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorAsociadoDocume
 
 		var myDropzone = new Dropzone("#archivos", {
 			params: {
-				 idpostulante: <?php echo $id; ?>,
+				 idasociado: <?php echo $id; ?>,
 				 iddocumentacion: <?php echo $iddocumentacion; ?>
 			},
 			url: 'subir.php'
@@ -726,49 +716,13 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorAsociadoDocume
 		});
 
 
-
-		function modificarEstadoPostulante(id, idestado) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {accion: 'modificarEstadoPostulante',id: id, idestado: idestado},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-					$('.btnContinuar').hide();
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data != '') {
-						$(location).attr('href',data);
-
-					} else {
-						swal("Error!", 'Se genero un error al modificar el estado del postulante', "warning");
-
-						$("#load").html('');
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
-		}
-
-		$('.btnContinuar').click(function() {
-			modificarEstadoPostulante(<?php echo $id; ?>, <?php echo $iddocumentacion; ?>);
-		});
-
 		$('.eliminar').click(function() {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {accion: 'eliminarDocumentacionPostulante',idpostulante: <?php echo $id; ?>, iddocumentacion: <?php echo $iddocumentacion; ?>},
+				data: {accion: 'eliminarDocumentacionAsociado',idasociado: <?php echo $id; ?>, iddocumentacion: <?php echo $iddocumentacion; ?>},
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('.btnEliminar').hide();
