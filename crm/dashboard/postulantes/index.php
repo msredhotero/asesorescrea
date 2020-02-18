@@ -55,8 +55,8 @@ $modificar = "modificarPostulantes";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbpostulantes";
 
-$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza');
-$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza');
+$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas');
+$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona');
 
 
 $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
@@ -81,8 +81,11 @@ $cadRef7 = $serviciosFunciones->devolverSelectBox($resVar7,array(1),'');
 
 $_SESSION['token'] = $serviciosReferencias->GUID();
 
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadOpcion,7=>$cadOpcion,8=>$cadRef7);
-$refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','refestadopostulantes','sexo','nacionalidad','afore','cedula','refesquemareclutamiento');
+$resVar8 = $serviciosReferencias->traerTipopersonas();
+$cadRef8 = $serviciosFunciones->devolverSelectBox($resVar8,array(1),'');
+
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadOpcion,7=>$cadOpcion,8=>$cadRef7,9=>$cadRef8);
+$refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','refestadopostulantes','sexo','nacionalidad','afore','cedula','refesquemareclutamiento','reftipopersonas');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -245,7 +248,11 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 										<div class="button-demo">
 											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
 												<i class="material-icons">add</i>
-												<span>NUEVO</span>
+												<span>NUEVO - PERSONA FISICA</span>
+											</button>
+											<button type="button" class="btn bg-blue-grey waves-effect btnNuevoMoral" data-toggle="modal" data-target="#lgmNuevo">
+												<i class="material-icons">add</i>
+												<span>NUEVO - PERSONA MORAL</span>
 											</button>
 
 										</div>
@@ -462,6 +469,54 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 <script>
 	$(document).ready(function(){
+
+		$('.btnNuevoMoral').click(function() {
+			$('.frmContsexo').hide();
+			$('.frmContrefescolaridades').hide();
+			$('.frmContrefestadocivil').hide();
+			$('.frmConttelefonocasa').hide();
+			$('.frmContafore').hide();
+			$('.frmContnss').hide();
+			$('.frmContvigdesdeafore').hide();
+			$('.frmContvighastaafore').hide();
+			$('.frmContreftipopersonas').hide();
+			$('#refescolaridades').val(6);
+			$('#refestadocivil').val(7);
+			$('#reftipopersonas').val(2);
+			$('#refesquemareclutamiento option[value="1"]').prop("disabled","true");
+			$('#refesquemareclutamiento option[value="2"]').prop("disabled","true");
+			$('#refesquemareclutamiento option[value="3"]').prop("disabled","true");
+			$('#refesquemareclutamiento option[value="4"]').prop("disabled","true");
+			$('#refesquemareclutamiento option[value="5"]').removeAttr("disabled");
+			$('#refesquemareclutamiento option[value="6"]').removeAttr("disabled");
+			$('#refesquemareclutamiento').val(5);
+			$('#sexo').val(1);
+
+		});
+
+		$('.btnNuevo').click(function() {
+			$('.frmContsexo').show();
+			$('.frmContrefescolaridades').show();
+			$('.frmContrefestadocivil').show();
+			$('.frmConttelefonocasa').show();
+			$('.frmContafore').show();
+			$('.frmContnss').show();
+			$('.frmContvigdesdeafore').show();
+			$('.frmContvighastaafore').show();
+			$('.frmContreftipopersonas').hide();
+			$('#refescolaridades').val(6);
+			$('#refestadocivil').val(7);
+			$('#reftipopersonas').val(1);
+
+			$('#refesquemareclutamiento option[value="1"]').removeAttr("disabled");
+			$('#refesquemareclutamiento option[value="2"]').removeAttr("disabled");
+			$('#refesquemareclutamiento option[value="3"]').removeAttr("disabled");
+			$('#refesquemareclutamiento option[value="4"]').removeAttr("disabled");
+			$('#refesquemareclutamiento option[value="5"]').prop("disabled","true");
+			$('#refesquemareclutamiento option[value="6"]').prop("disabled","true");
+			$('#refesquemareclutamiento').val(1);
+
+		});
 
 		<?php if ($_SESSION['idroll_sahilices'] == 3) { ?>
 		new Chart(document.getElementById("pie_chart").getContext("2d"), getChartJs('pie'));

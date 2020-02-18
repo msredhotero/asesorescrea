@@ -42,6 +42,9 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 $resEntrevistasOportunidades = $serviciosReferencias->traerEntrevistaoportunidades();
 
+$resRoles 	= $serviciosUsuario->traerUsuariosPorRol(3);
+$cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
+
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
@@ -210,44 +213,7 @@ $resEntrevistasOportunidades = $serviciosReferencias->traerEntrevistaoportunidad
 <script src='https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js'></script>
 
 
-	<script>
 
-	  document.addEventListener('DOMContentLoaded', function() {
-	    var calendarEl = document.getElementById('calendar');
-
-	    var calendar = new FullCalendar.Calendar(calendarEl, {
-	      plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list' ],
-			locale: 'es',
-	      header: {
-	        left: 'prev,next today',
-	        center: 'title',
-	        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-	      },
-	      editable: true,
-	      navLinks: true, // can click day/week names to navigate views
-	      eventLimit: true, // allow "more" link when too many events
-
-	      events: {
-	        url: '../../calendarjs/get-events.php',
-	        failure: function() {
-	          document.getElementById('script-warning').style.display = 'block'
-	        }
-	      },
-	      loading: function(bool) {
-	        document.getElementById('loading').style.display =
-	          bool ? 'block' : 'none';
-	      },
-			eventClick: function(info) {
-				 $('#lgmNuevo').modal();
-				 $('.frmAjaxNuevo').html(info.event.extendedProps.description);
-
-			  }
-	    });
-
-	    calendar.render();
-	  });
-
-	</script>
 
 
 
@@ -348,6 +314,23 @@ $resEntrevistasOportunidades = $serviciosReferencias->traerEntrevistaoportunidad
 						</div>
 						<div class="body table-responsive">
 							<form class="form" id="formCountry">
+								<div class="row">
+									<div class="col-lg-3 col-md-3 col-xs-3">
+										<p>Filtros por Responsable Comercial</p>
+									</div>
+									<div class="col-lg-6 col-md-6 col-xs-6">
+										<select class="form-control refgerentecomercial" name='refgerentecomercial' id='refgerentecomercial'>
+											<option value='0'>-- Seleecionar --</option>
+											<?php echo $cadRef1; ?>
+										</select>
+									</div>
+									<div class="col-lg-3 col-md-3 col-xs-3">
+										<button type="button" class="btn bg-blue waves-effect btnBuscar">
+											<i class="material-icons">done_all</i>
+											<span>BUSCAR</span>
+										</button>
+									</div>
+								</div>
 
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
@@ -403,10 +386,68 @@ $resEntrevistasOportunidades = $serviciosReferencias->traerEntrevistaoportunidad
 <script src="../../plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
 
 <script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
+<script>
 
+	var selectGerente = document.getElementById('refgerentecomercial');
+	document.addEventListener('DOMContentLoaded', function() {
+	  var calendarEl = document.getElementById('calendar');
+
+	  var selectGerenteValor = 0;
+
+	  var calendar = new FullCalendar.Calendar(calendarEl, {
+		 plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list' ],
+		 locale: 'es',
+		 header: {
+			left: 'prev,next today',
+			center: 'title',
+			right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+		 },
+		 editable: true,
+		 navLinks: true, // can click day/week names to navigate views
+		 eventLimit: true, // allow "more" link when too many events
+		 events: {
+			url: '../../calendarjs/get-events.php',
+			method: 'POST',
+			data: { // a function that returns an object
+				start: 'start',
+				end: 'end',
+				timeZone: 'timeZone'
+			},
+			failure: function() {
+			  document.getElementById('script-warning').style.display = 'block';
+			}
+		 },
+		 loading: function(bool) {
+			document.getElementById('loading').style.display =
+			  bool ? 'block' : 'none';
+		 },
+
+		 eventClick: function(info) {
+			  $('#lgmNuevo').modal();
+			  $('.frmAjaxNuevo').html('<h4>' + info.event.extendedProps.description + '</h4>');
+			  $('.frmAjaxNuevo').append('<br><h5>Responsable Comercial: ' + info.event.extendedProps.nombrecompleto + '</h5>');
+
+			}
+	  });
+
+	  calendar.render();
+
+
+
+	  selectGerente.addEventListener('change', function() {
+			selectGerenteValor = this.value;
+			alert(selectGerenteValor);
+			calendar.refetchEvents();
+		 });
+  });
+
+
+</script>
 
 <script>
 	$(document).ready(function(){
+
+
 
 	});
 </script>

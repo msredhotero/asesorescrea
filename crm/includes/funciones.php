@@ -551,7 +551,7 @@ class Servicios {
 							if (in_array($campo,$autocompletar)) {
 								$form	=	$form.'
 
-								<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+								<div class="form-group col-md-6 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 									<div class="form-line">
 									<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
 									<div class="input-group col-md-12">
@@ -572,7 +572,7 @@ class Servicios {
 
 								$form	=	$form.'
 
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 								<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
 								<div class="input-group col-md-12">
 									<select class="form-control" id="'.strtolower($campo).'" name="'.strtolower($campo).'" '.$lblObligatorio.'>
@@ -596,7 +596,7 @@ class Servicios {
 
 								$form	=	$form.'
 
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 									<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
 									<div class="switch">
 										<label><input type="checkbox"  id="'.$campo.'" name="'.$campo.'"/><span class="lever switch-col-green"></span></label>
@@ -614,7 +614,7 @@ class Servicios {
 
 									/*if (($row[0] == "fechabaja2") || ($row[0] == "fechaalta2")){*/
 										$form	=	$form.'
-										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 										<b>'.$label.'</b>
 										<div class="input-group">
 
@@ -756,7 +756,7 @@ class Servicios {
 
 
 															$form	=	$form.'
-															<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
+															<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 																<label class="form-label">'.$label.'</label>
 																<div class="form-group input-group">
 																	<div class="form-line">

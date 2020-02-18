@@ -1609,89 +1609,8 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
             $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
             $resV['error'] = true;
          } else {
-            switch ($iddocumentacion) {
-               case 2:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/siap/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 1:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/veritas/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 3:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/inef/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 4:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/ined/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 5:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/actanacimiento/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 6:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/curp/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 7:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/rfc/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 8:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/nss/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 9:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/comprobanteestudio/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 10:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/comprobantedomicilio/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 11:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/cv/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 12:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/infonavit/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 13:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/caratula/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 14:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/solicitud/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 15:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/formatofirma/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 16:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/consar/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 17:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/nolaborargobierno/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 18:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/codigoetica/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 19:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/aceptacionpoliticas/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 20:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/cuentaclave/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 21:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/banco/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 22:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/cf1/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 23:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/cf2/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 24:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/cf3/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 25:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/compromiso/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 26:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/cedulaseguros/'.mysql_result($resFoto,0,'archivo');
-               break;
-               case 27:
-                  $imagen = '../../archivos/postulantes/'.$idpostulante.'/rc/'.mysql_result($resFoto,0,'archivo');
-               break;
-            }
+
+            $imagen = '../../archivos/postulantes/'.$idpostulante.'/'.mysql_result($resFoto,0,'carpeta').'/'.mysql_result($resFoto,0,'archivo');
 
             $resV['datos'] = array('imagen' => $imagen, 'type' => mysql_result($resFoto,0,'type'));
 
@@ -2922,8 +2841,11 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
             $vighastaafore = '';
          }
 
+         // para la persona fisica o moral
+         $reftipopersonas = $_POST['reftipopersonas'];
+
          // desde el crm
-         $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore);
+         $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore,$reftipopersonas);
 
          //die(var_dump($res));
 
@@ -3035,8 +2957,11 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
             $vigdesdeafore = '';
             $vighastaafore = '';
 
+            // como la asignacion viene desde el test, la persona se considera fisica.
+            $reftipopersonas = 1;
+
             // desde el test
-            $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore);
+            $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore,$reftipopersonas);
 
             //die(var_dump($res));
 

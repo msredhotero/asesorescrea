@@ -214,29 +214,49 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocu
 $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 $permitePresentar = $serviciosReferencias->permitePresentarDocumentacionI($id);
 
-if (mysql_result($resultado,0,'rfc') == '') {
-	$alertaRFC = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el RFC!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=7"><b>AQUI</b></a></div>';
-} else {
-	$alertaRFC = '';
-}
+if (mysql_result($resultado,0,'refesquemareclutamiento') == 5 || mysql_result($resultado,0,'refesquemareclutamiento') == 6) {
+	if (mysql_result($resultado,0,'rfc') == '') {
+		$alertaRFC = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el RFC!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=7"><b>AQUI</b></a></div>';
+	} else {
+		$alertaRFC = '';
+	}
 
-if (mysql_result($resultado,0,'curp') == '') {
-	$alertaCURP = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el CURP!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=6"><b>AQUI</b></a></div>';
-} else {
+
+	if (mysql_result($resultado,0,'ine') == '') {
+		$alertaINE = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el INE!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=3"><b>AQUI</b></a></div>';
+	} else {
+		$alertaINE = '';
+	}
+
 	$alertaCURP = '';
-}
-
-if (mysql_result($resultado,0,'ine') == '') {
-	$alertaINE = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el INE!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=3"><b>AQUI</b></a></div>';
-} else {
-	$alertaINE = '';
-}
-
-if (mysql_result($resultado,0,'nss') == '') {
-	$alertaNSS = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el Nro de Seguro Social!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=8"><b>AQUI</b></a></div>';
-} else {
 	$alertaNSS = '';
+
+} else {
+	if (mysql_result($resultado,0,'rfc') == '') {
+		$alertaRFC = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el RFC!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=7"><b>AQUI</b></a></div>';
+	} else {
+		$alertaRFC = '';
+	}
+
+	if (mysql_result($resultado,0,'curp') == '') {
+		$alertaCURP = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el CURP!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=6"><b>AQUI</b></a></div>';
+	} else {
+		$alertaCURP = '';
+	}
+
+	if (mysql_result($resultado,0,'ine') == '') {
+		$alertaINE = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el INE!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=3"><b>AQUI</b></a></div>';
+	} else {
+		$alertaINE = '';
+	}
+
+	if (mysql_result($resultado,0,'nss') == '') {
+		$alertaNSS = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el Nro de Seguro Social!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=8"><b>AQUI</b></a></div>';
+	} else {
+		$alertaNSS = '';
+	}
 }
+
 
 ?>
 

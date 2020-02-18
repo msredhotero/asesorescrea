@@ -9,6 +9,73 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+	/*
+	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('5', '1');
+	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('5', '4');
+	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('5', '2');
+	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('5', '7');
+	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('5', '8');
+	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('5', '9');
+	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('6', '1');
+	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('6', '4');
+	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('6', '2');
+	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('6', '7');
+	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('6', '8');
+	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('6', '9');
+
+	INSERT INTO `u115752684_asesores`.`dbdocumentaciones` (`reftipodocumentaciones`, `documentacion`, `obligatoria`, `cantidadarchivos`, `fechacrea`, `fechamodi`, `usuariocrea`, `usuariomodi`, `orden`, `carpeta`) VALUES ('2', 'Acta Constitutiva', '0', '1', '2020-01-31 00:00:00', '2020-01-31 00:00:00', 'marcos', 'marcos', '27', 'actacontitutiva');
+	INSERT INTO `u115752684_asesores`.`dbdocumentaciones` (`reftipodocumentaciones`, `documentacion`, `obligatoria`, `cantidadarchivos`, `fechacrea`, `fechamodi`, `usuariocrea`, `usuariomodi`, `orden`, `carpeta`) VALUES ('2', 'Oficio CNSF', '0', '1', '2020-01-31 00:00:00', '2020-01-31 00:00:00', 'marcos', 'marcos', '28', 'oficiocnsf');
+	INSERT INTO `u115752684_asesores`.`dbdocumentaciones` (`reftipodocumentaciones`, `documentacion`, `obligatoria`, `cantidadarchivos`, `fechacrea`, `fechamodi`, `usuariocrea`, `usuariomodi`, `orden`, `carpeta`) VALUES ('2', 'Cedula CNSF', '0', '1', '2020-01-31 00:00:00', '2020-01-31 00:00:00', 'marcos', 'marcos', '29', 'cedulacnsf');
+
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '1', '2');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '3', '7');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '4', '7');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '7', '7');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '10', '7');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '27', '7');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '29', '7');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '30', '7');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '31', '7');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '20', '8');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '13', '8');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '14', '8');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '22', '8');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '23', '8');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '24', '8');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '1', '2');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '3', '7');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '4', '7');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '7', '7');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '10', '7');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '29', '7');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '20', '8');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '13', '8');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '14', '8');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '22', '8');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '23', '8');
+	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '24', '8');
+
+	*/
+
+	function traerTipopersonas() {
+		$sql = "select
+		t.idtipopersona,
+		t.tipopersona
+		from tbtipopersonas t
+		order by 1";
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerTipopersonasPorId($id) {
+		$sql = "select idtipopersona,tipopersona from tbtipopersonas where idtipopersona =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 	/* PARA Documentacionasesores */
 
 	function modificarAsociadoUnicaDocumentacion($id, $campo, $valor) {
@@ -781,7 +848,8 @@ class ServiciosReferencias {
 		e.fechacrea,
 		e.fechamodi,
 		e.usuariocrea,
-		e.usuariomodi
+		e.usuariomodi,
+		us.nombrecompleto
 		from dbentrevistaoportunidades e
 		inner join dboportunidades opo ON opo.idoportunidad = e.refoportunidades
 		inner join dbusuarios us ON us.idusuario = opo.refusuarios
@@ -2874,9 +2942,9 @@ class ServiciosReferencias {
 
 	/* PARA Postulantes */
 
-	function insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore) {
-		$sql = "insert into dbpostulantes(idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,refestadocivil,nacionalidad,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa,ultimoestado,refesquemareclutamiento,afore,folio,cedula,token,vigdesdecedulaseguro,vighastacedulaseguro,vigdesdeafore,vighastaafore)
-		values ('',".$refusuarios.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$email."','".$curp."','".$rfc."','".$ine."','".$fechanacimiento."','".$sexo."','".$codigopostal."',".$refescolaridades.",".$refestadocivil.",'".$nacionalidad."','".$telefonomovil."','".$telefonocasa."','".$telefonotrabajo."',".$refestadopostulantes.",'".$urlprueba."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."',".$refasesores.",".$comision.",".$refsucursalesinbursa.",".$ultimoestado.",".$refesquemareclutamiento.",'".$afore."','".$folio."','".$cedula."','".$token."','".($vigdesdecedulaseguro == '' ? 'null' : "'".$vigdesdecedulaseguro."'")."','".($vighastacedulaseguro == '' ? 'null' : "'".$vighastacedulaseguro."'")."','".($vigdesdeafore == '' ? 'null' : "'".$vigdesdeafore."'")."','".($vighastaafore == '' ? 'null' : "'".$vighastaafore."'")."')";
+	function insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore,$reftipopersonas) {
+		$sql = "insert into dbpostulantes(idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,refestadocivil,nacionalidad,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa,ultimoestado,refesquemareclutamiento,afore,folio,cedula,token,vigdesdecedulaseguro,vighastacedulaseguro,vigdesdeafore,vighastaafore,reftipopersonas)
+		values ('',".$refusuarios.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$email."','".$curp."','".$rfc."','".$ine."','".$fechanacimiento."','".$sexo."','".$codigopostal."',".$refescolaridades.",".$refestadocivil.",'".$nacionalidad."','".$telefonomovil."','".$telefonocasa."','".$telefonotrabajo."',".$refestadopostulantes.",'".$urlprueba."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."',".$refasesores.",".$comision.",".$refsucursalesinbursa.",".$ultimoestado.",".$refesquemareclutamiento.",'".$afore."','".$folio."','".$cedula."','".$token."','".($vigdesdecedulaseguro == '' ? 'null' : "'".$vigdesdecedulaseguro."'")."','".($vighastacedulaseguro == '' ? 'null' : "'".$vighastacedulaseguro."'")."','".($vigdesdeafore == '' ? 'null' : "'".$vigdesdeafore."'")."','".($vighastaafore == '' ? 'null' : "'".$vighastaafore."'")."',".$reftipopersonas.")";
 
 		//die(var_dump($sql));
 		$res = $this->query($sql,1);
@@ -3110,7 +3178,7 @@ class ServiciosReferencias {
 
 	function traerPostulantesPorId($id) {
 		$sql = "select idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa, refestadocivil,nss,afore,cedula,folio,refesquemareclutamiento,
-		datediff(now(),fechanacimiento)/365 as edad, fechaalta, observaciones, ultimoestado, nropoliza, vighastaafore, vigdesdeafore, vigdesdecedulaseguro,vighastacedulaseguro from dbpostulantes where idpostulante =".$id;
+		datediff(now(),fechanacimiento)/365 as edad, fechaalta, observaciones, ultimoestado, nropoliza, vighastaafore, vigdesdeafore, vigdesdecedulaseguro,vighastacedulaseguro,reftipopersonas from dbpostulantes where idpostulante =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -3331,8 +3399,9 @@ class ServiciosReferencias {
 		$sql = "select
 		da.iddocumentacionasesor,da.refpostulantes,da.refdocumentaciones,
 		da.archivo,da.type,da.refestadodocumentaciones,da.fechacrea,da.fechamodi,
-		da.usuariocrea,da.usuariomodi , e.estadodocumentacion, e.color
+		da.usuariocrea,da.usuariomodi , e.estadodocumentacion, e.color, d.carpeta
 		from dbdocumentacionasesores da
+		inner join dbdocumentaciones d on d.iddocumentacion = da.refdocumentaciones
 		inner join tbestadodocumentaciones e on e.idestadodocumentacion = da.refestadodocumentaciones
 		where da.refpostulantes =".$id." and da.refdocumentaciones = ".$iddocumentacion;
 		$res = $this->query($sql,0);
@@ -3867,7 +3936,8 @@ class ServiciosReferencias {
 						idclienteinbursa,
 						claveasesor,
 						fechaalta,
-						observaciones
+						observaciones,
+						reftipopersonas
 						)
 						select
 						'',
@@ -3895,7 +3965,8 @@ class ServiciosReferencias {
 						p.idclienteinbursa,
 						p.claveasesor,
 						p.fechaalta,
-						p.observaciones
+						p.observaciones,
+						p.reftipopersonas
 						from		dbpostulantes p where idpostulante =".$id;
 
 			$res = $this->query($sql,1);
