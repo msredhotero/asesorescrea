@@ -86,6 +86,17 @@ $cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.jqueryui.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.css">
 
+	<link href="../../fullcalendar-3.6.0/fullcalendar.css" rel="stylesheet" />
+	<link href="../../fullcalendar-3.6.0/fullcalendar.print.css" rel="stylesheet" media="print" />
+
+
+	<script src='../../fullcalendar-3.6.0/lib/moment.min.js'></script>
+	<script src='../../fullcalendar-3.6.0/lib/jquery.min.js'></script>
+	<script src='../../fullcalendar-3.6.0/fullcalendar.min.js'></script>
+	<script src='../../fullcalendar-3.6.0/lang/es.js'></script>
+	<script src='../../fullcalendar-3.6.0/lib/jquery-ui.custom.min.js'></script>
+
+<!--
 	<link href='../../packages/core/main.css' rel='stylesheet' />
 	<link href='../../packages/daygrid/main.css' rel='stylesheet' />
 	<script src='../../packages/core/main.js'></script>
@@ -97,24 +108,14 @@ $cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
 	<link href='../../packages/list/main.css' rel='stylesheet' />
 	<script src='../../packages/timegrid/main.js'></script>
 	<script src='../../packages/list/main.js'></script>
+-->
 
-	<link href="css/fullcalendar.css" rel="stylesheet" />
-	<link href="css/fullcalendar.print.css" rel="stylesheet" media="print" />
-	<script src="js/moment.min.js"></script>
-	<script src="js/fullcalendar.js"></script>
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
 	</style>
 
 	<style>
-
-  /*
-  i wish this required CSS was better documented :(
-  https://github.com/FezVrasta/popper.js/issues/674
-  derived from this CSS on this page: https://popper.js.org/tooltip-examples.html
-  */
-
   .popper,
   .tooltip {
     position: absolute;
@@ -214,9 +215,10 @@ $cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
 
 </style>
 
+<!--
 <script src='https://unpkg.com/popper.js/dist/umd/popper.min.js'></script>
 <script src='https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js'></script>
-
+-->
 
 
 
@@ -248,6 +250,70 @@ $cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
     right: 10px;
   }
 </style>
+
+<script>
+
+	$(document).ready(function() {
+
+		var refgerentecomercial = 0;
+
+		function renderCalendar() {
+			$('#calendar').fullCalendar({
+				locale: 'es',
+				header: {
+					left: 'prev,next today',
+					center: 'title',
+					right: 'month,agendaWeek,agendaDay'
+				},
+				editable: true,
+				navLinks: true,
+				eventLimit: true,
+				eventClick: function(calEvent, jsEvent, view) {
+					$('#lgmNuevo').modal();
+					$('.frmAjaxNuevo').html('<h4>' + calEvent.description + '</h4>');
+					$('.frmAjaxNuevo').append('<h5>Gerente Comercial: ' + calEvent.nombrecompleto + '</h5>');
+					/*
+					alert('Event: ' + calEvent.title);
+					alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
+					alert('View: ' + view.name);*/
+					// change the border color just for fun
+					//$(this).css('border-color', 'red');
+				},
+				events: {
+					url: '../../calendarjs/get-events.php',
+					method: 'POST',
+					data: {
+						start: 'start',
+						end: 'end',
+						timezone: 'timezone',
+						refgerentecomercial: refgerentecomercial
+					},
+					error: function() {
+						$('#script-warning').show();
+					}
+				},
+				loading: function(bool) {
+					$('#loading').toggle(bool);
+				}
+			});
+		}
+
+		$('#refgerentecomercial').change(function() {
+			//refgerentecomercial = $(this).val();
+			if ($(this).val()) {
+				refgerentecomercial = $(this).val();
+				$('#calendar').fullCalendar('destroy');
+				renderCalendar();
+			}
+			//$('#calendar').fullCalendar('refetchEvents');
+		});
+
+		renderCalendar();
+
+
+	});
+
+</script>
 
 
 </head>
@@ -325,16 +391,11 @@ $cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
 									</div>
 									<div class="col-lg-6 col-md-6 col-xs-6">
 										<select class="form-control refgerentecomercial" name='refgerentecomercial' id='refgerentecomercial'>
-											<option value='0'>-- Seleecionar --</option>
+											<option value='0'>-- Seleccionar --</option>
 											<?php echo $cadRef1; ?>
 										</select>
 									</div>
-									<div class="col-lg-3 col-md-3 col-xs-3">
-										<button type="button" class="btn bg-blue waves-effect btnBuscar">
-											<i class="material-icons">done_all</i>
-											<span>BUSCAR</span>
-										</button>
-									</div>
+
 								</div>
 
 								<div class="row">
@@ -376,7 +437,7 @@ $cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
 	 </div>
 </div>
 
-<?php echo $baseHTML->cargarArchivosJS('../../'); ?>
+<?php echo $baseHTML->cargarArchivosJS2('../../'); ?>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
 
@@ -391,181 +452,9 @@ $cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
 <script src="../../plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
 
 <script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
-<script>
-/*
-	var selectGerente = document.getElementById('refgerentecomercial');
-	document.addEventListener('DOMContentLoaded', function() {
-	  var calendarEl = document.getElementById('calendar');
-
-	  var selectGerenteValor = 0;
-
-	  var calendar = new FullCalendar.Calendar(calendarEl, {
-		 plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list' ],
-		 locale: 'es',
-		 header: {
-			left: 'prev,next today',
-			center: 'title',
-			right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-		 },
-		 editable: true,
-		 navLinks: true, // can click day/week names to navigate views
-		 eventLimit: true, // allow "more" link when too many events
-		 events: {
-			url: '../../calendarjs/get-events.php',
-			method: 'POST',
-			data: { // a function that returns an object
-				start: 'start',
-				end: 'end',
-				timeZone: 'timeZone'
-			},
-			failure: function() {
-			  document.getElementById('script-warning').style.display = 'block';
-			}
-		 },
-		 loading: function(bool) {
-			document.getElementById('loading').style.display =
-			  bool ? 'block' : 'none';
-		 },
-
-		 eventClick: function(info) {
-			  $('#lgmNuevo').modal();
-			  $('.frmAjaxNuevo').html('<h4>' + info.event.extendedProps.description + '</h4>');
-			  $('.frmAjaxNuevo').append('<br><h5>Responsable Comercial: ' + info.event.extendedProps.nombrecompleto + '</h5>');
-
-			}
-	  });
-
-	  calendar.render();
 
 
 
-	  selectGerente.addEventListener('change', function() {
-			selectGerenteValor = this.value;
-			alert(selectGerenteValor);
-			calendar.refetchEvents();
-		 });
-  });
-
-*/
-</script>
-
-<script>
-	$(document).ready(function(){
-
-		var calendar = $('#calendar').fullCalendar({  // assign calendar
-            header:{
-                left: 'prev,next today',
-                center: 'title',
-                right: 'agendaWeek,agendaDay'
-            },
-            defaultView: 'agendaWeek',
-            editable: true,
-            selectable: true,
-            allDaySlot: false,
-
-            events: "index.php?view=1",  // request to load current events
-
-
-            eventClick:  function(event, jsEvent, view) {  // when some one click on any event
-                endtime = $.fullCalendar.moment(event.end).format('h:mm');
-                starttime = $.fullCalendar.moment(event.start).format('dddd, MMMM Do YYYY, h:mm');
-                var mywhen = starttime + ' - ' + endtime;
-                $('#modalTitle').html(event.title);
-                $('#modalWhen').text(mywhen);
-                $('#eventID').val(event.id);
-                $('#calendarModal').modal();
-            },
-
-            select: function(start, end, jsEvent) {  // click on empty time slot
-                endtime = $.fullCalendar.moment(end).format('h:mm');
-                starttime = $.fullCalendar.moment(start).format('dddd, MMMM Do YYYY, h:mm');
-                var mywhen = starttime + ' - ' + endtime;
-                start = moment(start).format();
-                end = moment(end).format();
-                $('#createEventModal #startTime').val(start);
-                $('#createEventModal #endTime').val(end);
-                $('#createEventModal #when').text(mywhen);
-                $('#createEventModal').modal('toggle');
-           },
-           eventDrop: function(event, delta){ // event drag and drop
-               $.ajax({
-                   url: 'index.php',
-                   data: 'action=update&title='+event.title+'&start='+moment(event.start).format()+'&end='+moment(event.end).format()+'&id='+event.id ,
-                   type: "POST",
-                   success: function(json) {
-                   //alert(json);
-                   }
-               });
-           },
-           eventResize: function(event) {  // resize to increase or decrease time of event
-               $.ajax({
-                   url: 'index.php',
-                   data: 'action=update&title='+event.title+'&start='+moment(event.start).format()+'&end='+moment(event.end).format()+'&id='+event.id,
-                   type: "POST",
-                   success: function(json) {
-                       //alert(json);
-                   }
-               });
-           }
-        });
-
-       $('#submitButton').on('click', function(e){ // add event submit
-           // We don't want this to act as a link so cancel the link action
-           e.preventDefault();
-           doSubmit(); // send to form submit function
-       });
-
-       $('#deleteButton').on('click', function(e){ // delete event clicked
-           // We don't want this to act as a link so cancel the link action
-           e.preventDefault();
-           doDelete(); //send data to delete function
-       });
-
-       function doDelete(){  // delete event
-           $("#calendarModal").modal('hide');
-           var eventID = $('#eventID').val();
-           $.ajax({
-               url: 'index.php',
-               data: 'action=delete&id='+eventID,
-               type: "POST",
-               success: function(json) {
-                   if(json == 1)
-                        $("#calendar").fullCalendar('removeEvents',eventID);
-                   else
-                        return false;
-
-
-               }
-           });
-       }
-       function doSubmit(){ // add event
-           $("#createEventModal").modal('hide');
-           var title = $('#title').val();
-           var startTime = $('#startTime').val();
-           var endTime = $('#endTime').val();
-
-           $.ajax({
-               url: 'index.php',
-               data: 'action=add&title='+title+'&start='+startTime+'&end='+endTime,
-               type: "POST",
-               success: function(json) {
-                   $("#calendar").fullCalendar('renderEvent',
-                   {
-                       id: json.id,
-                       title: title,
-                       start: startTime,
-                       end: endTime,
-                   },
-                   true);
-               }
-           });
-
-       }
-
-
-
-	});
-</script>
 
 </body>
 <?php } ?>

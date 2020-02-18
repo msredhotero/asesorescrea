@@ -55,6 +55,9 @@ class ServiciosReferencias {
 	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '23', '8');
 	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '24', '8');
 
+	UPDATE `u115752684_asesores`.`tbroles` SET `descripcion`='Gerente Comercial' WHERE `idrol`='3';
+
+
 	*/
 
 	function traerTipopersonas() {
@@ -833,7 +836,14 @@ class ServiciosReferencias {
 		return $res;
 	}
 
-	function traerEntrevistaoportunidadesCalendar() {
+	function traerEntrevistaoportunidadesCalendar($refgerentecomercial) {
+
+		if ($refgerentecomercial != 0) {
+			$whereAd = ' where us.idusuario = '.$refgerentecomercial;
+		} else {
+			$whereAd = '';
+		}
+
 		$sql = "select
 		e.identrevistaoportunidad,
 		concat('Entrevista con ',' ',opo.apellidopaterno,' ',opo.apellidomaterno,' ',opo.nombre) as title,
@@ -855,6 +865,7 @@ class ServiciosReferencias {
 		inner join dbusuarios us ON us.idusuario = opo.refusuarios
 		inner join tbestadooportunidad es ON es.idestadooportunidad = opo.refestadooportunidad
 		inner join tbestadoentrevistas est ON est.idestadoentrevista = e.refestadoentrevistas
+		".$whereAd."
 		order by e.fecha";
 		$res = $this->query($sql,0);
 		return $res;
@@ -908,6 +919,7 @@ class ServiciosReferencias {
 	}
 
 	function traerEntrevistaoportunidadesPorUsuarioCalendar($id) {
+
 		$sql = "select
 		e.identrevistaoportunidad,
 		concat('Entrevista con ',' ',opo.apellidopaterno,' ',opo.apellidomaterno,' ',opo.nombre) as title,
@@ -927,7 +939,8 @@ class ServiciosReferencias {
 		inner join dbusuarios us ON us.idusuario = opo.refusuarios
 		inner join tbestadooportunidad es ON es.idestadooportunidad = opo.refestadooportunidad
 		inner join tbestadoentrevistas est ON est.idestadoentrevista = e.refestadoentrevistas
-		where us.idusuario =".$id;
+		where us.idusuario =".$id.$whereAd;
+
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -2710,28 +2723,62 @@ class ServiciosReferencias {
 		return $res;
 	}
 
-	function traerEntrevistasCalendar() {
-		$sql = "select
-		e.identrevista,
-		e.refpostulantes,
-		concat('Entrevista ', ep.estadopostulante, ' con Postulante: ', pos.apellidopaterno, ' ', pos.apellidomaterno, ' ', pos.nombre) as title,
-		concat('Entrevista ', ep.estadopostulante, ' con Postulante: ', pos.apellidopaterno, ' ', pos.apellidomaterno, ' ', pos.nombre, ' - Estado: ', est.estadoentrevista) as description,
-		'#F5B041' as color,
-		e.entrevistador,
-		e.fecha as start,
-		e.domicilio,
-		e.codigopostal,
-		e.refestadopostulantes,
-		e.refestadoentrevistas,
-		e.fechacrea,
-		e.fechamodi,
-		e.usuariocrea,
-		e.usuariomodi
-		from dbentrevistas e
-		inner join dbpostulantes pos ON pos.idpostulante = e.refpostulantes
-		inner join tbestadopostulantes ep ON ep.idestadopostulante = e.refestadopostulantes
-		inner join tbestadoentrevistas est ON est.idestadoentrevista = e.refestadoentrevistas
-		order by 1";
+	function traerEntrevistasCalendar($refgerentecomercial) {
+
+		if ($refgerentecomercial != 0) {
+
+			$sql = "select
+			e.identrevista,
+			e.refpostulantes,
+			concat('Entrevista ', ep.estadopostulante, ' con Postulante: ', pos.apellidopaterno, ' ', pos.apellidomaterno, ' ', pos.nombre) as title,
+			concat('Entrevista ', ep.estadopostulante, ' con Postulante: ', pos.apellidopaterno, ' ', pos.apellidomaterno, ' ', pos.nombre, ' - Estado: ', est.estadoentrevista) as description,
+			'#F5B041' as color,
+			e.entrevistador,
+			e.fecha as start,
+			e.domicilio,
+			e.codigopostal,
+			e.refestadopostulantes,
+			e.refestadoentrevistas,
+			e.fechacrea,
+			e.fechamodi,
+			e.usuariocrea,
+			e.usuariomodi,
+			coalesce(usu.nombrecompleto, e.entrevistador) as nombrecompleto
+			from dbentrevistas e
+			inner join dbpostulantes pos ON pos.idpostulante = e.refpostulantes
+			inner join dbreclutadorasores rc on rc.refpostulantes = pos.idpostulante
+			inner join dbusuarios usu on usu.idusuario = rc.refusuarios
+			inner join tbestadopostulantes ep ON ep.idestadopostulante = e.refestadopostulantes
+			inner join tbestadoentrevistas est ON est.idestadoentrevista = e.refestadoentrevistas
+			where usu.idusuario = ".$refgerentecomercial."
+			order by 1";
+		} else {
+			$sql = "select
+			e.identrevista,
+			e.refpostulantes,
+			concat('Entrevista ', ep.estadopostulante, ' con Postulante: ', pos.apellidopaterno, ' ', pos.apellidomaterno, ' ', pos.nombre) as title,
+			concat('Entrevista ', ep.estadopostulante, ' con Postulante: ', pos.apellidopaterno, ' ', pos.apellidomaterno, ' ', pos.nombre, ' - Estado: ', est.estadoentrevista) as description,
+			'#F5B041' as color,
+			e.entrevistador,
+			e.fecha as start,
+			e.domicilio,
+			e.codigopostal,
+			e.refestadopostulantes,
+			e.refestadoentrevistas,
+			e.fechacrea,
+			e.fechamodi,
+			e.usuariocrea,
+			e.usuariomodi,
+			coalesce(usu.nombrecompleto, e.entrevistador) as nombrecompleto
+			from dbentrevistas e
+			inner join dbpostulantes pos ON pos.idpostulante = e.refpostulantes
+			left join dbreclutadorasores rc on rc.refpostulantes = pos.idpostulante
+			left join dbusuarios usu on usu.idusuario = rc.refusuarios
+			inner join tbestadopostulantes ep ON ep.idestadopostulante = e.refestadopostulantes
+			inner join tbestadoentrevistas est ON est.idestadoentrevista = e.refestadoentrevistas
+			order by 1";
+		}
+
 		$res = $this->query($sql,0);
 		return $res;
 	}

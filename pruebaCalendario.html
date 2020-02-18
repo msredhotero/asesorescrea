@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <title>Hola Mundo!</title>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+		<script>
+  $( function() {
+    $( "#datepicker" ).datepicker();
+  } );
+  </script>
+    </head>
+    <body>
+        <div style="width: 800px; height: 100px; background-color: #F34;">
+        	<table border="0" align="center" cellpadding="3" cellspacing="3" class="campos_" id="id_TABLA_FORM">
+        		<tr>
+        			<td><input type="text" name="FECHA_DESDE" id="id_fecha_desde_" readonly="readonly" value="Entrada" class="campo_fecha_ ui-corner-all ui-state-default hasDatepicker ui-selectmenu-focus  ui-selectmenu-focus  ui-selectmenu-focus  ui-selectmenu-focus  ui-selectmenu-focus  ui-selectmenu-focus  ui-selectmenu-focus  ui-selectmenu-focus  ui-selectmenu-focus " style="text-decoration: none; color: rgb(85, 85, 85); z-index: 2147483647;">
+					</td>
+        			<td>
+        				<input type="text" name="FECHA_SALIDA" id="id_num_noches_" readonly="readonly" value="Salida" class="campo_fecha_ ui-corner-all ui-state-default ui-selectmenu-focus  ui-selectmenu-focus " style="text-decoration: none; color: rgb(85, 85, 85);">
+        			</td>
+        			<td><p>Date: <input type="text" id="datepicker" style="z-index: 999999;"></p></td>
+        			<td></td>
+        		</tr>
+        	</table>
+        </div>
+        <script>
+		  $( function() {
+		    $("#id_fecha_desde_").datepicker();
+		  });
+		  </script>
+
+    </body>
+</html>

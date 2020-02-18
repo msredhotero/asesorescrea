@@ -8,22 +8,24 @@ if (!isset($_SESSION['usua_sahilices']))
 include ('../includes/funcionesReferencias.php');
 $serviciosReferencias 	= new ServiciosReferencias();
 
+$refgerentecomercial = $_POST['refgerentecomercial'];
+
 switch ($_SESSION['idroll_sahilices']) {
    case 3:
       $resEntrevistasOportunidades = $serviciosReferencias->traerEntrevistaoportunidadesPorUsuarioCalendar($_SESSION['usuaid_sahilices']);
       $resEntrevistasPostulantes = $serviciosReferencias->traerEntrevistasCalendarPorUsuario($_SESSION['usuaid_sahilices']);
    break;
    case 1:
-      $resEntrevistasOportunidades = $serviciosReferencias->traerEntrevistaoportunidadesCalendar();
-      $resEntrevistasPostulantes = $serviciosReferencias->traerEntrevistasCalendar();
+      $resEntrevistasOportunidades = $serviciosReferencias->traerEntrevistaoportunidadesCalendar($refgerentecomercial);
+      $resEntrevistasPostulantes = $serviciosReferencias->traerEntrevistasCalendar($refgerentecomercial);
    break;
    case 8:
-      $resEntrevistasOportunidades = $serviciosReferencias->traerEntrevistaoportunidadesCalendar();
-      $resEntrevistasPostulantes = $serviciosReferencias->traerEntrevistasCalendar();
+      $resEntrevistasOportunidades = $serviciosReferencias->traerEntrevistaoportunidadesCalendar($refgerentecomercial);
+      $resEntrevistasPostulantes = $serviciosReferencias->traerEntrevistasCalendar($refgerentecomercial);
    break;
    default:
-      $resEntrevistasOportunidades = $serviciosReferencias->traerEntrevistaoportunidadesCalendar();
-      $resEntrevistasPostulantes = $serviciosReferencias->traerEntrevistasCalendar();
+      $resEntrevistasOportunidades = $serviciosReferencias->traerEntrevistaoportunidadesCalendar($refgerentecomercial);
+      $resEntrevistasPostulantes = $serviciosReferencias->traerEntrevistasCalendar($refgerentecomercial);
    break;
 }
 
@@ -51,10 +53,12 @@ $range_start = parseDateTime($_POST['start']);
 $range_end = parseDateTime($_POST['end']);
 
 // Parse the timeZone parameter if it is present.
-$time_zone = null;
-if (isset($_POST['timeZone'])) {
-  $time_zone = new DateTimeZone($_POST['timeZone']);
+$timezone = null;
+/*
+if (isset($_POST['timezone'])) {
+  $timezone = new DateTimeZone($_GET['timezone']);
 }
+*/
 
 // Read and parse our events JSON file into an array of event data arrays.
 //$json = file_get_contents(dirname(__FILE__) . '/../json/events.json');
@@ -65,7 +69,7 @@ $output_arrays = array();
 while ($array = mysql_fetch_array($resEntrevistasOportunidades)) {
 
   // Convert the input array into a useful Event object
-  $event = new Event($array, $time_zone);
+  $event = new Event($array, $timezone);
 
   // If the event is in-bounds, add it to the output
   if ($event->isWithinDayRange($range_start, $range_end)) {
@@ -76,7 +80,7 @@ while ($array = mysql_fetch_array($resEntrevistasOportunidades)) {
 while ($array = mysql_fetch_array($resEntrevistasPostulantes)) {
 
   // Convert the input array into a useful Event object
-  $event = new Event($array, $time_zone);
+  $event = new Event($array, $timezone);
 
   // If the event is in-bounds, add it to the output
   if ($event->isWithinDayRange($range_start, $range_end)) {
