@@ -13,7 +13,6 @@
 		include ('../../includes/funcionesUsuarios.php');
 		include ('../../includes/funcionesHTML.php');
 		include ('../../includes/funcionesReferencias.php');
-		include ('../../includes/base.php');
 		include ('../../includes/funcionesNotificaciones.php');
 
 		include '../../includes/ImageResize.php';
