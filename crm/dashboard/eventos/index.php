@@ -14,12 +14,16 @@ include ('../../includes/funcionesUsuarios.php');
 include ('../../includes/funcionesHTML.php');
 include ('../../includes/funcionesReferencias.php');
 include ('../../includes/base.php');
+include ('../../includes/funcionesMensajes.php');
 
 $serviciosFunciones 	= new Servicios();
 $serviciosUsuario 		= new ServiciosUsuarios();
 $serviciosHTML 			= new ServiciosHTML();
 $serviciosReferencias 	= new ServiciosReferencias();
 $baseHTML = new BaseHTML();
+$serviciosMensajes 	= new ServiciosMensajes();
+
+$serviciosMensajes->msgAsesorNuevo(1);
 
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
