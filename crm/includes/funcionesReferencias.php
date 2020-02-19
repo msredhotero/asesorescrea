@@ -3616,7 +3616,8 @@ class ServiciosReferencias {
 					    da.type,
 					    coalesce( ed.estadodocumentacion, 'Falta') as estadodocumentacion,
 						 ed.color,
-					    ed.idestadodocumentacion
+					    ed.idestadodocumentacion,
+						 d.carpeta
 					FROM
 					    dbdocumentaciones d
 					        LEFT JOIN

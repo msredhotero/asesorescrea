@@ -440,6 +440,10 @@ if (mysql_result($resultado,0,'refesquemareclutamiento') == 5 || mysql_result($r
 									<i class="material-icons">done_all</i>
 									<span>CONTINUAR</span>
 								</button>
+								<button type="button" class="btn btn-lg bg-orange waves-effect btnGenerar">
+									<i class="material-icons">class</i>
+									<span>GENERAR FOLIO</span>
+								</button>
 
 							<?php } ?>
 							<?php if ($permitePresentar == true) { ?>
@@ -514,6 +518,10 @@ if (mysql_result($resultado,0,'refesquemareclutamiento') == 5 || mysql_result($r
 			idTable =  $(this).attr("id");
 			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=" + idTable;
 			$(location).attr('href',url);
+		});
+
+		$('.btnGenerar').click(function() {
+			window.open("../../reportes/rptFolioParcial.php?id=<?php echo $id; ?>" ,'_blank');
 		});
 		<?php } ?>
 
