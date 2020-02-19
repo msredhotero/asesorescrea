@@ -14,18 +14,22 @@ switch ($_SESSION['idroll_sahilices']) {
    case 3:
       $resEntrevistasOportunidades = $serviciosReferencias->traerEntrevistaoportunidadesPorUsuarioCalendar($_SESSION['usuaid_sahilices']);
       $resEntrevistasPostulantes = $serviciosReferencias->traerEntrevistasCalendarPorUsuario($_SESSION['usuaid_sahilices']);
+		$resVisitasDeSeguimientos = $serviciosReferencias->traerAlertasPorUsuariosCalendario($_SESSION['usuaid_sahilices']);
    break;
    case 1:
       $resEntrevistasOportunidades = $serviciosReferencias->traerEntrevistaoportunidadesCalendar($refgerentecomercial);
       $resEntrevistasPostulantes = $serviciosReferencias->traerEntrevistasCalendar($refgerentecomercial);
+		$resVisitasDeSeguimientos = $serviciosReferencias->traerAlertasCalendario($refgerentecomercial);
    break;
    case 8:
       $resEntrevistasOportunidades = $serviciosReferencias->traerEntrevistaoportunidadesCalendar($refgerentecomercial);
       $resEntrevistasPostulantes = $serviciosReferencias->traerEntrevistasCalendar($refgerentecomercial);
+		$resVisitasDeSeguimientos = $serviciosReferencias->traerAlertasCalendario($refgerentecomercial);
    break;
    default:
       $resEntrevistasOportunidades = $serviciosReferencias->traerEntrevistaoportunidadesCalendar($refgerentecomercial);
       $resEntrevistasPostulantes = $serviciosReferencias->traerEntrevistasCalendar($refgerentecomercial);
+		$resVisitasDeSeguimientos = $serviciosReferencias->traerAlertasCalendario($refgerentecomercial);
    break;
 }
 
@@ -78,6 +82,17 @@ while ($array = mysql_fetch_array($resEntrevistasOportunidades)) {
 }
 
 while ($array = mysql_fetch_array($resEntrevistasPostulantes)) {
+
+  // Convert the input array into a useful Event object
+  $event = new Event($array, $timezone);
+
+  // If the event is in-bounds, add it to the output
+  if ($event->isWithinDayRange($range_start, $range_end)) {
+    $output_arrays[] = $event->toArray();
+  }
+}
+
+while ($array = mysql_fetch_array($resVisitasDeSeguimientos)) {
 
   // Convert the input array into a useful Event object
   $event = new Event($array, $timezone);

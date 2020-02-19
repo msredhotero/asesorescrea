@@ -44,6 +44,35 @@ class ServiciosMensajes {
 		return mail($destinatario,$asunto,$cuerpo,$headers);
 	}
 
+	function traerAsesoresPorId($id) {
+		$sql = "select idasesor,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,fechacrea,fechamodi,usuariocrea,usuariomodi from dbasesores where idasesor =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function cantidadAsesores() {
+		$sql = 'select count(*) from dbasesores';
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerAsesoresPorGerente() {
+		$sql = "select
+			count(a.idasesor) as cantidad,
+			usu.nombrecompleto
+			from dbasesores a
+			inner join dbusuarios u ON u.idusuario = a.refusuarios
+			inner join dbpostulantes pp on pp.refusuarios = u.idusuario
+		   inner join dbreclutadorasores rrr on rrr.refpostulantes = pp.idpostulante
+			inner join dbusuarios usu on usu.idusuario = rrr.refusuarios
+			group by usu.nombrecompleto
+			order by usu.nombrecompleto";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
    function traerPostulantesPorId($id) {
 		$sql = "select idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa, refestadocivil,nss,afore,cedula,folio,refesquemareclutamiento,
 		datediff(now(),fechanacimiento)/365 as edad, fechaalta from dbpostulantes where idpostulante =".$id;
@@ -268,7 +297,32 @@ class ServiciosMensajes {
       return '';
    }
 
+	function msgAsesorNuevo($idasesor) {
+		$resAsesor = $this->traerAsesoresPorId($idasesor);
 
+		$resCantidad = $this->cantidadAsesores();
+
+		$resDetalle = $this->traerAsesoresPorGerente();
+
+		$cuerpo = '';
+		$cuerpo .= '<h4>Asesor Nuevo: '.mysql_result($resAsesor,0,'apellidopaterno').' '.mysql_result($resAsesor,0,'apellidomaterno').' '.mysql_result($resAsesor,0,'nombre').'</h4>';
+
+		$cuerpo .= '<h5>Cantidad de Asesores: '.mysql_result($resCantidad,0,1).'</h5>';
+
+		while ($row = mysql_fetch_array($resDetalle)) {
+			$cuerpo .= '<p>Gerente: '.$row['nombrecompleto'].' , Cantidad de Asesores: '.$row['cantidad'].'</p>';
+		}
+
+		$destinatario = 'msredhotero@msn.com, msredhotero@gmail.com';
+		$destinatario = 'jfoncerrada@icloud.com, msredhotero@gmail.com';
+
+		$asunto = 'Se genero un nuevo Asesor';
+
+      $resEmail = $this->enviarEmail($destinatario,$asunto,$cuerpo);
+
+      return '';
+
+	}
 
 
 

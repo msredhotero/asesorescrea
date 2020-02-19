@@ -608,7 +608,7 @@ switch ($accion) {
    break;
 
    case 'migrarPostulante':
-      migrarPostulante($serviciosReferencias);
+      migrarPostulante($serviciosReferencias, $serviciosMensajes);
    break;
 
    case 'enviarAlerta':
@@ -693,11 +693,66 @@ switch ($accion) {
    case 'generarNotificacion':
    	generarNotificacion($serviciosNotificaciones);
 	break;
-/****			fin 				******/
+   /****			fin 				******/
+
+   case 'insertarAlertas':
+      insertarAlertas($serviciosReferencias);
+   break;
+   case 'modificarAlertas':
+      modificarAlertas($serviciosReferencias);
+   break;
+   case 'eliminarAlertas':
+      eliminarAlertas($serviciosReferencias);
+   break;
 
 
 }
 /* Fin */
+
+function insertarAlertas($serviciosReferencias) {
+   $reftiposeguimientos = 1;
+   $motivo = $_POST['motivo'];
+   $id = $_POST['refasesores'];
+   $fechacreacion = $_POST['fechacreacion'];
+   $refusuarios = $_POST['refusuarios'];
+
+   $res = $serviciosReferencias->insertarAlertas($reftiposeguimientos,$motivo,$id,$fechacreacion,$refusuarios);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarAlertas($serviciosReferencias) {
+   $id = $_POST['id'];
+   $reftiposeguimientos = $_POST['reftiposeguimientos'];
+   $motivo = $_POST['motivo'];
+   $id = $_POST['id'];
+   $fechacreacion = $_POST['fechacreacion'];
+   $refusuarios = $_POST['refusuarios'];
+
+   $res = $serviciosReferencias->modificarAlertas($id,$reftiposeguimientos,$motivo,$id,$fechacreacion,$refusuarios);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarAlertas($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarAlertas($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
 
 /****   	notificaciones * *************/
 function marcarNotificacion($serviciosNotificaciones) {
@@ -1251,7 +1306,7 @@ function enviarAlerta($serviciosReferencias,$serviciosUsuarios) {
    echo json_encode($resV);
 }
 
-function migrarPostulante($serviciosReferencias) {
+function migrarPostulante($serviciosReferencias, $serviciosMensajes) {
    session_start();
    $id = $_POST['id'];
    $usuario = $_SESSION['usua_sahilices'];
@@ -1259,7 +1314,11 @@ function migrarPostulante($serviciosReferencias) {
    $res = $serviciosReferencias->migrarPostulante($id,$usuario);
 
    if ((integer)$res > 0) {
+      $resMensaje = $serviciosMensajes->msgAsesorNuevo($res);
+      
       $res = $serviciosReferencias->modificarEstadoPostulante($id,10);
+
+
 
       echo '';
    } else {

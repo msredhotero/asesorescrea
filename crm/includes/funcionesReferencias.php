@@ -9,56 +9,182 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
-	/*
-	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('5', '1');
-	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('5', '4');
-	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('5', '2');
-	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('5', '7');
-	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('5', '8');
-	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('5', '9');
-	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('6', '1');
-	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('6', '4');
-	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('6', '2');
-	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('6', '7');
-	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('6', '8');
-	INSERT INTO `u115752684_asesores`.`dbguias` (`refesquemareclutamiento`, `refestadopostulantes`) VALUES ('6', '9');
+	/* PARA Alertas */
 
-	INSERT INTO `u115752684_asesores`.`dbdocumentaciones` (`reftipodocumentaciones`, `documentacion`, `obligatoria`, `cantidadarchivos`, `fechacrea`, `fechamodi`, `usuariocrea`, `usuariomodi`, `orden`, `carpeta`) VALUES ('2', 'Acta Constitutiva', '0', '1', '2020-01-31 00:00:00', '2020-01-31 00:00:00', 'marcos', 'marcos', '27', 'actacontitutiva');
-	INSERT INTO `u115752684_asesores`.`dbdocumentaciones` (`reftipodocumentaciones`, `documentacion`, `obligatoria`, `cantidadarchivos`, `fechacrea`, `fechamodi`, `usuariocrea`, `usuariomodi`, `orden`, `carpeta`) VALUES ('2', 'Oficio CNSF', '0', '1', '2020-01-31 00:00:00', '2020-01-31 00:00:00', 'marcos', 'marcos', '28', 'oficiocnsf');
-	INSERT INTO `u115752684_asesores`.`dbdocumentaciones` (`reftipodocumentaciones`, `documentacion`, `obligatoria`, `cantidadarchivos`, `fechacrea`, `fechamodi`, `usuariocrea`, `usuariomodi`, `orden`, `carpeta`) VALUES ('2', 'Cedula CNSF', '0', '1', '2020-01-31 00:00:00', '2020-01-31 00:00:00', 'marcos', 'marcos', '29', 'cedulacnsf');
+	function insertarAlertas($reftiposeguimientos,$motivo,$id,$fechacreacion,$refusuarios) {
+		$sql = "insert into dbalertas(idalerta,reftiposeguimientos,motivo,id,fechacreacion,refusuarios)
+		values ('',".$reftiposeguimientos.",'".$motivo."',".$id.",'".$fechacreacion."',".$refusuarios.")";
 
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '1', '2');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '3', '7');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '4', '7');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '7', '7');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '10', '7');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '27', '7');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '29', '7');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '30', '7');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '31', '7');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '20', '8');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '13', '8');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '14', '8');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '22', '8');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '23', '8');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('5', '24', '8');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '1', '2');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '3', '7');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '4', '7');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '7', '7');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '10', '7');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '29', '7');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '20', '8');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '13', '8');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '14', '8');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '22', '8');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '23', '8');
-	INSERT INTO `u115752684_asesores`.`dbesquemadocumentosestados` (`refesquemareclutamiento`, `refdocumentaciones`, `refestadopostulantes`) VALUES ('6', '24', '8');
-
-	UPDATE `u115752684_asesores`.`tbroles` SET `descripcion`='Gerente Comercial' WHERE `idrol`='3';
+		$res = $this->query($sql,1);
+		return $res;
+	}
 
 
-	*/
+	function modificarAlertas($id,$reftiposeguimientos,$motivo,$id,$fechacreacion,$refusuarios) {
+		$sql = "update dbalertas
+		set
+		reftiposeguimientos = ".$reftiposeguimientos.",motivo = '".$motivo."',id = ".$id.",fechacreacion = '".$fechacreacion."',refusuarios = ".$refusuarios."
+		where idalerta =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarAlertas($id) {
+		$sql = "delete from dbalertas where idalerta =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerAlertas() {
+		$sql = "select
+		a.idalerta,
+		a.reftiposeguimientos,
+		a.motivo,
+		a.id,
+		a.fechacreacion,
+		a.refusuarios
+		from dbalertas a
+		inner join tbtiposeguimientos tip ON tip.idtiposeguimiento = a.reftiposeguimientos
+		inner join dbusuarios u on u.idusuario = a.refusuarios
+		order by 1";
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerAlertasPorUsuarios($idusuario) {
+		$sql = "select
+		a.idalerta,
+		a.reftiposeguimientos,
+		a.motivo,
+		a.id,
+		a.fechacreacion,
+		a.refusuarios
+		from dbalertas a
+		inner join tbtiposeguimientos tip ON tip.idtiposeguimiento = a.reftiposeguimientos
+		inner join dbusuarios u on u.idusuario = a.refusuarios
+		where a.refusuarios = ".$refusuarios."
+		order by 1";
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerAlertasCalendario($refgerentecomercial) {
+		if ($refgerentecomercial == 0) {
+			$where = '';
+		} else {
+			$where = 'where u.idusuario = '.$refgerentecomercial;
+		}
+		$sql = "select
+		a.idalerta,
+		a.reftiposeguimientos,
+		concat('Visita de seguimiento asesor: ', ase.apellidopaterno,' ',ase.apellidomaterno,' ', ase.nombre) as description,
+		concat('Visita de seguimiento, motivo: ', a.motivo) as title,
+		a.id,
+		a.fechacreacion as start,
+		'#FF5733' as color,
+		a.refusuarios,
+		u.nombrecompleto
+		from dbalertas a
+		inner join tbtiposeguimientos tip ON tip.idtiposeguimiento = a.reftiposeguimientos
+		inner join dbusuarios u on u.idusuario = a.refusuarios
+		inner join dbasesores ase on ase.idasesor = a.id
+		".$where."
+		order by 1";
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerAlertasPorUsuariosCalendario($idusuario) {
+		$sql = "select
+		a.idalerta,
+		a.reftiposeguimientos,
+		concat('Visita de seguimiento asesor: ', ase.apellidopaterno,' ',ase.apellidomaterno,' ', ase.nombre) as description,
+		concat('Visita de seguimiento, motivo: ', a.motivo) as title,
+		'#FF5733' as color,
+		a.id,
+		a.fechacreacion as start,
+		a.refusuarios,
+		u.nombrecompleto
+		from dbalertas a
+		inner join tbtiposeguimientos tip ON tip.idtiposeguimiento = a.reftiposeguimientos
+		inner join dbusuarios u on u.idusuario = a.refusuarios
+		inner join dbasesores ase on ase.idasesor = a.id
+		where a.refusuarios = ".$refusuarios."
+		order by 1";
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerAlertasPorId($id) {
+		$sql = "select idalerta,reftiposeguimientos,motivo,id,fechacreacion from dbalertas where idalerta =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbalertas*/
+
+	/* PARA Tiposeguimientos */
+
+	function insertarTiposeguimientos($tiposeguimiento) {
+		$sql = "insert into tbtiposeguimientos(idtiposeguimiento,tiposeguimiento)
+		values ('','".$tiposeguimiento."')";
+
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarTiposeguimientos($id,$tiposeguimiento) {
+		$sql = "update tbtiposeguimientos
+		set
+		tiposeguimiento = '".$tiposeguimiento."'
+		where idtiposeguimiento =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarTiposeguimientos($id) {
+		$sql = "delete from tbtiposeguimientos where idtiposeguimiento =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerTiposeguimientos() {
+		$sql = "select
+		t.idtiposeguimiento,
+		t.tiposeguimiento
+		from tbtiposeguimientos t
+		order by 1";
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerTiposeguimientosPorId($id) {
+		$sql = "select idtiposeguimiento,tiposeguimiento from tbtiposeguimientos where idtiposeguimiento =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbtiposeguimientos*/
 
 	function traerTipopersonas() {
 		$sql = "select
