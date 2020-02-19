@@ -14,6 +14,7 @@
 		include ('../../includes/funcionesHTML.php');
 		include ('../../includes/funcionesReferencias.php');
 		include ('../../includes/base.php');
+		include ('../../includes/funcionesNotificaciones.php');
 
 		include '../../includes/ImageResize.php';
 		include '../../includes/ImageResizeException.php';
@@ -22,6 +23,7 @@
 		$serviciosUsuario 		= new ServiciosUsuarios();
 		$serviciosHTML 			= new ServiciosHTML();
 		$serviciosReferencias 	= new ServiciosReferencias();
+		$serviciosNotificaciones	= new ServiciosNotificaciones();
 
 		$archivo = $_FILES['file'];
 
@@ -39,7 +41,7 @@
 		if ($_SESSION['idroll_sahilices'] == 10) {
 			$idusuario = $_SESSION['usuaid_sahilices'];
 			$resultado 		= 	$serviciosReferencias->traerAsociadosPorUsuario($idusuario);
-			$id = mysql_result($resultado,0,'idpostulante');
+			$id = mysql_result($resultado,0,'idasociado');
 		} else {
 			$id = $_POST['idasociado'];
 			$resultado 		= 	$serviciosReferencias->traerAsociadosPorId($id);
@@ -97,6 +99,23 @@
 			$resEliminar = $serviciosReferencias->eliminarDocumentacionasesoresPorAsociadoDocumentacion($id,$iddocumentacion);
 
 			$resInsertar = $serviciosReferencias->insertarDocumentacionasociados($id,$iddocumentacion,$newname,$type,1,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices']);
+
+			/**** creo la notificacion ******/
+			$emailReferente = 'rlinares@asesorescrea.com'; //por ahora fijo
+			$mensaje = 'Se presento una documentacion: '.mysql_result($resDocumentacion,0,'documentacion');
+			$idpagina = 3;
+			$autor = mysql_result($resultado, 0, 'apellidopaterno').' '.mysql_result($resultado, 0, 'apellidomaterno').' '.mysql_result($resultado, 0, 'nombre');
+			$destinatario = $emailReferente;
+			$id1 = $id;
+			$id2 = 0;
+			$id3 = 0;
+			$icono = 'person_add';
+			$estilo = 'bg-light-green';
+			$fecha = date('Y-m-d H:i:s');
+			$url = "asociados/subirdocumentacioni.php?id=".$id."&documentacion=".$iddocumentacion;
+
+			$res = $serviciosNotificaciones->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url);
+			/*** fin de la notificacion ****/
 
 			if ($pos === false) {
 				$image = new \Gumlet\ImageResize($imagen_subida);

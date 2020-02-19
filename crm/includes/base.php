@@ -6,7 +6,10 @@
  */
 date_default_timezone_set('America/Mexico_City');
 
-class BaseHTML {
+include ('funcionesNotificaciones.php');
+$serviciosNoti = new ServiciosNotificaciones();
+
+class BaseHTML extends ServiciosNotificaciones {
 
     function cargarArchivosCSS($altura,$ar = array()) {
 
@@ -94,18 +97,23 @@ class BaseHTML {
 
     function cargarNotificaciones($datos = null, $altura = '') {
 
+      if ($_SESSION['idroll_sahilices'] == 4) {
+         $datos = $this->traerNotificacionesPorUsuarios('rlinares@asesorescrea.com');
+      } else {
+         $datos = $this->traerNotificacionesPorUsuarios($_SESSION['usua_sahilices']);
+      }
         $cad = '<ul class="menu lstNotificaciones">';
 
         while ($row = mysql_fetch_array($datos)) {
             $cad .= '<li>
-                            <a href="javascript:void(0);">
-                            <div class="icon-circle '.$row['color'].'">
+                            <a class="itemNotificacion" href="javascript:void(0);" data-url="'.$altura.$row['url'].'" id="'.$row['idnotificacion'].'" data-altura="'.$altura.'">
+                            <div class="icon-circle '.$row['estilo'].'">
                                 <i class="material-icons">'.$row['icono'].'</i>
                             </div>
                             <div class="menu-info">
-                                <h4>'.$row['titulo'].'</h4>
+                                <h4>'.$row['mensaje'].'</h4>
                                 <p>
-                                    <i class="material-icons">access_time</i> '.$row['fechacreacion'].'
+                                    <i class="material-icons">access_time</i> '.$row['fecha'].'
                                 </p>
                             </div>
                         </a>
@@ -113,8 +121,8 @@ class BaseHTML {
         }
 
         $cad .= '</ul>';
-
-        echo $cad;
+        //die(var_dump($cad));
+        return $cad;
     }
 
 
@@ -142,7 +150,31 @@ class BaseHTML {
       echo $cad;
    }
 
+   function root_path(){
+      $this_directory = dirname(__FILE__);
+      $archivos = scandir($this_directory);
+      $atras = "";
+      $cuenta = 0;
+      while (true) {
+         foreach($archivos as $actual) {
+            if ($actual == "root.path") {
+               if ($cuenta == 0)
+               return "./";
+               return $atras;
+            }
+         }
+         $cuenta++;
+         $atras = $atras . "../";
+         $archivos = scandir($atras);
+      }
+   }
+
+
     function cargarNAV($breadCumbs, $notificaciones='', $tareas='', $altura = '', $lstTareas='') {
+      if ($notificaciones == '') {
+         $notificaciones = $this->cargarNotificaciones('',($altura == '..' ? '' : '../'));
+         $cantidadNotificacionesNoLeidas = $this->traerNotificacionesNoLeidaPorUsuarios('rlinares@asesorescrea.com');
+      }
         $cad = '<nav class="navbar">
                     <div class="container-fluid">
                         <div class="navbar-header">
@@ -159,14 +191,12 @@ class BaseHTML {
                                 <li class="dropdown">
                                     <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button">
                                         <i class="material-icons">notifications</i>
-                                        <span class="label-count notificaciones-cantidad">0</span>
+                                        <span class="label-count notificaciones-cantidad">'.$cantidadNotificacionesNoLeidas.'</span>
                                     </a>
                                     <ul class="dropdown-menu">
                                         <li class="header">Notificaciones</li>
                                         <li class="body">
-                                           <ul class="menu notificaciones">
-
-                                           </ul>
+                                           '.$notificaciones.'
                                         </li>
                                         <li class="footer">
                                             <a href="javascript:void(0);">Ver Todas</a>

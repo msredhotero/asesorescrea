@@ -14,6 +14,7 @@
 		include ('../../includes/funcionesHTML.php');
 		include ('../../includes/funcionesReferencias.php');
 		include ('../../includes/base.php');
+		include ('../../includes/funcionesNotificaciones.php');
 
 		include '../../includes/ImageResize.php';
 		include '../../includes/ImageResizeException.php';
@@ -22,6 +23,7 @@
 		$serviciosUsuario 		= new ServiciosUsuarios();
 		$serviciosHTML 			= new ServiciosHTML();
 		$serviciosReferencias 	= new ServiciosReferencias();
+		$serviciosNotificaciones	= new ServiciosNotificaciones();
 
 		$archivo = $_FILES['file'];
 
@@ -57,73 +59,13 @@
 		$imagen = $serviciosReferencias->sanear_string(basename($archivo['name']));
 		$type = $archivo["type"];
 
+		$resDocumentacion = $serviciosReferencias->traerDocumentacionesPorId($iddocumentacion);
+
 
 		// desarrollo
-		switch ($iddocumentacion) {
-
-			case 3:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/inef/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['inef', time(), $extension]);
-			break;
-			case 4:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/ined/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['ined', time(), $extension]);
-			break;
-			case 5:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/actanacimiento/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['actanacimiento', time(), $extension]);
-			break;
-			case 6:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/curp/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['curp', time(), $extension]);
-			break;
-			case 7:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/rfc/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['rfc', time(), $extension]);
-			break;
-			case 8:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/nss/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['nss', time(), $extension]);
-			break;
-			case 9:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/comprobanteestudio/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['comprobanteestudio', time(), $extension]);
-			break;
-			case 10:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/comprobantedomicilio/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['comprobantedomicilio', time(), $extension]);
-			break;
-			case 11:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/cv/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['cv', time(), $extension]);
-			break;
-			case 12:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/infonavit/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['infonavit', time(), $extension]);
-			break;
-			case 26:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/cedulaseguros/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['cedulaseguros', time(), $extension]);
-			break;
-			case 27:
-				$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/rc/';
-				list($base,$extension) = explode('.',$name);
-				$newname = implode('.', ['rc', time(), $extension]);
-			break;
-
-		}
-
+		$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/'.mysql_result($resDocumentacion,0,'carpeta').'/';
+		list($base,$extension) = explode('.',$name);
+		$newname = implode('.', [mysql_result($resDocumentacion,0,'carpeta'), time(), $extension]);
 
 		// produccion
 		//$dir_destino = 'https://www.saupureinconsulting.com.ar/aifzn/data/'.mysql_result($resFoto,0,'iddocumentacionjugadorimagen').'/';
@@ -155,6 +97,23 @@
 			$resEliminar = $serviciosReferencias->eliminarDocumentacionasesoresPorPostulanteDocumentacion($idpostulante,$iddocumentacion);
 
 			$resInsertar = $serviciosReferencias->insertarDocumentacionasesores($idpostulante,$iddocumentacion,$newname,$type,1,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices']);
+
+			/**** creo la notificacion ******/
+			$emailReferente = 'rlinares@asesorescrea.com'; //por ahora fijo
+			$mensaje = 'Se presento una documentacion: '.mysql_result($resDocumentacion,0,'documentacion');
+			$idpagina = 1;
+			$autor = mysql_result($resultado, 0, 'apellidopaterno').' '.mysql_result($resultado, 0, 'apellidomaterno').' '.mysql_result($resultado, 0, 'nombre');
+			$destinatario = $emailReferente;
+			$id1 = $idpostulante;
+			$id2 = 0;
+			$id3 = 0;
+			$icono = 'person_add';
+			$estilo = 'bg-light-green';
+			$fecha = date('Y-m-d H:i:s');
+			$url = "postulantes/subirdocumentacioni.php?id=".$idpostulante."&documentacion=".$iddocumentacion;
+
+			$res = $serviciosNotificaciones->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url);
+			/*** fin de la notificacion ****/
 
 			if ($pos === false) {
 				$image = new \Gumlet\ImageResize($imagen_subida);

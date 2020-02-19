@@ -686,9 +686,38 @@ switch ($accion) {
       modificarAsociadoUnicaDocumentacion($serviciosReferencias);
    break;
 
+   /****   	notificaciones * *************/
+   case 'marcarNotificacion':
+   	marcarNotificacion($serviciosNotificaciones);
+	break;
+   case 'generarNotificacion':
+   	generarNotificacion($serviciosNotificaciones);
+	break;
+/****			fin 				******/
+
 
 }
 /* Fin */
+
+/****   	notificaciones * *************/
+function marcarNotificacion($serviciosNotificaciones) {
+	$id = $_POST['id'];
+
+	$res = $serviciosNotificaciones->marcarNotificacion($id);
+
+	if ($res == true) {
+      $resNotificacion = $serviciosNotificaciones->traerNotificacionesPorId($id);
+      $resV['mensaje'] = mysql_result($resNotificacion,0,'url');
+      $resV['error'] = false;
+	} else {
+      $resV['mensaje'] = 'Hubo un error al insertar datos';
+      $resV['error'] = true;
+	}
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
 
 /* nuevo 31/01/2020 */
 

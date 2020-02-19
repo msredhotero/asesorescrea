@@ -680,7 +680,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorAsociadoDocume
 					swal("Correcto!", resp.replace("1", ""), "success");
 					$('.btnGuardar').show();
 					$('.infoPlanilla').hide();
-					location.reload();
+					//location.reload();
 				});
 
 				this.on('error', function( file, resp ){

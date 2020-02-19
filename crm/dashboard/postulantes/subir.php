@@ -14,6 +14,7 @@
 		include ('../../includes/funcionesHTML.php');
 		include ('../../includes/funcionesReferencias.php');
 		include ('../../includes/base.php');
+		include ('../../includes/funcionesNotificaciones.php');
 
 		include '../../includes/ImageResize.php';
 		include '../../includes/ImageResizeException.php';
@@ -22,6 +23,7 @@
 		$serviciosUsuario 		= new ServiciosUsuarios();
 		$serviciosHTML 			= new ServiciosHTML();
 		$serviciosReferencias 	= new ServiciosReferencias();
+		$serviciosNotificaciones	= new ServiciosNotificaciones();
 
 		$archivo = $_FILES['file'];
 
@@ -38,6 +40,8 @@
 
 		$idpostulante = $_POST['idpostulante'];
 		$iddocumentacion = $_POST['iddocumentacion'];
+
+		$resultado = $serviciosReferencias->traerPostulantesPorId($idpostulante);
 
 		$resImagen = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacion($idpostulante,$iddocumentacion);
 
@@ -89,6 +93,23 @@
 			$resEliminar = $serviciosReferencias->eliminarDocumentacionasesoresPorPostulanteDocumentacion($idpostulante,$iddocumentacion);
 
 			$resInsertar = $serviciosReferencias->insertarDocumentacionasesores($idpostulante,$iddocumentacion,$newname,$type,1,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices']);
+
+			/**** creo la notificacion ******/
+			$emailReferente = 'rlinares@asesorescrea.com'; //por ahora fijo
+			$mensaje = 'Se presento una documentacion: '.mysql_result($resDocumentacion,0,'documentacion');
+			$idpagina = 1;
+			$autor = mysql_result($resultado, 0, 'apellidopaterno').' '.mysql_result($resultado, 0, 'apellidomaterno').' '.mysql_result($resultado, 0, 'nombre');
+			$destinatario = $emailReferente;
+			$id1 = $idpostulante;
+			$id2 = 0;
+			$id3 = 0;
+			$icono = 'person_add';
+			$estilo = 'bg-light-green';
+			$fecha = date('Y-m-d H:i:s');
+			$url = "postulantes/subirdocumentacioni.php?id=".$idpostulante."&documentacion=".$iddocumentacion;
+
+			$res = $serviciosNotificaciones->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url);
+			/*** fin de la notificacion ****/
 
 			if ($pos === false) {
 				$image = new \Gumlet\ImageResize($imagen_subida);

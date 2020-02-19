@@ -483,3 +483,44 @@ $('.maximizar').click(function() {
       $('.icomarcos').html('web');
   }
 });
+
+$('.itemNotificacion').click(function () {
+   id = $(this).attr("id");
+   var altura = $(this).data('altura');
+   var alturaURL = '';
+   if (altura == '') {
+      altura = '../';
+      alturaURL = '';
+   } else {
+      altura = '../../';
+      alturaURL = '../';
+   }
+
+   $.ajax({
+      url: altura + 'ajax/ajax.php',
+      type: 'POST',
+      // Form data
+      //datos del formulario
+      data: {accion: 'marcarNotificacion', id: id},
+      //mientras enviamos el archivo
+      beforeSend: function(){
+
+      },
+      //una vez finalizado correctamente
+      success: function(data){
+
+         if (data.error == false) {
+            //alert(alturaURL + data.mensaje);
+            $(location).attr('href', alturaURL + data.mensaje);
+         } else {
+            swal("Error!", data.mensaje, "warning");
+            $("#load").html('');
+         }
+      },
+      //si ha ocurrido un error
+      error: function(){
+         $(".alert").html('<strong>Error!</strong> Actualice la pagina');
+         $("#load").html('');
+      }
+   });
+});

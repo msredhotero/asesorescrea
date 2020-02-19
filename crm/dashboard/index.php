@@ -178,6 +178,7 @@ if (strlen($rechazadoC) > 0 ) {
 
 /********************* fin ********************************************/
 
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -283,7 +284,7 @@ if (strlen($rechazadoC) > 0 ) {
     </div>
     <!-- #END# Search Bar -->
     <!-- Top Bar -->
-    <?php echo $baseHTML->cargarNAV($breadCumbs); ?>
+    <?php echo $baseHTML->cargarNAV($breadCumbs,'','','..'); ?>
     <!-- #Top Bar -->
     <?php echo $baseHTML->cargarSECTION($_SESSION['usua_sahilices'], $_SESSION['nombre_sahilices'], str_replace('..','../dashboard',$resMenu),'../'); ?>
 
@@ -490,7 +491,7 @@ if (strlen($rechazadoC) > 0 ) {
 						</div>
 					</div>
 					<?php } ?>
-				
+
 			<?php } else { ?>
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
