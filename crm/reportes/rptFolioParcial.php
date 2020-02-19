@@ -92,17 +92,22 @@ while ($row = mysql_fetch_array($resFolio)) {
 
 if (count($ar)>0) {
 
+    if ($nombreTurno != '') {
+        $pdfi->addPDF($nombreTurno, 'all');
+    }
 
-   $pdfi->addPDF($nombreTurno, 'all');
 
    foreach ($ar as $value) {
       // code...
       //die(var_dump($ar));
       $pdfi->addPDF($value, 'all');
+      //echo $value.'<br>';
    }
 
-
+    //die(var_dump($ar));
    $pdfi->merge('browser', $directorio.'/archivos/postulantes/'.$id.'/foliocompleto/pagina3.pdf');
+
+
 
 } else {
    $pdf->Output($nombreTurno,'I');

@@ -46,10 +46,21 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 $resEntrevistasOportunidades = $serviciosReferencias->traerEntrevistaoportunidades();
 
-$resRoles 	= $serviciosUsuario->traerUsuariosPorRol(3);
+if ($_SESSION['idroll_sahilices'] == 3) {
+	$resRoles 	= $serviciosUsuario->traerUsuarioId($_SESSION['usuaid_sahilices']);
+} else {
+	$resRoles 	= $serviciosUsuario->traerUsuariosPorRol(3);
+}
+
 $cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
 
-$resAsesores 	= $serviciosReferencias->traerAsesores();
+
+if ($_SESSION['idroll_sahilices'] == 3) {
+	$resAsesores 	= $serviciosReferencias->traerAsesoresPorGerente($_SESSION['usuaid_sahilices'])
+} else {
+	$resAsesores 	= $serviciosReferencias->traerAsesores();
+}
+
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' ');
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
