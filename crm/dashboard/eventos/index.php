@@ -23,7 +23,7 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $baseHTML = new BaseHTML();
 $serviciosMensajes 	= new ServiciosMensajes();
 
-$serviciosMensajes->msgAsesorNuevo(1);
+//$serviciosMensajes->msgAsesorNuevo(1);
 
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');

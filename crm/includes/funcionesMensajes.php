@@ -307,7 +307,7 @@ class ServiciosMensajes {
 		$cuerpo = '';
 		$cuerpo .= '<h4>Asesor Nuevo: '.mysql_result($resAsesor,0,'apellidopaterno').' '.mysql_result($resAsesor,0,'apellidomaterno').' '.mysql_result($resAsesor,0,'nombre').'</h4>';
 
-		$cuerpo .= '<h5>Cantidad de Asesores: '.mysql_result($resCantidad,0,1).'</h5>';
+		$cuerpo .= '<h5>Cantidad de Asesores: '.mysql_result($resCantidad,0,0).'</h5>';
 
 		while ($row = mysql_fetch_array($resDetalle)) {
 			$cuerpo .= '<p>Gerente: '.$row['nombrecompleto'].' , Cantidad de Asesores: '.$row['cantidad'].'</p>';
