@@ -313,7 +313,7 @@ class ServiciosMensajes {
 			$cuerpo .= '<p>Gerente: '.$row['nombrecompleto'].' , Cantidad de Asesores: '.$row['cantidad'].'</p>';
 		}
 
-		$destinatario = 'msredhotero@msn.com, msredhotero@gmail.com';
+		//$destinatario = 'msredhotero@msn.com, msredhotero@gmail.com';
 		$destinatario = 'jfoncerrada@icloud.com, msredhotero@gmail.com';
 
 		$asunto = 'Se genero un nuevo Asesor';
