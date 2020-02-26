@@ -1315,7 +1315,7 @@ function migrarPostulante($serviciosReferencias, $serviciosMensajes) {
 
    if ((integer)$res > 0) {
       $resMensaje = $serviciosMensajes->msgAsesorNuevo($res);
-      
+
       $res = $serviciosReferencias->modificarEstadoPostulante($id,10);
 
 
@@ -1992,8 +1992,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
       case 'dbasesores':
          $resultado = $serviciosReferencias->traerAsesoresPorId($id);
 
-         $lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad');
-         $lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad');
+         $lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','nss','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta','urlprueba','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas');
+         $lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Nro de Seguro Social','Clave Interbancaria','ID Cliente Inbursa','Clave Asesor','Fecha de Alta','URL Prueba','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona');
 
 
 
@@ -2018,8 +2018,11 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 
          $cadRef6 	= "<option value='Mexico'>Mexico</option>";
 
-         $refdescripcion = array(0=> $cadRef1,1=> $cadRef2, 2=>$cadRef5,3=>$cadRef6);
-         $refCampo 	=  array('refusuarios','refescolaridades','sexo','codigopostal');
+         $resVar8 = $serviciosReferencias->traerTipopersonas();
+         $cadRef8 = $serviciosFunciones->devolverSelectBox($resVar8,array(1),'');
+
+         $refdescripcion = array(0=> $cadRef1,1=> $cadRef2, 2=>$cadRef5,3=>$cadRef6,4=>$cadRef8);
+         $refCampo 	=  array('refusuarios','refescolaridades','sexo','codigopostal','reftipopersonas');
       break;
       case 'dbpostulantes':
 
@@ -2360,7 +2363,7 @@ function modificarAsesores($serviciosReferencias) {
    $fechanacimiento = $_POST['fechanacimiento'];
    $sexo = $_POST['sexo'];
    $codigopostal = $_POST['codigopostal'];
-   $escolaridad = $_POST['escolaridad'];
+   $escolaridad = $_POST['refescolaridades'];
    $telefonomovil = $_POST['telefonomovil'];
    $telefonocasa = $_POST['telefonocasa'];
    $telefonotrabajo = $_POST['telefonotrabajo'];

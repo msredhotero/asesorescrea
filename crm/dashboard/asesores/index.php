@@ -55,8 +55,8 @@ $modificar = "modificarAsesores";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbasesores";
 
-$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad');
-$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad');
+$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','nss','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta','urlprueba','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas');
+$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Nro de Seguro Social','Clave Interbancaria','ID Cliente Inbursa','Clave Asesor','Fecha de Alta','URL Prueba','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona');
 
 
 $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
@@ -64,15 +64,15 @@ $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
 $resVar2	= $serviciosReferencias->traerEscolaridades();
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),'');
 
-$resVar3	= $serviciosReferencias->traerEstadocivil();
-$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
-
 $cadRef5 = "<option value=''>-- Seleccionar --</option><option value='1'>Femenino</option><option value='2'>Masculino</option>";
 
 $cadRef6 	= "<option value='Mexico'>Mexico</option>";
 
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3, 3=>$cadRef5,4=>$cadRef6);
-$refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','sexo','codigopostal');
+$resVar8 = $serviciosReferencias->traerTipopersonas();
+$cadRef8 = $serviciosFunciones->devolverSelectBox($resVar8,array(1),'');
+
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2, 2=>$cadRef5,3=>$cadRef6,4=>$cadRef8);
+$refCampo 	=  array('refusuarios','refescolaridades','sexo','codigopostal','reftipopersonas');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
