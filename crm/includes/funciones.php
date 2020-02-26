@@ -1419,7 +1419,7 @@ class Servicios {
 												$campo = strtolower($row[0]);
 
 												$form	=	$form.'
-												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 margTop  frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
+												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 margTop frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 													<label class="form-label">'.$label.'</label>
 													<div class="form-group">
 														<div class="form-line">

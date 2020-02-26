@@ -1002,8 +1002,11 @@ if (mysql_num_rows($resEstadoSiguiente) > 0) {
 	$(document).ready(function(){
 
 		<?php
+
 		if ($tipoPersona == 2) {
 		?>
+		$('.frmContine').hide();
+		$('.frmContcurp').hide();
 		$('.frmContsexo').hide();
 		$('.frmContrefescolaridades').hide();
 		$('.frmContrefestadocivil').hide();
