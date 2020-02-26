@@ -1272,7 +1272,7 @@ class Servicios {
 
 							$form	=	$form.'
 
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 margTop" style="display:'.$lblOculta.'">
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 margTop  frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 									<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
 									<select class="form-control show-tick" id="'.strtolower($campo).'" name="'.strtolower($campo).'">
 
@@ -1300,7 +1300,7 @@ class Servicios {
 
 								$form	=	$form.'
 
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12  frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 									<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
 									<div class="switch">';
 								if ($valorBit == 'Si') {
@@ -1327,7 +1327,7 @@ class Servicios {
 
 									$form	=	$form.'
 
-									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
+									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12  frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 										 <b>'.$label.'</b>
 										 <div class="input-group">
 											  <span class="input-group-addon">
@@ -1419,7 +1419,7 @@ class Servicios {
 												$campo = strtolower($row[0]);
 
 												$form	=	$form.'
-												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 margTop" style="display:'.$lblOculta.'">
+												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 margTop  frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 													<label class="form-label">'.$label.'</label>
 													<div class="form-group">
 														<div class="form-line">

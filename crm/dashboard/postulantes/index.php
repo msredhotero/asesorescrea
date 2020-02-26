@@ -92,7 +92,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 if ($_SESSION['idroll_sahilices'] == 3) {
 	$resOportunidades = $serviciosReferencias->traerOportunidadesPorUsuarioDisponibles($_SESSION['usuaid_sahilices']);
-	$cadRefOportunidades = $serviciosFunciones->devolverSelectBox($resOportunidades,array(1,2),' - ');
+	$cadRefOportunidades = $serviciosFunciones->devolverSelectBox($resOportunidades,array(1,13),' - ');
 
 	$resGrafico = $serviciosReferencias->graficoGerenteRendimiento($_SESSION['usuaid_sahilices']);
 
@@ -120,7 +120,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 } else {
 	$resOportunidades = $serviciosReferencias->traerOportunidadesDisponibles();
-	$cadRefOportunidades = $serviciosFunciones->devolverSelectBox($resOportunidades,array(1,2),' - ');
+	$cadRefOportunidades = $serviciosFunciones->devolverSelectBox($resOportunidades,array(1,13),' - ');
 }
 
 

@@ -1184,7 +1184,8 @@ class ServiciosReferencias {
 		o.refusuarios,
 		o.refreferentes,
 		o.refestadooportunidad,
-		o.refmotivorechazos,o.observaciones
+		o.refmotivorechazos,o.observaciones,
+		concat(o.apellidopaterno, ' ',o.apellidomaterno, ' ',o.nombre) as nombrecompleto
 		from dboportunidades o
 		inner join dbusuarios usu ON usu.idusuario = o.refusuarios
 		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
@@ -1565,7 +1566,8 @@ class ServiciosReferencias {
 		o.refusuarios,
 		o.refreferentes,
 		o.refestadooportunidad,
-		o.refmotivorechazos,o.observaciones
+		o.refmotivorechazos,o.observaciones,
+		concat(o.apellidopaterno, ' ',o.apellidomaterno, ' ',o.nombre) as nombrecompleto
 		from dboportunidades o
 		inner join dbusuarios usu ON usu.idusuario = o.refusuarios
 		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad

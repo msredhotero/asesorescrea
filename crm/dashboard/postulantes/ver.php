@@ -142,7 +142,8 @@ $codigopostal = mysql_result($resPostal,0,'codigo');
 
 $cadRef6 	= "<option value='Mexico'>Mexico</option>";
 
-$resVar10 = $serviciosReferencias->traerTipopersonasPorId(mysql_result($resultado,0,'reftipopersonas'));
+$tipoPersona = mysql_result($resultado,0,'reftipopersonas');
+$resVar10 = $serviciosReferencias->traerTipopersonasPorId($tipoPersona);
 $cadRef10 = $serviciosFunciones->devolverSelectBox($resVar10,array(1),'');
 
 $refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadRef7,7=>$cadRef8,8=>$cadRef9,9=> $cadRef10);
@@ -999,6 +1000,22 @@ if (mysql_num_rows($resEstadoSiguiente) > 0) {
 	<?php } ?>
 
 	$(document).ready(function(){
+
+		<?php
+		if ($tipoPersona == 2) {
+		?>
+		$('.frmContsexo').hide();
+		$('.frmContrefescolaridades').hide();
+		$('.frmContrefestadocivil').hide();
+		$('.frmConttelefonocasa').hide();
+		$('.frmContafore').hide();
+		$('.frmContnss').hide();
+		$('.frmContvigdesdeafore').hide();
+		$('.frmContvighastaafore').hide();
+		$('.frmContreftipopersonas').hide();
+		<?php
+		}
+		?>
 
 		$('#vigdesdeafore').pickadate({
 			format: 'yyyy-mm-dd',

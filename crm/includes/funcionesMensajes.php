@@ -39,7 +39,7 @@ class ServiciosMensajes {
 		$headers .= "Return-path: ".$destinatario."\r\n";
 
 		//direcciones que recibirán copia oculta
-		$headers .= "Bcc: msredhotero@msn.com\r\n";
+		$headers .= "Bcc: msredhotero@gmail.com\r\n";
 
 		return mail($destinatario,$asunto,$cuerpo,$headers);
 	}
@@ -304,17 +304,28 @@ class ServiciosMensajes {
 
 		$resDetalle = $this->traerAsesoresPorGerente();
 
+		if (mysql_num_rows($resCantidad) > 0) {
+			$cantidadAsesores = mysql_result($resCantidad,0,0);
+		} else {
+			$cantidadAsesores = 0;
+		}
+
+		$cantidadDetalle = 0;
+
 		$cuerpo = '';
 		$cuerpo .= '<h4>Asesor Nuevo: '.mysql_result($resAsesor,0,'apellidopaterno').' '.mysql_result($resAsesor,0,'apellidomaterno').' '.mysql_result($resAsesor,0,'nombre').'</h4>';
 
-		$cuerpo .= '<h5>Cantidad de Asesores: '.mysql_result($resCantidad,0,0).'</h5>';
+		$cuerpo .= '<h5>Cantidad de Asesores: '.$cantidadAsesores.'</h5>';
 
 		while ($row = mysql_fetch_array($resDetalle)) {
 			$cuerpo .= '<p>Gerente: '.$row['nombrecompleto'].' , Cantidad de Asesores: '.$row['cantidad'].'</p>';
+			$cantidadDetalle += $row['cantidad'];
 		}
 
+		$cuerpo .= '<p>Oficina: '.($cantidadAsesores - $cantidadDetalle).'</p>';
+
 		//$destinatario = 'msredhotero@msn.com, msredhotero@gmail.com';
-		$destinatario = 'jfoncerrada@icloud.com, msredhotero@gmail.com';
+		$destinatario = 'jfoncerrada@icloud.com, luis@grupojavelly.com';
 
 		$asunto = 'Se genero un nuevo Asesor';
 
