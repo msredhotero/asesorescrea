@@ -55,8 +55,8 @@ $modificar = "modificarPostulantes";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbpostulantes";
 
-$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas');
-$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona');
+$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas','razonsocial');
+$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona','Razon Social');
 
 
 $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
@@ -491,6 +491,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			$('#refesquemareclutamiento option[value="6"]').removeAttr("disabled");
 			$('#refesquemareclutamiento').val(5);
 			$('#sexo').val(1);
+			$('.frmContrazonsocial').show();
 
 		});
 
@@ -515,6 +516,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			$('#refesquemareclutamiento option[value="5"]').prop("disabled","true");
 			$('#refesquemareclutamiento option[value="6"]').prop("disabled","true");
 			$('#refesquemareclutamiento').val(1);
+			$('.frmContrazonsocial').hide();
 
 		});
 
@@ -579,6 +581,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 						$('#telefonomovil').val(data.telefonomovil);
 						$('#telefonotrabajo').val(data.telefonotrabajo);
 						$('#email').val(data.email);
+						$('#razonsocial').val(data.nombredespacho);
 
 
 					} else {
@@ -588,6 +591,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 						$('#telefonomovil').val('');
 						$('#telefonotrabajo').val('');
 						$('#email').val('');
+						$('#razonsocial').val('');
 					}
 				},
 				//si ha ocurrido un error
