@@ -1178,6 +1178,36 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function traerOportunidadesGrid($responsableComercial) {
+
+		if ($responsableComercial != '') {
+	      $roles = "where usu.idusuario = ".$responsableComercial."  ";
+	   } else {
+	      $roles = '';
+	   }
+
+		$sql = "select
+		o.idoportunidad,
+		o.nombredespacho,
+		o.apellidopaterno,
+		o.apellidomaterno,
+		o.nombre,
+		o.telefonomovil,
+		o.telefonotrabajo,
+		o.email,
+		o.refusuarios,
+		o.refreferentes,
+		o.refestadooportunidad,
+		o.refmotivorechazos,o.observaciones
+		from dboportunidades o
+		inner join dbusuarios usu ON usu.idusuario = o.refusuarios
+		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
+		".$roles."
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 	function traerOportunidadesDisponibles() {
 		$sql = "select
 		o.idoportunidad,
@@ -1203,13 +1233,25 @@ class ServiciosReferencias {
 		return $res;
 	}
 
-	function traerOportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir) {
+	function traerOportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial) {
 
 		$where = '';
 
+		$roles = '';
+
+	   if ($responsableComercial != '') {
+	      $roles = " usu.idusuario = ".$responsableComercial." and ";
+	   } else {
+	      $roles = '';
+	   }
+
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " where o.nombredespacho like '%".$busqueda."%' or o.apellidopaterno like '%".$busqueda."%' or o.apellidomaterno like '%".$busqueda."%' or o.nombre like '%".$busqueda."%' or o.telefonomovil like '%".$busqueda."%' or o.telefonotrabajo like '%".$busqueda."%' or o.email like '%".$busqueda."%' or usu.nombrecompleto like '%".$busqueda."%' or est.estadooportunidad like '%".$busqueda."%'";
+			$where = " where ".$roles." (o.nombredespacho like '%".$busqueda."%' or o.apellidopaterno like '%".$busqueda."%' or o.apellidomaterno like '%".$busqueda."%' or o.nombre like '%".$busqueda."%' or o.telefonomovil like '%".$busqueda."%' or o.telefonotrabajo like '%".$busqueda."%' or o.email like '%".$busqueda."%' or usu.nombrecompleto like '%".$busqueda."%' or est.estadooportunidad like '%".$busqueda."%')";
+		} else {
+			if ($responsableComercial != '') {
+	         $where = " where usu.idusuario = ".$responsableComercial." ";
+	      }
 		}
 
 
@@ -1236,6 +1278,8 @@ class ServiciosReferencias {
 		".$where."
 		ORDER BY ".$colSort." ".$colSortDir."
 		limit ".$start.",".$length;
+
+		//die(var_dump($sql));
 
 		$res = $this->query($sql,0);
 		return $res;
@@ -1733,7 +1777,25 @@ class ServiciosReferencias {
 		r.nombre,
 		r.telefono,
 		r.email,
-		r.observaciones
+		r.observaciones,
+		r.refusuarios
+		from tbreferentes r
+		left join dbusuarios usu on usu.idusuario = r.refusuarios
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerReferentesUsuario() {
+		$sql = "select
+		r.refusuarios,
+		r.apellidopaterno,
+		r.apellidomaterno,
+		r.nombre,
+		r.telefono,
+		r.email,
+		r.observaciones,
+		r.idreferente
 		from tbreferentes r
 		left join dbusuarios usu on usu.idusuario = r.refusuarios
 		order by 1";

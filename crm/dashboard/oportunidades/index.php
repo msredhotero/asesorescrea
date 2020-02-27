@@ -69,14 +69,17 @@ $cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
 if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)) {
 	$resReferentes 	= $serviciosReferencias->traerReferentesPorUsuario($_SESSION['usuaid_sahilices']);
 	$cadRef2 = "";
-
+	$cadRefFiltro = '<option value="">'.$_SESSION['nombre_sahilices'].'</option>';
 } else {
 	$resReferentes 	= $serviciosReferencias->traerReferentes();
-	$cadRef2 = "<option value=''>-- Seleccionar --</option>";
+	$cadRef2 = '<option value="">-- Seleccionar --</option>';
+	$resReferentesUsuarios = $serviciosReferencias->traerReferentesUsuario();
+	$cadRefFiltro = $cadRef1;
 }
 
 
 $cadRef2 .= $serviciosFunciones->devolverSelectBox($resReferentes,array(1,2,3),' ');
+
 
 $resEstado 	= $serviciosReferencias->traerEstadooportunidadPorId(1);
 $cadRef3 = $serviciosFunciones->devolverSelectBox($resEstado,array(1),' ');
@@ -234,7 +237,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Tel. Movil</th>
 												<th>Tel. Trabajo</th>
 												<th>Email</th>
-												<th>Reclutador</th>
+												<th class="perfilS">Resp.Comercial</th>
 												<th>Estado</th>
 												<th>Ref.</th>
 												<th>Fecha</th>
@@ -250,7 +253,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Tel. Movil</th>
 												<th>Tel. Trabajo</th>
 												<th>Email</th>
-												<th>Reclutador</th>
+												<th>Resp.Comercial</th>
 												<th>Estado</th>
 												<th>Ref.</th>
 												<th>Fecha</th>
@@ -273,7 +276,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Tel. Movil</th>
 												<th>Tel. Trabajo</th>
 												<th>Email</th>
-												<th>Reclutador</th>
+												<th class="perfilS">Resp.Comercial</th>
 												<th>Estado</th>
 												<th>Ref.</th>
 												<th>Fecha</th>
@@ -289,7 +292,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Tel. Movil</th>
 												<th>Tel. Trabajo</th>
 												<th>Email</th>
-												<th>Reclutador</th>
+												<th>Resp.Comercial</th>
 												<th>Estado</th>
 												<th>Ref.</th>
 												<th>Fecha</th>
@@ -419,6 +422,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=oportunidades",
+			"columnDefs": [
+		    { "orderable": false, "targets": 7 }
+		 	],
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -472,6 +478,19 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 				}
 			}
 		});
+
+		$("#example .perfilS").each( function ( i ) {
+			var select = $('<select><option value="">-- Seleccione Perfil --</option><?php echo $cadRefFiltro; ?></select>')
+				.appendTo( $(this).empty() )
+				.on( 'change', function () {
+					table.column( i )
+						.search( $(this).val() )
+						.draw();
+				} );
+			table.column( i ).data().unique().sort().each( function ( d, j ) {
+				select.append( '<option value="'+d+'">'+d+'</option>' )
+			} );
+		} );
 
 		$("#sign_in").submit(function(e){
 			e.preventDefault();

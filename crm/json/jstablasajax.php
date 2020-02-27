@@ -454,8 +454,9 @@ switch ($tabla) {
 				$class = array('bg-amber','bg-red');
 				$icon = array('create','delete');
 			} else {
-				$resAjax = $serviciosReferencias->traerOportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir);
-				$res = $serviciosReferencias->traerOportunidades();
+				$responsableComercial = $_GET['sSearch_0'];
+				$resAjax = $serviciosReferencias->traerOportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial);
+				$res = $serviciosReferencias->traerOportunidadesGrid($responsableComercial);
 				$label = array('btnModificar','btnEliminar');
 				$class = array('bg-amber','bg-red');
 				$icon = array('create','delete');
@@ -622,7 +623,7 @@ $id = 0;
 		//$id = $row[$indiceID];
 		// forma local utf8_decode
 		for ($i=$empieza;$i<=$termina;$i++) {
-			array_push($arAux, ($row[$i]));
+			array_push($arAux, utf8_decode($row[$i]));
 		}
 
 		if (($tabla == 'postulantes') || ($tabla == 'asesores') || ($tabla == 'asociados')) {
