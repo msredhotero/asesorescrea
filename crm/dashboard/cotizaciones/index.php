@@ -61,66 +61,35 @@ $lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','E
 
 $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
 
-$resVar2	= $serviciosReferencias->traerEscolaridades();
-$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),'');
+$resVar2	= $serviciosReferencias->traerClientes();
+$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(4,2,3),' ');
 
-$resVar3	= $serviciosReferencias->traerEstadocivil();
+$resVar3	= $serviciosReferencias->traerProductos();
 $cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
 
-$resVar4	= $serviciosReferencias->traerEstadopostulantesPorId(1);
-$cadRef4 = $serviciosFunciones->devolverSelectBox($resVar4,array(1),'');
+$resVar4	= $serviciosReferencias->traerAsesores();
+$cadRef4 = $serviciosFunciones->devolverSelectBox($resVar4,array(4,2,3),' ');
 
-$cadOpcion = "<option value='0'>No</option><option value='1'>Si</option>";
 
-$cadRef5 = "<option value=''>-- Seleccionar --</option><option value='1'>Femenino</option><option value='2'>Masculino</option>";
+$resVar5	= $serviciosReferencias->traerAsociados();
+$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(4,2,3),' ');
 
-$cadRef6 	= "<option value='Mexico'>Mexico</option>";
 
-$resVar7 = $serviciosReferencias->traerEsquemareclutamiento();
-$cadRef7 = $serviciosFunciones->devolverSelectBox($resVar7,array(1),'');
+$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId(1);
+$cadRef6 = $serviciosFunciones->devolverSelectBox($resVar6,array(1),'');
 
-$_SESSION['token'] = $serviciosReferencias->GUID();
 
-$resVar8 = $serviciosReferencias->traerTipopersonas();
-$cadRef8 = $serviciosFunciones->devolverSelectBox($resVar8,array(1),'');
-
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadOpcion,7=>$cadOpcion,8=>$cadRef7,9=>$cadRef8);
-$refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','refestadopostulantes','sexo','nacionalidad','afore','cedula','refesquemareclutamiento','reftipopersonas');
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6);
+$refCampo 	=  array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 if ($_SESSION['idroll_sahilices'] == 3) {
-	$resOportunidades = $serviciosReferencias->traerOportunidadesPorUsuarioDisponibles($_SESSION['usuaid_sahilices']);
-	$cadRefOportunidades = $serviciosFunciones->devolverSelectBox($resOportunidades,array(1,13),' - ');
-
-	$resGrafico = $serviciosReferencias->graficoGerenteRendimiento($_SESSION['usuaid_sahilices']);
-
-	$completos = '';
-	$completosoportunidad = '';
-	$rechazados = '';
-	while ($rowG = mysql_fetch_array($resGrafico)) {
-		$completosoportunidad .= $rowG['completosoportunidades'].",";
-		$completos .= $rowG['completos'].",";
-		$rechazados .= $rowG['abandonaron'].",";
-	}
-
-
-	if (strlen($completosoportunidad) > 0 ) {
-		$completosoportunidad = substr($completosoportunidad,0,-1);
-	}
-
-	if (strlen($completos) > 0 ) {
-		$completos = substr($completos,0,-1);
-	}
-
-	if (strlen($rechazados) > 0 ) {
-		$rechazados = substr($rechazados,0,-1);
-	}
+	
 
 } else {
-	$resOportunidades = $serviciosReferencias->traerOportunidadesDisponibles();
-	$cadRefOportunidades = $serviciosFunciones->devolverSelectBox($resOportunidades,array(1,13),' - ');
+	
 }
 
 
@@ -248,11 +217,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 										<div class="button-demo">
 											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
 												<i class="material-icons">add</i>
-												<span>NUEVO - PERSONA FISICA</span>
-											</button>
-											<button type="button" class="btn bg-blue-grey waves-effect btnNuevoMoral" data-toggle="modal" data-target="#lgmNuevo">
-												<i class="material-icons">add</i>
-												<span>NUEVO - PERSONA MORAL</span>
+												<span>NUEVO</span>
 											</button>
 
 										</div>
@@ -265,31 +230,21 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
-												<th>Nombre</th>
-												<th>Apellido P.</th>
-												<th>Apellido M.</th>
-												<th>Email</th>
-												<th>Cod. Postal</th>
-												<th>Fecha</th>
+												<th>Cliente</th>
+												<th>Producto</th>
+												<th>Asesor</th>
+												<th>Asociado</th>
 												<th>Estado</th>
-												<?php if ($_SESSION['idroll_sahilices'] == 1) { ?>
-												<th>Tel.</th>
-												<?php } ?>
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
-												<th>Nombre</th>
-												<th>Apellido P.</th>
-												<th>Apellido M.</th>
-												<th>Email</th>
-												<th>Cod. Postal</th>
-												<th>Fecha</th>
+												<th>Cliente</th>
+												<th>Producto</th>
+												<th>Asesor</th>
+												<th>Asociado</th>
 												<th>Estado</th>
-												<?php if ($_SESSION['idroll_sahilices'] == 1) { ?>
-												<th>Tel.</th>
-												<?php } ?>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -300,30 +255,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 							</div>
 						</div>
 					</div>
-					<?php if ($_SESSION['idroll_sahilices'] == 3) { ?>
-					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-						<div class="card ">
-							<div class="header bg-blue">
-								<h2 style="color:#fff">
-									ESTADISTICA POSTULANTES COMPLETOS Y ABANDONADOS
-								</h2>
-								<ul class="header-dropdown m-r--5">
-									<li class="dropdown">
-										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-											<i class="material-icons">more_vert</i>
-										</a>
-										<ul class="dropdown-menu pull-right">
-											<li><a href="javascript:void(0);" class="recargar">Recargar</a></li>
-										</ul>
-									</li>
-								</ul>
-							</div>
-							<div class="body table-responsive">
-								<canvas id="pie_chart" height="150"></canvas>
-							</div>
-						</div>
-					</div>
-					<?php } ?>
+					
 				</div>
 			</div>
 		</div>
@@ -340,27 +272,9 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular); ?></h4>
 	               </div>
 	               <div class="modal-body">
-							<div class="row">
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
-									<label for="oportunidades" class="control-label" style="text-align:left">Defina si el Prospecto proviene de una Oportunidad cargada</label>
-									<div class="input-group col-md-12">
-										<select class="form-control" id="refoportunidades" name="refoportunidades">
-											<option value=''>-- Seleccionar --</option>
-											<?php echo $cadRefOportunidades; ?>
-										</select>
-									</div>
-								</div>
-							</div>
-							<hr>
-							<div class="row">
-								<?php echo $frmUnidadNegocios; ?>
-								<div class="col-xs-3" style="display:none">
-									<select class="form-control" id="codigopostalaux" name="codigopostalaux"  required readonly />
-									</select>
-								</div>
-								<input type="hidden" id="origen" name="origen" value="crm"/>
-							</div>
-
+						<div class="row">
+							<?php echo $frmUnidadNegocios; ?>
+						</div>
 	               </div>
 	               <div class="modal-footer">
 	                   <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
@@ -381,9 +295,9 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		                   <h4 class="modal-title" id="largeModalLabel">MODIFICAR <?php echo strtoupper($singular); ?></h4>
 		               </div>
 		               <div class="modal-body">
-								<div class="row frmAjaxModificar">
+							<div class="row frmAjaxModificar">
 
-								</div>
+							</div>
 		               </div>
 		               <div class="modal-footer">
 		                   <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
@@ -405,8 +319,8 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		                   <h4 class="modal-title" id="largeModalLabel">ELIMINAR <?php echo strtoupper($singular); ?></h4>
 		               </div>
 		               <div class="modal-body">
-										 <p>¿Esta seguro que desea eliminar el registro?</p>
-										 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
+							 <p>¿Esta seguro que desea eliminar el registro?</p>
+							 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
 		               </div>
 		               <div class="modal-footer">
 		                   <button type="button" class="btn btn-danger waves-effect eliminar">ELIMINAR</button>
@@ -428,8 +342,8 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		                   <h4 class="modal-title" id="largeModalLabel">ELIMINAR DEFINITIVO <?php echo strtoupper($singular); ?></h4>
 		               </div>
 		               <div class="modal-body">
-										 <p>¿Esta seguro que desea eliminar el registro?</p>
-										 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
+							 <p>¿Esta seguro que desea eliminar el registro?</p>
+							 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
 		               </div>
 		               <div class="modal-footer">
 		                   <button type="button" class="btn btn-danger waves-effect eliminarDefinitivo">ELIMINAR</button>
@@ -470,199 +384,17 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 <script>
 	$(document).ready(function(){
 
-		$('.btnNuevoMoral').click(function() {
-			$('.frmContsexo').hide();
-			$('.frmContrefescolaridades').hide();
-			$('.frmContrefestadocivil').hide();
-			$('.frmConttelefonocasa').hide();
-			$('.frmContafore').hide();
-			$('.frmContnss').hide();
-			$('.frmContvigdesdeafore').hide();
-			$('.frmContvighastaafore').hide();
-			$('.frmContreftipopersonas').hide();
-			$('#refescolaridades').val(6);
-			$('#refestadocivil').val(7);
-			$('#reftipopersonas').val(2);
-			$('#refesquemareclutamiento option[value="1"]').prop("disabled","true");
-			$('#refesquemareclutamiento option[value="2"]').prop("disabled","true");
-			$('#refesquemareclutamiento option[value="3"]').prop("disabled","true");
-			$('#refesquemareclutamiento option[value="4"]').prop("disabled","true");
-			$('#refesquemareclutamiento option[value="5"]').removeAttr("disabled");
-			$('#refesquemareclutamiento option[value="6"]').removeAttr("disabled");
-			$('#refesquemareclutamiento').val(5);
-			$('#sexo').val(1);
-			$('.frmContrazonsocial').show();
-
-		});
-
-		$('.btnNuevo').click(function() {
-			$('.frmContsexo').show();
-			$('.frmContrefescolaridades').show();
-			$('.frmContrefestadocivil').show();
-			$('.frmConttelefonocasa').show();
-			$('.frmContafore').show();
-			$('.frmContnss').show();
-			$('.frmContvigdesdeafore').show();
-			$('.frmContvighastaafore').show();
-			$('.frmContreftipopersonas').hide();
-			$('#refescolaridades').val(6);
-			$('#refestadocivil').val(7);
-			$('#reftipopersonas').val(1);
-
-			$('#refesquemareclutamiento option[value="1"]').removeAttr("disabled");
-			$('#refesquemareclutamiento option[value="2"]').removeAttr("disabled");
-			$('#refesquemareclutamiento option[value="3"]').removeAttr("disabled");
-			$('#refesquemareclutamiento option[value="4"]').removeAttr("disabled");
-			$('#refesquemareclutamiento option[value="5"]').prop("disabled","true");
-			$('#refesquemareclutamiento option[value="6"]').prop("disabled","true");
-			$('#refesquemareclutamiento').val(1);
-			$('.frmContrazonsocial').hide();
-
-		});
+		
 
 		<?php if ($_SESSION['idroll_sahilices'] == 3) { ?>
-		new Chart(document.getElementById("pie_chart").getContext("2d"), getChartJs('pie'));
-
-		function getChartJs(type) {
-			 var config = null;
-
-			 if (type === 'pie') {
-				config = {
-					 type: 'pie',
-					 data: {
-						  datasets: [{
-							   data: [<?php echo $completosoportunidad; ?>,<?php echo $rechazados; ?>,<?php echo $completos; ?>],
-							   backgroundColor: [
-									 "rgb(12, 241, 8)",
-									 "rgb(252, 12, 12)",
-									 "rgb(5, 187, 5)",
-									 "rgb(139, 195, 74)"
-							   ],
-						  }],
-						  labels: [
-							   "Concluidos x Oportunidad",
-							   "Rechazados",
-							   "Concluidos",
-							   "Light Green"
-						  ]
-					 },
-					 options: {
-						  responsive: true,
-						  legend: false
-					 }
-				}
-			}
-			return config;
-		}
+		
 		<?php } ?>
 
-		$('#refoportunidades').change(function() {
-			traerOportunidadesPorId($(this).val());
-		});
 
-		function traerOportunidadesPorId(id) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {accion: 'traerOportunidadesPorId',id: id},
-				//mientras enviamos el archivo
-				beforeSend: function(){
+		$('#telefonofijo').inputmask('999 9999999', { placeholder: '___ _______' });
+		$('#telefonocelular').inputmask('999 9999999', { placeholder: '___ _______' });
 
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data.error === false) {
-						$('#apellidopaterno').val(data.apellidopaterno);
-						$('#apellidomaterno').val(data.apellidomaterno);
-						$('#nombre').val(data.nombre);
-						$('#telefonomovil').val(data.telefonomovil);
-						$('#telefonotrabajo').val(data.telefonotrabajo);
-						$('#email').val(data.email);
-						$('#razonsocial').val(data.nombredespacho);
-
-
-					} else {
-						$('#apellidopaterno').val('');
-						$('#apellidomaterno').val('');
-						$('#nombre').val('');
-						$('#telefonomovil').val('');
-						$('#telefonotrabajo').val('');
-						$('#email').val('');
-						$('#razonsocial').val('');
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
-		}
-
-		$('#compania').prop('readOnly',true);
-
-		$('#token').val('se genera automaticamente');
-		$('#token').prop('readOnly',true);
-
-		$('#afore').change(function() {
-			if ($(this).val() == 1) {
-				$('#compania').prop('readOnly',false);
-			} else {
-				$('#compania').prop('readOnly',true);
-				$('#compania').val('');
-			}
-		});
-
-		$('#telefonomovil').inputmask('999 9999999', { placeholder: '___ _______' });
-		$('#telefonocasa').inputmask('999 9999999', { placeholder: '___ _______' });
-		$('#telefonotrabajo').inputmask('999 9999999', { placeholder: '___ _______' });
-
-
-		var options = {
-
-			url: "../../json/jsbuscarpostal.php",
-
-			getValue: function(element) {
-				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
-			},
-
-			ajaxSettings: {
-				dataType: "json",
-				method: "POST",
-				data: {
-					busqueda: $("#codigopostal").val()
-				}
-			},
-
-			preparePostData: function (data) {
-				data.busqueda = $("#codigopostal").val();
-				return data;
-			},
-
-			list: {
-				maxNumberOfElements: 20,
-				match: {
-					enabled: true
-				},
-				onClickEvent: function() {
-					var value = $("#codigopostal").getSelectedItemData().codigo;
-					$("#codigopostal").val(value);
-
-				}
-			}
-		};
-
-
-		$("#codigopostal").easyAutocomplete(options);
-
-		$('#usuariocrea').val('marcos');
-		$('#usuariomodi').val('marcos');
-		$('#ultimoestado').val(0);
-
-		$('#fechanacimiento').pickadate({
+		$('#fechaemitido').pickadate({
 			format: 'yyyy-mm-dd',
 			labelMonthNext: 'Siguiente mes',
 			labelMonthPrev: 'Previo mes',
@@ -679,7 +411,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
 		});
 
-		$('#vigdesdeafore').pickadate({
+		$('#fechapago').pickadate({
 			format: 'yyyy-mm-dd',
 			labelMonthNext: 'Siguiente mes',
 			labelMonthPrev: 'Previo mes',
@@ -695,66 +427,12 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
 		});
-
-		$('#vighastaafore').pickadate({
-			format: 'yyyy-mm-dd',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 100,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-		});
-
-		$('#vigdesdecedulaseguro').pickadate({
-			format: 'yyyy-mm-dd',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 100,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-		});
-
-		$('#vighastacedulaseguro').pickadate({
-			format: 'yyyy-mm-dd',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 100,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-		});
-
-
-
 
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
 			"order": [[ 5, "desc" ]],
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=postulantes",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizaciones",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",

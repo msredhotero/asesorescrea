@@ -16,6 +16,54 @@ class ServiciosReferencias {
 
 	*/
 
+	/* PARA Productos */
+
+	function insertarProductos($producto) {
+		$sql = "insert into tbproductos(idproducto,producto)
+		values ('','".$producto."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarProductos($id,$producto) {
+		$sql = "update tbproductos
+		set
+		producto = '".$producto."'
+		where idproducto =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarProductos($id) {
+		$sql = "delete from tbproductos where idproducto =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerProductos() {
+		$sql = "select
+		p.idproducto,
+		p.producto
+		from tbproductos p
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerProductosPorId($id) {
+		$sql = "select idproducto,producto from tbproductos where idproducto =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbproductos*/
+
 	/* PARA Documentacionclientes */
 
 	function modificarClienteUnicaDocumentacion($id, $campo, $valor) {
