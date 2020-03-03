@@ -176,6 +176,19 @@ switch ($tabla) {
 		$termina = 7;
 
 	break;
+	case 'clientes':
+
+
+		$resAjax = $serviciosReferencias->traerClientesajax($length, $start, $busqueda,$colSort,$colSortDir);
+		$res = $serviciosReferencias->traerClientes();
+		$label = array('btnModificar','btnEliminar','btnDocumentacion');
+		$class = array('bg-amber','bg-red','bg-blue');
+		$icon = array('Modificar','Eliminar','Documentaciones');
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 9;
+
+	break;
 	case 'postulantes':
 
 
@@ -626,7 +639,7 @@ $id = 0;
 			array_push($arAux, ($row[$i]));
 		}
 
-		if (($tabla == 'postulantes') || ($tabla == 'asesores') || ($tabla == 'asociados')) {
+		if (($tabla == 'postulantes') || ($tabla == 'asesores') || ($tabla == 'asociados') || ($tabla == 'clientes')) {
 			array_push($arAux, armarAccionesDropDown($row[0],$label,$class,$icon));
 		} else {
 			array_push($arAux, armarAcciones($row[0],$label,$class,$icon));

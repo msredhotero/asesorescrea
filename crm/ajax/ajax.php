@@ -2417,29 +2417,26 @@ function traerAsesores($serviciosReferencias) {
 
 
 function insertarClientes($serviciosReferencias) {
+   session_start();
+
+   $reftipopersonas = $_POST['reftipopersonas'];
    $nombre = $_POST['nombre'];
    $apellidopaterno = $_POST['apellidopaterno'];
    $apellidomaterno = $_POST['apellidomaterno'];
+   $razonsocial = $_POST['razonsocial'];
+   $domicilio = $_POST['domicilio'];
+   $telefonofijo = $_POST['telefonofijo'];
+   $telefonocelular = $_POST['telefonocelular'];
    $email = $_POST['email'];
-   $sexo = $_POST['sexo'];
-   $refestadocivil = $_POST['refestadocivil'];
    $rfc = $_POST['rfc'];
-   $curp = $_POST['curp'];
-   $fechanacimiento = $_POST['fechanacimiento'];
+   $ine = $_POST['ine'];
    $numerocliente = $_POST['numerocliente'];
-   $nacionalidad = $_POST['nacionalidad'];
-   $refpromotores = $_POST['refpromotores'];
-   $refasesores = $_POST['refasesores'];
-   $refrolhogar = $_POST['refrolhogar'];
-   $reftipoclientes = $_POST['reftipoclientes'];
-   $refentidadnacimiento = $_POST['refentidadnacimiento'];
-   $refusuarios = $_POST['refusuarios'];
-   $fechacrea = $_POST['fechacrea'];
-   $fechamodi = $_POST['fechamodi'];
-   $usuariocrea = $_POST['usuariocrea'];
-   $usuariomodi = $_POST['usuariomodi'];
-
-   $res = $serviciosReferencias->insertarClientes($nombre,$apellidopaterno,$apellidomaterno,$email,$sexo,$refestadocivil,$rfc,$curp,$fechanacimiento,$numerocliente,$nacionalidad,$refpromotores,$refasesores,$refrolhogar,$reftipoclientes,$refentidadnacimiento,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
+   $refusuarios = 0;
+   $fechacrea = date('Y-m-d H:i:s');
+   $fechamodi = date('Y-m-d H:i:s');
+   $usuariocrea = $_SESSION['usua_sahilices'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+   $res = $serviciosReferencias->insertarClientes($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi); 
 
    if ((integer)$res > 0) {
       echo '';
@@ -2450,32 +2447,30 @@ function insertarClientes($serviciosReferencias) {
 
 
 function modificarClientes($serviciosReferencias) {
+   session_start();
+
    $id = $_POST['id'];
+   $reftipopersonas = $_POST['reftipopersonas'];
    $nombre = $_POST['nombre'];
    $apellidopaterno = $_POST['apellidopaterno'];
    $apellidomaterno = $_POST['apellidomaterno'];
+   $razonsocial = $_POST['razonsocial'];
+   $domicilio = $_POST['domicilio'];
+   $telefonofijo = $_POST['telefonofijo'];
+   $telefonocelular = $_POST['telefonocelular'];
    $email = $_POST['email'];
-   $sexo = $_POST['sexo'];
-   $refestadocivil = $_POST['refestadocivil'];
    $rfc = $_POST['rfc'];
-   $curp = $_POST['curp'];
-   $fechanacimiento = $_POST['fechanacimiento'];
+   $ine = $_POST['ine'];
    $numerocliente = $_POST['numerocliente'];
-   $nacionalidad = $_POST['nacionalidad'];
-   $refpromotores = $_POST['refpromotores'];
-   $refasesores = $_POST['refasesores'];
-   $refrolhogar = $_POST['refrolhogar'];
-   $reftipoclientes = $_POST['reftipoclientes'];
-   $refentidadnacimiento = $_POST['refentidadnacimiento'];
    $refusuarios = $_POST['refusuarios'];
-   $fechacrea = $_POST['fechacrea'];
-   $fechamodi = $_POST['fechamodi'];
-   $usuariocrea = $_POST['usuariocrea'];
-   $usuariomodi = $_POST['usuariomodi'];
+   //$fechacrea = $_POST['fechacrea'];
+   $fechamodi = date('Y-m-d H:i:s');
+   //$usuariocrea = $_POST['usuariocrea'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
 
-   $res = $serviciosReferencias->modificarClientes($id,$nombre,$apellidopaterno,$apellidomaterno,$email,$sexo,$refestadocivil,$rfc,$curp,$fechanacimiento,$numerocliente,$nacionalidad,$refpromotores,$refasesores,$refrolhogar,$reftipoclientes,$refentidadnacimiento,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
+   $res = $serviciosReferencias->modificarClientes($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi);
 
-   if ($res == true) {
+   if ($res == true) { 
       echo '';
    } else {
       echo 'Hubo un error al modificar datos';

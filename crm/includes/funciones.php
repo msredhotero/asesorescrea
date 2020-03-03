@@ -438,7 +438,7 @@ class Servicios {
 			break;
 
 			default:
-				$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","tipoimagen","utilidad","idusuario");
+				$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","usuariocrea","usuariomodi","tipoimagen","utilidad","idusuario");
 				break;
 		}
 
@@ -500,7 +500,7 @@ class Servicios {
 							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
 								<label for="'.$label.'" class="control-label" style="text-align:left">'.ucwords($label).'</label>
 								<div class="input-group">
-                           <span class="input-group-addon">€</span>
+                           <span class="input-group-addon">$</span>
                            <div class="form-line">
                               <input type="text" class="form-control" id="'.strtolower($row[0]).'" name="'.strtolower($row[0]).'" value="" '.$lblObligatorio.'>
                            </div>
@@ -517,7 +517,7 @@ class Servicios {
 							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
 								<label for="'.$label.'" class="control-label" style="text-align:left">'.ucwords($label).'</label>
 								<div class="input-group">
-                           <span class="input-group-addon">€</span>
+                           <span class="input-group-addon">$</span>
                            <div class="form-line">
                               <input type="text" class="form-control" id="'.strtolower($row[0]).'" name="'.strtolower($row[0]).'" value="" '.$lblObligatorio.'>
                            </div>
@@ -720,7 +720,7 @@ class Servicios {
 
 
 														$form	=	$form.'
-														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
+														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 															<label class="form-label">'.$label.'</label>
 															<div class="form-group">
 																<div class="form-line">

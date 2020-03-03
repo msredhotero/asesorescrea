@@ -55,14 +55,15 @@ $modificar = "modificarClientes";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbclientes";
 
-$lblCambio	 	= array('codipostal','telefon2','email2');
-$lblreemplazo	= array('Cod Postal','Tel. 2','Email 2');
+$lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente');
+$lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente');
 
 
-$cadRef 	= '';
+$resVar8 = $serviciosReferencias->traerTipopersonas();
+$cadRef8 = $serviciosFunciones->devolverSelectBox($resVar8,array(1),'');
 
-$refdescripcion = array();
-$refCampo 	=  array();
+$refdescripcion = array(0=>$cadRef8);
+$refCampo 	=  array('reftipopersonas');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -188,7 +189,11 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										<div class="button-demo">
 											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
 												<i class="material-icons">add</i>
-												<span>NUEVO</span>
+												<span>NUEVO - PERSONA FISICA</span>
+											</button>
+											<button type="button" class="btn bg-blue-grey waves-effect btnNuevoMoral" data-toggle="modal" data-target="#lgmNuevo">
+												<i class="material-icons">add</i>
+												<span>NUEVO - PERSONA MORAL</span>
 											</button>
 
 										</div>
@@ -200,35 +205,29 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
-												<th>cognom</th>
-												<th>nom</th>
-												<th>nif</th>
-												<th>carrer</th>
-												<th>codipostal</th>
-												<th>ciutat</th>
-												<th>pais</th>
-												<th>telefon</th>
-												<th>email</th>
-												<th>comentaris</th>
-												<th>telefon2</th>
-												<th>email2</th>
+												<th>Tipo P.</th>
+												<th>Ape. Paterno</th>
+												<th>Ape. Materno</th>
+												<th>Nombre</th>
+												<th>Razon Social</th>
+												<th>Tel. Fijo</th>
+												<th>Tel. Celular</th>
+												<th>Email</th>
+												<th>Nro Cliente</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
-												<th>cognom</th>
-												<th>nom</th>
-												<th>nif</th>
-												<th>carrer</th>
-												<th>codipostal</th>
-												<th>ciutat</th>
-												<th>pais</th>
-												<th>telefon</th>
-												<th>email</th>
-												<th>comentaris</th>
-												<th>telefon2</th>
-												<th>email2</th>
+												<th>Tipo P.</th>
+												<th>Ape. Paterno</th>
+												<th>Ape. Materno</th>
+												<th>Nombre</th>
+												<th>Razon Social</th>
+												<th>Tel. Fijo</th>
+												<th>Tel. Celular</th>
+												<th>Email</th>
+												<th>Nro Cliente</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -337,6 +336,59 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 <script>
 	$(document).ready(function(){
 
+		$('.frmContnumerocliente').hide();
+		$('.frmContrefusuarios').hide();
+
+		$('.btnNuevoMoral').click(function() {
+			$('.frmContsexo').hide();
+			$('.frmContrefescolaridades').hide();
+			$('.frmContrefestadocivil').hide();
+			$('.frmConttelefonocasa').hide();
+			$('.frmContafore').hide();
+			$('.frmContnss').hide();
+			$('.frmContvigdesdeafore').hide();
+			$('.frmContvighastaafore').hide();
+			$('.frmContreftipopersonas').hide();
+			$('#refescolaridades').val(6);
+			$('#refestadocivil').val(7);
+			$('#reftipopersonas').val(2);
+			$('#refesquemareclutamiento option[value="1"]').prop("disabled","true");
+			$('#refesquemareclutamiento option[value="2"]').prop("disabled","true");
+			$('#refesquemareclutamiento option[value="3"]').prop("disabled","true");
+			$('#refesquemareclutamiento option[value="4"]').prop("disabled","true");
+			$('#refesquemareclutamiento option[value="5"]').removeAttr("disabled");
+			$('#refesquemareclutamiento option[value="6"]').removeAttr("disabled");
+			$('#refesquemareclutamiento').val(5);
+			$('#sexo').val(1);
+			$('.frmContrazonsocial').show();
+
+		});
+
+		$('.btnNuevo').click(function() {
+			$('.frmContsexo').show();
+			$('.frmContrefescolaridades').show();
+			$('.frmContrefestadocivil').show();
+			$('.frmConttelefonocasa').show();
+			$('.frmContafore').show();
+			$('.frmContnss').show();
+			$('.frmContvigdesdeafore').show();
+			$('.frmContvighastaafore').show();
+			$('.frmContreftipopersonas').hide();
+			$('#refescolaridades').val(6);
+			$('#refestadocivil').val(7);
+			$('#reftipopersonas').val(1);
+
+			$('#refesquemareclutamiento option[value="1"]').removeAttr("disabled");
+			$('#refesquemareclutamiento option[value="2"]').removeAttr("disabled");
+			$('#refesquemareclutamiento option[value="3"]').removeAttr("disabled");
+			$('#refesquemareclutamiento option[value="4"]').removeAttr("disabled");
+			$('#refesquemareclutamiento option[value="5"]').prop("disabled","true");
+			$('#refesquemareclutamiento option[value="6"]').prop("disabled","true");
+			$('#refesquemareclutamiento').val(1);
+			$('.frmContrazonsocial').hide();
+
+		});
+
 		$('.maximizar').click(function() {
 			if ($('.icomarcos').text() == 'web') {
 				$('#marcos').show();
@@ -349,7 +401,13 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			}
 
 		});
-		
+
+		$("#example").on("click",'.btnDocumentacion', function(){
+			idTable =  $(this).attr("id");
+			url = "subirdocumentacioni.php?id=" + idTable + "&documentacion=3";
+			$(location).attr('href',url);
+		});//fin del boton eliminar
+
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
