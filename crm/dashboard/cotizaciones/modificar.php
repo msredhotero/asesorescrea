@@ -334,13 +334,11 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 <script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
 
-<script src="../../js/picker.js"></script>
-<script src="../../js/picker.date.js"></script>
+<!-- Moment Plugin Js -->
+    <script src="../../plugins/momentjs/moment.js"></script>
+	 <script src="../../js/moment-with-locales.js"></script>
 
-<script src="../../js/jquery.easy-autocomplete.min.js"></script>
-
-<!-- Chart Plugins Js -->
-<script src="../../plugins/chartjs/Chart.bundle.js"></script>
+<script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
 
 <script>
 	$(document).ready(function(){
@@ -377,10 +375,12 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('.frmContprimaneta').show();
 		$('.frmContprimatotal').show();
 		$('.frmContrecibopago').show();
+		$('.frmContfechaemitido').show();
 
 		$("#primaneta").prop('required',true);
 		$("#primatotal").prop('required',true);
 		$("#recibopago").prop('required',true);
+		$("#fechaemitido").prop('required',true);
 		<?php
 		}
 		?>
@@ -391,6 +391,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('.frmContprimaneta').show();
 		$('.frmContprimatotal').show();
 		$('.frmContrecibopago').show();
+		$('.frmContfechaemitido').show();
 
 		$('.frmContfechapago').show();
 		$('.frmContnrorecibo').show();
@@ -398,6 +399,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$("#primaneta").prop('required',true);
 		$("#primatotal").prop('required',true);
 		$("#recibopago").prop('required',true);
+		$("#fechaemitido").prop('required',true);
 
 		$("#fechapago").prop('required',true);
 		$("#nrorecibo").prop('required',true);
@@ -411,6 +413,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('.frmContprimaneta').show();
 		$('.frmContprimatotal').show();
 		$('.frmContrecibopago').show();
+		$('.frmContfechaemitido').show();
 
 		$('.frmContfechapago').show();
 		$('.frmContnrorecibo').show();
@@ -420,6 +423,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$("#primaneta").prop('required',true);
 		$("#primatotal").prop('required',true);
 		$("#recibopago").prop('required',true);
+		$("#fechaemitido").prop('required',true);
 
 		$("#fechapago").prop('required',true);
 		$("#nrorecibo").prop('required',true);
@@ -435,6 +439,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('.frmContprimaneta').show();
 		$('.frmContprimatotal').show();
 		$('.frmContrecibopago').show();
+		$('.frmContfechaemitido').show();
 
 		$('.frmContfechapago').show();
 		$('.frmContnrorecibo').show();
@@ -445,6 +450,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$("#primaneta").prop('required',true);
 		$("#primatotal").prop('required',true);
 		$("#recibopago").prop('required',true);
+		$("#fechaemitido").prop('required',true);
 
 		$("#fechapago").prop('required',true);
 		$("#nrorecibo").prop('required',true);
@@ -493,39 +499,26 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('#telefonofijo').inputmask('999 9999999', { placeholder: '___ _______' });
 		$('#telefonocelular').inputmask('999 9999999', { placeholder: '___ _______' });
 
-		$('#fechaemitido').pickadate({
-			format: 'yyyy-mm-dd',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 100,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+
+		$('#fechaemitido').bootstrapMaterialDatePicker({
+			format: 'YYYY/MM/DD HH:mm',
+			lang : 'mx',
+			clearButton: true,
+			weekStart: 1,
+			time: true,
+			minDate : new Date()
 		});
 
-		$('#fechapago').pickadate({
-			format: 'yyyy-mm-dd',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 100,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		$('#fechapago').bootstrapMaterialDatePicker({
+			format: 'YYYY/MM/DD HH:mm',
+			lang : 'mx',
+			clearButton: true,
+			weekStart: 1,
+			time: true,
+			minDate : new Date()
 		});
+
+
 
 		var table = $('#example').DataTable({
 			"bProcessing": true,
@@ -811,7 +804,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 						if (data == '') {
 							swal("Ok!", 'Se guardo correctamente la cotizacion', "success");
 
-							setTimeout(refrescar, 2500);
+							setTimeout(refrescar, 1500);
 						} else {
 							swal({
 								title: "Respuesta",
