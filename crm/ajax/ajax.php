@@ -747,7 +747,7 @@ function insertarCotizaciones($serviciosReferencias) {
    $refclientes = $_POST['refclientes'];
    $refproductos = $_POST['refproductos'];
    $refasesores = $_POST['refasesores'];
-   $refasociados = $_POST['refasociados'];
+   $refasociados = ($_POST['refasociados'] == '' ? 'NULL' : $_POST['refasociados']);
    $refestadocotizaciones = $_POST['refestadocotizaciones'];
    $observaciones = $_POST['observaciones'];
    $fechaemitido = ($_POST['fechaemitido'] == '' ? 'NULL' : $_POST['fechaemitido']);
@@ -781,7 +781,7 @@ function modificarCotizaciones($serviciosReferencias) {
    $refclientes = $_POST['refclientes'];
    $refproductos = $_POST['refproductos'];
    $refasesores = $_POST['refasesores'];
-   $refasociados = $_POST['refasociados'];
+   $refasociados = ($_POST['refasociados'] == '' ? 'NULL' : $_POST['refasociados']);
    $refestadocotizaciones = $_POST['refestadocotizaciones'];
    $observaciones = $_POST['observaciones'];
    $fechaemitido = ($_POST['fechaemitido'] == '' ? 'NULL' : $_POST['fechaemitido']);
