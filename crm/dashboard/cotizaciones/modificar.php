@@ -327,7 +327,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 								<div class="row" style="padding: 5px 20px;">
 
-									<?php echo utf8_decode($frmUnidadNegocios); ?>
+									<?php echo $frmUnidadNegocios; ?>
 
 								</div>
 								<div class="row">

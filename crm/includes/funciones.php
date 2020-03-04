@@ -1268,7 +1268,7 @@ class Servicios {
 
 							$campo = strtolower($row[0]);
 
-							$option = utf8_decode($refdescripcion[array_search($row[0], $refCampo)]);
+							$option = ($refdescripcion[array_search($row[0], $refCampo)]);
 
 							$form	=	$form.'
 
