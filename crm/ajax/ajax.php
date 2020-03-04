@@ -705,9 +705,119 @@ switch ($accion) {
       eliminarAlertas($serviciosReferencias);
    break;
 
+   case 'insertarCotizaciones':
+      insertarCotizaciones($serviciosReferencias);
+   break;
+   case 'modificarCotizaciones':
+      modificarCotizaciones($serviciosReferencias);
+   break;
+   case 'eliminarCotizaciones':
+      eliminarCotizaciones($serviciosReferencias);
+   break;
+   case 'rechazarCotizacion':
+      rechazarCotizacion($serviciosReferencias);
+   break;
+
 
 }
 /* Fin */
+
+function rechazarCotizacion($serviciosReferencias) {
+   session_start();
+
+   $id = $_POST['id'];
+   $observaciones = $_POST['observaciones'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+
+   if ($observaciones == '') {
+      echo 'Debe cargar una observacion para poder Rechazar la cotizacion';
+   } else {
+      $res = $serviciosReferencias->modificarCotizacionesRechazar($id,$observaciones,$usuariomodi);
+      echo '';
+   }
+
+
+
+}
+
+
+function insertarCotizaciones($serviciosReferencias) {
+   session_start();
+
+   $refclientes = $_POST['refclientes'];
+   $refproductos = $_POST['refproductos'];
+   $refasesores = $_POST['refasesores'];
+   $refasociados = $_POST['refasociados'];
+   $refestadocotizaciones = $_POST['refestadocotizaciones'];
+   $observaciones = $_POST['observaciones'];
+   $fechaemitido = ($_POST['fechaemitido'] == '' ? 'NULL' : $_POST['fechaemitido']);
+   $primaneta = ($_POST['primaneta'] == '' ? 'NULL' : $_POST['primaneta']);
+   $primatotal = ($_POST['primatotal'] == '' ? 'NULL' : $_POST['primatotal']);
+   $recibopago = $_POST['recibopago'];
+   $fechapago = ($_POST['fechapago'] == '' ? 'NULL' : $_POST['fechapago']);
+   $nrorecibo = $_POST['nrorecibo'];
+   $importecomisionagente = ($_POST['importecomisionagente'] == '' ? 'NULL' : $_POST['importecomisionagente']);
+   $importebonopromotor = ($_POST['importebonopromotor'] == '' ? 'NULL' : $_POST['importebonopromotor']);
+   $fechacrea = date('Y-m-d H:i:s');
+   $fechamodi = date('Y-m-d H:i:s');
+   $usuariocrea = $_SESSION['usua_sahilices'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+   $refusuarios = $_SESSION['usuaid_sahilices'];
+
+   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$observaciones,$fechaemitido,$primaneta,$primatotal,$recibopago,$fechapago,$nrorecibo,$importecomisionagente,$importebonopromotor,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos ';
+   }
+}
+
+
+function modificarCotizaciones($serviciosReferencias) {
+   session_start();
+
+   $id = $_POST['id'];
+   $refclientes = $_POST['refclientes'];
+   $refproductos = $_POST['refproductos'];
+   $refasesores = $_POST['refasesores'];
+   $refasociados = $_POST['refasociados'];
+   $refestadocotizaciones = $_POST['refestadocotizaciones'];
+   $observaciones = $_POST['observaciones'];
+   $fechaemitido = ($_POST['fechaemitido'] == '' ? 'NULL' : $_POST['fechaemitido']);
+   $primaneta = ($_POST['primaneta'] == '' ? 'NULL' : $_POST['primaneta']);
+   $primatotal = ($_POST['primatotal'] == '' ? 'NULL' : $_POST['primatotal']);
+   $recibopago = $_POST['recibopago'];
+   $fechapago = ($_POST['fechapago'] == '' ? 'NULL' : $_POST['fechapago']);
+   $nrorecibo = $_POST['nrorecibo'];
+   $importecomisionagente = ($_POST['importecomisionagente'] == '' ? 'NULL' : $_POST['importecomisionagente']);
+   $importebonopromotor = ($_POST['importebonopromotor'] == '' ? 'NULL' : $_POST['importebonopromotor']);
+   $fechacrea = date('Y-m-d H:i:s');
+   $fechamodi = date('Y-m-d H:i:s');
+   $usuariocrea = $_SESSION['usua_sahilices'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+   $refusuarios = $_SESSION['usuaid_sahilices'];
+
+   $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$observaciones,$fechaemitido,$primaneta,$primatotal,$recibopago,$fechapago,$nrorecibo,$importecomisionagente,$importebonopromotor,$fechamodi,$usuariomodi,$refusuarios);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarCotizaciones($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarCotizaciones($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
 
 function insertarAlertas($serviciosReferencias) {
    $reftiposeguimientos = 1;
@@ -1992,6 +2102,47 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+      case 'dbcotizaciones':
+         $resultado = $serviciosReferencias->traerCotizacionesPorId($id);
+
+         $lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones','fechaemitido','primaneta','primatotal','recibopago','fechapago','nrorecibo','importecomisionagente','importebonopromotor');
+         $lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor');
+
+
+
+         $modificar = "modificarCotizaciones";
+         $idTabla = "idcotizacion";
+
+         $resUsuario = $serviciosUsuarios->traerUsuarioId(mysql_result($resultado,0,'refusuarios'));
+         $cadRef1 	= $serviciosFunciones->devolverSelectBox($resUsuario,array(1),'');
+
+         $resVar2	= $serviciosReferencias->traerClientes();
+         $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(4,2,3),' ',mysql_result($resultado,0,'refclientes'));
+
+         $resVar3	= $serviciosReferencias->traerProductos();
+         $cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resVar3,array(1),'',mysql_result($resultado,0,'refclientes'));
+
+
+         $resVar4	= $serviciosReferencias->traerAsesores();
+         $cadRef4 = $serviciosFunciones->devolverSelectBoxActivo($resVar4,array(4,2,3),' ',mysql_result($resultado,0,'refclientes'));
+
+         if ($_SESSION['idroll_sahilices'] == 7) {
+         	$resVar5	= $serviciosReferencias->traerAsociadosPorUsuario($_SESSION['usuaid_sahilices']);
+         	$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(4,2,3),' ');
+         } else {
+         	$resVar5	= $serviciosReferencias->traerAsociados();
+         	$cadRef5 = $serviciosFunciones->devolverSelectBoxActivo($resVar5,array(4,2,3),' ',mysql_result($resultado,0,'refclientes'));
+         }
+
+
+
+         $resVar6 = $serviciosReferencias->traerEstadocotizaciones();
+         $cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',mysql_result($resultado,0,'refclientes'));
+
+
+         $refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6);
+         $refCampo 	=  array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones');
+      break;
 
       case 'dbasesores':
          $resultado = $serviciosReferencias->traerAsesoresPorId($id);
@@ -2436,7 +2587,7 @@ function insertarClientes($serviciosReferencias) {
    $fechamodi = date('Y-m-d H:i:s');
    $usuariocrea = $_SESSION['usua_sahilices'];
    $usuariomodi = $_SESSION['usua_sahilices'];
-   $res = $serviciosReferencias->insertarClientes($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi); 
+   $res = $serviciosReferencias->insertarClientes($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
 
    if ((integer)$res > 0) {
       echo '';
@@ -2470,7 +2621,7 @@ function modificarClientes($serviciosReferencias) {
 
    $res = $serviciosReferencias->modificarClientes($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi);
 
-   if ($res == true) { 
+   if ($res == true) {
       echo '';
    } else {
       echo 'Hubo un error al modificar datos';

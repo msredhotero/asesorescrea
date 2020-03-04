@@ -67,12 +67,18 @@ $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(4,2,3),' ');
 $resVar3	= $serviciosReferencias->traerProductos();
 $cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
 
-$resVar4	= $serviciosReferencias->traerAsesores();
+
+$resVar4	= $serviciosReferencias->traerAsociados();
 $cadRef4 = $serviciosFunciones->devolverSelectBox($resVar4,array(4,2,3),' ');
 
+if ($_SESSION['idroll_sahilices'] == 7) {
+	$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
+	$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(4,2,3),' ');
+} else {
+	$resVar5	= $serviciosReferencias->traerAsesores();
+	$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(4,2,3),' ');
+}
 
-$resVar5	= $serviciosReferencias->traerAsociados();
-$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(4,2,3),' ');
 
 
 $resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId(1);
@@ -80,16 +86,16 @@ $cadRef6 = $serviciosFunciones->devolverSelectBox($resVar6,array(1),'');
 
 
 $refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6);
-$refCampo 	=  array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones');
+$refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 if ($_SESSION['idroll_sahilices'] == 3) {
-	
+
 
 } else {
-	
+
 }
 
 
@@ -255,7 +261,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 							</div>
 						</div>
 					</div>
-					
+
 				</div>
 			</div>
 		</div>
@@ -384,10 +390,28 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 <script>
 	$(document).ready(function(){
 
-		
+		$('.frmContfechaemitido').hide();
+		$('.frmContprimaneta').hide();
+		$('.frmContprimatotal').hide();
+		$('.frmContrecibopago').hide();
+		$('.frmContfechapago').hide();
+		$('.frmContnrorecibo').hide();
+		$('.frmContimportecomisionagente').hide();
+		$('.frmContimportebonopromotor').hide();
+		$('.frmContobservaciones').hide();
+		$('.frmContrefusuarios').hide();
 
-		<?php if ($_SESSION['idroll_sahilices'] == 3) { ?>
-		
+		$('#fechacrea').val('2020-02-02');
+		$('#fechamodi').val('2020-02-02');
+		$('#usuariocrea').val('2020-02-02');
+		$('#usuariomodi').val('2020-02-02');
+
+
+
+		<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
+			$('.frmContrefasociados').hide();
+			$('#refasociados').prepend('<option value="0">sin valor</option>');
+			$('#refasociados').val(0);
 		<?php } ?>
 
 
@@ -455,14 +479,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 					"sortAscending":  ": activate to sort column ascending",
 					"sortDescending": ": activate to sort column descending"
 				}
-			},
-			"columnDefs": [
-              {
-                  "targets": [ 4 ],
-                  "visible": false,
-                  "searchable": false
-              }
-          ]
+			}
 		});
 
 		$("#sign_in").submit(function(e){
@@ -486,7 +503,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 				success: function(data){
 
 					if (data != '') {
-						$(location).attr('href',data);
+						$('.frmAjaxModificar').html(data);
 					} else {
 						swal("Error!", data, "warning");
 
@@ -620,7 +637,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 		$("#example").on("click",'.btnModificar', function(){
 			idTable =  $(this).attr("id");
-			frmAjaxModificar(idTable);
+			$(location).attr('href','modificar.php?id=' + idTable);
 		});//fin del boton modificar
 
 		$("#example").on("click",'.btnVer', function(){
@@ -655,7 +672,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 					success: function(data){
 
 						if (data == '') {
-							swal("Ok!", 'Se guardo correctamente el formulario, cuando el Prospecto para Asesor confirme su email podra continuar con el Proceso de Reclutamiento', "success");
+							swal("Ok!", 'Se guardo correctamente la cotizacion', "success");
 
 							$('#lgmNuevo').modal('hide');
 

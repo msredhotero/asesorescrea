@@ -514,7 +514,7 @@ class Servicios {
 
 							$form	=	$form.'
 
-							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($row[0]).'" style="display:'.$lblOculta.'">
 								<label for="'.$label.'" class="control-label" style="text-align:left">'.ucwords($label).'</label>
 								<div class="input-group">
                            <span class="input-group-addon">$</span>
@@ -658,7 +658,7 @@ class Servicios {
 
 											$form	=	$form.'
 
-											<div class="form-group col-md-12" style="display:'.$lblOculta.'">
+											<div class="form-group col-md-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 												<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
 												<div class="input-group col-md-12">
 													<textarea name="'.$campo.'" id="'.$campo.'" rows="200" cols="160">
@@ -679,7 +679,7 @@ class Servicios {
 												$campo = strtolower($row[0]);
 
 												$form	=	$form.'
-												<div class="col-sm-12" style="display:'.$lblOculta.'">
+												<div class="col-sm-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 												<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
 													<div class="form-group">
 														<div class="form-line">
@@ -1250,7 +1250,7 @@ class Servicios {
 					if (strpos($row[1],"decimal") !== false) {
 						$form	=	$form.'
 
-						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($row[0]).'" style="display:'.$lblOculta.'">
 							<label for="'.$label.'" class="control-label" style="text-align:left">'.ucwords($label).'</label>
 							<div class="input-group">
                         <span class="input-group-addon">$</span>
@@ -1382,7 +1382,7 @@ class Servicios {
 
 											$form	=	$form.'
 
-											<div class="form-group col-md-6" style="display:'.$lblOculta.'">
+											<div class="form-group col-md-6 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 												<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
 												<div class="input-group col-md-12">
 													<textarea type="text" rows="2" cols="6" class="form-control" id="'.$campo.'" name="'.$campo.'" placeholder="Ingrese el '.$label.'..." >'.(mysql_result($resMod,0,$row[0])).'</textarea>
@@ -1400,7 +1400,7 @@ class Servicios {
 
 											$form	=	$form.'
 
-											<div class="form-group col-md-12" style="display:'.$lblOculta.'">
+											<div class="form-group col-md-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 												<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
 												<div class="input-group col-md-12">
 													<textarea name="'.$campo.'" id="'.$campo.'" rows="200" cols="160">

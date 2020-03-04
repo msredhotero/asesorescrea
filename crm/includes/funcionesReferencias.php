@@ -303,6 +303,18 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function modificarCotizacionesRechazar($id,$observaciones,$usuariomodi) {
+		$sql = "update dbcotizaciones
+		set
+		refestadocotizaciones = 4,
+		observaciones = '".$observaciones."',
+		fechamodi = '".date('Y-m-d H:i:s')."',
+		usuariomodi = '".$usuariomodi."' where idcotizacion =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 
 	function eliminarCotizaciones($id) {
 		$sql = "delete from dbcotizaciones where idcotizacion =".$id;
@@ -339,8 +351,154 @@ class ServiciosReferencias {
 		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
 		inner join tbproductos pro ON pro.idproducto = c.refproductos
 		inner join dbasesores ase ON ase.idasesor = c.refasesores
+		left join dbusuarios us ON us.idusuario = c.refusuarios
+		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
+		order by 1";
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerCotizacionesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial) {
+		$where = '';
+
+		$roles = '';
+
+	   if ($responsableComercial != '') {
+	      $roles = " ase.refusuarios = ".$responsableComercial." and ";
+	   } else {
+	      $roles = '';
+	   }
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where ".$roles." (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or pro.producto like '%".$busqueda."%' or concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%')";
+		} else {
+			if ($responsableComercial != '') {
+	         $where = " where ase.refusuarios = ".$responsableComercial." ";
+	      }
+		}
+
+
+		$sql = "select
+		c.idcotizacion,
+		concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+		pro.producto,
+		concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
+		concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
+		est.estadocotizacion,
+		c.refclientes,
+		c.refproductos,
+		c.refasesores,
+		c.refasociados,
+		c.refestadocotizaciones,
+		c.observaciones,
+		c.fechaemitido,
+		c.primaneta,
+		c.primatotal,
+		c.recibopago,
+		c.fechapago,
+		c.nrorecibo,
+		c.importecomisionagente,
+		c.importebonopromotor,
+		c.fechacrea,
+		c.fechamodi,
+		c.usuariocrea,
+		c.usuariomodi,
+		c.refusuarios
+		from dbcotizaciones c
+		inner join dbclientes cli ON cli.idcliente = c.refclientes
+		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
+		inner join tbproductos pro ON pro.idproducto = c.refproductos
+		inner join dbasesores ase ON ase.idasesor = c.refasesores
+		left join dbusuarios us ON us.idusuario = c.refusuarios
+		left join dbasociados aso ON aso.idasociado = c.refasociados
+		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
+		".$where."
+		ORDER BY ".$colSort." ".$colSortDir."
+		limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerCotizacionesPorUsuario($idusuario) {
+		$sql = "select
+		c.idcotizacion,
+		c.refclientes,
+		c.refproductos,
+		c.refasesores,
+		c.refasociados,
+		c.refestadocotizaciones,
+		c.observaciones,
+		c.fechaemitido,
+		c.primaneta,
+		c.primatotal,
+		c.recibopago,
+		c.fechapago,
+		c.nrorecibo,
+		c.importecomisionagente,
+		c.importebonopromotor,
+		c.fechacrea,
+		c.fechamodi,
+		c.usuariocrea,
+		c.usuariomodi,
+		c.refusuarios
+		from dbcotizaciones c
+		inner join dbclientes cli ON cli.idcliente = c.refclientes
+		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
+		inner join tbproductos pro ON pro.idproducto = c.refproductos
+		inner join dbasesores ase ON ase.idasesor = c.refasesores
 		inner join dbusuarios us ON us.idusuario = c.refusuarios
 		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
+		where ase.refusuarios = ".$idusuario."
+		order by 1";
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerCotizacionesGrid($responsableComercial) {
+
+		if ($responsableComercial != '') {
+	      $roles = "where ase.idasesor = ".$responsableComercial."  ";
+	   } else {
+	      $roles = '';
+	   }
+
+		$sql = "select
+		c.idcotizacion,
+		c.refclientes,
+		c.refproductos,
+		c.refasesores,
+		c.refasociados,
+		c.refestadocotizaciones,
+		c.observaciones,
+		c.fechaemitido,
+		c.primaneta,
+		c.primatotal,
+		c.recibopago,
+		c.fechapago,
+		c.nrorecibo,
+		c.importecomisionagente,
+		c.importebonopromotor,
+		c.fechacrea,
+		c.fechamodi,
+		c.usuariocrea,
+		c.usuariomodi,
+		c.refusuarios
+		from dbcotizaciones c
+		inner join dbclientes cli ON cli.idcliente = c.refclientes
+		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
+		inner join tbproductos pro ON pro.idproducto = c.refproductos
+		inner join dbasesores ase ON ase.idasesor = c.refasesores
+		inner join dbusuarios us ON us.idusuario = c.refusuarios
+		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
+		".$roles."
 		order by 1";
 
 		$res = $this->query($sql,0);
@@ -389,7 +547,8 @@ class ServiciosReferencias {
 	function traerEstadocotizaciones() {
 		$sql = "select
 		e.idestadocotizacion,
-		e.estadocotizacion
+		e.estadocotizacion,
+		e.orden
 		from tbestadocotizaciones e
 		order by 1";
 		$res = $this->query($sql,0);
@@ -398,7 +557,8 @@ class ServiciosReferencias {
 
 
 	function traerEstadocotizacionesPorId($id) {
-		$sql = "select idestadocotizacion,estadocotizacion from tbestadocotizaciones where idestadocotizacion =".$id;
+		$sql = "select idestadocotizacion,estadocotizacion,
+		orden from tbestadocotizaciones where idestadocotizacion =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -4858,7 +5018,7 @@ class ServiciosReferencias {
 		$sql = "select idcliente,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi from dbclientes where idcliente =".$id;
 		$res = $this->query($sql,0);
 		return $res;
-	} 
+	}
 
 	function traerClientesPorUsuario($id) {
 		$sql = "select idcliente,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi from dbclientes where refusuarios =".$id;

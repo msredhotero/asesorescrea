@@ -67,6 +67,31 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 }
 
 switch ($tabla) {
+	case 'cotizaciones':
+
+		if ($_SESSION['idroll_sahilices'] == 7) {
+
+			$resAjax = $serviciosReferencias->traerCotizacionesajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+			$res = $serviciosReferencias->traerCotizacionesPorUsuario($_SESSION['usuaid_sahilices']);
+			$label = array('btnModificar','btnEliminar');
+			$class = array('bg-amber','bg-red');
+			$icon = array('create','delete');
+		} else {
+
+			$responsableComercial = $_GET['sSearch_0'];
+			$resAjax = $serviciosReferencias->traerCotizacionesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial);
+			$res = $serviciosReferencias->traerCotizacionesGrid($responsableComercial);
+			$label = array('btnModificar','btnEliminar');
+			$class = array('bg-amber','bg-red');
+			$icon = array('create','delete');
+
+		}
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 5;
+
+	break;
 	case 'asesores':
 		$filtro = "where p.nombre like '%_busqueda%' or p.apellidopaterno like '%_busqueda%' or p.apellidomaterno like '%_busqueda%' or p.email like '%_busqueda%' or p.idclienteinbursa like '%_busqueda%' or p.claveinterbancaria like '%_busqueda%' or p.claveasesor like '%_busqueda%' or  DATE_FORMAT( p.fechaalta, '%Y-%m-%d') like '%_busqueda%'";
 
@@ -481,7 +506,7 @@ switch ($tabla) {
 		$empieza = 1;
 		$termina = 11;
 
-		break;
+	break;
 	case 'oportunidadeshistorico':
 
 		if ($_SESSION['idroll_sahilices'] == 3) {
