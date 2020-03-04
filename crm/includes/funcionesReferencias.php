@@ -46,7 +46,8 @@ class ServiciosReferencias {
 	function traerProductos() {
 		$sql = "select
 		p.idproducto,
-		p.producto
+		p.producto,
+		p.prima
 		from tbproductos p
 		order by 1";
 		$res = $this->query($sql,0);
@@ -55,7 +56,7 @@ class ServiciosReferencias {
 
 
 	function traerProductosPorId($id) {
-		$sql = "select idproducto,producto from tbproductos where idproducto =".$id;
+		$sql = "select idproducto,producto,prima from tbproductos where idproducto =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -285,19 +286,19 @@ class ServiciosReferencias {
 
 	/* PARA Cotizaciones */
 
-	function insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$observaciones,$fechaemitido,$primaneta,$primatotal,$recibopago,$fechapago,$nrorecibo,$importecomisionagente,$importebonopromotor,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios) {
-		$sql = "insert into dbcotizaciones(idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,observaciones,fechaemitido,primaneta,primatotal,recibopago,fechapago,nrorecibo,importecomisionagente,importebonopromotor,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios)
-		values ('',".$refclientes.",".$refproductos.",".$refasesores.",".$refasociados.",".$refestadocotizaciones.",'".$observaciones."','".$fechaemitido."',".$primaneta.",".$primatotal.",'".$recibopago."','".$fechapago."','".$nrorecibo."',".$importecomisionagente.",".$importebonopromotor.",'".date('Y-m-d H:i:s')."','".date('Y-m-d H:i:s')."','".$usuariocrea."','".$usuariomodi."',".$refusuarios.")";
+	function insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$observaciones,$fechaemitido,$primaneta,$primatotal,$recibopago,$fechapago,$nrorecibo,$importecomisionagente,$importebonopromotor,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$nropoliza) {
+		$sql = "insert into dbcotizaciones(idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,observaciones,fechaemitido,primaneta,primatotal,recibopago,fechapago,nrorecibo,importecomisionagente,importebonopromotor,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,nropoliza)
+		values ('',".$refclientes.",".$refproductos.",".$refasesores.",".$refasociados.",".$refestadocotizaciones.",'".$observaciones."','".$fechaemitido."',".$primaneta.",".$primatotal.",'".$recibopago."','".$fechapago."','".$nrorecibo."',".$importecomisionagente.",".$importebonopromotor.",'".date('Y-m-d H:i:s')."','".date('Y-m-d H:i:s')."','".$usuariocrea."','".$usuariomodi."',".$refusuarios.",'".$nropoliza."')";
 
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$observaciones,$fechaemitido,$primaneta,$primatotal,$recibopago,$fechapago,$nrorecibo,$importecomisionagente,$importebonopromotor,$fechamodi,$usuariomodi,$refusuarios) {
+	function modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$observaciones,$fechaemitido,$primaneta,$primatotal,$recibopago,$fechapago,$nrorecibo,$importecomisionagente,$importebonopromotor,$fechamodi,$usuariomodi,$refusuarios,$nropoliza) {
 		$sql = "update dbcotizaciones
 		set
-		refclientes = ".$refclientes.",refproductos = ".$refproductos.",refasesores = ".$refasesores.",refasociados = ".$refasociados.",refestadocotizaciones = ".$refestadocotizaciones.",observaciones = '".$observaciones."',fechaemitido = '".$fechaemitido."',primaneta = ".$primaneta.",primatotal = ".$primatotal.",recibopago = '".$recibopago."',fechapago = '".$fechapago."',nrorecibo = '".$nrorecibo."',importecomisionagente = ".$importecomisionagente.",importebonopromotor = ".$importebonopromotor.",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',refusuarios = ".$refusuarios." where idcotizacion =".$id;
+		refclientes = ".$refclientes.",refproductos = ".$refproductos.",refasesores = ".$refasesores.",refasociados = ".$refasociados.",refestadocotizaciones = ".$refestadocotizaciones.",observaciones = '".$observaciones."',fechaemitido = '".$fechaemitido."',primaneta = ".$primaneta.",primatotal = ".$primatotal.",recibopago = '".$recibopago."',fechapago = '".$fechapago."',nrorecibo = '".$nrorecibo."',importecomisionagente = ".$importecomisionagente.",importebonopromotor = ".$importebonopromotor.",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',refusuarios = ".$refusuarios.",nropoliza = '".$nropoliza."' where idcotizacion =".$id;
 
 		$res = $this->query($sql,0);
 		return $res;
@@ -337,6 +338,7 @@ class ServiciosReferencias {
 		c.primaneta,
 		c.primatotal,
 		c.recibopago,
+		c.nropoliza,
 		c.fechapago,
 		c.nrorecibo,
 		c.importecomisionagente,
@@ -398,6 +400,7 @@ class ServiciosReferencias {
 		c.primaneta,
 		c.primatotal,
 		c.recibopago,
+		c.nropoliza,
 		c.fechapago,
 		c.nrorecibo,
 		c.importecomisionagente,
@@ -439,6 +442,7 @@ class ServiciosReferencias {
 		c.primaneta,
 		c.primatotal,
 		c.recibopago,
+		c.nropoliza,
 		c.fechapago,
 		c.nrorecibo,
 		c.importecomisionagente,
@@ -482,6 +486,7 @@ class ServiciosReferencias {
 		c.primaneta,
 		c.primatotal,
 		c.recibopago,
+		c.nropoliza,
 		c.fechapago,
 		c.nrorecibo,
 		c.importecomisionagente,
@@ -507,7 +512,7 @@ class ServiciosReferencias {
 
 
 	function traerCotizacionesPorId($id) {
-		$sql = "select idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,observaciones,fechaemitido,primaneta,primatotal,recibopago,fechapago,nrorecibo,importecomisionagente,importebonopromotor,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios from dbcotizaciones where idcotizacion =".$id;
+		$sql = "select idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,observaciones,fechaemitido,primaneta,primatotal,recibopago,fechapago,nrorecibo,importecomisionagente,importebonopromotor,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,nropoliza from dbcotizaciones where idcotizacion =".$id;
 
 		$res = $this->query($sql,0);
 		return $res;
@@ -550,7 +555,7 @@ class ServiciosReferencias {
 		e.estadocotizacion,
 		e.orden
 		from tbestadocotizaciones e
-		order by 1";
+		order by e.orden";
 		$res = $this->query($sql,0);
 		return $res;
 	}

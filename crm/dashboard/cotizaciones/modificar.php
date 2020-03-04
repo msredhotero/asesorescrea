@@ -55,8 +55,8 @@ $resultado = $serviciosReferencias->traerCotizacionesPorId($id);
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbcotizaciones";
 
-$lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones','fechaemitido','primaneta','primatotal','recibopago','fechapago','nrorecibo','importecomisionagente','importebonopromotor');
-$lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor');
+$lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones','fechaemitido','primaneta','primatotal','recibopago','fechapago','nrorecibo','importecomisionagente','importebonopromotor','nropoliza');
+$lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor','Nro Poliza');
 
 
 $modificar = "modificarCotizaciones";
@@ -125,9 +125,13 @@ $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(4,2,3),' 
 $resVar3	= $serviciosReferencias->traerProductos();
 $cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resVar3,array(1),'',mysql_result($resultado,0,'refproductos'));
 
-
-$resVar4	= $serviciosReferencias->traerAsociados();
-$cadRef4 = $serviciosFunciones->devolverSelectBoxActivo($resVar4,array(4,2,3),' ',mysql_result($resultado,0,'refasociados'));
+if ($_SESSION['idroll_sahilices'] != 7) {
+	$resVar4	= $serviciosReferencias->traerAsociados();
+	$cadRef4 = '<option value="0">-- Seleccionar --</option>';
+	$cadRef4 .= $serviciosFunciones->devolverSelectBoxActivo($resVar4,array(4,2,3),' ',mysql_result($resultado,0,'refasociados'));
+} else {
+	$cadRef4 = '<option value="0">-- Seleccionar --</option>';
+}
 
 if ($_SESSION['idroll_sahilices'] == 7) {
 	$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
@@ -146,6 +150,12 @@ $refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','r
 
 $frmUnidadNegocios = $serviciosFunciones->camposTablaModificar($id, $idTabla,$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
+
+$resProducto = $serviciosReferencias->traerProductosPorId(mysql_result($resultado,0,'refproductos'));
+
+$resGuia = $serviciosReferencias->traerEstadocotizaciones();
+
+$prima = mysql_result($resProducto, 0,'prima');
 
 if ($_SESSION['idroll_sahilices'] == 3) {
 
@@ -251,6 +261,46 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 	<div class="container-fluid">
 		<div class="row clearfix">
 
+			<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
+
+				<?php
+				$lblEstado = 'complete';
+				$i = 0;
+				while ($rowG = mysql_fetch_array($resGuia)) {
+					$i += 1;
+					$urlAcceso = 'javascript:void(0)';
+					
+					if ($rowG['idestadocotizacion'] == $idestado) {
+						$lblEstado = 'active';
+					}
+					if (($rowG['idestadocotizacion'] == 4) && ($idestado>4)) {
+						$lblEstado = 'disabled';
+					} else {
+						$lblEstado = 'complete';
+					}
+
+					if ($rowG['idestadocotizacion'] > $idestado) {
+						$lblEstado = 'disabled';
+					}
+
+				?>
+				<div class="col-xs-1 bs-wizard-step <?php echo $lblEstado; ?>">
+					<div class="text-center bs-wizard-stepnum">Paso <?php echo $i; ?></div>
+					<div class="progress">
+						<div class="progress-bar"></div>
+					</div>
+					<a href="<?php echo $urlAcceso; ?>" class="bs-wizard-dot"></a>
+					<div class="bs-wizard-info text-center"><?php echo $rowG['estadocotizacion']; ?></div>
+				</div>
+				<?php
+					if ($lblEstado == 'active') {
+						$lblEstado = 'disabled';
+					}
+				}
+				?>
+
+			</div>
+
 			<div class="row">
 
 
@@ -277,7 +327,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 								<div class="row" style="padding: 5px 20px;">
 
-									<?php echo $frmUnidadNegocios; ?>
+									<?php echo utf8_encode($frmUnidadNegocios); ?>
 
 								</div>
 								<div class="row">
@@ -356,6 +406,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('.frmContimportebonopromotor').show();
 		$('.frmContrefusuarios').hide();
 		$('.frmContrefestadocotizaciones').hide();
+		$('.frmContnropoliza').show();
 		<?php } else {?>
 		$('.frmContfechaemitido').hide();
 		$('.frmContprimaneta').hide();
@@ -365,6 +416,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('.frmContnrorecibo').hide();
 		$('.frmContimportecomisionagente').hide();
 		$('.frmContimportebonopromotor').hide();
+		$('.frmContnropoliza').hide();
 
 		$('.frmContrefusuarios').hide();
 		$('.frmContrefestadocotizaciones').hide();
@@ -376,9 +428,12 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('.frmContprimatotal').show();
 		$('.frmContrecibopago').show();
 		$('.frmContfechaemitido').show();
+		$('.frmContnropoliza').show();
 
+		<?php if ($prima == '1') { ?>
 		$("#primaneta").prop('required',true);
 		$("#primatotal").prop('required',true);
+		<?php } ?>
 		$("#recibopago").prop('required',true);
 		$("#fechaemitido").prop('required',true);
 		<?php
@@ -392,17 +447,20 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('.frmContprimatotal').show();
 		$('.frmContrecibopago').show();
 		$('.frmContfechaemitido').show();
+		$('.frmContnropoliza').show();
 
 		$('.frmContfechapago').show();
 		$('.frmContnrorecibo').show();
 
+		<?php if ($prima == '1') { ?>
 		$("#primaneta").prop('required',true);
 		$("#primatotal").prop('required',true);
+		<?php } ?>
 		$("#recibopago").prop('required',true);
 		$("#fechaemitido").prop('required',true);
 
 		$("#fechapago").prop('required',true);
-		$("#nrorecibo").prop('required',true);
+		$("#nropoliza").prop('required',true);
 		<?php
 		}
 		?>
@@ -414,19 +472,22 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('.frmContprimatotal').show();
 		$('.frmContrecibopago').show();
 		$('.frmContfechaemitido').show();
+		$('.frmContnropoliza').show();
 
 		$('.frmContfechapago').show();
 		$('.frmContnrorecibo').show();
 
 		$('.frmContimportecomisionagente').show();
 
+		<?php if ($prima == '1') { ?>
 		$("#primaneta").prop('required',true);
 		$("#primatotal").prop('required',true);
+		<?php } ?>
 		$("#recibopago").prop('required',true);
 		$("#fechaemitido").prop('required',true);
 
 		$("#fechapago").prop('required',true);
-		$("#nrorecibo").prop('required',true);
+		$("#nropoliza").prop('required',true);
 
 		$("#importecomisionagente").prop('required',true);
 		<?php
@@ -440,6 +501,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('.frmContprimatotal').show();
 		$('.frmContrecibopago').show();
 		$('.frmContfechaemitido').show();
+		$('.frmContnropoliza').show();
 
 		$('.frmContfechapago').show();
 		$('.frmContnrorecibo').show();
@@ -447,13 +509,15 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('.frmContimportecomisionagente').show();
 		$('.frmContimportebonopromotor').show();
 
+		<?php if ($prima == '1') { ?>
 		$("#primaneta").prop('required',true);
 		$("#primatotal").prop('required',true);
+		<?php } ?>
 		$("#recibopago").prop('required',true);
 		$("#fechaemitido").prop('required',true);
 
 		$("#fechapago").prop('required',true);
-		$("#nrorecibo").prop('required',true);
+		$("#nropoliza").prop('required',true);
 
 		$("#importecomisionagente").prop('required',true);
 		$("#importebonopromotor").prop('required',true);

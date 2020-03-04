@@ -40,6 +40,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
 $singular = "Cotizacion";
+$singular2 = "Cliente";
 
 $plural = "Cotizaciones";
 
@@ -68,8 +69,13 @@ $resVar3	= $serviciosReferencias->traerProductos();
 $cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
 
 
-$resVar4	= $serviciosReferencias->traerAsociados();
-$cadRef4 = $serviciosFunciones->devolverSelectBox($resVar4,array(4,2,3),' ');
+if ($_SESSION['idroll_sahilices'] != 7) {
+	$resVar4	= $serviciosReferencias->traerAsociados();
+	$cadRef4 = '<option value="0">-- Seleccionar --</option>';
+	$cadRef4 .= $serviciosFunciones->devolverSelectBox($resVar4,array(4,2,3),' ');
+} else {
+	$cadRef4 = '<option value="0">-- Sin valor --</option>';
+}
 
 if ($_SESSION['idroll_sahilices'] == 7) {
 	$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
@@ -90,6 +96,21 @@ $refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','r
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
+
+
+$tabla2 			= "dbclientes";
+
+$lblCambio2	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial');
+$lblreemplazo2	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social');
+
+
+$resVar82 = $serviciosReferencias->traerTipopersonas();
+$cadRef82 = $serviciosFunciones->devolverSelectBox($resVar82,array(1),'');
+
+$refdescripcion2 = array(0=>$cadRef82);
+$refCampo2 	=  array('reftipopersonas');
+
+$frmUnidadNegocios2 	= $serviciosFunciones->camposTablaViejo('insertarClientes' ,$tabla2,$lblCambio2,$lblreemplazo2,$refdescripcion2,$refCampo2);
 
 if ($_SESSION['idroll_sahilices'] == 3) {
 
@@ -224,6 +245,14 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
 												<i class="material-icons">add</i>
 												<span>NUEVO</span>
+											</button>
+											<button type="button" class="btn bg-green waves-effect btnNuevo2" data-toggle="modal" data-target="#lgmNuevo2">
+												<i class="material-icons">add</i>
+												<span>CLIENTE - PERSONA FISICA</span>
+											</button>
+											<button type="button" class="btn bg-blue-grey waves-effect btnNuevoMoral" data-toggle="modal" data-target="#lgmNuevo2">
+												<i class="material-icons">add</i>
+												<span>CLIENTE - PERSONA MORAL</span>
 											</button>
 
 										</div>
@@ -363,6 +392,31 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		</form>
 
 
+	<!-- NUEVO -->
+	<form class="formulario frmNuevo2" role="form" id="sign_in">
+	   <div class="modal fade" id="lgmNuevo2" tabindex="-1" role="dialog">
+	       <div class="modal-dialog modal-lg" role="document">
+	           <div class="modal-content">
+	               <div class="modal-header">
+	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular2); ?></h4>
+	               </div>
+	               <div class="modal-body">
+							<div class="row">
+								<?php echo $frmUnidadNegocios2; ?>
+							</div>
+
+	               </div>
+	               <div class="modal-footer">
+	                   <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
+	                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+	               </div>
+	           </div>
+	       </div>
+	   </div>
+		<input type="hidden" id="accion" name="accion" value="<?php echo 'insertarClientes'; ?>"/>
+	</form>
+
+
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
@@ -390,6 +444,26 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 <script>
 	$(document).ready(function(){
 
+		$('.frmContnumerocliente').hide();
+		$('.frmContrefusuarios').hide();
+
+		$('.btnNuevoMoral').click(function() {
+
+			$('.frmContreftipopersonas').hide();
+			$('#reftipopersonas').val(2);
+			$('.frmContrazonsocial').show();
+
+		});
+
+		$('.btnNuevo2').click(function() {
+			$('.frmContreftipopersonas').hide();
+			$('#reftipopersonas').val(1);
+
+			$('.frmContrazonsocial').hide();
+
+		});
+
+		$('.frmContnropoliza').hide();
 		$('.frmContfechaemitido').hide();
 		$('.frmContprimaneta').hide();
 		$('.frmContprimatotal').hide();
@@ -401,10 +475,16 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('.frmContobservaciones').hide();
 		$('.frmContrefusuarios').hide();
 
-		$('#fechacrea').val('2020-02-02');
-		$('#fechamodi').val('2020-02-02');
-		$('#usuariocrea').val('2020-02-02');
-		$('#usuariomodi').val('2020-02-02');
+		$('.frmNuevo #fechacrea').val('2020-02-02');
+		$('.frmNuevo #fechamodi').val('2020-02-02');
+		$('.frmNuevo #usuariocrea').val('2020-02-02');
+		$('.frmNuevo #usuariomodi').val('2020-02-02');
+
+		$('.frmNuevo2 #numerocliente').val('123456');
+		$('.frmNuevo2 #fechacrea').val('2020-02-02');
+		$('.frmNuevo2 #fechamodi').val('2020-02-02');
+		$('.frmNuevo2 #usuariocrea').val('2020-02-02');
+		$('.frmNuevo2 #usuariomodi').val('2020-02-02');
 
 
 
@@ -699,14 +779,14 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		});
 
 
-		$('.frmModificar').submit(function(e){
+		$('.frmNuevo2').submit(function(e){
 
 			e.preventDefault();
-			if ($('.frmModificar')[0].checkValidity()) {
+			if ($('.frmNuevo2')[0].checkValidity()) {
 
 
 				//información del formulario
-				var formData = new FormData($(".formulario")[1]);
+				var formData = new FormData($(".formulario")[4]);
 				var message = "";
 				//hacemos la petición ajax
 				$.ajax({
@@ -729,14 +809,13 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 						if (data == '') {
 							swal({
 									title: "Respuesta",
-									text: "Registro Modificado con exito!!",
+									text: "Registro Creado con exito!!",
 									type: "success",
 									timer: 1500,
 									showConfirmButton: false
 							});
 
-							$('#lgmModificar').modal('hide');
-							table.ajax.reload();
+							location.reload();
 						} else {
 							swal({
 									title: "Respuesta",
