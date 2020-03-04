@@ -52,7 +52,7 @@ class Servicios {
 			foreach ($ar as $i) {
 				$contenido .= $rowTT[$i].$delimitador;
 			}
-			$cad .= '<option value="'.$rowTT[0].'">'.utf8_encode(substr($contenido,0,strlen($contenido)-strlen($delimitador))).'</option>';
+			$cad .= '<option value="'.$rowTT[0].'">'.(substr($contenido,0,strlen($contenido)-strlen($delimitador))).'</option>';
 		}
 		return $cad;
 	}
@@ -66,9 +66,9 @@ class Servicios {
 				$contenido .= $rowTT[$i].$delimitador;
 			}
 			if ($rowTT[0] == $idSelect) {
-				$cad .= '<option value="'.$rowTT[0].'" selected="selected">'.utf8_encode(substr($contenido,0,strlen($contenido)-strlen($delimitador))).'</option>';
+				$cad .= '<option value="'.$rowTT[0].'" selected="selected">'.(substr($contenido,0,strlen($contenido)-strlen($delimitador))).'</option>';
 			} else {
-				$cad .= '<option value="'.$rowTT[0].'">'.utf8_encode(substr($contenido,0,strlen($contenido)-strlen($delimitador))).'</option>';
+				$cad .= '<option value="'.$rowTT[0].'">'.(substr($contenido,0,strlen($contenido)-strlen($delimitador))).'</option>';
 			}
 		}
 		return $cad;
