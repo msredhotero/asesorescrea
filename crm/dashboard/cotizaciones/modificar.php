@@ -120,7 +120,7 @@ $resUsuario = $serviciosUsuario->traerUsuarioId(mysql_result($resultado,0,'refus
 $cadRef1 	= $serviciosFunciones->devolverSelectBox($resUsuario,array(1),'');
 
 $resVar2	= $serviciosReferencias->traerClientes();
-$cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(2,3,4),' ',mysql_result($resultado,0,'refclientes'));
+$cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(3,4,2),' ',mysql_result($resultado,0,'refclientes'));
 
 $resVar3	= $serviciosReferencias->traerProductos();
 $cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resVar3,array(1),'',mysql_result($resultado,0,'refproductos'));
