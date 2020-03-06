@@ -63,7 +63,7 @@ $lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','E
 $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
 
 $resVar2	= $serviciosReferencias->traerClientes();
-$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(4,2,3),' ');
+$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(2,3,4),' ');
 
 $resVar3	= $serviciosReferencias->traerProductos();
 $cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
