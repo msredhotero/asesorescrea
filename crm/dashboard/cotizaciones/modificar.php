@@ -424,18 +424,21 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		<?php
 		if ($ordenPosible == 5) {
 		?>
-		$('.frmContprimaneta').show();
-		$('.frmContprimatotal').show();
+		
 		$('.frmContrecibopago').show();
 		$('.frmContfechaemitido').show();
 		$('.frmContnropoliza').show();
 
+
 		<?php if ($prima == '1') { ?>
 		$("#primaneta").prop('required',true);
 		$("#primatotal").prop('required',true);
+		$('.frmContprimaneta').show();
+		$('.frmContprimatotal').show();
 		<?php } ?>
 		$("#recibopago").prop('required',true);
 		$("#fechaemitido").prop('required',true);
+		
 		<?php
 		}
 		?>
@@ -443,8 +446,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		<?php
 		if ($ordenPosible == 6) {
 		?>
-		$('.frmContprimaneta').show();
-		$('.frmContprimatotal').show();
+		
 		$('.frmContrecibopago').show();
 		$('.frmContfechaemitido').show();
 		$('.frmContnropoliza').show();
@@ -455,6 +457,8 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		<?php if ($prima == '1') { ?>
 		$("#primaneta").prop('required',true);
 		$("#primatotal").prop('required',true);
+		$('.frmContprimaneta').show();
+		$('.frmContprimatotal').show();
 		<?php } ?>
 		$("#recibopago").prop('required',true);
 		$("#fechaemitido").prop('required',true);
@@ -468,8 +472,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		<?php
 		if ($ordenPosible == 7) {
 		?>
-		$('.frmContprimaneta').show();
-		$('.frmContprimatotal').show();
+		
 		$('.frmContrecibopago').show();
 		$('.frmContfechaemitido').show();
 		$('.frmContnropoliza').show();
@@ -482,6 +485,8 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		<?php if ($prima == '1') { ?>
 		$("#primaneta").prop('required',true);
 		$("#primatotal").prop('required',true);
+		$('.frmContprimaneta').show();
+		$('.frmContprimatotal').show();
 		<?php } ?>
 		$("#recibopago").prop('required',true);
 		$("#fechaemitido").prop('required',true);
@@ -497,8 +502,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		<?php
 		if ($ordenPosible == 8) {
 		?>
-		$('.frmContprimaneta').show();
-		$('.frmContprimatotal').show();
+		
 		$('.frmContrecibopago').show();
 		$('.frmContfechaemitido').show();
 		$('.frmContnropoliza').show();
@@ -512,6 +516,8 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		<?php if ($prima == '1') { ?>
 		$("#primaneta").prop('required',true);
 		$("#primatotal").prop('required',true);
+		$('.frmContprimaneta').show();
+		$('.frmContprimatotal').show();
 		<?php } ?>
 		$("#recibopago").prop('required',true);
 		$("#fechaemitido").prop('required',true);
