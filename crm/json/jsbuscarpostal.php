@@ -27,7 +27,7 @@ $res = $serviciosReferencias->buscarPostal(utf8_decode($busqueda));
 $cad = '';
 	while ($row = mysql_fetch_array($res)) {
 
-		array_push($ar,array('id'=>$row['id'], 'codigo'=> substr('00000'.$row['codigo'],-5), 'colonia'=> utf8_decode($row['colonia']), 'municipio'=> utf8_decode($row['municipio']), 'estado'=> utf8_decode($row['estado'])));
+		array_push($ar,array('id'=>$row['id'], 'codigo'=> substr('00000'.$row['codigo'],-5), 'colonia'=> ($row['colonia']), 'municipio'=> ($row['municipio']), 'estado'=> ($row['estado'])));
 	}
 
 }
