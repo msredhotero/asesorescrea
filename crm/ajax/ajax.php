@@ -628,7 +628,7 @@ switch ($accion) {
       insertarOportunidades($serviciosReferencias);
    break;
    case 'modificarOportunidades':
-      modificarOportunidades($serviciosReferencias);
+      modificarOportunidades($serviciosReferencias,$serviciosNotificaciones);
    break;
    case 'eliminarOportunidades':
       eliminarOportunidades($serviciosReferencias);
@@ -719,8 +719,227 @@ switch ($accion) {
    break;
 
 
+   case 'insertarAsociadostemporales':
+      insertarAsociadostemporales($serviciosReferencias,$serviciosUsuarios);
+   break;
+   case 'modificarAsociadostemporales':
+      modificarAsociadostemporales($serviciosReferencias,$serviciosUsuarios);
+   break;
+   case 'eliminarAsociadostemporales':
+      eliminarAsociadostemporales($serviciosReferencias);
+   break;
+
+   case 'eliminarDocumentacionAsociadotemporal':
+      eliminarDocumentacionAsociadotemporal($serviciosReferencias);
+   break;
+   case 'traerDocumentacionPorAsociadotemporalDocumentacion':
+      traerDocumentacionPorAsociadotemporalDocumentacion($serviciosReferencias);
+   break;
+   case 'modificarEstadoDocumentacionAsociadostemporales':
+      modificarEstadoDocumentacionAsociadostemporales($serviciosReferencias);
+   break;
+   case 'modificarAsociadotemporalUnicaDocumentacion':
+      modificarAsociadotemporalUnicaDocumentacion($serviciosReferencias);
+   break;
+
+   case 'traerEntrevistaoportunidadesPorOportunidad':
+      traerEntrevistaoportunidadesPorOportunidad($serviciosReferencias);
+   break;
+
+
 }
 /* Fin */
+
+
+
+function traerEntrevistaoportunidadesPorOportunidad($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->traerEntrevistaoportunidadesPorOportunidad($id);
+
+   if (mysql_num_rows($res) > 0) {
+      $resV['error'] = false;
+      $resV['fecha'] = mysql_result($res,0,'fecha');
+      $resV['reftipocita'] = mysql_result($res,0,'reftipocita');
+   } else {
+      $resV['error'] = true;
+      $resV['fecha'] = '';
+      $resV['reftipocita'] = '';
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
+function modificarAsociadotemporalUnicaDocumentacion($serviciosReferencias) {
+   $idasociadotemporal = $_POST['idasociadotemporal'];
+   $campo = $_POST['campo'];
+   $valor = $_POST['valor'];
+
+   $res = $serviciosReferencias->modificarAsociadotemporalUnicaDocumentacion($idasociadotemporal, $campo, $valor);
+
+   if ($res == true) {
+      $resV['leyenda'] = '';
+      $resV['error'] = false;
+   } else {
+      $resV['leyenda'] = 'Hubo un error al modificar datos';
+      $resV['error'] = true;
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
+
+function modificarEstadoDocumentacionAsociadostemporales($serviciosReferencias) {
+   session_start();
+
+   $iddocumentacionasociadotemporal = $_POST['iddocumentacionasociadotemporal'];
+   $idestado = $_POST['idestado'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+
+   if ($iddocumentacionasociadotemporal == 0) {
+      $resV['leyenda'] = 'Todavia no cargo el archivo, no podra modificar el estado de la documentación';
+      $resV['error'] = true;
+   } else {
+      $res = $serviciosReferencias->modificarEstadoDocumentacionAsociadostemporales($iddocumentacionasociadotemporal,$idestado,$usuariomodi);
+
+      if ($res == true) {
+         $resV['leyenda'] = '';
+         $resV['error'] = false;
+      } else {
+         $resV['leyenda'] = 'Hubo un error al modificar datos';
+         $resV['error'] = true;
+      }
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function traerDocumentacionPorAsociadotemporalDocumentacion($serviciosReferencias) {
+
+   $idasociadotemporal = $_POST['idasociadotemporal'];
+   $iddocumentacion = $_POST['iddocumentacion'];
+
+   $resV['datos'] = '';
+   $resV['error'] = false;
+
+   $resFoto = $serviciosReferencias->traerDocumentacionPorAsociadotemporalDocumentacion($idasociadotemporal,$iddocumentacion);
+
+   $imagen = '';
+
+   if (mysql_num_rows($resFoto) > 0) {
+      /* produccion
+      $imagen = 'https://www.saupureinconsulting.com.ar/aifzn/'.mysql_result($resFoto,0,'archivo').'/'.mysql_result($resFoto,0,'imagen');
+      */
+
+      //desarrollo
+
+      if (mysql_result($resFoto,0,'type') == '') {
+         $imagen = '../../imagenes/sin_img.jpg';
+
+         $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+         $resV['error'] = true;
+      } else {
+         $imagen = '../../archivos/asociadostemporales/'.$idasociadotemporal.'/'.mysql_result($resFoto,0,'carpeta').'/'.mysql_result($resFoto,0,'archivo');
+
+         $resV['datos'] = array('imagen' => $imagen, 'type' => mysql_result($resFoto,0,'type'));
+
+         $resV['error'] = false;
+      }
+
+
+
+   } else {
+      $imagen = '../../imagenes/sin_img.jpg';
+
+
+      $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+      $resV['error'] = true;
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
+
+function eliminarDocumentacionAsociadotemporal($serviciosReferencias) {
+   $idasociadotemporal = $_POST['idasociadotemporal'];
+   $iddocumentacion = $_POST['iddocumentacion'];
+
+   $res = $serviciosReferencias->eliminarDocumentacionAsociadotemporal($idasociadotemporal, $iddocumentacion);
+
+   header('Content-type: application/json');
+   echo json_encode($res);
+}
+
+function insertarAsociadostemporales($serviciosReferencias,$serviciosUsuarios) {
+
+   $apellidopaterno = $_POST['apellidopaterno'];
+   $apellidomaterno = $_POST['apellidomaterno'];
+   $nombre = $_POST['nombre'];
+   $ine = $_POST['ine'];
+   $email = $_POST['email'];
+   $fechanacimiento = $_POST['fechanacimiento'];
+   $telefonomovil = $_POST['telefonomovil'];
+   $telefonotrabajo = $_POST['telefonotrabajo'];
+   $refbancos = $_POST['refbancos'];
+   $claveinterbancaria = $_POST['claveinterbancaria'];
+   $domicilio = $_POST['domicilio'];
+
+   $password = $apellidopaterno.$apellidomaterno.date('His');
+
+   $refusuarios = $serviciosUsuarios->insertarUsuario($nombre,$password,12,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
+
+   $res = $serviciosReferencias->insertarAsociadostemporales($refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarAsociadostemporales($serviciosReferencias) {
+   $id = $_POST['id'];
+   $refusuarios = $_POST['refusuarios'];
+   $apellidopaterno = $_POST['apellidopaterno'];
+   $apellidomaterno = $_POST['apellidomaterno'];
+   $nombre = $_POST['nombre'];
+   $ine = $_POST['ine'];
+   $email = $_POST['email'];
+   $fechanacimiento = $_POST['fechanacimiento'];
+   $telefonomovil = $_POST['telefonomovil'];
+   $telefonotrabajo = $_POST['telefonotrabajo'];
+   $refbancos = $_POST['refbancos'];
+   $claveinterbancaria = $_POST['claveinterbancaria'];
+   $domicilio = $_POST['domicilio'];
+
+   $res = $serviciosReferencias->modificarAsociadostemporales($id,$refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarAsociadostemporales($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarAsociadostemporales($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
 
 function rechazarCotizacion($serviciosReferencias) {
    session_start();
@@ -915,7 +1134,7 @@ function modificarEstadoDocumentacionAsociados($serviciosReferencias) {
    $idestado = $_POST['idestado'];
    $usuariomodi = $_SESSION['usua_sahilices'];
 
-   if ($iddocumentacionasesor == 0) {
+   if ($iddocumentacionasociado == 0) {
       $resV['leyenda'] = 'Todavia no cargo el archivo, no podra modificar el estado de la documentación';
       $resV['error'] = true;
    } else {
@@ -1300,7 +1519,9 @@ function insertarOportunidades($serviciosReferencias) {
 
 }
 
-function modificarOportunidades($serviciosReferencias) {
+function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones) {
+   session_start();
+
    $id = $_POST['id'];
    $nombredespacho = $_POST['nombredespacho'];
    $apellidopaterno = $_POST['apellidopaterno'];
@@ -1318,17 +1539,86 @@ function modificarOportunidades($serviciosReferencias) {
       $refestadooportunidad = 4;
    }
 
-   if (($telefonotrabajo == '') && ($telefonomovil == '')) {
-      echo 'Hubo un error al insertar datos - Debe cargar por lo menos un telefono';
-   } else {
-      $res = $serviciosReferencias->modificarOportunidades($id,$nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$telefonomovil,$telefonotrabajo,$email,$refusuarios,$refreferentes,$refestadooportunidad,$refmotivorechazos,$observaciones);
-
-      if ($res == true) {
-         echo '';
-      } else {
-         echo 'Hubo un error al modificar datos';
+   $error = '';
+   if ($refestadooportunidad == 2) {
+      $resEntrevistas = $serviciosReferencias->traerEntrevistaoportunidadesPorOportunidad($id);
+      if ($_POST['fecha'] == '') {
+         $error = 'Debe cargar la fecha de la cita - ';
+      }
+      if ($_POST['entrevistador'] == '') {
+         $error .= 'Debe cargar el entrevistador de la cita - ';
       }
    }
+
+   if ($error != '') {
+      echo 'Hubo un error al insertar datos - '.$error;
+   } else {
+      if (($telefonotrabajo == '') && ($telefonomovil == '')) {
+         echo 'Hubo un error al insertar datos - Debe cargar por lo menos un telefono';
+      } else {
+         $res = $serviciosReferencias->modificarOportunidades($id,$nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$telefonomovil,$telefonotrabajo,$email,$refusuarios,$refreferentes,$refestadooportunidad,$refmotivorechazos,$observaciones);
+
+         if ($res == true) {
+            if ($refestadooportunidad == 3) {
+               /**** creo la notificacion ******/
+      			$emailReferente = 'rlinares@asesorescrea.com'; //por ahora fijo
+      			$mensaje = 'Se acepto una oportunidad: '.$apellidopaterno.' '.$apellidomaterno.' '.$nombre;
+      			$idpagina = 1;
+      			$autor = $_SESSION['usua_sahilices'];
+      			$destinatario = $emailReferente;
+      			$id1 = $id;
+      			$id2 = 0;
+      			$id3 = 0;
+      			$icono = 'person_add';
+      			$estilo = 'bg-light-green';
+      			$fecha = date('Y-m-d H:i:s');
+      			$url = "oportunidades/index.php";
+
+      			$res = $serviciosNotificaciones->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url);
+      			/*** fin de la notificacion ****/
+            }
+            if ($refestadooportunidad == 2) {
+               if (mysql_num_rows($resEntrevistas) > 0) {
+                  //modifico la entrevista
+
+                  $id = mysql_result($resEntrevistas,0,0);
+                  $refoportunidades = $_POST['refoportunidades'];
+                  $entrevistador = $_POST['entrevistador'];
+                  $fecha = $_POST['fecha'];
+                  $domicilio = 'sin domicilio';
+                  $codigopostal = 547;
+                  $refestadoentrevistas = 1;
+                  $fechamodi = date('Y-m-d H:i:s');
+                  $usuariomodi = $_SESSION['usua_sahilices'];
+                  $reftipocita = $_POST['reftipocita'];
+
+                  $res = $serviciosReferencias->modificarEntrevistaoportunidades($id,$refoportunidades,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadoentrevistas,$fechamodi,$usuariomodi,$reftipocita);
+
+               } else {
+                  //inserto la entrevista
+                  $refoportunidades = $_POST['refoportunidades'];
+                  $entrevistador = $_POST['entrevistador'];
+                  $fecha = $_POST['fecha'];
+                  $domicilio = 'sin domicilio';
+                  $codigopostal = 547;
+                  $refestadoentrevistas = 1;
+                  $fechacrea = date('Y-m-d H:i:s');
+                  $fechamodi = date('Y-m-d H:i:s');
+                  $usuariocrea = $_SESSION['usua_sahilices'];
+                  $usuariomodi = $_SESSION['usua_sahilices'];
+                  $reftipocita = $_POST['reftipocita'];
+
+                  $res = $serviciosReferencias->insertarEntrevistaoportunidades($refoportunidades,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadoentrevistas,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$reftipocita);
+
+               }
+            }
+            echo '';
+         } else {
+            echo 'Hubo un error al modificar datos';
+         }
+      }
+   }
+
 }
 
 function eliminarOportunidades($serviciosReferencias) {
@@ -2297,6 +2587,23 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 
          $refdescripcion = array(0=> $cadRef1,1=> $cadRef2);
          $refCampo 	=  array('refusuarios','refbancos');
+      break;case 'dbasociadostemporales':
+         $resultado = $serviciosReferencias->traerAsociadostemporalesPorId($id);
+
+         $modificar = "modificarAsociadostemporales";
+         $idTabla = "idasociadotemporal";
+
+         $lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refbancos','claveinterbancaria');
+         $lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Sucursal Bancaria','Clave Interbancaria');
+
+         $resVar1 = $serviciosUsuarios->traerUsuarioId(mysql_result($resultado,0,'refusuarios'));
+         $cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
+
+         $resVar2	= $serviciosReferencias->traerBancos();
+         $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(1),'',mysql_result($resultado,0,'refbancos'));
+
+         $refdescripcion = array(0=> $cadRef1,1=> $cadRef2);
+         $refCampo 	=  array('refusuarios','refbancos');
       break;
       case 'dbreclutadorasores':
          $resultado = $serviciosReferencias->traerReclutadorasoresPorId($id);
@@ -3048,6 +3355,8 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
             $refesquemareclutamiento = $_POST['refesquemareclutamiento'];
          }
 
+         $reforigenreclutamiento = $_POST['reforigenreclutamiento'];
+
 
          if ($afore == '1') {
             //$refestadopostulantes = 9; // lo saco por orden de javier 19/12/2019
@@ -3091,9 +3400,10 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
          // para la persona fisica o moral
          $reftipopersonas = $_POST['reftipopersonas'];
          $razonsocial = $_POST['razonsocial'];
+         $email2 = $_POST['email2'];
 
          // desde el crm
-         $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore,$reftipopersonas,$razonsocial);
+         $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore,$reftipopersonas,$razonsocial,$reforigenreclutamiento,$email2);
 
          //die(var_dump($res));
 
@@ -3128,6 +3438,8 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
 
 
       } else {
+         $resEliminar = $serviciosReferencias->eliminarUsuariosDefinitivamente($refusuarios);
+
          echo 'Hubo un error al crear usuario, verificar que no existe ya ese email en la base de datos';
       }
    } else {
@@ -3209,8 +3521,11 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
             $reftipopersonas = 1;
             $razonsocial = '';
 
+            $reforigenreclutamiento = 1;
+            $email2 = '';
+
             // desde el test
-            $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore,$reftipopersonas,$razonsocial);
+            $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore,$reftipopersonas,$razonsocial,$reforigenreclutamiento,$email2);
 
             //die(var_dump($res));
 
@@ -3304,7 +3619,10 @@ function modificarPostulantes($serviciosReferencias) {
 
    $razonsocial = $_POST['razonsocial'];
 
-   $res = $serviciosReferencias->modificarPostulantes($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$nss,$refesquemareclutamiento,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore,$nropoliza,$razonsocial);
+   $reforigenreclutamiento = $_POST['reforigenreclutamiento'];
+   $email2 = $_POST['email2'];
+
+   $res = $serviciosReferencias->modificarPostulantes($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$nss,$refesquemareclutamiento,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore,$nropoliza,$razonsocial,$reforigenreclutamiento,$email2);
 
    if ($res == true) {
       echo '';

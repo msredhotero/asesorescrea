@@ -61,7 +61,6 @@ $lblCambio	 	= array('nombredespacho','refusuarios','refreferentes','refestadoop
 $lblreemplazo	= array('Nombre del Despacho','Asignar a Gerente','Persona que Recomendo','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Motivos de Rechazos');
 
 
-
 $resRoles 	= $serviciosUsuario->traerUsuariosPorRol(3);
 $cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
 
@@ -93,6 +92,12 @@ $refCampo 	=  array('refusuarios','refreferentes','refestadooportunidad','refmot
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
+
+$resTipoCita 	= $serviciosReferencias->traerTipocita(1);
+$cadRefTipoCita = $serviciosFunciones->devolverSelectBox($resTipoCita,array(1),' ');
+
+$resEstadoCita = $serviciosReferencias->traerEstadoentrevistasPorId(1);
+$cadRefCita = $serviciosFunciones->devolverSelectBox($resEstadoCita,array(1),'');
 
 ?>
 
@@ -206,10 +211,12 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
+											<?php if ($_SESSION['idroll_sahilices'] != 3) { ?>
 											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
 												<i class="material-icons">add</i>
 												<span>NUEVO</span>
 											</button>
+											<?php } ?>
 											<button type="button" class="btn bg-blue waves-effect btnVigente">
 												<i class="material-icons">timeline</i>
 												<span>VIGENTE</span>
@@ -230,10 +237,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
+												<th>Cita</th>
 												<th>Nombre Despacho</th>
-												<th>Apellido Paterno</th>
-												<th>Apellido Materno</th>
-												<th>Nombre</th>
+												<th>Nombre Completo</th>
 												<th>Tel. Movil</th>
 												<th>Tel. Trabajo</th>
 												<th>Email</th>
@@ -246,10 +252,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										</thead>
 										<tfoot>
 											<tr>
+												<th>Cita</th>
 												<th>Nombre Despacho</th>
-												<th>Apellido Paterno</th>
-												<th>Apellido Materno</th>
-												<th>Nombre</th>
+												<th>Nombre Completo</th>
 												<th>Tel. Movil</th>
 												<th>Tel. Trabajo</th>
 												<th>Email</th>
@@ -270,9 +275,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										<thead>
 											<tr>
 												<th>Nombre Despacho</th>
-												<th>Apellido Paterno</th>
-												<th>Apellido Materno</th>
-												<th>Nombre</th>
+												<th>Nombre Completo</th>
 												<th>Tel. Movil</th>
 												<th>Tel. Trabajo</th>
 												<th>Email</th>
@@ -286,9 +289,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										<tfoot>
 											<tr>
 												<th>Nombre Despacho</th>
-												<th>Apellido Paterno</th>
-												<th>Apellido Materno</th>
-												<th>Nombre</th>
+												<th>Nombre Completo</th>
 												<th>Tel. Movil</th>
 												<th>Tel. Trabajo</th>
 												<th>Email</th>
@@ -351,6 +352,55 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		               <div class="modal-body">
 								<div class="row frmAjaxModificar">
 								</div>
+								<div class="row frmEntrevistaoportunidad">
+
+									<input type="hidden" class="form-control" id="refoportunidades" name="refoportunidades" >
+
+
+
+									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContentrevistador" style="display:block">
+										<label class="form-label">Entrevistador</label>
+										<div class="form-group input-group">
+											<div class="form-line">
+												<input type="text" class="form-control" id="entrevistador" name="entrevistador" value="<?php echo $_SESSION['nombre_sahilices']; ?>">
+											</div>
+										</div>
+									</div>
+
+
+									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContfecha" style="display:block">
+										<b>Fecha</b>
+										<div class="input-group">
+											<span class="input-group-addon">
+												 <i class="material-icons">date_range</i>
+											</span>
+	                              <div class="form-line">
+										   	<input readonly="readonly" style="width:200px;" type="text" class="datepicker form-control" id="fecha" name="fecha" data-dtp="dtp_PkrpV">
+	                              </div>
+	                           </div>
+                           </div>
+
+									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContrefestadoentrevistas" style="display:none;">
+										<label for="refestadoentrevistas" class="control-label" style="text-align:left">Estado</label>
+										<div class="input-group col-md-12">
+											<select class="form-control" id="refestadoentrevistas" name="refestadoentrevistas">
+												<?php echo $cadRefCita; ?>
+											</select>
+										</div>
+									</div>
+
+									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContreftipocita" style="display:block">
+										<label class="form-label">Tipo Cita</label>
+										<div class="form-group">
+											<div class="form-line">
+												<select class="form-control" id="reftipocita" name="reftipocita">
+													<?php echo $cadRefTipoCita; ?>
+												</select>
+
+											</div>
+										</div>
+									</div>
+								</div>
 		               </div>
 		               <div class="modal-footer">
 		                   <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
@@ -403,6 +453,12 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 <script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
 
+<!-- Moment Plugin Js -->
+    <script src="../../plugins/momentjs/moment.js"></script>
+	 <script src="../../js/moment-with-locales.js"></script>
+
+<script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
+
 
 <script>
 	$(document).ready(function(){
@@ -418,13 +474,49 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			$('.contHistorico').hide();
 		});
 
+
+		function traerEntrevistasucursalesPorOportunidad(id) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'traerEntrevistaoportunidadesPorOportunidad',id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						if (data.error == false) {
+							$('.frmEntrevistaoportunidad #fecha').val(data.fecha);
+							$('.frmEntrevistaoportunidad #reftipocita').val(data.reftipocita);
+							$('.frmEntrevistaoportunidad').show();
+						} else {
+							$('.frmEntrevistaoportunidad').hide();
+							$('.frmEntrevistaoportunidad #fecha').val(data.fecha);
+						}
+
+					} else {
+						swal("Error!", 'Se genero un error al traer datos', "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
+
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=oportunidades",
-			"columnDefs": [
-		    { "orderable": false, "targets": 7 }
-		 	],
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -447,7 +539,10 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 					"sortAscending":  ": activate to sort column ascending",
 					"sortDescending": ": activate to sort column descending"
 				}
-			}
+			},
+			"columnDefs": [
+		    { "orderable": false, "targets": 6 }
+		 	],
 		});
 
 		var table2 = $('#example2').DataTable({
@@ -514,6 +609,22 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 					if (data != '') {
 						$('.frmAjaxModificar').html(data);
+
+						$('.frmEntrevistaoportunidad #entrevistador').val($('.frmAjaxModificar #refusuarios option:selected').html());
+
+						$('#refoportunidades').val(id);
+
+						traerEntrevistasucursalesPorOportunidad(id);
+
+						$('.frmEntrevistaoportunidad #fecha').bootstrapMaterialDatePicker({
+							format: 'YYYY/MM/DD HH:mm',
+							lang : 'mx',
+							clearButton: true,
+							weekStart: 1,
+							time: true,
+							minDate : new Date()
+						});
+
 					} else {
 						swal("Error!", data, "warning");
 
@@ -648,6 +759,22 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			frmAjaxModificar(idTable);
 			$('#lgmModificar').modal();
 		});//fin del boton modificar
+
+		$(".frmAjaxModificar").on("change",'#refusuarios', function(){
+			$('.frmEntrevistaoportunidad #entrevistador').val($('.frmAjaxModificar #refusuarios option:selected').html());
+		});//fin del boton modificar
+
+		$('.frmEntrevistaoportunidad').hide();
+
+		$(".frmAjaxModificar").on("change",'#refestadooportunidad', function(){
+
+			if ($('.frmAjaxModificar #refestadooportunidad option:selected').val() == 2) {
+				$('.frmEntrevistaoportunidad').show();
+			} else {
+				$('.frmEntrevistaoportunidad').hide();
+			}
+		});//fin del boton modificar
+
 
 		$('.frmNuevo').submit(function(e){
 

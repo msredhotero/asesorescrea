@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../asesores/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../asociadostemporales/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Asesores",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Asociados Temporales",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -39,53 +39,36 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Asesor";
+$singular = "Asociado Temporal";
 
-$plural = "Asesores";
+$plural = "Asociados Temporales";
 
-$eliminar = "eliminarAsesores";
+$eliminar = "eliminarAsociadostemporales";
 
-$insertar = "insertarAsesores";
+$insertar = "insertarAsociadostemporales";
 
-$modificar = "modificarAsesores";
+$modificar = "modificarAsociadostemporales";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbasesores";
+$tabla 			= "dbasociadostemporales";
 
-$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','nss','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta','urlprueba','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas','razonsocial');
-$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Nro de Seguro Social','Clave Interbancaria','ID Cliente Inbursa','Clave Asesor','Fecha de Alta','URL Prueba','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona','Razon Social');
+$lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refbancos','claveinterbancaria');
+$lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Sucursal Bancaria','Clave Interbancaria');
 
 
 $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
 
-$resVar2	= $serviciosReferencias->traerEscolaridades();
+$resVar2	= $serviciosReferencias->traerBancos();
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),'');
 
-$cadRef5 = "<option value=''>-- Seleccionar --</option><option value='1'>Femenino</option><option value='2'>Masculino</option>";
-
-$cadRef6 	= "<option value='Mexico'>Mexico</option>";
-
-$resVar8 = $serviciosReferencias->traerTipopersonas();
-$cadRef8 = $serviciosFunciones->devolverSelectBox($resVar8,array(1),'');
-
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2, 2=>$cadRef5,3=>$cadRef6,4=>$cadRef8);
-$refCampo 	=  array('refusuarios','refescolaridades','sexo','codigopostal','reftipopersonas');
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2);
+$refCampo 	=  array('refusuarios','refbancos');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
-
-$resRoles 	= $serviciosUsuario->traerUsuariosPorRol(3);
-$cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
-
-if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)) {
-	$cadRefFiltro = '<option value="">'.$_SESSION['nombre_sahilices'].'</option>';
-} else {
-	$cadRefFiltro = $cadRef1;
-}
-
 
 ?>
 
@@ -114,6 +97,9 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 
 	<!-- Dropzone Css -->
 	<link href="../../plugins/dropzone/dropzone.css" rel="stylesheet">
+
+	<link rel="stylesheet" type="text/css" href="../../css/classic.css"/>
+	<link rel="stylesheet" type="text/css" href="../../css/classic.date.css"/>
 
 
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
@@ -217,12 +203,10 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 												<th>Nombre</th>
 												<th>Apellido P.</th>
 												<th>Apellido M.</th>
+												<th>INE</th>
 												<th>Email</th>
-												<th>ID Inbursa</th>
-												<th>Clave Interb.</th>
-												<th>Clave Asesor</th>
-												<th>Fecha Alta</th>
-												<th class="perfilS">Resp.Comercial</th>
+												<th>Fecha Nac.</th>
+												<th>Tel. Movil</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -231,12 +215,10 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 												<th>Nombre</th>
 												<th>Apellido P.</th>
 												<th>Apellido M.</th>
+												<th>INE</th>
 												<th>Email</th>
-												<th>ID Inbursa</th>
-												<th>Clave Interb.</th>
-												<th>Clave Asesor</th>
-												<th>Fecha Alta</th>
-												<th>Resp.Comercial</th>
+												<th>Fecha Nac.</th>
+												<th>Tel. Movil</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -254,7 +236,7 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 
 
 <!-- NUEVO -->
-	<form class="formulario" role="form" id="sign_in">
+	<form class="formulario frmNuevo" role="form" id="sign_in">
 	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
 	       <div class="modal-dialog modal-lg" role="document">
 	           <div class="modal-content">
@@ -275,19 +257,18 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 	</form>
 
 	<!-- MODIFICAR -->
-		<form class="formulario" role="form" id="sign_in">
+		<form class="formulario frmModificar" role="form" id="sign_in">
 		   <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
 		       <div class="modal-dialog modal-lg" role="document">
 		           <div class="modal-content">
 		               <div class="modal-header">
 		                   <h4 class="modal-title" id="largeModalLabel">MODIFICAR <?php echo strtoupper($singular); ?></h4>
 		               </div>
-		               <div class="modal-body">
-								<div class="row frmAjaxModificar">
-								</div>
+		               <div class="modal-body frmAjaxModificar">
+
 		               </div>
 		               <div class="modal-footer">
-		                   <button type="button" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
+		                   <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
 		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
 		               </div>
 		           </div>
@@ -337,16 +318,34 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 
 <script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
 
+<script src="../../js/picker.js"></script>
+<script src="../../js/picker.date.js"></script>
+
 
 <script>
 	$(document).ready(function(){
+
+		$('#fechanacimiento').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		});
+
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=asesores",
-			"columnDefs": [
-		    { "orderable": false, "targets": 8 }
-		 	],
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=asociadostemporales",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -372,19 +371,6 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 			}
 		});
 
-		$("#example .perfilS").each( function ( i ) {
-			var select = $('<select><option value="">-- Seleccione Perfil --</option><?php echo $cadRefFiltro; ?></select>')
-				.appendTo( $(this).empty() )
-				.on( 'change', function () {
-					table.column( i )
-						.search( $(this).val() )
-						.draw();
-				} );
-			table.column( i ).data().unique().sort().each( function ( d, j ) {
-				select.append( '<option value="'+d+'">'+d+'</option>' )
-			} );
-		} );
-
 		$("#sign_in").submit(function(e){
 			e.preventDefault();
 		});
@@ -407,6 +393,22 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 
 					if (data != '') {
 						$('.frmAjaxModificar').html(data);
+						$('.frmAjaxModificar #fechanacimiento').pickadate({
+							format: 'yyyy-mm-dd',
+							labelMonthNext: 'Siguiente mes',
+							labelMonthPrev: 'Previo mes',
+							labelMonthSelect: 'Selecciona el mes del año',
+							labelYearSelect: 'Selecciona el año',
+							selectMonths: true,
+							selectYears: 100,
+							today: 'Hoy',
+							clear: 'Borrar',
+							close: 'Cerrar',
+							monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+							monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+							weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+							weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+						});
 					} else {
 						swal("Error!", data, "warning");
 
@@ -521,9 +523,10 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 			});
 		}
 
-		$("#example").on("click",'.btnEnviar', function(){
+		$("#example").on("click",'.btnDocumentacion', function(){
 			idTable =  $(this).attr("id");
-			reenviarActivacion(idTable);
+			url = "subirdocumentacioni.php?id=" + idTable + "&documentacion=3";
+			$(location).attr('href',url);
 		});//fin del boton eliminar
 
 		$("#example").on("click",'.btnEliminar', function(){
@@ -542,115 +545,124 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 			$('#lgmModificar').modal();
 		});//fin del boton modificar
 
-		$('.nuevo').click(function(){
+		$('.frmNuevo').submit(function(e){
 
-			//información del formulario
-			var formData = new FormData($(".formulario")[0]);
-			var message = "";
-			//hacemos la petición ajax
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: formData,
-				//necesario para subir archivos via ajax
-				cache: false,
-				contentType: false,
-				processData: false,
-				//mientras enviamos el archivo
-				beforeSend: function(){
+			e.preventDefault();
+			if ($('#sign_in')[0].checkValidity()) {
 
-				},
-				//una vez finalizado correctamente
-				success: function(data){
+				//información del formulario
+				var formData = new FormData($(".formulario")[0]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
 
-					if (data == '') {
-						swal({
-								title: "Respuesta",
-								text: "Registro Creado con exito!!",
-								type: "success",
-								timer: 1500,
-								showConfirmButton: false
-						});
+					},
+					//una vez finalizado correctamente
+					success: function(data){
 
-						$('#lgmNuevo').modal('hide');
-						$('#unidadnegocio').val('');
-						table.ajax.reload();
-					} else {
-						swal({
-								title: "Respuesta",
-								text: data,
-								type: "error",
-								timer: 2500,
-								showConfirmButton: false
-						});
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Creado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
+
+							$('#lgmNuevo').modal('hide');
+							$('#unidadnegocio').val('');
+							table.ajax.reload();
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
 
 
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
 					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
+				});
+			}
 		});
 
 
-		$('.modificar').click(function(){
+		$('.frmModificar').submit(function(e){
 
-			//información del formulario
-			var formData = new FormData($(".formulario")[1]);
-			var message = "";
-			//hacemos la petición ajax
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: formData,
-				//necesario para subir archivos via ajax
-				cache: false,
-				contentType: false,
-				processData: false,
-				//mientras enviamos el archivo
-				beforeSend: function(){
+			e.preventDefault();
+			if ($('.frmModificar')[0].checkValidity()) {
 
-				},
-				//una vez finalizado correctamente
-				success: function(data){
+				//información del formulario
+				var formData = new FormData($(".formulario")[1]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
 
-					if (data == '') {
-						swal({
-								title: "Respuesta",
-								text: "Registro Modificado con exito!!",
-								type: "success",
-								timer: 1500,
-								showConfirmButton: false
-						});
+					},
+					//una vez finalizado correctamente
+					success: function(data){
 
-						$('#lgmModificar').modal('hide');
-						table.ajax.reload();
-					} else {
-						swal({
-								title: "Respuesta",
-								text: data,
-								type: "error",
-								timer: 2500,
-								showConfirmButton: false
-						});
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Modificado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
+
+							$('#lgmModificar').modal('hide');
+							table.ajax.reload();
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
 
 
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
 					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
+				});
+			}
 		});
+
 	});
 </script>
 

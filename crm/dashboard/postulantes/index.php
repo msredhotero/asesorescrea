@@ -55,8 +55,8 @@ $modificar = "modificarPostulantes";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbpostulantes";
 
-$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas','razonsocial');
-$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona','Razon Social');
+$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas','razonsocial','reforigenreclutamiento','email2');
+$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona','Razon Social','Origen de Reclutamiento','Email Adic.');
 
 
 $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
@@ -84,8 +84,11 @@ $_SESSION['token'] = $serviciosReferencias->GUID();
 $resVar8 = $serviciosReferencias->traerTipopersonas();
 $cadRef8 = $serviciosFunciones->devolverSelectBox($resVar8,array(1),'');
 
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadOpcion,7=>$cadOpcion,8=>$cadRef7,9=>$cadRef8);
-$refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','refestadopostulantes','sexo','nacionalidad','afore','cedula','refesquemareclutamiento','reftipopersonas');
+$resVar9 = $serviciosReferencias->traerOrigenreclutamiento();
+$cadRef9 = $serviciosFunciones->devolverSelectBox($resVar9,array(1),'');
+
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadOpcion,7=>$cadOpcion,8=>$cadRef7,9=>$cadRef8,10=>$cadRef9);
+$refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','refestadopostulantes','sexo','nacionalidad','afore','cedula','refesquemareclutamiento','reftipopersonas','reforigenreclutamiento');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -123,6 +126,14 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 	$cadRefOportunidades = $serviciosFunciones->devolverSelectBox($resOportunidades,array(1,13),' - ');
 }
 
+$resRoles 	= $serviciosUsuario->traerUsuariosPorRol(3);
+$cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
+
+if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)) {
+	$cadRefFiltro = '<option value="">'.$_SESSION['nombre_sahilices'].'</option>';
+} else {
+	$cadRefFiltro = $cadRef1;
+}
 
 ?>
 
@@ -275,6 +286,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 												<?php if ($_SESSION['idroll_sahilices'] == 1) { ?>
 												<th>Tel.</th>
 												<?php } ?>
+												<th class="perfilS">Resp.Comercial</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -290,6 +302,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 												<?php if ($_SESSION['idroll_sahilices'] == 1) { ?>
 												<th>Tel.</th>
 												<?php } ?>
+												<th>Resp.Comercial</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -783,9 +796,23 @@ if ($_SESSION['idroll_sahilices'] == 3) {
                   "targets": [ 4 ],
                   "visible": false,
                   "searchable": false
-              }
+              },
+				  { "orderable": false, "targets": 8 }
           ]
 		});
+
+		$("#example .perfilS").each( function ( i ) {
+			var select = $('<select><option value="">-- Seleccione Perfil --</option><?php echo $cadRefFiltro; ?></select>')
+				.appendTo( $(this).empty() )
+				.on( 'change', function () {
+					table.column( i )
+						.search( $(this).val() )
+						.draw();
+				} );
+			table.column( i ).data().unique().sort().each( function ( d, j ) {
+				select.append( '<option value="'+d+'">'+d+'</option>' )
+			} );
+		} );
 
 		$("#sign_in").submit(function(e){
 			e.preventDefault();

@@ -106,13 +106,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 	<link href="../../plugins/waitme/waitMe.css" rel="stylesheet" />
 	<link href="../../plugins/jquery-datatable/skin/bootstrap/css/dataTables.bootstrap.css" rel="stylesheet">
 
-	<!-- VUE JS -->
-	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-
-	<!-- axios -->
-	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
-	<script src="https://unpkg.com/vue-swal"></script>
 
 	<!-- Bootstrap Material Datetime Picker Css -->
 	<link href="../../plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet" />

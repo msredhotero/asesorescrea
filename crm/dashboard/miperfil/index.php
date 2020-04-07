@@ -533,6 +533,77 @@ if (mysql_result($resultado,0,'nss') == '') {
 
 	<div class="container-fluid">
 
+
+		<div class="row clearfix">
+			<div class="row">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<div class="card ">
+						<div class="header bg-blue">
+							<h2>
+								DOCUMENTACIONES
+							</h2>
+							<ul class="header-dropdown m-r--5">
+								<li class="dropdown">
+									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+										<i class="material-icons">more_vert</i>
+									</a>
+									<ul class="dropdown-menu pull-right">
+
+									</ul>
+								</li>
+							</ul>
+						</div>
+						<div class="body table-responsive">
+							<div class="row">
+									<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-bottom: 10px;">
+										<div class="alert alert-info">
+											<p><b>Importante!</b> Recuerde que debe completar toda la documentacion para poder continuar con el Proceso de Reclutamieno</p>
+										</div>
+
+										<?php echo $alertaINE; ?>
+										<?php echo $alertaCURP; ?>
+										<?php echo $alertaRFC; ?>
+										<?php echo $alertaNSS; ?>
+
+										<?php if ($permitePresentar == true) { ?>
+											<button type="button" class="btn bg-amber waves-effect btnPresentar">
+												<i class="material-icons">done_all</i>
+												<span>PRESENTAR DOCUMENTACION</span>
+											</button>
+
+										<?php } ?>
+									</div>
+									<?php
+									$noHabilitaCambio = '';
+									while ($row = mysql_fetch_array($resDocumentaciones)) {
+
+										if (($row['idestadodocumentacion'] == 5) || ($row['idestadodocumentacion'] == 6) || ($row['idestadodocumentacion'] == 7)) {
+											$noHabilitaCambio .= $row['iddocumentacion'].',';
+										}
+									?>
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+										<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
+											<div class="icon">
+												<i class="material-icons">face</i>
+											</div>
+											<div class="content">
+												<div class="text"><?php echo $row['documentacion']; ?></div>
+												<div class="number"><?php echo $row['estadodocumentacion']; ?></div>
+											</div>
+										</div>
+									</div>
+								<?php }
+								if (strlen($noHabilitaCambio) > 0) {
+									$noHabilitaCambio = substr($noHabilitaCambio,0,-1);
+								}
+								?>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div> <!-- fin del container documentaciones -->
+
 		<div class="row clearfix">
 			<div class="row">
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -695,75 +766,7 @@ if (mysql_result($resultado,0,'nss') == '') {
 			</div> <!-- fin del container veritas -->
 
 
-			<div class="row clearfix">
-				<div class="row">
-					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-						<div class="card ">
-							<div class="header bg-blue">
-								<h2>
-									DOCUMENTACIONES
-								</h2>
-								<ul class="header-dropdown m-r--5">
-									<li class="dropdown">
-										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-											<i class="material-icons">more_vert</i>
-										</a>
-										<ul class="dropdown-menu pull-right">
 
-										</ul>
-									</li>
-								</ul>
-							</div>
-							<div class="body table-responsive">
-								<div class="row">
-										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-bottom: 10px;">
-											<div class="alert alert-info">
-												<p><b>Importante!</b> Recuerde que debe completar toda la documentacion para poder continuar con el Proceso de Reclutamieno</p>
-											</div>
-
-											<?php echo $alertaINE; ?>
-											<?php echo $alertaCURP; ?>
-											<?php echo $alertaRFC; ?>
-											<?php echo $alertaNSS; ?>
-
-											<?php if ($permitePresentar == true) { ?>
-												<button type="button" class="btn bg-amber waves-effect btnPresentar">
-													<i class="material-icons">done_all</i>
-													<span>PRESENTAR DOCUMENTACION</span>
-												</button>
-
-											<?php } ?>
-										</div>
-										<?php
-										$noHabilitaCambio = '';
-										while ($row = mysql_fetch_array($resDocumentaciones)) {
-
-											if (($row['idestadodocumentacion'] == 5) || ($row['idestadodocumentacion'] == 6) || ($row['idestadodocumentacion'] == 7)) {
-												$noHabilitaCambio .= $row['iddocumentacion'].',';
-											}
-										?>
-										<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-											<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
-												<div class="icon">
-													<i class="material-icons">face</i>
-												</div>
-												<div class="content">
-													<div class="text"><?php echo $row['documentacion']; ?></div>
-													<div class="number"><?php echo $row['estadodocumentacion']; ?></div>
-												</div>
-											</div>
-										</div>
-									<?php }
-									if (strlen($noHabilitaCambio) > 0) {
-										$noHabilitaCambio = substr($noHabilitaCambio,0,-1);
-									}
-									?>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div> <!-- fin del container documentaciones -->
 
 		</div>
 	</div>
@@ -922,7 +925,7 @@ if (mysql_result($resultado,0,'nss') == '') {
 	traerImagen('example1','timagen1',2);
 	traerImagen('example2','timagen2',1);
 
-	var arNoHabilita = [<?php echo $noHabilitaCambio; ?>];
+	var arNoHabilita = [ <?php echo $noHabilitaCambio; ?>];
 
 	$(document).ready(function(){
 
@@ -966,7 +969,7 @@ if (mysql_result($resultado,0,'nss') == '') {
 
 			idTable =  $(this).attr("id");
 
-			if (arNoHabilita.indexOf(parseInt(idTable))>0) {
+			if (arNoHabilita.indexOf(parseInt(idTable))>=0) {
 				swal("Error!", 'No puede modificarse una documentaciones Presentada o Aceptada', "warning");
 			} else {
 				url = "subirdocumentacioni.php?documentacion=" + idTable;
