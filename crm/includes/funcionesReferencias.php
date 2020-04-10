@@ -9,6 +9,17 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+	function traerOportunidadesAsociadosTemporales() {
+		$sql = "select
+					o.idoportunidad, concat(o.apellidopaterno, ' ', o.apellidomaterno, ' ', o.nombre) as apyn
+				from	dboportunidades o
+				left
+				join	dbasociadostemporales ast on ast.refoportunidades = o.idoportunidad
+				where	ast.idasociadotemporal is null and o.refestadooportunidad = 7";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 	function enviarEmail($destinatario,$asunto,$cuerpo, $referencia='') {
 
 
@@ -467,18 +478,18 @@ class ServiciosReferencias {
 
 	/* PARA Asociados temporales */
 
-	function insertarAsociadostemporales($refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio,$nombredespacho,$refestadoasociado) {
-		$sql = "insert into dbasociadostemporales(idasociadotemporal,refusuarios,apellidopaterno,apellidomaterno,nombre,ine,email,fechanacimiento,telefonomovil,telefonotrabajo,refbancos,claveinterbancaria,domicilio,nombredespacho,refestadoasociado)
-		values ('',".$refusuarios.",'".$apellidopaterno."','".$apellidomaterno."','".$nombre."','".$ine."','".$email."','".$fechanacimiento."','".$telefonomovil."','".$telefonotrabajo."',".$refbancos.",'".$claveinterbancaria."','".$domicilio."','".$nombredespacho."',".$refestadoasociado.")";
+	function insertarAsociadostemporales($refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio,$nombredespacho,$refestadoasociado,$refoportunidades) {
+		$sql = "insert into dbasociadostemporales(idasociadotemporal,refusuarios,apellidopaterno,apellidomaterno,nombre,ine,email,fechanacimiento,telefonomovil,telefonotrabajo,refbancos,claveinterbancaria,domicilio,nombredespacho,refestadoasociado,refoportunidades)
+		values ('',".$refusuarios.",'".$apellidopaterno."','".$apellidomaterno."','".$nombre."','".$ine."','".$email."','".$fechanacimiento."','".$telefonomovil."','".$telefonotrabajo."',".$refbancos.",'".$claveinterbancaria."','".$domicilio."','".$nombredespacho."',".$refestadoasociado.",".($refoportunidades == '' ? 0 : $refoportunidades).")";
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarAsociadostemporales($id,$refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio,$nombredespacho,$refestadoasociado) {
+	function modificarAsociadostemporales($id,$refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio,$nombredespacho,$refestadoasociado,$refoportunidades) {
 		$sql = "update dbasociadostemporales
 		set
-		refusuarios = ".$refusuarios.",apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',nombre = '".$nombre."',ine = '".$ine."',email = '".$email."',fechanacimiento = '".$fechanacimiento."',telefonomovil = '".$telefonomovil."',telefonotrabajo = '".$telefonotrabajo."',refbancos = ".$refbancos.",claveinterbancaria = '".$claveinterbancaria."',domicilio = '".$domicilio."',nombredespacho = '".$nombredespacho."',refestadoasociado = ".$refestadoasociado."
+		refusuarios = ".$refusuarios.",apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',nombre = '".$nombre."',ine = '".$ine."',email = '".$email."',fechanacimiento = '".$fechanacimiento."',telefonomovil = '".$telefonomovil."',telefonotrabajo = '".$telefonotrabajo."',refbancos = ".$refbancos.",claveinterbancaria = '".$claveinterbancaria."',domicilio = '".$domicilio."',nombredespacho = '".$nombredespacho."',refestadoasociado = ".$refestadoasociado.",refoportunidades = ".($refoportunidades == '' ? 0 : $refoportunidades)."
 		where idasociadotemporal =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -545,7 +556,8 @@ class ServiciosReferencias {
 		a.claveinterbancaria,
 		a.domicilio,
 		a.nombredespacho,
-		a.refestadoasociado
+		a.refestadoasociado,
+		a.refoportunidades
 		from dbasociadostemporales a
 		inner join dbusuarios usu ON usu.idusuario = a.refusuarios
 		inner join tbbancos ban ON ban.idbanco = a.refbancos
@@ -556,13 +568,13 @@ class ServiciosReferencias {
 
 
 	function traerAsociadostemporalesPorId($id) {
-		$sql = "select idasociadotemporal,refusuarios,apellidopaterno,apellidomaterno,nombre,ine,email,fechanacimiento,telefonomovil,telefonotrabajo,refbancos,claveinterbancaria,domicilio,nombredespacho,refestadoasociado from dbasociadostemporales where idasociadotemporal =".$id;
+		$sql = "select idasociadotemporal,refusuarios,apellidopaterno,apellidomaterno,nombre,ine,email,fechanacimiento,telefonomovil,telefonotrabajo,refbancos,claveinterbancaria,domicilio,nombredespacho,refestadoasociado,refoportunidades from dbasociadostemporales where idasociadotemporal =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
 	function traerAsociadostemporalesPorUsuario($id) {
-		$sql = "select idasociadotemporal,refusuarios,apellidopaterno,apellidomaterno,nombre,ine,email,fechanacimiento,telefonomovil,telefonotrabajo,refbancos,claveinterbancaria,domicilio,nombredespacho,refestadoasociado from dbasociadostemporales where refusuarios =".$id;
+		$sql = "select idasociadotemporal,refusuarios,apellidopaterno,apellidomaterno,nombre,ine,email,fechanacimiento,telefonomovil,telefonotrabajo,refbancos,claveinterbancaria,domicilio,nombredespacho,refestadoasociado,refoportunidades from dbasociadostemporales where refusuarios =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -7103,7 +7115,7 @@ class ServiciosReferencias {
 	function eliminarUsuariosDefinitivamente($id) {
    $sql = "delete from dbusuarios where idusuario =".$id;
    $res = $this->query($sql,0);
-   return $res;
+   return $sql;
    }
 
 

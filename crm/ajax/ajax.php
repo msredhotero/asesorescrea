@@ -938,12 +938,13 @@ function insertarAsociadostemporales($serviciosReferencias,$serviciosUsuarios) {
    $domicilio = $_POST['domicilio'];
    $nombredespacho = $_POST['nombredespacho'];
    $refestadoasociado = $_POST['refestadoasociado'];
+   $refoportunidades = $_POST['refoportunidades'];
 
    $password = $apellidopaterno.$apellidomaterno.date('His');
 
    $refusuarios = $serviciosUsuarios->insertarUsuario($nombre,$password,12,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
 
-   $res = $serviciosReferencias->insertarAsociadostemporales($refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio,$nombredespacho,$refestadoasociado);
+   $res = $serviciosReferencias->insertarAsociadostemporales($refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio,$nombredespacho,$refestadoasociado,$refoportunidades);
 
    if ((integer)$res > 0) {
       echo '';
@@ -968,8 +969,9 @@ function modificarAsociadostemporales($serviciosReferencias) {
    $domicilio = $_POST['domicilio'];
    $nombredespacho = $_POST['nombredespacho'];
    $refestadoasociado = $_POST['refestadoasociado'];
+   $refoportunidades = $_POST['refoportunidades'];
 
-   $res = $serviciosReferencias->modificarAsociadostemporales($id,$refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio,$nombredespacho,$refestadoasociado);
+   $res = $serviciosReferencias->modificarAsociadostemporales($id,$refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio,$nombredespacho,$refestadoasociado,$refoportunidades);
 
    if ($res == true) {
       echo '';
@@ -981,13 +983,19 @@ function modificarAsociadostemporales($serviciosReferencias) {
 function eliminarAsociadostemporales($serviciosReferencias) {
    $id = $_POST['id'];
 
+   $resAT = $serviciosReferencias->traerAsociadostemporalesPorId($id);
+
+   $refusuarios = mysql_result($resAT, 0,'refusuarios');
+
    $res = $serviciosReferencias->eliminarAsociadostemporales($id);
 
    if ($res == true) {
+      $resEliminar = $serviciosReferencias->eliminarUsuariosDefinitivamente($refusuarios);
       echo '';
    } else {
       echo 'Hubo un error al eliminar datos';
    }
+
 }
 
 function rechazarCotizacion($serviciosReferencias) {
@@ -2644,8 +2652,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $modificar = "modificarAsociadostemporales";
          $idTabla = "idasociadotemporal";
 
-         $lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refbancos','claveinterbancaria','nombredespacho','refestadoasociado');
-         $lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Sucursal Bancaria','Clave Interbancaria','Nombre Despacho','Estado Asociado');
+         $lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refbancos','claveinterbancaria','nombredespacho','refestadoasociado','refoportunidades');
+         $lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Sucursal Bancaria','Clave Interbancaria','Nombre Despacho','Estado Asociado','Oportunidades');
 
          $resVar1 = $serviciosUsuarios->traerUsuarioId(mysql_result($resultado,0,'refusuarios'));
          $cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
@@ -2656,8 +2664,15 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $resVar3	= $serviciosReferencias->traerEstadoasociado();
          $cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resVar3,array(1),'',mysql_result($resultado,0,'refestadoasociado'));
 
-         $refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3);
-         $refCampo 	=  array('refusuarios','refbancos','refestadoasociado');
+         $oportunidades = $serviciosReferencias->traerOportunidadesAsociadosTemporales();
+         $oportunidadesUnica = $serviciosReferencias->traerOportunidadesPorId(mysql_result($resultado,0,'refoportunidades'));
+
+         $cadRef4 = "<option value=''>-- Seleccionar --</option>";
+         $cadRef4 .= $serviciosFunciones->devolverSelectBoxActivo($oportunidades,array(1),'',mysql_result($resultado,0,'refoportunidades'));
+         $cadRef4 .= $serviciosFunciones->devolverSelectBoxActivo($oportunidadesUnica,array(2,3,4),' ',mysql_result($resultado,0,'refoportunidades'));
+
+         $refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4);
+         $refCampo 	=  array('refusuarios','refbancos','refestadoasociado','refoportunidades');
       break;
       case 'dbreclutadorasores':
          $resultado = $serviciosReferencias->traerReclutadorasoresPorId($id);

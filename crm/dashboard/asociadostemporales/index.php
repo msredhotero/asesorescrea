@@ -55,8 +55,8 @@ $modificar = "modificarAsociadostemporales";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbasociadostemporales";
 
-$lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refbancos','claveinterbancaria','nombredespacho','refestadoasociado');
-$lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Sucursal Bancaria','Clave Interbancaria','Nombre Despacho','Estado Asociado');
+$lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refbancos','claveinterbancaria','nombredespacho','refestadoasociado','refoportunidades');
+$lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Sucursal Bancaria','Clave Interbancaria','Nombre Despacho','Estado Asociado','Oportunidades');
 
 
 $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
@@ -67,8 +67,14 @@ $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),'');
 $resVar3	= $serviciosReferencias->traerEstadoasociadoPorId(1);
 $cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
 
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=>$cadRef3);
-$refCampo 	=  array('refusuarios','refbancos','refestadoasociado');
+$oportunidades = $serviciosReferencias->traerOportunidadesAsociadosTemporales();
+$cadRef4 = "<option value=''>-- Seleccionar --</option>";
+$cadRef4 .= $serviciosFunciones->devolverSelectBox($oportunidades,array(1),'');
+
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=>$cadRef3,3=>$cadRef4);
+$refCampo 	=  array('refusuarios','refbancos','refestadoasociado','refoportunidades');
+
+
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -328,6 +334,52 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 <script>
 	$(document).ready(function(){
 
+		$('#refoportunidades').change(function() {
+			traerOportunidadesPorId($(this).val());
+		});
+
+		function traerOportunidadesPorId(id) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'traerOportunidadesPorId',id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error === false) {
+						$('#apellidopaterno').val(data.apellidopaterno);
+						$('#apellidomaterno').val(data.apellidomaterno);
+						$('#nombre').val(data.nombre);
+						$('#telefonomovil').val(data.telefonomovil);
+						$('#telefonotrabajo').val(data.telefonotrabajo);
+						$('#email').val(data.email);
+						$('#nombredespacho').val(data.nombredespacho);
+
+
+					} else {
+						$('#apellidopaterno').val('');
+						$('#apellidomaterno').val('');
+						$('#nombre').val('');
+						$('#telefonomovil').val('');
+						$('#telefonotrabajo').val('');
+						$('#email').val('');
+						$('#nombredespacho').val('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
+
 		$('#fechanacimiento').pickadate({
 			format: 'yyyy-mm-dd',
 			labelMonthNext: 'Siguiente mes',
@@ -452,6 +504,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						});
 						$('#lgmEliminar').modal('toggle');
 						table.ajax.reload();
+						location.reload(true);
 					} else {
 						swal({
 								title: "Respuesta",
