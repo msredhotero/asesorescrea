@@ -104,12 +104,15 @@ $rechazado = '';
 $noatendido = '';
 $nocontacto = '';
 $asociado = '';
+$totalPie1 = 0;
 while ($rowG = mysql_fetch_array($resGrafico)) {
 	$aceptado .= $rowG['aceptado'].",";
 	$rechazado .= $rowG['rechazado'].",";
 	$noatendido .= $rowG['noatendido'].",";
 	$nocontacto .= $rowG['nocontacto'].",";
 	$asociado .= $rowG['asociado'].",";
+
+	$totalPie1 = (integer)$rowG['aceptado'] + (integer)$rowG['rechazado'] + (integer)$rowG['noatendido'] + (integer)$rowG['nocontacto'] + (integer)$rowG['asociado'];
 }
 
 
@@ -409,6 +412,7 @@ if (strlen($iniciadoC) > 0 ) {
 							</div>
 							<div class="body table-responsive">
 								<canvas id="pie_chart" height="150"></canvas>
+								<h4>Total Oportunidades: <?php echo $totalPie1; ?></h4>
 							</div>
 						</div>
 					</div>

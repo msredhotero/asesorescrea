@@ -55,8 +55,8 @@ $modificar = "modificarPostulantes";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbpostulantes";
 
-$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas','razonsocial','reforigenreclutamiento','email2');
-$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona','Razon Social','Origen de Reclutamiento','Email Adic.');
+$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas','razonsocial','reforigenreclutamiento','email2','vigdesderc','vighastarc');
+$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona','Razon Social','Origen de Reclutamiento','Email Adic.','Vig. Desde RC','Vig. Hasta RC');
 
 
 $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
@@ -124,6 +124,36 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 } else {
 	$resOportunidades = $serviciosReferencias->traerOportunidadesDisponibles();
 	$cadRefOportunidades = $serviciosFunciones->devolverSelectBox($resOportunidades,array(1,13),' - ');
+
+	$resGrafico = $serviciosReferencias->graficoGerenteRendimientoTotal();
+
+	$completos = '';
+	$completosoportunidad = '';
+	$rechazados = '';
+	$encurso = '';
+	while ($rowG = mysql_fetch_array($resGrafico)) {
+		$completosoportunidad .= $rowG['completosoportunidades'].",";
+		$completos .= $rowG['completos'].",";
+		$rechazados .= $rowG['abandonaron'].",";
+		$encurso .= $rowG['encurso'].",";
+	}
+
+
+	if (strlen($completosoportunidad) > 0 ) {
+		$completosoportunidad = substr($completosoportunidad,0,-1);
+	}
+
+	if (strlen($completos) > 0 ) {
+		$completos = substr($completos,0,-1);
+	}
+
+	if (strlen($rechazados) > 0 ) {
+		$rechazados = substr($rechazados,0,-1);
+	}
+
+	if (strlen($encurso) > 0 ) {
+		$encurso = substr($encurso,0,-1);
+	}
 }
 
 $resRoles 	= $serviciosUsuario->traerUsuariosPorRol(3);
@@ -313,7 +343,7 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 							</div>
 						</div>
 					</div>
-					<?php if ($_SESSION['idroll_sahilices'] == 3) { ?>
+
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="card ">
 							<div class="header bg-blue">
@@ -336,7 +366,7 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 							</div>
 						</div>
 					</div>
-					<?php } ?>
+
 				</div>
 			</div>
 		</div>
@@ -533,9 +563,10 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 
 		});
 
-		<?php if ($_SESSION['idroll_sahilices'] == 3) { ?>
+
 		new Chart(document.getElementById("pie_chart").getContext("2d"), getChartJs('pie'));
 
+		<?php if ($_SESSION['idroll_sahilices'] == 3) { ?>
 		function getChartJs(type) {
 			 var config = null;
 
@@ -567,7 +598,41 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 			}
 			return config;
 		}
+
+		<?php } else { ?>
+			function getChartJs(type) {
+				 var config = null;
+
+				 if (type === 'pie') {
+					config = {
+						 type: 'pie',
+						 data: {
+							  datasets: [{
+								   data: [<?php echo $completosoportunidad; ?>,<?php echo $rechazados; ?>,<?php echo $completos; ?>,<?php echo $encurso; ?>],
+								   backgroundColor: [
+										 "rgb(12, 241, 8)",
+										 "rgb(252, 12, 12)",
+										 "rgb(5, 187, 5)",
+										 "rgb(26, 213, 250)"
+								   ],
+							  }],
+							  labels: [
+								   "Concluidos x Oportunidad",
+								   "Rechazados",
+								   "Concluidos",
+								   "En Curso"
+							  ]
+						 },
+						 options: {
+							  responsive: true,
+							  legend: false
+						 }
+					}
+				}
+				return config;
+			}
 		<?php } ?>
+
 
 		$('#refoportunidades').change(function() {
 			traerOportunidadesPorId($(this).val());
@@ -676,6 +741,41 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 		$('#ultimoestado').val(0);
 
 		$('#fechanacimiento').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		});
+
+
+		$('#vigdesderc').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		});
+
+		$('#vighastarc').pickadate({
 			format: 'yyyy-mm-dd',
 			labelMonthNext: 'Siguiente mes',
 			labelMonthPrev: 'Previo mes',

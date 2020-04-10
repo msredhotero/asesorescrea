@@ -1215,6 +1215,11 @@ class Servicios {
 									from ".$tabla." where ".$lblid." = ".$id;
 				$resMod = $this->query($sqlMod,0);
 				break;
+			case 'dbasesores':
+				$sqlMod = "select a.idasesor,a.refusuarios,a.nombre,a.apellidopaterno,a.apellidomaterno,a.email,a.curp,a.rfc,a.ine,a.fechanacimiento,a.sexo,SUBSTRING(concat('00000', p.codigo),-5,5) as codigopostal,a.refescolaridades,a.telefonomovil,a.telefonocasa,a.telefonotrabajo,a.fechacrea,a.fechamodi,a.usuariocrea,a.usuariomodi,a.reftipopersonas,a.claveinterbancaria,a.idclienteinbursa,a.claveasesor,a.fechaalta,a.nss,a.razonsocial from dbasesores a
+				left join postal p on p.id = a.codigopostal where a.idasesor = ".$id;
+				$resMod = $this->query($sqlMod,0);
+			break;
 
 			default:
 				$sqlMod = "select * from ".$tabla." where ".$lblid." = ".$id;
@@ -1240,6 +1245,9 @@ class Servicios {
 				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes','telefonofijo');
 			break;
 			case 'dbpostulantes':
+				$ocultar = array("usuariomodi","fechacrea","fechamodi","usuariocrea","usuariomodi",'refasesores','comision','refsucursalesinbursa','ultimoestado','token');
+			break;
+			case 'dbasesores':
 				$ocultar = array("usuariomodi","fechacrea","fechamodi","usuariocrea","usuariomodi",'refasesores','comision','refsucursalesinbursa','ultimoestado','token');
 			break;
 			default:

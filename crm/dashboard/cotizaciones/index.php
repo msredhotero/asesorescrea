@@ -79,7 +79,12 @@ if ($_SESSION['idroll_sahilices'] != 7) {
 
 if ($_SESSION['idroll_sahilices'] == 7) {
 	$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
-	$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(4,2,3),' ');
+	if (mysql_num_rows($resVar5)>0) {
+		$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(4,2,3),' ');
+	} else {
+		header('Location: ../index.php');
+	}
+
 } else {
 	$resVar5	= $serviciosReferencias->traerAsesores();
 	$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(4,2,3),' ');
@@ -238,7 +243,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 						</div>
 						<div class="body table-responsive">
 							<form class="form" id="formCountry">
-								<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+								<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)|| ($_SESSION['idroll_sahilices'] == 7)) { ?>
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
@@ -246,6 +251,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 												<i class="material-icons">add</i>
 												<span>NUEVO</span>
 											</button>
+											<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
 											<button type="button" class="btn bg-green waves-effect btnNuevo2" data-toggle="modal" data-target="#lgmNuevo2">
 												<i class="material-icons">add</i>
 												<span>CLIENTE - PERSONA FISICA</span>
@@ -254,6 +260,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 												<i class="material-icons">add</i>
 												<span>CLIENTE - PERSONA MORAL</span>
 											</button>
+											<?php } ?>
 
 										</div>
 									</div>

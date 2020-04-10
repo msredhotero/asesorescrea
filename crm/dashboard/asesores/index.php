@@ -66,13 +66,12 @@ $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),'');
 
 $cadRef5 = "<option value=''>-- Seleccionar --</option><option value='1'>Femenino</option><option value='2'>Masculino</option>";
 
-$cadRef6 	= "<option value='Mexico'>Mexico</option>";
 
 $resVar8 = $serviciosReferencias->traerTipopersonas();
 $cadRef8 = $serviciosFunciones->devolverSelectBox($resVar8,array(1),'');
 
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2, 2=>$cadRef5,3=>$cadRef6,4=>$cadRef8);
-$refCampo 	=  array('refusuarios','refescolaridades','sexo','codigopostal','reftipopersonas');
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2, 2=>$cadRef5,3=>$cadRef8);
+$refCampo 	=  array('refusuarios','refescolaridades','sexo','reftipopersonas');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -115,6 +114,11 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 	<!-- Dropzone Css -->
 	<link href="../../plugins/dropzone/dropzone.css" rel="stylesheet">
 
+	<!-- CSS file -->
+	<link rel="stylesheet" href="../../css/easy-autocomplete.min.css">
+	<!-- Additional CSS Themes file - not required-->
+	<link rel="stylesheet" href="../../css/easy-autocomplete.themes.min.css">
+
 
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.bootstrap.css">
@@ -123,6 +127,9 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
+		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
+		#codigopostal { width: 400px; }
+
 	</style>
 
 
@@ -263,6 +270,10 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 	               </div>
 	               <div class="modal-body">
 	                  <?php echo $frmUnidadNegocios; ?>
+							<div class="col-xs-3" style="display:none">
+								<input type="text" class="form-control" id="codigopostalaux" name="codigopostalaux" value=''/>
+
+							</div>
 	               </div>
 	               <div class="modal-footer">
 	                   <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
@@ -284,6 +295,10 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 		               </div>
 		               <div class="modal-body">
 								<div class="row frmAjaxModificar">
+								</div>
+								<div class="col-xs-3" style="display:none">
+									<input type="text" class="form-control" id="codigopostalaux2" name="codigopostalaux2" value=''/>
+
 								</div>
 		               </div>
 		               <div class="modal-footer">
@@ -337,9 +352,89 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 
 <script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
 
+<script src="../../js/jquery.easy-autocomplete.min.js"></script>
 
 <script>
 	$(document).ready(function(){
+
+		var options2 = {
+
+			url: "../../json/jsbuscarpostal.php",
+
+			getValue: function(element) {
+				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					busqueda: $("#codigopostal2").val()
+				}
+			},
+
+			preparePostData: function (data) {
+				data.busqueda = $("#codigopostal2").val();
+				return data;
+			},
+
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $("#codigopostal2").getSelectedItemData().codigo;
+					var idcodigo = $("#codigopostal2").getSelectedItemData().id;
+					$("#codigopostal2").val(value);
+
+					$("#codigopostalaux2").val(idcodigo);
+
+				}
+			}
+		};
+
+		var options = {
+
+			url: "../../json/jsbuscarpostal.php",
+
+			getValue: function(element) {
+				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					busqueda: $("#codigopostal").val()
+				}
+			},
+
+			preparePostData: function (data) {
+				data.busqueda = $("#codigopostal").val();
+				return data;
+			},
+
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $("#codigopostal").getSelectedItemData().codigo;
+					var idcodigo = $("#codigopostal").getSelectedItemData().id;
+					$("#codigopostal").val(value);
+
+					$("#codigopostalaux").val(idcodigo);
+
+				}
+			}
+		};
+
+
+		$("#codigopostal").easyAutocomplete(options);
+
+
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
@@ -407,6 +502,7 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 
 					if (data != '') {
 						$('.frmAjaxModificar').html(data);
+						$("#codigopostal2").easyAutocomplete(options2);
 					} else {
 						swal("Error!", data, "warning");
 
