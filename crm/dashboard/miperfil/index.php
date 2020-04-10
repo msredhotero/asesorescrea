@@ -925,7 +925,7 @@ if (mysql_result($resultado,0,'nss') == '') {
 	traerImagen('example1','timagen1',2);
 	traerImagen('example2','timagen2',1);
 
-	var arNoHabilita = [ <?php echo $noHabilitaCambio; ?>];
+	var arNoHabilita = [ 0];
 
 	$(document).ready(function(){
 

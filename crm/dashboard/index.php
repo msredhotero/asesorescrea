@@ -101,9 +101,15 @@ $ar = array();
 
 $aceptado = '';
 $rechazado = '';
+$noatendido = '';
+$nocontacto = '';
+$asociado = '';
 while ($rowG = mysql_fetch_array($resGrafico)) {
 	$aceptado .= $rowG['aceptado'].",";
 	$rechazado .= $rowG['rechazado'].",";
+	$noatendido .= $rowG['noatendido'].",";
+	$nocontacto .= $rowG['nocontacto'].",";
+	$asociado .= $rowG['asociado'].",";
 }
 
 
@@ -113,6 +119,18 @@ if (strlen($aceptado) > 0 ) {
 
 if (strlen($rechazado) > 0 ) {
 	$rechazado = substr($rechazado,0,-1);
+}
+
+if (strlen($noatendido) > 0 ) {
+	$noatendido = substr($noatendido,0,-1);
+}
+
+if (strlen($nocontacto) > 0 ) {
+	$nocontacto = substr($nocontacto,0,-1);
+}
+
+if (strlen($asociado) > 0 ) {
+	$asociado = substr($asociado,0,-1);
 }
 
 /***************************************************************/
@@ -147,6 +165,45 @@ if (strlen($citaprogramada) > 0 ) {
 	$citaprogramada = substr($citaprogramada,0,-1);
 }
 
+/***************************************************************/
+
+$resGraficoM = $serviciosReferencias->graficoTotalMensual();
+$ar = array();
+
+$aceptadoM = '';
+$rechazadoM = '';
+$noatendidoM = '';
+$nocontactoM = '';
+$asociadoM = '';
+while ($rowG = mysql_fetch_array($resGraficoM)) {
+	$aceptadoM .= $rowG['aceptado'].",";
+	$rechazadoM .= $rowG['rechazado'].",";
+	$noatendidoM .= $rowG['noatendido'].",";
+	$nocontactoM .= $rowG['nocontacto'].",";
+	$asociadoM .= $rowG['asociado'].",";
+}
+
+
+if (strlen($aceptadoM) > 0 ) {
+	$aceptadoM = substr($aceptadoM,0,-1);
+}
+
+if (strlen($rechazadoM) > 0 ) {
+	$rechazadoM = substr($rechazadoM,0,-1);
+}
+
+if (strlen($noatendidoM) > 0 ) {
+	$noatendidoM = substr($noatendidoM,0,-1);
+}
+
+if (strlen($nocontactoM) > 0 ) {
+	$nocontactoM = substr($nocontactoM,0,-1);
+}
+
+if (strlen($asociadoM) > 0 ) {
+	$asociadoM = substr($asociadoM,0,-1);
+}
+
 /*
 $poratender = '144,0,0,0,0,0,0,0,0,0,0,0';
 $citaprogramada = '67,0,0,0,0,0,0,0,0,0,0,0';
@@ -157,10 +214,14 @@ $resComparativo = $serviciosReferencias->graficoIndiceAceptacion();
 
 $aceptadoC = '';
 $rechazadoC = '';
+$iniciadoC = '';
+
 $nombresC = '';
 while ($rowG = mysql_fetch_array($resComparativo)) {
 	$aceptadoC .= $rowG['aceptado'].",";
 	$rechazadoC .= $rowG['rechazado'].",";
+	$iniciadoC .= $rowG['iniciado'].",";
+
 	$nombresC .= "'".$rowG['nombrecompleto']."',";
 }
 
@@ -175,6 +236,11 @@ if (strlen($aceptadoC) > 0 ) {
 if (strlen($rechazadoC) > 0 ) {
 	$rechazadoC = substr($rechazadoC,0,-1);
 }
+
+if (strlen($iniciadoC) > 0 ) {
+	$iniciadoC = substr($iniciadoC,0,-1);
+}
+
 
 /********************* fin ********************************************/
 
@@ -350,7 +416,7 @@ if (strlen($rechazadoC) > 0 ) {
 						<div class="card ">
 							<div class="header bg-blue">
 								<h2 style="color:#fff">
-									ASIGNACION TOTAL DE OPORTUNIDADES ACTUALES
+									ASIGNACION TOTAL DE OPORTUNIDADES MENSUAL
 								</h2>
 								<ul class="header-dropdown m-r--5">
 									<li class="dropdown">
@@ -364,7 +430,7 @@ if (strlen($rechazadoC) > 0 ) {
 								</ul>
 							</div>
 							<div class="body table-responsive">
-								<canvas id="bar_chart" height="150"></canvas>
+								<canvas id="pie_chart2" height="150"></canvas>
 							</div>
 						</div>
 					</div>
@@ -529,6 +595,8 @@ if (strlen($rechazadoC) > 0 ) {
 				<input type="hidden" id="accion" name="accion" value="<?php echo $modificar; ?>"/>
 			</form>
 
+
+
 	 <?php }  ?>
 
 
@@ -563,7 +631,8 @@ if (strlen($rechazadoC) > 0 ) {
 		$(document).ready(function(){
 			<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 1)) { ?>
 			new Chart(document.getElementById("pie_chart").getContext("2d"), getChartJs('pie'));
-			new Chart(document.getElementById("bar_chart").getContext("2d"), getChartJs('bar'));
+			new Chart(document.getElementById("pie_chart2").getContext("2d"), getChartJs('pie2'));
+
 
 			<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 1)) { ?>
 			new Chart(document.getElementById("bar_chart2").getContext("2d"), getChartJs('bar2'));
@@ -635,7 +704,11 @@ if (strlen($rechazadoC) > 0 ) {
 			                        label: "Rechazados",
 			                        data: [<?php echo $rechazadoC; ?>],
 			                        backgroundColor: 'rgba(252, 12, 12, 0.8)'
-			                    }]
+			                    }, {
+	 			                        label: "Iniciado",
+	 			                        data: [<?php echo $iniciadoC; ?>],
+	 			                        backgroundColor: 'rgba(62, 204, 246, 0.8)'
+	 			                    }]
 			            },
 			            options: {
 			                responsive: true,
@@ -672,24 +745,54 @@ if (strlen($rechazadoC) > 0 ) {
 			            }
 			        }
 			    }
-			    else if (type === 'pie') {
+			    else if (type === 'pie2') {
 			        config = {
 			            type: 'pie',
 			            data: {
 			                datasets: [{
-			                    data: [<?php echo $aceptado; ?>,<?php echo $rechazado; ?>],
+			                    data: [<?php echo $aceptadoM; ?>,<?php echo $rechazadoM; ?>,<?php echo $noatendidoM; ?>,<?php echo $nocontactoM; ?>,<?php echo $asociadoM; ?>],
 			                    backgroundColor: [
 			                        "rgb(12, 241, 8)",
 			                        "rgb(252, 12, 12)",
-			                        "rgb(0, 188, 212)",
-			                        "rgb(139, 195, 74)"
+			                        "rgb(220, 44, 6)",
+			                        "rgb(241, 47, 6)",
+			                        "rgb(244, 250, 26)"
 			                    ],
 			                }],
 			                labels: [
 			                    "Aceptados",
 			                    "Rechazados",
-			                    "Cyan",
-			                    "Light Green"
+			                    "No Atendido",
+			                    "No Contacto",
+			                    "Agente Asociado"
+			                ]
+			            },
+			            options: {
+			                responsive: true,
+			                legend: false
+			            }
+			        }
+			    }
+				 else if (type === 'pie') {
+			        config = {
+			            type: 'pie',
+			            data: {
+			                datasets: [{
+			                    data: [<?php echo $aceptado; ?>,<?php echo $rechazado; ?>,<?php echo $noatendido; ?>,<?php echo $nocontacto; ?>,<?php echo $asociado; ?>],
+			                    backgroundColor: [
+			                        "rgb(12, 241, 8)",
+			                        "rgb(252, 12, 12)",
+			                        "rgb(220, 44, 6)",
+			                        "rgb(241, 47, 6)",
+			                        "rgb(244, 250, 26)"
+			                    ],
+			                }],
+			                labels: [
+			                    "Aceptados",
+			                    "Rechazados",
+			                    "No Atendido",
+			                    "No Contacto",
+			                    "Agente Asociado"
 			                ]
 			            },
 			            options: {
@@ -850,11 +953,13 @@ if (strlen($rechazadoC) > 0 ) {
 
 				}
 
+
 				$("#example").on("click",'.btnModificar', function(){
 					idTable =  $(this).attr("id");
 					frmAjaxModificar(idTable);
 					$('#lgmModificar').modal();
 				});//fin del boton modificar
+
 
 				$('.modificar').click(function(){
 

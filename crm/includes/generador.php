@@ -83,7 +83,9 @@ $tablasAr	= array('rolhogar' => 'tbrolhogar',
 							'tiposeguimientos' => 'tbtiposeguimientos',
 							'alertas' => 'dbalertas',
 							'cotizaciones' => 'dbcotizaciones',
-							'estadocotizaciones' => 'tbestadocotizaciones'
+							'estadocotizaciones' => 'tbestadocotizaciones',
+							'reasignaciones' => 'dbreasignaciones',
+							'estadoasociado' => 'tbestadoasociado'
 							);
 
 
@@ -137,7 +139,9 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'tiposeguimientos' => 'tbtiposeguimientos',
 								'alertas' => 'dbalertas',
 								'cotizaciones' => 'dbcotizaciones',
-								'estadocotizaciones' => 'tbestadocotizaciones');
+								'estadocotizaciones' => 'tbestadocotizaciones',
+								'reasignaciones' => 'dbreasignaciones',
+								'estadoasociado' => 'tbestadoasociado');
 
 	$tablasArAux	= array('rolhogar' => 1,
 								'tipopromotores' => 1,
@@ -187,7 +191,9 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'tiposeguimientos' => 1,
 								'alertas' => 2,
 								'cotizaciones' => 5,
-								'estadocotizaciones' => 1);
+								'estadocotizaciones' => 1,
+								'reasignaciones' => 1,
+								'estadoasociado' => 1);
 
 	$inner= '';
 	$sql	=	"show columns from ".$tabla;

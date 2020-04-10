@@ -39,9 +39,9 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Asociado Temporal";
+$singular = "Agente Asociado";
 
-$plural = "Asociados Temporales";
+$plural = "Agentes Asociados";
 
 $eliminar = "eliminarAsociadostemporales";
 
@@ -55,8 +55,8 @@ $modificar = "modificarAsociadostemporales";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbasociadostemporales";
 
-$lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refbancos','claveinterbancaria');
-$lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Sucursal Bancaria','Clave Interbancaria');
+$lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refbancos','claveinterbancaria','nombredespacho','refestadoasociado');
+$lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Sucursal Bancaria','Clave Interbancaria','Nombre Despacho','Estado Asociado');
 
 
 $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
@@ -64,8 +64,11 @@ $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
 $resVar2	= $serviciosReferencias->traerBancos();
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),'');
 
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2);
-$refCampo 	=  array('refusuarios','refbancos');
+$resVar3	= $serviciosReferencias->traerEstadoasociadoPorId(1);
+$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
+
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=>$cadRef3);
+$refCampo 	=  array('refusuarios','refbancos','refestadoasociado');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////

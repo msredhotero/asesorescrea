@@ -9,10 +9,130 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
-	function traerOrigenreclutamiento() {
-		$sql = "select idorigenreclutamiento, origenreclutamiento from tborigenreclutamiento";
+
+	/* PARA Estadoasociado */
+
+	function insertarEstadoasociado($estadoasociado) {
+		$sql = "insert into tbestadoasociado(idestadoasociado,estadoasociado)
+		values ('','".$estadoasociado."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarEstadoasociado($id,$estadoasociado) {
+		$sql = "update tbestadoasociado
+		set
+		estadoasociado = '".$estadoasociado."'
+		where idestadoasociado =".$id;
 		$res = $this->query($sql,0);
 		return $res;
+	}
+
+
+	function eliminarEstadoasociado($id) {
+		$sql = "delete from tbestadoasociado where idestadoasociado =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerEstadoasociado() {
+		$sql = "select
+		e.idestadoasociado,
+		e.estadoasociado
+		from tbestadoasociado e
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerEstadoasociadoPorId($id) {
+		$sql = "select idestadoasociado,estadoasociado from tbestadoasociado where idestadoasociado =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbestadoasociado*/
+
+	function asignarOportunidades($id,$refusuarios) {
+		$resO = $this->traerOportunidadesPorId($id);
+
+		$sql = "insert into dboportunidades(idoportunidad,nombredespacho,apellidopaterno,apellidomaterno,nombre,telefonomovil,telefonotrabajo,email,refusuarios,refreferentes,refestadooportunidad,fechacrea,refmotivorechazos,observaciones)
+		select '',nombredespacho,apellidopaterno,apellidomaterno,nombre,telefonomovil,telefonotrabajo,email,".$refusuarios.",refreferentes,1,'".date('Y-m-d H-i-s')."',0,observaciones
+		from dboportunidades
+		where idoportunidad =".$id;
+		$res = $this->query($sql,1);
+
+		$resReasignar = $this->insertarReasignaciones($id,mysql_result($resO,0,'refusuarios'));
+		return $res;
+	}
+
+	/* PARA Reasignaciones */
+
+	function insertarReasignaciones($refoportunidades,$refusuarios) {
+		$sql = "insert into dbreasignaciones(idreasignacion,refoportunidades,refusuarios,fechacreacion)
+		values ('',".$refoportunidades.",".$refusuarios.",'".date('Y-m-d H:i:s')."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarReasignaciones($id,$refoportunidades,$refusuarios) {
+		$sql = "update dbreasignaciones
+		set
+		refoportunidades = ".$refoportunidades.",refusuarios = ".$refusuarios."
+		where idreasignacion =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarReasignaciones($id) {
+		$sql = "delete from dbreasignaciones where idreasignacion =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerReasignaciones() {
+		$sql = "select
+		r.idreasignacion,
+		r.refoportunidades,
+		r.refusuarios,
+		r.fechacreacion
+		from dbreasignaciones r
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerReasignacionesPorId($id) {
+		$sql = "select idreasignacion,refoportunidades,refusuarios,fechacreacion from dbreasignaciones where idreasignacion =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerReasignacionesPorUsuarios($id) {
+		$sql = "select idreasignacion,refoportunidades,refusuarios,fechacreacion from dbreasignaciones where refusuarios =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerReasignacionesPorOportunidad($id) {
+		$sql = "select idreasignacion,refoportunidades,refusuarios,fechacreacion from dbreasignaciones where refoportunidades =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerOrigenreclutamiento() {
+			$sql = "select idorigenreclutamiento, origenreclutamiento from tborigenreclutamiento";
+			$res = $this->query($sql,0);
+			return $res;
 	}
 
 	function traerOrigenreclutamientoPorId($id) {
@@ -247,18 +367,18 @@ class ServiciosReferencias {
 
 	/* PARA Asociados temporales */
 
-	function insertarAsociadostemporales($refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio) {
-		$sql = "insert into dbasociadostemporales(idasociadotemporal,refusuarios,apellidopaterno,apellidomaterno,nombre,ine,email,fechanacimiento,telefonomovil,telefonotrabajo,refbancos,claveinterbancaria,domicilio)
-		values ('',".$refusuarios.",'".$apellidopaterno."','".$apellidomaterno."','".$nombre."','".$ine."','".$email."','".$fechanacimiento."','".$telefonomovil."','".$telefonotrabajo."',".$refbancos.",'".$claveinterbancaria."','".$domicilio."')";
+	function insertarAsociadostemporales($refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio,$nombredespacho,$refestadoasociado) {
+		$sql = "insert into dbasociadostemporales(idasociadotemporal,refusuarios,apellidopaterno,apellidomaterno,nombre,ine,email,fechanacimiento,telefonomovil,telefonotrabajo,refbancos,claveinterbancaria,domicilio,nombredespacho,refestadoasociado)
+		values ('',".$refusuarios.",'".$apellidopaterno."','".$apellidomaterno."','".$nombre."','".$ine."','".$email."','".$fechanacimiento."','".$telefonomovil."','".$telefonotrabajo."',".$refbancos.",'".$claveinterbancaria."','".$domicilio."','".$nombredespacho."',".$refestadoasociado.")";
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarAsociadostemporales($id,$refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio) {
+	function modificarAsociadostemporales($id,$refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio,$nombredespacho,$refestadoasociado) {
 		$sql = "update dbasociadostemporales
 		set
-		refusuarios = ".$refusuarios.",apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',nombre = '".$nombre."',ine = '".$ine."',email = '".$email."',fechanacimiento = '".$fechanacimiento."',telefonomovil = '".$telefonomovil."',telefonotrabajo = '".$telefonotrabajo."',refbancos = ".$refbancos.",claveinterbancaria = '".$claveinterbancaria."',domicilio = '".$domicilio."'
+		refusuarios = ".$refusuarios.",apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',nombre = '".$nombre."',ine = '".$ine."',email = '".$email."',fechanacimiento = '".$fechanacimiento."',telefonomovil = '".$telefonomovil."',telefonotrabajo = '".$telefonotrabajo."',refbancos = ".$refbancos.",claveinterbancaria = '".$claveinterbancaria."',domicilio = '".$domicilio."',nombredespacho = '".$nombredespacho."',refestadoasociado = ".$refestadoasociado."
 		where idasociadotemporal =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -295,7 +415,9 @@ class ServiciosReferencias {
 		a.refbancos,
 		a.claveinterbancaria,
 		a.domicilio,
-		a.refusuarios
+		a.refusuarios,
+		a.nombredespacho,
+		a.refestadoasociado
 		from dbasociadostemporales a
 		inner join dbusuarios usu ON usu.idusuario = a.refusuarios
 		inner join tbbancos ban ON ban.idbanco = a.refbancos
@@ -321,7 +443,9 @@ class ServiciosReferencias {
 		a.telefonotrabajo,
 		a.refbancos,
 		a.claveinterbancaria,
-		a.domicilio
+		a.domicilio,
+		a.nombredespacho,
+		a.refestadoasociado
 		from dbasociadostemporales a
 		inner join dbusuarios usu ON usu.idusuario = a.refusuarios
 		inner join tbbancos ban ON ban.idbanco = a.refbancos
@@ -332,13 +456,13 @@ class ServiciosReferencias {
 
 
 	function traerAsociadostemporalesPorId($id) {
-		$sql = "select idasociadotemporal,refusuarios,apellidopaterno,apellidomaterno,nombre,ine,email,fechanacimiento,telefonomovil,telefonotrabajo,refbancos,claveinterbancaria,domicilio from dbasociadostemporales where idasociadotemporal =".$id;
+		$sql = "select idasociadotemporal,refusuarios,apellidopaterno,apellidomaterno,nombre,ine,email,fechanacimiento,telefonomovil,telefonotrabajo,refbancos,claveinterbancaria,domicilio,nombredespacho,refestadoasociado from dbasociadostemporales where idasociadotemporal =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
 	function traerAsociadostemporalesPorUsuario($id) {
-		$sql = "select idasociadotemporal,refusuarios,apellidopaterno,apellidomaterno,nombre,ine,email,fechanacimiento,telefonomovil,telefonotrabajo,refbancos,claveinterbancaria,domicilio from dbasociadostemporales where refusuarios =".$id;
+		$sql = "select idasociadotemporal,refusuarios,apellidopaterno,apellidomaterno,nombre,ine,email,fechanacimiento,telefonomovil,telefonotrabajo,refbancos,claveinterbancaria,domicilio,nombredespacho,refestadoasociado from dbasociadostemporales where refusuarios =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -1574,11 +1698,47 @@ class ServiciosReferencias {
 				    END),0) AS aceptado,
 				    coalesce(sum(CASE
 				        WHEN opo.refestadooportunidad = 4 THEN 1
-				    END),0) AS rechazado
+				    END),0) AS rechazado,
+				    coalesce(sum(CASE
+				        WHEN opo.refestadooportunidad = 5 THEN 1
+				    END),0) AS noatendido,
+				    coalesce(sum(CASE
+				        WHEN opo.refestadooportunidad = 6 THEN 1
+				    END),0) AS nocontacto,
+				    coalesce(sum(CASE
+				        WHEN opo.refestadooportunidad = 7 THEN 1
+				    END),0) AS asociado
+
 				FROM
 				    dboportunidades opo
 				WHERE
-				    opo.refestadooportunidad IN (3 , 4)";
+				    opo.refestadooportunidad IN (3 , 4,5,6,7)";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function graficoTotalMensual() {
+		$sql = "SELECT
+				    coalesce(sum(CASE
+				        WHEN opo.refestadooportunidad = 3 THEN 1
+				    END),0) AS aceptado,
+				    coalesce(sum(CASE
+				        WHEN opo.refestadooportunidad = 4 THEN 1
+				    END),0) AS rechazado,
+				    coalesce(sum(CASE
+				        WHEN opo.refestadooportunidad = 5 THEN 1
+				    END),0) AS noatendido,
+				    coalesce(sum(CASE
+				        WHEN opo.refestadooportunidad = 6 THEN 1
+				    END),0) AS nocontacto,
+				    coalesce(sum(CASE
+				        WHEN opo.refestadooportunidad = 7 THEN 1
+				    END),0) AS asociado
+
+				FROM
+				    dboportunidades opo
+				WHERE
+				    opo.refestadooportunidad IN (3 , 4,5,6,7) and month(opo.fechacrea) = ".date('m');
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -1628,16 +1788,18 @@ class ServiciosReferencias {
 		$sql = "select
 						r.nombrecompleto,
 						count(r.aceptado) as aceptado,
-						count(r.rechazado) as rechazado
+						count(r.rechazado) as rechazado,
+						count(r.iniciado) as iniciado
 					from (
 						SELECT
 							usu.nombrecompleto,
 							(case when opo.refestadooportunidad = 3 then 1 end) as aceptado,
-							(case when opo.refestadooportunidad = 4 then 1 end) as rechazado
+							(case when opo.refestadooportunidad in (4,5,6) then 1 end) as rechazado,
+							(case when opo.refestadooportunidad in (1,2) then 1 end) as iniciado
 						FROM
 						dbusuarios usu
 						 left JOIN dboportunidades opo ON usu.idusuario = opo.refusuarios
-						 		and opo.refestadooportunidad IN (3 , 4)
+						 		and opo.refestadooportunidad IN (1,2,3 , 4,5,6)
 						 where usu.refroles = 3
 					    ) r
 					group by r.nombrecompleto
@@ -2128,7 +2290,25 @@ class ServiciosReferencias {
 		return $res;
 	}
 
-	function traerOportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial) {
+	function traerOportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max, $estado) {
+
+		$cadFecha = '';
+		if ($min != '' && $max != '') {
+			$cadFecha = " and o.fechacrea between '".$min."' and '".$max."'";
+		} else {
+			if ($min != '' && $max == '') {
+				$cadFecha = " and o.fechacrea >= '".$min."'";
+			} else {
+				if ($min == '' && $max != '') {
+					$cadFecha = " and o.fechacrea <= '".$max."'";
+				}
+			}
+		}
+
+		$cadEstado = '';
+		if ($estado != '') {
+			$cadEstado = " and o.refestadooportunidad =".$estado;
+		}
 
 		$where = '';
 
@@ -2170,7 +2350,7 @@ class ServiciosReferencias {
 		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
 		left join tbreferentes rr on rr.idreferente = o.refreferentes
 		left join dbentrevistaoportunidades eo on eo.refoportunidades = o.idoportunidad
-		where est.idestadooportunidad <> 4 ".$where."
+		where est.idestadooportunidad not in (4,5,6) ".$where." ".$cadFecha.$cadEstado."
 		ORDER BY ".$colSort." ".$colSortDir."
 		limit ".$start.",".$length;
 
@@ -2181,7 +2361,26 @@ class ServiciosReferencias {
 	}
 
 
-	function traerOportunidadesajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir, $idusuario) {
+	function traerOportunidadesajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir, $idusuario, $min, $max, $cadEstado) {
+
+		$cadFecha = '';
+		if ($min != '' && $max != '') {
+			$cadFecha = " and o.fechacrea between '".$min."' and '".$max."'";
+		} else {
+			if ($min != '' && $max == '') {
+				$cadFecha = " and o.fechacrea >= '".$min."'";
+			} else {
+				if ($min == '' && $max != '') {
+					$cadFecha = " and o.fechacrea <= '".$max."'";
+				}
+			}
+		}
+
+		$cadEstado = '';
+		if ($estado != '') {
+			$cadEstado = " and o.refestadooportunidad =".$estado;
+		}
+
 
 		$where = '';
 
@@ -2212,15 +2411,35 @@ class ServiciosReferencias {
 		left join tbreferentes rr on rr.idreferente = o.refreferentes
 		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
 		left join dbentrevistaoportunidades eo on eo.refoportunidades = o.idoportunidad
-		where r.idreclutadorasor is null and est.idestadooportunidad <> 4 and usu.idusuario = ".$idusuario.$where."
+		where r.idreclutadorasor is null and est.idestadooportunidad not in (4,5,6) and usu.idusuario = ".$idusuario.$where." ".$cadFecha.$cadEstado."
 		ORDER BY o.fechacrea desc
 		limit ".$start.",".$length;
+
+		//die(var_dump($sql));
 
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
-	function traerOportunidadesajaxPorUsuarioHistorico($length, $start, $busqueda,$colSort,$colSortDir, $idusuario) {
+	function traerOportunidadesajaxPorUsuarioHistorico($length, $start, $busqueda,$colSort,$colSortDir, $idusuario, $min, $max, $estado) {
+
+		$cadFecha = '';
+		if ($min != '' && $max != '') {
+			$cadFecha = " and o.fechacrea between '".$min."' and '".$max."'";
+		} else {
+			if ($min != '' && $max == '') {
+				$cadFecha = " and o.fechacrea >= '".$min."'";
+			} else {
+				if ($min == '' && $max != '') {
+					$cadFecha = " and o.fechacrea <= '".$max."'";
+				}
+			}
+		}
+
+		$cadEstado = '';
+		if ($estado != '') {
+			$cadEstado = " and o.refestadooportunidad =".$estado;
+		}
 
 		$where = '';
 
@@ -2249,7 +2468,7 @@ class ServiciosReferencias {
 		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
 		left join tbreferentes rr on rr.idreferente = o.refreferentes
 		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
-		where (est.idestadooportunidad = 4 or r.refoportunidades is not null) and usu.idusuario = ".$idusuario.$where."
+		where (est.idestadooportunidad in (4,5,6) or r.refoportunidades is not null) and usu.idusuario = ".$idusuario.$where."  ".$cadFecha.$cadEstado."
 		ORDER BY o.fechacrea desc
 		limit ".$start.",".$length;
 
@@ -2258,7 +2477,25 @@ class ServiciosReferencias {
 	}
 
 
-	function traerOportunidadesajaxPorRecomendador($length, $start, $busqueda,$colSort,$colSortDir, $idusuario) {
+	function traerOportunidadesajaxPorRecomendador($length, $start, $busqueda,$colSort,$colSortDir, $idusuario, $min, $max, $estado) {
+
+		$cadFecha = '';
+		if ($min != '' && $max != '') {
+			$cadFecha = " and o.fechacrea between '".$min."' and '".$max."'";
+		} else {
+			if ($min != '' && $max == '') {
+				$cadFecha = " and o.fechacrea >= '".$min."'";
+			} else {
+				if ($min == '' && $max != '') {
+					$cadFecha = " and o.fechacrea <= '".$max."'";
+				}
+			}
+		}
+
+		$cadEstado = '';
+		if ($estado != '') {
+			$cadEstado = " and o.refestadooportunidad =".$estado;
+		}
 
 		$where = '';
 
@@ -2289,7 +2526,7 @@ class ServiciosReferencias {
 		left join tbreferentes rr on rr.idreferente = o.refreferentes
 		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
 		left join dbentrevistaoportunidades eo on eo.refoportunidades = o.idoportunidad
-		where r.idreclutadorasor is null and est.idestadooportunidad <> 4 and o.refreferentes = ".$idusuario.$where."
+		where r.idreclutadorasor is null and est.idestadooportunidad not in (4,5,6) and o.refreferentes = ".$idusuario.$where." ".$cadFecha.$cadEstado."
 		ORDER BY o.fechacrea desc
 		limit ".$start.",".$length;
 
@@ -2297,7 +2534,25 @@ class ServiciosReferencias {
 		return $res;
 	}
 
-	function traerOportunidadesajaxPorRecomendadorHistorico($length, $start, $busqueda,$colSort,$colSortDir, $idusuario) {
+	function traerOportunidadesajaxPorRecomendadorHistorico($length, $start, $busqueda,$colSort,$colSortDir, $idusuario, $min, $max, $estado) {
+
+		$cadFecha = '';
+		if ($min != '' && $max != '') {
+			$cadFecha = " and o.fechacrea between '".$min."' and '".$max."'";
+		} else {
+			if ($min != '' && $max == '') {
+				$cadFecha = " and o.fechacrea >= '".$min."'";
+			} else {
+				if ($min == '' && $max != '') {
+					$cadFecha = " and o.fechacrea <= '".$max."'";
+				}
+			}
+		}
+
+		$cadEstado = '';
+		if ($estado != '') {
+			$cadEstado = " and o.refestadooportunidad =".$estado;
+		}
 
 		$where = '';
 
@@ -2326,7 +2581,7 @@ class ServiciosReferencias {
 		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
 		left join tbreferentes rr on rr.idreferente = o.refreferentes
 		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
-		where  (est.idestadooportunidad = 4 or r.refoportunidades is not null) and o.refreferentes = ".$idusuario.$where."
+		where  (est.idestadooportunidad in (4,5,6) or r.refoportunidades is not null) and o.refreferentes = ".$idusuario.$where." ".$cadFecha.$cadEstado."
 		ORDER BY o.fechacrea desc
 		limit ".$start.",".$length;
 
@@ -2335,13 +2590,39 @@ class ServiciosReferencias {
 	}
 
 
-	function traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir) {
+	function traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max, $estado) {
 
 		$where = '';
 
+		$roles = '';
+
+	   if ($responsableComercial != '') {
+	      $roles = " usu.idusuario = ".$responsableComercial." and ";
+	   } else {
+	      $roles = '';
+	   }
+
+		$cadFecha = '';
+		if ($min != '' && $max != '') {
+			$cadFecha = " and o.fechacrea between '".$min."' and '".$max."'";
+		} else {
+			if ($min != '' && $max == '') {
+				$cadFecha = " and o.fechacrea >= '".$min."'";
+			} else {
+				if ($min == '' && $max != '') {
+					$cadFecha = " and o.fechacrea <= '".$max."'";
+				}
+			}
+		}
+
+		$cadEstado = '';
+		if ($estado != '') {
+			$cadEstado = " and o.refestadooportunidad =".$estado;
+		}
+
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and (o.nombredespacho like '%".$busqueda."%' or o.apellidopaterno like '%".$busqueda."%' or o.apellidomaterno like '%".$busqueda."%' or o.nombre like '%".$busqueda."%' or o.telefonomovil like '%".$busqueda."%' or o.telefonotrabajo like '%".$busqueda."%' or o.email like '%".$busqueda."%' or usu.nombrecompleto like '%".$busqueda."%' or est.estadooportunidad like '%".$busqueda."%')";
+			$where = " and ".$roles." and (o.nombredespacho like '%".$busqueda."%' or o.apellidopaterno like '%".$busqueda."%' or o.apellidomaterno like '%".$busqueda."%' or o.nombre like '%".$busqueda."%' or o.telefonomovil like '%".$busqueda."%' or o.telefonotrabajo like '%".$busqueda."%' or o.email like '%".$busqueda."%' or usu.nombrecompleto like '%".$busqueda."%' or est.estadooportunidad like '%".$busqueda."%')";
 		}
 
 
@@ -2364,9 +2645,11 @@ class ServiciosReferencias {
 		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
 		left join tbreferentes rr on rr.idreferente = o.refreferentes
 		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
-		where (est.idestadooportunidad = 4 or r.refoportunidades is not null) ".$where."
+		where ".$roles." (est.idestadooportunidad in (4,5,6) or r.refoportunidades is not null) ".$where." ".$cadFecha.$cadEstado."
 		ORDER BY o.fechacrea desc
 		limit ".$start.",".$length;
+
+		//die(var_dump($sql));
 
 		$res = $this->query($sql,0);
 		return $res;
@@ -2593,6 +2876,12 @@ class ServiciosReferencias {
 
 	function traerEstadooportunidadPorId($id) {
 		$sql = "select idestadooportunidad,estadooportunidad from tbestadooportunidad where idestadooportunidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerEstadooportunidadPorIn($in) {
+		$sql = "select idestadooportunidad,estadooportunidad from tbestadooportunidad where idestadooportunidad in (".$id.")";
 		$res = $this->query($sql,0);
 		return $res;
 	}

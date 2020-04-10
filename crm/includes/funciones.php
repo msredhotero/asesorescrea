@@ -8,6 +8,46 @@ date_default_timezone_set('America/Mexico_City');
 
 class Servicios {
 
+	function addInput($medidas='', $typo,$id,$nombre,$class, $label,$requerido='',$datos='') {
+		if ($typo == 'select') {
+			$medidasAr = explode (',',$medidas);
+			$input = '<div class="col-lg-'.$medidasAr[0].' col-md-'.$medidasAr[0].' col-sm-'.$medidasAr[0].' col-xs-'.$medidasAr[0].' frmCont'.$label.'" style="display:block">
+							<label class="form-label">'.$label.'</label>
+							<div class="form-group input-group">
+								<div class="form-line">
+									<select type="'.$typo.'" class="form-control '.$class.'" id="'.$id.'" name="'.$nombre.'" >
+									'.$datos.'
+									</select>
+								</div>
+							</div>
+						</div>';
+		} else {
+			if ($medidas != '') {
+				$medidasAr = explode (',',$medidas);
+				$input = '<div class="col-lg-'.$medidasAr[0].' col-md-'.$medidasAr[0].' col-sm-'.$medidasAr[0].' col-xs-'.$medidasAr[0].' frmCont'.$label.'" style="display:block">
+								<label class="form-label">'.$label.'</label>
+								<div class="form-group input-group">
+									<div class="form-line">
+										<input type="'.$typo.'" class="form-control '.$class.'" id="'.$id.'" name="'.$nombre.'" '.$requerido.'>
+									</div>
+								</div>
+							</div>';
+			} else {
+				$input = '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.$label.'" style="display:block">
+								<label class="form-label">'.$label.'</label>
+								<div class="form-group input-group">
+									<div class="form-line">
+										<input type="'.$typo.'" class="form-control '.$class.'" id="'.$id.'" name="'.$nombre.'" '.$requerido.'>
+									</div>
+								</div>
+							</div>';
+			}
+		}
+
+
+		return $input;
+	}
+
 	function generaCURP($primerApellido, $segundoApellido, $nombre, $diaNacimiento, $mesNacimiento, $anioNacimiento, $sexo, $entidadNacimiento) {
 
 		$primerApellido = urlencode($primerApellido);
@@ -43,6 +83,18 @@ class Servicios {
 		}
 	}
 
+	function devolverSelectBox2($datos, $ar, $delimitador) {
+
+		$cad		= '';
+		while ($rowTT = mysql_fetch_array($datos)) {
+			$contenido	= '';
+			foreach ($ar as $i) {
+				$contenido .= $rowTT[$i].$delimitador;
+			}
+			$cad .= "<option value='".$rowTT[0]."'>".(substr($contenido,0,strlen($contenido)-strlen($delimitador)))."</option>";
+		}
+		return $cad;
+	}
 
 	function devolverSelectBox($datos, $ar, $delimitador) {
 

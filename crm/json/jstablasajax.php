@@ -111,11 +111,12 @@ switch ($tabla) {
 		if ($_SESSION['idroll_sahilices'] == 3) {
 			$consulta .= ' inner join dbusuarios usu ON usu.idusuario = p.refusuarios
 			inner join dbpostulantes pp on pp.refusuarios = usu.idusuario
-			inner join dbreclutadorasores rrr on rrr.refpostulantes = pp.idpostulante and rrr.refusuarios = '.$_SESSION['usuaid_sahilices'].' ';
+			inner join dbreclutadorasores rrr on rrr.refpostulantes = pp.idpostulante and rrr.refusuarios = '.$_SESSION['usuaid_sahilices'].'
+			left join dbusuarios usur ON usur.idusuario = rrr.refusuarios';
 			$res = $serviciosReferencias->traerAsesoresPorGerente($_SESSION['usuaid_sahilices']);
 		} else {
 			if ($_SESSION['idroll_sahilices'] == 7) {
-				$consulta .= ' inner join dbusuarios usu ON p.refusuarios = '.$_SESSION['usuaid_sahilices'].' ';
+				$consulta .= ' inner join dbusuarios usur ON p.refusuarios = '.$_SESSION['usuaid_sahilices'].' ';
 				$res = $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
 			} else {
 				$responsableComercial = $_GET['sSearch_0'];
@@ -146,49 +147,49 @@ switch ($tabla) {
 
 		switch ($_SESSION['idroll_sahilices']) {
 			case 1:
-				$label = array('btnModificar','btnEliminar');
-				$class = array('bg-amber','bg-red');
-				$icon = array('Modificar','Eliminar');
+				$label = array('btnModificar','btnEliminar','btnPerfil');
+				$class = array('bg-amber','bg-red','bg-orange');
+				$icon = array('Modificar','Eliminar','Expediente');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 9;
 			break;
 			case 2:
-				$label = array('btnModificar');
-				$class = array('bg-amber');
-				$icon = array('Modificar');
+				$label = array('btnModificar','btnPerfil');
+				$class = array('bg-amber','bg-orange');
+				$icon = array('Modificar','Expediente');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 9;
 			break;
 			case 3:
-				$label = array('btnModificar');
-				$class = array('bg-amber');
-				$icon = array('Modificar');
+				$label = array('btnModificar','btnPerfil');
+				$class = array('bg-amber','bg-orange');
+				$icon = array('Modificar','Expediente');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 9;
 			break;
 			case 4:
-				$label = array('btnModificar');
-				$class = array('bg-amber');
-				$icon = array('Modificar');
+				$label = array('btnModificar','btnPerfil');
+				$class = array('bg-amber','bg-orange');
+				$icon = array('Modificar','Expediente');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 9;
 			break;
 			case 5:
-				$label = array('btnModificar');
-				$class = array('bg-amber');
-				$icon = array('Modificar');
+				$label = array('btnModificar','btnPerfil');
+				$class = array('bg-amber','bg-orange');
+				$icon = array('Modificar','Expediente');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 9;
 			break;
 			case 6:
-				$label = array('btnModificar');
-				$class = array('bg-amber');
-				$icon = array('Modificar');
+				$label = array('btnModificar','btnPerfil');
+				$class = array('bg-amber','bg-orange');
+				$icon = array('Modificar','Expediente');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 9;
@@ -522,9 +523,13 @@ switch ($tabla) {
 	break;
 	case 'oportunidades':
 
+		$min = $_GET['start'];
+		$max = $_GET['end'];
+		$estado = $_GET['estado'];
+
 		if ($_SESSION['idroll_sahilices'] == 3) {
 
-			$resAjax = $serviciosReferencias->traerOportunidadesajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+			$resAjax = $serviciosReferencias->traerOportunidadesajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices'],$min,$max,$estado);
 			$res = $serviciosReferencias->traerOportunidadesPorUsuario($_SESSION['usuaid_sahilices']);
 			$label = array('btnModificar');
 			$class = array('bg-amber');
@@ -533,14 +538,14 @@ switch ($tabla) {
 			if ($_SESSION['idroll_sahilices'] == 9) {
 				$resReferentes 	= $serviciosReferencias->traerReferentesPorUsuario($_SESSION['usuaid_sahilices']);
 				// traigo el recomendador o referente a traves del usuario para filtrar
-				$resAjax = $serviciosReferencias->traerOportunidadesajaxPorRecomendador($length, $start, $busqueda,$colSort,$colSortDir, mysql_result($resReferentes,0,0));
+				$resAjax = $serviciosReferencias->traerOportunidadesajaxPorRecomendador($length, $start, $busqueda,$colSort,$colSortDir, mysql_result($resReferentes,0,0),$min,$max,$estado);
 				$res = $serviciosReferencias->traerOportunidadesPorRecomendador(mysql_result($resReferentes,0,0));
 				$label = array('btnModificar','btnEliminar');
 				$class = array('bg-amber','bg-red');
 				$icon = array('create','delete');
 			} else {
 				$responsableComercial = $_GET['sSearch_0'];
-				$resAjax = $serviciosReferencias->traerOportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial);
+				$resAjax = $serviciosReferencias->traerOportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,$estado);
 				$res = $serviciosReferencias->traerOportunidadesGrid($responsableComercial);
 				$label = array('btnModificar','btnEliminar');
 				$class = array('bg-amber','bg-red');
@@ -556,8 +561,12 @@ switch ($tabla) {
 	break;
 	case 'oportunidadeshistorico':
 
+		$min = $_GET['start'];
+		$max = $_GET['end'];
+		$estado = $_GET['estado'];
+
 		if ($_SESSION['idroll_sahilices'] == 3) {
-			$resAjax = $serviciosReferencias->traerOportunidadesajaxPorUsuarioHistorico($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+			$resAjax = $serviciosReferencias->traerOportunidadesajaxPorUsuarioHistorico($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices'],$min,$max,$estado);
 			$res = $serviciosReferencias->traerOportunidadesPorUsuarioEstadoH($_SESSION['usuaid_sahilices'],'3');
 			$label = array();
 			$class = array();
@@ -566,17 +575,25 @@ switch ($tabla) {
 			if ($_SESSION['idroll_sahilices'] == 9) {
 				$resReferentes 	= $serviciosReferencias->traerReferentesPorUsuario($_SESSION['usuaid_sahilices']);
 				// traigo el recomendador o referente a traves del usuario para filtrar
-				$resAjax = $serviciosReferencias->traerOportunidadesajaxPorRecomendadorHistorico($length, $start, $busqueda,$colSort,$colSortDir,mysql_result($resReferentes,0,0));
+				$resAjax = $serviciosReferencias->traerOportunidadesajaxPorRecomendadorHistorico($length, $start, $busqueda,$colSort,$colSortDir,mysql_result($resReferentes,0,0),$min,$max,$estado);
 				$res = $serviciosReferencias->traerOportunidadesPorRecomendadorEstadoH(mysql_result($resReferentes,0,0),'3');
 				$label = array();
 				$class = array();
 				$icon = array();
 			} else {
-				$resAjax = $serviciosReferencias->traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir);
+				$responsableComercial = $_GET['sSearch_0'];
+				$resAjax = $serviciosReferencias->traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,$estado);
 				$res = $serviciosReferencias->traerOportunidadesPorEstadoH('3');
-				$label = array();
-				$class = array();
-				$icon = array();
+				if ($_SESSION['idroll_sahilices'] == 4 || $_SESSION['idroll_sahilices'] == 1) {
+					$label = array('btnReasignar');
+					$class = array('bg-deep-orange');
+					$icon = array('cached');
+				} else {
+					$label = array();
+					$class = array();
+					$icon = array();
+				}
+
 			}
 
 		}

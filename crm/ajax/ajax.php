@@ -746,11 +746,56 @@ switch ($accion) {
       traerEntrevistaoportunidadesPorOportunidad($serviciosReferencias);
    break;
 
+   case 'Reasignar':
+      Reasignar($serviciosReferencias,$serviciosUsuarios,$serviciosFunciones);
+   break;
+   case 'asinar':
+      asinar($serviciosReferencias);
+   break;
+
 
 }
 /* Fin */
 
+function asinar($serviciosReferencias) {
+   $id = $_POST['idasignar'];
+   $asignarusuario = $_POST['asignarusuario'];
 
+   $res = $serviciosReferencias->asignarOportunidades($id,$asignarusuario);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function Reasignar($serviciosReferencias,$serviciosUsuarios,$serviciosFunciones) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->traerOportunidadesPorId($id);
+   $cad = '';
+
+   if (mysql_result($res,0,'refestadooportunidad') == 5) {
+      $resAsignacion = $serviciosReferencias->traerReasignacionesPorOportunidad($id);
+
+      if (mysql_num_rows($resAsignacion) > 0) {
+         echo '';
+      } else {
+         $resUsuario = $serviciosUsuarios->traerUsuariosPorRolMenosOportunidad(3,mysql_result($res,0,'refusuarios'),$id);
+         $cadVar = $serviciosFunciones->devolverSelectBox2($resUsuario,array(3),'');
+         $cad = $serviciosFunciones->addInput('6,6,6,12','select','asignarusuario','asignarusuario','', 'Selecciona el Gerente Comercial','',$cadVar);
+
+         //die(var_dump($cadVar));
+
+         echo $cad;
+      }
+
+
+   } else {
+      echo '';
+   }
+}
 
 function traerEntrevistaoportunidadesPorOportunidad($serviciosReferencias) {
    $id = $_POST['id'];
@@ -891,12 +936,14 @@ function insertarAsociadostemporales($serviciosReferencias,$serviciosUsuarios) {
    $refbancos = $_POST['refbancos'];
    $claveinterbancaria = $_POST['claveinterbancaria'];
    $domicilio = $_POST['domicilio'];
+   $nombredespacho = $_POST['nombredespacho'];
+   $refestadoasociado = $_POST['refestadoasociado'];
 
    $password = $apellidopaterno.$apellidomaterno.date('His');
 
    $refusuarios = $serviciosUsuarios->insertarUsuario($nombre,$password,12,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
 
-   $res = $serviciosReferencias->insertarAsociadostemporales($refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio);
+   $res = $serviciosReferencias->insertarAsociadostemporales($refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio,$nombredespacho,$refestadoasociado);
 
    if ((integer)$res > 0) {
       echo '';
@@ -919,8 +966,10 @@ function modificarAsociadostemporales($serviciosReferencias) {
    $refbancos = $_POST['refbancos'];
    $claveinterbancaria = $_POST['claveinterbancaria'];
    $domicilio = $_POST['domicilio'];
+   $nombredespacho = $_POST['nombredespacho'];
+   $refestadoasociado = $_POST['refestadoasociado'];
 
-   $res = $serviciosReferencias->modificarAsociadostemporales($id,$refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio);
+   $res = $serviciosReferencias->modificarAsociadostemporales($id,$refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio,$nombredespacho,$refestadoasociado);
 
    if ($res == true) {
       echo '';
@@ -2593,8 +2642,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $modificar = "modificarAsociadostemporales";
          $idTabla = "idasociadotemporal";
 
-         $lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refbancos','claveinterbancaria');
-         $lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Sucursal Bancaria','Clave Interbancaria');
+         $lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refbancos','claveinterbancaria','nombredespacho','refestadoasociado');
+         $lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Sucursal Bancaria','Clave Interbancaria','Nombre Despacho','Estado Asociado');
 
          $resVar1 = $serviciosUsuarios->traerUsuarioId(mysql_result($resultado,0,'refusuarios'));
          $cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
@@ -2602,8 +2651,11 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $resVar2	= $serviciosReferencias->traerBancos();
          $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(1),'',mysql_result($resultado,0,'refbancos'));
 
-         $refdescripcion = array(0=> $cadRef1,1=> $cadRef2);
-         $refCampo 	=  array('refusuarios','refbancos');
+         $resVar3	= $serviciosReferencias->traerEstadoasociado();
+         $cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resVar3,array(1),'',mysql_result($resultado,0,'refestadoasociado'));
+
+         $refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3);
+         $refCampo 	=  array('refusuarios','refbancos','refestadoasociado');
       break;
       case 'dbreclutadorasores':
          $resultado = $serviciosReferencias->traerReclutadorasoresPorId($id);
@@ -2686,7 +2738,12 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $cadRef2 = "<option value=''>-- Seleccionar --</option>";
          $cadRef2 .= $serviciosFunciones->devolverSelectBoxActivo($resReferentes,array(1,2,3),' ',mysql_result($resultado,0,'refreferentes'));
 
-         $resEstado 	= $serviciosReferencias->traerEstadooportunidad();
+         if ($_SESSION['idroll_sahilices'] == 4 || $_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 8) {
+            $resEstado 	= $serviciosReferencias->traerEstadooportunidad();
+         } else {
+            $resEstado 	= $serviciosReferencias->traerEstadooportunidadPorIn('1,2,3,4');
+         }
+
          $cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resEstado,array(1),' ',mysql_result($resultado,0,'refestadooportunidad'));
 
          $resMotivos = $serviciosReferencias->traerMotivorechazos();

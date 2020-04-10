@@ -99,6 +99,9 @@ $cadRefTipoCita = $serviciosFunciones->devolverSelectBox($resTipoCita,array(1),'
 $resEstadoCita = $serviciosReferencias->traerEstadoentrevistasPorId(1);
 $cadRefCita = $serviciosFunciones->devolverSelectBox($resEstadoCita,array(1),'');
 
+$resEstado2 	= $serviciosReferencias->traerEstadooportunidad();
+$cadRef33 = '<option value="">-- Seleccionar --</option>';
+$cadRef33 .= $serviciosFunciones->devolverSelectBox2($resEstado2,array(1),' ');
 ?>
 
 <!DOCTYPE html>
@@ -126,6 +129,9 @@ $cadRefCita = $serviciosFunciones->devolverSelectBox($resEstadoCita,array(1),'')
 
 	<!-- Dropzone Css -->
 	<link href="../../plugins/dropzone/dropzone.css" rel="stylesheet">
+
+	<link rel="stylesheet" type="text/css" href="../../css/classic.css"/>
+	<link rel="stylesheet" type="text/css" href="../../css/classic.date.css"/>
 
 
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
@@ -225,8 +231,22 @@ $cadRefCita = $serviciosFunciones->devolverSelectBox($resEstadoCita,array(1),'')
 												<i class="material-icons">history</i>
 												<span>HISTORICO</span>
 											</button>
+											<button type="button" class="btn bg-blue-grey waves-effect btnSubirArchivo" onClick="document.location.href='subirexcel.php'">
+												<i class="material-icons">unarchive</i>
+												<span>SUBIR ARCHIVO</span>
+											</button>
 
 										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-lg-12 col-md-12">
+										<?php echo $serviciosFunciones->addInput('4,4,4,6','text','fechadesde_filtro','fechadesde_filtro','datepicker', 'Fecha Desde'); ?>
+										<?php echo $serviciosFunciones->addInput('4,4,4,6','text','fechahasta_filtro','fechadesde_filtro','datepicker', 'Fecha Hasta'); ?>
+										<?php echo $serviciosFunciones->addInput('4,4,4,6','select','estado_filtro','estado_filtro','', 'Estado','',$cadRef33); ?>
+
+										<button type="button" class="btn bg-red" id="filtrar">Filtrar</button>
 									</div>
 								</div>
 
@@ -279,7 +299,7 @@ $cadRefCita = $serviciosFunciones->devolverSelectBox($resEstadoCita,array(1),'')
 												<th>Tel. Movil</th>
 												<th>Tel. Trabajo</th>
 												<th>Email</th>
-												<th class="perfilS">Resp.Comercial</th>
+												<th class="perfilSS">Resp.Comercial</th>
 												<th>Estado</th>
 												<th>Ref.</th>
 												<th>Fecha</th>
@@ -436,6 +456,29 @@ $cadRefCita = $serviciosFunciones->devolverSelectBox($resEstadoCita,array(1),'')
 			<input type="hidden" name="ideliminar" id="ideliminar" value="0">
 		</form>
 
+		<!-- REASIGNAR -->
+			<form class="formulario frmAsignar" role="form" id="sign_in">
+				<div class="modal fade" id="lgmReasignar" tabindex="-1" role="dialog">
+					 <div class="modal-dialog modal-lg" role="document">
+						  <div class="modal-content">
+								<div class="modal-header">
+									 <h4 class="modal-title" id="largeModalLabel">REASIGNAR OPORTUNIDAD</h4>
+								</div>
+								<div class="modal-body">
+									<div class="row frmAjaxReasignar">
+									</div>
+								</div>
+								<div class="modal-footer">
+									 <button type="submit" class="btn bg-deep-orange waves-effect reasignar">REASIGNAR</button>
+									 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+								</div>
+						  </div>
+					 </div>
+				</div>
+				<input type="hidden" id="accion" name="accion" value="asinar"/>
+				<input type="hidden" id="idasignar" name="idasignar" value=""/>
+			</form>
+
 
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
@@ -460,8 +503,46 @@ $cadRefCita = $serviciosFunciones->devolverSelectBox($resEstadoCita,array(1),'')
 <script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
 
 
+<script src="../../js/picker.js"></script>
+<script src="../../js/picker.date.js"></script>
+
 <script>
 	$(document).ready(function(){
+
+		$('#fechadesde_filtro').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		});
+
+		$('#fechahasta_filtro').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		});
+
 		$('.contHistorico').hide();
 
 		$('.btnHistorico').click(function() {
@@ -513,10 +594,22 @@ $cadRefCita = $serviciosFunciones->devolverSelectBox($resEstadoCita,array(1),'')
 			});
 		}
 
+
+
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=oportunidades",
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+				/* Add some extra data to the sender */
+				aoData.push( { "name": "start", "value": $('#fechadesde_filtro').val(), } );
+				aoData.push( { "name": "end", "value": $('#fechahasta_filtro').val(), } );
+				aoData.push( { "name": "estado", "value": $('#estado_filtro').val(), } );
+				$.getJSON( sSource, aoData, function (json) {
+				/* Do whatever additional processing you want on the callback, then tell DataTables */
+				fnCallback(json)
+				} );
+			},
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -543,12 +636,28 @@ $cadRefCita = $serviciosFunciones->devolverSelectBox($resEstadoCita,array(1),'')
 			"columnDefs": [
 		    { "orderable": false, "targets": 6 }
 		 	],
+
 		});
+
+		$('#filtrar').click( function() {
+			table.draw();
+			table2.draw();
+		} );
 
 		var table2 = $('#example2').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=oportunidadeshistorico",
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+				/* Add some extra data to the sender */
+				aoData.push( { "name": "start", "value": $('#fechadesde_filtro').val(), } );
+				aoData.push( { "name": "end", "value": $('#fechahasta_filtro').val(), } );
+				aoData.push( { "name": "estado", "value": $('#estado_filtro').val(), } );
+				$.getJSON( sSource, aoData, function (json) {
+				/* Do whatever additional processing you want on the callback, then tell DataTables */
+				fnCallback(json)
+				} );
+			},
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -571,7 +680,10 @@ $cadRefCita = $serviciosFunciones->devolverSelectBox($resEstadoCita,array(1),'')
 					"sortAscending":  ": activate to sort column ascending",
 					"sortDescending": ": activate to sort column descending"
 				}
-			}
+			},
+			"columnDefs": [
+		    { "orderable": false, "targets": 5 }
+		 	],
 		});
 
 		$("#example .perfilS").each( function ( i ) {
@@ -583,6 +695,19 @@ $cadRefCita = $serviciosFunciones->devolverSelectBox($resEstadoCita,array(1),'')
 						.draw();
 				} );
 			table.column( i ).data().unique().sort().each( function ( d, j ) {
+				select.append( '<option value="'+d+'">'+d+'</option>' )
+			} );
+		} );
+
+		$("#example2 .perfilSS").each( function ( i ) {
+			var select = $('<select><option value="">-- Seleccione Perfil --</option><?php echo $cadRefFiltro; ?></select>')
+				.appendTo( $(this).empty() )
+				.on( 'change', function () {
+					table2.column( i )
+						.search( $(this).val() )
+						.draw();
+				} );
+			table2.column( i ).data().unique().sort().each( function ( d, j ) {
 				select.append( '<option value="'+d+'">'+d+'</option>' )
 			} );
 		} );
@@ -691,6 +816,40 @@ $cadRefCita = $serviciosFunciones->devolverSelectBox($resEstadoCita,array(1),'')
 
 		}
 
+		function Reasignar(id) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'Reasignar', id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.frmAjaxReasignar').html('');
+					$('.reasignar').hide();
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						$('.frmAjaxReasignar').html(data);
+						$('.reasignar').show();
+					} else {
+
+						$(".frmAjaxReasignar").html('<h4>No es posible reasignar esta oportunidad, debe estar en estado No Atendido o ya fue reasignada (Verificar)</h4>');
+						$('#idasignar').val('');
+						$('.reasignar').hide();
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+
+		}
+
 		function reenviarActivacion(id) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
@@ -758,6 +917,14 @@ $cadRefCita = $serviciosFunciones->devolverSelectBox($resEstadoCita,array(1),'')
 			idTable =  $(this).attr("id");
 			frmAjaxModificar(idTable);
 			$('#lgmModificar').modal();
+		});//fin del boton modificar
+
+
+		$("#example2").on("click",'.btnReasignar', function(){
+			idTable =  $(this).attr("id");
+			$('#idasignar').val(idTable);
+			Reasignar(idTable);
+			$('#lgmReasignar').modal();
 		});//fin del boton modificar
 
 		$(".frmAjaxModificar").on("change",'#refusuarios', function(){
@@ -872,6 +1039,66 @@ $cadRefCita = $serviciosFunciones->devolverSelectBox($resEstadoCita,array(1),'')
 
 							$('#lgmModificar').modal('hide');
 							table.ajax.reload();
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
+
+
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
+					}
+				});
+			}
+		});
+
+
+		$('.frmAsignar').submit(function(e){
+
+			e.preventDefault();
+			if ($('.frmAsignar')[0].checkValidity()) {
+
+				//información del formulario
+				var formData = new FormData($(".formulario")[3]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
+
+					},
+					//una vez finalizado correctamente
+					success: function(data){
+
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Modificado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
+
+							$('#lgmReasignar').modal('hide');
+							table.ajax.reload();
+							table2.ajax.reload();
 						} else {
 							swal({
 									title: "Respuesta",
