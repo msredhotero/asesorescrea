@@ -231,10 +231,12 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox2($resEstado2,array(1),' ');
 												<i class="material-icons">history</i>
 												<span>HISTORICO</span>
 											</button>
+											<?php if ($_SESSION['idroll_sahilices'] == 4) { ?>
 											<button type="button" class="btn bg-blue-grey waves-effect btnSubirArchivo" onClick="document.location.href='subirexcel.php'">
 												<i class="material-icons">unarchive</i>
 												<span>SUBIR ARCHIVO</span>
 											</button>
+											<?php } ?>
 
 										</div>
 									</div>
