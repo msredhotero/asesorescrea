@@ -3107,7 +3107,7 @@ class ServiciosReferencias {
 	}
 
 	function traerEstadooportunidadPorIn($in) {
-		$sql = "select idestadooportunidad,estadooportunidad from tbestadooportunidad where idestadooportunidad in (".$id.")";
+		$sql = "select idestadooportunidad,estadooportunidad from tbestadooportunidad where idestadooportunidad in (".$in.")";
 		$res = $this->query($sql,0);
 		return $res;
 	}
