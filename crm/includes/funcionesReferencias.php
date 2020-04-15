@@ -9,6 +9,76 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+	function graficoVentasPorGerentes() {
+		$sql = "select
+					TIMESTAMPDIFF(MONTH, p.ultimafecha,curdate()) as diffmeses
+				from (
+				    select
+						MAX(c.fechapago) as ultimafecha,
+				        a.idasesor
+					from		dbcotizaciones c
+					inner
+					join		dbasesores a
+					on			c.refasesores = a.idasesor
+					left
+					join		dbasociados aso
+					on			aso.idasociado = c.refasociados
+					left
+					join		dbasociadostemporales asot
+					on			asot.idasociadotemporal = c.refasociadostemporales
+
+					where		c.refestadocotizaciones>=6
+					group by    a.idasesor
+				    ) p";
+		$res = $this->query($sql,0);
+	}
+
+	function graficosVentasAnuales() {
+		$sql = "select
+					coalesce( r.cantidad,0) as cantidad,
+					m.meses
+				from	(
+				    select
+						count(*) as cantidad,
+						month(c.fechapago) as mes
+					from		dbcotizaciones c
+					inner
+					join		dbasesores a
+					on			c.refasesores = a.idasesor
+					left
+					join		dbasociados aso
+					on			aso.idasociado = c.refasociados
+					left
+					join		dbasociadostemporales asot
+					on			asot.idasociadotemporal = c.refasociadostemporales
+
+					where		c.refestadocotizaciones>=6
+					group by    month(c.fechapago)
+				    ) r
+				    right
+				    join 		tbmeses m
+				    on			m.idmes = r.mes";
+		$res = $this->query($sql,0);
+
+		$meses = '';
+		$cantidad = '';
+
+		while ($rowG = mysql_fetch_array($res)) {
+			$meses .= "'".$rowG['meses']."',";
+			$cantidad .= $rowG['cantidad'].",";
+		}
+
+		if (strlen($meses) > 0 ) {
+			$meses = substr($meses,0,-1);
+		}
+
+		if (strlen($cantidad) > 0 ) {
+			$cantidad = substr($cantidad,0,-1);
+		}
+
+		return array('meses'=>$meses, 'cantidad' => $cantidad);
+	}
+
 	function traerOportunidadesAsociadosTemporales() {
 		$sql = "select
 					o.idoportunidad, concat(o.apellidopaterno, ' ', o.apellidomaterno, ' ', o.nombre) as apyn

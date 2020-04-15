@@ -244,6 +244,9 @@ if (strlen($iniciadoC) > 0 ) {
 	$iniciadoC = substr($iniciadoC,0,-1);
 }
 
+//////////////////////////////////////////////////////////////
+// grafica de ventas anuales
+$resVentasAnuales = $serviciosReferencias->graficosVentasAnuales();
 
 /********************* fin ********************************************/
 
@@ -393,6 +396,7 @@ if (strlen($iniciadoC) > 0 ) {
 				</div>
 
 				<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 1)) { ?>
+				<div class="row">
 					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 						<div class="card ">
 							<div class="header bg-blue">
@@ -438,9 +442,11 @@ if (strlen($iniciadoC) > 0 ) {
 							</div>
 						</div>
 					</div>
+				</div>
 					<?php } ?>
 					<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 1)) { ?>
-					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="row">
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="card ">
 							<div class="header bg-blue">
 								<h2 style="color:#fff">
@@ -462,7 +468,56 @@ if (strlen($iniciadoC) > 0 ) {
 							</div>
 						</div>
 					</div>
+				</div>
 					<?php } ?>
+
+				<div class="row">
+					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+						<div class="card ">
+							<div class="header bg-blue">
+								<h2 style="color:#fff">
+									VENTAS POR MES
+								</h2>
+								<ul class="header-dropdown m-r--5">
+									<li class="dropdown">
+										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+											<i class="material-icons">more_vert</i>
+										</a>
+										<ul class="dropdown-menu pull-right">
+											<li><a href="javascript:void(0);" class="recargar">Recargar</a></li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="body table-responsive">
+								<canvas id="bar_line" height="250"></canvas>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+						<div class="card ">
+							<div class="header bg-blue">
+								<h2 style="color:#fff">
+									VENTAS POR MES GERENTES
+								</h2>
+								<ul class="header-dropdown m-r--5">
+									<li class="dropdown">
+										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+											<i class="material-icons">more_vert</i>
+										</a>
+										<ul class="dropdown-menu pull-right">
+											<li><a href="javascript:void(0);" class="recargar">Recargar</a></li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="body table-responsive">
+								<canvas id="bar_line2" height="250"></canvas>
+							</div>
+						</div>
+					</div>
+				</div>
+
 
 			<?php } else { ?>
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -637,6 +692,8 @@ if (strlen($iniciadoC) > 0 ) {
 			new Chart(document.getElementById("pie_chart").getContext("2d"), getChartJs('pie'));
 			new Chart(document.getElementById("pie_chart2").getContext("2d"), getChartJs('pie2'));
 
+			new Chart(document.getElementById("bar_line").getContext("2d"), getChartJs('lineVentas'));
+
 
 			<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 1)) { ?>
 			new Chart(document.getElementById("bar_chart2").getContext("2d"), getChartJs('bar2'));
@@ -667,6 +724,27 @@ if (strlen($iniciadoC) > 0 ) {
 			                        pointBackgroundColor: 'rgba(252, 248, 12, 0.9)',
 			                        pointBorderWidth: 1
 			                    }]
+			            },
+			            options: {
+			                responsive: true,
+			                legend: false
+			            }
+			        }
+			    }
+				 else if (type === 'lineVentas') {
+			        config = {
+			            type: 'line',
+			            data: {
+			                labels: [<?php echo $resVentasAnuales['meses']; ?>],
+			                datasets: [{
+			                    label: "Por Atender",
+			                    data: [<?php echo $resVentasAnuales['cantidad']; ?>],
+			                    borderColor: 'rgba(0, 188, 212, 0.75)',
+			                    backgroundColor: 'rgba(0, 188, 212, 0.3)',
+			                    pointBorderColor: 'rgba(0, 188, 212, 0)',
+			                    pointBackgroundColor: 'rgba(0, 188, 212, 0.9)',
+			                    pointBorderWidth: 1
+			                }]
 			            },
 			            options: {
 			                responsive: true,
