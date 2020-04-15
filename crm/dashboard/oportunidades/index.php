@@ -269,6 +269,7 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox2($resEstado2,array(1),' ');
 												<th>Estado</th>
 												<th>Ref.</th>
 												<th>Fecha</th>
+												<th>Dias en Gestion</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -284,6 +285,7 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox2($resEstado2,array(1),' ');
 												<th>Estado</th>
 												<th>Ref.</th>
 												<th>Fecha</th>
+												<th>Dias en Gestion</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -635,6 +637,12 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox2($resEstado2,array(1),' ');
 					"sortDescending": ": activate to sort column descending"
 				}
 			},
+		   "rowCallback": function( row, data, index ) {
+			  if (data[10] > 15) {
+				  $('td', row).css('background-color', '#F62121');
+				  $('td', row).css('color', 'white');
+			  }
+		   },
 			"columnDefs": [
 		    { "orderable": false, "targets": 6 }
 		 	],
@@ -688,7 +696,13 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox2($resEstado2,array(1),' ');
 		 	],
 		});
 
+		<?php
+		if ($_SESSION['idroll_sahilices'] == 3 ) {
+			$cadRefFiltro = '<option value="">'.$_SESSION['nombre_sahilices'].'</option>';
+		}
+		?>
 		$("#example .perfilS").each( function ( i ) {
+
 			var select = $('<select><option value="">-- Seleccione Perfil --</option><?php echo $cadRefFiltro; ?></select>')
 				.appendTo( $(this).empty() )
 				.on( 'change', function () {

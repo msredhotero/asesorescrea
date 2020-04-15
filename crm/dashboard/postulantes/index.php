@@ -312,8 +312,9 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 												<th>Email</th>
 												<th>Cod. Postal</th>
 												<th>Fecha</th>
+												<th>Dias de Gestion</th>
 												<th>Estado</th>
-												<?php if ($_SESSION['idroll_sahilices'] == 1) { ?>
+												<?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4) { ?>
 												<th>Tel.</th>
 												<?php } ?>
 												<th class="perfilS">Resp.Comercial</th>
@@ -328,8 +329,9 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 												<th>Email</th>
 												<th>Cod. Postal</th>
 												<th>Fecha</th>
+												<th>Dias de Gestion</th>
 												<th>Estado</th>
-												<?php if ($_SESSION['idroll_sahilices'] == 1) { ?>
+												<?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4) { ?>
 												<th>Tel.</th>
 												<?php } ?>
 												<th>Resp.Comercial</th>
@@ -608,19 +610,17 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 						 type: 'pie',
 						 data: {
 							  datasets: [{
-								   data: [<?php echo $completosoportunidad; ?>,<?php echo $rechazados; ?>,<?php echo $completos; ?>,<?php echo $encurso; ?>],
+								   data: [<?php echo $rechazados; ?>,<?php echo ($completos + $completosoportunidad); ?>,<?php echo $encurso; ?>],
 								   backgroundColor: [
-										 "rgb(12, 241, 8)",
 										 "rgb(252, 12, 12)",
 										 "rgb(5, 187, 5)",
 										 "rgb(26, 213, 250)"
 								   ],
 							  }],
 							  labels: [
-								   "Concluidos x Oportunidad",
 								   "Rechazados",
 								   "Concluidos",
-								   "En Curso"
+								   "Agente Asociado"
 							  ]
 						 },
 						 options: {
@@ -897,11 +897,26 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
                   "visible": false,
                   "searchable": false
               },
-				  { "orderable": false, "targets": 8 }
-          ]
+				  <?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4) { ?>
+				  { "orderable": false, "targets": 9 }
+				  <?php } else { ?>
+					{ "orderable": false, "targets": 8 }
+					<?php }  ?>
+          ],
+			"rowCallback": function( row, data, index ) {
+				if (data[6] > 20) {
+					$('td', row).css('background-color', '#F62121');
+					$('td', row).css('color', 'white');
+				}
+			}
 		});
 
 		$("#example .perfilS").each( function ( i ) {
+			<?php
+			if ($_SESSION['idroll_sahilices'] == 3 ) {
+				$cadRefFiltro = '<option value="">'.$_SESSION['nombre_sahilices'].'</option>';
+			}
+			?>
 			var select = $('<select><option value="">-- Seleccione Perfil --</option><?php echo $cadRefFiltro; ?></select>')
 				.appendTo( $(this).empty() )
 				.on( 'change', function () {

@@ -944,7 +944,7 @@ function insertarAsociadostemporales($serviciosReferencias,$serviciosUsuarios) {
 
    $refusuarios = $serviciosUsuarios->insertarUsuario($nombre,$password,12,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
 
-   $res = $serviciosReferencias->insertarAsociadostemporales($refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio,$nombredespacho,$refestadoasociado,$refoportunidades);
+   $res = $serviciosReferencias->insertarAsociadostemporales($refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio,$nombredespacho,$refestadoasociado,$refoportunidades,0);
 
    if ((integer)$res > 0) {
       echo '';
@@ -1638,7 +1638,7 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones)
                if (mysql_num_rows($resEntrevistas) > 0) {
                   //modifico la entrevista
 
-                  $id = mysql_result($resEntrevistas,0,0);
+                  $idEntrevista = mysql_result($resEntrevistas,0,0);
                   $refoportunidades = $_POST['refoportunidades'];
                   $entrevistador = $_POST['entrevistador'];
                   $fecha = $_POST['fecha'];
@@ -1649,7 +1649,7 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones)
                   $usuariomodi = $_SESSION['usua_sahilices'];
                   $reftipocita = $_POST['reftipocita'];
 
-                  $res = $serviciosReferencias->modificarEntrevistaoportunidades($id,$refoportunidades,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadoentrevistas,$fechamodi,$usuariomodi,$reftipocita);
+                  $res = $serviciosReferencias->modificarEntrevistaoportunidades($idEntrevista,$refoportunidades,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadoentrevistas,$fechamodi,$usuariomodi,$reftipocita);
 
                } else {
                   //inserto la entrevista
@@ -1668,6 +1668,30 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones)
                   $res = $serviciosReferencias->insertarEntrevistaoportunidades($refoportunidades,$entrevistador,$fecha,$domicilio,$codigopostal,$refestadoentrevistas,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$reftipocita);
 
                }
+            }
+
+            // si es asociado temporal o agente asociado id=8 lo genero automatico
+            if ($refestadooportunidad == 8) {
+
+               if ($email != '') {
+                  $password = $apellidopaterno.$apellidomaterno.date('His');
+
+                  $refusuarios = $serviciosUsuarios->insertarUsuario($nombre,$password,12,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
+
+                  $resAT = $serviciosReferencias->insertarAsociadostemporales($refusuarios,$apellidopaterno,$apellidomaterno,$nombre,'',$email,'null',$telefonomovil,$telefonotrabajo,0,'','',$nombredespacho,1,$id,0);
+                  $asunto = 'Se genero un Asociado Temporal';
+               } else {
+                  $asunto = 'No se pudo generar un Asociado Temporal por falta de email';
+               }
+
+               $destinatario = 'jfoncerrada@icloud.com';
+
+      	      $cuerpo = '';
+      	      $cuerpo .= '<h4>Nombre Completo: '.$row['nombre'].' '.$row['apellidopaterno'].' '.$row['apellidomaterno'].'</h4><br>';
+      	      $cuerpo .= "Acceda por este link: <a href='asesorescrea.com/desarrollo/crm/asociadostemporales/index.php'>ACCEDER</a>";
+
+      	      $res = $this->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
+
             }
             echo '';
          } else {
@@ -2496,8 +2520,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
       case 'dbasesores':
          $resultado = $serviciosReferencias->traerAsesoresPorId($id);
 
-         $lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','nss','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta','urlprueba','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas','razonsocial');
-         $lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Nro de Seguro Social','Clave Interbancaria','ID Cliente Inbursa','Clave Asesor','Fecha de Alta','URL Prueba','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona','Razon Social');
+         $lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','nss','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta','urlprueba','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas','razonsocial','vigdesderc','vighastarc');
+         $lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Nro de Seguro Social','Clave Interbancaria','ID Cliente Inbursa','Clave Asesor','Fecha de Alta','URL Prueba','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona','Razon Social','Vig. Desde RC','Vig. Hasta RC');
 
 
 
@@ -2901,7 +2925,13 @@ function insertarAsesores($serviciosReferencias, $serviciosUsuarios) {
       $nss = $_POST['nss'];
       $razonsocial = $_POST['razonsocial'];
 
-      $res = $serviciosReferencias->insertarAsesores($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial);
+      $nropoliza = $_POST['nropoliza'];
+      $vigdesdecedulaseguro = $_POST['vigdesdecedulaseguro'];
+      $vighastacedulaseguro = $_POST['vighastacedulaseguro'];
+      $vigdesderc = $_POST['vigdesderc'];
+      $vighastarc = $_POST['vighastarc'];
+
+      $res = $serviciosReferencias->insertarAsesores($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc, $vighastarc);
 
       if ((integer)$res > 0) {
          echo '';
@@ -2946,7 +2976,13 @@ function modificarAsesores($serviciosReferencias) {
    $nss = $_POST['nss'];
    $razonsocial = $_POST['razonsocial'];
 
-   $res = $serviciosReferencias->modificarAsesores($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechamodi,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial);
+   $nropoliza = $_POST['nropoliza'];
+   $vigdesdecedulaseguro = $_POST['vigdesdecedulaseguro'];
+   $vighastacedulaseguro = $_POST['vighastacedulaseguro'];
+   $vigdesderc = $_POST['vigdesderc'];
+   $vighastarc = $_POST['vighastarc'];
+
+   $res = $serviciosReferencias->modificarAsesores($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechamodi,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc, $vighastarc);
 
    if ($res == true) {
       echo '';
@@ -3748,6 +3784,26 @@ function modificarPostulantes($serviciosReferencias) {
    $res = $serviciosReferencias->modificarPostulantes($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$nss,$refesquemareclutamiento,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore,$nropoliza,$razonsocial,$reforigenreclutamiento,$email2,$vigdesderc,$vighastarc);
 
    if ($res == true) {
+      // si es asociado temporal o agente asociado id=8 lo genero automatico
+      if ($refestadopostulantes == 11) {
+
+         if ($email != '') {
+
+            $resAT = $serviciosReferencias->insertarAsociadostemporales($refusuarios,$apellidopaterno,$apellidomaterno,$nombre,'',$email,'null',$telefonomovil,$telefonotrabajo,0,'','',$razonsocial,1,0,$id);
+            $asunto = 'Se genero un Asociado Temporal';
+         } else {
+            $asunto = 'No se pudo generar un Asociado Temporal por falta de email';
+         }
+
+         $destinatario = 'jfoncerrada@icloud.com';
+
+         $cuerpo = '';
+         $cuerpo .= '<h4>Nombre Completo: '.$row['nombre'].' '.$row['apellidopaterno'].' '.$row['apellidomaterno'].'</h4><br>';
+         $cuerpo .= "Acceda por este link: <a href='asesorescrea.com/desarrollo/crm/asociadostemporales/index.php'>ACCEDER</a>";
+
+         $res = $this->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
+
+      }
       echo '';
    } else {
       echo 'Hubo un error al modificar datos';

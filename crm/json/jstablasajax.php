@@ -260,6 +260,7 @@ switch ($tabla) {
 			p.email,
 			p.codigopostal,
 			p.fechacrea,
+			(case when p.refestadopostulantes < 9 then DATEDIFF(CURDATE(),p.fechacrea) else 0 end) as dias,
 			ep.estadopostulante,
 			p.telefonomovil,
 			usur.nombrecompleto,
@@ -322,7 +323,7 @@ switch ($tabla) {
 				$icon = array('Ver','Modificar','Eliminar','Eliminar Def.');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 9;
+				$termina = 10;
 			break;
 			case 2:
 				$label = array('btnVer','btnModificar');
@@ -330,7 +331,7 @@ switch ($tabla) {
 				$icon = array('Ver','Modificar');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 8;
+				$termina = 9;
 			break;
 			case 3:
 				$label = array('btnVer','btnModificar');
@@ -338,7 +339,7 @@ switch ($tabla) {
 				$icon = array('Ver','Modificar');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 8;
+				$termina = 9;
 			break;
 			case 4:
 				$label = array('btnVer','btnModificar');
@@ -346,7 +347,7 @@ switch ($tabla) {
 				$icon = array('Ver','Modificar');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 8;
+				$termina = 10;
 			break;
 			case 5:
 				$label = array('btnVer','btnModificar');
@@ -354,7 +355,7 @@ switch ($tabla) {
 				$icon = array('Ver','Modificar');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 8;
+				$termina = 9;
 			break;
 			case 6:
 				$label = array('btnVer','btnModificar');
@@ -362,7 +363,7 @@ switch ($tabla) {
 				$icon = array('Ver','Modificar');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 8;
+				$termina = 9;
 			break;
 
 			default:
@@ -556,7 +557,7 @@ switch ($tabla) {
 
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 10;
+		$termina = 11;
 
 	break;
 	case 'oportunidadeshistorico':

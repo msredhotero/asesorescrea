@@ -1216,7 +1216,8 @@ class Servicios {
 				$resMod = $this->query($sqlMod,0);
 				break;
 			case 'dbasesores':
-				$sqlMod = "select a.idasesor,a.refusuarios,a.nombre,a.apellidopaterno,a.apellidomaterno,a.email,a.curp,a.rfc,a.ine,a.fechanacimiento,a.sexo,SUBSTRING(concat('00000', p.codigo),-5,5) as codigopostal,a.refescolaridades,a.telefonomovil,a.telefonocasa,a.telefonotrabajo,a.fechacrea,a.fechamodi,a.usuariocrea,a.usuariomodi,a.reftipopersonas,a.claveinterbancaria,a.idclienteinbursa,a.claveasesor,a.fechaalta,a.nss,a.razonsocial from dbasesores a
+				$sqlMod = "select a.idasesor,a.refusuarios,a.nombre,a.apellidopaterno,a.apellidomaterno,a.email,a.curp,a.rfc,a.ine,a.fechanacimiento,a.sexo,SUBSTRING(concat('00000', p.codigo),-5,5) as codigopostal,a.refescolaridades,a.telefonomovil,a.telefonocasa,a.telefonotrabajo,a.fechacrea,a.fechamodi,a.usuariocrea,a.usuariomodi,a.reftipopersonas,a.claveinterbancaria,a.idclienteinbursa,a.claveasesor,a.fechaalta,a.nss,a.razonsocial,a.nropoliza,a.vigdesdecedulaseguro,
+				a.vighastacedulaseguro,a.vigdesderc,a.vighastarc from dbasesores a
 				left join postal p on p.id = a.codigopostal where a.idasesor = ".$id;
 				$resMod = $this->query($sqlMod,0);
 			break;

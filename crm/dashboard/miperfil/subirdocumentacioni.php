@@ -324,20 +324,40 @@ switch ($iddocumentacion) {
 		$campo = '';
 	break;
 	case 26:
+
+		$dato = mysql_result($resPostulante,0,'vigdesdecedulaseguro');
+		$dato2 = mysql_result($resPostulante,0,'vighastacedulaseguro');
 		// code...
-		$input = '';
-		$boton = '';
-		$leyenda = '';
-		$campo = '';
+		$input = '<input type="text" maxlength="25" name="vigdesdecedulaseguro" id="vigdesdecedulaseguro" class="form-control" value="'.$dato.'"/> ';
+		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
+		$leyenda = 'Cargue la Vigencia Desde del Seguro';
+		$campo = 'vigdesdecedulaseguro';
+
+		$input2 = '<input type="text" maxlength="25" name="vigdesdecedulaseguro" id="vigdesdecedulaseguro" class="form-control" value="'.$dato2.'"/> ';
+		$boton2 = '<button type="button" class="btn btn-primary waves-effect btnModificar2">GUARDAR</button>';
+		$leyenda2 = 'Cargue la Vigencia Hasta del Seguro';
+		$campo2 = 'vigdesdecedulaseguro';
 	break;
 	case 27:
 		// code...
 		$dato = mysql_result($resPostulante,0,'nropoliza');
+		$dato2 = mysql_result($resPostulante,0,'vigdesderc');
+		$dato3 = mysql_result($resPostulante,0,'vighastarc');
 
 		$input = '<input type="text" maxlength="25" name="nropoliza" id="nropoliza" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
 		$leyenda = 'Cargue el Nro de Poliza';
 		$campo = 'nropoliza';
+
+		$input2 = '<input type="text" maxlength="25" name="vigdesderc" id="vigdesderc" class="form-control" value="'.$dato2.'"/> ';
+		$boton2 = '<button type="button" class="btn btn-primary waves-effect btnModificar2">GUARDAR</button>';
+		$leyenda2 = 'Cargue la Vigencia Desde RC';
+		$campo2 = 'vigdesderc';
+
+		$input3 = '<input type="text" maxlength="25" name="vighastarc" id="vighastarc" class="form-control" value="'.$dato3.'"/> ';
+		$boton3 = '<button type="button" class="btn btn-primary waves-effect btnModificar3">GUARDAR</button>';
+		$leyenda3 = 'Cargue la Vigencia Hasta RC';
+		$campo3 = 'vighastarc';
 	break;
 
 	default:
@@ -516,7 +536,6 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 							<form class="form" id="formCountry">
 
 								<div class="row" style="padding: 5px 20px;">
-
 									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
 										<label class="form-label"><?php echo $leyenda; ?></label>
 										<div class="form-group input-group">
@@ -536,6 +555,51 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 										</div>
 									</div>
 								</div>
+								<?php if (isset($campo2)) { ?>
+									<div class="row" style="padding: 5px 20px;">
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+											<label class="form-label"><?php echo $leyenda2; ?></label>
+											<div class="form-group input-group">
+												<div class="form-line">
+													<?php echo $input2; ?>
+
+												</div>
+											</div>
+										</div>
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+											<label class="form-label"> </label>
+											<div class="form-group input-group">
+												<div class="form-line">
+													<?php echo $boton2; ?>
+
+												</div>
+											</div>
+										</div>
+									</div>
+								<?php } ?>
+
+								<?php if (isset($campo3)) { ?>
+									<div class="row" style="padding: 5px 20px;">
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+											<label class="form-label"><?php echo $leyenda3; ?></label>
+											<div class="form-group input-group">
+												<div class="form-line">
+													<?php echo $input3; ?>
+
+												</div>
+											</div>
+										</div>
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+											<label class="form-label"> </label>
+											<div class="form-group input-group">
+												<div class="form-line">
+													<?php echo $boton3; ?>
+
+												</div>
+											</div>
+										</div>
+									</div>
+								<?php } ?>
 							</form>
 						</div>
 					</div>
@@ -680,7 +744,88 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 		});
 
 		$('.btnModificar').click(function() {
-			modificarPostulanteUnicaDocumentacion($('#<?php echo $campo; ?>').val());
+			modificarPostulanteUnicaDocumentacion($('#<?php echo $campo; ?>').val(),'<?php echo $campo; ?>');
+		});
+
+		<?php if (isset($campo2)) { ?>
+		$('.btnModificar2').click(function() {
+			modificarPostulanteUnicaDocumentacion($('#<?php echo $campo2; ?>').val(),'<?php echo $campo2; ?>');
+		});
+		<?php } ?>
+
+		<?php if (isset($campo2)) { ?>
+		$('.btnModificar3').click(function() {
+			modificarPostulanteUnicaDocumentacion($('#<?php echo $campo3; ?>').val(),'<?php echo $campo3; ?>');
+		});
+		<?php } ?>
+
+		$('#vigdesderc').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		});
+
+		$('#vighastarc').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		});
+
+
+		$('#vigdesdecedulaseguro').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		});
+
+		$('#vighastacedulaseguro').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
 		});
 
 		$('.btnVolver').click(function() {
@@ -688,7 +833,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 			$(location).attr('href',url);
 		});
 
-		function modificarPostulanteUnicaDocumentacion(valor) {
+		function modificarPostulanteUnicaDocumentacion(valor, campo) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
@@ -697,7 +842,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 				data: {
 					accion: 'modificarPostulanteUnicaDocumentacion',
 					idpostulante: <?php echo $id; ?>,
-					campo: '<?php echo $campo; ?>',
+					campo: campo,
 					valor: valor
 				},
 				//mientras enviamos el archivo
@@ -708,7 +853,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 				success: function(data){
 
 					if (data.error == false) {
-						swal("Ok!", 'Se guardo correctamente el <?php echo $campo; ?>', "success");
+						swal("Ok!", 'Se guardo correctamente el ' + campo, "success");
 
 					} else {
 						swal("Error!", data.leyenda, "warning");
