@@ -2930,7 +2930,12 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          if ($_SESSION['idroll_sahilices'] == 4 || $_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 8) {
             $resEstado 	= $serviciosReferencias->traerEstadooportunidad();
          } else {
-            $resEstado 	= $serviciosReferencias->traerEstadooportunidadPorIn('1,2,3,4');
+            if ($_SESSION['usuaid_sahilices'] == 119) {
+               $resEstado 	= $serviciosReferencias->traerEstadooportunidadPorIn('1,2,3,4,8');
+            } else {
+               $resEstado 	= $serviciosReferencias->traerEstadooportunidadPorIn('1,2,3,4');
+            }
+
          }
 
          $cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resEstado,array(1),' ',mysql_result($resultado,0,'refestadooportunidad'));
