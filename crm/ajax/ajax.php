@@ -1775,7 +1775,7 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones,
 
                   $refusuarios = $serviciosUsuarios->insertarUsuario($nombre,$password,12,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
 
-                  $resAT = $serviciosReferencias->insertarAsociados($refusuarios,2,$nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,'',$email,'null',$telefonomovil,$telefonotrabajo,0,'','',1,$id,0);
+                  $resAT = $serviciosReferencias->insertarAsociados($refusuarios,2,$nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,'',$email,'null',$telefonomovil,$telefonotrabajo,1,'','',1,$id,0);
 
                   $asunto = 'Se genero un Asociado Temporal';
                } else {
@@ -3949,7 +3949,7 @@ function modificarPostulantes($serviciosReferencias) {
 
          if ($email != '') {
 
-            $resAT = $serviciosReferencias->insertarAsociados($refusuarios,2,$razonsocial,$apellidopaterno,$apellidomaterno,$nombre,'',$email,'null',$telefonomovil,$telefonotrabajo,0,'','',1,0,$id);
+            $resAT = $serviciosReferencias->insertarAsociados($refusuarios,2,$razonsocial,$apellidopaterno,$apellidomaterno,$nombre,'',$email,'null',$telefonomovil,$telefonotrabajo,1,'','',1,0,$id);
             $asunto = 'Se genero un Asociado Temporal';
          } else {
             $asunto = 'No se pudo generar un Asociado Temporal por falta de email';
