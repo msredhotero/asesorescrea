@@ -402,7 +402,7 @@ $resVentasAnuales = $serviciosReferencias->graficosVentasAnuales();
 						</div>
 				</div>
 
-				<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 1)) { ?>
+				<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11)) { ?>
 				<div class="row">
 					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 						<div class="card ">
@@ -451,7 +451,7 @@ $resVentasAnuales = $serviciosReferencias->graficosVentasAnuales();
 					</div>
 				</div>
 					<?php } ?>
-					<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 1)) { ?>
+					<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11)) { ?>
 				<div class="row">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="card ">
@@ -695,14 +695,14 @@ $resVentasAnuales = $serviciosReferencias->graficosVentasAnuales();
 
 	<script>
 		$(document).ready(function(){
-			<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 1)) { ?>
+			<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11)) { ?>
 			new Chart(document.getElementById("pie_chart").getContext("2d"), getChartJs('pie'));
 			new Chart(document.getElementById("pie_chart2").getContext("2d"), getChartJs('pie2'));
 
 			new Chart(document.getElementById("bar_line").getContext("2d"), getChartJs('lineVentas'));
 
 
-			<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 1)) { ?>
+			<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11)) { ?>
 			new Chart(document.getElementById("bar_chart2").getContext("2d"), getChartJs('bar2'));
 			<?php } ?>
 

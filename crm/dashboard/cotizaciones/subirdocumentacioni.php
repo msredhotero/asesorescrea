@@ -281,7 +281,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 			<div class="row">
 				<?php
 				while ($row = mysql_fetch_array($resDocumentaciones)) {
-					if (($row['idestadodocumentacion'] != 5) && ($row['idestadodocumentacion'] != 6) && ($row['idestadodocumentacion'] != 7)) {
+
 				?>
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
@@ -294,7 +294,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 							</div>
 						</div>
 					</div>
-				<?php } } ?>
+				<?php }  ?>
 			</div>
 
 			<div class="row">
@@ -382,6 +382,19 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 									<h4>
 										Estado: <b><?php echo $estadoDocumentacion; ?></b>
 									</h4>
+								</div>
+								<div class="col-xs-6 col-md-6" style="display:block">
+									<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
+									<div class="input-group col-md-12">
+										<select class="form-control show-tick" id="refestados" name="refestados">
+											<?php echo $cadRefEstados; ?>
+										</select>
+									</div>
+									<?php
+									if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11)) {
+									?>
+									<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
+								<?php } ?>
 								</div>
 
 							</div>
