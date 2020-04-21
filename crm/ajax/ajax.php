@@ -753,9 +753,65 @@ switch ($accion) {
       asinar($serviciosReferencias);
    break;
 
+   case 'insertarDirectorioasesores':
+      insertarDirectorioasesores($serviciosReferencias);
+   break;
+   case 'modificarDirectorioasesores':
+      modificarDirectorioasesores($serviciosReferencias);
+   break;
+   case 'eliminarDirectorioasesores':
+      eliminarDirectorioasesores($serviciosReferencias);
+   break;
+
 
 }
 /* Fin */
+
+
+function insertarDirectorioasesores($serviciosReferencias) {
+   $refasesores = $_POST['refasesores'];
+   $area = $_POST['area'];
+   $razonsocial = $_POST['razonsocial'];
+   $telefono = $_POST['telefono'];
+   $email = $_POST['email'];
+
+   $res = $serviciosReferencias->insertarDirectorioasesores($refasesores,$area,$razonsocial,$telefono,$email);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarDirectorioasesores($serviciosReferencias) {
+   $id = $_POST['id'];
+   $refasesores = $_POST['refasesores'];
+   $area = $_POST['area'];
+   $razonsocial = $_POST['razonsocial'];
+   $telefono = $_POST['telefono'];
+   $email = $_POST['email'];
+
+   $res = $serviciosReferencias->modificarDirectorioasesores($id,$refasesores,$area,$razonsocial,$telefono,$email);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarDirectorioasesores($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarDirectorioasesores($id);
+
+   if ($res == true) {
+   echo '';
+   } else {
+   echo 'Hubo un error al eliminar datos';
+   }
+}
 
 function asinar($serviciosReferencias) {
    $id = $_POST['idasignar'];
@@ -2516,6 +2572,24 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+      case 'dbdirectorioasesores':
+         $resultado = $serviciosReferencias->traerDirectorioasesoresPorId($id);
+
+         $lblCambio	 	= array('refasesores','razonsocial');
+         $lblreemplazo	= array('Asesores','Razon Social');
+
+
+
+         $modificar = "modificarDirectorioasesores";
+         $idTabla = "iddirectorioasesor";
+
+         $resAsesores = $serviciosReferencias->traerAsesoresPorId(mysql_result($resultado,0,'refasesores'));
+
+         $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resAsesores,array(3,4,2),' ',mysql_result($resultado,0,'refasesores'));
+
+         $refdescripcion = array(0=> $cadRef2);
+         $refCampo 	=  array('refasesores');
+      break;
       case 'dbcotizaciones':
          $resultado = $serviciosReferencias->traerCotizacionesPorId($id);
 

@@ -67,6 +67,27 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 }
 
 switch ($tabla) {
+	case 'directorio':
+
+
+		$resAjax = $serviciosReferencias->traerDirectorioasesoresajax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['idasesor_aux']);
+		if ($busqueda == '') {
+			$res = $serviciosReferencias->traerDirectorioasesoresPorAsesor($_SESSION['idasesor_aux']);
+		} else {
+			$res = $serviciosReferencias->traerDirectorioasesoresajax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['idasesor_aux']);
+		}
+
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('create','delete');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 4;
+
+	break;
+
 	case 'cotizaciones':
 
 		if ($_SESSION['idroll_sahilices'] == 7) {
@@ -149,49 +170,49 @@ switch ($tabla) {
 
 		switch ($_SESSION['idroll_sahilices']) {
 			case 1:
-				$label = array('btnModificar','btnEliminar','btnPerfil');
-				$class = array('bg-amber','bg-red','bg-orange');
-				$icon = array('Modificar','Eliminar','Expediente');
+				$label = array('btnModificar','btnEliminar','btnPerfil','btnDirectorio');
+				$class = array('bg-amber','bg-red','bg-orange','bg-lime');
+				$icon = array('Modificar','Eliminar','Expediente','Directorio');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 10;
 			break;
 			case 2:
-				$label = array('btnModificar','btnPerfil');
-				$class = array('bg-amber','bg-orange');
-				$icon = array('Modificar','Expediente');
+				$label = array('btnModificar','btnPerfil','btnDirectorio');
+				$class = array('bg-amber','bg-orange','bg-lime');
+				$icon = array('Modificar','Expediente','Directorio');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 10;
 			break;
 			case 3:
-				$label = array('btnModificar','btnPerfil');
-				$class = array('bg-amber','bg-orange');
-				$icon = array('Modificar','Expediente');
+				$label = array('btnModificar','btnPerfil','btnDirectorio');
+				$class = array('bg-amber','bg-orange','bg-lime');
+				$icon = array('Modificar','Expediente','Directorio');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 10;
 			break;
 			case 4:
-				$label = array('btnModificar','btnPerfil');
-				$class = array('bg-amber','bg-orange');
-				$icon = array('Modificar','Expediente');
+				$label = array('btnModificar','btnPerfil','btnDirectorio');
+				$class = array('bg-amber','bg-orange','bg-lime','Directorio');
+				$icon = array('Modificar','Expediente','Directorio');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 10;
 			break;
 			case 5:
-				$label = array('btnModificar','btnPerfil');
-				$class = array('bg-amber','bg-orange');
-				$icon = array('Modificar','Expediente');
+				$label = array('btnModificar','btnPerfil','btnDirectorio');
+				$class = array('bg-amber','bg-orange','bg-lime');
+				$icon = array('Modificar','Expediente','Directorio');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina =10;
 			break;
 			case 6:
-				$label = array('btnModificar','btnPerfil');
-				$class = array('bg-amber','bg-orange');
-				$icon = array('Modificar','Expediente');
+				$label = array('btnModificar','btnPerfil','btnDirectorio');
+				$class = array('bg-amber','bg-orange','bg-lime');
+				$icon = array('Modificar','Expediente','Directorio');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 10;

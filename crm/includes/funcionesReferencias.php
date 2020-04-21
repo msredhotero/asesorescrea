@@ -9,6 +9,91 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+
+	/* PARA Directorioasesores */
+
+	function insertarDirectorioasesores($refasesores,$area,$razonsocial,$telefono,$email) {
+		$sql = "insert into dbdirectorioasesores(iddirectorioasesor,refasesores,area,razonsocial,telefono,email)
+		values ('',".$refasesores.",'".$area."','".$razonsocial."','".$telefono."','".$email."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarDirectorioasesores($id,$refasesores,$area,$razonsocial,$telefono,$email) {
+		$sql = "update dbdirectorioasesores
+		set
+		refasesores = ".$refasesores.",area = '".$area."',razonsocial = '".$razonsocial."',telefono = '".$telefono."',email = '".$email."'
+		where iddirectorioasesor =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarDirectorioasesores($id) {
+		$sql = "delete from dbdirectorioasesores where iddirectorioasesor =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerDirectorioasesores() {
+		$sql = "select
+		d.iddirectorioasesor,
+		d.refasesores,
+		d.area,
+		d.razonsocial,
+		d.telefono,
+		d.email
+		from dbdirectorioasesores d
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerDirectorioasesoresajax($length, $start, $busqueda,$colSort,$colSortDir,$refasesores) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (d.area like '%".$busqueda."%' or d.razonsocial like '%".$busqueda."%' or d.telefono like '%".$busqueda."%' or d.email like '%".$busqueda."%' )";
+		}
+
+
+		$sql = "select
+		d.iddirectorioasesor,
+		d.area,
+		d.razonsocial,
+		d.telefono,
+		d.email,
+		d.refasesores
+		from dbdirectorioasesores d
+		where d.refasesores = ".$refasesores." ".$where."
+		ORDER BY ".$colSort." ".$colSortDir."
+		limit ".$start.",".$length;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerDirectorioasesoresPorId($id) {
+		$sql = "select iddirectorioasesor,refasesores,area,razonsocial,telefono,email from dbdirectorioasesores where iddirectorioasesor =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerDirectorioasesoresPorAsesor($idasesor) {
+		$sql = "select iddirectorioasesor,refasesores,area,razonsocial,telefono,email from dbdirectorioasesores where refasesores =".$idasesor;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbdirectorioasesores*/
+
 	/* PARA Estadoasesor */
 
 	function insertarEstadoasesor($estadoasesor) {

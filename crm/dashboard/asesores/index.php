@@ -824,6 +824,11 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 			$(location).attr('href', 'perfil.php?id=' + idTable);
 		});//fin del boton modificar
 
+		$("#example").on("click",'.btnDirectorio', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href', 'directorio.php?id=' + idTable);
+		});//fin del boton modificar
+
 		$('.nuevo').click(function(){
 
 			//información del formulario
