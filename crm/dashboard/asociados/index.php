@@ -55,8 +55,8 @@ $modificar = "modificarAsociados";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbasociados";
 
-$lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refbancos','claveinterbancaria');
-$lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Sucursal Bancaria','Clave Interbancaria');
+$lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refbancos','claveinterbancaria','reftipoasociado','nombredespacho','refestadoasociado','refoportunidades','refpostulantes');
+$lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Sucursal Bancaria','Clave Interbancaria','Tipo Asociado','Nombre del Despacho','Est. Asociado','Oportunidad Aso.','Postulante Aso.');
 
 
 $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
@@ -64,8 +64,14 @@ $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
 $resVar2	= $serviciosReferencias->traerBancos();
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),'');
 
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2);
-$refCampo 	=  array('refusuarios','refbancos');
+$resVar4	= $serviciosReferencias->traerTipoasociado();
+$cadRef4 = $serviciosFunciones->devolverSelectBox($resVar4,array(1),'');
+
+$resVar3	= $serviciosReferencias->traerEstadoasociadoPorId(1);
+$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
+
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=>$cadRef4,3=>$cadRef3);
+$refCampo 	=  array('refusuarios','refbancos','reftipoasociado','refestadoasociado');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -200,6 +206,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
+												<th>Tipo</th>
+												<th>Nombre Despacho</th>
 												<th>Apellido P.</th>
 												<th>Apellido M.</th>
 												<th>Nombre</th>
@@ -212,6 +220,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										</thead>
 										<tfoot>
 											<tr>
+												<th>Tipo</th>
+												<th>Nombre Despacho</th>
 												<th>Apellido P.</th>
 												<th>Apellido M.</th>
 												<th>Nombre</th>

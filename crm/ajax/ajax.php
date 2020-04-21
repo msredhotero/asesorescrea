@@ -729,17 +729,17 @@ switch ($accion) {
       eliminarAsociadostemporales($serviciosReferencias);
    break;
 
-   case 'eliminarDocumentacionAsociadotemporal':
-      eliminarDocumentacionAsociadotemporal($serviciosReferencias);
+   case 'eliminarDocumentacionCotizacion':
+      eliminarDocumentacionCotizacion($serviciosReferencias);
    break;
-   case 'traerDocumentacionPorAsociadotemporalDocumentacion':
-      traerDocumentacionPorAsociadotemporalDocumentacion($serviciosReferencias);
+   case 'traerDocumentacionPorCotizacionDocumentacion':
+      traerDocumentacionPorCotizacionDocumentacion($serviciosReferencias);
    break;
-   case 'modificarEstadoDocumentacionAsociadostemporales':
-      modificarEstadoDocumentacionAsociadostemporales($serviciosReferencias);
+   case 'modificarEstadoDocumentacionCotizaciones':
+      modificarEstadoDocumentacionCotizaciones($serviciosReferencias);
    break;
-   case 'modificarAsociadotemporalUnicaDocumentacion':
-      modificarAsociadotemporalUnicaDocumentacion($serviciosReferencias);
+   case 'modificarCotizacionUnicaDocumentacion':
+      modificarCotizacionUnicaDocumentacion($serviciosReferencias);
    break;
 
    case 'traerEntrevistaoportunidadesPorOportunidad':
@@ -817,12 +817,12 @@ function traerEntrevistaoportunidadesPorOportunidad($serviciosReferencias) {
 }
 
 
-function modificarAsociadotemporalUnicaDocumentacion($serviciosReferencias) {
-   $idasociadotemporal = $_POST['idasociadotemporal'];
+function modificarCotizacionUnicaDocumentacion($serviciosReferencias) {
+   $idcotizacion = $_POST['idcotizacion'];
    $campo = $_POST['campo'];
    $valor = $_POST['valor'];
 
-   $res = $serviciosReferencias->modificarAsociadotemporalUnicaDocumentacion($idasociadotemporal, $campo, $valor);
+   $res = $serviciosReferencias->modificarCotizacionUnicaDocumentacion($idcotizacion, $campo, $valor);
 
    if ($res == true) {
       $resV['leyenda'] = '';
@@ -837,18 +837,18 @@ function modificarAsociadotemporalUnicaDocumentacion($serviciosReferencias) {
 
 }
 
-function modificarEstadoDocumentacionAsociadostemporales($serviciosReferencias) {
+function modificarEstadoDocumentacionCotizaciones($serviciosReferencias) {
    session_start();
 
-   $iddocumentacionasociadotemporal = $_POST['iddocumentacionasociadotemporal'];
+   $iddocumentacioncotizacion = $_POST['iddocumentacioncotizacion'];
    $idestado = $_POST['idestado'];
    $usuariomodi = $_SESSION['usua_sahilices'];
 
-   if ($iddocumentacionasociadotemporal == 0) {
+   if ($iddocumentacioncotizacion == 0) {
       $resV['leyenda'] = 'Todavia no cargo el archivo, no podra modificar el estado de la documentación';
       $resV['error'] = true;
    } else {
-      $res = $serviciosReferencias->modificarEstadoDocumentacionAsociadostemporales($iddocumentacionasociadotemporal,$idestado,$usuariomodi);
+      $res = $serviciosReferencias->modificarEstadoDocumentacionCotizaciones($iddocumentacioncotizacion,$idestado,$usuariomodi);
 
       if ($res == true) {
          $resV['leyenda'] = '';
@@ -864,15 +864,15 @@ function modificarEstadoDocumentacionAsociadostemporales($serviciosReferencias) 
    echo json_encode($resV);
 }
 
-function traerDocumentacionPorAsociadotemporalDocumentacion($serviciosReferencias) {
+function traerDocumentacionPorCotizacionDocumentacion($serviciosReferencias) {
 
-   $idasociadotemporal = $_POST['idasociadotemporal'];
+   $idcotizacion = $_POST['idcotizacion'];
    $iddocumentacion = $_POST['iddocumentacion'];
 
    $resV['datos'] = '';
    $resV['error'] = false;
 
-   $resFoto = $serviciosReferencias->traerDocumentacionPorAsociadotemporalDocumentacion($idasociadotemporal,$iddocumentacion);
+   $resFoto = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacion($idcotizacion,$iddocumentacion);
 
    $imagen = '';
 
@@ -889,7 +889,7 @@ function traerDocumentacionPorAsociadotemporalDocumentacion($serviciosReferencia
          $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
          $resV['error'] = true;
       } else {
-         $imagen = '../../archivos/asociadostemporales/'.$idasociadotemporal.'/'.mysql_result($resFoto,0,'carpeta').'/'.mysql_result($resFoto,0,'archivo');
+         $imagen = '../../archivos/cotizaciones/'.$idcotizacion.'/'.mysql_result($resFoto,0,'carpeta').'/'.mysql_result($resFoto,0,'archivo');
 
          $resV['datos'] = array('imagen' => $imagen, 'type' => mysql_result($resFoto,0,'type'));
 
@@ -913,11 +913,11 @@ function traerDocumentacionPorAsociadotemporalDocumentacion($serviciosReferencia
 
 
 
-function eliminarDocumentacionAsociadotemporal($serviciosReferencias) {
-   $idasociadotemporal = $_POST['idasociadotemporal'];
+function eliminarDocumentacionCotizacion($serviciosReferencias) {
+   $idcotizacion = $_POST['idcotizacion'];
    $iddocumentacion = $_POST['iddocumentacion'];
 
-   $res = $serviciosReferencias->eliminarDocumentacionAsociadotemporal($idasociadotemporal, $iddocumentacion);
+   $res = $serviciosReferencias->eliminarDocumentacionCotizacion($idcotizacion, $iddocumentacion);
 
    header('Content-type: application/json');
    echo json_encode($res);
@@ -1041,7 +1041,14 @@ function insertarCotizaciones($serviciosReferencias) {
    $refusuarios = $_SESSION['usuaid_sahilices'];
    $nropoliza = $_POST['nropoliza'];
 
-   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$observaciones,$fechaemitido,$primaneta,$primatotal,$recibopago,$fechapago,$nrorecibo,$importecomisionagente,$importebonopromotor,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$nropoliza);
+   $cobertura = $_POST['cobertura'];
+   $reasegurodirecto = $_POST['reasegurodirecto'];
+   $fecharenovacion = $_POST['fecharenovacion'];
+   $fechapropuesta = $_POST['fechapropuesta'];
+   $tiponegocio = $_POST['tiponegocio'];
+   $presentacotizacion = $_POST['presentacotizacion'];
+
+   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$observaciones,$fechaemitido,$primaneta,$primatotal,$recibopago,$fechapago,$nrorecibo,$importecomisionagente,$importebonopromotor,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$nropoliza,$cobertura,$reasegurodirecto,$fecharenovacion,$fechapropuesta,$tiponegocio,$presentacotizacion);
 
    if ((integer)$res > 0) {
       echo '';
@@ -1059,7 +1066,13 @@ function modificarCotizaciones($serviciosReferencias) {
    $refproductos = $_POST['refproductos'];
    $refasesores = $_POST['refasesores'];
    $refasociados = ($_POST['refasociados'] == '' ? 'NULL' : $_POST['refasociados']);
-   $refestadocotizaciones = $_POST['refestadocotizaciones'];
+   $estadoactual = $_POST['estadoactual'];
+   if ($estadoactual != '') {
+      $refestadocotizaciones = $estadoactual;
+   } else {
+      $refestadocotizaciones = $_POST['refestadocotizaciones'];
+   }
+
    $observaciones = $_POST['observaciones'];
    $fechaemitido = ($_POST['fechaemitido'] == '' ? 'NULL' : $_POST['fechaemitido']);
    $primaneta = ($_POST['primaneta'] == '' ? 'NULL' : $_POST['primaneta']);
@@ -1076,7 +1089,14 @@ function modificarCotizaciones($serviciosReferencias) {
    $refusuarios = $_SESSION['usuaid_sahilices'];
    $nropoliza = $_POST['nropoliza'];
 
-   $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$observaciones,$fechaemitido,$primaneta,$primatotal,$recibopago,$fechapago,$nrorecibo,$importecomisionagente,$importebonopromotor,$fechamodi,$usuariomodi,$refusuarios,$nropoliza);
+   $cobertura = $_POST['cobertura'];
+   $reasegurodirecto = $_POST['reasegurodirecto'];
+   $fecharenovacion = $_POST['fecharenovacion'];
+   $fechapropuesta = $_POST['fechapropuesta'];
+   $tiponegocio = $_POST['tiponegocio'];
+   $presentacotizacion = $_POST['presentacotizacion'];
+
+   $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$observaciones,$fechaemitido,$primaneta,$primatotal,$recibopago,$fechapago,$nrorecibo,$importecomisionagente,$importebonopromotor,$fechamodi,$usuariomodi,$refusuarios,$nropoliza,$cobertura,$reasegurodirecto,$fecharenovacion,$fechapropuesta,$tiponegocio,$presentacotizacion);
 
    if ($res == true) {
       echo '';
@@ -1284,11 +1304,22 @@ function insertarAsociados($serviciosReferencias,$serviciosUsuarios) {
    $claveinterbancaria = $_POST['claveinterbancaria'];
    $domicilio = $_POST['domicilio'];
 
+   $reftipoasociado = $_POST['reftipoasociado'];
+
+   $nombredespacho = $_POST['nombredespacho'];
+   $refestadoasociado = $_POST['refestadoasociado'];
+   $refoportunidades = $_POST['refoportunidades'];
+   $refpostulantes = $_POST['refpostulantes'];
+
+   if ($email == '') {
+      $email = $apellidopaterno.$apellidomaterno.date('His').'@modificar.com';
+   }
+
    $password = $apellidopaterno.$apellidomaterno.date('His');
 
    $refusuarios = $serviciosUsuarios->insertarUsuario($nombre,$password,10,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
 
-   $res = $serviciosReferencias->insertarAsociados($refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio);
+   $res = $serviciosReferencias->insertarAsociados($refusuarios,$reftipoasociado,$nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio,$refestadoasociado,$refoportunidades,$refpostulantes);
 
    if ((integer)$res > 0) {
       echo '';
@@ -1311,8 +1342,14 @@ function modificarAsociados($serviciosReferencias) {
    $refbancos = $_POST['refbancos'];
    $claveinterbancaria = $_POST['claveinterbancaria'];
    $domicilio = $_POST['domicilio'];
+   $nombredespacho = $_POST['nombredespacho'];
+   $refestadoasociado = $_POST['refestadoasociado'];
+   $refoportunidades = $_POST['refoportunidades'];
+   $refpostulantes = $_POST['refpostulantes'];
 
-   $res = $serviciosReferencias->modificarAsociados($id,$refusuarios,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio);
+   $reftipoasociado = $_POST['reftipoasociado'];
+
+   $res = $serviciosReferencias->modificarAsociados($id,$refusuarios,$reftipoasociado,$nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$ine,$email,$fechanacimiento,$telefonomovil,$telefonotrabajo,$refbancos,$claveinterbancaria,$domicilio,$refestadoasociado,$refoportunidades,$refpostulantes);
 
    if ($res == true) {
       echo '';
@@ -1339,8 +1376,10 @@ function insertarReclutadorasores($serviciosReferencias) {
    $refusuarios = $_POST['refusuarios'];
    $refpostulantes = $_POST['refpostulantes'];
    $refoportunidades = $_POST['refoportunidades'];
+   $refasesores = $_POST['refasesores'];
+   $refasociados = $_POST['refasociados'];
 
-   $res = $serviciosReferencias->insertarReclutadorasores($refusuarios,$refpostulantes,$refoportunidades);
+   $res = $serviciosReferencias->insertarReclutadorasores($refusuarios,$refpostulantes,$refoportunidades,$refasesores,$refasociados);
 
    if ((integer)$res > 0) {
       echo '';
@@ -1354,8 +1393,10 @@ function modificarReclutadorasores($serviciosReferencias) {
    $refusuarios = $_POST['refusuarios'];
    $refpostulantes = $_POST['refpostulantes'];
    $refoportunidades = $_POST['refoportunidades'];
+   $refasesores = $_POST['refasesores'];
+   $refasociados = $_POST['refasociados'];
 
-   $res = $serviciosReferencias->modificarReclutadorasores($id,$refusuarios,$refpostulantes,$refoportunidades);
+   $res = $serviciosReferencias->modificarReclutadorasores($id,$refusuarios,$refpostulantes,$refoportunidades,$refasesores,$refasociados);
 
    if ($res == true) {
       echo '';
@@ -1678,7 +1719,7 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones)
 
                   $refusuarios = $serviciosUsuarios->insertarUsuario($nombre,$password,12,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
 
-                  $resAT = $serviciosReferencias->insertarAsociadostemporales($refusuarios,$apellidopaterno,$apellidomaterno,$nombre,'',$email,'null',$telefonomovil,$telefonotrabajo,0,'','',$nombredespacho,1,$id,0);
+                  $resAT = $serviciosReferencias->insertarAsociados($refusuarios,2,$apellidopaterno,$apellidomaterno,$nombre,'',$email,'null',$telefonomovil,$telefonotrabajo,0,'','',$nombredespacho,1,$id,0);
                   $asunto = 'Se genero un Asociado Temporal';
                } else {
                   $asunto = 'No se pudo generar un Asociado Temporal por falta de email';
@@ -2520,8 +2561,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
       case 'dbasesores':
          $resultado = $serviciosReferencias->traerAsesoresPorId($id);
 
-         $lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','nss','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta','urlprueba','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas','razonsocial','vigdesderc','vighastarc');
-         $lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Nro de Seguro Social','Clave Interbancaria','ID Cliente Inbursa','Clave Asesor','Fecha de Alta','URL Prueba','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona','Razon Social','Vig. Desde RC','Vig. Hasta RC');
+         $lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','nss','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta','urlprueba','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas','razonsocial','vigdesderc','vighastarc','refestadoasesor');
+         $lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Nro de Seguro Social','Clave Interbancaria','ID Cliente Inbursa','Clave Asesor','Fecha de Alta','URL Prueba','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona','Razon Social','Vig. Desde RC','Vig. Hasta RC','Est.');
 
 
 
@@ -2549,10 +2590,13 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          }
 
          $resVar8 = $serviciosReferencias->traerTipopersonas();
-         $cadRef8 = $serviciosFunciones->devolverSelectBox($resVar8,array(1),'');
+         $cadRef8 = $serviciosFunciones->devolverSelectBoxActivo($resVar8,array(1),'',mysql_result($resultado,0,'codigopostal'));
 
-         $refdescripcion = array(0=> $cadRef1,1=> $cadRef2, 2=>$cadRef5,3=>$cadRef8);
-         $refCampo 	=  array('refusuarios','refescolaridades','sexo','reftipopersonas');
+         $resVar9 = $serviciosReferencias->traerEstadoasesor();
+         $cadRef9 = $serviciosFunciones->devolverSelectBoxActivo($resVar9,array(1),'',mysql_result($resultado,0,'refestadoasesor'));
+
+         $refdescripcion = array(0=> $cadRef1,1=> $cadRef2, 2=>$cadRef5,3=>$cadRef8,4=>$cadRef9);
+         $refCampo 	=  array('refusuarios','refescolaridades','sexo','reftipopersonas','refestadoasesor');
       break;
       case 'dbpostulantes':
 
@@ -2659,8 +2703,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $modificar = "modificarAsociados";
          $idTabla = "idasociado";
 
-         $lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refbancos','claveinterbancaria');
-         $lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Sucursal Bancaria','Clave Interbancaria');
+         $lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refbancos','claveinterbancaria','reftipoasociado','nombredespacho','refestadoasociado','refoportunidades','refpostulantes');
+         $lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Sucursal Bancaria','Clave Interbancaria','Tipo Asociado','Nombre del Despacho','Est. Asociado','Oportunidad Aso.','Postulante Aso.');
 
          $resVar1 = $serviciosUsuarios->traerUsuarioId(mysql_result($resultado,0,'refusuarios'));
          $cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
@@ -2668,8 +2712,28 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $resVar2	= $serviciosReferencias->traerBancos();
          $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(1),'',mysql_result($resultado,0,'refbancos'));
 
-         $refdescripcion = array(0=> $cadRef1,1=> $cadRef2);
-         $refCampo 	=  array('refusuarios','refbancos');
+         $resVar4	= $serviciosReferencias->traerTipoasociado();
+         $cadRef4 = $serviciosFunciones->devolverSelectBoxActivo($resVar4,array(1),'',mysql_result($resultado,0,'reftipoasociado'));
+
+         $resVar3	= $serviciosReferencias->traerEstadoasociado();
+         $cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resVar3,array(1),'',mysql_result($resultado,0,'refestadoasociado'));
+
+         $oportunidades = $serviciosReferencias->traerOportunidadesAsociados();
+         $cadRef5 = "<option value=''>-- Seleccionar --</option>";
+         if (mysql_result($resultado,0,'refoportunidades') != 0) {
+            $cadRef5 .= $serviciosFunciones->devolverSelectBoxActivo($serviciosReferencias->traerOportunidadesPorId(mysql_result($resultado,0,'refoportunidades')),array(3,4,2),' ',mysql_result($resultado,0,'refoportunidades'));
+         }
+         $cadRef5 .= $serviciosFunciones->devolverSelectBoxActivo($oportunidades,array(1),'',mysql_result($resultado,0,'refoportunidades'));
+
+         $postulantes = $serviciosReferencias->traerPostulantesAsociados();
+         $cadRef6 = "<option value=''>-- Seleccionar --</option>";
+         if (mysql_result($resultado,0,'refpostulantes') != 0) {
+            $cadRef6 .= $serviciosFunciones->devolverSelectBoxActivo($serviciosReferencias->traerPostulantesPorId(mysql_result($resultado,0,'refpostulantes')),array(3,4,2),' ',mysql_result($resultado,0,'refpostulantes'));
+         }
+         $cadRef6 .= $serviciosFunciones->devolverSelectBoxActivo($postulantes,array(1),'',mysql_result($resultado,0,'refpostulantes'));
+
+         $refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=>$cadRef4,3=>$cadRef3,4=>$cadRef5,5=>$cadRef6);
+         $refCampo 	=  array('refusuarios','refbancos','reftipoasociado','refestadoasociado','refoportunidades','refpostulantes');
       break;case 'dbasociadostemporales':
          $resultado = $serviciosReferencias->traerAsociadostemporalesPorId($id);
 
@@ -2704,8 +2768,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $modificar = "modificarReclutadorasores";
          $idTabla = "idreclutadorasor";
 
-         $lblCambio	 	= array('refusuarios','refpostulantes','refoportunidades');
-         $lblreemplazo	= array('Usuarios','Postulantes','Oportunidades');
+         $lblCambio	 	= array('refusuarios','refpostulantes','refoportunidades','refasesores','refasociados');
+         $lblreemplazo	= array('Usuarios','Postulantes','Oportunidades','Asesores','Asociados');
 
          $resRoles 	= $serviciosUsuarios->traerUsuariosPorRol(3);
          $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resRoles,array(3),'',mysql_result($resultado,0,'refusuarios'));
@@ -2717,8 +2781,17 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $cadRef3 = "<option value='0'>-- Seleccionar --</option>";
          $cadRef3 .= $serviciosFunciones->devolverSelectBoxActivo($resOportunidades,array(2),'',mysql_result($resultado,0,'refoportunidades'));
 
-         $refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3);
-         $refCampo 	=  array('refusuarios','refpostulantes','refoportunidades');
+
+         $resAsesores = $serviciosReferencias->traerAsesores();
+         $cadRef4 = "<option value='0'>-- Seleccionar --</option>";
+         $cadRef4 .= $serviciosFunciones->devolverSelectBoxActivo($resAsesores,array(3,4,2),' ',mysql_result($resultado,0,'refasesores'));
+
+         $resAsociados = $serviciosReferencias->traerAsociados();
+         $cadRef5 = "<option value='0'>-- Seleccionar --</option>";
+         $cadRef5 .= $serviciosFunciones->devolverSelectBoxActivo($resAsociados,array(3,4,2),' ',mysql_result($resultado,0,'refasociados'));
+
+         $refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef4,4=>$cadRef5);
+         $refCampo 	=  array('refusuarios','refpostulantes','refoportunidades','refasesores','refasociados');
       break;
       case 'tbreferentes':
          $resultado = $serviciosReferencias->traerReferentesPorId($id);
@@ -2931,7 +3004,9 @@ function insertarAsesores($serviciosReferencias, $serviciosUsuarios) {
       $vigdesderc = $_POST['vigdesderc'];
       $vighastarc = $_POST['vighastarc'];
 
-      $res = $serviciosReferencias->insertarAsesores($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc, $vighastarc);
+      $refestadoasesor = $_POST['refestadoasesor'];
+
+      $res = $serviciosReferencias->insertarAsesores($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc, $vighastarc , $refestadoasesor);
 
       if ((integer)$res > 0) {
          echo '';
@@ -2982,7 +3057,9 @@ function modificarAsesores($serviciosReferencias) {
    $vigdesderc = $_POST['vigdesderc'];
    $vighastarc = $_POST['vighastarc'];
 
-   $res = $serviciosReferencias->modificarAsesores($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechamodi,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc, $vighastarc);
+   $refestadoasesor = $_POST['refestadoasesor'];
+
+   $res = $serviciosReferencias->modificarAsesores($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechamodi,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc, $vighastarc,$refestadoasesor);
 
    if ($res == true) {
       echo '';
@@ -3568,9 +3645,9 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
                if (($_SESSION['idroll_sahilices'] == 2) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 5) || ($_SESSION['idroll_sahilices'] == 6)) {
                   if (isset($_POST['refoportunidades'])) {
 
-                     $resRelacionRP = $serviciosReferencias->insertarReclutadorasores($_SESSION['usuaid_sahilices'],$res,($_POST['refoportunidades'] == '' ? 0 : $_POST['refoportunidades']));
+                     $resRelacionRP = $serviciosReferencias->insertarReclutadorasores($_SESSION['usuaid_sahilices'],$res,($_POST['refoportunidades'] == '' ? 0 : $_POST['refoportunidades']),0,0);
                   } else {
-                     $resRelacionRP = $serviciosReferencias->insertarReclutadorasores($_SESSION['usuaid_sahilices'],$res,0);
+                     $resRelacionRP = $serviciosReferencias->insertarReclutadorasores($_SESSION['usuaid_sahilices'],$res,0,0,0);
                   }
 
                }
@@ -3789,7 +3866,7 @@ function modificarPostulantes($serviciosReferencias) {
 
          if ($email != '') {
 
-            $resAT = $serviciosReferencias->insertarAsociadostemporales($refusuarios,$apellidopaterno,$apellidomaterno,$nombre,'',$email,'null',$telefonomovil,$telefonotrabajo,0,'','',$razonsocial,1,0,$id);
+            $resAT = $serviciosReferencias->insertarAsociados($refusuarios,2,$apellidopaterno,$apellidomaterno,$nombre,'',$email,'null',$telefonomovil,$telefonotrabajo,0,'','',$razonsocial,1,0,$id);
             $asunto = 'Se genero un Asociado Temporal';
          } else {
             $asunto = 'No se pudo generar un Asociado Temporal por falta de email';

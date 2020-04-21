@@ -55,8 +55,8 @@ $resultado = $serviciosReferencias->traerCotizacionesPorId($id);
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbcotizaciones";
 
-$lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones','fechaemitido','primaneta','primatotal','recibopago','fechapago','nrorecibo','importecomisionagente','importebonopromotor','nropoliza');
-$lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor','Nro Poliza');
+$lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones','fechaemitido','primaneta','primatotal','recibopago','fechapago','nrorecibo','importecomisionagente','importebonopromotor','cobertura','reasegurodirecto','fecharenovacion','fechapropuesta','tiponegocio','presentacotizacion','nropoliza');
+$lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor','Cobertura Requiere Reaseguro','Reaseguro Directo con Inbursa o Broker','Fecha renovación o presentación de propueta al cliente','Fecha en que se entrega propuesta','Tipo de negocio para agente','Presenta Cotizacion o Poliza de competencia','Nro Poliza');
 
 
 $modificar = "modificarCotizaciones";
@@ -68,6 +68,7 @@ $idestado = mysql_result($resultado,0,'refestadocotizaciones');
 $resEstados = $serviciosReferencias->traerEstadocotizacionesPorId($idestado);
 
 $orden = mysql_result($resEstados,0,'orden');
+$ordenAux = $orden;
 
 switch ($orden) {
 	case 1:
@@ -83,7 +84,7 @@ switch ($orden) {
 	case 3:
 		$ordenPosible = 5;
 		$ordenRechazo = 4;
-		$lblOrden = 'Emitido';
+		$lblOrden = 'Aceptado';
 	break;
 	case 4:
 		$ordenPosible = 0;
@@ -92,20 +93,25 @@ switch ($orden) {
 	break;
 	case 5:
 		$ordenPosible = 6;
-		$ordenRechazo = 4;
-		$lblOrden = 'Pagado';
+		$ordenRechazo = 0;
+		$lblOrden = 'Emitido';
 	break;
 	case 6:
 		$ordenPosible = 7;
-		$ordenRechazo = 0;
-		$lblOrden = 'Comisionado Agente';
+		$ordenRechazo = 4;
+		$lblOrden = 'Pagado';
 	break;
 	case 7:
 		$ordenPosible = 8;
 		$ordenRechazo = 0;
-		$lblOrden = 'Bono Promotor';
+		$lblOrden = 'Comisionado Agente';
 	break;
 	case 8:
+		$ordenPosible = 9;
+		$ordenRechazo = 0;
+		$lblOrden = 'Bono Promotor';
+	break;
+	case 9:
 		$ordenPosible = 0;
 		$ordenRechazo = 0;
 		$lblOrden = 'Finalizado';
@@ -114,6 +120,14 @@ switch ($orden) {
 	default:
 		// code...
 		break;
+}
+
+if ($_SESSION['idroll_sahilices'] == 7) {
+	if ($orden >= 7) {
+		$ordenPosible = 0;
+		$ordenRechazo = 0;
+		$lblOrden = 'Finalizado';
+	}
 }
 
 $resUsuario = $serviciosUsuario->traerUsuarioId(mysql_result($resultado,0,'refusuarios'));
@@ -136,9 +150,13 @@ if ($_SESSION['idroll_sahilices'] != 7) {
 if ($_SESSION['idroll_sahilices'] == 7) {
 	$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
 	$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(4,2,3),' ');
+
+	$resGuia = $serviciosReferencias->traerEstadocotizacionesPorIn('1,2,3,4,5,6,7');
 } else {
 	$resVar5	= $serviciosReferencias->traerAsesores();
 	$cadRef5 = $serviciosFunciones->devolverSelectBoxActivo($resVar5,array(4,2,3),' ',mysql_result($resultado,0,'refasesores'));
+
+	$resGuia = $serviciosReferencias->traerEstadocotizaciones();
 }
 
 $resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId($ordenPosible);
@@ -153,7 +171,6 @@ $frmUnidadNegocios = $serviciosFunciones->camposTablaModificar($id, $idTabla,$mo
 
 $resProducto = $serviciosReferencias->traerProductosPorId(mysql_result($resultado,0,'refproductos'));
 
-$resGuia = $serviciosReferencias->traerEstadocotizaciones();
 
 $prima = mysql_result($resProducto, 0,'prima');
 
@@ -269,7 +286,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 				while ($rowG = mysql_fetch_array($resGuia)) {
 					$i += 1;
 					$urlAcceso = 'javascript:void(0)';
-					
+
 					if ($rowG['idestadocotizacion'] == $idestado) {
 						$lblEstado = 'active';
 					}
@@ -328,29 +345,42 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 								<div class="row" style="padding: 5px 20px;">
 
 									<?php echo $frmUnidadNegocios; ?>
-
+									<input type="hidden" id="estadoactual" name="estadoactual" value=""/>
 								</div>
 								<div class="row">
-									<div class="modal-footer">
-										<?php
-										if ($ordenPosible == 0) {
-										?>
-										<button type="button" class="btn btn-success waves-effect"><?php echo $lblOrden; ?></button>
-										<?php
-										} else {
-										?>
-										<button type="submit" class="btn btn-success waves-effect"><?php echo $lblOrden; ?></button>
-										<?php
-										}
-										?>
 
-										<?php
-										if ($ordenRechazo > 0) {
-										?>
-										<button type="button" class="btn btn-danger waves-effect btnRechazar">RECHAZAR</button>
-										<?php
-										}
-										?>
+									<div class="modal-footer">
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="text-align:left;">
+											<?php
+											if (($ordenPosible > 5) || ($ordenPosible == 0)) {
+											?>
+											<button type="button" class="btn bg-light-blue waves-effect btnArchivos"><i class="material-icons">cloud_upload</i><span> SUBIR ARCHIVOS</span></button>
+											<?php
+											}
+											?>
+										</div>
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+											<?php
+											if ($ordenPosible == 0) {
+											?>
+											<button type="button" class="btn btn-success waves-effect"><?php echo $lblOrden; ?></button>
+											<?php
+											} else {
+											?>
+											<button id="<?php echo $idestado; ?>" type="button" class="btn btn-warning waves-effect btnModificar">Modificar</button>
+											<button type="submit" class="btn btn-success waves-effect btnContinuar"><?php echo $lblOrden; ?></button>
+											<?php
+											}
+											?>
+
+											<?php
+											if ($ordenRechazo > 0) {
+											?>
+											<button type="button" class="btn btn-danger waves-effect btnRechazar">RECHAZAR</button>
+											<?php
+											}
+											?>
+										</div>
 				               </div>
 								</div>
 
@@ -388,10 +418,18 @@ if ($_SESSION['idroll_sahilices'] == 3) {
     <script src="../../plugins/momentjs/moment.js"></script>
 	 <script src="../../js/moment-with-locales.js"></script>
 
+	 <script src="../../js/picker.js"></script>
+	 <script src="../../js/picker.date.js"></script>
+
 <script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
 
 <script>
 	$(document).ready(function(){
+
+		$('.btnArchivos').click(function() {
+			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=35";
+			$(location).attr('href',url);
+		});
 
 		<?php
 		if ($lblOrden == 'Finalizado') {
@@ -407,6 +445,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('.frmContrefusuarios').hide();
 		$('.frmContrefestadocotizaciones').hide();
 		$('.frmContnropoliza').show();
+		$('.frmContfechapropuesta').show();
 		<?php } else {?>
 		$('.frmContfechaemitido').hide();
 		$('.frmContprimaneta').hide();
@@ -417,14 +456,26 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('.frmContimportecomisionagente').hide();
 		$('.frmContimportebonopromotor').hide();
 		$('.frmContnropoliza').hide();
+		$('.frmContfechapropuesta').hide();
 
 		$('.frmContrefusuarios').hide();
 		$('.frmContrefestadocotizaciones').hide();
 
 		<?php
-		if ($ordenPosible == 5) {
+		if ($ordenPosible >= 3) {
 		?>
-		
+		$('.frmContfechapropuesta').show();
+		$("#fechapropuesta").prop('required',true);
+		<?php
+		} else {
+		?>
+		$("#fechapropuesta").prop('required',false);
+		<?php } ?>
+
+		<?php
+		if ($ordenPosible == 6) {
+		?>
+
 		$('.frmContrecibopago').show();
 		$('.frmContfechaemitido').show();
 		$('.frmContnropoliza').show();
@@ -438,15 +489,15 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		<?php } ?>
 		$("#recibopago").prop('required',true);
 		$("#fechaemitido").prop('required',true);
-		
+
 		<?php
 		}
 		?>
 
 		<?php
-		if ($ordenPosible == 6) {
+		if ($ordenPosible == 7) {
 		?>
-		
+
 		$('.frmContrecibopago').show();
 		$('.frmContfechaemitido').show();
 		$('.frmContnropoliza').show();
@@ -470,9 +521,9 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		?>
 
 		<?php
-		if ($ordenPosible == 7) {
+		if ($ordenPosible == 8) {
 		?>
-		
+
 		$('.frmContrecibopago').show();
 		$('.frmContfechaemitido').show();
 		$('.frmContnropoliza').show();
@@ -500,9 +551,9 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		?>
 
 		<?php
-		if ($ordenPosible == 8) {
+		if ($ordenPosible == 9) {
 		?>
-		
+
 		$('.frmContrecibopago').show();
 		$('.frmContfechaemitido').show();
 		$('.frmContnropoliza').show();
@@ -547,6 +598,22 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		}
 		?>
 
+
+		<?php
+		if ($_SESSION['idroll_sahilices'] == 7) {
+			if ($orden >= 7) {
+
+		?>
+		$('.frmContimportecomisionagente').hide();
+		$('.frmContimportebonopromotor').hide();
+		$('.frmContprimaneta').hide();
+		$('.frmContprimatotal').hide();
+
+		<?php
+			}
+		}
+		?>
+
 		$('.frmContfechacrea').hide();
 		$('.frmContfechamodi').hide();
 		$('.frmContusuariocrea').hide();
@@ -556,6 +623,25 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('#fechamodi').val('2020-02-02');
 		$('#usuariocrea').val('2020-02-02');
 		$('#usuariomodi').val('2020-02-02');
+
+		$('#fecharenovacion').bootstrapMaterialDatePicker({
+			format: 'YYYY/MM/DD',
+			lang : 'es',
+			clearButton: true,
+			weekStart: 1,
+			time: false,
+			minDate : new Date()
+		});
+
+
+		$('#fechapropuesta').bootstrapMaterialDatePicker({
+			format: 'YYYY/MM/DD',
+			lang : 'es',
+			clearButton: true,
+			weekStart: 1,
+			time: false,
+			minDate : new Date()
+		});
 
 
 
@@ -572,7 +658,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 		$('#fechaemitido').bootstrapMaterialDatePicker({
 			format: 'YYYY/MM/DD HH:mm',
-			lang : 'mx',
+			lang : 'es',
 			clearButton: true,
 			weekStart: 1,
 			time: true,
@@ -581,7 +667,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 		$('#fechapago').bootstrapMaterialDatePicker({
 			format: 'YYYY/MM/DD HH:mm',
-			lang : 'mx',
+			lang : 'es',
 			clearButton: true,
 			weekStart: 1,
 			time: true,
@@ -780,10 +866,10 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			frmAjaxEliminarDefinitivo($('#ideliminarDefinitivo').val());
 		});
 
-		$("#example").on("click",'.btnModificar', function(){
+		$(".btnModificar").click( function(){
 			idTable =  $(this).attr("id");
-			frmAjaxModificar(idTable);
-			$('#lgmModificar').modal();
+			$('#estadoactual').val(idTable);
+			$('.btnContinuar').click();
 		});//fin del boton modificar
 
 		$("#example").on("click",'.btnVer', function(){

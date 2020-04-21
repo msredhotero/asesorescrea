@@ -55,21 +55,30 @@ $modificar = "modificarReclutadorasores";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbreclutadorasores";
 
-$lblCambio	 	= array('refusuarios','refpostulantes','refoportunidades');
-$lblreemplazo	= array('Usuarios','Postulantes','Oportunidades');
+$lblCambio	 	= array('refusuarios','refpostulantes','refoportunidades','refasesores','refasociados');
+$lblreemplazo	= array('Usuarios','Postulantes','Oportunidades','Asesores','Asociados');
 
 $resRoles 	= $serviciosUsuario->traerUsuariosPorRol(3);
 $cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
 
 $resPostulantes = $serviciosReferencias->traerPostulantes();
-$cadRef2 = $serviciosFunciones->devolverSelectBox($resPostulantes,array(3,4,2),' ');
+$cadRef2 = "<option value='0'>-- Seleccionar --</option>";
+$cadRef2 .= $serviciosFunciones->devolverSelectBox($resPostulantes,array(3,4,2),' ');
 
 $resOportunidades 	= $serviciosReferencias->traerOportunidadesDisponibles();
 $cadRef3 = "<option value='0'>-- Seleccionar --</option>";
 $cadRef3 .= $serviciosFunciones->devolverSelectBox($resOportunidades,array(2),'');
 
-$refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3);
-$refCampo 	=  array('refusuarios','refpostulantes','refoportunidades');
+$resAsesores = $serviciosReferencias->traerAsesores();
+$cadRef4 = "<option value='0'>-- Seleccionar --</option>";
+$cadRef4 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' ');
+
+$resAsociados = $serviciosReferencias->traerAsociados();
+$cadRef5 = "<option value='0'>-- Seleccionar --</option>";
+$cadRef5 .= $serviciosFunciones->devolverSelectBox($resAsociados,array(3,4,2),' ');
+
+$refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef4,4=>$cadRef5);
+$refCampo 	=  array('refusuarios','refpostulantes','refoportunidades','refasesores','refasociados');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -211,6 +220,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Usuario</th>
 												<th>Postulante</th>
 												<th>Oportunidad</th>
+												<th>Asesor</th>
+												<th>Asociado</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -219,6 +230,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Usuario</th>
 												<th>Postulante</th>
 												<th>Oportunidad</th>
+												<th>Asesor</th>
+												<th>Asociado</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>

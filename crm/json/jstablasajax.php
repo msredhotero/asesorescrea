@@ -105,8 +105,10 @@ switch ($tabla) {
 			p.claveinterbancaria,
 			p.claveasesor,
 			p.fechaalta,
-			usur.nombrecompleto
+			usur.nombrecompleto,
+			tea.estadoasesor
 		from dbasesores p
+		inner join tbestadoasesor tea on tea.idestadoasesor = p.refestadoasesor
 		';
 		if ($_SESSION['idroll_sahilices'] == 3) {
 			$consulta .= ' inner join dbusuarios usu ON usu.idusuario = p.refusuarios
@@ -152,7 +154,7 @@ switch ($tabla) {
 				$icon = array('Modificar','Eliminar','Expediente');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 9;
+				$termina = 10;
 			break;
 			case 2:
 				$label = array('btnModificar','btnPerfil');
@@ -160,7 +162,7 @@ switch ($tabla) {
 				$icon = array('Modificar','Expediente');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 9;
+				$termina = 10;
 			break;
 			case 3:
 				$label = array('btnModificar','btnPerfil');
@@ -168,7 +170,7 @@ switch ($tabla) {
 				$icon = array('Modificar','Expediente');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 9;
+				$termina = 10;
 			break;
 			case 4:
 				$label = array('btnModificar','btnPerfil');
@@ -176,7 +178,7 @@ switch ($tabla) {
 				$icon = array('Modificar','Expediente');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 9;
+				$termina = 10;
 			break;
 			case 5:
 				$label = array('btnModificar','btnPerfil');
@@ -184,7 +186,7 @@ switch ($tabla) {
 				$icon = array('Modificar','Expediente');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 9;
+				$termina =10;
 			break;
 			case 6:
 				$label = array('btnModificar','btnPerfil');
@@ -192,7 +194,7 @@ switch ($tabla) {
 				$icon = array('Modificar','Expediente');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 9;
+				$termina = 10;
 			break;
 
 			default:
@@ -201,7 +203,7 @@ switch ($tabla) {
 				$icon = array();
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 9;
+				$termina = 10;
 			break;
 		}
 	break;
@@ -216,7 +218,7 @@ switch ($tabla) {
 		$icon = array('Modificar','Eliminar','Documentaciones');
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 7;
+		$termina = 9;
 
 	break;
 	case 'asociadostemporales':
@@ -613,7 +615,7 @@ switch ($tabla) {
 
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 3;
+		$termina = 5;
 	break;
 	case 'entrevistaoportunidades':
 		if ($_SESSION['idroll_sahilices'] == 3) {

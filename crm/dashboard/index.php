@@ -37,32 +37,39 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 if ($_SESSION['idroll_sahilices'] == 7) {
 	$resultado = $serviciosReferencias->traerPostulantesPorIdUsuario($_SESSION['usuaid_sahilices']);
 
-	$refestado = mysql_result($resultado,0,'refestadopostulantes');
-	$refesquemareclutamiento  = mysql_result($resultado,0,'refesquemareclutamiento');
+	if (mysql_num_rows($resultado) > 0) {
+		$refestado = mysql_result($resultado,0,'refestadopostulantes');
+		$refesquemareclutamiento  = mysql_result($resultado,0,'refesquemareclutamiento');
 
-	$resEstado = $serviciosReferencias->traerGuiasPorEsquemaSiguiente($refesquemareclutamiento, $refestado);
+		$resEstado = $serviciosReferencias->traerGuiasPorEsquemaSiguiente($refesquemareclutamiento, $refestado);
 
-	//die(var_dump($refestado));
+		//die(var_dump($refestado));
 
-	if (mysql_num_rows($resEstado) > 0) {
-		$estadoSiguiente = mysql_result($resEstado,0,'refestadopostulantes');
-		$idestado = mysql_result($resEstado,0,'refestadopostulantes');
+		if (mysql_num_rows($resEstado) > 0) {
+			$estadoSiguiente = mysql_result($resEstado,0,'refestadopostulantes');
+			$idestado = mysql_result($resEstado,0,'refestadopostulantes');
+		} else {
+			$estadoSiguiente = 8;
+			$idestado = 8;
+		}
+
+		$resGuia = $serviciosReferencias->traerGuiasPorEsquemaEspecial(mysql_result($resultado,0,'refesquemareclutamiento'));
+
+
+
+		$leyendaDocumentacion = '';
+		switch ($idestado) {
+			case 7:
+				$leyendaDocumentacion = '<div class="alert bg-light-green"><i class="material-icons">warning</i> Ya tiene habilitado el sistema para cargar su documentación, ingrese <a style="color: white;" href="miperfil/index.php"><b>AQUI</b></a></div>';
+				break;
+
+		}
 	} else {
-		$estadoSiguiente = 8;
-		$idestado = 8;
+		$leyendaDocumentacion = '';
+		$refestado = 10;
+		$resGuia = array();
 	}
 
-	$resGuia = $serviciosReferencias->traerGuiasPorEsquemaEspecial(mysql_result($resultado,0,'refesquemareclutamiento'));
-
-
-
-	$leyendaDocumentacion = '';
-	switch ($idestado) {
-		case 7:
-			$leyendaDocumentacion = '<div class="alert bg-light-green"><i class="material-icons">warning</i> Ya tiene habilitado el sistema para cargar su documentación, ingrese <a style="color: white;" href="miperfil/index.php"><b>AQUI</b></a></div>';
-			break;
-
-	}
 } else {
 
 	if ($_SESSION['idroll_sahilices'] == 3) {
