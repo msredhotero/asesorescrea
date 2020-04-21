@@ -1785,8 +1785,8 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones,
                $destinatario = 'jfoncerrada@icloud.com';
 
       	      $cuerpo = '';
-      	      $cuerpo .= '<h4>Nombre Completo: '.$row['nombre'].' '.$row['apellidopaterno'].' '.$row['apellidomaterno'].'</h4><br>';
-      	      $cuerpo .= "Acceda por este link: <a href='asesorescrea.com/desarrollo/crm/asociadostemporales/index.php'>ACCEDER</a>";
+      	      $cuerpo .= '<h4>Nombre Completo: '.$nombre.' '.$apellidopaterno.' '.$apellidomaterno.'</h4><br>';
+      	      $cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/asociadostemporales/index.php'>ACCEDER</a>";
 
       	      $res = $serviciosReferencias->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
 
@@ -3958,8 +3958,8 @@ function modificarPostulantes($serviciosReferencias) {
          $destinatario = 'jfoncerrada@icloud.com';
 
          $cuerpo = '';
-         $cuerpo .= '<h4>Nombre Completo: '.$row['nombre'].' '.$row['apellidopaterno'].' '.$row['apellidomaterno'].'</h4><br>';
-         $cuerpo .= "Acceda por este link: <a href='asesorescrea.com/desarrollo/crm/asociadostemporales/index.php'>ACCEDER</a>";
+         $cuerpo .= '<h4>Nombre Completo: '.$nombre.' '.$apellidopaterno.' '.$apellidomaterno.'</h4><br>';
+         $cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/asociadostemporales/index.php'>ACCEDER</a>";
 
          $res = $serviciosReferencias->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
 
