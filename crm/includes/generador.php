@@ -89,7 +89,8 @@ $tablasAr	= array('rolhogar' => 'tbrolhogar',
 							'tipoasociados' => 'tbtipoasociado',
 							'estadoasesor' => 'tbestadoasesor',
 							'documentacioncotizaciones' => 'dbdocumentacioncotizaciones',
-							'directorioasesores' => 'dbdirectorioasesores'
+							'directorioasesores' => 'dbdirectorioasesores',
+							'clientesasesores' => 'dbclientesasesores'
 							);
 
 
@@ -149,7 +150,8 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'tipoasociados' => 'tbtipoasociado',
 								'estadoasesor' => 'tbestadoasesor',
 								'documentacioncotizaciones' => 'dbdocumentacioncotizaciones',
-								'directorioasesores' => 'dbdirectorioasesores'
+								'directorioasesores' => 'dbdirectorioasesores',
+								'clientesasesores' => 'dbclientesasesores'
 							);
 
 	$tablasArAux	= array('rolhogar' => 1,
@@ -206,7 +208,8 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'tipoasociados' => 1,
 								'estadoasesor' => 1,
 								'documentacioncotizaciones' => 3,
-								'directorioasesores' => 1
+								'directorioasesores' => 1,
+								'clientesasesores' => 1
 							);
 
 	$inner= '';

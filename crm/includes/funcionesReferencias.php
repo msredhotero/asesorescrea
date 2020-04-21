@@ -10,6 +10,91 @@ date_default_timezone_set('America/Mexico_City');
 class ServiciosReferencias {
 
 
+	/* PARA Clientesasesores */
+
+	function insertarClientesasesores($refclientes,$refasesores,$apellidopaterno,$apellidomaterno,$nombre,$razonsocial,$domicilio,$email,$rfc,$ine,$reftipopersonas,$telefonofijo,$telefonocelular) {
+		$sql = "insert into dbclientesasesores(idclienteasesor,refclientes,refasesores,apellidopaterno,apellidomaterno,nombre,razonsocial,domicilio,email,rfc,ine,reftipopersonas,telefonofijo,telefonocelular)
+		values ('',".$refclientes.",".$refasesores.",'".$apellidopaterno."','".$apellidomaterno."','".$nombre."','".$razonsocial."','".$domicilio."','".$email."','".$rfc."','".$ine."',".$reftipopersonas.",'".$telefonofijo."','".$telefonocelular."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarClientesasesores($id,$refclientes,$refasesores,$apellidopaterno,$apellidomaterno,$nombre,$razonsocial,$domicilio,$email,$rfc,$ine,$reftipopersonas,$telefonofijo,$telefonocelular) {
+		$sql = "update dbclientesasesores
+		set
+		refclientes = ".$refclientes.",refasesores = ".$refasesores.",apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',nombre = '".$nombre."',razonsocial = '".$razonsocial."',domicilio = '".$domicilio."',email = '".$email."',rfc = '".$rfc."',ine = '".$ine."',reftipopersonas = ".$reftipopersonas.",telefonofijo = '".$telefonofijo."',telefonocelular = '".$telefonocelular."'
+		where idclienteasesor =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarClientesasesores($id) {
+		$sql = "delete from dbclientesasesores where idclienteasesor =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerClientesasesores() {
+		$sql = "select
+		c.idclienteasesor,
+		c.refclientes,
+		c.refasesores,
+		c.apellidopaterno,
+		c.apellidomaterno,
+		c.nombre,
+		c.razonsocial,
+		c.domicilio,
+		c.email,
+		c.rfc,
+		c.ine,
+		c.reftipopersonas,
+		c.telefonofijo,
+		c.telefonocelular
+		from dbclientesasesores c
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerClientesasesoresPorId($id) {
+		$sql = "select idclienteasesor,refclientes,refasesores,apellidopaterno,apellidomaterno,nombre,razonsocial,domicilio,email,rfc,ine,reftipopersonas,telefonofijo,telefonocelular from dbclientesasesores where idclienteasesor =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerClientesasesoresPorAsesor($refasesor) {
+		$sql = "select
+		c.idclienteasesor,
+		c.refclientes,
+		c.nombre,
+		c.apellidopaterno,
+		c.apellidomaterno,
+		c.razonsocial,
+		c.domicilio,
+		c.email,
+		c.rfc,
+		c.ine,
+		c.reftipopersonas,
+		c.telefonofijo,
+		c.telefonocelular,
+		c.refasesores
+		from dbclientesasesores c
+		inner join dbclientes cl ON cl.idcliente = c.refclientes
+		inner join dbasesores ase on ase.refusuarios = c.refasesores
+		where ase.refusuarios = ".$refasesor;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbclientesasesores*/
+
+
 	/* PARA Directorioasesores */
 
 	function insertarDirectorioasesores($refasesores,$area,$razonsocial,$telefono,$email) {

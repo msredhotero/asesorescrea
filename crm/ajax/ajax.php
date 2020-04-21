@@ -3192,6 +3192,9 @@ function insertarClientes($serviciosReferencias) {
    $res = $serviciosReferencias->insertarClientes($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
 
    if ((integer)$res > 0) {
+      if ($_SESSION['idroll_sahilices'] == 7) {
+         $resClienteAsedor = $serviciosReferencias->insertarClientesasesores($res,$_SESSION['usuaid_sahilices'],$apellidopaterno,$apellidomaterno,$nombre,$razonsocial,$domicilio,$email,$rfc,$ine,$reftipopersonas,$telefonofijo,$telefonocelular);
+      }
       echo '';
    } else {
       echo 'Hubo un error al insertar datos';

@@ -62,8 +62,18 @@ $lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','E
 
 $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
 
-$resVar2	= $serviciosReferencias->traerClientes();
-$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(3,4,2),' ');
+if ($_SESSION['idroll_sahilices'] == 7) {
+	$resVar2	= $serviciosReferencias->traerClientesasesoresPorAsesor($_SESSION['usuaid_sahilices']);
+} else {
+	$resVar2	= $serviciosReferencias->traerClientes();
+}
+
+if (mysql_num_rows($resVar2) > 0) {
+	$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(3,4,2),' ');
+} else {
+	$cadRef2 = "<option value='0'>-- No cargo ningun cliente aun --</option>";
+}
+
 
 $resVar3	= $serviciosReferencias->traerProductos();
 $cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
@@ -247,10 +257,17 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
+											<?php if (mysql_num_rows($resVar2) > 0) { ?>
 											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
 												<i class="material-icons">add</i>
 												<span>NUEVO</span>
 											</button>
+										<?php } else { ?>
+											<button type="button" class="btn bg-red waves-effect">
+												<i class="material-icons">block</i>
+												<span>NUEVO</span>
+											</button>
+										<?php }  ?>
 
 											<button type="button" class="btn bg-green waves-effect btnNuevo2" data-toggle="modal" data-target="#lgmNuevo2">
 												<i class="material-icons">add</i>
