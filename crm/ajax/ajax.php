@@ -628,7 +628,7 @@ switch ($accion) {
       insertarOportunidades($serviciosReferencias);
    break;
    case 'modificarOportunidades':
-      modificarOportunidades($serviciosReferencias,$serviciosNotificaciones);
+      modificarOportunidades($serviciosReferencias,$serviciosNotificaciones,$serviciosUsuarios);
    break;
    case 'eliminarOportunidades':
       eliminarOportunidades($serviciosReferencias);
@@ -1673,7 +1673,7 @@ function insertarOportunidades($serviciosReferencias) {
 
 }
 
-function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones) {
+function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones,$serviciosUsuarios) {
    session_start();
 
    $id = $_POST['id'];
