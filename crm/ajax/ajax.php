@@ -1788,7 +1788,7 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones,
       	      $cuerpo .= '<h4>Nombre Completo: '.$row['nombre'].' '.$row['apellidopaterno'].' '.$row['apellidomaterno'].'</h4><br>';
       	      $cuerpo .= "Acceda por este link: <a href='asesorescrea.com/desarrollo/crm/asociadostemporales/index.php'>ACCEDER</a>";
 
-      	      $res = $this->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
+      	      $res = $serviciosReferencias->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
 
             }
             echo '';
@@ -3961,7 +3961,7 @@ function modificarPostulantes($serviciosReferencias) {
          $cuerpo .= '<h4>Nombre Completo: '.$row['nombre'].' '.$row['apellidopaterno'].' '.$row['apellidomaterno'].'</h4><br>';
          $cuerpo .= "Acceda por este link: <a href='asesorescrea.com/desarrollo/crm/asociadostemporales/index.php'>ACCEDER</a>";
 
-         $res = $this->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
+         $res = $serviciosReferencias->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
 
       }
       echo '';
