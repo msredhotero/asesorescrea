@@ -1768,7 +1768,7 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones)
             }
 
             // si es asociado temporal o agente asociado id=8 lo genero automatico
-            if ($refestadooportunidad == 8) {
+            if ($refestadooportunidad == 7) {
 
                if ($email != '') {
                   $password = $apellidopaterno.$apellidomaterno.date('His');
