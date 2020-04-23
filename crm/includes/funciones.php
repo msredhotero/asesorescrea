@@ -96,6 +96,36 @@ class Servicios {
 		return $cad;
 	}
 
+	function devolverSelectBoxText($datos, $ar, $delimitador) {
+
+		$cad		= '';
+		while ($rowTT = mysql_fetch_array($datos)) {
+			$contenido	= '';
+			foreach ($ar as $i) {
+				$contenido .= $rowTT[$i].$delimitador;
+			}
+			$cad .= '<option value="'.(substr($contenido,0,strlen($contenido)-strlen($delimitador))).'">'.(substr($contenido,0,strlen($contenido)-strlen($delimitador))).'</option>';
+		}
+		return $cad;
+	}
+
+	function devolverSelectBoxActivoText($datos, $ar, $delimitador, $idSelect) {
+
+		$cad		= '';
+		while ($rowTT = mysql_fetch_array($datos)) {
+			$contenido	= '';
+			foreach ($ar as $i) {
+				$contenido .= $rowTT[$i].$delimitador;
+			}
+			if ((substr($contenido,0,strlen($contenido)-strlen($delimitador))) == $idSelect) {
+				$cad .= '<option value="'.(substr($contenido,0,strlen($contenido)-strlen($delimitador))).'" selected="selected">'.(substr($contenido,0,strlen($contenido)-strlen($delimitador))).'</option>';
+			} else {
+				$cad .= '<option value="'.(substr($contenido,0,strlen($contenido)-strlen($delimitador))).'">'.(substr($contenido,0,strlen($contenido)-strlen($delimitador))).'</option>';
+			}
+		}
+		return $cad;
+	}
+
 	function devolverSelectBox($datos, $ar, $delimitador) {
 
 		$cad		= '';
@@ -1217,7 +1247,7 @@ class Servicios {
 				break;
 			case 'dbasesores':
 				$sqlMod = "select a.idasesor,a.refusuarios,a.nombre,a.apellidopaterno,a.apellidomaterno,a.email,a.curp,a.rfc,a.ine,a.fechanacimiento,a.sexo,SUBSTRING(concat('00000', p.codigo),-5,5) as codigopostal,a.refescolaridades,a.telefonomovil,a.telefonocasa,a.telefonotrabajo,a.fechacrea,a.fechamodi,a.usuariocrea,a.usuariomodi,a.reftipopersonas,a.claveinterbancaria,a.idclienteinbursa,a.claveasesor,a.fechaalta,a.nss,a.razonsocial,a.nropoliza,a.vigdesdecedulaseguro,
-				a.vighastacedulaseguro,a.vigdesderc,a.vighastarc from dbasesores a
+				a.vighastacedulaseguro,a.vigdesderc,a.vighastarc,a.observaciones from dbasesores a
 				left join postal p on p.id = a.codigopostal where a.idasesor = ".$id;
 				$resMod = $this->query($sqlMod,0);
 			break;
@@ -1226,6 +1256,8 @@ class Servicios {
 				$sqlMod = "select * from ".$tabla." where ".$lblid." = ".$id;
 				$resMod = $this->query($sqlMod,0);
 		}
+
+		//die(var_dump($sqlMod));
 		/*if ($tabla == 'dbtorneos') {
 			$resMod = $this->TraerIdTorneos($id);
 		} else {

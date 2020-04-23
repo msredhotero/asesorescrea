@@ -66,12 +66,10 @@ $modificar = "modificarEntrevistas";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $resultado 		= 	$serviciosReferencias->traerPostulantesPorIdUsuario($idusuario);
 
+
 if (mysql_num_rows($resultado)<= 0) {
-	echo "<script>
-	alert('Asesor cargado directamente son expediente !!!');
-	window.location = 'index.php';
-	</script>
-	";
+
+	header('Location: expediente.php?id='.$id.'&documentacion=31');
 }
 if (mysql_result($resultado,0,'refestadopostulantes') == 9) {
 	header('Location: ../index.php');

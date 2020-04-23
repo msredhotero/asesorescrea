@@ -9,6 +9,271 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+	/* PARA Documentacioncotizaciones */
+
+	function modificarAsesoresunicaUnicaDocumentacion($id, $campo, $valor) {
+		$sql = "update dbasesores
+		set
+		".$campo." = '".$valor."'
+		where idasesor =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerDocumentacionPorAsesoresunicaDocumentacionCompleta($idasesor) {
+		$sql = "SELECT
+					    d.iddocumentacion,
+					    d.documentacion,
+					    d.obligatoria,
+					    da.iddocumentacionasesorunica,
+					    da.archivo,
+					    da.type,
+					    coalesce( ed.estadodocumentacion, 'Falta') as estadodocumentacion,
+						 ed.color,
+					    ed.idestadodocumentacion
+					FROM
+					    dbdocumentaciones d
+					        LEFT JOIN
+					    dbdocumentacionasesoresunica da ON d.iddocumentacion = da.refdocumentaciones
+					        AND da.refasesores = ".$idasesor."
+					        LEFT JOIN
+					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
+					where d.iddocumentacion in (27,31)
+
+					order by 1";
+		$res = $this->query($sql,0);
+ 		return $res;
+	}
+
+	function insertarDocumentacionasesoresunica($refasesores,$refdocumentaciones,$archivo,$type,$refestadodocumentaciones,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+		$sql = "insert into dbdocumentacionasesoresunica(iddocumentacionasesorunica,refasesores,refdocumentaciones,archivo,type,refestadodocumentaciones,fechacrea,fechamodi,usuariocrea,usuariomodi)
+		values ('',".$refasesores.",".$refdocumentaciones.",'".$archivo."','".$type."',".$refestadodocumentaciones.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarDocumentacionasesoresunica($id,$refasesores,$refdocumentaciones,$archivo,$type,$refestadodocumentaciones,$fechamodi,$usuariomodi) {
+		$sql = "update dbdocumentacionasesoresunica
+		set
+		refasesores = ".$refasesores.",refdocumentaciones = ".$refdocumentaciones.",archivo = '".$archivo."',type = '".$type."',refestadodocumentaciones = ".$refestadodocumentaciones.",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."'
+		where iddocumentacionasesorunica =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function modificarEstadoDocumentacionasesoresunica($id, $refestadodocumentaciones,$usuariomodi) {
+		$sql = "update dbdocumentacionasesoresunica
+		set
+		refestadodocumentaciones = ".$refestadodocumentaciones.",fechamodi = '".date('Y-m-d H:i:s')."',usuariomodi = '".$usuariomodi."'
+		where iddocumentacionasesorunica =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function modificarEstadoDocumentacionAsesoresunicaPorDocumentacion($iddocumentacion,$idasesor, $refestadodocumentaciones,$usuariomodi) {
+		$sql = "update dbdocumentacionasesoresunica
+		set
+		refestadodocumentaciones = ".$refestadodocumentaciones.",fechamodi = '".date('Y-m-d H:i:s')."',usuariomodi = '".$usuariomodi."'
+		where refdocumentaciones =".$iddocumentacion." and refasesores =".$idasesor;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarDocumentacionasesoresunica($id) {
+		$sql = "delete from dbdocumentacionasesoresunica where iddocumentacionasesorunica =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function eliminarDocumentacionasesoresunicaPorAsesoresunicaDocumentacion($idasesor,$iddocumentacion) {
+		$sql = "delete from dbdocumentacionasesoresunica where refasesores =".$idasesor." and refdocumentaciones = ".$iddocumentacion;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function eliminarDocumentacionasesoresunicaPorAsesoresunicaDocumentacionEspecifico($idasesor,$iddocumentacion, $archivo) {
+		$sql = "delete from dbdocumentacionasesoresunica where refasesores =".$idasesor =" and refdocumentaciones = ".$iddocumentacion." and archivo like '%".$archivo."%'";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function eliminarDocumentacionAsesoresunicas($idasesor,$iddocumentacion) {
+		/*** auditoria ****/
+
+		/*** fin auditoria ***/
+
+		$resFoto = $this->traerDocumentacionPorAsesoresunicaDocumentacion($idasesor,$iddocumentacion);
+
+		$resDocumentacion = $this->traerDocumentacionesPorId($iddocumentacion);
+
+		$imagen = '';
+
+      if (mysql_num_rows($resFoto) > 0) {
+         /* produccion
+         $imagen = 'https://www.saupureinconsulting.com.ar/aifzn/'.mysql_result($resFoto,0,'archivo').'/'.mysql_result($resFoto,0,'imagen');
+         */
+
+         //desarrollo
+
+         if (mysql_result($resFoto,0,'type') == '') {
+
+            $resV['error'] = true;
+				$resV['leyenda'] = 'Archivo perdido';
+         } else {
+				$archivos = '../archivos/asesores/'.$idasesor.'/'.mysql_result($resDocumentacion,0,'carpeta').'/';
+
+            $resBorrar = $this->borrarDirecctorio($archivos);
+
+				$resUpdate = $this->eliminarDocumentacionasesoresunica(mysql_result($resFoto,0,'iddocumentacionasesorunica'));
+
+            $resV['error'] = false;
+				$resV['leyenda'] = 'Archivo eliminado correctamente';
+         }
+
+
+
+      } else {
+         $resV['error'] = true;
+			$resV['leyenda'] = 'Archivo no encontrado';
+      }
+
+		return $resV;
+
+	}
+
+
+	function traerDocumentacionasesoresunica() {
+		$sql = "select
+		d.iddocumentacionasesorunica,
+		d.refasesores,
+		d.refdocumentaciones,
+		d.archivo,
+		d.type,
+		d.refestadodocumentaciones,
+		d.fechacrea,
+		d.fechamodi,
+		d.usuariocrea,
+		d.usuariomodi
+		from dbdocumentacionasesoresunica d
+		inner join dbasesores ase ON ase.idasesor = d.refasesores
+		inner join dbdocumentaciones doc ON doc.iddocumentacion = d.refdocumentaciones
+		inner join tbtipodocumentaciones ti ON ti.idtipodocumentacion = doc.reftipodocumentaciones
+		inner join tbestadodocumentaciones est ON est.idestadodocumentacion = d.refestadodocumentaciones
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerDocumentacionasesoresunicaPorId($id) {
+		$sql = "select iddocumentacionasesorunica,refasesores,refdocumentaciones,archivo,type,refestadodocumentaciones,fechacrea,fechamodi,usuariocrea,usuariomodi from dbdocumentacionasesoresunica where iddocumentacionasesorunica =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerDocumentacionPorAsesoresunicaDocumentacion($id, $iddocumentacion) {
+		$sql = "select
+		da.iddocumentacionasesorunica,da.refasesores,da.refdocumentaciones,
+		da.archivo,da.type,da.refestadodocumentaciones,da.fechacrea,da.fechamodi,
+		da.usuariocrea,da.usuariomodi , e.estadodocumentacion, e.color, d.carpeta
+		from dbdocumentacionasesoresunica da
+		inner join dbdocumentaciones d on d.iddocumentacion = da.refdocumentaciones
+		inner join tbestadodocumentaciones e on e.idestadodocumentacion = da.refestadodocumentaciones
+		where da.refasesores =".$id." and da.refdocumentaciones = ".$iddocumentacion;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* fin para documentaciones de asesores unica */
+
+
+	/* PARA Domicilios */
+
+	function insertarDomicilios($reftabla,$idreferencia,$calle,$numeroext,$numeroint,$colonia,$estado,$delegacion,$codigopostal) {
+		$sql = "insert into dbdomicilios(iddomicilio,reftabla,idreferencia,calle,numeroext,numeroint,colonia,estado,delegacion,codigopostal)
+		values ('',".$reftabla.",".$idreferencia.",'".$calle."','".$numeroext."','".$numeroint."','".$colonia."','".$estado."','".$delegacion."','".$codigopostal."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+	function insertarDomiciliosDe($reftabla,$idreferencia,$id) {
+		$sql = "insert into dbdomicilios(iddomicilio,reftabla,idreferencia,calle,numeroext,numeroint,colonia,estado,delegacion,codigopostal)
+		select
+		'',1,".$id.",calle,numeroext,numeroint,colonia,estado,delegacion,codigopostal
+		from dbdomicilios where reftabla = ".$reftabla." and idreferencia =".$idreferencia;
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarDomicilios($id,$reftabla,$idreferencia,$calle,$numeroext,$numeroint,$colonia,$estado,$delegacion,$codigopostal) {
+		$sql = "update dbdomicilios
+		set
+		reftabla = ".$reftabla.",idreferencia = ".$idreferencia.",calle = '".$calle."',numeroext = '".$numeroext."',numeroint = '".$numeroint."',colonia = '".$colonia."',estado = '".$estado."',delegacion = '".$delegacion."',codigopostal = '".$codigopostal."'
+		where iddomicilio =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarDomicilios($id) {
+		$sql = "delete from dbdomicilios where iddomicilio =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerDomicilios() {
+		$sql = "select
+		d.iddomicilio,
+		d.reftabla,
+		d.idreferencia,
+		d.calle,
+		d.numeroext,
+		d.numeroint,
+		d.colonia,
+		d.estado,
+		d.delegacion,
+		d.codigopostal
+		from dbdomicilios d
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerDomiciliosPorTablaReferencia($idtabla, $tabla, $idnombre, $id) {
+		$sql = "select
+		d.iddomicilio,
+		d.reftabla,
+		d.idreferencia,
+		d.calle,
+		d.numeroext,
+		d.numeroint,
+		d.colonia,
+		d.estado,
+		d.delegacion,
+		d.codigopostal
+		from dbdomicilios d
+		inner join ".$tabla." v on v.".$idnombre." = d.idreferencia
+		where d.reftabla = ".$idtabla." and d.idreferencia = ".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerDomiciliosPorId($id) {
+		$sql = "select iddomicilio,reftabla,idreferencia,calle,numeroext,numeroint,colonia,estado,delegacion,codigopostal from dbdomicilios where iddomicilio =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbdomicilios*/
+
 
 	/* PARA Clientesasesores */
 
@@ -97,18 +362,18 @@ class ServiciosReferencias {
 
 	/* PARA Directorioasesores */
 
-	function insertarDirectorioasesores($refasesores,$area,$razonsocial,$telefono,$email) {
-		$sql = "insert into dbdirectorioasesores(iddirectorioasesor,refasesores,area,razonsocial,telefono,email)
-		values ('',".$refasesores.",'".$area."','".$razonsocial."','".$telefono."','".$email."')";
+	function insertarDirectorioasesores($refasesores,$area,$razonsocial,$telefono,$email,$telefonocelular) {
+		$sql = "insert into dbdirectorioasesores(iddirectorioasesor,refasesores,area,razonsocial,telefono,email,telefonocelular)
+		values ('',".$refasesores.",'".$area."','".$razonsocial."','".$telefono."','".$email."','".$telefonocelular."')";
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarDirectorioasesores($id,$refasesores,$area,$razonsocial,$telefono,$email) {
+	function modificarDirectorioasesores($id,$refasesores,$area,$razonsocial,$telefono,$email,$telefonocelular) {
 		$sql = "update dbdirectorioasesores
 		set
-		refasesores = ".$refasesores.",area = '".$area."',razonsocial = '".$razonsocial."',telefono = '".$telefono."',email = '".$email."'
+		refasesores = ".$refasesores.",area = '".$area."',razonsocial = '".$razonsocial."',telefono = '".$telefono."',email = '".$email."',telefonocelular = '".$telefonocelular."'
 		where iddirectorioasesor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -129,6 +394,7 @@ class ServiciosReferencias {
 		d.area,
 		d.razonsocial,
 		d.telefono,
+		d.telefonocelular,
 		d.email
 		from dbdirectorioasesores d
 		order by 1";
@@ -142,7 +408,7 @@ class ServiciosReferencias {
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and (d.area like '%".$busqueda."%' or d.razonsocial like '%".$busqueda."%' or d.telefono like '%".$busqueda."%' or d.email like '%".$busqueda."%' )";
+			$where = " and (d.area like '%".$busqueda."%' or d.razonsocial like '%".$busqueda."%' or d.telefono like '%".$busqueda."%' or d.email like '%".$busqueda."%' or d.telefonocelular like '%".$busqueda."%' )";
 		}
 
 
@@ -151,6 +417,7 @@ class ServiciosReferencias {
 		d.area,
 		d.razonsocial,
 		d.telefono,
+		d.telefonocelular,
 		d.email,
 		d.refasesores
 		from dbdirectorioasesores d
@@ -164,13 +431,13 @@ class ServiciosReferencias {
 
 
 	function traerDirectorioasesoresPorId($id) {
-		$sql = "select iddirectorioasesor,refasesores,area,razonsocial,telefono,email from dbdirectorioasesores where iddirectorioasesor =".$id;
+		$sql = "select iddirectorioasesor,refasesores,area,razonsocial,telefono,email,telefonocelular from dbdirectorioasesores where iddirectorioasesor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
 	function traerDirectorioasesoresPorAsesor($idasesor) {
-		$sql = "select iddirectorioasesor,refasesores,area,razonsocial,telefono,email from dbdirectorioasesores where refasesores =".$idasesor;
+		$sql = "select iddirectorioasesor,refasesores,area,razonsocial,telefono,email,telefonocelular from dbdirectorioasesores where refasesores =".$idasesor;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -5940,7 +6207,8 @@ class ServiciosReferencias {
 						vighastacedulaseguro,
 						vigdesderc,
 						vighastarc,
-						refestadoasesor
+						refestadoasesor,
+						refestadoasesorinbursa
 						)
 						select
 						'',
@@ -5976,10 +6244,15 @@ class ServiciosReferencias {
 						p.vighastacedulaseguro,
 						p.vigdesderc,
 						p.vighastarc,
+						1,
 						1
 						from		dbpostulantes p where idpostulante =".$id;
 
 			$res = $this->query($sql,1);
+
+			if ((integer)$res > 0) {
+				$resDomicilio = $this->insertarDomiciliosDe(8,$id,$res);
+			}
 			return $res;
 
 		} else {
@@ -5988,19 +6261,19 @@ class ServiciosReferencias {
 	}
 
 
-	function insertarAsesores($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc,$vighastarc,$refestadoasesor) {
-		$sql = "insert into dbasesores(idasesor,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,fechacrea,fechamodi,usuariocrea,usuariomodi,reftipopersonas,claveinterbancaria,idclienteinbursa,claveasesor,fechaalta,nss,razonsocial,nropoliza,vigdesdecedulaseguro,vighastacedulaseguro,vigdesderc,vighastarc,refestadoasesor)
-		values ('',".$refusuarios.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$email."','".$curp."','".$rfc."','".$ine."','".$fechanacimiento."','".$sexo."','".$codigopostal."',".$refescolaridades.",'".$telefonomovil."','".$telefonocasa."','".$telefonotrabajo."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."',".$reftipopersonas.",'".$claveinterbancaria."','".$idclienteinbursa."','".$claveasesor."','".$fechaalta."','".$nss."','".$razonsocial."','".$nropoliza."',".($vigdesdecedulaseguro == '' ? 'null' : "'".$vigdesdecedulaseguro."'").",".($vighastacedulaseguro == '' ? 'null' : "'".$vighastacedulaseguro."'").",".($vigdesderc == '' ? 'null' : "'".$vigdesderc."'").",".($vighastarc == '' ? 'null' : "'".$vighastarc."'").",".$refestadoasesor.")";
+	function insertarAsesores($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc,$vighastarc,$refestadoasesor,$refestadoasesorinbursa) {
+		$sql = "insert into dbasesores(idasesor,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,fechacrea,fechamodi,usuariocrea,usuariomodi,reftipopersonas,claveinterbancaria,idclienteinbursa,claveasesor,fechaalta,nss,razonsocial,nropoliza,vigdesdecedulaseguro,vighastacedulaseguro,vigdesderc,vighastarc,refestadoasesor,refestadoasesorinbursa)
+		values ('',".$refusuarios.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$email."','".$curp."','".$rfc."','".$ine."','".$fechanacimiento."','".$sexo."','".$codigopostal."',".$refescolaridades.",'".$telefonomovil."','".$telefonocasa."','".$telefonotrabajo."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."',".$reftipopersonas.",'".$claveinterbancaria."','".$idclienteinbursa."','".$claveasesor."','".$fechaalta."','".$nss."','".$razonsocial."','".$nropoliza."',".($vigdesdecedulaseguro == '' ? 'null' : "'".$vigdesdecedulaseguro."'").",".($vighastacedulaseguro == '' ? 'null' : "'".$vighastacedulaseguro."'").",".($vigdesderc == '' ? 'null' : "'".$vigdesderc."'").",".($vighastarc == '' ? 'null' : "'".$vighastarc."'").",".$refestadoasesor.",".$refestadoasesorinbursa.")";
 
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarAsesores($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechamodi,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc,$vighastarc,$refestadoasesor) {
+	function modificarAsesores($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechamodi,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc,$vighastarc,$refestadoasesor,$refestadoasesorinbursa) {
 		$sql = "update dbasesores
 		set
-		refusuarios = ".$refusuarios.",nombre = '".$nombre."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',email = '".$email."',curp = '".$curp."',rfc = '".$rfc."',ine = '".$ine."',fechanacimiento = '".$fechanacimiento."',sexo = '".$sexo."',codigopostal = '".$codigopostal."',refescolaridades = ".$refescolaridades.",telefonomovil = '".$telefonomovil."',telefonocasa = '".$telefonocasa."',telefonotrabajo = '".$telefonotrabajo."',fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',reftipopersonas = ".$reftipopersonas.",claveinterbancaria = '".$claveinterbancaria."',idclienteinbursa = '".$idclienteinbursa."',claveasesor = '".$claveasesor."',fechaalta = '".$fechaalta."',nss = '".$nss."',razonsocial = '".$razonsocial."',nropoliza = '".$nropoliza."',vigdesdecedulaseguro = ".($vigdesdecedulaseguro == '' ? 'null' : "'".$vigdesdecedulaseguro."'").",vighastacedulaseguro = ".($vighastacedulaseguro == '' ? 'null' : "'".$vighastacedulaseguro."'").",vigdesderc = ".($vigdesderc == '' ? 'null' : "'".$vigdesderc."'").",vighastarc = ".($vighastarc == '' ? 'null' : "'".$vighastarc."'").",refestadoasesor = ".$refestadoasesor." where idasesor =".$id;
+		refusuarios = ".$refusuarios.",nombre = '".$nombre."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',email = '".$email."',curp = '".$curp."',rfc = '".$rfc."',ine = '".$ine."',fechanacimiento = '".$fechanacimiento."',sexo = '".$sexo."',codigopostal = '".$codigopostal."',refescolaridades = ".$refescolaridades.",telefonomovil = '".$telefonomovil."',telefonocasa = '".$telefonocasa."',telefonotrabajo = '".$telefonotrabajo."',fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',reftipopersonas = ".$reftipopersonas.",claveinterbancaria = '".$claveinterbancaria."',idclienteinbursa = '".$idclienteinbursa."',claveasesor = '".$claveasesor."',fechaalta = '".$fechaalta."',nss = '".$nss."',razonsocial = '".$razonsocial."',nropoliza = '".$nropoliza."',vigdesdecedulaseguro = ".($vigdesdecedulaseguro == '' ? 'null' : "'".$vigdesdecedulaseguro."'").",vighastacedulaseguro = ".($vighastacedulaseguro == '' ? 'null' : "'".$vighastacedulaseguro."'").",vigdesderc = ".($vigdesderc == '' ? 'null' : "'".$vigdesderc."'").",vighastarc = ".($vighastarc == '' ? 'null' : "'".$vighastarc."'").",refestadoasesor = ".$refestadoasesor.",refestadoasesorinbursa = ".$refestadoasesorinbursa." where idasesor =".$id;
 
 		$res = $this->query($sql,0);
 		return $res;
@@ -6113,7 +6386,7 @@ class ServiciosReferencias {
 
 
 	function traerAsesoresPorId($id) {
-	$sql = "select idasesor,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,fechacrea,fechamodi,usuariocrea,usuariomodi,reftipopersonas,claveinterbancaria,idclienteinbursa,claveasesor,fechaalta,nss,razonsocial,nropoliza,vigdesdecedulaseguro,vighastacedulaseguro,vigdesderc,vighastarc,refestadoasesor from dbasesores where idasesor =".$id;
+	$sql = "select idasesor,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,fechacrea,fechamodi,usuariocrea,usuariomodi,reftipopersonas,claveinterbancaria,idclienteinbursa,claveasesor,fechaalta,nss,razonsocial,nropoliza,vigdesdecedulaseguro,vighastacedulaseguro,vigdesderc,vighastarc,refestadoasesor,refestadoasesorinbursa from dbasesores where idasesor =".$id;
 	$res = $this->query($sql,0);
 	return $res;
 	}

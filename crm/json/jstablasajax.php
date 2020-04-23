@@ -84,7 +84,7 @@ switch ($tabla) {
 
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 4;
+		$termina = 5;
 
 	break;
 
@@ -127,9 +127,11 @@ switch ($tabla) {
 			p.claveasesor,
 			p.fechaalta,
 			usur.nombrecompleto,
-			tea.estadoasesor
+			tea.estadoasesor,
+			teai.estadoasesor
 		from dbasesores p
 		inner join tbestadoasesor tea on tea.idestadoasesor = p.refestadoasesor
+		inner join tbestadoasesor teai on teai.idestadoasesor = p.refestadoasesorinbursa
 		';
 		if ($_SESSION['idroll_sahilices'] == 3) {
 			$consulta .= ' inner join dbusuarios usu ON usu.idusuario = p.refusuarios
@@ -175,7 +177,7 @@ switch ($tabla) {
 				$icon = array('Modificar','Eliminar','Expediente','Directorio');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 10;
+				$termina = 11;
 			break;
 			case 2:
 				$label = array('btnModificar','btnPerfil','btnDirectorio');
@@ -183,7 +185,7 @@ switch ($tabla) {
 				$icon = array('Modificar','Expediente','Directorio');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 10;
+				$termina = 11;
 			break;
 			case 3:
 				$label = array('btnModificar','btnPerfil','btnDirectorio');
@@ -191,7 +193,7 @@ switch ($tabla) {
 				$icon = array('Modificar','Expediente','Directorio');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 10;
+				$termina = 11;
 			break;
 			case 4:
 				$label = array('btnModificar','btnPerfil','btnDirectorio');
@@ -199,7 +201,7 @@ switch ($tabla) {
 				$icon = array('Modificar','Expediente','Directorio');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 10;
+				$termina = 11;
 			break;
 			case 5:
 				$label = array('btnModificar','btnPerfil','btnDirectorio');
@@ -207,7 +209,7 @@ switch ($tabla) {
 				$icon = array('Modificar','Expediente','Directorio');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina =10;
+				$termina =11;
 			break;
 			case 6:
 				$label = array('btnModificar','btnPerfil','btnDirectorio');
@@ -215,7 +217,7 @@ switch ($tabla) {
 				$icon = array('Modificar','Expediente','Directorio');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 10;
+				$termina = 11;
 			break;
 
 			default:
@@ -224,7 +226,7 @@ switch ($tabla) {
 				$icon = array();
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 10;
+				$termina = 11;
 			break;
 		}
 	break;

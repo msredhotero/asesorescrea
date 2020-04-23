@@ -14,23 +14,26 @@ include ('../../includes/funcionesUsuarios.php');
 include ('../../includes/funcionesHTML.php');
 include ('../../includes/funcionesReferencias.php');
 include ('../../includes/base.php');
+include ('../../includes/funcionesPostal.php');
 
-$serviciosFunciones 	= new Servicios();
+
+$serviciosFunciones 		= new Servicios();
 $serviciosUsuario 		= new ServiciosUsuarios();
 $serviciosHTML 			= new ServiciosHTML();
 $serviciosReferencias 	= new ServiciosReferencias();
-$baseHTML = new BaseHTML();
+$baseHTML 					= new BaseHTML();
+$serviciosPostal        = new serviciosPostal();
 
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../asesores/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../postulantes/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Asesores",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Postulantes",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -39,36 +42,65 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Directorio";
+$singular = "Domicilio";
 
-$plural = "Directorio Asesores";
+$plural = "Domicilio Postulante";
 
-$eliminar = "eliminarDirectorioasesores";
+$eliminar = "eliminarDomicilios";
 
-$insertar = "insertarDirectorioasesores";
+$insertar = "insertarDomicilios";
 
-$modificar = "modificarDirectorioasesores";
+$modificar = "modificarDomicilios";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 $id = $_GET['id'];
 
-$resultado = $serviciosReferencias->traerAsesoresPorId($id);
+$resultado = $serviciosReferencias->traerPostulantesPorId($id);
 
-$_SESSION['idasesor_aux'] = $id;
+$resDomicilio = $serviciosReferencias->traerDomiciliosPorTablaReferencia(8, 'dbpostulantes', 'idpostulante', $id);
+
+if (mysql_num_rows($resDomicilio) <= 0) {
+	$idDomicilio = $serviciosReferencias->insertarDomicilios(8,$id,'','','','','','','');
+	$resDomicilio = $serviciosReferencias->traerDomiciliosPorId($idDomicilio);
+}
+
+//$resasdasd = $serviciosReferencias->migrarPostulante($id,'marcosborrar');
+//die(var_dump($resasdasd));
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbdirectorioasesores";
+$tabla 			= "dbdomicilios";
 
-$lblCambio	 	= array('refasesores','razonsocial','telefonocelular');
-$lblreemplazo	= array('Asesores','Nombre','Tel. Fijo');
+$lblCambio	 	= array('numeroext','numeroint','codigopostal');
+$lblreemplazo	= array('Nro Ext.','Nro Int.','Cod. Postal');
 
-$cadRef2 = $serviciosFunciones->devolverSelectBox($resultado,array(3,4,2),' ');
+$resEstado = $serviciosPostal->devolverComboHTML('estado', '');
+$cadRef1 = "<option value=''>-- Seleccionar --</option>";
+$cadRef1 .= $serviciosFunciones->devolverSelectBoxActivoText($resEstado,array(0),'', mysql_result($resDomicilio,0,'estado'));
 
-$refdescripcion = array(0=> $cadRef2);
-$refCampo 	=  array('refasesores');
 
-$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+$filtroM = array();
+$filtroM["estado"] = mysql_result($resDomicilio,0,'estado');
+$filtro = (object)$filtroM;
+
+$resMunicipio = $serviciosPostal->devolverComboHTML('municipio', $filtro);
+$cadRef2 = "<option value=''>-- Seleccionar --</option>";
+$cadRef2 .= $serviciosFunciones->devolverSelectBoxActivoText($resMunicipio,array(0),'', mysql_result($resDomicilio,0,'delegacion'));
+
+$filtroC = array();
+$filtroC["municipio"] = mysql_result($resDomicilio,0,'delegacion');
+$filtro = (object)$filtroC;
+
+$resColonia = $serviciosPostal->devolverComboHTML('colonia', $filtro);
+$cadRef3 = "<option value=''>-- Seleccionar --</option>";
+$cadRef3 .= $serviciosFunciones->devolverSelectBoxActivoText($resColonia,array(0),'', mysql_result($resDomicilio,0,'colonia'));
+
+
+
+$refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3);
+$refCampo 	=  array('estado','delegacion','colonia');
+
+$frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar(mysql_result($resDomicilio,0,'iddomicilio'),'iddomicilio',$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -177,7 +209,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2 style="color:white;">
-								<?php echo strtoupper($plural); ?>
+								<?php echo strtoupper($plural).": ".mysql_result($resultado,0,'apellidopaterno')." ".mysql_result($resultado,0,'apellidomaterno')." ".mysql_result($resultado,0,'nombre'); ?>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -191,46 +223,18 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 							</ul>
 						</div>
 						<div class="body table-responsive">
-							<form class="form" id="formCountry">
+							<form class="form" id="sign_in" role="form">
 
-								<div class="row">
-									<div class="col-lg-12 col-md-12">
-										<div class="button-demo">
-											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
-												<i class="material-icons">add</i>
-												<span>NUEVO</span>
-											</button>
-
-										</div>
-									</div>
+								<div class="row frmAjaxModificar">
+									<?php echo $frmUnidadNegocios; ?>
+								</div>
+								<div class="button-demo">
+									<button type="submit" class="btn bg-light-blue waves-effect modificarDomicilio">
+										<i class="material-icons">save</i>
+										<span>GUARDAR</span>
+									</button>
 								</div>
 
-
-								<div class="row" style="padding: 5px 20px;">
-
-									<table id="example" class="display table " style="width:100%">
-										<thead>
-											<tr>
-												<th>Area</th>
-												<th>Razon Social</th>
-												<th>Telfono</th>
-												<th>Telfono Movil</th>
-												<th>Email</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tfoot>
-											<tr>
-												<th>Area</th>
-												<th>Razon Social</th>
-												<th>Telfono</th>
-												<th>Telfono Movil</th>
-												<th>Email</th>
-												<th>Acciones</th>
-											</tr>
-										</tfoot>
-									</table>
-								</div>
 							</form>
 							</div>
 						</div>
@@ -241,57 +245,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	</div>
 </section>
 
-
-<!-- NUEVO -->
-	<form class="formulario" role="form" id="sign_in">
-	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
-	       <div class="modal-dialog modal-lg" role="document">
-	           <div class="modal-content">
-	               <div class="modal-header">
-	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular); ?></h4>
-	               </div>
-	               <div class="modal-body">
-	                  <?php echo $frmUnidadNegocios; ?>
-							<div class="col-xs-3" style="display:none">
-								<input type="text" class="form-control" id="codigopostalaux" name="codigopostalaux" value=''/>
-
-							</div>
-	               </div>
-	               <div class="modal-footer">
-	                   <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
-	                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-	               </div>
-	           </div>
-	       </div>
-	   </div>
-		<input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
-	</form>
-
-	<!-- MODIFICAR -->
-		<form class="formulario" role="form" id="sign_in">
-		   <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
-		       <div class="modal-dialog modal-lg" role="document">
-		           <div class="modal-content">
-		               <div class="modal-header">
-		                   <h4 class="modal-title" id="largeModalLabel">MODIFICAR <?php echo strtoupper($singular); ?></h4>
-		               </div>
-		               <div class="modal-body">
-								<div class="row frmAjaxModificar">
-								</div>
-								<div class="col-xs-3" style="display:none">
-									<input type="text" class="form-control" id="codigopostalaux2" name="codigopostalaux2" value=''/>
-
-								</div>
-		               </div>
-		               <div class="modal-footer">
-		                   <button type="button" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
-		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-		               </div>
-		           </div>
-		       </div>
-		   </div>
-			<input type="hidden" id="accion" name="accion" value="<?php echo $modificar; ?>"/>
-		</form>
 
 
 	<!-- ELIMINAR -->
@@ -342,7 +295,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 <script>
 	$(document).ready(function(){
 
-
+		$('.frmContreftabla').hide();
+		$('.frmContidreferencia').hide();
 
 
 		var table = $('#example').DataTable({
@@ -379,6 +333,65 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		$("#sign_in").submit(function(e){
 			e.preventDefault();
 		});
+
+
+		function llenarCombosGral(dato, filtro, contenedor) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'llenarCombosGral',dato: dato, filtro: JSON.stringify(filtro)},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('#'+contenedor).html('');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					if (dato == 'codigopostal') {
+						$('#'+contenedor).val(data);
+					} else {
+						$('#'+contenedor).html(data);
+					}
+
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+
+		}
+
+		function loadMunicipios() {
+			var data = [{"estado": $('#estado').val()}];
+			llenarCombosGral('municipio', data, 'delegacion');
+		}
+
+		function loadColonia() {
+			var data = [{"municipio":$('#delegacion').val()}];
+			llenarCombosGral('colonia', data, 'colonia');
+		}
+
+		function loadPostal() {
+			var data = [{"municipio":$('#delegacion').val(),"colonia":$('#colonia').val()}];
+			llenarCombosGral('codigopostal', data, 'codigopostal');
+		}
+
+		$('#estado').change(function() {
+			loadMunicipios();
+		});
+
+		$('#delegacion').change(function() {
+			loadColonia();
+		});
+
+		$('#colonia').change(function() {
+			loadPostal();
+		});
+
+
 
 
 		function frmAjaxModificar(id) {
@@ -540,58 +553,62 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		});
 
 
-		$('.modificar').click(function(){
+		$('.form').submit(function(e){
 
-			//información del formulario
-			var formData = new FormData($(".formulario")[1]);
-			var message = "";
-			//hacemos la petición ajax
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: formData,
-				//necesario para subir archivos via ajax
-				cache: false,
-				contentType: false,
-				processData: false,
-				//mientras enviamos el archivo
-				beforeSend: function(){
-
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data == '') {
-						swal({
-								title: "Respuesta",
-								text: "Registro Modificado con exito!!",
-								type: "success",
-								timer: 1500,
-								showConfirmButton: false
-						});
-
-						$('#lgmModificar').modal('hide');
-						table.ajax.reload();
-					} else {
-						swal({
-								title: "Respuesta",
-								text: data,
-								type: "error",
-								timer: 2500,
-								showConfirmButton: false
-						});
+			e.preventDefault();
+			if ($('.form')[0].checkValidity()) {
 
 
+				//información del formulario
+				var formData = new FormData($(".form")[0]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
+
+					},
+					//una vez finalizado correctamente
+					success: function(data){
+
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Modificado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
+
+
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
+
+
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
 					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
+				});
+			}
 		});
 	});
 </script>

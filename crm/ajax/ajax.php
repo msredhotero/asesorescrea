@@ -7,6 +7,7 @@ include ('../includes/funcionesReferencias.php');
 include ('../includes/funcionesNotificaciones.php');
 include ('../includes/funcionesMensajes.php');
 include ('../includes/validadores.php');
+include ('../includes/funcionesPostal.php');
 
 $serviciosUsuarios  		= new ServiciosUsuarios();
 $serviciosFunciones 		= new Servicios();
@@ -15,7 +16,7 @@ $serviciosReferencias		= new ServiciosReferencias();
 $serviciosNotificaciones	= new ServiciosNotificaciones();
 $serviciosMensajes	= new ServiciosMensajes();
 $serviciosValidador        = new serviciosValidador();
-
+$serviciosPostal        = new serviciosPostal();
 
 $accion = $_POST['accion'];
 
@@ -27,9 +28,13 @@ date_default_timezone_set('America/Mexico_City');
 
 
 switch ($accion) {
-    case 'login':
-        enviarMail($serviciosUsuarios);
-        break;
+   case 'llenarCombosGral':
+      llenarCombosGral($serviciosReferencias, $serviciosUsuarios,$serviciosFunciones,$serviciosPostal);
+   break;
+
+   case 'login':
+      enviarMail($serviciosUsuarios);
+      break;
 	case 'entrar':
 		entrar($serviciosUsuarios);
 		break;
@@ -763,9 +768,263 @@ switch ($accion) {
       eliminarDirectorioasesores($serviciosReferencias);
    break;
 
+   case 'insertarDomicilios':
+      insertarDomicilios($serviciosReferencias);
+   break;
+   case 'modificarDomicilios':
+      modificarDomicilios($serviciosReferencias);
+   break;
+   case 'eliminarDomicilios':
+      eliminarDomicilios($serviciosReferencias);
+   break;
+   case 'traerDomiciliosPorTablaReferencia':
+   traerDomiciliosPorTablaReferencia($serviciosReferencias);
+   break;
+
+   case 'modificarAsesoresunicaUnicaDocumentacion':
+      modificarAsesoresunicaUnicaDocumentacion($serviciosReferencias);
+   break;
+   case 'modificarEstadoDocumentacionasesoresunica':
+      modificarEstadoDocumentacionasesoresunica($serviciosReferencias);
+   break;
+   case 'traerDocumentacionPorAsesoresunicaDocumentacion':
+      traerDocumentacionPorAsesoresunicaDocumentacion($serviciosReferencias);
+   break;
+   case 'eliminarDocumentacionasesoresunica':
+      eliminarDocumentacionasesoresunica($serviciosReferencias);
+   break;
+   case 'traerDirectorio':
+      traerDirectorio($serviciosReferencias);
+   break;
 
 }
-/* Fin */
+/* FinFinFin */
+
+function traerDirectorio($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->traerDirectorioasesoresPorId($id);
+   $resAsesores = $serviciosReferencias->traerAsesoresPorId($id);
+
+
+   $titulo = "Asesor: ".mysql_result($resAsesores,0,'apellidopaterno').' '.mysql_result($resAsesores,0,'apellidomaterno').' '.mysql_result($resAsesores,0,'nombre');
+
+   $data['titulo'] = $titulo;
+
+   $cad = '';
+   $cad .= '<table class="table table-striped table-bordered">';
+   $cad .= '<thead>';
+   $cad .= '<th>Area</th>
+            <th>Nombre</th>
+            <th>Tel.</th>
+            <th>Tel. Movil</th>
+            <th>Email</th>';
+   $cad .= '</thead>';
+   $cad .= '<tbody>';
+
+   while ($row = mysql_fetch_array($res))
+	{
+      $cad .= '<tr>';
+      $cad .= '<td>'.$row['area'].'</td>';
+      $cad .= '<td>'.$row['razonsocial'].'</td>';
+      $cad .= '<td>'.$row['telefono'].'</td>';
+      $cad .= '<td>'.$row['telefonocelular'].'</td>';
+      $cad .= '<td>'.$row['email'].'</td>';
+      $cad .= '</tr>';
+   }
+
+   $cad .= '</tbody></table';
+
+   $data['contenido'] = $cad;
+
+
+   header('Content-type: application/json');
+   echo json_encode($data);
+}
+
+function eliminarDocumentacionasesoresunica($serviciosReferencias) {
+   $idasesor = $_POST['idasesor'];
+   $iddocumentacion = $_POST['iddocumentacion'];
+
+   $res = $serviciosReferencias->eliminarDocumentacionasesoresunicas($idasesor, $iddocumentacion);
+
+   header('Content-type: application/json');
+   echo json_encode($res);
+}
+
+
+function traerDocumentacionPorAsesoresunicaDocumentacion($serviciosArbitros) {
+
+   $idasesor = $_POST['idasesor'];
+   $iddocumentacion = $_POST['iddocumentacion'];
+
+   $resV['datos'] = '';
+   $resV['error'] = false;
+
+   $resFoto = $serviciosArbitros->traerDocumentacionPorAsesoresunicaDocumentacion($idasesor,$iddocumentacion);
+
+   $imagen = '';
+
+   if (mysql_num_rows($resFoto) > 0) {
+      /* produccion
+      $imagen = 'https://www.saupureinconsulting.com.ar/aifzn/'.mysql_result($resFoto,0,'archivo').'/'.mysql_result($resFoto,0,'imagen');
+      */
+
+      //desarrollo
+
+      if (mysql_result($resFoto,0,'type') == '') {
+         $imagen = '../../imagenes/sin_img.jpg';
+
+         $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+         $resV['error'] = true;
+      } else {
+
+         $imagen = '../../archivos/asesores/'.$idasesor.'/'.mysql_result($resFoto,0,'carpeta').'/'.mysql_result($resFoto,0,'archivo');
+
+         $resV['datos'] = array('imagen' => $imagen, 'type' => mysql_result($resFoto,0,'type'));
+
+         $resV['error'] = false;
+      }
+
+
+
+   } else {
+      $imagen = '../../imagenes/sin_img.jpg';
+
+
+      $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+      $resV['error'] = true;
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
+function modificarEstadoDocumentacionasesoresunica($serviciosReferencias) {
+   session_start();
+
+   $iddocumentacionasesorunica = $_POST['iddocumentacionasesoresunica'];
+   $idestado = $_POST['idestado'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+
+   if ($iddocumentacionasesorunica == 0) {
+      $resV['leyenda'] = 'Todavia no cargo el archivo, no podra modificar el estado de la documentación';
+      $resV['error'] = true;
+   } else {
+      $res = $serviciosReferencias->modificarEstadoDocumentacionasesoresunica($iddocumentacionasesorunica,$idestado,$usuariomodi);
+
+      if ($res == true) {
+         $resV['leyenda'] = '';
+         $resV['error'] = false;
+      } else {
+         $resV['leyenda'] = 'Hubo un error al modificar datos';
+         $resV['error'] = true;
+      }
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
+function modificarAsesoresunicaUnicaDocumentacion($serviciosReferencias) {
+   $idasesor = $_POST['idasesor'];
+   $campo = $_POST['campo'];
+   $valor = $_POST['valor'];
+
+   $res = $serviciosReferencias->modificarAsesoresunicaUnicaDocumentacion($idasesor, $campo, $valor);
+
+   if ($res == true) {
+      $resV['leyenda'] = '';
+      $resV['error'] = false;
+   } else {
+      $resV['leyenda'] = 'Hubo un error al modificar datos';
+      $resV['error'] = true;
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
+
+function llenarCombosGral($serviciosReferencias, $serviciosUsuarios,$serviciosFunciones,$serviciosPostal) {
+   //$id = $_POST['id'];
+   $dato = $_POST['dato'];
+   $filtro = json_decode($_POST['filtro']);
+
+   //die(var_dump($filtro));
+
+   $res = $serviciosPostal->devolverComboHTML($dato, $filtro[0]);
+   if ($dato == 'codigopostal') {
+      if (mysql_num_rows($res)>0) {
+         $cadRef = mysql_result($res,0,0);
+      } else {
+         $cadRef = '';
+      }
+   } else {
+      $cadRef = "<option value=''>-- Seleccionar --</option>";
+      $cadRef .= $serviciosFunciones->devolverSelectBox($res,array(0),'');
+   }
+
+
+   echo $cadRef;
+}
+
+function insertarDomicilios($serviciosReferencias) {
+   $reftabla = $_POST['reftabla'];
+   $idreferencia = $_POST['idreferencia'];
+   $calle = $_POST['calle'];
+   $numeroext = $_POST['numeroext'];
+   $numeroint = $_POST['numeroint'];
+   $colonia = $_POST['colonia'];
+   $estado = $_POST['estado'];
+   $delegacion = $_POST['delegacion'];
+   $codigopostal = $_POST['codigopostal'];
+
+   $res = $serviciosReferencias->insertarDomicilios($reftabla,$idreferencia,$calle,$numeroext,$numeroint,$colonia,$estado,$delegacion,$codigopostal);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarDomicilios($serviciosReferencias) {
+   $id = $_POST['id'];
+   $reftabla = $_POST['reftabla'];
+   $idreferencia = $_POST['idreferencia'];
+   $calle = $_POST['calle'];
+   $numeroext = $_POST['numeroext'];
+   $numeroint = $_POST['numeroint'];
+   $colonia = $_POST['colonia'];
+   $estado = $_POST['estado'];
+   $delegacion = $_POST['delegacion'];
+   $codigopostal = $_POST['codigopostal'];
+
+   $res = $serviciosReferencias->modificarDomicilios($id,$reftabla,$idreferencia,$calle,$numeroext,$numeroint,$colonia,$estado,$delegacion,$codigopostal);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarDomicilios($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarDomicilios($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
 
 
 function insertarDirectorioasesores($serviciosReferencias) {
@@ -774,8 +1033,9 @@ function insertarDirectorioasesores($serviciosReferencias) {
    $razonsocial = $_POST['razonsocial'];
    $telefono = $_POST['telefono'];
    $email = $_POST['email'];
+   $telefonocelular = $_POST['telefonocelular'];
 
-   $res = $serviciosReferencias->insertarDirectorioasesores($refasesores,$area,$razonsocial,$telefono,$email);
+   $res = $serviciosReferencias->insertarDirectorioasesores($refasesores,$area,$razonsocial,$telefono,$email,$telefonocelular);
 
    if ((integer)$res > 0) {
       echo '';
@@ -791,8 +1051,9 @@ function modificarDirectorioasesores($serviciosReferencias) {
    $razonsocial = $_POST['razonsocial'];
    $telefono = $_POST['telefono'];
    $email = $_POST['email'];
+   $telefonocelular = $_POST['telefonocelular'];
 
-   $res = $serviciosReferencias->modificarDirectorioasesores($id,$refasesores,$area,$razonsocial,$telefono,$email);
+   $res = $serviciosReferencias->modificarDirectorioasesores($id,$refasesores,$area,$razonsocial,$telefono,$email,$telefonocelular);
 
    if ($res == true) {
       echo '';
@@ -2576,8 +2837,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
       case 'dbdirectorioasesores':
          $resultado = $serviciosReferencias->traerDirectorioasesoresPorId($id);
 
-         $lblCambio	 	= array('refasesores','razonsocial');
-         $lblreemplazo	= array('Asesores','Razon Social');
+         $lblCambio	 	= array('refasesores','razonsocial','telefonocelular');
+         $lblreemplazo	= array('Asesores','Nombre','Tel. Movil');
 
 
 
@@ -2636,8 +2897,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
       case 'dbasesores':
          $resultado = $serviciosReferencias->traerAsesoresPorId($id);
 
-         $lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','nss','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta','urlprueba','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas','razonsocial','vigdesderc','vighastarc','refestadoasesor');
-         $lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Nro de Seguro Social','Clave Interbancaria','ID Cliente Inbursa','Clave Asesor','Fecha de Alta','URL Prueba','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona','Razon Social','Vig. Desde RC','Vig. Hasta RC','Est.');
+         $lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','nss','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta','urlprueba','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas','razonsocial','vigdesderc','vighastarc','refestadoasesor','refestadoasesorinbursa');
+         $lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Nro de Seguro Social','Clave Interbancaria','ID Cliente Inbursa','Clave Asesor','Fecha de Alta','URL Prueba','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona','Razon Social','Vig. Desde RC','Vig. Hasta RC','Est. CREA','Est. INBURSA');
 
 
 
@@ -2670,8 +2931,11 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $resVar9 = $serviciosReferencias->traerEstadoasesor();
          $cadRef9 = $serviciosFunciones->devolverSelectBoxActivo($resVar9,array(1),'',mysql_result($resultado,0,'refestadoasesor'));
 
-         $refdescripcion = array(0=> $cadRef1,1=> $cadRef2, 2=>$cadRef5,3=>$cadRef8,4=>$cadRef9);
-         $refCampo 	=  array('refusuarios','refescolaridades','sexo','reftipopersonas','refestadoasesor');
+         $resVar10 = $serviciosReferencias->traerEstadoasesor();
+         $cadRef10 = $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',mysql_result($resultado,0,'refestadoasesorinbursa'));
+
+         $refdescripcion = array(0=> $cadRef1,1=> $cadRef2, 2=>$cadRef5,3=>$cadRef8,4=>$cadRef9,5=>$cadRef10);
+         $refCampo 	=  array('refusuarios','refescolaridades','sexo','reftipopersonas','refestadoasesor','refestadoasesorinbursa');
       break;
       case 'dbpostulantes':
 
@@ -3138,8 +3402,9 @@ function modificarAsesores($serviciosReferencias) {
    $vighastarc = $_POST['vighastarc'];
 
    $refestadoasesor = $_POST['refestadoasesor'];
+   $refestadoasesorinbursa = $_POST['refestadoasesorinbursa'];
 
-   $res = $serviciosReferencias->modificarAsesores($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechamodi,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc, $vighastarc,$refestadoasesor);
+   $res = $serviciosReferencias->modificarAsesores($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechamodi,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc, $vighastarc,$refestadoasesor,$refestadoasesorinbursa);
 
    if ($res == true) {
       echo '';

@@ -249,6 +249,16 @@ if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 	$span = 'text-info glyphicon glyphicon-plus-sign';
 }
 
+$input2 = '';
+$boton2 = '';
+$leyenda2 = '';
+$campo2 = '';
+
+$input3 = '';
+$boton3 = '';
+$leyenda3 = '';
+$campo3 = '';
+
 switch ($iddocumentacion) {
 	case 3:
 		// code...
@@ -340,10 +350,10 @@ switch ($iddocumentacion) {
 		$leyenda = 'Cargue la Vigencia Desde del Seguro';
 		$campo = 'vigdesdecedulaseguro';
 
-		$input2 = '<input type="text" maxlength="25" name="vigdesdecedulaseguro" id="vigdesdecedulaseguro" class="form-control" value="'.$dato2.'"/> ';
+		$input2 = '<input type="text" maxlength="25" name="vighastacedulaseguro" id="vighastacedulaseguro" class="form-control" value="'.$dato2.'"/> ';
 		$boton2 = '<button type="button" class="btn btn-primary waves-effect btnModificar2">GUARDAR</button>';
 		$leyenda2 = 'Cargue la Vigencia Hasta del Seguro';
-		$campo2 = 'vigdesdecedulaseguro';
+		$campo2 = 'vighastacedulaseguro';
 	break;
 	case 27:
 		// code...

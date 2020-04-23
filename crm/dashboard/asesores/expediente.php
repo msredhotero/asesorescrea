@@ -29,7 +29,7 @@ $serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../asesores/
 
 $fecha = date('Y-m-d');
 
-$idusuario = $_GET['id'];
+$id = $_GET['id'];
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
 $resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Asesores",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
@@ -40,9 +40,7 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
-$resultado 		= 	$serviciosReferencias->traerPostulantesPorIdUsuario($idusuario);
-
-$id = mysql_result($resultado,0,'idpostulante');
+$resultado 		= 	$serviciosReferencias->traerAsesoresPorId($id);
 
 $iddocumentacion = $_GET['documentacion'];
 
@@ -61,154 +59,26 @@ $modificar = "modificarPostulantes";
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$resultado 		= 	$serviciosReferencias->traerPostulantesPorId($id);
+
 
 $postulante = mysql_result($resultado,0,'nombre').' '.mysql_result($resultado,0,'apellidopaterno').' '.mysql_result($resultado,0,'apellidomaterno');
 
-$resGuia = $serviciosReferencias->traerGuiasPorEsquemaEspecial(mysql_result($resultado,0,'refesquemareclutamiento'));
-
-$resEstadoSiguiente = $serviciosReferencias->traerGuiasPorEsquemaSiguiente(mysql_result($resultado,0,'refesquemareclutamiento'), mysql_result($resultado,0,'refestadopostulantes'));
-
-if (mysql_num_rows($resEstadoSiguiente) > 0) {
-	$estadoSiguiente = mysql_result($resEstadoSiguiente,0,'refestadopostulantes');
-} else {
-	$estadoSiguiente = 1;
-}
-
-
-$path  = '../../archivos/postulantes/'.$id;
-
-if (!file_exists($path)) {
-	mkdir($path, 0777);
-}
-
-/**** son 10 documentaciones */
-$pathINEf  = '../../archivos/postulantes/'.$id.'/inef';
-
-if (!file_exists($pathINEf)) {
-	mkdir($pathINEf, 0777);
-}
-
-$filesINEf = array_diff(scandir($pathINEf), array('.', '..'));
-
-/****************************************************************/
-
-$pathINEd  = '../../archivos/postulantes/'.$id.'/ined';
-
-if (!file_exists($pathINEd)) {
-	mkdir($pathINEd, 0777);
-}
-
-$filesINEd = array_diff(scandir($pathINEd), array('.', '..'));
-
-/****************************************************************/
-
-$pathAN  = '../../archivos/postulantes/'.$id.'/actanacimiento';
-
-if (!file_exists($pathAN)) {
-	mkdir($pathAN, 0777);
-}
-
-$filesAN = array_diff(scandir($pathAN), array('.', '..'));
-
-/****************************************************************/
-
-$pathCURP  = '../../archivos/postulantes/'.$id.'/curp';
-
-if (!file_exists($pathCURP)) {
-	mkdir($pathCURP, 0777);
-}
-
-$filesCURP = array_diff(scandir($pathCURP), array('.', '..'));
-
-/****************************************************************/
-
-$pathRFC  = '../../archivos/postulantes/'.$id.'/rfc';
-
-if (!file_exists($pathRFC)) {
-	mkdir($pathRFC, 0777);
-}
-
-$filesRFC = array_diff(scandir($pathRFC), array('.', '..'));
-
-/****************************************************************/
-
-$pathNSS  = '../../archivos/postulantes/'.$id.'/nss';
-
-if (!file_exists($pathNSS)) {
-	mkdir($pathNSS, 0777);
-}
-
-$filesNSS = array_diff(scandir($pathNSS), array('.', '..'));
-
-/****************************************************************/
-
-$pathCE  = '../../archivos/postulantes/'.$id.'/comprobanteestudio';
-
-if (!file_exists($pathCE)) {
-	mkdir($pathCE, 0777);
-}
-
-$filesCE = array_diff(scandir($pathCE), array('.', '..'));
-
-/****************************************************************/
-
-$pathCD  = '../../archivos/postulantes/'.$id.'/comprobantedomicilio';
-
-if (!file_exists($pathCD)) {
-	mkdir($pathCD, 0777);
-}
-
-$filesCD = array_diff(scandir($pathCD), array('.', '..'));
-
-/****************************************************************/
-
-$pathCV  = '../../archivos/postulantes/'.$id.'/cv';
-
-if (!file_exists($pathCV)) {
-	mkdir($pathCV, 0777);
-}
-
-$filesCV = array_diff(scandir($pathCV), array('.', '..'));
-
-/****************************************************************/
-
-$pathCedulaseguros  = '../../archivos/postulantes/'.$id.'/cedulaseguros';
-
-if (!file_exists($pathCedulaseguros)) {
-	mkdir($pathCedulaseguros, 0777);
-}
-
-$filesCedulaseguros = array_diff(scandir($pathCedulaseguros), array('.', '..'));
-
-/****************************************************************/
-
-$pathRC  = '../../archivos/postulantes/'.$id.'/rc';
-
-if (!file_exists($pathRC)) {
-	mkdir($pathRC, 0777);
-}
-
-$filesRC = array_diff(scandir($pathRC), array('.', '..'));
-
-
-
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacion($id, $iddocumentacion);
+$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorAsesoresunicaDocumentacion($id, $iddocumentacion);
 
 $resDocumentacion = $serviciosReferencias->traerDocumentacionesPorId($iddocumentacion);
 
-$resPostulante = $serviciosReferencias->traerPostulantesPorId($id);
+$resPostulante = $serviciosReferencias->traerAsesoresPorId($id);
 
 $resEstados = $serviciosReferencias->traerEstadodocumentaciones();
 
-$idestado = mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones');
+
 
 if (mysql_num_rows($resDocumentacionAsesor) > 0) {
-	$cadRefEstados = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', $idestado);
+	$cadRefEstados = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'));
 
-	$iddocumentacionasesores = mysql_result($resDocumentacionAsesor,0,'iddocumentacionasesor');
+	$iddocumentacionasociado = mysql_result($resDocumentacionAsesor,0,'iddocumentacionasesorunica');
 
 	$estadoDocumentacion = mysql_result($resDocumentacionAsesor,0,'estadodocumentacion');
 
@@ -235,7 +105,7 @@ if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 } else {
 	$cadRefEstados = $serviciosFunciones->devolverSelectBox($resEstados,array(1),'');
 
-	$iddocumentacionasesores = 0;
+	$iddocumentacionasociado = 0;
 
 	$estadoDocumentacion = 'Falta Cargar';
 
@@ -381,10 +251,10 @@ switch ($iddocumentacion) {
 		$leyenda = 'Cargue la Vigencia Desde del Seguro';
 		$campo = 'vigdesdecedulaseguro';
 
-		$input2 = '<input type="text" maxlength="25" name="vigdesdecedulaseguro" id="vigdesdecedulaseguro" class="form-control" value="'.$dato2.'"/> ';
+		$input2 = '<input type="text" maxlength="25" name="vighastacedulaseguro" id="vighastacedulaseguro" class="form-control" value="'.$dato2.'"/> ';
 		$boton2 = '<button type="button" class="btn btn-primary waves-effect btnModificar2">GUARDAR</button>';
 		$leyenda2 = 'Cargue la Vigencia Hasta del Seguro';
-		$campo2 = 'vigdesdecedulaseguro';
+		$campo2 = 'vighastacedulaseguro';
 	break;
 
 	default:
@@ -396,9 +266,7 @@ switch ($iddocumentacion) {
 	break;
 }
 
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,7);
-
-$puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorAsesoresunicaDocumentacionCompleta($id);
 
 ?>
 
@@ -542,7 +410,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								DOCUMENTACION - <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?>
+								DOCUMENTACION: <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?> - ASESOR: <?php echo $postulante; ?>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -564,26 +432,72 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 
 								<div class="row" style="padding: 5px 20px;">
 
-									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
-										<label class="form-label"><?php echo $leyenda; ?></label>
-										<div class="form-group input-group">
-											<div class="form-line">
-												<?php echo $input; ?>
+									<div class="row" style="padding: 5px 20px;">
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+											<label class="form-label"><?php echo $leyenda; ?></label>
+											<div class="form-group input-group">
+												<div class="form-line">
+													<?php echo $input; ?>
 
+												</div>
+											</div>
+										</div>
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+											<label class="form-label"> </label>
+											<div class="form-group input-group">
+												<div class="form-line">
+													<?php echo $boton; ?>
+
+												</div>
 											</div>
 										</div>
 									</div>
-									<?php if ($idestado != 5) { ?>
-									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
-										<label class="form-label"> </label>
-										<div class="form-group input-group">
-											<div class="form-line">
-												<?php echo $boton; ?>
+									<?php if (isset($campo2)) { ?>
+										<div class="row" style="padding: 5px 20px;">
+											<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+												<label class="form-label"><?php echo $leyenda2; ?></label>
+												<div class="form-group input-group">
+													<div class="form-line">
+														<?php echo $input2; ?>
 
+													</div>
+												</div>
+											</div>
+											<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+												<label class="form-label"> </label>
+												<div class="form-group input-group">
+													<div class="form-line">
+														<?php echo $boton2; ?>
+
+													</div>
+												</div>
 											</div>
 										</div>
-									</div>
 									<?php } ?>
+
+									<?php if (isset($campo3)) { ?>
+										<div class="row" style="padding: 5px 20px;">
+											<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+												<label class="form-label"><?php echo $leyenda3; ?></label>
+												<div class="form-group input-group">
+													<div class="form-line">
+														<?php echo $input3; ?>
+
+													</div>
+												</div>
+											</div>
+											<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+												<label class="form-label"> </label>
+												<div class="form-group input-group">
+													<div class="form-line">
+														<?php echo $boton3; ?>
+
+													</div>
+												</div>
+											</div>
+										</div>
+									<?php } ?>
+
 								</div>
 
 							</form>
@@ -608,7 +522,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 							</ul>
 						</div>
 						<div class="body">
-							<?php if ($idestado != 5) { ?>
+							<?php if ($iddocumentacionasociado != 0) { ?>
 							<div class="row">
 								<button type="button" class="btn bg-red waves-effect btnEliminar">
 									<i class="material-icons">remove</i>
@@ -633,7 +547,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 					</div>
 				</div>
 			</div>
-			<?php if ($idestado != 5) { ?>
+
 			<div class="row">
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card">
@@ -651,7 +565,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 						</div>
 						<div class="body">
 
-							<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+							<form action="subirunica.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
 								<div class="dz-message">
 									<div class="drag-icon-cph">
 										<i class="material-icons">touch_app</i>
@@ -668,7 +582,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 					</div>
 				</div>
 			</div>
-			<?php } ?>
+
 		</div>
 	</div>
 </section>
@@ -799,23 +713,23 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
-			url = "subirdocumentacioni.php?documentacion=" + idTable;
+			url = "expediente.php?id=<?php echo $id; ?>&documentacion=" + idTable;
 			$(location).attr('href',url);
 		});
 
 		$('.btnModificar').click(function() {
-			modificarPostulanteUnicaDocumentacion($('#<?php echo $campo; ?>').val(),'<?php echo $campo; ?>');
+			modificarAsesoresunicaUnicaDocumentacion($('#<?php echo $campo; ?>').val(),'<?php echo $campo; ?>');
 		});
 
 		<?php if (isset($campo2)) { ?>
 		$('.btnModificar2').click(function() {
-			modificarPostulanteUnicaDocumentacion($('#<?php echo $campo2; ?>').val(),'<?php echo $campo2; ?>');
+			modificarAsesoresunicaUnicaDocumentacion($('#<?php echo $campo2; ?>').val(),'<?php echo $campo2; ?>');
 		});
 		<?php } ?>
 
 		<?php if (isset($campo2)) { ?>
 		$('.btnModificar3').click(function() {
-			modificarPostulanteUnicaDocumentacion($('#<?php echo $campo3; ?>').val(),'<?php echo $campo3; ?>');
+			modificarAsesoresunicaUnicaDocumentacion($('#<?php echo $campo3; ?>').val(),'<?php echo $campo3; ?>');
 		});
 		<?php } ?>
 
@@ -824,15 +738,15 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 			$(location).attr('href',url);
 		});
 
-		function modificarPostulanteUnicaDocumentacion(valor, campo) {
+		function modificarAsesoresunicaUnicaDocumentacion(valor, campo) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
 				data: {
-					accion: 'modificarPostulanteUnicaDocumentacion',
-					idpostulante: <?php echo $id; ?>,
+					accion: 'modificarAsesoresunicaUnicaDocumentacion',
+					idasesor: <?php echo $id; ?>,
 					campo: campo,
 					valor: valor
 				},
@@ -861,18 +775,18 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 		}
 
 		$('.guardarEstado').click(function() {
-			modificarEstadoDocumentacionPostulante($('#refestados').val());
+			modificarEstadoDocumentacionasesoresunica($('#refestados').val());
 		});
 
-		function modificarEstadoDocumentacionPostulante(idestado) {
+		function modificarEstadoDocumentacionasesoresunica(idestado) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
 				data: {
-					accion: 'modificarEstadoDocumentacionPostulante',
-					iddocumentacionasesores: <?php echo $iddocumentacionasesores; ?>,
+					accion: 'modificarEstadoDocumentacionasesoresunica',
+					iddocumentacionasesoresunica: <?php echo $iddocumentacionasociado; ?>,
 					idestado: idestado
 				},
 				//mientras enviamos el archivo
@@ -902,9 +816,9 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 
 		function traerImagen(contenedorpdf, contenedor) {
 			$.ajax({
-				data:  {idpostulante: <?php echo $id; ?>,
+				data:  {idasesor: <?php echo $id; ?>,
 						iddocumentacion: <?php echo $iddocumentacion; ?>,
-						accion: 'traerDocumentacionPorPostulanteDocumentacion'},
+						accion: 'traerDocumentacionPorAsesoresunicaDocumentacion'},
 				url:   '../../ajax/ajax.php',
 				type:  'post',
 				beforeSend: function () {
@@ -927,11 +841,9 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 					}
 
 					if (response.error) {
-						$('.btnContinuar').hide();
 						$('.btnEliminar').hide();
 						$('.guardarEstado').hide();
 					} else {
-						$('.btnContinuar').show();
 						$('.btnEliminar').show();
 						$('.guardarEstado').show();
 					}
@@ -944,7 +856,6 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 
 		traerImagen('example1','timagen1');
 
-		<?php if ($idestado != 5) { ?>
 
 		Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
 
@@ -965,7 +876,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 					swal("Correcto!", resp.replace("1", ""), "success");
 					$('.btnGuardar').show();
 					$('.infoPlanilla').hide();
-					location.reload();
+					//location.reload();
 				});
 
 				this.on('error', function( file, resp ){
@@ -981,10 +892,9 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 				 idpostulante: <?php echo $id; ?>,
 				 iddocumentacion: <?php echo $iddocumentacion; ?>
 			},
-			url: 'subir.php'
+			url: 'subirunica.php'
 		});
 
-		<?php } ?>
 
 		function setButtonWavesEffect(event) {
 			$(event.currentTarget).find('[role="menu"] li a').removeClass('waves-effect');
@@ -1002,40 +912,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 
 
 
-		function modificarEstadoPostulante(id, idestado) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {accion: 'modificarEstadoPostulante',id: id, idestado: idestado},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-					$('.btnContinuar').hide();
-				},
-				//una vez finalizado correctamente
-				success: function(data){
 
-					if (data != '') {
-						$(location).attr('href',data);
-
-					} else {
-						swal("Error!", 'Se genero un error al modificar el estado del postulante', "warning");
-
-						$("#load").html('');
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
-		}
-
-		$('.btnContinuar').click(function() {
-			modificarEstadoPostulante(<?php echo $id; ?>, <?php echo $iddocumentacion; ?>);
-		});
 
 		$('.eliminar').click(function() {
 			$.ajax({
@@ -1043,7 +920,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {accion: 'eliminarDocumentacionPostulante',idpostulante: <?php echo $id; ?>, iddocumentacion: <?php echo $iddocumentacion; ?>},
+				data: {accion: 'eliminarDocumentacionasesoresunica',idasesor: <?php echo $id; ?>, iddocumentacion: <?php echo $iddocumentacion; ?>},
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('.btnEliminar').hide();

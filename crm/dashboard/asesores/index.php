@@ -55,8 +55,8 @@ $modificar = "modificarAsesores";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbasesores";
 
-$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','nss','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta','urlprueba','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas','razonsocial','vigdesderc','vighastarc','refestadoasesor');
-$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Nro de Seguro Social','Clave Interbancaria','ID Cliente Inbursa','Clave Asesor','Fecha de Alta','URL Prueba','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona','Razon Social','Vig. Desde RC','Vig. Hasta RC','Estado Asesor');
+$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','nss','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta','urlprueba','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas','razonsocial','vigdesderc','vighastarc','refestadoasesor','refestadoasesorinbursa');
+$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Nro de Seguro Social','Clave Interbancaria','ID Cliente Inbursa','Clave Asesor','Fecha de Alta','URL Prueba','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona','Razon Social','Vig. Desde RC','Vig. Hasta RC','Estado Asesor CREA','Estado Asesor INBURSA');
 
 
 $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
@@ -73,8 +73,8 @@ $cadRef8 = $serviciosFunciones->devolverSelectBox($resVar8,array(1),'');
 $resVar9 = $serviciosReferencias->traerEstadoasesor();
 $cadRef9 = $serviciosFunciones->devolverSelectBox($resVar9,array(1),'');
 
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2, 2=>$cadRef5,3=>$cadRef8,4=>$cadRef9);
-$refCampo 	=  array('refusuarios','refescolaridades','sexo','reftipopersonas','refestadoasesor');
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2, 2=>$cadRef5,3=>$cadRef8,4=>$cadRef9,5=>$cadRef9);
+$refCampo 	=  array('refusuarios','refescolaridades','sexo','reftipopersonas','refestadoasesor','refestadoasesorinbursa');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -236,7 +236,8 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 												<th>Clave Asesor</th>
 												<th>Fecha Alta</th>
 												<th class="perfilS">Resp.Comercial</th>
-												<th>Est.</th>
+												<th>Est. CREA</th>
+												<th>Est. INBURSA</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -251,7 +252,8 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 												<th>Clave Asesor</th>
 												<th>Fecha Alta</th>
 												<th>Resp.Comercial</th>
-												<th>Est.</th>
+												<th>Est. CREA</th>
+												<th>Est. INBURSA</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -344,6 +346,25 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 		</form>
 
 
+
+		<div class="modal fade" id="lgmDirectorio" tabindex="-1" role="dialog">
+			 <div class="modal-dialog modal-lg" role="document">
+				  <div class="modal-content">
+						<div class="modal-header">
+							 <h4 class="modal-title" id="lblModalDirectorio"></h4>
+						</div>
+						<div class="modal-body">
+							<div class="row contDirectorio">
+							</div>
+						</div>
+						<div class="modal-footer">
+							 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+						</div>
+				  </div>
+			 </div>
+		</div>
+
+
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
@@ -367,6 +388,8 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 
 <script>
 	$(document).ready(function(){
+
+
 
 		var options2 = {
 
@@ -575,6 +598,64 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 				select.append( '<option value="'+d+'">'+d+'</option>' )
 			} );
 		} );
+
+		$('#example tbody').on('dblclick', 'tr', function () {
+			var data = table.row( this ).data();
+			var str = data[11];
+
+			var indexId = str.indexOf('id=');
+			var str2 = str.slice(indexId + 4, str.length);
+			var indexId2 = str2.indexOf('"');
+			var idTabla = str.slice(indexId + 4, indexId + 4 + indexId2);
+
+			traerDirectorio(idTabla);
+
+		});
+
+		function traerDirectorio(id) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'traerDirectorio', id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('#lblModalDirectorio').html();
+					$('.contDirectorio').html();
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						$('#lgmDirectorio').modal();
+						$('#lblModalDirectorio').html(data.titulo);
+						$('.contDirectorio').html(data.contenido);
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data,
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+
+		}
 
 		$("#sign_in").submit(function(e){
 			e.preventDefault();
