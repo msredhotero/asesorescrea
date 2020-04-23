@@ -611,9 +611,9 @@ switch ($tabla) {
 				$resAjax = $serviciosReferencias->traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,$estado);
 				$res = $serviciosReferencias->traerOportunidadesPorEstadoH('3');
 				if ($_SESSION['idroll_sahilices'] == 4 || $_SESSION['idroll_sahilices'] == 1) {
-					$label = array('btnReasignar');
-					$class = array('bg-deep-orange');
-					$icon = array('cached');
+					$label = array('btnReasignar','btnModificar');
+					$class = array('bg-deep-orange','bg-amber');
+					$icon = array('cached','edit');
 				} else {
 					$label = array();
 					$class = array();
@@ -624,6 +624,25 @@ switch ($tabla) {
 
 		}
 
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 9;
+	break;
+	case 'oportunidadespendientes':
+
+		$min = $_GET['start'];
+		$max = $_GET['end'];
+		$estado = 9;
+
+		$responsableComercial = $_GET['sSearch_0'];
+		$resAjax = $serviciosReferencias->traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,9);
+		$res = $serviciosReferencias->traerOportunidadesPorEstadoH('3');
+		if ($_SESSION['idroll_sahilices'] == 4 || $_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 8) {
+			$label = array('btnReasignar','btnModificar');
+			$class = array('bg-deep-orange','bg-amber');
+			$icon = array('cached','edit');
+		}
 
 		$indiceID = 0;
 		$empieza = 1;

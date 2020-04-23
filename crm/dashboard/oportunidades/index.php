@@ -237,6 +237,12 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox2($resEstado2,array(1),' ');
 												<span>SUBIR ARCHIVO</span>
 											</button>
 											<?php } ?>
+											<?php if ($_SESSION['idroll_sahilices'] == 8) { ?>
+												<button type="button" class="btn bg-deep-orange waves-effect btnPendientes">
+													<i class="material-icons">assignment_late</i>
+													<span>PENDIENTES DE REVISION</span>
+												</button>
+											<?php } ?>
 
 										</div>
 									</div>
@@ -296,6 +302,41 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox2($resEstado2,array(1),' ');
 									<h4>HISTORICO</h4>
 									<hr>
 									<table id="example2" class="display table " style="width:100%">
+										<thead>
+											<tr>
+												<th>Nombre Despacho</th>
+												<th>Nombre Completo</th>
+												<th>Tel. Movil</th>
+												<th>Tel. Trabajo</th>
+												<th>Email</th>
+												<th class="perfilSS">Resp.Comercial</th>
+												<th>Estado</th>
+												<th>Ref.</th>
+												<th>Fecha</th>
+												<th>Acciones</th>
+											</tr>
+										</thead>
+										<tfoot>
+											<tr>
+												<th>Nombre Despacho</th>
+												<th>Nombre Completo</th>
+												<th>Tel. Movil</th>
+												<th>Tel. Trabajo</th>
+												<th>Email</th>
+												<th>Resp.Comercial</th>
+												<th>Estado</th>
+												<th>Ref.</th>
+												<th>Fecha</th>
+												<th>Acciones</th>
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+
+								<div class="row contPendientes" style="padding: 5px 20px;">
+									<h4>PENDIENTES DE REVISION</h4>
+									<hr>
+									<table id="example3" class="display table " style="width:100%">
 										<thead>
 											<tr>
 												<th>Nombre Despacho</th>
@@ -548,15 +589,24 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox2($resEstado2,array(1),' ');
 		});
 
 		$('.contHistorico').hide();
+		$('.contPendientes').hide();
+
+		$('.btnPendientes').click(function() {
+			$('.contHistorico').hide();
+			$('.contActuales').hide();
+			$('.contPendientes').show();
+		});
 
 		$('.btnHistorico').click(function() {
 			$('.contHistorico').show();
 			$('.contActuales').hide();
+			$('.contPendientes').hide();
 		});
 
 		$('.btnVigente').click(function() {
 			$('.contActuales').show();
 			$('.contHistorico').hide();
+			$('.contPendientes').hide();
 		});
 
 
@@ -696,6 +746,49 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox2($resEstado2,array(1),' ');
 		 	],
 		});
 
+
+		var table2 = $('#example3').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=oportunidadespendientes",
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+				/* Add some extra data to the sender */
+				aoData.push( { "name": "start", "value": $('#fechadesde_filtro').val(), } );
+				aoData.push( { "name": "end", "value": $('#fechahasta_filtro').val(), } );
+				aoData.push( { "name": "estado", "value": $('#estado_filtro').val(), } );
+				$.getJSON( sSource, aoData, function (json) {
+				/* Do whatever additional processing you want on the callback, then tell DataTables */
+				fnCallback(json)
+				} );
+			},
+			"language": {
+				"emptyTable":     "No hay datos cargados",
+				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "Mostrar _MENU_ filas",
+				"loadingRecords": "Cargando...",
+				"processing":     "Procesando...",
+				"search":         "Buscar:",
+				"zeroRecords":    "No se encontraron resultados",
+				"paginate": {
+					"first":      "Primero",
+					"last":       "Ultimo",
+					"next":       "Siguiente",
+					"previous":   "Anterior"
+				},
+				"aria": {
+					"sortAscending":  ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			},
+			"columnDefs": [
+		    { "orderable": false, "targets": 5 }
+		 	],
+		});
+
 		<?php
 		if ($_SESSION['idroll_sahilices'] == 3 ) {
 			$cadRefFiltro = '<option value="">'.$_SESSION['nombre_sahilices'].'</option>';
@@ -716,6 +809,20 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox2($resEstado2,array(1),' ');
 		} );
 
 		$("#example2 .perfilSS").each( function ( i ) {
+			var select = $('<select><option value="">-- Seleccione Perfil --</option><?php echo $cadRefFiltro; ?></select>')
+				.appendTo( $(this).empty() )
+				.on( 'change', function () {
+					table2.column( i )
+						.search( $(this).val() )
+						.draw();
+				} );
+			table2.column( i ).data().unique().sort().each( function ( d, j ) {
+				select.append( '<option value="'+d+'">'+d+'</option>' )
+			} );
+		} );
+
+
+		$("#example3 .perfilSS").each( function ( i ) {
 			var select = $('<select><option value="">-- Seleccione Perfil --</option><?php echo $cadRefFiltro; ?></select>')
 				.appendTo( $(this).empty() )
 				.on( 'change', function () {
@@ -935,8 +1042,27 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox2($resEstado2,array(1),' ');
 			$('#lgmModificar').modal();
 		});//fin del boton modificar
 
+		$("#example2").on("click",'.btnModificar', function(){
+			idTable =  $(this).attr("id");
+			frmAjaxModificar(idTable);
+			$('#lgmModificar').modal();
+		});//fin del boton modificar
+
+		$("#example3").on("click",'.btnModificar', function(){
+			idTable =  $(this).attr("id");
+			frmAjaxModificar(idTable);
+			$('#lgmModificar').modal();
+		});//fin del boton modificar
+
 
 		$("#example2").on("click",'.btnReasignar', function(){
+			idTable =  $(this).attr("id");
+			$('#idasignar').val(idTable);
+			Reasignar(idTable);
+			$('#lgmReasignar').modal();
+		});//fin del boton modificar
+
+		$("#example3").on("click",'.btnReasignar', function(){
 			idTable =  $(this).attr("id");
 			$('#idasignar').val(idTable);
 			Reasignar(idTable);

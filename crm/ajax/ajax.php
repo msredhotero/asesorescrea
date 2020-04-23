@@ -1093,7 +1093,7 @@ function Reasignar($serviciosReferencias,$serviciosUsuarios,$serviciosFunciones)
    $res = $serviciosReferencias->traerOportunidadesPorId($id);
    $cad = '';
 
-   if (mysql_result($res,0,'refestadooportunidad') == 5 || mysql_result($res,0,'refestadooportunidad') == 6 || mysql_result($res,0,'refestadooportunidad') == 4) {
+   if (mysql_result($res,0,'refestadooportunidad') == 5 || mysql_result($res,0,'refestadooportunidad') == 6 || mysql_result($res,0,'refestadooportunidad') == 4 || mysql_result($res,0,'refestadooportunidad') == 9) {
       $resAsignacion = $serviciosReferencias->traerReasignacionesPorOportunidad($id);
 
       if (mysql_num_rows($resAsignacion) > 0) {
