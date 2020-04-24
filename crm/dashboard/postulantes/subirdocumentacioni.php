@@ -376,6 +376,21 @@ switch ($iddocumentacion) {
 		$leyenda3 = 'Cargue la Vigencia Hasta RC';
 		$campo3 = 'vighastarc';
 	break;
+	case 31:
+
+		$dato = mysql_result($resPostulante,0,'vigdesdecedulaseguro');
+		$dato2 = mysql_result($resPostulante,0,'vighastacedulaseguro');
+		// code...
+		$input = '<input type="text" maxlength="25" name="vigdesdecedulaseguro" id="vigdesdecedulaseguro" class="form-control" value="'.$dato.'"/> ';
+		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
+		$leyenda = 'Cargue la Vigencia Desde del Seguro';
+		$campo = 'vigdesdecedulaseguro';
+
+		$input2 = '<input type="text" maxlength="25" name="vighastacedulaseguro" id="vighastacedulaseguro" class="form-control" value="'.$dato2.'"/> ';
+		$boton2 = '<button type="button" class="btn btn-primary waves-effect btnModificar2">GUARDAR</button>';
+		$leyenda2 = 'Cargue la Vigencia Hasta del Seguro';
+		$campo2 = 'vighastacedulaseguro';
+	break;
 
 	default:
 		// code...
