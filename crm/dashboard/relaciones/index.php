@@ -75,7 +75,7 @@ $cadRef4 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' '
 
 $resAsociados = $serviciosReferencias->traerAsociados();
 $cadRef5 = "<option value='0'>-- Seleccionar --</option>";
-$cadRef5 .= $serviciosFunciones->devolverSelectBox($resAsociados,array(3,4,2),' ');
+$cadRef5 .= $serviciosFunciones->devolverSelectBox($resAsociados,array(2,3,4),' ');
 
 $refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef4,4=>$cadRef5);
 $refCampo 	=  array('refusuarios','refpostulantes','refoportunidades','refasesores','refasociados');
