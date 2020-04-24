@@ -70,6 +70,7 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 	$cadRef2 = "";
 	$cadRefFiltro = '<option value="">'.$_SESSION['nombre_sahilices'].'</option>';
 } else {
+	
 	$resReferentes 	= $serviciosReferencias->traerReferentes();
 	$cadRef2 = '<option value="">-- Seleccionar --</option>';
 	$resReferentesUsuarios = $serviciosReferencias->traerReferentesUsuario();

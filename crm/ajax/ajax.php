@@ -2047,7 +2047,7 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones,
 
       	      $cuerpo = '';
       	      $cuerpo .= '<h4>Nombre Completo: '.$nombre.' '.$apellidopaterno.' '.$apellidomaterno.'</h4><br>';
-      	      $cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/asociados/index.php'>ACCEDER</a>";
+      	      $cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/dashboard/asociados/index.php'>ACCEDER</a>";
 
       	      $res = $serviciosReferencias->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
 
@@ -3191,11 +3191,11 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $cadRef2 = "<option value=''>-- Seleccionar --</option>";
          $cadRef2 .= $serviciosFunciones->devolverSelectBoxActivo($resReferentes,array(1,2,3),' ',mysql_result($resultado,0,'refreferentes'));
 
-         if ($_SESSION['idroll_sahilices'] == 4 || $_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 8) {
+         if ($_SESSION['idroll_sahilices'] == 4 || $_SESSION['idroll_sahilices'] == 1) {
             $resEstado 	= $serviciosReferencias->traerEstadooportunidad();
          } else {
-            if ($_SESSION['usuaid_sahilices'] == 119) {
-               $resEstado 	= $serviciosReferencias->traerEstadooportunidadPorIn('1,2,3,4,8');
+            if ($_SESSION['idroll_sahilices'] == 8) {
+               $resEstado 	= $serviciosReferencias->traerEstadooportunidadPorIn('8');
             } else {
                $resEstado 	= $serviciosReferencias->traerEstadooportunidadPorIn('1,2,3,4');
             }
@@ -4224,7 +4224,7 @@ function modificarPostulantes($serviciosReferencias) {
 
          $cuerpo = '';
          $cuerpo .= '<h4>Nombre Completo: '.$nombre.' '.$apellidopaterno.' '.$apellidomaterno.'</h4><br>';
-         $cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/asociados/index.php'>ACCEDER</a>";
+         $cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/dashboard/asociados/index.php'>ACCEDER</a>";
 
          $res = $serviciosReferencias->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
 
