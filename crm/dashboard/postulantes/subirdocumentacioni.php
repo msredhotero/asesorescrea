@@ -14,12 +14,14 @@ include ('../../includes/funcionesUsuarios.php');
 include ('../../includes/funcionesHTML.php');
 include ('../../includes/funcionesReferencias.php');
 include ('../../includes/base.php');
+include ('../../includes/funcionesPostal.php');
 
-$serviciosFunciones 	= new Servicios();
+$serviciosFunciones 		= new Servicios();
 $serviciosUsuario 		= new ServiciosUsuarios();
 $serviciosHTML 			= new ServiciosHTML();
 $serviciosReferencias 	= new ServiciosReferencias();
-$baseHTML = new BaseHTML();
+$baseHTML 					= new BaseHTML();
+$serviciosPostal        = new serviciosPostal();
 
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
@@ -405,6 +407,69 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocu
 
 $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 
+
+// solo para cargar el domicilio
+if ($iddocumentacion == 10) {
+/********************* para domicilio  ******************************/
+
+/////////////////////// Opciones pagina ///////////////////////////////////////////////
+$singular2 = "Domicilio";
+
+$plural2 = "Domicilio Postulante";
+
+$eliminar2 = "eliminarDomicilios";
+
+$insertar2 = "insertarDomicilios";
+
+$modificar2 = "modificarDomicilios";
+
+$resDomicilio = $serviciosReferencias->traerDomiciliosPorTablaReferencia(8, 'dbpostulantes', 'idpostulante', $id);
+
+if (mysql_num_rows($resDomicilio) <= 0) {
+	$idDomicilio = $serviciosReferencias->insertarDomicilios(8,$id,'','','','','','','');
+	$resDomicilio = $serviciosReferencias->traerDomiciliosPorId($idDomicilio);
+}
+
+/////////////////////// Opciones para la creacion del formulario  /////////////////////
+$tabla2 			= "dbdomicilios";
+
+$lblCambio2	 	= array('numeroext','numeroint','codigopostal');
+$lblreemplazo2	= array('Nro Ext.','Nro Int.','Cod. Postal');
+
+$resEstado2 = $serviciosPostal->devolverComboHTML('estado', '');
+$cadRef1 = "<option value=''>-- Seleccionar --</option>";
+$cadRef1 .= $serviciosFunciones->devolverSelectBoxActivoText($resEstado2,array(0),'', mysql_result($resDomicilio,0,'estado'));
+
+
+$filtroM = array();
+$filtroM["estado"] = mysql_result($resDomicilio,0,'estado');
+$filtro = (object)$filtroM;
+
+$resMunicipio = $serviciosPostal->devolverComboHTML('municipio', $filtro);
+$cadRef2 = "<option value=''>-- Seleccionar --</option>";
+$cadRef2 .= $serviciosFunciones->devolverSelectBoxActivoText($resMunicipio,array(0),'', mysql_result($resDomicilio,0,'delegacion'));
+
+$filtroC = array();
+$filtroC["municipio"] = mysql_result($resDomicilio,0,'delegacion');
+$filtro = (object)$filtroC;
+
+$resColonia = $serviciosPostal->devolverComboHTML('colonia', $filtro);
+$cadRef3 = "<option value=''>-- Seleccionar --</option>";
+$cadRef3 .= $serviciosFunciones->devolverSelectBoxActivoText($resColonia,array(0),'', mysql_result($resDomicilio,0,'colonia'));
+
+
+
+$refdescripcion2 = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3);
+$refCampo2 	=  array('estado','delegacion','colonia');
+
+$frmUnidadNegocios2 	= $serviciosFunciones->camposTablaModificar(mysql_result($resDomicilio,0,'iddomicilio'),'iddomicilio',$modificar2,$tabla2,$lblCambio2,$lblreemplazo2,$refdescripcion2,$refCampo2);
+//////////////////////////////////////////////  FIN de los opciones //////////////////////////
+} else {
+	$frmUnidadNegocios2 	= '';
+}
+//////////////////////// Fin opciones ////////////////////////////////////////////////
+
+/******************************* fin domicilio ***************/
 ?>
 
 <!DOCTYPE html>
@@ -530,22 +595,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 				while ($rowG = mysql_fetch_array($resGuia)) {
 					$i += 1;
 					$urlAcceso = $rowG['url'].'?id='.$id;
-					/*
-					if ($rowG['refestadopostulantes'] == $estadoSiguiente) {
-						$lblEstado = 'active';
-					}
 
-					if (($lblEstado == 'complete') || ($lblEstado == 'active')) {
-						$urlAcceso = $rowG['url'].'?id='.$id;
-					} else {
-						if ($rowG['refestadopostulantes'] == 7) {
-							$urlAcceso = $rowG['url'].'?id='.$id;
-							$lblEstado = 'active';
-						} else {
-							$urlAcceso = 'javascript:void(0)';
-						}
-					}
-					*/
 				?>
 				<div class="col-xs-2 bs-wizard-step <?php echo $lblEstado; ?>">
 					<div class="text-center bs-wizard-stepnum">Paso <?php echo $i; ?></div>
@@ -605,6 +655,19 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 								<i class="material-icons">undo</i>
 								<span>GUARDAR</span>
 							</button>
+							<?php if ($frmUnidadNegocios2 != '') { ?>
+							<form class="form" id="sign_in" role="form">
+								<div class="row frmAjaxModificar">
+									<?php echo $frmUnidadNegocios2; ?>
+								</div>
+								<div class="button-demo">
+									<button type="submit" class="btn bg-light-blue waves-effect modificarDomicilio">
+										<i class="material-icons">save</i>
+										<span>GUARDAR</span>
+									</button>
+								</div>
+							</div>
+							<?php } ?>
 							<form class="form" id="formCountry">
 
 								<div class="row" style="padding: 5px 20px;">
@@ -627,7 +690,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 										</div>
 									</div>
 								</div>
-								<?php if (isset($campo2)) { ?>
+								<?php if (isset($campo2) && $campo2 != '') { ?>
 									<div class="row" style="padding: 5px 20px;">
 										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
 											<label class="form-label"><?php echo $leyenda2; ?></label>
@@ -650,7 +713,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 									</div>
 								<?php } ?>
 
-								<?php if (isset($campo3)) { ?>
+								<?php if (isset($campo3) && $campo3 != '') { ?>
 									<div class="row" style="padding: 5px 20px;">
 										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
 											<label class="form-label"><?php echo $leyenda3; ?></label>
@@ -1166,7 +1229,6 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 
 		});
 
-
 		$('.maximizar').click(function() {
 			if ($('.icomarcos').text() == 'web') {
 				$('#marcos').show();
@@ -1177,8 +1239,127 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 				$('.content').css('marginLeft', '15px');
 				$('.icomarcos').html('web');
 			}
-
 		});
+
+		<?php if ($iddocumentacion == 10) { ?>
+			$('.frmContreftabla').hide();
+			$('.frmContidreferencia').hide();
+			
+		function llenarCombosGral(dato, filtro, contenedor) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'llenarCombosGral',dato: dato, filtro: JSON.stringify(filtro)},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('#'+contenedor).html('');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					if (dato == 'codigopostal') {
+						$('#'+contenedor).val(data);
+					} else {
+						$('#'+contenedor).html(data);
+					}
+
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+
+		}
+
+		function loadMunicipios() {
+			var data = [{"estado": $('#estado').val()}];
+			llenarCombosGral('municipio', data, 'delegacion');
+		}
+
+		function loadColonia() {
+			var data = [{"municipio":$('#delegacion').val()}];
+			llenarCombosGral('colonia', data, 'colonia');
+		}
+
+		function loadPostal() {
+			var data = [{"municipio":$('#delegacion').val(),"colonia":$('#colonia').val()}];
+			llenarCombosGral('codigopostal', data, 'codigopostal');
+		}
+
+		$('#estado').change(function() {
+			loadMunicipios();
+		});
+
+		$('#delegacion').change(function() {
+			loadColonia();
+		});
+
+		$('#colonia').change(function() {
+			loadPostal();
+		});
+
+		$('.form').submit(function(e){
+
+			e.preventDefault();
+			if ($('.form')[0].checkValidity()) {
+
+
+				//información del formulario
+				var formData = new FormData($(".form")[0]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
+
+					},
+					//una vez finalizado correctamente
+					success: function(data){
+
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Modificado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
+
+
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
+
+
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
+					}
+				});
+			}
+		});
+
+		<?php } ?>
 
 
 	});
