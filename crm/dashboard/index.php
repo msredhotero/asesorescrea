@@ -507,7 +507,7 @@ $resVentasGerentes = $serviciosReferencias->graficoVentasPorGerentes();
 						<div class="card ">
 							<div class="header bg-blue">
 								<h2 style="color:#fff">
-									VENTAS POR MES GERENTES
+									HISTORICO VENTAS
 								</h2>
 								<ul class="header-dropdown m-r--5">
 									<li class="dropdown">
