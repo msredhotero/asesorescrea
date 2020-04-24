@@ -422,10 +422,10 @@ class ServiciosReferencias {
 		d.refasesores
 		from dbdirectorioasesores d
 		where d.refasesores = ".$refasesores." ".$where."
-		ORDER BY ".$colSort." ".$colSortDir."
-		limit ".$start.",".$length;
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
 
-		$res = $this->query($sql,0);
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
 	}
 
@@ -1612,12 +1612,12 @@ class ServiciosReferencias {
 		left join dbasociados aso ON aso.idasociado = c.refasociados
 		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
 		".$where."
-		ORDER BY ".$colSort." ".$colSortDir."
-		limit ".$start.",".$length;
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
 
 		//die(var_dump($sql));
 
-		$res = $this->query($sql,0);
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
 	}
 
@@ -1667,12 +1667,12 @@ class ServiciosReferencias {
 		left join dbasociados aso ON aso.idasociado = c.refasociados
 		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
 		where ase.refusuarios = ".$responsableComercial." ".$where."
-		ORDER BY ".$colSort." ".$colSortDir."
-		limit ".$start.",".$length;
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
 
 		//die(var_dump($sql));
 
-		$res = $this->query($sql,0);
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
 	}
 
@@ -2354,10 +2354,10 @@ class ServiciosReferencias {
 		inner join tbbancos ban ON ban.idbanco = a.refbancos
 		inner join tbtipoasociado ta ON ta.idtipoasociado = a.reftipoasociado
 		".$where."
-		ORDER BY ".$colSort." ".$colSortDir."
-		limit ".$start.",".$length;
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
 
-		$res = $this->query($sql,0);
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
 	}
 
@@ -2815,10 +2815,12 @@ class ServiciosReferencias {
 		inner join tbestadooportunidad es ON es.idestadooportunidad = opo.refestadooportunidad
 		inner join tbestadoentrevistas est ON est.idestadoentrevista = e.refestadoentrevistas
 		".$where."
-		ORDER BY ".$colSort." ".$colSortDir."
-		limit ".$start.",".$length;
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
 
-		$res = $this->query($sql,0);
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
 	}
 
@@ -2859,10 +2861,12 @@ class ServiciosReferencias {
 		inner join tbestadooportunidad es ON es.idestadooportunidad = opo.refestadooportunidad
 		inner join tbestadoentrevistas est ON est.idestadoentrevista = e.refestadoentrevistas
 		where us.idusuario = ".$idusuario.$where."
-		ORDER BY ".$colSort." ".$colSortDir."
-		limit ".$start.",".$length;
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
 
-		$res = $this->query($sql,0);
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
 	}
 
@@ -3280,12 +3284,12 @@ class ServiciosReferencias {
 		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
 		left join dbentrevistaoportunidades eo on eo.refoportunidades = o.idoportunidad
 		where r.idreclutadorasor is null and est.idestadooportunidad not in (4,5,6,7,8,9) and usu.idusuario = ".$idusuario.$where." ".$cadFecha.$cadEstado."
-		ORDER BY o.fechacrea desc
-		limit ".$start.",".$length;
+		ORDER BY o.fechacrea desc ";
+		$limit = "limit ".$start.",".$length;
 
 		//die(var_dump($sql));
 
-		$res = $this->query($sql,0);
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
 	}
 
@@ -3337,10 +3341,12 @@ class ServiciosReferencias {
 		left join tbreferentes rr on rr.idreferente = o.refreferentes
 		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
 		where (est.idestadooportunidad in (4,5,6,7,8,9) or r.refoportunidades is not null) and usu.idusuario = ".$idusuario.$where."  ".$cadFecha.$cadEstado."
-		ORDER BY o.fechacrea desc
-		limit ".$start.",".$length;
+		ORDER BY o.fechacrea desc ";
+		$limit = "limit ".$start.",".$length;
 
-		$res = $this->query($sql,0);
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
 	}
 
@@ -3396,10 +3402,12 @@ class ServiciosReferencias {
 		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
 		left join dbentrevistaoportunidades eo on eo.refoportunidades = o.idoportunidad
 		where r.idreclutadorasor is null and est.idestadooportunidad not in (4,5,6,7,8,9) and o.refreferentes = ".$idusuario.$where." ".$cadFecha.$cadEstado."
-		ORDER BY o.fechacrea desc
-		limit ".$start.",".$length;
+		ORDER BY o.fechacrea desc ";
+		$limit = "limit ".$start.",".$length;
 
-		$res = $this->query($sql,0);
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
 	}
 
@@ -3451,10 +3459,12 @@ class ServiciosReferencias {
 		left join tbreferentes rr on rr.idreferente = o.refreferentes
 		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
 		where  (est.idestadooportunidad in (4,5,6,7,8,9) or r.refoportunidades is not null) and o.refreferentes = ".$idusuario.$where." ".$cadFecha.$cadEstado."
-		ORDER BY o.fechacrea desc
-		limit ".$start.",".$length;
+		ORDER BY o.fechacrea desc ";
+		$limit = "limit ".$start.",".$length;
 
-		$res = $this->query($sql,0);
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
 	}
 
@@ -3515,12 +3525,12 @@ class ServiciosReferencias {
 		left join tbreferentes rr on rr.idreferente = o.refreferentes
 		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
 		where ".$roles." (est.idestadooportunidad in (4,5,6,7,8,9) or r.refoportunidades is not null) ".$where." ".$cadFecha.$cadEstado."
-		ORDER BY o.fechacrea desc
-		limit ".$start.",".$length;
+		ORDER BY o.fechacrea desc ";
+		$limit = "limit ".$start.",".$length;
 
 		//die(var_dump($sql));
 
-		$res = $this->query($sql,0);
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
 	}
 
@@ -3808,10 +3818,10 @@ class ServiciosReferencias {
 		from tbreferentes r
 		left join dbusuarios usu on usu.idusuario = r.refusuarios
 		".$where."
-		ORDER BY ".$colSort." ".$colSortDir."
-		limit ".$start.",".$length;
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
 
-		$res = $this->query($sql,0);
+		$res = array($this->query($sql.$limit,0),$this->query($sql,0));
 		return $res;
 	}
 
@@ -3914,10 +3924,12 @@ class ServiciosReferencias {
 		left join dbasesores ase on ase.idasesor = r.refasesores
 		left join dbasociados aso ON aso.idasociado = r.refasociados
 		".$where."
-		ORDER BY ".$colSort." ".$colSortDir."
-		limit ".$start.",".$length;
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
 
-		$res = $this->query($sql,0);
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
 	}
 
@@ -4447,10 +4459,12 @@ class ServiciosReferencias {
 		from tbentrevistasucursales e
 		inner join postal p on p.id = e.refpostal
 		".$where."
-		ORDER BY ".$colSort." ".$colSortDir."
-		limit ".$start.",".$length;
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
 
-		$res = $this->query($sql,0);
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
 	}
 
@@ -4837,12 +4851,12 @@ class ServiciosReferencias {
 		}
 
 		$sql = $consulta.' '.$where."
-		ORDER BY ".$colSort." ".$colSortDir."
-		limit ".$start.",".$length;
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
 
 		//die(var_dump($sql));
 
-		$res = $this->query($sql,0);
+		$res = array($this->query($sql.$limit,0),$this->query($sql,0));
 		return $res;
 	}
 
@@ -6508,10 +6522,10 @@ class ServiciosReferencias {
 		from dbclientes c
 		inner join tbtipopersonas tip ON tip.idtipopersona = c.reftipopersonas
 		".$where."
-		ORDER BY ".$colSort." ".$colSortDir."
-		limit ".$start.",".$length;
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
 
-		$res = $this->query($sql,0);
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
 	}
 

@@ -69,13 +69,11 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 switch ($tabla) {
 	case 'directorio':
 
+		$datos = $serviciosReferencias->traerDirectorioasesoresajax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['idasesor_aux']);
 
-		$resAjax = $serviciosReferencias->traerDirectorioasesoresajax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['idasesor_aux']);
-		if ($busqueda == '') {
-			$res = $serviciosReferencias->traerDirectorioasesoresPorAsesor($_SESSION['idasesor_aux']);
-		} else {
-			$res = $serviciosReferencias->traerDirectorioasesoresajax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['idasesor_aux']);
-		}
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
 
 		$label = array('btnModificar','btnEliminar');
 		$class = array('bg-amber','bg-red');
@@ -92,16 +90,23 @@ switch ($tabla) {
 
 		if ($_SESSION['idroll_sahilices'] == 7) {
 
-			$resAjax = $serviciosReferencias->traerCotizacionesajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
-			$res = $serviciosReferencias->traerCotizacionesPorUsuario($_SESSION['usuaid_sahilices']);
+			$datos = $serviciosReferencias->traerCotizacionesajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
 			$label = array('btnModificar','btnEliminar');
 			$class = array('bg-amber','bg-red');
 			$icon = array('create','delete');
 		} else {
 
 			$responsableComercial = $_GET['sSearch_0'];
-			$resAjax = $serviciosReferencias->traerCotizacionesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial);
-			$res = $serviciosReferencias->traerCotizacionesGrid($responsableComercial);
+
+			$datos = $serviciosReferencias->traerCotizacionesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
 			$label = array('btnModificar','btnEliminar');
 			$class = array('bg-amber','bg-red');
 			$icon = array('create','delete');
@@ -136,24 +141,26 @@ switch ($tabla) {
 		if ($_SESSION['idroll_sahilices'] == 3) {
 			$consulta .= ' inner join dbusuarios usu ON usu.idusuario = p.refusuarios
 			inner join dbpostulantes pp on pp.refusuarios = usu.idusuario
-			inner join dbreclutadorasores rrr on rrr.refpostulantes = pp.idpostulante and rrr.refusuarios = '.$_SESSION['usuaid_sahilices'].'
+			inner join dbreclutadorasores rrr on (rrr.refasesores = p.idasesor
+			OR rrr.refpostulantes = pp.idpostulante) and rrr.refusuarios = '.$_SESSION['usuaid_sahilices'].'
 			left join dbusuarios usur ON usur.idusuario = rrr.refusuarios';
-			$res = $serviciosReferencias->traerAsesoresPorGerente($_SESSION['usuaid_sahilices']);
+			//$res = $serviciosReferencias->traerAsesoresPorGerente($_SESSION['usuaid_sahilices']);
 		} else {
 			if ($_SESSION['idroll_sahilices'] == 7) {
 				$consulta .= ' inner join dbusuarios usur ON p.refusuarios = '.$_SESSION['usuaid_sahilices'].' ';
-				$res = $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
+				//$res = $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
 			} else {
 				$responsableComercial = $_GET['sSearch_0'];
 				if ($responsableComercial == '') {
-					$res = $serviciosReferencias->traerAsesores();
+					//$res = $serviciosReferencias->traerAsesores();
 					$consulta .= ' inner join dbusuarios usu ON usu.idusuario = p.refusuarios
 					left join dbpostulantes pp on pp.refusuarios = usu.idusuario
-					left join dbreclutadorasores rrr on rrr.refpostulantes = pp.idpostulante
+					left join dbreclutadorasores rrr on (rrr.refasesores = p.idasesor
+					OR rrr.refpostulantes = pp.idpostulante)
 					left join dbusuarios usur ON usur.idusuario = rrr.refusuarios';
 				} else {
 
-					$res = $serviciosReferencias->traerAsesoresPorGerente($responsableComercial);
+					//$res = $serviciosReferencias->traerAsesoresPorGerente($responsableComercial);
 					$consulta .= ' inner join dbusuarios usu ON usu.idusuario = p.refusuarios
 					LEFT join dbpostulantes pp on pp.refusuarios = usu.idusuario
 					inner join dbreclutadorasores rrr on (rrr.refasesores = p.idasesor
@@ -167,9 +174,10 @@ switch ($tabla) {
 
 		//die(var_dump($consulta));
 
+		$datos = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta,'');
 
-		$resAjax = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta,'');
-
+		$resAjax = $datos[0];
+		$res = $datos[1];
 
 		switch ($_SESSION['idroll_sahilices']) {
 			case 1:
@@ -234,9 +242,11 @@ switch ($tabla) {
 
 	case 'asociados':
 
+		$datos = $serviciosReferencias->traerAsociadosajax($length, $start, $busqueda,$colSort,$colSortDir);
 
-		$resAjax = $serviciosReferencias->traerAsociadosajax($length, $start, $busqueda,$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerAsociados();
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
 		$label = array('btnModificar','btnEliminar','btnDocumentacion');
 		$class = array('bg-amber','bg-red','bg-blue');
 		$icon = array('Modificar','Eliminar','Documentaciones');
@@ -261,8 +271,11 @@ switch ($tabla) {
 	case 'clientes':
 
 
-		$resAjax = $serviciosReferencias->traerClientesajax($length, $start, $busqueda,$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerClientes();
+		$datos = $serviciosReferencias->traerClientesajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
 		$label = array('btnModificar','btnEliminar','btnDocumentacion');
 		$class = array('bg-amber','bg-red','bg-blue');
 		$icon = array('Modificar','Eliminar','Documentaciones');
@@ -320,15 +333,15 @@ switch ($tabla) {
 		if ($_SESSION['idroll_sahilices'] == 3) {
 			$consulta .= 'inner join dbreclutadorasores rrr on rrr.refpostulantes = p.idpostulante and rrr.refusuarios = '.$_SESSION['usuaid_sahilices'].'
 			inner join dbusuarios usur on usur.idusuario = rrr.refusuarios';
-			$res = $serviciosReferencias->traerPostulantesPorGerente($_SESSION['usuaid_sahilices']);
+			//$res = $serviciosReferencias->traerPostulantesPorGerente($_SESSION['usuaid_sahilices']);
 		} else {
 			$responsableComercial = $_GET['sSearch_0'];
 			if ($responsableComercial == '') {
-				$res = $serviciosReferencias->traerPostulantes();
+				//$res = $serviciosReferencias->traerPostulantes();
 				$consulta .= 'left join dbreclutadorasores rrr on rrr.refpostulantes = p.idpostulante
 				left join dbusuarios usur on usur.idusuario = rrr.refusuarios ';
 			} else {
-				$res = $serviciosReferencias->traerPostulantesPorGerente($responsableComercial);
+				//$res = $serviciosReferencias->traerPostulantesPorGerente($responsableComercial);
 				$consulta .= 'inner join dbreclutadorasores rrr on rrr.refpostulantes = p.idpostulante and rrr.refusuarios = '.$responsableComercial.'
 				inner join dbusuarios usur on usur.idusuario = rrr.refusuarios';
 			}
@@ -337,7 +350,10 @@ switch ($tabla) {
 
 		//die(var_dump($consulta));
 
-		$resAjax = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta,$pre);
+		$datos = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta,$pre);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
 
 		//die(var_dump());
 
@@ -437,9 +453,10 @@ switch ($tabla) {
 		if ($idestado == '') {
 			$filtro = "where e.entrevistador like '%_busqueda%' or cast(e.fecha as unsigned) like '%_busqueda%' or e.domicilio like '%_busqueda%' or e.codigopostal like '%_busqueda%' or est.estadoentrevista like '%_busqueda%'";
 
-			$resAjax = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta,'');
+			$datos = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta,'');
 
-			$res = $serviciosReferencias->traerEntrevistasPorPostulante($id);
+			$resAjax = $datos[0];
+			$res = $datos[1];
 
 			$termina = 7;
 		} else {
@@ -448,11 +465,13 @@ switch ($tabla) {
 			$pre = " where e.refestadopostulantes = ".$idestado;
 			//die(var_dump($filtro));
 
-			$resAjax = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta,$pre);
+			$datos = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta,$pre);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
 
 			$termina = 6;
 
-			$res = $serviciosReferencias->traerEntrevistasPorPostulanteEstado($id,mysql_result($resultado,0,'refestadopostulantes'));
 		}
 
 
@@ -519,8 +538,9 @@ switch ($tabla) {
 
 		break;
 	case 'referentes':
-		$resAjax = $serviciosReferencias->traerReferentesajax($length, $start, $busqueda,$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerReferentes();
+		$datos = $serviciosReferencias->traerReferentesajax($length, $start, $busqueda,$colSort,$colSortDir);
+		$resAjax = $datos[0];
+		$res = $datos[1];
 		$label = array('btnModificar','btnEliminar');
 		$class = array('bg-amber','bg-red');
 		$icon = array('create','delete');
@@ -556,8 +576,11 @@ switch ($tabla) {
 
 		if ($_SESSION['idroll_sahilices'] == 3) {
 
-			$resAjax = $serviciosReferencias->traerOportunidadesajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices'],$min,$max,$estado);
-			$res = $serviciosReferencias->traerOportunidadesPorUsuario($_SESSION['usuaid_sahilices']);
+			$datos = $serviciosReferencias->traerOportunidadesajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices'],$min,$max,$estado);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
 			$label = array('btnModificar');
 			$class = array('bg-amber');
 			$icon = array('create');
@@ -565,8 +588,11 @@ switch ($tabla) {
 			if ($_SESSION['idroll_sahilices'] == 9) {
 				$resReferentes 	= $serviciosReferencias->traerReferentesPorUsuario($_SESSION['usuaid_sahilices']);
 				// traigo el recomendador o referente a traves del usuario para filtrar
-				$resAjax = $serviciosReferencias->traerOportunidadesajaxPorRecomendador($length, $start, $busqueda,$colSort,$colSortDir, mysql_result($resReferentes,0,0),$min,$max,$estado);
-				$res = $serviciosReferencias->traerOportunidadesPorRecomendador(mysql_result($resReferentes,0,0));
+				$datos = $serviciosReferencias->traerOportunidadesajaxPorRecomendador($length, $start, $busqueda,$colSort,$colSortDir, mysql_result($resReferentes,0,0),$min,$max,$estado);
+
+				$resAjax = $datos[0];
+				$res = $datos[1];
+
 				$label = array('btnModificar','btnEliminar');
 				$class = array('bg-amber','bg-red');
 				$icon = array('create','delete');
@@ -596,8 +622,12 @@ switch ($tabla) {
 		$estado = $_GET['estado'];
 
 		if ($_SESSION['idroll_sahilices'] == 3) {
-			$resAjax = $serviciosReferencias->traerOportunidadesajaxPorUsuarioHistorico($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices'],$min,$max,$estado);
-			$res = $serviciosReferencias->traerOportunidadesPorUsuarioEstadoH($_SESSION['usuaid_sahilices'],'3');
+
+			$datos = $serviciosReferencias->traerOportunidadesajaxPorUsuarioHistorico($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices'],$min,$max,$estado);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
 			$label = array();
 			$class = array();
 			$icon = array();
@@ -605,15 +635,21 @@ switch ($tabla) {
 			if ($_SESSION['idroll_sahilices'] == 9) {
 				$resReferentes 	= $serviciosReferencias->traerReferentesPorUsuario($_SESSION['usuaid_sahilices']);
 				// traigo el recomendador o referente a traves del usuario para filtrar
-				$resAjax = $serviciosReferencias->traerOportunidadesajaxPorRecomendadorHistorico($length, $start, $busqueda,$colSort,$colSortDir,mysql_result($resReferentes,0,0),$min,$max,$estado);
-				$res = $serviciosReferencias->traerOportunidadesPorRecomendadorEstadoH(mysql_result($resReferentes,0,0),'3');
+				$datos = $serviciosReferencias->traerOportunidadesajaxPorRecomendadorHistorico($length, $start, $busqueda,$colSort,$colSortDir,mysql_result($resReferentes,0,0),$min,$max,$estado);
+
+				$resAjax = $datos[0];
+				$res = $datos[1];
+
 				$label = array();
 				$class = array();
 				$icon = array();
 			} else {
 				$responsableComercial = $_GET['sSearch_0'];
-				$resAjax = $serviciosReferencias->traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,$estado);
-				$res = $serviciosReferencias->traerOportunidadesPorEstadoH('3');
+				$datos = $serviciosReferencias->traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,$estado);
+
+				$resAjax = $datos[0];
+				$res = $datos[1];
+
 				if ($_SESSION['idroll_sahilices'] == 4 || $_SESSION['idroll_sahilices'] == 1) {
 					$label = array('btnReasignar','btnModificar');
 					$class = array('bg-deep-orange','bg-amber');
@@ -640,8 +676,11 @@ switch ($tabla) {
 		$estado = 9;
 
 		$responsableComercial = $_GET['sSearch_0'];
-		$resAjax = $serviciosReferencias->traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,9);
-		$res = $serviciosReferencias->traerOportunidadesPorEstadoH('3');
+		$datos = $serviciosReferencias->traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,9);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
 		if ($_SESSION['idroll_sahilices'] == 4 || $_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 8) {
 			$label = array('btnReasignar','btnModificar');
 			$class = array('bg-deep-orange','bg-amber');
@@ -653,8 +692,11 @@ switch ($tabla) {
 		$termina = 9;
 	break;
 	case 'relaciones':
-		$resAjax = $serviciosReferencias->traerReclutadorasoresajax($length, $start, $busqueda,$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerReclutadorasores();
+		$datos = $serviciosReferencias->traerReclutadorasoresajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
 		$label = array('btnModificar','btnEliminar');
 		$class = array('bg-amber','bg-red');
 		$icon = array('create','delete');
@@ -665,12 +707,15 @@ switch ($tabla) {
 	break;
 	case 'entrevistaoportunidades':
 		if ($_SESSION['idroll_sahilices'] == 3) {
-			$resAjax = $serviciosReferencias->traerEntrevistaoportunidadesPorUsuarioajax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
-			$res = $serviciosReferencias->traerEntrevistaoportunidadesPorUsuario($_SESSION['usuaid_sahilices']);
+			$datos = $serviciosReferencias->traerEntrevistaoportunidadesPorUsuarioajax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+
 		} else {
-			$resAjax = $serviciosReferencias->traerEntrevistaoportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir);
-			$res = $serviciosReferencias->traerEntrevistaoportunidades();
+			$datos = $serviciosReferencias->traerEntrevistaoportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir);
+
 		}
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
 
 		$label = array('btnModificar','btnEliminar');
 		$class = array('bg-amber','bg-red');
@@ -681,8 +726,11 @@ switch ($tabla) {
 
 		break;
 	case 'entrevistasucursales':
-		$resAjax = $serviciosReferencias->traerEntrevistasucursalesajax($length, $start, $busqueda,$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerEntrevistasucursales();
+		$datos = $serviciosReferencias->traerEntrevistasucursalesajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
 		$label = array('btnModificar','btnEliminar');
 		$class = array('bg-amber','bg-red');
 		$icon = array('create','delete');
@@ -690,61 +738,15 @@ switch ($tabla) {
 		$empieza = 1;
 		$termina = 6;
 
-		break;
-	case 'tipoubicacion':
-		$resAjax = $serviciosReferencias->traerTipoubicacionajax($length, $start, $busqueda,$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerTipoubicacion();
-		$label = array('btnModificar','btnEliminar');
-		$class = array('bg-amber','bg-red');
-		$icon = array('create','delete');
-		$indiceID = 0;
-		$empieza = 1;
-		$termina = 1;
-
-	break;
-	case 'ubicaciones':
-		$resAjax = $serviciosReferencias->traerUbicacionesajax($length, $start, $busqueda,$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerUbicaciones();
-		$label = array('btnModificar','btnEliminar');
-		$class = array('bg-amber','bg-red');
-		$icon = array('create','delete');
-		$indiceID = 0;
-		$empieza = 1;
-		$termina = 5;
-
-	break;
-	case 'tarifes':
-		$resAjax = $serviciosReferencias->traerTarifasajax($length, $start, $busqueda,$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerTarifas();
-		$label = array('btnModificar','btnEliminar');
-		$class = array('bg-amber','bg-red');
-		$icon = array('create','delete');
-		$indiceID = 0;
-		$empieza = 1;
-		$termina = 4;
-
-	break;
-	case 'periodes':
-		$resAjax = $serviciosReferencias->traerPeriodosajax($length, $start, $busqueda,$colSort,$colSortDir);
-		$res = $serviciosReferencias->traerPeriodos();
-		$label = array('btnModificar','btnEliminar');
-		$class = array('bg-amber','bg-red');
-		$icon = array('create','delete');
-		$indiceID = 0;
-		$empieza = 1;
-		$termina = 4;
-
 	break;
 	case 'usuarios':
 
 		//die(var_dump($_GET['sSearch_0']));
 
-		$resAjax = $serviciosUsuarios->traerUsuariosajax($length, $start, $busqueda,$colSort,$colSortDir, $_GET['sSearch_0']);
-		if ($_GET['sSearch_0'] != '') {
-			$res = $serviciosUsuarios->traerUsuariosPorRol($_GET['sSearch_0']);
-		} else {
-			$res = $serviciosUsuarios->traerUsuarios();
-		}
+		$datos = $serviciosUsuarios->traerUsuariosajax($length, $start, $busqueda,$colSort,$colSortDir, $_GET['sSearch_0']);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
 
 		$label = array('btnModificar','btnEliminar');
 		$class = array('bg-amber','bg-red');

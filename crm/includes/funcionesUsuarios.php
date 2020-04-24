@@ -318,12 +318,12 @@ function traerUsuariosajax($length, $start, $busqueda,$colSort,$colSortDir, $per
 			from dbusuarios u
 			inner join tbroles r on u.refroles = r.idrol
          ".$where."
-      	order by ".$colSort." ".$colSortDir."
-      	limit ".$start.",".$length;
+      	order by ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
 
-   //die(var_dump($sql));
+		//die(var_dump($sql));
 
-	$res = $this->query($sql,0);
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 	return $res;
 }
 
