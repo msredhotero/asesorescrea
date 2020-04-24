@@ -136,10 +136,13 @@ if (mysql_result($resultado,0,'cedula') == '1') {
 $resVar8 = $serviciosReferencias->traerEsquemareclutamiento();
 $cadRef9 = $serviciosFunciones->devolverSelectBoxActivo($resVar8,array(1),'',mysql_result($resultado,0,'refesquemareclutamiento'));
 
-$resPostal = $serviciosReferencias->traerPostalPorId(mysql_result($resultado,0,'codigopostal'));
+if (mysql_result($resultado,0,'codigopostal') != '') {
+	$resPostal = $serviciosReferencias->traerPostalPorId(mysql_result($resultado,0,'codigopostal'));
 
-$codigopostal = mysql_result($resPostal,0,'codigo');
-
+	$codigopostal = mysql_result($resPostal,0,'codigo');
+} else {
+	$codigopostal = '';
+}
 $cadRef6 	= "<option value='Mexico'>Mexico</option>";
 
 $tipoPersona = mysql_result($resultado,0,'reftipopersonas');
@@ -484,6 +487,10 @@ if (mysql_num_rows($resEstadoSiguiente) > 0) {
 									<button type="submit" class="btn bg-light-blue waves-effect modificarPostulante">
 										<i class="material-icons">save</i>
 										<span>GUARDAR</span>
+									</button>
+									<button type="button" class="btn bg-green waves-effect domicilioPostulante">
+										<i class="material-icons">home</i>
+										<span>DOMICILIO</span>
 									</button>
 								</div>
 								<?php } ?>
@@ -1589,6 +1596,10 @@ if (mysql_num_rows($resEstadoSiguiente) > 0) {
 			$(location).attr('href','ver.php?id=' + idTable);
 
 		});//fin del boton modificar
+
+		$('.domicilioPostulante').click(function(){
+			$(location).attr('href','domicilio.php?id=<?php echo $id; ?>');
+		});
 
 		$('.frmNuevo').submit(function(e){
 

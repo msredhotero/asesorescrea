@@ -698,6 +698,13 @@ class ServiciosReferencias {
 		mail($destinatario,$asunto,$cuerpo,$headers);
 	}
 
+	// cuando un asesor no vende en 6 meses pasa a inactivo
+	function cronBajaAsesor() {
+		
+	}
+
+	// si cotizo y el estado es pagado entonces pasa automaticamente a activo
+
 	// notificacion vencer poliza rc rosa 5 dias
 	function cronNotificarPoliza() {
 		$sql = "select
