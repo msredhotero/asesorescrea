@@ -588,7 +588,7 @@ class ServiciosReferencias {
 		$gerentecomercial = '';
 
 		while ($rowG = mysql_fetch_array($res)) {
-			$asesores .= $rowG['asesores'];
+			$asesores .= $rowG['asesores'].",";
 			$activos .= $rowG['activo'].",";
 			$gerentecomercial .= "'".$rowG['nombrecompleto']."',";
 		}
