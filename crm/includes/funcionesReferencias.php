@@ -3509,6 +3509,8 @@ class ServiciosReferencias {
 		$cadAsigandos = '';
 		if ($asignados == '1') {
 			$cadAsigandos = " inner join dbreasignaciones ra on ra.refoportunidades = o.idoportunidad ";
+		} else {
+			$cadAsigandos = " left join dbreasignaciones ra on ra.refoportunidades = o.idoportunidad ";
 		}
 
 		$busqueda = str_replace("'","",$busqueda);
@@ -3525,7 +3527,7 @@ class ServiciosReferencias {
 		o.telefonotrabajo,
 		o.email,
 		usu.nombrecompleto,
-		est.estadooportunidad,
+		concat(est.estadooportunidad, ' ', (case when ra.idreasignacion is null then '' else '** Reasignado' end)) as estadooportunidad ,
 		concat(rr.apellidopaterno, ' ', rr.nombre) as referente,
 		o.fechacrea,
 		o.refusuarios,
