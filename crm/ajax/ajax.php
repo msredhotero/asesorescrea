@@ -2029,6 +2029,9 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones,
             // si es asociado temporal o agente asociado id=8 lo genero automatico
             if ($refestadooportunidad == 7) {
 
+               $cuerpo = '';
+      	      $cuerpo .= '<h4>Nombre Completo: '.$nombre.' '.$apellidopaterno.' '.$apellidomaterno.'</h4><br>';
+
                if ($email != '') {
                   $password = $apellidopaterno.$apellidomaterno.date('His');
 
@@ -2037,15 +2040,13 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones,
                   $resAT = $serviciosReferencias->insertarAsociados($refusuarios,2,$nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,'',$email,'null',$telefonomovil,$telefonotrabajo,1,'','',1,$id,0);
 
                   $asunto = 'Se genero un Asociado Temporal';
+
+                  $cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/dashboard/asociados/index.php?id=".$resAT."'>ACCEDER</a>";
                } else {
                   $asunto = 'No se pudo generar un Asociado Temporal por falta de email';
                }
 
                $destinatario = 'jfoncerrada@icloud.com';
-
-      	      $cuerpo = '';
-      	      $cuerpo .= '<h4>Nombre Completo: '.$nombre.' '.$apellidopaterno.' '.$apellidomaterno.'</h4><br>';
-      	      $cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/dashboard/asociados/index.php'>ACCEDER</a>";
 
       	      $res = $serviciosReferencias->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
 
@@ -4210,19 +4211,20 @@ function modificarPostulantes($serviciosReferencias) {
       // si es asociado temporal o agente asociado id=8 lo genero automatico
       if ($refestadopostulantes == 11) {
 
+         $cuerpo = '';
+         $cuerpo .= '<h4>Nombre Completo: '.$nombre.' '.$apellidopaterno.' '.$apellidomaterno.'</h4><br>';
+
          if ($email != '') {
 
             $resAT = $serviciosReferencias->insertarAsociados($refusuarios,2,$razonsocial,$apellidopaterno,$apellidomaterno,$nombre,'',$email,'null',$telefonomovil,$telefonotrabajo,1,'','',1,0,$id);
             $asunto = 'Se genero un Asociado Temporal';
+
+            $cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/dashboard/asociados/index.php?id=".$resAT."'>ACCEDER</a>";
          } else {
             $asunto = 'No se pudo generar un Asociado Temporal por falta de email';
          }
 
          $destinatario = 'jfoncerrada@icloud.com';
-
-         $cuerpo = '';
-         $cuerpo .= '<h4>Nombre Completo: '.$nombre.' '.$apellidopaterno.' '.$apellidomaterno.'</h4><br>';
-         $cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/dashboard/asociados/index.php'>ACCEDER</a>";
 
          $res = $serviciosReferencias->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
 

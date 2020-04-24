@@ -31,7 +31,7 @@ $fecha = date('Y-m-d');
 
 /*
 $destinatario = 'rlinares@asesorescrea.com';
-
+$asunto = 'Se genero un Asociado Temporal';
 $cuerpo = '';
 $cuerpo .= '<h4>Nombre Completo: Marcos Prueba Correo</h4><br>';
 $cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/dashboard/asociados/index.php'>ACCEDER</a>";
@@ -57,6 +57,11 @@ $eliminar = "eliminarAsociados";
 $insertar = "insertarAsociados";
 
 $modificar = "modificarAsociados";
+
+$idmodificar = 0;
+if (isset($_GET['id'])) {
+	$idmodificar = $_GET['id'];
+}
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
@@ -563,6 +568,11 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			frmAjaxModificar(idTable);
 			$('#lgmModificar').modal();
 		});//fin del boton modificar
+
+		<?php if ($idmodificar > 0) { ?>
+			frmAjaxModificar(<?php echo $idmodificar; ?>);
+			$('#lgmModificar').modal();
+		<?php } ?>
 
 		$('.frmNuevo').submit(function(e){
 
