@@ -3193,7 +3193,7 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
             $resEstado 	= $serviciosReferencias->traerEstadooportunidad();
          } else {
             if ($_SESSION['idroll_sahilices'] == 8) {
-               $resEstado 	= $serviciosReferencias->traerEstadooportunidadPorIn('8');
+               $resEstado 	= $serviciosReferencias->traerEstadooportunidadPorIn('1,8');
             } else {
                $resEstado 	= $serviciosReferencias->traerEstadooportunidadPorIn('1,2,3,4');
             }
