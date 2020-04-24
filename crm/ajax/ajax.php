@@ -1939,6 +1939,11 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones,
    session_start();
 
    $id = $_POST['id'];
+
+   // voy a buscar el estado anterior de la oportunidad, si era pendiente de revision y lo pasan a por atender genero asignacion nueva
+   $resO = $serviciosReferencias->traerOportunidadesPorId($id);
+   $refEstadoAux = mysql_result($resO,0,'refestadooportunidad');
+
    $nombredespacho = $_POST['nombredespacho'];
    $apellidopaterno = $_POST['apellidopaterno'];
    $apellidomaterno = $_POST['apellidomaterno'];
@@ -1969,6 +1974,11 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones,
       if (($telefonotrabajo == '') && ($telefonomovil == '')) {
          echo 'Hubo un error al insertar datos - Debe cargar por lo menos un telefono';
       } else {
+         if (($refEstadoAux == 9) && ($refestadooportunidad == 1)) {
+            $refestadooportunidad = 4;
+            $resAsignacion = $serviciosReferencias->asignarOportunidades($id,$refusuarios);
+         }
+         
          $res = $serviciosReferencias->modificarOportunidades($id,$nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$telefonomovil,$telefonotrabajo,$email,$refusuarios,$refreferentes,$refestadooportunidad,$refmotivorechazos,$observaciones);
 
          if ($res == true) {
