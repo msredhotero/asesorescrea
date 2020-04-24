@@ -544,26 +544,68 @@ class ServiciosReferencias {
 
 	function graficoVentasPorGerentes() {
 		$sql = "select
-					TIMESTAMPDIFF(MONTH, p.ultimafecha,curdate()) as diffmeses
+				u.nombrecompleto,
+				sum(u.activo) as activo,
+				count(u.asesores) as asesores
 				from (
-				    select
-						MAX(c.fechapago) as ultimafecha,
-				        a.idasesor
-					from		dbcotizaciones c
-					inner
-					join		dbasesores a
-					on			c.refasesores = a.idasesor
-					left
-					join		dbasociados aso
-					on			aso.idasociado = c.refasociados
-					left
-					join		dbasociadostemporales asot
-					on			asot.idasociadotemporal = c.refasociadostemporales
-
-					where		c.refestadocotizaciones>=6
-					group by    a.idasesor
-				    ) p";
+					SELECT
+						gc.nombrecompleto,
+						(CASE
+							WHEN COALESCE(r.diffmeses, 99) > 6 THEN 0
+							ELSE 1
+						END) AS activo,
+						a.idasesor AS asesores
+					FROM
+						(SELECT
+							COALESCE(TIMESTAMPDIFF(MONTH, p.ultimafecha, CURDATE()), 99) AS diffmeses,
+								p.idasesor
+						FROM
+							(SELECT
+							MAX(c.fechapago) AS ultimafecha, a.idasesor
+						FROM
+							dbcotizaciones c
+						INNER JOIN dbasesores a ON c.refasesores = a.idasesor
+						LEFT JOIN dbasociados aso ON aso.idasociado = c.refasociados
+						WHERE
+							c.refestadocotizaciones >= 6
+						GROUP BY a.idasesor) p) r
+							RIGHT JOIN
+						dbasesores a ON a.idasesor = r.idasesor
+							LEFT JOIN
+						dbpostulantes p ON p.refusuarios = a.refusuarios
+							INNER JOIN
+						dbreclutadorasores rrr ON (rrr.refasesores = a.idasesor
+							OR rrr.refpostulantes = p.idpostulante)
+							INNER JOIN
+						dbusuarios gc ON gc.idusuario = rrr.refusuarios
+				) u
+				group by u.nombrecompleto
+				";
 		$res = $this->query($sql,0);
+
+		$asesores = '';
+		$activos = '';
+		$gerentecomercial = '';
+
+		while ($rowG = mysql_fetch_array($res)) {
+			$asesores .= $rowG['asesores'];
+			$activos .= $rowG['activo'].",";
+			$gerentecomercial .= "'".$rowG['nombrecompleto']."',";
+		}
+
+		if (strlen($asesores) > 0 ) {
+			$asesores = substr($asesores,0,-1);
+		}
+
+		if (strlen($activos) > 0 ) {
+			$activos = substr($activos,0,-1);
+		}
+
+		if (strlen($gerentecomercial) > 0 ) {
+			$gerentecomercial = substr($gerentecomercial,0,-1);
+		}
+
+		return array('asesores'=>$asesores, 'activo' => $activos, 'nombrecompleto' => $gerentecomercial);
 	}
 
 	function graficosVentasAnuales() {
@@ -3175,13 +3217,14 @@ class ServiciosReferencias {
 		left join tbreferentes rr on rr.idreferente = o.refreferentes
 		left join dbentrevistaoportunidades eo on eo.refoportunidades = o.idoportunidad
 		where est.idestadooportunidad not in (4,5,6,7,8,9) ".$where." ".$cadFecha.$cadEstado."
-		ORDER BY ".$colSort." ".$colSortDir."
-		limit ".$start.",".$length;
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
 
 		//die(var_dump($sql));
 
-		$res = $this->query($sql,0);
-		return $res;
+		$res = $this->query($sql.$limit,0);
+		$resAux  = $this->query($sql,0);
+		return array($res,$resAux);
 	}
 
 

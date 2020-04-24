@@ -255,6 +255,8 @@ if (strlen($iniciadoC) > 0 ) {
 // grafica de ventas anuales
 $resVentasAnuales = $serviciosReferencias->graficosVentasAnuales();
 
+$resVentasGerentes = $serviciosReferencias->graficoVentasPorGerentes();
+
 /********************* fin ********************************************/
 
 
@@ -700,6 +702,7 @@ $resVentasAnuales = $serviciosReferencias->graficosVentasAnuales();
 			new Chart(document.getElementById("pie_chart2").getContext("2d"), getChartJs('pie2'));
 
 			new Chart(document.getElementById("bar_line").getContext("2d"), getChartJs('lineVentas'));
+			new Chart(document.getElementById("bar_line2").getContext("2d"), getChartJs('lineVentasGerentes'));
 
 
 			<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11)) { ?>
@@ -752,6 +755,35 @@ $resVentasAnuales = $serviciosReferencias->graficosVentasAnuales();
 			                    pointBackgroundColor: 'rgba(0, 188, 212, 0.9)',
 			                    pointBorderWidth: 1
 			                }]
+			            },
+			            options: {
+			                responsive: true,
+			                legend: false
+			            }
+			        }
+			    }
+				 else if (type === 'lineVentasGerentes') {
+			        config = {
+			            type: 'line',
+			            data: {
+			                labels: [<?php echo $resVentasGerentes['nombrecompleto']; ?>],
+			                datasets: [{
+			                    label: "Activos",
+			                    data: [<?php echo $resVentasGerentes['activo']; ?>],
+			                    borderColor: 'rgba(0, 188, 212, 0.75)',
+			                    backgroundColor: 'rgba(0, 188, 212, 0.3)',
+			                    pointBorderColor: 'rgba(0, 188, 212, 0)',
+			                    pointBackgroundColor: 'rgba(0, 188, 212, 0.9)',
+			                    pointBorderWidth: 1
+			                }, {
+		                        label: "Asesores",
+		                        data: [<?php echo $resVentasGerentes['asesores']; ?>],
+		                        borderColor: 'rgba(233, 30, 99, 0.75)',
+		                        backgroundColor: 'rgba(233, 30, 99, 0.3)',
+		                        pointBorderColor: 'rgba(233, 30, 99, 0)',
+		                        pointBackgroundColor: 'rgba(233, 30, 99, 0.9)',
+		                        pointBorderWidth: 1
+		                    }]
 			            },
 			            options: {
 			                responsive: true,

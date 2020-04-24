@@ -571,8 +571,11 @@ switch ($tabla) {
 				$icon = array('create','delete');
 			} else {
 				$responsableComercial = $_GET['sSearch_0'];
-				$resAjax = $serviciosReferencias->traerOportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,$estado);
-				$res = $serviciosReferencias->traerOportunidadesGrid($responsableComercial);
+
+				$datos = $serviciosReferencias->traerOportunidadesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,$estado);
+
+				$resAjax = $datos[0];
+				$res = $datos[1];
 				$label = array('btnModificar','btnEliminar');
 				$class = array('bg-amber','bg-red');
 				$icon = array('create','delete');
