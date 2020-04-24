@@ -213,7 +213,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 											<tr>
 												<th>Area</th>
 												<th>Nombre</th>
-												<th>Telfono</th>
+												<th>Telefono</th>
 												<th>Telfono Movil</th>
 												<th>Email</th>
 												<th>Acciones</th>
@@ -223,7 +223,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 											<tr>
 												<th>Area</th>
 												<th>Nombre</th>
-												<th>Telfono</th>
+												<th>Telefono</th>
 												<th>Telfono Movil</th>
 												<th>Email</th>
 												<th>Acciones</th>
