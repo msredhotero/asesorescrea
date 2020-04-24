@@ -155,8 +155,9 @@ switch ($tabla) {
 
 					$res = $serviciosReferencias->traerAsesoresPorGerente($responsableComercial);
 					$consulta .= ' inner join dbusuarios usu ON usu.idusuario = p.refusuarios
-					inner join dbpostulantes pp on pp.refusuarios = usu.idusuario
-					inner join dbreclutadorasores rrr on rrr.refpostulantes = pp.idpostulante and rrr.refusuarios = '.$responsableComercial.'
+					LEFT join dbpostulantes pp on pp.refusuarios = usu.idusuario
+					inner join dbreclutadorasores rrr on (rrr.refasesores = pp.idasesor
+					OR rrr.refpostulantes = pp.idpostulante) and rrr.refusuarios = '.$responsableComercial.'
 					inner join dbusuarios usur ON usur.idusuario = rrr.refusuarios';
 				}
 
