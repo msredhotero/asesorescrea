@@ -1951,9 +1951,6 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones,
    $refestadooportunidad = $_POST['refestadooportunidad'];
    $refmotivorechazos = ($_POST['refmotivorechazos'] == '' ? 'null' : $_POST['refmotivorechazos']);
    $observaciones = $_POST['observaciones'];
-   if ($refmotivorechazos != 'null') {
-      $refestadooportunidad = 4;
-   }
 
    $error = '';
    if ($refestadooportunidad == 2) {
