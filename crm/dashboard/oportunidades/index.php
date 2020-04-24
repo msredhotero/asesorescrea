@@ -70,7 +70,7 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 	$cadRef2 = "";
 	$cadRefFiltro = '<option value="">'.$_SESSION['nombre_sahilices'].'</option>';
 } else {
-	
+
 	$resReferentes 	= $serviciosReferencias->traerReferentes();
 	$cadRef2 = '<option value="">-- Seleccionar --</option>';
 	$resReferentesUsuarios = $serviciosReferencias->traerReferentesUsuario();
@@ -103,6 +103,8 @@ $cadRefCita = $serviciosFunciones->devolverSelectBox($resEstadoCita,array(1),'')
 $resEstado2 	= $serviciosReferencias->traerEstadooportunidad();
 $cadRef33 = '<option value="">-- Seleccionar --</option>';
 $cadRef33 .= $serviciosFunciones->devolverSelectBox2($resEstado2,array(1),' ');
+
+$cadRefAsinados = "<option value='0'>No</option><option value='1'>Si</option>"
 ?>
 
 <!DOCTYPE html>
@@ -251,10 +253,12 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox2($resEstado2,array(1),' ');
 
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
-										<?php echo $serviciosFunciones->addInput('4,4,4,6','text','fechadesde_filtro','fechadesde_filtro','datepicker', 'Fecha Desde'); ?>
-										<?php echo $serviciosFunciones->addInput('4,4,4,6','text','fechahasta_filtro','fechadesde_filtro','datepicker', 'Fecha Hasta'); ?>
-										<?php echo $serviciosFunciones->addInput('4,4,4,6','select','estado_filtro','estado_filtro','', 'Estado','',$cadRef33); ?>
-
+										<?php echo $serviciosFunciones->addInput('3,3,3,6','text','fechadesde_filtro','fechadesde_filtro','datepicker', 'Fecha Desde'); ?>
+										<?php echo $serviciosFunciones->addInput('3,3,3,6','text','fechahasta_filtro','fechadesde_filtro','datepicker', 'Fecha Hasta'); ?>
+										<?php echo $serviciosFunciones->addInput('3,3,3,6','select','estado_filtro','estado_filtro','', 'Estado','',$cadRef33); ?>
+										<?php echo $serviciosFunciones->addInput('3,3,3,6','select','asignados_filtro','asignados_filtro','', 'Asignados','',$cadRefAsinados); ?>
+									</div>
+									<div class="col-lg-12 col-md-12">
 										<button type="button" class="btn bg-red" id="filtrar">Filtrar</button>
 									</div>
 								</div>
@@ -591,23 +595,27 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox2($resEstado2,array(1),' ');
 
 		$('.contHistorico').hide();
 		$('.contPendientes').hide();
+		$('.frmContAsignados').hide();
 
 		$('.btnPendientes').click(function() {
 			$('.contHistorico').hide();
 			$('.contActuales').hide();
 			$('.contPendientes').show();
+			$('.frmContAsignados').hide();
 		});
 
 		$('.btnHistorico').click(function() {
 			$('.contHistorico').show();
 			$('.contActuales').hide();
 			$('.contPendientes').hide();
+			$('.frmContAsignados').show();
 		});
 
 		$('.btnVigente').click(function() {
 			$('.contActuales').show();
 			$('.contHistorico').hide();
 			$('.contPendientes').hide();
+			$('.frmContAsignados').hide();
 		});
 
 
@@ -714,6 +722,7 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox2($resEstado2,array(1),' ');
 				aoData.push( { "name": "start", "value": $('#fechadesde_filtro').val(), } );
 				aoData.push( { "name": "end", "value": $('#fechahasta_filtro').val(), } );
 				aoData.push( { "name": "estado", "value": $('#estado_filtro').val(), } );
+				aoData.push( { "name": "asigandos", "value": $('#asignados_filtro').val(), } );
 				$.getJSON( sSource, aoData, function (json) {
 				/* Do whatever additional processing you want on the callback, then tell DataTables */
 				fnCallback(json)
@@ -748,7 +757,7 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox2($resEstado2,array(1),' ');
 		});
 
 
-		var table2 = $('#example3').DataTable({
+		var table3 = $('#example3').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=oportunidadespendientes",

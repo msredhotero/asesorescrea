@@ -700,7 +700,7 @@ class ServiciosReferencias {
 
 	// cuando un asesor no vende en 6 meses pasa a inactivo
 	function cronBajaAsesor() {
-		
+
 	}
 
 	// si cotizo y el estado es pagado entonces pasa automaticamente a activo
@@ -3476,14 +3476,14 @@ class ServiciosReferencias {
 	}
 
 
-	function traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max, $estado) {
+	function traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max, $estado, $asignados) {
 
 		$where = '';
 
 		$roles = '';
 
 	   if ($responsableComercial != '') {
-	      $roles = " usu.idusuario = ".$responsableComercial." and ";
+	      $roles = " and usu.idusuario = ".$responsableComercial." and ";
 	   } else {
 	      $roles = '';
 	   }
@@ -3506,9 +3506,14 @@ class ServiciosReferencias {
 			$cadEstado = " and o.refestadooportunidad =".$estado;
 		}
 
+		$cadAsigandos = '';
+		if ($asignados == '1') {
+			$cadAsigandos = " inner join dbreasignaciones ra on ra.refoportunidades = o.idoportunidad ";
+		}
+
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and ".$roles." and (o.nombredespacho like '%".$busqueda."%' or o.apellidopaterno like '%".$busqueda."%' or o.apellidomaterno like '%".$busqueda."%' or o.nombre like '%".$busqueda."%' or o.telefonomovil like '%".$busqueda."%' or o.telefonotrabajo like '%".$busqueda."%' or o.email like '%".$busqueda."%' or usu.nombrecompleto like '%".$busqueda."%' or est.estadooportunidad like '%".$busqueda."%')";
+			$where = " ".$roles." and (o.nombredespacho like '%".$busqueda."%' or o.apellidopaterno like '%".$busqueda."%' or o.apellidomaterno like '%".$busqueda."%' or o.nombre like '%".$busqueda."%' or o.telefonomovil like '%".$busqueda."%' or o.telefonotrabajo like '%".$busqueda."%' or o.email like '%".$busqueda."%' or usu.nombrecompleto like '%".$busqueda."%' or est.estadooportunidad like '%".$busqueda."%')";
 		}
 
 
@@ -3529,6 +3534,7 @@ class ServiciosReferencias {
 		from dboportunidades o
 		inner join dbusuarios usu ON usu.idusuario = o.refusuarios
 		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
+		".$cadAsigandos."
 		left join tbreferentes rr on rr.idreferente = o.refreferentes
 		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
 		where ".$roles." (est.idestadooportunidad in (4,5,6,7,8,9) or r.refoportunidades is not null) ".$where." ".$cadFecha.$cadEstado."

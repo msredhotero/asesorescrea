@@ -645,7 +645,9 @@ switch ($tabla) {
 				$icon = array();
 			} else {
 				$responsableComercial = $_GET['sSearch_0'];
-				$datos = $serviciosReferencias->traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,$estado);
+				$asigandos = $_GET['asigandos'];
+
+				$datos = $serviciosReferencias->traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,$estado,$asigandos);
 
 				$resAjax = $datos[0];
 				$res = $datos[1];
@@ -676,7 +678,7 @@ switch ($tabla) {
 		$estado = 9;
 
 		$responsableComercial = $_GET['sSearch_0'];
-		$datos = $serviciosReferencias->traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,9);
+		$datos = $serviciosReferencias->traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,9,0);
 
 		$resAjax = $datos[0];
 		$res = $datos[1];

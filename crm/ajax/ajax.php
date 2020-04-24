@@ -1094,6 +1094,7 @@ function Reasignar($serviciosReferencias,$serviciosUsuarios,$serviciosFunciones)
    $cad = '';
 
    if (mysql_result($res,0,'refestadooportunidad') == 5 || mysql_result($res,0,'refestadooportunidad') == 6 || mysql_result($res,0,'refestadooportunidad') == 4 || mysql_result($res,0,'refestadooportunidad') == 9) {
+      //die(var_dump(mysql_result($res,0,'refestadooportunidad')));
       $resAsignacion = $serviciosReferencias->traerReasignacionesPorOportunidad($id);
 
       if (mysql_num_rows($resAsignacion) > 0) {
