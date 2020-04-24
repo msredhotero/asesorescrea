@@ -1191,6 +1191,8 @@ $cadRefAsinados = "<option value='0'>No</option><option value='1'>Si</option>"
 
 							$('#lgmModificar').modal('hide');
 							table.ajax.reload();
+							table2.ajax.reload();
+							table3.ajax.reload();
 						} else {
 							swal({
 									title: "Respuesta",
