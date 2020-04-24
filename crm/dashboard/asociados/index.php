@@ -29,6 +29,15 @@ $serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../asociados
 
 $fecha = date('Y-m-d');
 
+
+$destinatario = 'rlinares@asesorescrea.com';
+
+$cuerpo = '';
+$cuerpo .= '<h4>Nombre Completo: Marcos Prueba Correo</h4><br>';
+$cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/dashboard/asociados/index.php'>ACCEDER</a>";
+
+$res = $serviciosReferencias->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
+
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
 $resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Asociados",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
