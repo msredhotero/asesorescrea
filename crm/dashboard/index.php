@@ -764,7 +764,7 @@ $resVentasGerentes = $serviciosReferencias->graficoVentasPorGerentes();
 			    }
 				 else if (type === 'lineVentasGerentes') {
 			        config = {
-			            type: 'line',
+			            type: 'bar',
 			            data: {
 			                labels: [<?php echo $resVentasGerentes['nombrecompleto']; ?>],
 			                datasets: [{
