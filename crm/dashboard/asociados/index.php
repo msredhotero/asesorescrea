@@ -34,7 +34,7 @@ $destinatario = 'rlinares@asesorescrea.com';
 $asunto = 'Se genero un Asociado Temporal';
 $cuerpo = '';
 $cuerpo .= '<h4>Nombre Completo: Marcos Prueba Correo</h4><br>';
-$cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/dashboard/asociados/index.php'>ACCEDER</a>";
+$cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/dashboard/asociados/index.php?id=11'>ACCEDER</a>";
 
 $res = $serviciosReferencias->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
 */
