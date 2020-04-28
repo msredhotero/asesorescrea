@@ -2843,6 +2843,21 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+      case 'dbclientes':
+         $resultado = $serviciosReferencias->traerClientesPorId($id);
+
+         $lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial');
+         $lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social');
+
+         $modificar = "modificarClientes";
+         $idTabla = "idcliente";
+
+         $resVar8 = $serviciosReferencias->traerTipopersonas();
+         $cadRef8 = $serviciosFunciones->devolverSelectBoxActivo($resVar8,array(1),'',mysql_result($resultado,0,'reftipopersonas'));
+
+         $refdescripcion = array(0=>$cadRef8);
+         $refCampo 	=  array('reftipopersonas');
+      break;
       case 'dbdirectorioasesores':
          $resultado = $serviciosReferencias->traerDirectorioasesoresPorId($id);
 

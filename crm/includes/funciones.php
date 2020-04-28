@@ -700,8 +700,8 @@ class Servicios {
 
 									/*if (($row[0] == "fechabaja2") || ($row[0] == "fechaalta2")){*/
 										$form	=	$form.'
-										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($campo).' '.$lblObligatorioAsterisco.'" style="display:'.$lblOculta.'">
-										<b>'.$label.'</b>
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
+										<b>'.$label.' '.$lblObligatorioAsterisco.'</b>
 										<div class="input-group">
 
 										<span class="input-group-addon">
@@ -744,8 +744,8 @@ class Servicios {
 
 											$form	=	$form.'
 
-											<div class="form-group col-md-12 frmCont'.strtolower($campo).' '.$lblObligatorioAsterisco.'" style="display:'.$lblOculta.'">
-												<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
+											<div class="form-group col-md-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
+												<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.' '.$lblObligatorioAsterisco.'</label>
 												<div class="input-group col-md-12">
 													<textarea name="'.$campo.'" id="'.$campo.'" rows="200" cols="160">
 														Ingrese la noticia.
@@ -1286,6 +1286,9 @@ class Servicios {
 			break;
 			case 'dbasesores':
 				$ocultar = array("usuariomodi","fechacrea","fechamodi","usuariocrea","usuariomodi",'refasesores','comision','refsucursalesinbursa','ultimoestado','token');
+			break;
+			case 'dbclientes':
+				$ocultar = array("usuariomodi","fechacrea","fechamodi","usuariocrea","usuariomodi");
 			break;
 			default:
 				$ocultar = array();
