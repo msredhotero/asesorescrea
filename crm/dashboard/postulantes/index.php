@@ -950,7 +950,12 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 				success: function(data){
 
 					if (data != '') {
-						$(location).attr('href',data);
+						if (data == 'index.php') {
+							swal("Importante!", 'El proceso de reclutamiento ya concluyo en el estado actual.', "warning");
+						} else {
+							$(location).attr('href',data);
+						}
+
 					} else {
 						swal("Error!", data, "warning");
 
