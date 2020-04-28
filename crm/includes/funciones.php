@@ -539,6 +539,8 @@ class Servicios {
 			}
 		}*/
 
+		$lblObligatorioAsterisco = '';
+
 
 		if ($res == false) {
 			return 'Error al traer datos';
@@ -552,8 +554,10 @@ class Servicios {
 
 				if ($row[2]=='NO') {
 					$lblObligatorio = ' required ';
+					$lblObligatorioAsterisco = ' <span style="color:red;">*</span> ';
 				} else {
 					$lblObligatorio = '';
+					$lblObligatorioAsterisco = '';
 				}
 
 				foreach ($lblcambio as $cambio) {
@@ -580,7 +584,7 @@ class Servicios {
 							$form	=	$form.'
 
 							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
-								<label for="'.$label.'" class="control-label" style="text-align:left">'.ucwords($label).'</label>
+								<label for="'.$label.'" class="control-label" style="text-align:left">'.ucwords($label).' '.$lblObligatorioAsterisco.'</label>
 								<div class="input-group">
                            <span class="input-group-addon">$</span>
                            <div class="form-line">
@@ -597,7 +601,7 @@ class Servicios {
 							$form	=	$form.'
 
 							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($row[0]).'" style="display:'.$lblOculta.'">
-								<label for="'.$label.'" class="control-label" style="text-align:left">'.ucwords($label).'</label>
+								<label for="'.$label.'" class="control-label" style="text-align:left">'.ucwords($label).' '.$lblObligatorioAsterisco.'</label>
 								<div class="input-group">
                            <span class="input-group-addon">$</span>
                            <div class="form-line">
@@ -635,7 +639,7 @@ class Servicios {
 
 								<div class="form-group col-md-6 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 									<div class="form-line">
-									<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
+									<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.' '.$lblObligatorioAsterisco.'</label>
 									<div class="input-group col-md-12">
 
 										<select data-placeholder="selecione el '.$label.'..." id="'.strtolower($campo).'" name="'.strtolower($campo).'" class="chosen-select" tabindex="2">
@@ -655,7 +659,7 @@ class Servicios {
 								$form	=	$form.'
 
 								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
-								<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
+								<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.' '.$lblObligatorioAsterisco.'</label>
 								<div class="input-group col-md-12">
 									<select class="form-control" id="'.strtolower($campo).'" name="'.strtolower($campo).'" '.$lblObligatorio.'>
 
@@ -679,7 +683,7 @@ class Servicios {
 								$form	=	$form.'
 
 								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
-									<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
+									<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.' '.$lblObligatorioAsterisco.'</label>
 									<div class="switch">
 										<label><input type="checkbox"  id="'.$campo.'" name="'.$campo.'"/><span class="lever switch-col-green"></span></label>
 									</div>
@@ -696,7 +700,7 @@ class Servicios {
 
 									/*if (($row[0] == "fechabaja2") || ($row[0] == "fechaalta2")){*/
 										$form	=	$form.'
-										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($campo).' '.$lblObligatorioAsterisco.'" style="display:'.$lblOculta.'">
 										<b>'.$label.'</b>
 										<div class="input-group">
 
@@ -721,7 +725,7 @@ class Servicios {
 										$form	=	$form.'
 
 										<div class="form-group col-md-6" style="display:'.$lblOculta.'">
-											<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
+											<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.' '.$lblObligatorioAsterisco.'</label>
 											<div class="input-group col-md-6">
 												<input id="'.$campo.'" name="'.$campo.'" class="form-control">
 												<span class="input-group-addon">
@@ -740,7 +744,7 @@ class Servicios {
 
 											$form	=	$form.'
 
-											<div class="form-group col-md-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
+											<div class="form-group col-md-12 frmCont'.strtolower($campo).' '.$lblObligatorioAsterisco.'" style="display:'.$lblOculta.'">
 												<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
 												<div class="input-group col-md-12">
 													<textarea name="'.$campo.'" id="'.$campo.'" rows="200" cols="160">
@@ -762,7 +766,7 @@ class Servicios {
 
 												$form	=	$form.'
 												<div class="col-sm-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
-												<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.'</label>
+												<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.' '.$lblObligatorioAsterisco.'</label>
 													<div class="form-group">
 														<div class="form-line">
 															<textarea rows="2" class="form-control no-resize" id="'.$campo.'" name="'.$campo.'" placeholder="Ingrese el '.$label.'..."></textarea>
@@ -803,7 +807,7 @@ class Servicios {
 
 														$form	=	$form.'
 														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
-															<label class="form-label">'.$label.'</label>
+															<label class="form-label">'.$label.' '.$lblObligatorioAsterisco.'</label>
 															<div class="form-group">
 																<div class="form-line">
 																	<input type="number" class="form-control" id="'.$campo.'" name="'.$campo.'" '.$lblObligatorio.'/>
@@ -822,7 +826,7 @@ class Servicios {
 
 															$form	=	$form.'
 															<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
-																<label class="form-label">'.$label.'</label>
+																<label class="form-label">'.$label.' '.$lblObligatorioAsterisco.'</label>
 																<div class="form-group input-group">
 																	<div class="form-line">
 																		<input type="email" class="form-control" id="'.$campo.'" name="'.$campo.'" '.$lblObligatorio.'/>
@@ -839,7 +843,7 @@ class Servicios {
 
 															$form	=	$form.'
 															<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
-																<label class="form-label">'.$label.'</label>
+																<label class="form-label">'.$label.' '.$lblObligatorioAsterisco.'</label>
 																<div class="form-group input-group">
 																	<div class="form-line">
 																		<input type="text" class="form-control" id="'.$campo.'" name="'.$campo.'" '.$lblObligatorio.'/>
