@@ -885,7 +885,7 @@ $resVentasGerentes = $serviciosReferencias->graficoVentasPorGerentes();
 			                    "Rechazados",
 			                    "No Atendido",
 			                    "No Contacto",
-			                    "Agente Asociado"
+			                    "Asociado Temporal"
 			                ]
 			            },
 			            options: {
@@ -913,7 +913,7 @@ $resVentasGerentes = $serviciosReferencias->graficoVentasPorGerentes();
 			                    "Rechazados",
 			                    "No Atendido",
 			                    "No Contacto",
-			                    "Agente Asociado"
+			                    "Asociado Temporal"
 			                ]
 			            },
 			            options: {

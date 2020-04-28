@@ -349,6 +349,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 <script>
 	$(document).ready(function(){
 
+		$('.frmContrefoportunidades').hide();
+		$('.frmContrefpostulantes').hide();
+
 		$('#fechanacimiento').pickadate({
 			format: 'yyyy-mm-dd',
 			labelMonthNext: 'Siguiente mes',
