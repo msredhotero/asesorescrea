@@ -3483,7 +3483,7 @@ class ServiciosReferencias {
 		$roles = '';
 
 	   if ($responsableComercial != '') {
-	      $roles = " and usu.idusuario = ".$responsableComercial." and ";
+	      $roles = " usu.idusuario = ".$responsableComercial." and ";
 	   } else {
 	      $roles = '';
 	   }
