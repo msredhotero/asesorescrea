@@ -3373,8 +3373,9 @@ function insertarAsesores($serviciosReferencias, $serviciosUsuarios) {
       $vighastarc = $_POST['vighastarc'];
 
       $refestadoasesor = $_POST['refestadoasesor'];
+      $refestadoasesorinbursa = $_POST['refestadoasesorinbursa'];
 
-      $res = $serviciosReferencias->insertarAsesores($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc, $vighastarc , $refestadoasesor);
+      $res = $serviciosReferencias->insertarAsesores($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc, $vighastarc , $refestadoasesor,$refestadoasesorinbursa);
 
       if ((integer)$res > 0) {
          echo '';
