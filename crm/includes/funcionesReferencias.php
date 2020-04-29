@@ -2728,6 +2728,30 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function graficoIndiceAceptacionMesual() {
+		$sql = "select
+						r.nombrecompleto,
+						count(r.aceptado) as aceptado,
+						count(r.rechazado) as rechazado,
+						count(r.iniciado) as iniciado
+					from (
+						SELECT
+							usu.nombrecompleto,
+							(case when opo.refestadooportunidad = 3 then 1 end) as aceptado,
+							(case when opo.refestadooportunidad in (4,5,6,7,8) then 1 end) as rechazado,
+							(case when opo.refestadooportunidad in (1,2) then 1 end) as iniciado
+						FROM
+						dbusuarios usu
+						 left JOIN dboportunidades opo ON usu.idusuario = opo.refusuarios
+						 		and opo.refestadooportunidad IN (1,2,3 , 4,5,6,7,8) and month(opo.fechacrea)=3
+						 where usu.refroles = 3
+					    ) r
+					group by r.nombrecompleto
+					order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 	function traerReferentesPorUsuario($idusuario) {
 		$sql = "select idreferente,apellidopaterno,apellidomaterno,nombre,telefono,email,observaciones,refusuarios from tbreferentes where refusuarios =".$idusuario;
 

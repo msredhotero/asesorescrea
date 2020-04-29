@@ -269,6 +269,41 @@ $resVentasAnuales = $serviciosReferencias->graficosVentasAnuales();
 
 $resVentasGerentes = $serviciosReferencias->graficoVentasPorGerentes();
 
+////////////////////////////////////////////////////////////////////////
+
+$resComparativo2 = $serviciosReferencias->graficoIndiceAceptacionMesual();
+
+$aceptadoC2 = '';
+$rechazadoC2 = '';
+$iniciadoC2 = '';
+
+$nombresC2 = '';
+while ($rowG = mysql_fetch_array($resComparativo2)) {
+	$aceptadoC2 .= $rowG['aceptado'].",";
+	$rechazadoC2 .= $rowG['rechazado'].",";
+	$iniciadoC2 .= $rowG['iniciado'].",";
+
+	$nombresC2 .= "'".$rowG['nombrecompleto']."',";
+}
+
+if (strlen($nombresC2) > 0 ) {
+	$nombresC2 = substr($nombresC2,0,-1);
+}
+
+if (strlen($aceptadoC2) > 0 ) {
+	$aceptadoC2 = substr($aceptadoC2,0,-1);
+}
+
+if (strlen($rechazadoC2) > 0 ) {
+	$rechazadoC2 = substr($rechazadoC2,0,-1);
+}
+
+if (strlen($iniciadoC2) > 0 ) {
+	$iniciadoC2 = substr($iniciadoC2,0,-1);
+}
+
+//////////////////////////////////////////////////////////////
+
 /********************* fin ********************************************/
 
 
@@ -483,7 +518,7 @@ $resVentasGerentes = $serviciosReferencias->graficoVentasPorGerentes();
 					</div>
 				</div>
 					<?php } ?>
-					<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11)) { ?>
+					<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 				<div class="row">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="card ">
@@ -504,6 +539,33 @@ $resVentasGerentes = $serviciosReferencias->graficoVentasPorGerentes();
 							</div>
 							<div class="body table-responsive">
 								<canvas id="bar_chart2" height="150"></canvas>
+							</div>
+						</div>
+					</div>
+				</div>
+					<?php } ?>
+
+					<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+				<div class="row">
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+						<div class="card ">
+							<div class="header bg-blue">
+								<h2 style="color:#fff">
+									ASIGNACION TOTAL DE OPORTUNIDADES COMPARATIVO MENSUAL
+								</h2>
+								<ul class="header-dropdown m-r--5">
+									<li class="dropdown">
+										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+											<i class="material-icons">more_vert</i>
+										</a>
+										<ul class="dropdown-menu pull-right">
+											<li><a href="javascript:void(0);" class="recargar">Recargar</a></li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="body table-responsive">
+								<canvas id="bar_chart3" height="150"></canvas>
 							</div>
 						</div>
 					</div>
@@ -735,8 +797,9 @@ $resVentasGerentes = $serviciosReferencias->graficoVentasPorGerentes();
 			new Chart(document.getElementById("bar_line2").getContext("2d"), getChartJs('lineVentasGerentes'));
 
 
-			<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11)) { ?>
+			<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 			new Chart(document.getElementById("bar_chart2").getContext("2d"), getChartJs('bar2'));
+			new Chart(document.getElementById("bar_chart3").getContext("2d"), getChartJs('bar4'));
 			<?php } ?>
 
 			function getChartJs(type) {
@@ -858,6 +921,31 @@ $resVentasGerentes = $serviciosReferencias->graficoVentasPorGerentes();
 			                    }, {
 	 			                        label: "Iniciado",
 	 			                        data: [<?php echo $iniciadoC; ?>],
+	 			                        backgroundColor: 'rgba(62, 204, 246, 0.8)'
+	 			                    }]
+			            },
+			            options: {
+			                responsive: true,
+			                legend: false
+			            }
+			        }
+			    }
+				 else if (type === 'bar4') {
+			        config = {
+			            type: 'bar',
+			            data: {
+			                labels: [<?php echo $nombresC2; ?>],
+			                datasets: [{
+			                    label: "Aceptados",
+			                    data: [<?php echo $aceptadoC2; ?>],
+			                    backgroundColor: 'rgba(12, 241, 8, 0.8)'
+			                }, {
+			                        label: "Rechazados",
+			                        data: [<?php echo $rechazadoC2; ?>],
+			                        backgroundColor: 'rgba(252, 12, 12, 0.8)'
+			                    }, {
+	 			                        label: "Iniciado",
+	 			                        data: [<?php echo $iniciadoC2; ?>],
 	 			                        backgroundColor: 'rgba(62, 204, 246, 0.8)'
 	 			                    }]
 			            },
