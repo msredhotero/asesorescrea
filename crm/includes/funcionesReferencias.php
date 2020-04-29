@@ -3287,7 +3287,7 @@ class ServiciosReferencias {
 		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
 		left join tbreferentes rr on rr.idreferente = o.refreferentes
 		left join dbentrevistaoportunidades eo on eo.refoportunidades = o.idoportunidad
-		where est.idestadooportunidad not in (4,5,6,7,8) ".$where." ".$cadFecha.$cadEstado."
+		where est.idestadooportunidad not in (3,4,5,6,7,8) ".$where." ".$cadFecha.$cadEstado."
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
 
@@ -3350,7 +3350,7 @@ class ServiciosReferencias {
 		left join tbreferentes rr on rr.idreferente = o.refreferentes
 		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
 		left join dbentrevistaoportunidades eo on eo.refoportunidades = o.idoportunidad
-		where r.idreclutadorasor is null and est.idestadooportunidad not in (4,5,6,7,8) and usu.idusuario = ".$idusuario.$where." ".$cadFecha.$cadEstado."
+		where r.idreclutadorasor is null and est.idestadooportunidad not in (3,4,5,6,7,8) and usu.idusuario = ".$idusuario.$where." ".$cadFecha.$cadEstado."
 		ORDER BY o.fechacrea desc ";
 		$limit = "limit ".$start.",".$length;
 
@@ -3407,7 +3407,7 @@ class ServiciosReferencias {
 		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
 		left join tbreferentes rr on rr.idreferente = o.refreferentes
 		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
-		where (est.idestadooportunidad in (4,5,6,7,8) or r.refoportunidades is not null) and usu.idusuario = ".$idusuario.$where."  ".$cadFecha.$cadEstado."
+		where (est.idestadooportunidad in (3,4,5,6,7,8) or r.refoportunidades is not null) and usu.idusuario = ".$idusuario.$where."  ".$cadFecha.$cadEstado."
 		ORDER BY o.fechacrea desc ";
 		$limit = "limit ".$start.",".$length;
 
@@ -3468,7 +3468,7 @@ class ServiciosReferencias {
 		left join tbreferentes rr on rr.idreferente = o.refreferentes
 		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
 		left join dbentrevistaoportunidades eo on eo.refoportunidades = o.idoportunidad
-		where r.idreclutadorasor is null and est.idestadooportunidad not in (4,5,6,7,8) and o.refreferentes = ".$idusuario.$where." ".$cadFecha.$cadEstado."
+		where r.idreclutadorasor is null and est.idestadooportunidad not in (3,4,5,6,7,8) and o.refreferentes = ".$idusuario.$where." ".$cadFecha.$cadEstado."
 		ORDER BY o.fechacrea desc ";
 		$limit = "limit ".$start.",".$length;
 
@@ -3525,7 +3525,7 @@ class ServiciosReferencias {
 		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
 		left join tbreferentes rr on rr.idreferente = o.refreferentes
 		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
-		where  (est.idestadooportunidad in (4,5,6,7,8) or r.refoportunidades is not null) and o.refreferentes = ".$idusuario.$where." ".$cadFecha.$cadEstado."
+		where  (est.idestadooportunidad in (3,4,5,6,7,8) or r.refoportunidades is not null) and o.refreferentes = ".$idusuario.$where." ".$cadFecha.$cadEstado."
 		ORDER BY o.fechacrea desc ";
 		$limit = "limit ".$start.",".$length;
 
@@ -3599,7 +3599,7 @@ class ServiciosReferencias {
 		".$cadAsigandos."
 		left join tbreferentes rr on rr.idreferente = o.refreferentes
 		left join dbreclutadorasores r on r.refoportunidades = o.idoportunidad
-		where ".$roles." (est.idestadooportunidad in (4,5,6,7,8) or r.refoportunidades is not null) ".$where." ".$cadFecha.$cadEstado."
+		where ".$roles." (est.idestadooportunidad in (3,4,5,6,7,8) or r.refoportunidades is not null) ".$where." ".$cadFecha.$cadEstado."
 		ORDER BY o.fechacrea desc ";
 		$limit = "limit ".$start.",".$length;
 
