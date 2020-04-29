@@ -908,7 +908,7 @@ $cadRefAsinados = "<option value='0'>No</option><option value='1'>Si</option>"
 						}
 
 						/*alert($('.frmAjaxModificar #refestadogeneraloportunidad option:selected').val());*/
-						if (($('.frmAjaxModificar #refestadooportunidad option:selected').val() <= 2) || ($('.frmAjaxModificar #refestadooportunidad option:selected').val() == 3)) {
+						if (($('.frmAjaxModificar #refestadooportunidad option:selected').val() <= 2) || ($('.frmAjaxModificar #refestadooportunidad option:selected').val() == 3) || ($('.frmAjaxModificar #refestadooportunidad option:selected').val() == 7)) {
 							$('.btnPendienteRevision').hide();
 							$( "#btnPendienteRevision" ).data( "accesible",'No' );
 						} else {
