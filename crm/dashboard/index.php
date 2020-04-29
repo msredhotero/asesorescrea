@@ -1040,7 +1040,7 @@ if (strlen($asociadoC2) > 0 ) {
 	 			                        backgroundColor: 'rgba(138, 17, 222, 0.8)'
 	 			                    }, {
 		 			                        label: "No Contactado",
-		 			                        data: [<?php echo $noatendidoC; ?>],
+		 			                        data: [<?php echo $nocontactoC; ?>],
 		 			                        backgroundColor: 'rgba(252, 142, 25, 0.8)'
 		 			                    }, {
 			 			                        label: "Agente Temporal",
@@ -1077,7 +1077,7 @@ if (strlen($asociadoC2) > 0 ) {
 		 			                        backgroundColor: 'rgba(138, 17, 222, 0.8)'
 		 			                    }, {
 			 			                        label: "No Contactado",
-			 			                        data: [<?php echo $noatendidoC2; ?>],
+			 			                        data: [<?php echo $nocontactoC2; ?>],
 			 			                        backgroundColor: 'rgba(252, 142, 25, 0.8)'
 			 			                    }, {
 				 			                        label: "Agente Temporal",
