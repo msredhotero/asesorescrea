@@ -112,12 +112,24 @@ $noatendido = '';
 $nocontacto = '';
 $asociado = '';
 $totalPie1 = 0;
+
+$aceptadoCant1 = 0;
+$rechazadoCant1 = 0;
+$noatendidoCant1 = 0;
+$nocontactoCant1 = 0;
+$asociadoCant1 = 0;
 while ($rowG = mysql_fetch_array($resGrafico)) {
 	$aceptado .= $rowG['aceptado'].",";
 	$rechazado .= $rowG['rechazado'].",";
 	$noatendido .= $rowG['noatendido'].",";
 	$nocontacto .= $rowG['nocontacto'].",";
 	$asociado .= $rowG['asociado'].",";
+
+	$aceptadoCant1 += (integer)$rowG['aceptado'];
+	$rechazadoCant1 += (integer)$rowG['rechazado'];
+	$noatendidoCant1 += (integer)$rowG['noatendido'];
+	$nocontactoCant1 += (integer)$rowG['nocontacto'];
+	$asociadoCant1 += (integer)$rowG['asociado'];
 
 	$totalPie1 = (integer)$rowG['aceptado'] + (integer)$rowG['rechazado'] + (integer)$rowG['noatendido'] + (integer)$rowG['nocontacto'] + (integer)$rowG['asociado'];
 }
@@ -425,6 +437,24 @@ $resVentasGerentes = $serviciosReferencias->graficoVentasPorGerentes();
 							</div>
 							<div class="body table-responsive">
 								<canvas id="pie_chart" height="150"></canvas>
+								<div class="row clearfix">
+									<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
+										<button class="btn btn-success btn-block waves-effect" type="button">ACEPTADO <span class="badge"><?php echo $aceptadoCant1; ?></span></button>
+									</div>
+									<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
+										<button class="btn bg-red btn-block waves-effect" type="button">RECHAZADO <span class="badge"><?php echo $rechazadoCant1; ?></span></button>
+									</div>
+									<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
+										<button class="btn bg-purple btn-block waves-effect" type="button">NO ATENDIDO <span class="badge"><?php echo $noatendidoCant1; ?></span></button>
+									</div>
+									<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
+										<button class="btn bg-orange btn-block waves-effect" type="button">NO CONTACTADO <span class="badge"><?php echo $nocontactoCant1; ?></span></button>
+									</div>
+									<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
+										<button class="btn bg-yellow btn-block waves-effect" type="button">AGENTE TEMPORAL <span class="badge"><?php echo $asociadoCant1; ?></span></button>
+									</div>
+
+								</div>
 								<h4>Total Oportunidades: <?php echo $totalPie1; ?></h4>
 							</div>
 						</div>
