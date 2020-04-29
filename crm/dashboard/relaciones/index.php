@@ -41,7 +41,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
 $singular = "Relacion";
 
-$plural = "Relaciones";
+$plural = "Relaciones Gerentes Comerciales";
 
 $eliminar = "eliminarReclutadorasores";
 

@@ -901,11 +901,11 @@ $resVentasGerentes = $serviciosReferencias->graficoVentasPorGerentes();
 			                datasets: [{
 			                    data: [<?php echo $aceptado; ?>,<?php echo $rechazado; ?>,<?php echo $noatendido; ?>,<?php echo $nocontacto; ?>,<?php echo $asociado; ?>],
 			                    backgroundColor: [
-			                        "rgb(12, 241, 8)",
-			                        "rgb(252, 12, 12)",
-			                        "rgb(220, 44, 6)",
-			                        "rgb(241, 47, 6)",
-			                        "rgb(244, 250, 26)"
+										  "rgb(12, 241, 8)",
+										  "rgb(252, 12, 12)",
+										  "rgb(138, 17, 222)",
+										  "rgb(252, 142, 25)",
+										  "rgb(244, 250, 26)"
 			                    ],
 			                }],
 			                labels: [
