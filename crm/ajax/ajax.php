@@ -3211,11 +3211,13 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 
          $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resRoles,array(3),'',mysql_result($resultado,0,'refusuarios'));
 
-         $cadRef2 = "<option value=''>-- Seleccionar --</option>";
+
          if ($_SESSION['idroll_sahilices'] == 3) {
             $resReferentes 	= $serviciosReferencias->traerReferentesPorId(mysql_result($resultado,0,'refreferentes'));
+            $cadRef2 = "";
          } else {
             $resReferentes 	= $serviciosReferencias->traerReferentes();
+            $cadRef2 = "<option value=''>-- Seleccionar --</option>";
          }
 
 
