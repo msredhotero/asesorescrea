@@ -614,6 +614,20 @@ if (strlen($iniciadoC2) > 0 ) {
 							</div>
 							<div class="body table-responsive">
 								<canvas id="bar_line2" height="250"></canvas>
+								<div class="list-group">
+									<?php
+									$i=0;
+									foreach ($resVentasGerentes['arGerente'] as $valor) {
+									?>
+
+									<a href="javascript:void(0);" class="list-group-item">
+										<span class="badge bg-pink"><?php echo $resVentasGerentes['arPorcentajes'][$i]; ?> %</span> <?php echo $valor; ?>
+									</a>
+								<?php
+									$i += 1;
+									}
+								?>
+								</div>
 							</div>
 						</div>
 					</div>
