@@ -2658,7 +2658,7 @@ class ServiciosReferencias {
 				FROM
 				    dboportunidades opo
 				WHERE
-				    opo.refestadooportunidad IN (3 , 4,5,6,7,8) and month(opo.fechacrea) = ".date('m');
+				    opo.refestadooportunidad IN (3 , 4,5,6,7,8) and month(opo.fechacrea) = 3";
 		$res = $this->query($sql,0);
 		return $res;
 	}
