@@ -797,8 +797,20 @@ switch ($accion) {
       traerDirectorio($serviciosReferencias);
    break;
 
+   case 'Revision':
+      Revision($serviciosReferencias);
+   break;
+
 }
 /* FinFinFin */
+
+function Revision($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->modificarOportunidadesEstadoGeneral($id,3);
+
+   echo '';
+}
 
 function traerDirectorio($serviciosReferencias) {
    $id = $_POST['id'];
@@ -1093,7 +1105,7 @@ function Reasignar($serviciosReferencias,$serviciosUsuarios,$serviciosFunciones)
    $res = $serviciosReferencias->traerOportunidadesPorId($id);
    $cad = '';
 
-   if (mysql_result($res,0,'refestadooportunidad') == 5 || mysql_result($res,0,'refestadooportunidad') == 6 || mysql_result($res,0,'refestadooportunidad') == 4 || mysql_result($res,0,'refestadooportunidad') == 9) {
+   if (mysql_result($res,0,'refestadooportunidad') == 5 || mysql_result($res,0,'refestadooportunidad') == 6 || mysql_result($res,0,'refestadooportunidad') == 4) {
       //die(var_dump(mysql_result($res,0,'refestadooportunidad')));
       $resAsignacion = $serviciosReferencias->traerReasignacionesPorOportunidad($id);
 
@@ -1914,13 +1926,14 @@ function insertarOportunidades($serviciosReferencias) {
    $refestadooportunidad = $_POST['refestadooportunidad'];
    $refmotivorechazos = ($_POST['refmotivorechazos'] == '' ? 'null' : $_POST['refmotivorechazos']);
    $observaciones = $_POST['observaciones'];
+   $refestadogeneraloportunidad = 1;
 
    if (($telefonotrabajo == '') && ($telefonomovil == '')) {
       echo 'Hubo un error al insertar datos - Debe cargar por lo menos un telefono';
    } else {
       $existe = $serviciosReferencias->existeOportunidad($apellidopaterno,$apellidomaterno,$nombre);
       if ($existe == 0) {
-         $res = $serviciosReferencias->insertarOportunidades($nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$telefonomovil,$telefonotrabajo,$email,$refusuarios,$refreferentes,$refestadooportunidad,$refmotivorechazos,$observaciones);
+         $res = $serviciosReferencias->insertarOportunidades($nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$telefonomovil,$telefonotrabajo,$email,$refusuarios,$refreferentes,$refestadooportunidad,$refmotivorechazos,$observaciones,$refestadogeneraloportunidad);
 
          if ((integer)$res > 0) {
             echo '';
@@ -1956,6 +1969,7 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones,
    $refestadooportunidad = $_POST['refestadooportunidad'];
    $refmotivorechazos = ($_POST['refmotivorechazos'] == '' ? 'null' : $_POST['refmotivorechazos']);
    $observaciones = $_POST['observaciones'];
+   $refestadogeneraloportunidad = $_POST['refestadogeneraloportunidad'];
 
    $error = '';
    if ($refestadooportunidad == 2) {
@@ -1974,12 +1988,16 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones,
       if (($telefonotrabajo == '') && ($telefonomovil == '')) {
          echo 'Hubo un error al insertar datos - Debe cargar por lo menos un telefono';
       } else {
-         if (($refEstadoAux == 9) && ($refestadooportunidad == 1)) {
-            $refestadooportunidad = 4;
+         if ($refestadooportunidad == 8) {
+            $refestadogeneraloportunidad = 2; // lo dejo en rechazo definitivo
+         }
+         if (($refestadogeneraloportunidad == 3) && ($refestadooportunidad == 1)) {
+            $refestadooportunidad = $refEstadoAux; // le dejo el estado con el que finalizo
+            $refestadogeneraloportunidad = 2; // lo dejo en rechazo definitivo
             $resAsignacion = $serviciosReferencias->asignarOportunidades($id,$refusuarios);
          }
 
-         $res = $serviciosReferencias->modificarOportunidades($id,$nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$telefonomovil,$telefonotrabajo,$email,$refusuarios,$refreferentes,$refestadooportunidad,$refmotivorechazos,$observaciones);
+         $res = $serviciosReferencias->modificarOportunidades($id,$nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$telefonomovil,$telefonotrabajo,$email,$refusuarios,$refreferentes,$refestadooportunidad,$refmotivorechazos,$observaciones,$refestadogeneraloportunidad);
 
          if ($res == true) {
             if ($refestadooportunidad == 3) {
@@ -3240,8 +3258,11 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $cadRef4 = "<option value=''>-- Seleccionar --</option>";
          $cadRef4 .= $serviciosFunciones->devolverSelectBoxActivo($resMotivos,array(1),' ',mysql_result($resultado,0,'refmotivorechazos'));
 
-         $refdescripcion = array(0 => $cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef4);
-         $refCampo 	=  array('refusuarios','refreferentes','refestadooportunidad','refmotivorechazos');
+         $resGeneralEstado 	= $serviciosReferencias->traerEstadogeneraloportunidadPorId(mysql_result($resultado,0,'refestadogeneraloportunidad'));
+         $cadRef5 = $serviciosFunciones->devolverSelectBox($resGeneralEstado,array(1),' ');
+
+         $refdescripcion = array(0 => $cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef4,4=>$cadRef5);
+         $refCampo 	=  array('refusuarios','refreferentes','refestadooportunidad','refmotivorechazos','refestadogeneraloportunidad');
       break;
 
       default:

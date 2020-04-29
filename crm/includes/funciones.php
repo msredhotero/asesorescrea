@@ -520,7 +520,7 @@ class Servicios {
 			break;
 
 			default:
-				$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","usuariocrea","usuariomodi","tipoimagen","utilidad","idusuario");
+				$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","usuariocrea","usuariomodi","tipoimagen","utilidad","idusuario",'refestadogeneraloportunidad');
 				break;
 		}
 
@@ -1279,7 +1279,7 @@ class Servicios {
 				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi","domicilio","entrevistador",'codigopostal');
 			break;
 			case 'dboportunidades':
-				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes','telefonofijo');
+				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes','telefonofijo','refestadogeneraloportunidad');
 			break;
 			case 'dbpostulantes':
 				$ocultar = array("usuariomodi","fechacrea","fechamodi","usuariocrea","usuariomodi",'refasesores','comision','refsucursalesinbursa','ultimoestado','token');

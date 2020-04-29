@@ -88,8 +88,11 @@ $resMotivos = $serviciosReferencias->traerMotivorechazos();
 $cadRef4 = "<option value=''>-- Seleccionar --</option>";
 $cadRef4 .= $serviciosFunciones->devolverSelectBox($resMotivos,array(1),' ');
 
-$refdescripcion = array(0 => $cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef4);
-$refCampo 	=  array('refusuarios','refreferentes','refestadooportunidad','refmotivorechazos');
+$resGeneralEstado 	= $serviciosReferencias->traerEstadogeneraloportunidadPorId(1);
+$cadRef5 = $serviciosFunciones->devolverSelectBox($resGeneralEstado,array(1),' ');
+
+$refdescripcion = array(0 => $cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef4,4=>$cadRef5);
+$refCampo 	=  array('refusuarios','refreferentes','refestadooportunidad','refmotivorechazos','refestadogeneraloportunidad');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -473,8 +476,11 @@ $cadRefAsinados = "<option value='0'>No</option><option value='1'>Si</option>"
 								</div>
 		               </div>
 		               <div class="modal-footer">
-		                   <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
-		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+								<?php if (($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 1)) { ?>
+								<button id="btnPendienteRevision" type="button" class="btn bg-deep-orange waves-effect btnPendienteRevision" data-accesible="no" data-dismiss="modal">PASAR A REVISION</button>
+								<?php } ?>
+		                  <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
+		                  <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
 		               </div>
 		           </div>
 		       </div>
@@ -558,6 +564,10 @@ $cadRefAsinados = "<option value='0'>No</option><option value='1'>Si</option>"
 
 <script>
 	$(document).ready(function(){
+
+
+
+		$('.frmContrefmotivorechazos').hide();
 
 		$('#fechadesde_filtro').pickadate({
 			format: 'yyyy-mm-dd',
@@ -868,6 +878,10 @@ $cadRefAsinados = "<option value='0'>No</option><option value='1'>Si</option>"
 					if (data != '') {
 						$('.frmAjaxModificar').html(data);
 
+						<?php if ($_SESSION['idroll_sahilices'] == 8) { ?>
+							$('.frmEntrevistaoportunidad').hide();
+
+						<?php } else { ?>
 						$('.frmEntrevistaoportunidad #entrevistador').val($('.frmAjaxModificar #refusuarios option:selected').html());
 
 						$('#refoportunidades').val(id);
@@ -882,6 +896,59 @@ $cadRefAsinados = "<option value='0'>No</option><option value='1'>Si</option>"
 							time: true,
 							minDate : new Date()
 						});
+
+
+
+						<?php } ?>
+
+						if ($('#refestadooportunidad option:selected').val() == 4) {
+							$('.frmContrefmotivorechazos').show();
+						} else {
+							$('.frmContrefmotivorechazos').hide();
+						}
+
+						/*alert($('.frmAjaxModificar #refestadogeneraloportunidad option:selected').val());*/
+						if (($('.frmAjaxModificar #refestadooportunidad option:selected').val() <= 2) || ($('.frmAjaxModificar #refestadooportunidad option:selected').val() == 3)) {
+							$('.btnPendienteRevision').hide();
+							$( "#btnPendienteRevision" ).data( "accesible",'No' );
+						} else {
+							if ($('.frmAjaxModificar #refestadooportunidad option:selected').val() == 8) {
+								$('.btnPendienteRevision').hide();
+								$( "#btnPendienteRevision" ).data( "accesible",'No' );
+							} else {
+
+								if ($('.frmAjaxModificar #refestadogeneraloportunidad option:selected').val() == 3) {
+									$('.btnPendienteRevision').removeClass('bg-deep-orange');
+									$('.btnPendienteRevision').addClass('bg-green');
+									$('.btnPendienteRevision').html('REVISION ASIGNADA');
+									$( "#btnPendienteRevision" ).data( "accesible",'No' );
+
+								} else {
+									if ($('.frmAjaxModificar #refestadogeneraloportunidad option:selected').val() == 2) {
+										$('.btnPendienteRevision').hide();
+										$( "#btnPendienteRevision" ).data( "accesible",'No' );
+									} else {
+										$('.btnPendienteRevision').show();
+										$('.btnPendienteRevision').addClass('bg-deep-orange');
+										$('.btnPendienteRevision').removeClass('bg-green');
+										$('.btnPendienteRevision').html('PASAR A REVISION');
+										$( "#btnPendienteRevision" ).data( 'accesible','Si' );
+									}
+
+
+								}
+							}
+						}
+
+
+						<?php if ($_SESSION['idroll_sahilices'] == 3) { ?>
+							$('.frmContrefusuarios').hide();
+							$('.frmContrefreferentes').hide();
+						<?php } ?>
+
+
+
+
 
 					} else {
 						swal("Error!", data, "warning");
@@ -944,6 +1011,63 @@ $cadRefAsinados = "<option value='0'>No</option><option value='1'>Si</option>"
 							showConfirmButton: false
 					});
 
+				}
+			});
+
+		}
+
+		$('#btnPendienteRevision').click(function() {
+			var idTablaMod = $('.frmAjaxModificar #id').val();
+			if ($( "#btnPendienteRevision" ).data( "accesible") == 'Si') {
+				Revision(idTablaMod);
+			} else {
+				swal({
+						title: "Respuesta",
+						text: 'No se puede pasar a revision verifique',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+				});
+			}
+
+		});
+
+
+		function Revision(id) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'Revision', id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data == '') {
+						swal({
+								title: "Respuesta",
+								text: 'Oportunidad enviada a revision',
+								type: "success",
+								timer: 1500,
+								showConfirmButton: false
+						});
+						table.ajax.reload();
+						table2.ajax.reload();
+					} else {
+
+						$(".frmAjaxReasignar").html('<h4>No es posible pasar a revision esta oportunidad (Verificar)</h4>');
+						$('#idasignar').val('');
+						$('.reasignar').hide();
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
 				}
 			});
 
@@ -1085,12 +1209,20 @@ $cadRefAsinados = "<option value='0'>No</option><option value='1'>Si</option>"
 
 		$('.frmEntrevistaoportunidad').hide();
 
+
+
 		$(".frmAjaxModificar").on("change",'#refestadooportunidad', function(){
 
 			if ($('.frmAjaxModificar #refestadooportunidad option:selected').val() == 2) {
 				$('.frmEntrevistaoportunidad').show();
 			} else {
 				$('.frmEntrevistaoportunidad').hide();
+			}
+
+			if ($('.frmAjaxModificar #refestadooportunidad option:selected').val() == 4) {
+				$('.frmContrefmotivorechazos').show();
+			} else {
+				$('.frmContrefmotivorechazos').hide();
 			}
 		});//fin del boton modificar
 

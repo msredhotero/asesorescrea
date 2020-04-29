@@ -675,18 +675,18 @@ switch ($tabla) {
 
 		$min = $_GET['start'];
 		$max = $_GET['end'];
-		$estado = 9;
+		$estado = $_GET['estado'];;
 
 		$responsableComercial = $_GET['sSearch_0'];
-		$datos = $serviciosReferencias->traerOportunidadesajaxPorHistorico($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,9,0);
+		$datos = $serviciosReferencias->traerOportunidadesajaxPorHistoricoJavelly($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,$estado,0);
 
 		$resAjax = $datos[0];
 		$res = $datos[1];
 
 		if ($_SESSION['idroll_sahilices'] == 4 || $_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 8) {
-			$label = array('btnReasignar','btnModificar');
-			$class = array('bg-deep-orange','bg-amber');
-			$icon = array('cached','edit');
+			$label = array('btnModificar');
+			$class = array('bg-amber');
+			$icon = array('edit');
 		}
 
 		$indiceID = 0;
