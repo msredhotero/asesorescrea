@@ -197,12 +197,28 @@ $rechazadoM = '';
 $noatendidoM = '';
 $nocontactoM = '';
 $asociadoM = '';
+
+$aceptadoCant2 = 0;
+$rechazadoCant2 = 0;
+$noatendidoCant2 = 0;
+$nocontactoCant2 = 0;
+$asociadoCant2 = 0;
+
+$totalPie2 = 0;
 while ($rowG = mysql_fetch_array($resGraficoM)) {
 	$aceptadoM .= $rowG['aceptado'].",";
 	$rechazadoM .= $rowG['rechazado'].",";
 	$noatendidoM .= $rowG['noatendido'].",";
 	$nocontactoM .= $rowG['nocontacto'].",";
 	$asociadoM .= $rowG['asociado'].",";
+
+	$aceptadoCant2 += (integer)$rowG['aceptado'];
+	$rechazadoCant2 += (integer)$rowG['rechazado'];
+	$noatendidoCant2 += (integer)$rowG['noatendido'];
+	$nocontactoCant2 += (integer)$rowG['nocontacto'];
+	$asociadoCant2 += (integer)$rowG['asociado'];
+
+	$totalPie2 = (integer)$rowG['aceptado'] + (integer)$rowG['rechazado'] + (integer)$rowG['noatendido'] + (integer)$rowG['nocontacto'] + (integer)$rowG['asociado'];
 }
 
 
@@ -236,13 +252,17 @@ $resComparativo = $serviciosReferencias->graficoIndiceAceptacion();
 
 $aceptadoC = '';
 $rechazadoC = '';
-$iniciadoC = '';
+$noatendidoC = '';
+$nocontactoC = '';
+$asociadoC = '';
 
 $nombresC = '';
 while ($rowG = mysql_fetch_array($resComparativo)) {
 	$aceptadoC .= $rowG['aceptado'].",";
 	$rechazadoC .= $rowG['rechazado'].",";
-	$iniciadoC .= $rowG['iniciado'].",";
+	$noatendidoC .= $rowG['noatendido'].",";
+	$nocontactoC .= $rowG['nocontacto'].",";
+	$asociadoC .= $rowG['asociado'].",";
 
 	$nombresC .= "'".$rowG['nombrecompleto']."',";
 }
@@ -259,8 +279,16 @@ if (strlen($rechazadoC) > 0 ) {
 	$rechazadoC = substr($rechazadoC,0,-1);
 }
 
-if (strlen($iniciadoC) > 0 ) {
-	$iniciadoC = substr($iniciadoC,0,-1);
+if (strlen($noatendidoC) > 0 ) {
+	$noatendidoC = substr($noatendidoC,0,-1);
+}
+
+if (strlen($nocontactoC) > 0 ) {
+	$nocontactoC = substr($nocontactoC,0,-1);
+}
+
+if (strlen($asociadoC) > 0 ) {
+	$asociadoC = substr($asociadoC,0,-1);
 }
 
 //////////////////////////////////////////////////////////////
@@ -275,12 +303,18 @@ $resComparativo2 = $serviciosReferencias->graficoIndiceAceptacionMesual();
 
 $aceptadoC2 = '';
 $rechazadoC2 = '';
+$noatendidoC2 = '';
+$nocontactoC2 = '';
+$asociadoC2 = '';
 $iniciadoC2 = '';
 
 $nombresC2 = '';
 while ($rowG = mysql_fetch_array($resComparativo2)) {
 	$aceptadoC2 .= $rowG['aceptado'].",";
 	$rechazadoC2 .= $rowG['rechazado'].",";
+	$noatendidoC2 .= $rowG['noatendido'].",";
+	$nocontactoC2 .= $rowG['nocontacto'].",";
+	$asociadoC2 .= $rowG['asociado'].",";
 	$iniciadoC2 .= $rowG['iniciado'].",";
 
 	$nombresC2 .= "'".$rowG['nombrecompleto']."',";
@@ -300,6 +334,18 @@ if (strlen($rechazadoC2) > 0 ) {
 
 if (strlen($iniciadoC2) > 0 ) {
 	$iniciadoC2 = substr($iniciadoC2,0,-1);
+}
+
+if (strlen($noatendidoC2) > 0 ) {
+	$noatendidoC2 = substr($noatendidoC2,0,-1);
+}
+
+if (strlen($nocontactoC2) > 0 ) {
+	$nocontactoC2 = substr($nocontactoC2,0,-1);
+}
+
+if (strlen($asociadoC2) > 0 ) {
+	$asociadoC2 = substr($asociadoC2,0,-1);
 }
 
 //////////////////////////////////////////////////////////////
@@ -474,19 +520,19 @@ if (strlen($iniciadoC2) > 0 ) {
 								<canvas id="pie_chart" height="150"></canvas>
 								<div class="row clearfix">
 									<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
-										<button class="btn btn-success btn-block waves-effect" type="button">ACEPTADO <span class="badge"><?php echo $aceptadoCant1; ?></span></button>
+										<button class="btn btn-success btn-xs btn-block waves-effect" type="button">ACEPTADO <span class="badge"><?php echo $aceptadoCant1; ?></span></button>
 									</div>
 									<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
-										<button class="btn bg-red btn-block waves-effect" type="button">RECHAZADO <span class="badge"><?php echo $rechazadoCant1; ?></span></button>
+										<button class="btn bg-red btn-xs btn-block waves-effect" type="button">RECHAZADO <span class="badge"><?php echo $rechazadoCant1; ?></span></button>
 									</div>
 									<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
-										<button class="btn bg-purple btn-block waves-effect" type="button">NO ATENDIDO <span class="badge"><?php echo $noatendidoCant1; ?></span></button>
+										<button class="btn bg-purple btn-xs btn-block waves-effect" type="button">NO ATENDIDO <span class="badge"><?php echo $noatendidoCant1; ?></span></button>
 									</div>
 									<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
-										<button class="btn bg-orange btn-block waves-effect" type="button">NO CONTACTADO <span class="badge"><?php echo $nocontactoCant1; ?></span></button>
+										<button class="btn bg-orange btn-xs btn-block waves-effect" type="button">NO CONTACTADO <span class="badge"><?php echo $nocontactoCant1; ?></span></button>
 									</div>
-									<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
-										<button class="btn bg-yellow btn-block waves-effect" type="button">AGENTE TEMPORAL <span class="badge"><?php echo $asociadoCant1; ?></span></button>
+									<div class="col-xs-6 col-sm-6 col-md-5 col-lg-5">
+										<button class="btn bg-yellow btn-xs btn-block waves-effect" type="button">AGENTE TEMPORAL <span class="badge"><?php echo $asociadoCant1; ?></span></button>
 									</div>
 
 								</div>
@@ -513,6 +559,25 @@ if (strlen($iniciadoC2) > 0 ) {
 							</div>
 							<div class="body table-responsive">
 								<canvas id="pie_chart2" height="150"></canvas>
+								<div class="row clearfix">
+									<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
+										<button class="btn btn-success btn-xs btn-block waves-effect" type="button">ACEPTADO <span class="badge"><?php echo $aceptadoCant2; ?></span></button>
+									</div>
+									<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
+										<button class="btn bg-red btn-xs btn-block waves-effect" type="button">RECHAZADO <span class="badge"><?php echo $rechazadoCant2; ?></span></button>
+									</div>
+									<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
+										<button class="btn bg-purple btn-xs btn-block waves-effect" type="button">NO ATENDIDO <span class="badge"><?php echo $noatendidoCant2; ?></span></button>
+									</div>
+									<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
+										<button class="btn bg-orange btn-xs btn-block waves-effect" type="button">NO CONTACTADO <span class="badge"><?php echo $nocontactoCant2; ?></span></button>
+									</div>
+									<div class="col-xs-6 col-sm-6 col-md-5 col-lg-5">
+										<button class="btn bg-yellow btn-xs btn-block waves-effect" type="button">AGENTE TEMPORAL <span class="badge"><?php echo $asociadoCant2; ?></span></button>
+									</div>
+
+								</div>
+								<h4>Total Oportunidades: <?php echo $totalPie2; ?></h4>
 							</div>
 						</div>
 					</div>
@@ -538,6 +603,23 @@ if (strlen($iniciadoC2) > 0 ) {
 								</ul>
 							</div>
 							<div class="body table-responsive">
+								<div class="row clearfix">
+									<div class="col-xs-6 col-sm-6 col-md-2 col-lg-2">
+										<button class="btn btn-success btn-xs btn-block waves-effect" type="button">ACEPTADO </button>
+									</div>
+									<div class="col-xs-6 col-sm-6 col-md-2 col-lg-2">
+										<button class="btn bg-red btn-xs btn-block waves-effect" type="button">RECHAZADO</button>
+									</div>
+									<div class="col-xs-6 col-sm-6 col-md-2 col-lg-2">
+										<button class="btn bg-purple btn-xs btn-block waves-effect" type="button">NO ATENDIDO</button>
+									</div>
+									<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+										<button class="btn bg-orange btn-xs btn-block waves-effect" type="button">NO CONTACTADO </button>
+									</div>
+									<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+										<button class="btn bg-yellow btn-xs btn-block waves-effect" type="button">AGENTE TEMPORAL </button>
+									</div>
+								</div>
 								<canvas id="bar_chart2" height="150"></canvas>
 							</div>
 						</div>
@@ -565,6 +647,26 @@ if (strlen($iniciadoC2) > 0 ) {
 								</ul>
 							</div>
 							<div class="body table-responsive">
+								<div class="row clearfix">
+									<div class="col-xs-6 col-sm-6 col-md-2 col-lg-2">
+										<button class="btn bg-light-blue btn-xs btn-block waves-effect" type="button">INICIADO </button>
+									</div>
+									<div class="col-xs-6 col-sm-6 col-md-2 col-lg-2">
+										<button class="btn btn-success btn-xs btn-block waves-effect" type="button">ACEPTADO </button>
+									</div>
+									<div class="col-xs-6 col-sm-6 col-md-2 col-lg-2">
+										<button class="btn bg-red btn-xs btn-block waves-effect" type="button">RECHAZADO</button>
+									</div>
+									<div class="col-xs-6 col-sm-6 col-md-2 col-lg-2">
+										<button class="btn bg-purple btn-xs btn-block waves-effect" type="button">NO ATENDIDO</button>
+									</div>
+									<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+										<button class="btn bg-orange btn-xs btn-block waves-effect" type="button">NO CONTACTADO </button>
+									</div>
+									<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+										<button class="btn bg-yellow btn-xs btn-block waves-effect" type="button">AGENTE TEMPORAL </button>
+									</div>
+								</div>
 								<canvas id="bar_chart3" height="150"></canvas>
 							</div>
 						</div>
@@ -933,10 +1035,18 @@ if (strlen($iniciadoC2) > 0 ) {
 			                        data: [<?php echo $rechazadoC; ?>],
 			                        backgroundColor: 'rgba(252, 12, 12, 0.8)'
 			                    }, {
-	 			                        label: "Iniciado",
-	 			                        data: [<?php echo $iniciadoC; ?>],
-	 			                        backgroundColor: 'rgba(62, 204, 246, 0.8)'
-	 			                    }]
+	 			                        label: "No Atendido",
+	 			                        data: [<?php echo $noatendidoC; ?>],
+	 			                        backgroundColor: 'rgba(138, 17, 222, 0.8)'
+	 			                    }, {
+		 			                        label: "No Contactado",
+		 			                        data: [<?php echo $noatendidoC; ?>],
+		 			                        backgroundColor: 'rgba(252, 142, 25, 0.8)'
+		 			                    }, {
+			 			                        label: "Agente Temporal",
+			 			                        data: [<?php echo $asociadoC; ?>],
+			 			                        backgroundColor: 'rgba(244, 250, 26, 0.8)'
+			 			                    }]
 			            },
 			            options: {
 			                responsive: true,
@@ -961,7 +1071,19 @@ if (strlen($iniciadoC2) > 0 ) {
 	 			                        label: "Iniciado",
 	 			                        data: [<?php echo $iniciadoC2; ?>],
 	 			                        backgroundColor: 'rgba(62, 204, 246, 0.8)'
-	 			                    }]
+	 			                    }, {
+		 			                        label: "No Atendido",
+		 			                        data: [<?php echo $noatendidoC2; ?>],
+		 			                        backgroundColor: 'rgba(138, 17, 222, 0.8)'
+		 			                    }, {
+			 			                        label: "No Contactado",
+			 			                        data: [<?php echo $noatendidoC2; ?>],
+			 			                        backgroundColor: 'rgba(252, 142, 25, 0.8)'
+			 			                    }, {
+				 			                        label: "Agente Temporal",
+				 			                        data: [<?php echo $asociadoC2; ?>],
+				 			                        backgroundColor: 'rgba(244, 250, 26, 0.8)'
+				 			                    }]
 			            },
 			            options: {
 			                responsive: true,

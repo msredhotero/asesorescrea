@@ -2719,17 +2719,21 @@ class ServiciosReferencias {
 						r.nombrecompleto,
 						count(r.aceptado) as aceptado,
 						count(r.rechazado) as rechazado,
-						count(r.iniciado) as iniciado
+						count(r.noatendido) as noatendido,
+						count(r.nocontacto) as nocontacto,
+						count(r.asociado) as asociado
 					from (
 						SELECT
 							usu.nombrecompleto,
 							(case when opo.refestadooportunidad = 3 then 1 end) as aceptado,
-							(case when opo.refestadooportunidad in (4,5,6,7,8) then 1 end) as rechazado,
-							(case when opo.refestadooportunidad in (1,2) then 1 end) as iniciado
+							(case when opo.refestadooportunidad in (4,8) then 1 end) as rechazado,
+							(case when opo.refestadooportunidad in (5) then 1 end) as noatendido,
+							(case when opo.refestadooportunidad in (6) then 1 end) as nocontacto,
+							(case when opo.refestadooportunidad in (7) then 1 end) as asociado
 						FROM
 						dbusuarios usu
 						 left JOIN dboportunidades opo ON usu.idusuario = opo.refusuarios
-						 		and opo.refestadooportunidad IN (1,2,3 , 4,5,6,7,8)
+						 		and opo.refestadooportunidad IN (3 , 4,5,6,7,8)
 						 where usu.refroles = 3
 					    ) r
 					group by r.nombrecompleto
@@ -2743,13 +2747,19 @@ class ServiciosReferencias {
 						r.nombrecompleto,
 						count(r.aceptado) as aceptado,
 						count(r.rechazado) as rechazado,
+						count(r.noatendido) as noatendido,
+						count(r.nocontacto) as nocontacto,
+						count(r.asociado) as asociado,
 						count(r.iniciado) as iniciado
 					from (
 						SELECT
 							usu.nombrecompleto,
+							(case when opo.refestadooportunidad in (1,2) then 1 end) as iniciado,
 							(case when opo.refestadooportunidad = 3 then 1 end) as aceptado,
-							(case when opo.refestadooportunidad in (4,5,6,7,8) then 1 end) as rechazado,
-							(case when opo.refestadooportunidad in (1,2) then 1 end) as iniciado
+							(case when opo.refestadooportunidad in (4,8) then 1 end) as rechazado,
+							(case when opo.refestadooportunidad in (5) then 1 end) as noatendido,
+							(case when opo.refestadooportunidad in (6) then 1 end) as nocontacto,
+							(case when opo.refestadooportunidad in (7) then 1 end) as asociado
 						FROM
 						dbusuarios usu
 						 left JOIN dboportunidades opo ON usu.idusuario = opo.refusuarios
