@@ -635,10 +635,20 @@ class ServiciosReferencias {
 		$activos = '';
 		$gerentecomercial = '';
 
+		$arGerente = array();
+		$arGerentePorcentaje = array();
+
 		while ($rowG = mysql_fetch_array($res)) {
 			$asesores .= $rowG['asesores'].",";
 			$activos .= $rowG['activo'].",";
 			$gerentecomercial .= "'".$rowG['nombrecompleto']."',";
+			array_push($arGerente,$rowG['nombrecompleto']);
+			if ((integer)$rowG['asesores'] != 0) {
+				array_push($arGerentePorcentaje,((integer)$rowG['activo'] * 100 / (integer)$rowG['asesores']));
+			} else {
+				array_push($arGerentePorcentaje,0);
+			}
+
 		}
 
 		if (strlen($asesores) > 0 ) {
@@ -653,7 +663,7 @@ class ServiciosReferencias {
 			$gerentecomercial = substr($gerentecomercial,0,-1);
 		}
 
-		return array('asesores'=>$asesores, 'activo' => $activos, 'nombrecompleto' => $gerentecomercial);
+		return array('asesores'=>$asesores, 'activo' => $activos, 'nombrecompleto' => $gerentecomercial,'arGerente' => $arGerente, 'arPorcentajes' => $arGerentePorcentaje);
 	}
 
 	function graficosVentasAnuales() {
