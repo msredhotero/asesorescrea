@@ -279,7 +279,9 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular); ?></h4>
 	               </div>
 	               <div class="modal-body">
-	                  <?php echo $frmUnidadNegocios; ?>
+							<div class="row">
+		                  <?php echo $frmUnidadNegocios; ?>
+							</div>
 							<div class="col-xs-3" style="display:none">
 								<input type="text" class="form-control" id="codigopostalaux" name="codigopostalaux" value=''/>
 

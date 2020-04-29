@@ -3200,7 +3200,7 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $idTabla = "idoportunidad";
 
          $lblCambio	 	= array('nombredespacho','refusuarios','refreferentes','refestadooportunidad','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refmotivorechazos');
-         $lblreemplazo	= array('Nombre del Despacho','Asignar a Reclutador','Persona que Recomendo','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Motivos de Rechazos');
+         $lblreemplazo	= array('Nombre del Despacho','Asignar a Gerente Comercial','Persona que Recomendo','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Motivos de Rechazos');
 
 
          if ($_SESSION['idroll_sahilices'] == 3) {
@@ -3211,8 +3211,14 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 
          $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resRoles,array(3),'',mysql_result($resultado,0,'refusuarios'));
 
-         $resReferentes 	= $serviciosReferencias->traerReferentes();
          $cadRef2 = "<option value=''>-- Seleccionar --</option>";
+         if ($_SESSION['idroll_sahilices'] == 3) {
+            $resReferentes 	= $serviciosReferencias->traerReferentesPorId(mysql_result($resultado,0,'refreferentes'));
+         } else {
+            $resReferentes 	= $serviciosReferencias->traerReferentes();
+         }
+
+
          $cadRef2 .= $serviciosFunciones->devolverSelectBoxActivo($resReferentes,array(1,2,3),' ',mysql_result($resultado,0,'refreferentes'));
 
          if ($_SESSION['idroll_sahilices'] == 4 || $_SESSION['idroll_sahilices'] == 1) {
