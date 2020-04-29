@@ -56,7 +56,7 @@ $modificar = "modificarReclutadorasores";
 $tabla 			= "dbreclutadorasores";
 
 $lblCambio	 	= array('refusuarios','refpostulantes','refoportunidades','refasesores','refasociados');
-$lblreemplazo	= array('Usuarios','Postulantes','Oportunidades','Asesores','Asociados');
+$lblreemplazo	= array('Gerente Comercial','Postulantes','Oportunidades','Asesores','Asociados');
 
 $resRoles 	= $serviciosUsuario->traerUsuariosPorRol(3);
 $cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
