@@ -644,7 +644,7 @@ class ServiciosReferencias {
 			$gerentecomercial .= "'".$rowG['nombrecompleto']."',";
 			array_push($arGerente,$rowG['nombrecompleto']);
 			if ((integer)$rowG['asesores'] != 0) {
-				array_push($arGerentePorcentaje,((integer)$rowG['activo'] * 100 / (integer)$rowG['asesores']));
+				array_push($arGerentePorcentaje,round(((integer)$rowG['activo'] * 100 / (integer)$rowG['asesores']),2));
 			} else {
 				array_push($arGerentePorcentaje,0);
 			}
