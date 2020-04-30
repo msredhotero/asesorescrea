@@ -1139,7 +1139,7 @@ if (strlen($asociadoC2) > 0 ) {
 			                    "Rechazados",
 			                    "No Atendido",
 			                    "No Contacto",
-			                    "Asociado Temporal"
+			                    "Agente Temporal"
 			                ]
 			            },
 			            options: {
@@ -1167,7 +1167,7 @@ if (strlen($asociadoC2) > 0 ) {
 			                    "Rechazados",
 			                    "No Atendido",
 			                    "No Contacto",
-			                    "Asociado Temporal"
+			                    "Agente Temporal"
 			                ]
 			            },
 			            options: {

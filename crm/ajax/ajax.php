@@ -2067,11 +2067,11 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones,
 
                   $resAT = $serviciosReferencias->insertarAsociados($refusuarios,2,$nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,'',$email,'null',$telefonomovil,$telefonotrabajo,1,'','',1,$id,0);
 
-                  $asunto = 'Se genero un Asociado Temporal';
+                  $asunto = 'Se genero un Agente Temporal';
 
                   $cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/dashboard/asociados/index.php?id=".$resAT."'>ACCEDER</a>";
                } else {
-                  $asunto = 'No se pudo generar un Asociado Temporal por falta de email';
+                  $asunto = 'No se pudo generar un Agente Temporal por falta de email';
                }
 
                $destinatario = 'jfoncerrada@icloud.com';
@@ -4274,11 +4274,11 @@ function modificarPostulantes($serviciosReferencias) {
          if ($email != '') {
 
             $resAT = $serviciosReferencias->insertarAsociados($refusuarios,2,$razonsocial,$apellidopaterno,$apellidomaterno,$nombre,'',$email,'null',$telefonomovil,$telefonotrabajo,1,'','',1,0,$id);
-            $asunto = 'Se genero un Asociado Temporal';
+            $asunto = 'Se genero un Agente Temporal';
 
             $cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/dashboard/asociados/index.php?id=".$resAT."'>ACCEDER</a>";
          } else {
-            $asunto = 'No se pudo generar un Asociado Temporal por falta de email';
+            $asunto = 'No se pudo generar un Agente Temporal por falta de email';
          }
 
          $destinatario = 'jfoncerrada@icloud.com';
