@@ -300,7 +300,7 @@ function traerUsuariosajax($length, $start, $busqueda,$colSort,$colSortDir, $per
 
 	$busqueda = str_replace("'","",$busqueda);
 	if ($busqueda != '') {
-		$where = "where ".$roles." (u.usuario like '%".$busqueda."%' or r.descripcion like '%".$busqueda."%' or u.email like '%".$busqueda."%' or u.nombrecompleto like '%".$busqueda."%')";
+		$where = "where ".$roles." (u.usuario like '%".$busqueda."%' or r.descripcion like '%".$busqueda."%' or u.email like '%".$busqueda."%' or u.nombrecompleto like '%".$busqueda."%' or ss.razonsocial like '%".$busqueda."%')";
 	} else {
       if ($perfil != '') {
          $where = " where u.refroles = ".$perfil;
@@ -313,10 +313,13 @@ function traerUsuariosajax($length, $start, $busqueda,$colSort,$colSortDir, $per
                   r.descripcion,
                   u.email ,
                   u.nombrecompleto,
+                  ss.razonsocial,
                   (case when u.activo = 1 then 'Si' else 'No' end) as activo,
                   u.refroles
+
 			from dbusuarios u
 			inner join tbroles r on u.refroles = r.idrol
+         left join tbsocios ss on ss.idsocio = u.refsocios
          ".$where."
       	order by ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;

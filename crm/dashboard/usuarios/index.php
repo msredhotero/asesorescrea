@@ -55,8 +55,8 @@ $modificar = "modificarUsuario";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbusuarios";
 
-$lblCambio	 	= array('nombrecompleto','refroles');
-$lblreemplazo	= array('Nombre Completo','Perfil');
+$lblCambio	 	= array('nombrecompleto','refroles','refsocios');
+$lblreemplazo	= array('Nombre Completo','Perfil','Socio');
 
 
 
@@ -68,8 +68,12 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resRoles,array(1),'');
 
-$refdescripcion = array(0 => $cadRef2);
-$refCampo 	=  array('refroles');
+$resSocio = $serviciosReferencias->traerSocios();
+$cadRef3 = '<option value="0">-- Seleccionar --</option>';
+$cadRef3 .= $serviciosFunciones->devolverSelectBox($resSocio,array(1),'');
+
+$refdescripcion = array(0 => $cadRef2,1=>$cadRef3);
+$refCampo 	=  array('refroles','refsocios');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -212,6 +216,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th></th>
 												<th>Email</th>
 												<th>Nombre Completo</th>
+												<th>Socio</th>
 												<th>Activo</th>
 												<th>Acciones</th>
 											</tr>
@@ -222,6 +227,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th class="perfilS">Perfil</th>
 												<th>Email</th>
 												<th>Nombre Completo</th>
+												<th>Socio</th>
 												<th>Activo</th>
 												<th>Acciones</th>
 											</tr>

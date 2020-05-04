@@ -55,8 +55,8 @@ $modificar = "modificarPostulantes";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbpostulantes";
 
-$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas','razonsocial','reforigenreclutamiento','email2','vigdesderc','vighastarc');
-$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona','Razon Social','Origen de Reclutamiento','Email Adic.','Vig. Desde RC','Vig. Hasta RC');
+$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas','razonsocial','reforigenreclutamiento','email2','vigdesderc','vighastarc','refreferentes');
+$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona','Razon Social','Origen de Reclutamiento','Email Adic.','Vig. Desde RC','Vig. Hasta RC','Promotor de Talento');
 
 
 $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
@@ -87,8 +87,19 @@ $cadRef8 = $serviciosFunciones->devolverSelectBox($resVar8,array(1),'');
 $resVar9 = $serviciosReferencias->traerOrigenreclutamiento();
 $cadRef9 = $serviciosFunciones->devolverSelectBox($resVar9,array(1),'');
 
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadOpcion,7=>$cadOpcion,8=>$cadRef7,9=>$cadRef8,10=>$cadRef9);
-$refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','refestadopostulantes','sexo','nacionalidad','afore','cedula','refesquemareclutamiento','reftipopersonas','reforigenreclutamiento');
+if ($_SESSION['idroll_sahilices'] == 9) {
+	$resVar10 = $serviciosReferencias->traerReferentesPorUsuario($_SESSION['usuaid_sahilices']);
+	$cadRef10 	= "";
+} else {
+	$resVar10 = $serviciosReferencias->traerReferentes();
+	$cadRef10 	= '<option value="0">-- Seleccionar --</option>';
+}
+
+
+$cadRef10 .= $serviciosFunciones->devolverSelectBox($resVar10,array(1,2,3),' ');
+
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadOpcion,7=>$cadOpcion,8=>$cadRef7,9=>$cadRef8,10=>$cadRef9,11=>$cadRef10);
+$refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','refestadopostulantes','sexo','nacionalidad','afore','cedula','refesquemareclutamiento','reftipopersonas','reforigenreclutamiento','refreferentes');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -156,14 +167,18 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 	}
 }
 
+if ($_SESSION['idroll_sahilices'] == 9) {
+	$completos = '';
+	$completosoportunidad = '';
+	$rechazados = '';
+	$encurso = '';
+}
+
 $resRoles 	= $serviciosUsuario->traerUsuariosPorRol(3);
 $cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
 
-if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)) {
-	$cadRefFiltro = '<option value="">'.$_SESSION['nombre_sahilices'].'</option>';
-} else {
-	$cadRefFiltro = $cadRef1;
-}
+$cadRefFiltro = $cadRef1;
+
 
 ?>
 
@@ -283,7 +298,7 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 						</div>
 						<div class="body table-responsive">
 							<form class="form" id="formCountry">
-								<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+								<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 9) ) { ?>
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
@@ -318,6 +333,7 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 												<th>Tel.</th>
 												<?php } ?>
 												<th class="perfilS">Resp.Comercial</th>
+												<th class="perfilT">Promotor</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -334,7 +350,8 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 												<?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4) { ?>
 												<th>Tel.</th>
 												<?php } ?>
-												<th>Resp.Comercial</th>
+												<th>Ger.Comercial</th>
+												<th>Promotor</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -898,9 +915,11 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
                   "searchable": false
               },
 				  <?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4) { ?>
-				  { "orderable": false, "targets": 9 }
+				  { "orderable": false, "targets": 9 },
+				  { "orderable": false, "targets": 10 }
 				  <?php } else { ?>
-					{ "orderable": false, "targets": 8 }
+					{ "orderable": false, "targets": 8 },
+ 				  { "orderable": false, "targets": 9 }
 					<?php }  ?>
           ],
 			"rowCallback": function( row, data, index ) {
@@ -928,6 +947,8 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 				select.append( '<option value="'+d+'">'+d+'</option>' )
 			} );
 		} );
+
+
 
 		$("#sign_in").submit(function(e){
 			e.preventDefault();

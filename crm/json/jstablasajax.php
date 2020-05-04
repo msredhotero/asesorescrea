@@ -291,7 +291,7 @@ switch ($tabla) {
 
 		$pre = "where rr.idasesor is null";
 
-		$consulta = 'select
+		$consulta = "select
 			p.idpostulante,
 			p.nombre,
 			p.apellidopaterno,
@@ -303,6 +303,7 @@ switch ($tabla) {
 			ep.estadopostulante,
 			p.telefonomovil,
 			usur.nombrecompleto,
+			concat(re.apellidopaterno, ' ', re.apellidomaterno, ' ', re.nombre) as promotor,
 			est.estadocivil,
 			p.curp,
 			p.rfc,
@@ -329,23 +330,33 @@ switch ($tabla) {
 		inner join tbescolaridades esc ON esc.idescolaridad = p.refescolaridades
 		inner join tbestadocivil est ON est.idestadocivil = p.refestadocivil
 		inner join tbestadopostulantes ep ON ep.idestadopostulante = p.refestadopostulantes
-		left join dbasesores rr on rr.refusuarios = p.refusuarios ';
-		if ($_SESSION['idroll_sahilices'] == 3) {
-			$consulta .= 'inner join dbreclutadorasores rrr on rrr.refpostulantes = p.idpostulante and rrr.refusuarios = '.$_SESSION['usuaid_sahilices'].'
-			inner join dbusuarios usur on usur.idusuario = rrr.refusuarios';
-			//$res = $serviciosReferencias->traerPostulantesPorGerente($_SESSION['usuaid_sahilices']);
+		left join dbasesores rr on rr.refusuarios = p.refusuarios ";
+		if ($_SESSION['idroll_sahilices'] == 9) {
+			$consulta .= 'left join dbreclutadorasores rrr on rrr.refpostulantes = p.idpostulante
+			left join dbusuarios usur on usur.idusuario = rrr.refusuarios
+			inner join tbreferentes re on re.idreferente = p.refreferentes
+			inner join dbusuarios usurf on usurf.idusuario = '.$_SESSION['usuaid_sahilices'].' and re.refusuarios =  usurf.idusuario ';
 		} else {
-			$responsableComercial = $_GET['sSearch_0'];
-			if ($responsableComercial == '') {
-				//$res = $serviciosReferencias->traerPostulantes();
-				$consulta .= 'left join dbreclutadorasores rrr on rrr.refpostulantes = p.idpostulante
-				left join dbusuarios usur on usur.idusuario = rrr.refusuarios ';
+			if ($_SESSION['idroll_sahilices'] == 3) {
+				$consulta .= 'inner join dbreclutadorasores rrr on rrr.refpostulantes = p.idpostulante and rrr.refusuarios = '.$_SESSION['usuaid_sahilices'].'
+				inner join dbusuarios usur on usur.idusuario = rrr.refusuarios
+				left join tbreferentes re on re.idreferente = p.refreferentes ';
+				//$res = $serviciosReferencias->traerPostulantesPorGerente($_SESSION['usuaid_sahilices']);
 			} else {
-				//$res = $serviciosReferencias->traerPostulantesPorGerente($responsableComercial);
-				$consulta .= 'inner join dbreclutadorasores rrr on rrr.refpostulantes = p.idpostulante and rrr.refusuarios = '.$responsableComercial.'
-				inner join dbusuarios usur on usur.idusuario = rrr.refusuarios';
-			}
+				$responsableComercial = $_GET['sSearch_0'];
+				if ($responsableComercial == '') {
+					//$res = $serviciosReferencias->traerPostulantes();
+					$consulta .= 'left join dbreclutadorasores rrr on rrr.refpostulantes = p.idpostulante
+					left join dbusuarios usur on usur.idusuario = rrr.refusuarios
+					left join tbreferentes re on re.idreferente = p.refreferentes';
+				} else {
+					//$res = $serviciosReferencias->traerPostulantesPorGerente($responsableComercial);
+					$consulta .= 'inner join dbreclutadorasores rrr on rrr.refpostulantes = p.idpostulante and rrr.refusuarios = '.$responsableComercial.'
+					inner join dbusuarios usur on usur.idusuario = rrr.refusuarios
+					left join tbreferentes re on re.idreferente = p.refreferentes ';
+				}
 
+			}
 		}
 
 		//die(var_dump($consulta));
@@ -365,7 +376,7 @@ switch ($tabla) {
 				$icon = array('Ver','Modificar','Eliminar','Eliminar Def.');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 10;
+				$termina = 11;
 			break;
 			case 2:
 				$label = array('btnVer','btnModificar');
@@ -373,7 +384,7 @@ switch ($tabla) {
 				$icon = array('Ver','Modificar');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 9;
+				$termina = 10;
 			break;
 			case 3:
 				$label = array('btnVer','btnModificar');
@@ -381,7 +392,7 @@ switch ($tabla) {
 				$icon = array('Ver','Modificar');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 9;
+				$termina = 10;
 			break;
 			case 4:
 				$label = array('btnVer','btnModificar');
@@ -389,7 +400,7 @@ switch ($tabla) {
 				$icon = array('Ver','Modificar');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 10;
+				$termina = 11;
 			break;
 			case 5:
 				$label = array('btnVer','btnModificar');
@@ -397,7 +408,7 @@ switch ($tabla) {
 				$icon = array('Ver','Modificar');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 9;
+				$termina = 10;
 			break;
 			case 6:
 				$label = array('btnVer','btnModificar');
@@ -405,7 +416,15 @@ switch ($tabla) {
 				$icon = array('Ver','Modificar');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 9;
+				$termina = 10;
+			break;
+			case 9:
+				$label = array('btnVer');
+				$class = array('bg-blue');
+				$icon = array('Ver');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 10;
 			break;
 
 			default:
@@ -755,7 +774,7 @@ switch ($tabla) {
 		$icon = array('create','delete');
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 5;
+		$termina = 6;
 
 	break;
 

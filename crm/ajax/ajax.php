@@ -42,7 +42,7 @@ switch ($accion) {
         insertarUsuario($serviciosUsuarios);
         break;
 	case 'modificarUsuario':
-        modificarUsuario($serviciosUsuarios);
+        modificarUsuario($serviciosReferencias);
         break;
 	case 'registrar':
 		registrar($serviciosUsuarios);
@@ -3052,8 +3052,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $modificar = "modificarUsuario";
          $idTabla = "idusuario";
 
-         $lblCambio	 	= array('nombrecompleto','refroles');
-         $lblreemplazo	= array('Nombre Completo','Perfil');
+         $lblCambio	 	= array('nombrecompleto','refroles','refsocios');
+         $lblreemplazo	= array('Nombre Completo','Perfil','Socio');
 
 
          $resRoles 	= $serviciosUsuarios->traerRoles();
@@ -3061,8 +3061,12 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 
          $cadRef = $serviciosFunciones->devolverSelectBoxActivo($resRoles,array(1),'',mysql_result($resultado,0,'refroles'));
 
-         $refdescripcion = array(0 => $cadRef);
-         $refCampo 	=  array("refroles");
+         $resSocio = $serviciosReferencias->traerSocios();
+         $cadRef3 = '<option value="0">-- Seleccionar --</option>';
+         $cadRef3 .= $serviciosFunciones->devolverSelectBoxActivo($resSocio,array(1),'',mysql_result($resultado,0,'refsocios'));
+
+         $refdescripcion = array(0 => $cadRef,1=>$cadRef3);
+         $refCampo 	=  array('refroles','refsocios');
       break;
       case 'tbentrevistasucursales':
          $resultado = $serviciosReferencias->traerEntrevistasucursalesPorId($id);
@@ -4035,8 +4039,11 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
          $razonsocial = $_POST['razonsocial'];
          $email2 = $_POST['email2'];
 
+         $observaciones = $_POST['observaciones'];
+         $refreferentes = $_POST['refreferentes'];
+
          // desde el crm
-         $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore,$reftipopersonas,$razonsocial,$reforigenreclutamiento,$email2,$vigdesderc,$vighastarc);
+         $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore,$reftipopersonas,$razonsocial,$reforigenreclutamiento,$email2,$vigdesderc,$vighastarc,$observaciones,$refreferentes);
 
          //die(var_dump($res));
 
@@ -4159,8 +4166,11 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
             $reforigenreclutamiento = 1;
             $email2 = '';
 
+            $observaciones = '';
+            $refreferentes = 0;
+
             // desde el test
-            $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore,$reftipopersonas,$razonsocial,$reforigenreclutamiento,$email2,$vigdesderc,$vighastarc);
+            $res = $serviciosReferencias->insertarPostulantes($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$refesquemareclutamiento,$afore,$folio,$cedula,$token,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore,$reftipopersonas,$razonsocial,$reforigenreclutamiento,$email2,$vigdesderc,$vighastarc,$observaciones,$refreferentes);
 
             //die(var_dump($res));
 
@@ -4261,8 +4271,9 @@ function modificarPostulantes($serviciosReferencias) {
    $vighastarc = $_POST['vighastarc'];
 
    $observaciones = $_POST['observaciones'];
+   $refreferentes = $_POST['refreferentes'];
 
-   $res = $serviciosReferencias->modificarPostulantes($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$nss,$refesquemareclutamiento,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore,$nropoliza,$razonsocial,$reforigenreclutamiento,$email2,$vigdesderc,$vighastarc,$observaciones);
+   $res = $serviciosReferencias->modificarPostulantes($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$nss,$refesquemareclutamiento,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore,$nropoliza,$razonsocial,$reforigenreclutamiento,$email2,$vigdesderc,$vighastarc,$observaciones,$refreferentes);
 
    if ($res == true) {
       // si es asociado temporal o agente asociado id=8 lo genero automatico
@@ -5848,8 +5859,9 @@ function insertarUsuarios($serviciosReferencias) {
 	$refroll			=	$_POST['refroles'];
 	$email				=	$_POST['email'];
 	$nombre				=	$_POST['nombrecompleto'];
+   $refsocios = $_POST['refsocios'];
 
-	   $res = $serviciosReferencias->insertarUsuarios($usuario,$password,$refroll,$email,$nombre,1);
+	   $res = $serviciosReferencias->insertarUsuarios($usuario,$password,$refroll,$email,$nombre,1,$refsocios);
 	if ((integer)$res > 0) {
 		echo '';
 	} else {
@@ -5858,13 +5870,14 @@ function insertarUsuarios($serviciosReferencias) {
 }
 
 
-function modificarUsuario($serviciosUsuarios) {
+function modificarUsuario($serviciosReferencias) {
 	$id					=	$_POST['id'];
 	$usuario			=	$_POST['usuario'];
 	$password			=	$_POST['password'];
 	$refroll			=	$_POST['refroles'];
 	$email				=	$_POST['email'];
 	$nombre				=	$_POST['nombrecompleto'];
+   $refsocios = $_POST['refsocios'];
 
    if (isset($_POST['activo'])) {
       $activo = 1;
@@ -5872,9 +5885,13 @@ function modificarUsuario($serviciosUsuarios) {
       $activo = 0;
    }
 
+	$res = $serviciosReferencias->modificarUsuarios($id,$usuario,$password,$refroll,$email,$nombre,$activo,$refsocios);
 
-
-	echo $serviciosUsuarios->modificarUsuario($id,$usuario,$password,$refroll,$email,$nombre,$activo);
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
 }
 
 
