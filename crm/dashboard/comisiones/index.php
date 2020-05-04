@@ -39,9 +39,9 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Recomendador";
+$singular = "Promotor de Talento";
 
-$plural = "Recomendadores";
+$plural = "Promotor de Talento";
 
 $eliminar = "eliminarReferentes";
 
