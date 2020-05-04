@@ -673,7 +673,7 @@ if (strlen($asociadoC2) > 0 ) {
 					</div>
 				</div>
 					<?php } ?>
-
+				<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 				<div class="row">
 					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 						<div class="card ">
@@ -734,6 +734,7 @@ if (strlen($asociadoC2) > 0 ) {
 						</div>
 					</div>
 				</div>
+				<?php } ?>
 
 
 			<?php } else { ?>
