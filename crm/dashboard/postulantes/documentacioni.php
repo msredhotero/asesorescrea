@@ -60,7 +60,13 @@ $resultado 		= 	$serviciosReferencias->traerPostulantesPorId($id);
 $postulante = mysql_result($resultado,0,'nombre').' '.mysql_result($resultado,0,'apellidopaterno').' '.mysql_result($resultado,0,'apellidomaterno');
 
 
-$resGuia = $serviciosReferencias->traerGuiasPorEsquemaEspecial(mysql_result($resultado,0,'refesquemareclutamiento'));
+if (mysql_result($resultado,0,'reforigenreclutamiento') == 2) {
+	$notId = 3;
+} else {
+	$notId = 0;
+}
+
+$resGuia = $serviciosReferencias->traerGuiasPorEsquemaEspecialJavelly(mysql_result($resultado,0,'refesquemareclutamiento'),$notId);
 
 $resEstadoSiguiente = $serviciosReferencias->traerGuiasPorEsquemaSiguiente(mysql_result($resultado,0,'refesquemareclutamiento'), mysql_result($resultado,0,'refestadopostulantes'));
 
@@ -250,7 +256,7 @@ if (mysql_result($resultado,0,'refesquemareclutamiento') == 5 || mysql_result($r
 		$alertaINE = '';
 	}
 
-	if (mysql_result($resultado,0,'nss') == '') {
+	if ((mysql_result($resultado,0,'nss') == '') && (mysql_result($resultado,0,'reforigenreclutamiento') == 1)) {
 		$alertaNSS = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el Nro de Seguro Social!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=8"><b>AQUI</b></a></div>';
 	} else {
 		$alertaNSS = '';

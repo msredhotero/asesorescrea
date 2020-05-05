@@ -297,7 +297,12 @@ if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
 	$span2 = 'text-info glyphicon glyphicon-plus-sign';
 }
 
-$resGuia = $serviciosReferencias->traerGuiasPorEsquemaEspecial(mysql_result($resultado,0,'refesquemareclutamiento'));
+if (mysql_result($resultado,0,'reforigenreclutamiento') == 2) {
+	$notId = 3;
+} else {
+	$notId = 0;
+}
+$resGuia = $serviciosReferencias->traerGuiasPorEsquemaEspecialJavelly(mysql_result($resultado,0,'refesquemareclutamiento'),$notId);
 
 $resEstadoSiguiente = $serviciosReferencias->traerGuiasPorEsquemaSiguiente(mysql_result($resultado,0,'refesquemareclutamiento'), mysql_result($resultado,0,'refestadopostulantes'));
 

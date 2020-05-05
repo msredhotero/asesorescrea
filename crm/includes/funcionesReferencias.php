@@ -4423,6 +4423,22 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function traerGuiasPorEsquemaEspecialJavelly($idesquema,$noId=0) {
+		$sql = "select
+					g.idguia,
+					g.refesquemareclutamiento,
+					g.refestadopostulantes,
+					ep.estadopostulante,
+					ep.orden,
+					ep.url
+				from dbguias g
+				inner join tbestadopostulantes ep on ep.idestadopostulante = g.refestadopostulantes
+				where refesquemareclutamiento =".$idesquema." and g.refestadopostulantes not in (1,9) and g.refestadopostulantes not in (".$noId.")
+				order by ep.orden";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 	function traerGuiasPorEsquemaSiguiente($idesquema, $idestado) {
 		$sql = "SELECT
 					    g.idguia,
@@ -5999,6 +6015,7 @@ class ServiciosReferencias {
 	}
 
 	function traerDocumentacionPorPostulanteDocumentacionCompleta($idpostulante, $idestado) {
+
 		$sql = "SELECT
 					    d.iddocumentacion,
 					    d.documentacion,
@@ -6020,8 +6037,18 @@ class ServiciosReferencias {
 						 	  inner join
 						 dbesquemadocumentosestados ede on ede.refdocumentaciones = d.iddocumentacion
 						 and ede.refesquemareclutamiento = (select refesquemareclutamiento from dbpostulantes where idpostulante = ".$idpostulante.") and ede.refestadopostulantes = ".$idestado."
+						 inner
+						 join dbpostulantes pp on pp.idpostulante = ".$idpostulante."
+						 left
+						 join dbexcluyedocumentaciones exd 
+						 on exd.refdocumentaciones = d.iddocumentacion
+						 and exd.refesquemareclutamiento = ede.refesquemareclutamiento
+						 and exd.reforigenreclutamiento = pp.reforigenreclutamiento
+						 where exd.idexcluyedocumentacion is null
 
 					order by 1";
+
+
 		$res = $this->query($sql,0);
  		return $res;
 	}
