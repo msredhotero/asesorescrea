@@ -491,8 +491,17 @@ if (mysql_num_rows($resEstadoSiguiente) > 0) {
 
 								</div>
 							</div>
-							<?php } ?>
+
+						<?php } ?>
 							<form class="form" id="sign_in" role="form">
+								<?php if ($_SESSION['idroll_sahilices'] == 9) { ?>
+								<div class="row">
+									<button type="button" class="btn bg-teal waves-effect" onClick="window.location.href='documentacioni.php?id=<?php echo $id; ?>'">
+										<i class="material-icons">attachment</i>
+										<span>DOCUMENTACIONES</span>
+									</button>
+								</div>
+								<?php } ?>
 								<div class="row">
 									<?php echo $frmUnidadNegocios; ?>
 								</div>
