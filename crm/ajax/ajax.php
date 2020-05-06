@@ -4279,22 +4279,30 @@ function modificarPostulantes($serviciosReferencias) {
       // si es asociado temporal o agente asociado id=8 lo genero automatico
       if ($refestadopostulantes == 11) {
 
-         $cuerpo = '';
-         $cuerpo .= '<h4>Nombre Completo: '.$nombre.' '.$apellidopaterno.' '.$apellidomaterno.'</h4><br>';
+         $resExiste = $serviciosReferencias->traerAsociadosPorUsuario($refusuarios);
 
-         if ($email != '') {
+         if (mysql_num_rows($resExiste) <= 0) {
 
-            $resAT = $serviciosReferencias->insertarAsociados($refusuarios,2,$razonsocial,$apellidopaterno,$apellidomaterno,$nombre,'',$email,'null',$telefonomovil,$telefonotrabajo,1,'','',1,0,$id);
-            $asunto = 'Se genero un Agente Temporal';
+            $cuerpo = '';
+            $cuerpo .= '<h4>Nombre Completo: '.$nombre.' '.$apellidopaterno.' '.$apellidomaterno.'</h4><br>';
 
-            $cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/dashboard/asociados/index.php?id=".$resAT."'>ACCEDER</a>";
-         } else {
-            $asunto = 'No se pudo generar un Agente Temporal por falta de email';
+            if ($email != '') {
+
+
+               $resAT = $serviciosReferencias->insertarAsociados($refusuarios,2,$razonsocial,$apellidopaterno,$apellidomaterno,$nombre,'',$email,'null',$telefonomovil,$telefonotrabajo,1,'','',1,0,$id);
+               $asunto = 'Se genero un Agente Temporal';
+
+               $cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/dashboard/asociados/index.php?id=".$resAT."'>ACCEDER</a>";
+
+
+            } else {
+               $asunto = 'No se pudo generar un Agente Temporal por falta de email';
+            }
+
+            $destinatario = 'jfoncerrada@icloud.com';
+
+            $res = $serviciosReferencias->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
          }
-
-         $destinatario = 'jfoncerrada@icloud.com';
-
-         $res = $serviciosReferencias->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
 
       }
       echo '';

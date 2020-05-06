@@ -6040,7 +6040,7 @@ class ServiciosReferencias {
 						 inner
 						 join dbpostulantes pp on pp.idpostulante = ".$idpostulante."
 						 left
-						 join dbexcluyedocumentaciones exd 
+						 join dbexcluyedocumentaciones exd
 						 on exd.refdocumentaciones = d.iddocumentacion
 						 and exd.refesquemareclutamiento = ede.refesquemareclutamiento
 						 and exd.reforigenreclutamiento = pp.reforigenreclutamiento
