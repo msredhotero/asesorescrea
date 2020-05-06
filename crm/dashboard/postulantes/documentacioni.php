@@ -383,7 +383,7 @@ if (mysql_result($resultado,0,'refesquemareclutamiento') == 5 || mysql_result($r
 
 	<div class="container-fluid">
 		<div class="row clearfix subirImagen">
-			<?php if ($_SESSION['idroll_sahilices'] != 9) { ?>
+			
 			<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
 
 				<?php
@@ -425,7 +425,7 @@ if (mysql_result($resultado,0,'refesquemareclutamiento') == 5 || mysql_result($r
 				?>
 
 			</div>
-			<?php } ?>
+
 
 			<div class="row">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-bottom: 10px;">

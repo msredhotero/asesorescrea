@@ -448,7 +448,7 @@ if (mysql_num_rows($resEstadoSiguiente) > 0) {
 							<?php echo $alertaEscolaridad; ?>
 							<?php echo $alertaAfore; ?>
 							<?php echo $alertaUsuario; ?>
-							<?php if ($_SESSION['idroll_sahilices'] != 9) { ?>
+
 							<div class="row">
 								<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
 									<?php
@@ -492,9 +492,9 @@ if (mysql_num_rows($resEstadoSiguiente) > 0) {
 								</div>
 							</div>
 
-						<?php } ?>
+
 							<form class="form" id="sign_in" role="form">
-								<?php if ($_SESSION['idroll_sahilices'] == 9) { ?>
+								<?php if ($_SESSION['idroll_sahilices'] == 19) { ?>
 								<div class="row">
 									<button type="button" class="btn bg-teal waves-effect" onClick="window.location.href='documentacioni.php?id=<?php echo $id; ?>'">
 										<i class="material-icons">attachment</i>
@@ -507,7 +507,7 @@ if (mysql_num_rows($resEstadoSiguiente) > 0) {
 								</div>
 								<input type="hidden" name="codigopostalaux" id="codigopostalaux" value="<?php echo mysql_result($resultado,0,'codigopostal'); ?>" />
 
-								<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+								<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 9) ) { ?>
 								<div class="row"><div class="alert bg-orange"><i class="material-icons">warning</i> Recuerde que una vez cargada la Clave del Asesor, se guardara automaticamente la Fecha y Hora, y no se podrá modificar</div></div>
 								<div class="button-demo">
 									<button type="submit" class="btn bg-light-blue waves-effect modificarPostulante">

@@ -587,7 +587,7 @@ $frmUnidadNegocios2 	= $serviciosFunciones->camposTablaModificar(mysql_result($r
 
 	<div class="container-fluid">
 		<div class="row clearfix subirImagen">
-			<?php if ($_SESSION['idroll_sahilices'] != 9) { ?>
+
 			<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
 				<?php
 				$lblEstado = 'complete';
@@ -613,7 +613,7 @@ $frmUnidadNegocios2 	= $serviciosFunciones->camposTablaModificar(mysql_result($r
 				?>
 
 			</div>
-			<?php } ?>
+			
 
 			<div class="row">
 				<?php
