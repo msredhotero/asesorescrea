@@ -801,8 +801,124 @@ switch ($accion) {
       Revision($serviciosReferencias);
    break;
 
+   case 'insertarPerfilasesores':
+      insertarPerfilasesores($serviciosReferencias);
+   break;
+   case 'modificarPerfilasesores':
+      modificarPerfilasesores($serviciosReferencias);
+   break;
+   case 'eliminarPerfilasesores':
+      eliminarPerfilasesores($serviciosReferencias);
+   break;
+
+   case 'traerPerfilasesoresPorIdImagenCompleto':
+      traerPerfilasesoresPorIdImagenCompleto($serviciosReferencias);
+   break;
+
 }
 /* FinFinFin */
+
+function traerPerfilasesoresPorIdImagenCompleto($serviciosReferencias) {
+
+   $id = $_POST['idperfilasesor'];
+   $imagenbuscada = $_POST['imagen'];
+
+   if ($imagenbuscada == 1) {
+      $imagenbuscada = 'imagenperfil';
+   } else {
+      $imagenbuscada = 'imagenfirma';
+   }
+
+   $resV['datos'] = '';
+   $resV['error'] = false;
+
+   $resFoto = $serviciosReferencias->traerPerfilasesoresPorIdImagenCompleto($id,$imagenbuscada);
+
+   $imagen = '';
+
+   if (mysql_num_rows($resFoto) > 0) {
+
+      if (mysql_result($resFoto,0,$imagenbuscada) == '') {
+         $imagen = '../../imagenes/sin_img.jpg';
+
+         $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+         $resV['error'] = true;
+      } else {
+
+         $imagen = '../../'.mysql_result($resFoto,0,$imagenbuscada);
+
+         $resV['datos'] = array('imagen' => $imagen, 'type' => 'jpg');
+
+         $resV['error'] = false;
+      }
+
+
+
+   } else {
+      $imagen = '../../imagenes/sin_img.jpg';
+
+
+      $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+      $resV['error'] = true;
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
+function insertarPerfilasesores($serviciosReferencias) {
+   $reftabla = $_POST['reftabla'];
+   $idreferencia = $_POST['idreferencia'];
+   $imagenperfil = $_POST['imagenperfil'];
+   $imagenfirma = $_POST['imagenfirma'];
+   $urllinkedin = $_POST['urllinkedin'];
+   $urlfacebook = $_POST['urlfacebook'];
+   $urlinstagram = $_POST['urlinstagram'];
+   $visible = $_POST['visible'];
+
+   $res = $serviciosReferencias->insertarPerfilasesores($reftabla,$idreferencia,$imagenperfil,$imagenfirma,$urllinkedin,$urlfacebook,$urlinstagram,$visible);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+
+function modificarPerfilasesores($serviciosReferencias) {
+   $id = $_POST['id'];
+   $reftabla = $_POST['reftabla'];
+   $idreferencia = $_POST['idreferencia'];
+   $imagenperfil = $_POST['imagenperfil'];
+   $imagenfirma = $_POST['imagenfirma'];
+   $urllinkedin = $_POST['urllinkedin'];
+   $urlfacebook = $_POST['urlfacebook'];
+   $urlinstagram = $_POST['urlinstagram'];
+   $visible = $_POST['visible'];
+
+   $res = $serviciosReferencias->modificarPerfilasesores($id,$reftabla,$idreferencia,$imagenperfil,$imagenfirma,$urllinkedin,$urlfacebook,$urlinstagram,$visible);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarPerfilasesores($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarPerfilasesores($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
 
 function Revision($serviciosReferencias) {
    $id = $_POST['id'];

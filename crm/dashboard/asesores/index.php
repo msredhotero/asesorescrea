@@ -881,6 +881,11 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 			});
 		}
 
+		$("#example").on("click",'.btnInformacion', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','informacion.php?id=' + idTable);
+		});
+
 		$("#example").on("click",'.btnDomicilio', function(){
 			idTable =  $(this).attr("id");
 			$(location).attr('href','domicilio.php?id=' + idTable);

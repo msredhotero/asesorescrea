@@ -1200,13 +1200,17 @@ class Servicios {
 	function camposTablaModificar($id,$lblid,$accion,$tabla,$lblcambio,$lblreemplazo,$refdescripcion,$refCampo) {
 
 		switch ($tabla) {
+			case 'dbperfilasesores':
+				$sqlMod = "select idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,(case when visible = '1' then 'Si' else 'No' end) as visible from dbperfilasesores where idperfilasesor= ".$id;
+				$resMod = $this->query($sqlMod,0);
+			break;
 
 			case 'dbusuarios':
 				$sqlMod = "select
 								idusuario,usuario,password,refroles,email,nombrecompleto,(case when activo = 1 then 'Si' else 'No' end) as activo
 									from ".$tabla." where ".$lblid." = ".$id;
 				$resMod = $this->query($sqlMod,0);
-				break;
+			break;
 
 			case 'tbentrevistasucursales':
 				$sqlMod = "select e.identrevistasucursal,
@@ -1272,6 +1276,9 @@ class Servicios {
 		$res 	=	$this->query($sql,0);
 
 		switch ($tabla) {
+			case 'dbperfilasesores':
+				$ocultar = array("imagenperfil","imagenfirma");
+			break;
 			case 'dbentrevistas':
 				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes');
 			break;

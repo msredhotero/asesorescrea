@@ -9,6 +9,125 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+	/* PARA Perfilasesores */
+
+	function insertarPerfilasesores($reftabla,$idreferencia,$imagenperfil,$imagenfirma,$urllinkedin,$urlfacebook,$urlinstagram,$visible) {
+		$sql = "insert into dbperfilasesores(idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,visible)
+		values ('',".$reftabla.",".$idreferencia.",'".$imagenperfil."','".$imagenfirma."','".$urllinkedin."','".$urlfacebook."','".$urlinstagram."','".$visible."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarPerfilasesores($id,$reftabla,$idreferencia,$imagenperfil,$imagenfirma,$urllinkedin,$urlfacebook,$urlinstagram,$visible) {
+		$sql = "update dbperfilasesores
+		set
+		reftabla = ".$reftabla.",idreferencia = ".$idreferencia.",urllinkedin = '".$urllinkedin."',urlfacebook = '".$urlfacebook."',urlinstagram = '".$urlinstagram."',visible = '".$visible."'
+		where idperfilasesor =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function modificarPerfilasesoresPorImagen($id,$imagen,$archivo) {
+		$sql = "update dbperfilasesores
+		set
+		".$imagen." = '".$archivo."' where idperfilasesor =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarPerfilasesores($id) {
+		$sql = "delete from dbperfilasesores where idperfilasesor =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerPerfilasesores() {
+		$sql = "select
+		p.idperfilasesor,
+		p.reftabla,
+		p.idreferencia,
+		p.imagenperfil,
+		p.imagenfirma,
+		p.urllinkedin,
+		p.urlfacebook,
+		p.urlinstagram,
+		p.visible
+		from dbperfilasesores p
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerPerfilasesoresPorTablaReferencia($idtabla, $tabla, $idnombre, $id) {
+		$sql = "select
+		d.idperfilasesor,
+		d.reftabla,
+		d.idreferencia,
+		d.imagenperfil,
+		d.imagenfirma,
+		d.urllinkedin,
+		d.urlfacebook,
+		d.urlinstagram,
+		d.visible
+		from dbperfilasesores d
+		inner join ".$tabla." v on v.".$idnombre." = d.idreferencia
+		where d.reftabla = ".$idtabla." and d.idreferencia = ".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerPerfilasesoresPorId($id) {
+		$sql = "select idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,visible from dbperfilasesores where idperfilasesor =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerPerfilasesoresPorIdCompleto($id) {
+		$sql = "select
+		idperfilasesor,
+		reftabla,
+		idreferencia,
+		concat('archivos/informacion/',idperfilasesor,'/', imagenperfil) as imagenperfil,
+		concat('archivos/informacion/',idperfilasesor,'/', imagenfirma) as imagenfirma,
+		urllinkedin,
+		urlfacebook,
+		urlinstagram,
+		(case when visible = '1' then 'Si' else 'No' end) as visible
+		from dbperfilasesores where idperfilasesor =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerPerfilasesoresPorIdImagenCompleto($id,$imagen) {
+
+		if ($imagen == 'imagenperfil') {
+			$cad = " and imagenperfil != ''";
+		} else {
+			$cad = " and imagenfirma != ''";
+		}
+		$sql = "select
+		idperfilasesor,
+		reftabla,
+		idreferencia,
+		concat('archivos/informacion/',idperfilasesor,'/', imagenperfil) as imagenperfil,
+		concat('archivos/informacion/',idperfilasesor,'/', imagenfirma) as imagenfirma,
+		urllinkedin,
+		urlfacebook,
+		urlinstagram,
+		(case when visible = '1' then 'Si' else 'No' end) as visible
+		from dbperfilasesores where idperfilasesor =".$id.$cad;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbperfilasesores*/
+
    /* PARA Socios */
 
 	function insertarSocios($razonsocial,$comision,$esreclutador) {

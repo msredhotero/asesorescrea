@@ -33,7 +33,7 @@ $serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../postulant
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Postulantes",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Asesores",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -42,15 +42,15 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Domicilio";
+$singular = "Perfil Web";
 
-$plural = "Domicilio Postulante";
+$plural = "Perfil Web";
 
-$eliminar = "eliminarDomicilios";
+$eliminar = "eliminarPerfilasesores";
 
-$insertar = "insertarDomicilios";
+$insertar = "insertarPerfilasesores";
 
-$modificar = "modificarDomicilios";
+$modificar = "modificarPerfilasesores";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
@@ -58,49 +58,34 @@ $id = $_GET['id'];
 
 $resultado = $serviciosReferencias->traerAsesoresPorId($id);
 
-$resDomicilio = $serviciosReferencias->traerDomiciliosPorTablaReferencia(1, 'dbasesores', 'idasesor', $id);
+$resInformacion = $serviciosReferencias->traerPerfilasesoresPorTablaReferencia(1, 'dbasesores', 'idasesor', $id);
 
-if (mysql_num_rows($resDomicilio) <= 0) {
-	$idDomicilio = $serviciosReferencias->insertarDomicilios(1,$id,'','','','','','','');
-	$resDomicilio = $serviciosReferencias->traerDomiciliosPorId($idDomicilio);
+if (mysql_num_rows($resInformacion) <= 0) {
+	$idInformacion = $serviciosReferencias->insertarPerfilasesores(1,$id,'','','','','','1');
+	$resInformacion = $serviciosReferencias->traerPerfilasesoresPorId($idInformacion);
+} else {
+	$idInformacion = mysql_result($resInformacion,0,'idperfilasesor');
 }
 
 //$resasdasd = $serviciosReferencias->migrarPostulante($id,'marcosborrar');
 //die(var_dump($resasdasd));
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbdomicilios";
+$tabla 			= "dbperfilasesores";
 
-$lblCambio	 	= array('numeroext','numeroint','codigopostal');
-$lblreemplazo	= array('Nro Ext.','Nro Int.','Cod. Postal');
+$lblCambio	 	= array('urllinkedin','urlfacebook','urlinstagram');
+$lblreemplazo	= array('URL Linkedin','URL Facebook','URL Instagram');
 
-$resEstado = $serviciosPostal->devolverComboHTML('estado', '');
-$cadRef1 = "<option value=''>-- Seleccionar --</option>";
-$cadRef1 .= $serviciosFunciones->devolverSelectBoxActivoText($resEstado,array(0),'', mysql_result($resDomicilio,0,'estado'));
+if (mysql_result($resInformacion,0,'visible') == '1') {
+	$cadRef5 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+} else {
+	$cadRef5 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+}
 
+$refdescripcion = array(0=>$cadRef5);
+$refCampo 	=  array('visible');
 
-$filtroM = array();
-$filtroM["estado"] = mysql_result($resDomicilio,0,'estado');
-$filtro = (object)$filtroM;
-
-$resMunicipio = $serviciosPostal->devolverComboHTML('municipio', $filtro);
-$cadRef2 = "<option value=''>-- Seleccionar --</option>";
-$cadRef2 .= $serviciosFunciones->devolverSelectBoxActivoText($resMunicipio,array(0),'', mysql_result($resDomicilio,0,'delegacion'));
-
-$filtroC = array();
-$filtroC["municipio"] = mysql_result($resDomicilio,0,'delegacion');
-$filtro = (object)$filtroC;
-
-$resColonia = $serviciosPostal->devolverComboHTML('colonia', $filtro);
-$cadRef3 = "<option value=''>-- Seleccionar --</option>";
-$cadRef3 .= $serviciosFunciones->devolverSelectBoxActivoText($resColonia,array(0),'', mysql_result($resDomicilio,0,'colonia'));
-
-
-
-$refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3);
-$refCampo 	=  array('estado','delegacion','colonia');
-
-$frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar(mysql_result($resDomicilio,0,'iddomicilio'),'iddomicilio',$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+$frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($idInformacion,'idperfilasesor',$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -151,6 +136,22 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar(mysql_result($re
 		.alert > i{ vertical-align: middle !important; }
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		#codigopostal { width: 400px; }
+
+		.pdfobject-container { height: 30rem; border: 1rem solid rgba(0,0,0,.1); }
+
+		  .thumbnail2 {
+		    display: block;
+		    padding: 4px;
+		    margin-bottom: 20px;
+		    line-height: 1.42857143;
+		    background-color: #fff;
+		    border: 1px solid #ddd;
+		    border-radius: 4px;
+		    -webkit-transition: border .2s ease-in-out;
+		    -o-transition: border .2s ease-in-out;
+		    transition: border .2s ease-in-out;
+			 text-align: center;
+		}
 
 	</style>
 
@@ -203,8 +204,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar(mysql_result($re
 		<div class="row clearfix">
 
 			<div class="row">
-
-
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
@@ -236,7 +235,113 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar(mysql_result($re
 								</div>
 
 							</form>
-							</div>
+
+							<div class="row clearfix subirImagen">
+								<div class="row">
+									<div class="col-xs-6 col-md-6 col-lg-6">
+										<h4>IMAGEN DE PERFIL</h4>
+										<a href="javascript:void(0);" class="thumbnail timagen1">
+											<img class="img-responsive">
+										</a>
+										<div id="example1"></div>
+
+
+
+									</div>
+									<div class="col-xs-6 col-md-6 col-lg-6">
+										<h4>FIRMA</h4>
+										<a href="javascript:void(0);" class="thumbnail timagen2">
+											<img class="img-responsive2">
+										</a>
+										<div id="example2"></div>
+
+									</div>
+								</div>
+
+							</div> <!-- fin del container veritas -->
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+
+					<div class="card">
+						<div class="header">
+							<h2>
+								CARGA/MODIFIQUE LA IMAGEN DE PERFIL
+							</h2>
+							<ul class="header-dropdown m-r--5">
+								<li class="dropdown">
+									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+										<i class="material-icons">more_vert</i>
+									</a>
+
+								</li>
+							</ul>
+						</div>
+						<div class="body">
+
+							<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+							<form action="subirinformacion.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+								<div class="dz-message">
+									<div class="drag-icon-cph">
+										<i class="material-icons">touch_app</i>
+									</div>
+									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+
+								</div>
+								<div class="fallback">
+
+									<input name="file" type="file" id="archivos" />
+									<input type="hidden" id="idinformacion" name="idinformacion" value="<?php echo $idInformacion; ?>" />
+
+
+								</div>
+							</form>
+							<?php } ?>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+					<div class="card">
+						<div class="header">
+							<h2>
+								CARGA/MODIFIQUE LA FIRMA
+							</h2>
+							<ul class="header-dropdown m-r--5">
+								<li class="dropdown">
+									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+										<i class="material-icons">more_vert</i>
+									</a>
+
+								</li>
+							</ul>
+						</div>
+						<div class="body">
+
+
+							<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+							<form action="subirinformacion.php" id="frmFileUpload2" class="dropzone" method="post" enctype="multipart/form-data">
+								<div class="dz-message">
+									<div class="drag-icon-cph">
+										<i class="material-icons">touch_app</i>
+									</div>
+									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+
+								</div>
+								<div class="fallback">
+
+									<input name="file" type="file" id="archivos2" />
+									<input type="hidden" id="idinformacion" name="idinformacion" value="<?php echo $idInformacion; ?>" />
+
+
+
+								</div>
+							</form>
+							<?php } ?>
 						</div>
 					</div>
 				</div>
@@ -292,8 +397,124 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar(mysql_result($re
 <script src="../../js/picker.js"></script>
 <script src="../../js/picker.date.js"></script>
 
+<script src="../../plugins/dropzone/dropzone.js"></script>
+
+<script src="../../js/pdfobject.min.js"></script>
+
 <script>
 	$(document).ready(function(){
+
+		function traerImagen(contenedorpdf, contenedor, imagen) {
+			$.ajax({
+				data:  {idperfilasesor: <?php echo $idInformacion; ?>,
+						imagen: imagen,
+						accion: 'traerPerfilasesoresPorIdImagenCompleto'},
+				url:   '../../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+
+				},
+				success:  function (response) {
+					var cadena = response.datos.type.toLowerCase();
+
+					if (response.datos.type != '') {
+						if (cadena.indexOf("pdf") > -1) {
+							PDFObject.embed(response.datos.imagen, "#"+contenedorpdf);
+							$('#'+contenedorpdf).show();
+							$("."+contenedor).hide();
+
+						} else {
+							$("." + contenedor + " img").attr("src",response.datos.imagen);
+							$("."+contenedor).show();
+							$('#'+contenedorpdf).hide();
+						}
+					}
+
+					if (response.error) {
+						$('.btnContinuar').hide();
+					} else {
+						$('.btnContinuar').show();
+					}
+
+
+
+				}
+			});
+		}
+
+		traerImagen('example1','timagen1',1);
+		traerImagen('example2','timagen2',2);
+
+		<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+		Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
+
+		Dropzone.options.frmFileUpload = {
+			maxFilesize: 10,
+			acceptedFiles: ".jpg,.jpeg",
+			accept: function(file, done) {
+				done();
+			},
+			init: function() {
+				this.on("sending", function(file, xhr, formData){
+						formData.append("idinformacion", '<?php echo $idInformacion; ?>');
+						formData.append("iddocumentacion", '88');
+				});
+				this.on('success', function( file, resp ){
+					traerImagen('example1','timagen1',1);
+					$('.lblPlanilla').hide();
+					swal("Correcto!", resp.replace("1", ""), "success");
+
+				});
+
+				this.on('error', function( file, resp ){
+					swal("Error!", resp.replace("1", ""), "warning");
+				});
+			}
+		};
+
+
+		Dropzone.options.frmFileUpload2 = {
+				maxFilesize: 10,
+				acceptedFiles: ".jpg,.jpeg",
+				accept: function(file, done) {
+					done();
+				},
+				init: function() {
+					this.on("sending", function(file, xhr, formData){
+						formData.append("idinformacion", '<?php echo $idInformacion; ?>');
+						formData.append("iddocumentacion", '89');
+		         });
+					this.on('success', function( file, resp ){
+						traerImagen('example2','timagen2',2);
+						$('.lblComplemento').hide();
+						swal("Correcto!", resp.replace("1", ""), "success");
+
+					});
+
+					this.on('error', function( file, resp ){
+						swal("Error!", resp.replace("1", ""), "warning");
+					});
+				}
+			};
+
+
+
+		var myDropzone = new Dropzone("#archivos", {
+			params: {
+				idinformacion: <?php echo $idInformacion; ?>,
+				iddocumentacion: 88
+			},
+			url: 'subirinformacion.php'
+		});
+
+		var myDropzone2 = new Dropzone("#archivos2", {
+				params: {
+					idinformacion: <?php echo $idInformacion; ?>,
+					iddocumentacion: 89
+		      },
+				url: 'subirinformacion.php'
+			});
+		<?php } ?>
 
 		$('.frmContreftabla').hide();
 		$('.frmContidreferencia').hide();
@@ -301,65 +522,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar(mysql_result($re
 		$("#sign_in").submit(function(e){
 			e.preventDefault();
 		});
-
-
-		function llenarCombosGral(dato, filtro, contenedor) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {accion: 'llenarCombosGral',dato: dato, filtro: JSON.stringify(filtro)},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-					$('#'+contenedor).html('');
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-					if (dato == 'codigopostal') {
-						$('#'+contenedor).val(data);
-					} else {
-						$('#'+contenedor).html(data);
-					}
-
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
-
-		}
-
-		function loadMunicipios() {
-			var data = [{"estado": $('#estado').val()}];
-			llenarCombosGral('municipio', data, 'delegacion');
-		}
-
-		function loadColonia() {
-			var data = [{"municipio":$('#delegacion').val()}];
-			llenarCombosGral('colonia', data, 'colonia');
-		}
-
-		function loadPostal() {
-			var data = [{"municipio":$('#delegacion').val(),"colonia":$('#colonia').val()}];
-			llenarCombosGral('codigopostal', data, 'codigopostal');
-		}
-
-		$('#estado').change(function() {
-			loadMunicipios();
-		});
-
-		$('#delegacion').change(function() {
-			loadColonia();
-		});
-
-		$('#colonia').change(function() {
-			loadPostal();
-		});
-
-
 
 
 		function frmAjaxModificar(id) {

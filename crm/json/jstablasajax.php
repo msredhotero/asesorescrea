@@ -181,49 +181,49 @@ switch ($tabla) {
 
 		switch ($_SESSION['idroll_sahilices']) {
 			case 1:
-				$label = array('btnModificar','btnEliminar','btnPerfil','btnDirectorio','btnDomicilio');
-				$class = array('bg-amber','bg-red','bg-orange','bg-lime','bt-green');
-				$icon = array('Modificar','Eliminar','Expediente','Directorio','Domicilio');
+				$label = array('btnModificar','btnEliminar','btnPerfil','btnDirectorio','btnDomicilio','btnInformacion');
+				$class = array('bg-amber','bg-red','bg-orange','bg-lime','bg-green','bg-green');
+				$icon = array('Modificar','Eliminar','Expediente','Directorio','Domicilio','Informacion');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 11;
 			break;
 			case 2:
-				$label = array('btnModificar','btnPerfil','btnDirectorio','btnDomicilio');
-				$class = array('bg-amber','bg-orange','bg-lime','bt-green');
-				$icon = array('Modificar','Expediente','Directorio','Domicilio');
+				$label = array('btnModificar','btnPerfil','btnDirectorio','btnDomicilio','btnInformacion');
+				$class = array('bg-amber','bg-orange','bg-lime','bt-green','bg-green');
+				$icon = array('Modificar','Expediente','Directorio','Domicilio','Informacion');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 11;
 			break;
 			case 3:
-				$label = array('btnModificar','btnPerfil','btnDirectorio','btnDomicilio');
-				$class = array('bg-amber','bg-orange','bg-lime','bt-green');
-				$icon = array('Modificar','Expediente','Directorio','Domicilio');
+				$label = array('btnModificar','btnPerfil','btnDirectorio','btnDomicilio','btnInformacion');
+				$class = array('bg-amber','bg-orange','bg-lime','bt-green','bg-green');
+				$icon = array('Modificar','Expediente','Directorio','Domicilio','Informacion');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 11;
 			break;
 			case 4:
-				$label = array('btnModificar','btnPerfil','btnDirectorio','btnDomicilio');
-				$class = array('bg-amber','bg-orange','bg-lime','Directorio','bt-green');
-				$icon = array('Modificar','Expediente','Directorio','Domicilio');
+				$label = array('btnModificar','btnPerfil','btnDirectorio','btnDomicilio','btnInformacion');
+				$class = array('bg-amber','bg-orange','bg-lime','Directorio','bt-green','bg-green');
+				$icon = array('Modificar','Expediente','Directorio','Domicilio','Informacion');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 11;
 			break;
 			case 5:
-				$label = array('btnModificar','btnPerfil','btnDirectorio','btnDomicilio');
-				$class = array('bg-amber','bg-orange','bg-lime','bt-green');
-				$icon = array('Modificar','Expediente','Directorio','Domicilio');
+				$label = array('btnModificar','btnPerfil','btnDirectorio','btnDomicilio','btnInformacion');
+				$class = array('bg-amber','bg-orange','bg-lime','bt-green','bg-green');
+				$icon = array('Modificar','Expediente','Directorio','Domicilio','Informacion');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina =11;
 			break;
 			case 6:
-				$label = array('btnModificar','btnPerfil','btnDirectorio','btnDomicilio');
-				$class = array('bg-amber','bg-orange','bg-lime','bt-green');
-				$icon = array('Modificar','Expediente','Directorio','Domicilio');
+				$label = array('btnModificar','btnPerfil','btnDirectorio','btnDomicilio','btnInformacion');
+				$class = array('bg-amber','bg-orange','bg-lime','bt-green','bg-green');
+				$icon = array('Modificar','Expediente','Directorio','Domicilio','Informacion');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 11;
@@ -797,7 +797,7 @@ $id = 0;
 		//$id = $row[$indiceID];
 		// forma local utf8_decode
 		for ($i=$empieza;$i<=$termina;$i++) {
-			array_push($arAux, ($row[$i]));
+			array_push($arAux, utf8_decode($row[$i]));
 		}
 
 		if (($tabla == 'postulantes') || ($tabla == 'asesores') || ($tabla == 'asociadostemporales') || ($tabla == 'asociados') || ($tabla == 'clientes')) {
