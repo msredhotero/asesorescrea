@@ -2614,7 +2614,7 @@ class ServiciosReferencias {
 		a.apellidopaterno,
 		a.apellidomaterno,
 		a.nombre,
-		coalesce(uo.nombrecompleto, upo.nombrecompleto) as gerente,
+		coalesce(uo.nombrecompleto, upo.nombrecompleto),
 		a.email,
 		a.fechanacimiento,
 		a.telefonomovil,
