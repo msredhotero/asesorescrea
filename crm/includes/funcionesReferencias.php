@@ -3046,12 +3046,29 @@ class ServiciosReferencias {
 			FROM
 			    tbreferentes r
 			        INNER JOIN
-			    dbpostulantes p ON p.refreferentes = rr.refpostulantes
+			    dbpostulantes p ON p.refreferentes = r.idreferente
 			WHERE
 			    p.refestadopostulantes in (10,11) and r.idreferente = ".$idreferente."
 		".$where."
+		union all
+
+			SELECT
+				r.idreferente,
+				opo.apellidopaterno,
+				opo.apellidomaterno,
+				opo.nombre,
+			    1000 AS comision
+			FROM
+			    tbreferentes r
+			        INNER JOIN
+			    dboportunidades opo ON opo.refreferentes = r.idreferente
+			WHERE
+			    opo.refestadooportunidad in (7) and r.idreferente = ".$idreferente."
+		".$where."
 		ORDER BY ".$colSort." ".$colSortDir."
 		limit ".$start.",".$length;
+
+		//die(var_dump($sql));
 
 		$res = $this->query($sql,0);
 		return $res;
