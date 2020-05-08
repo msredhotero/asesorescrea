@@ -509,6 +509,11 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			});
 		}
 
+		$("#example").on("click",'.btnInformacion', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','informacion.php?id=' + idTable);
+		});
+
 		$("#example").on("click",'.btnEnviar', function(){
 			idTable =  $(this).attr("id");
 			reenviarActivacion(idTable);

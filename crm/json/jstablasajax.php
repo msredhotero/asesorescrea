@@ -242,7 +242,14 @@ switch ($tabla) {
 
 	case 'asociados':
 
-		$datos = $serviciosReferencias->traerAsociadosajax($length, $start, $busqueda,$colSort,$colSortDir);
+		if ($_SESSION['idroll_sahilices'] == 3 ) {
+			$responsableComercial = $_SESSION['usuaid_sahilices'];
+		} else {
+			$responsableComercial = $_GET['sSearch_0'];
+		}
+
+
+		$datos = $serviciosReferencias->traerAsociadosajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial);
 
 		$resAjax = $datos[0];
 		$res = $datos[1];
@@ -769,9 +776,9 @@ switch ($tabla) {
 		$resAjax = $datos[0];
 		$res = $datos[1];
 
-		$label = array('btnModificar','btnEliminar');
-		$class = array('bg-amber','bg-red');
-		$icon = array('create','delete');
+		$label = array('btnModificar','btnEliminar','btnInformacion');
+		$class = array('bg-amber','bg-red','bg-teal');
+		$icon = array('create','delete','add_a_photo');
 		$indiceID = 0;
 		$empieza = 1;
 		$termina = 6;
@@ -797,7 +804,7 @@ $id = 0;
 		//$id = $row[$indiceID];
 		// forma local utf8_decode
 		for ($i=$empieza;$i<=$termina;$i++) {
-			array_push($arAux, utf8_decode($row[$i]));
+			array_push($arAux, ($row[$i]));
 		}
 
 		if (($tabla == 'postulantes') || ($tabla == 'asesores') || ($tabla == 'asociadostemporales') || ($tabla == 'asociados') || ($tabla == 'clientes')) {

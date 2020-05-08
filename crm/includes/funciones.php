@@ -1201,7 +1201,7 @@ class Servicios {
 
 		switch ($tabla) {
 			case 'dbperfilasesores':
-				$sqlMod = "select idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,(case when visible = '1' then 'Si' else 'No' end) as visible from dbperfilasesores where idperfilasesor= ".$id;
+				$sqlMod = "select idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,(case when visible = '1' then 'Si' else 'No' end) as visible,token from dbperfilasesores where idperfilasesor= ".$id;
 				$resMod = $this->query($sqlMod,0);
 			break;
 

@@ -82,11 +82,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 $resRoles 	= $serviciosUsuario->traerUsuariosPorRol(3);
 $cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
 
-if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)) {
-	$cadRefFiltro = '<option value="">'.$_SESSION['nombre_sahilices'].'</option>';
-} else {
-	$cadRefFiltro = $cadRef1;
-}
+$cadRefFiltro = $cadRef1;
 
 
 ?>
@@ -235,7 +231,7 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 												<th>Clave Interb.</th>
 												<th>Clave Asesor</th>
 												<th>Fecha Alta</th>
-												<th class="perfilS">Resp.Comercial</th>
+												<th class="perfilS">Gte.Comercial</th>
 												<th>Est. CREA</th>
 												<th>Est. INBURSA</th>
 												<th>Acciones</th>
@@ -251,7 +247,7 @@ if (($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 6)
 												<th>Clave Interb.</th>
 												<th>Clave Asesor</th>
 												<th>Fecha Alta</th>
-												<th>Resp.Comercial</th>
+												<th>Gte.Comercial</th>
 												<th>Est. CREA</th>
 												<th>Est. INBURSA</th>
 												<th>Acciones</th>

@@ -12,8 +12,8 @@ class ServiciosReferencias {
 	/* PARA Perfilasesores */
 
 	function insertarPerfilasesores($reftabla,$idreferencia,$imagenperfil,$imagenfirma,$urllinkedin,$urlfacebook,$urlinstagram,$visible) {
-		$sql = "insert into dbperfilasesores(idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,visible)
-		values ('',".$reftabla.",".$idreferencia.",'".$imagenperfil."','".$imagenfirma."','".$urllinkedin."','".$urlfacebook."','".$urlinstagram."','".$visible."')";
+		$sql = "insert into dbperfilasesores(idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,visible,token)
+		values ('',".$reftabla.",".$idreferencia.",'".$imagenperfil."','".$imagenfirma."','".$urllinkedin."','".$urlfacebook."','".$urlinstagram."','".$visible."','".$this->GUID()."')";
 		$res = $this->query($sql,1);
 		return $res;
 	}
@@ -54,7 +54,8 @@ class ServiciosReferencias {
 		p.urllinkedin,
 		p.urlfacebook,
 		p.urlinstagram,
-		p.visible
+		p.visible,
+		p.token
 		from dbperfilasesores p
 		order by 1";
 		$res = $this->query($sql,0);
@@ -71,7 +72,8 @@ class ServiciosReferencias {
 		d.urllinkedin,
 		d.urlfacebook,
 		d.urlinstagram,
-		d.visible
+		d.visible,
+		d.token
 		from dbperfilasesores d
 		inner join ".$tabla." v on v.".$idnombre." = d.idreferencia
 		where d.reftabla = ".$idtabla." and d.idreferencia = ".$id;
@@ -81,7 +83,7 @@ class ServiciosReferencias {
 
 
 	function traerPerfilasesoresPorId($id) {
-		$sql = "select idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,visible from dbperfilasesores where idperfilasesor =".$id;
+		$sql = "select idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,visible,token from dbperfilasesores where idperfilasesor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -96,7 +98,8 @@ class ServiciosReferencias {
 		urllinkedin,
 		urlfacebook,
 		urlinstagram,
-		(case when visible = '1' then 'Si' else 'No' end) as visible
+		(case when visible = '1' then 'Si' else 'No' end) as visible,
+		token
 		from dbperfilasesores where idperfilasesor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -118,7 +121,8 @@ class ServiciosReferencias {
 		urllinkedin,
 		urlfacebook,
 		urlinstagram,
-		(case when visible = '1' then 'Si' else 'No' end) as visible
+		(case when visible = '1' then 'Si' else 'No' end) as visible,
+		token
 		from dbperfilasesores where idperfilasesor =".$id.$cad;
 		$res = $this->query($sql,0);
 		return $res;
@@ -2557,13 +2561,23 @@ class ServiciosReferencias {
 	}
 
 
-	function traerAsociadosajax($length, $start, $busqueda,$colSort,$colSortDir) {
+	function traerAsociadosajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial) {
 
 		$where = '';
 
+		if ($responsableComercial != '') {
+	      $roles = " (uo.idusuario = ".$responsableComercial." or upo.idusuario = ".$responsableComercial.") and ";
+	   } else {
+	      $roles = '';
+	   }
+
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " where (a.apellidopaterno like '%".$busqueda."%' or a.apellidomaterno like '%".$busqueda."%' or p.nombre like '%".$busqueda."%' or p.email like '%".$busqueda."%' or p.ine like '%".$busqueda."%')";
+			$where = " where ".$roles." (a.apellidopaterno like '%".$busqueda."%' or a.apellidomaterno like '%".$busqueda."%' or p.nombre like '%".$busqueda."%' or p.email like '%".$busqueda."%' or p.ine like '%".$busqueda."%')";
+		} else {
+			if ($responsableComercial != '') {
+	         $where = " where (uo.idusuario = ".$responsableComercial." or upo.idusuario = ".$responsableComercial.") ";
+	      }
 		}
 
 
@@ -2574,7 +2588,7 @@ class ServiciosReferencias {
 		a.apellidopaterno,
 		a.apellidomaterno,
 		a.nombre,
-		a.ine,
+		coalesce(uo.nombrecompleto, upo.nombrecompleto) as gerente,
 		a.email,
 		a.fechanacimiento,
 		a.telefonomovil,
@@ -2582,14 +2596,22 @@ class ServiciosReferencias {
 		a.refbancos,
 		a.claveinterbancaria,
 		a.domicilio,
+		a.ine,
 		a.refusuarios
 		from dbasociados a
 		inner join dbusuarios usu ON usu.idusuario = a.refusuarios
 		inner join tbbancos ban ON ban.idbanco = a.refbancos
 		inner join tbtipoasociado ta ON ta.idtipoasociado = a.reftipoasociado
+		left join dbpostulantes pp ON pp.idpostulante = a.refpostulantes
+      left join dboportunidades o ON o.idoportunidad = a.refoportunidades
+      left join dbusuarios uo on uo.idusuario = o.refusuarios and o.refestadooportunidad = 7
+      left join dbreclutadorasores rrr on rrr.refpostulantes = pp.idpostulante
+      left join dbusuarios upo on upo.idusuario = rrr.refusuarios
 		".$where."
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
 
 		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;

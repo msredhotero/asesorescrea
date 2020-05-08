@@ -90,6 +90,13 @@ $refCampo 	=  array('refusuarios','refbancos','reftipoasociado','refestadoasocia
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
+
+$resRoles 	= $serviciosUsuario->traerUsuariosPorRol(3);
+$cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(3),'');
+
+$cadRefFiltro = $cadRef1;
+
+
 ?>
 
 <!DOCTYPE html>
@@ -225,7 +232,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Apellido P.</th>
 												<th>Apellido M.</th>
 												<th>Nombre</th>
-												<th>INE</th>
+												<th class="perfilS">Gte.Comercial</th>
 												<th>Email</th>
 												<th>Fecha Nac.</th>
 												<th>Tel. Movil</th>
@@ -239,7 +246,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Apellido P.</th>
 												<th>Apellido M.</th>
 												<th>Nombre</th>
-												<th>INE</th>
+												<th>Gte.Comercial</th>
 												<th>Email</th>
 												<th>Fecha Nac.</th>
 												<th>Tel. Movil</th>
@@ -373,6 +380,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=asociados",
+			"columnDefs": [
+		    { "orderable": false, "targets": 5 }
+		 	],
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -397,6 +407,24 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 				}
 			}
 		});
+
+		<?php
+		if ($_SESSION['idroll_sahilices'] == 3 ) {
+			$cadRefFiltro = '<option value="">'.$_SESSION['nombre_sahilices'].'</option>';
+		}
+		?>
+		$("#example .perfilS").each( function ( i ) {
+			var select = $('<select><option value="">-- Seleccione Perfil --</option><?php echo $cadRefFiltro; ?></select>')
+				.appendTo( $(this).empty() )
+				.on( 'change', function () {
+					table.column( i )
+						.search( $(this).val() )
+						.draw();
+				} );
+			table.column( i ).data().unique().sort().each( function ( d, j ) {
+				select.append( '<option value="'+d+'">'+d+'</option>' )
+			} );
+		} );
 
 		$("#sign_in").submit(function(e){
 			e.preventDefault();
