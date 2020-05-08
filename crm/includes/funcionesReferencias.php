@@ -2608,6 +2608,22 @@ class ServiciosReferencias {
       left join dbreclutadorasores rrr on rrr.refpostulantes = pp.idpostulante
       left join dbusuarios upo on upo.idusuario = rrr.refusuarios
 		".$where."
+		group by a.idasociado,
+		ta.tipoasociado,
+		a.nombredespacho,
+		a.apellidopaterno,
+		a.apellidomaterno,
+		a.nombre,
+		coalesce(uo.nombrecompleto, upo.nombrecompleto) as gerente,
+		a.email,
+		a.fechanacimiento,
+		a.telefonomovil,
+		a.telefonotrabajo,
+		a.refbancos,
+		a.claveinterbancaria,
+		a.domicilio,
+		a.ine,
+		a.refusuarios
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
 
