@@ -2614,7 +2614,8 @@ class ServiciosReferencias {
 		a.apellidopaterno,
 		a.apellidomaterno,
 		a.nombre,
-		coalesce(uo.nombrecompleto, upo.nombrecompleto),
+		uo.nombrecompleto,
+		upo.nombrecompleto,
 		a.email,
 		a.fechanacimiento,
 		a.telefonomovil,
@@ -3023,7 +3024,7 @@ class ServiciosReferencias {
 			    p.apellidopaterno,
 			    p.apellidomaterno,
 			    p.nombre,
-			    2000 AS comision
+			    1000 AS comision
 			FROM
 			    tbreferentes r
 			        INNER JOIN
@@ -3034,6 +3035,20 @@ class ServiciosReferencias {
 			    dbpostulantes p ON p.idpostulante = rr.refpostulantes
 			WHERE
 			    p.refestadopostulantes = 10 and r.idreferente = ".$idreferente."
+		".$where."
+		union all
+			SELECT
+				r.idreferente,
+			    p.apellidopaterno,
+			    p.apellidomaterno,
+			    p.nombre,
+			    1000 AS comision
+			FROM
+			    tbreferentes r
+			        INNER JOIN
+			    dbpostulantes p ON p.refreferentes = rr.refpostulantes
+			WHERE
+			    p.refestadopostulantes in (10,11) and r.idreferente = ".$idreferente."
 		".$where."
 		ORDER BY ".$colSort." ".$colSortDir."
 		limit ".$start.",".$length;
