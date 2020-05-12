@@ -510,10 +510,18 @@ if (mysql_num_rows($resEstadoSiguiente) > 0) {
 								<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 9) ) { ?>
 								<div class="row"><div class="alert bg-orange"><i class="material-icons">warning</i> Recuerde que una vez cargada la Clave del Asesor, se guardara automaticamente la Fecha y Hora, y no se podrá modificar</div></div>
 								<div class="button-demo">
+									<?php if (((mysql_result($resultado,0,'refestadopostulantes') == 10 || mysql_result($resultado,0,'refestadopostulantes') == 11)) && ($_SESSION['idroll_sahilices'] != 1 && $_SESSION['idroll_sahilices'] != 4)) { ?>
+										<button type="button" class="btn bg-red waves-effect modificarPostulante">
+											<i class="material-icons">cancel</i>
+											<span>GUARDAR</span>
+										</button>
+									<?php } else { ?>
 									<button type="submit" class="btn bg-light-blue waves-effect modificarPostulante">
 										<i class="material-icons">save</i>
 										<span>GUARDAR</span>
 									</button>
+									<?php } ?>
+
 									<button type="button" class="btn bg-green waves-effect domicilioPostulante">
 										<i class="material-icons">home</i>
 										<span>DOMICILIO</span>

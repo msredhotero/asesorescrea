@@ -4412,42 +4412,62 @@ function modificarPostulantes($serviciosReferencias) {
    $observaciones = $_POST['observaciones'];
    $refreferentes = $_POST['refreferentes'];
 
-   $res = $serviciosReferencias->modificarPostulantes($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$nss,$refesquemareclutamiento,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore,$nropoliza,$razonsocial,$reforigenreclutamiento,$email2,$vigdesderc,$vighastarc,$observaciones,$refreferentes);
+   $error = '';
 
-   if ($res == true) {
-      // si es asociado temporal o agente asociado id=8 lo genero automatico
-      if ($refestadopostulantes == 11) {
+   if ($refestadopostulantes == 11 && ($refesquemareclutamiento == 4 || $refesquemareclutamiento == 5 || $refesquemareclutamiento == 6) ) {
+      if ($refesquemareclutamiento == 4) {
+         $resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacion($id, 26);
+      } else {
+         $resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacion($id, 31);
+      }
 
-         $resExiste = $serviciosReferencias->traerAsociadosPorUsuario($refusuarios);
+      // verificar dependeiendo el tipo de esquema de reclutamiento
+      if (mysql_num_rows($resDocumentacionAsesor) <= 0 ) {
+         $error = 'Debe Cargar la Cedula de Seguro para confirmar Agente Temporal';
+      }
+   }
 
-         if (mysql_num_rows($resExiste) <= 0) {
+   if ($error != '') {
+      echo $error;
+   } else {
+      $res = $serviciosReferencias->modificarPostulantes($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$refestadocivil,$nacionalidad,$telefonomovil,$telefonocasa,$telefonotrabajo,$refestadopostulantes,$urlprueba,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refasesores,$comision,$refsucursalesinbursa,$ultimoestado,$nss,$refesquemareclutamiento,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesdeafore,$vighastaafore,$nropoliza,$razonsocial,$reforigenreclutamiento,$email2,$vigdesderc,$vighastarc,$observaciones,$refreferentes);
 
-            $cuerpo = '';
-            $cuerpo .= '<h4>Nombre Completo: '.$nombre.' '.$apellidopaterno.' '.$apellidomaterno.'</h4><br>';
+      if ($res == true) {
+         // si es asociado temporal o agente asociado id=8 lo genero automatico
+         if ($refestadopostulantes == 11) {
 
-            if ($email != '') {
+            $resExiste = $serviciosReferencias->traerAsociadosPorUsuario($refusuarios);
+
+            if (mysql_num_rows($resExiste) <= 0) {
+
+               $cuerpo = '';
+               $cuerpo .= '<h4>Nombre Completo: '.$nombre.' '.$apellidopaterno.' '.$apellidomaterno.'</h4><br>';
+
+               if ($email != '') {
 
 
-               $resAT = $serviciosReferencias->insertarAsociados($refusuarios,2,$razonsocial,$apellidopaterno,$apellidomaterno,$nombre,'',$email,'null',$telefonomovil,$telefonotrabajo,1,'','',1,0,$id);
-               $asunto = 'Se genero un Agente Temporal';
+                  $resAT = $serviciosReferencias->insertarAsociados($refusuarios,2,$razonsocial,$apellidopaterno,$apellidomaterno,$nombre,'',$email,'null',$telefonomovil,$telefonotrabajo,1,'','',1,0,$id);
+                  $asunto = 'Se genero un Agente Temporal';
 
-               $cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/dashboard/asociados/index.php?id=".$resAT."'>ACCEDER</a>";
+                  $cuerpo .= "Acceda por este link: <a href='http://asesorescrea.com/desarrollo/crm/dashboard/asociados/index.php?id=".$resAT."'>ACCEDER</a>";
 
 
-            } else {
-               $asunto = 'No se pudo generar un Agente Temporal por falta de email';
+               } else {
+                  $asunto = 'No se pudo generar un Agente Temporal por falta de email';
+               }
+
+               $destinatario = 'jfoncerrada@icloud.com';
+
+               $res = $serviciosReferencias->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
             }
 
-            $destinatario = 'jfoncerrada@icloud.com';
-
-            $res = $serviciosReferencias->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
          }
-
+         echo '';
+      } else {
+         echo 'Hubo un error al modificar datos';
       }
-      echo '';
-   } else {
-      echo 'Hubo un error al modificar datos';
    }
+
 }
 
 
