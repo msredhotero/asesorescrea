@@ -63,7 +63,7 @@ $tipopersona = mysql_result($resultado,0,'reftipopersonas');
 $resInformacion = $serviciosReferencias->traerPerfilasesoresPorTablaReferencia(1, 'dbasesores', 'idasesor', $id);
 
 if (mysql_num_rows($resInformacion) <= 0) {
-	$idInformacion = $serviciosReferencias->insertarPerfilasesores(1,$id,'','','','','','1');
+	$idInformacion = $serviciosReferencias->insertarPerfilasesores(1,$id,'','','','','','1','',0,'');
 	$resInformacion = $serviciosReferencias->traerPerfilasesoresPorId($idInformacion);
 } else {
 	$idInformacion = mysql_result($resInformacion,0,'idperfilasesor');
