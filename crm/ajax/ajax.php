@@ -823,11 +823,18 @@ function traerPerfilasesoresPorIdImagenCompleto($serviciosReferencias) {
    $id = $_POST['idperfilasesor'];
    $imagenbuscada = $_POST['imagen'];
 
-   if ($imagenbuscada == 1) {
-      $imagenbuscada = 'imagenperfil';
-   } else {
-      $imagenbuscada = 'imagenfirma';
+   switch ($imagenbuscada) {
+      case 1:
+         $imagenbuscada = 'imagenperfil';
+      break;
+      case 2:
+         $imagenbuscada = 'imagenfirma';
+      break;
+      case 3:
+         $imagenbuscada = 'imagenlogo';
+      break;
    }
+
 
    $resV['datos'] = '';
    $resV['error'] = false;
@@ -878,7 +885,11 @@ function insertarPerfilasesores($serviciosReferencias) {
    $urlinstagram = $_POST['urlinstagram'];
    $visible = $_POST['visible'];
 
-   $res = $serviciosReferencias->insertarPerfilasesores($reftabla,$idreferencia,$imagenperfil,$imagenfirma,$urllinkedin,$urlfacebook,$urlinstagram,$visible);
+   $urloficial = $_POST['urloficial'];
+   $reftipofigura = $_POST['reftipofigura'];
+   $marcapropia = $_POST['marcapropia'];
+
+   $res = $serviciosReferencias->insertarPerfilasesores($reftabla,$idreferencia,$imagenperfil,$imagenfirma,$urllinkedin,$urlfacebook,$urlinstagram,$visible,$urloficial,$reftipofigura,$marcapropia);
 
    if ((integer)$res > 0) {
       echo '';
@@ -899,9 +910,21 @@ function modificarPerfilasesores($serviciosReferencias) {
    $urlinstagram = $_POST['urlinstagram'];
    $visible = $_POST['visible'];
 
-   $res = $serviciosReferencias->modificarPerfilasesores($id,$reftabla,$idreferencia,$imagenperfil,$imagenfirma,$urllinkedin,$urlfacebook,$urlinstagram,$visible);
+   $urloficial = $_POST['urloficial'];
+   $reftipofigura = $_POST['reftipofigura'];
+   $marcapropia = $_POST['marcapropia'];
+
+   $res = $serviciosReferencias->modificarPerfilasesores($id,$reftabla,$idreferencia,$imagenperfil,$imagenfirma,$urllinkedin,$urlfacebook,$urlinstagram,$visible,$urloficial,$reftipofigura,$marcapropia);
 
    if ($res == true) {
+      $resEliminar = $serviciosReferencias->eliminarPerfilasesoresespecialidadesPorPerfil($id);
+      $resUser = $serviciosReferencias->traerEspecialidades();
+		$cad = 'user';
+		while ($rowFS = mysql_fetch_array($resUser)) {
+			if (isset($_POST[$cad.$rowFS[0]])) {
+				$serviciosReferencias->insertarPerfilasesoresespecialidades($id,$rowFS[0]);
+			}
+		}
       echo '';
    } else {
       echo 'Hubo un error al modificar datos';

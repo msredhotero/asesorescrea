@@ -9,20 +9,186 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
-	/* PARA Perfilasesores */
 
-	function insertarPerfilasesores($reftabla,$idreferencia,$imagenperfil,$imagenfirma,$urllinkedin,$urlfacebook,$urlinstagram,$visible) {
-		$sql = "insert into dbperfilasesores(idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,visible,token)
-		values ('',".$reftabla.",".$idreferencia.",'".$imagenperfil."','".$imagenfirma."','".$urllinkedin."','".$urlfacebook."','".$urlinstagram."','".$visible."','".$this->GUID()."')";
+	/* PARA Perfilasesoresespecialidades */
+
+	function insertarPerfilasesoresespecialidades($refperfilasesores,$refespecialidades) {
+		$sql = "insert into dbperfilasesoresespecialidades(idperfilasesorespecialidad,refperfilasesores,refespecialidades)
+		values ('',".$refperfilasesores.",".$refespecialidades.")";
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarPerfilasesores($id,$reftabla,$idreferencia,$imagenperfil,$imagenfirma,$urllinkedin,$urlfacebook,$urlinstagram,$visible) {
+	function modificarPerfilasesoresespecialidades($id,$refperfilasesores,$refespecialidades) {
+		$sql = "update dbperfilasesoresespecialidades
+		set
+		refperfilasesores = ".$refperfilasesores.",refespecialidades = ".$refespecialidades."
+		where idperfilasesorespecialidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarPerfilasesoresespecialidades($id) {
+		$sql = "delete from dbperfilasesoresespecialidades where idperfilasesorespecialidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function eliminarPerfilasesoresespecialidadesPorPerfil($id) {
+		$sql = "delete from dbperfilasesoresespecialidades where refperfilasesores =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerPerfilasesoresespecialidades() {
+		$sql = "select
+		p.idperfilasesorespecialidad,
+		p.refperfilasesores,
+		p.refespecialidades
+		from dbperfilasesoresespecialidades p
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerPerfilasesoresespecialidadesPorId($id) {
+		$sql = "select idperfilasesorespecialidad,refperfilasesores,refespecialidades from dbperfilasesoresespecialidades where idperfilasesorespecialidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerPerfilasesoresespecialidadesPorPerfil($idperfil) {
+		$sql = "select
+		p.idperfilasesorespecialidad,
+		p.refperfilasesores,
+		p.refespecialidades
+		from dbperfilasesoresespecialidades p
+		inner join tbespecialidades esp on esp.idespecialidad = p.refespecialidades
+		where p.refperfilasesores =".$idperfil."
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbperfilasesoresespecialidades*/
+
+
+	/* PARA Tipofigura */
+
+	function insertarTipofigura($tipofigura) {
+	$sql = "insert into tbtipofigura(idtipofigura,tipofigura)
+	values ('','".$tipofigura."')";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarTipofigura($id,$tipofigura) {
+	$sql = "update tbtipofigura
+	set
+	tipofigura = '".$tipofigura."'
+	where idtipofigura =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarTipofigura($id) {
+	$sql = "delete from tbtipofigura where idtipofigura =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerTipofigura() {
+	$sql = "select
+	t.idtipofigura,
+	t.tipofigura
+	from tbtipofigura t
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerTipofiguraPorId($id) {
+	$sql = "select idtipofigura,tipofigura from tbtipofigura where idtipofigura =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbtipofigura*/
+
+	/* PARA Especialidades */
+
+	function insertarEspecialidades($especialidad) {
+		$sql = "insert into tbespecialidades(idespecialidad,especialidad)
+		values ('','".$especialidad."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarEspecialidades($id,$especialidad) {
+		$sql = "update tbespecialidades
+		set
+		especialidad = '".$especialidad."'
+		where idespecialidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarEspecialidades($id) {
+		$sql = "delete from tbespecialidades where idespecialidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerEspecialidades() {
+		$sql = "select
+		e.idespecialidad,
+		e.especialidad
+		from tbespecialidades e
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerEspecialidadesPorId($id) {
+		$sql = "select idespecialidad,especialidad from tbespecialidades where idespecialidad =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbespecialidades*/
+
+	/* PARA Perfilasesores */
+
+	function insertarPerfilasesores($reftabla,$idreferencia,$imagenperfil,$imagenfirma,$urllinkedin,$urlfacebook,$urlinstagram,$visible,$urloficial,$reftipofigura,$marcapropia) {
+		$sql = "insert into dbperfilasesores(idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,visible,token,urloficial,reftipofigura,marcapropia)
+		values ('',".$reftabla.",".$idreferencia.",'".$imagenperfil."','".$imagenfirma."','".$urllinkedin."','".$urlfacebook."','".$urlinstagram."','".$visible."','".$this->GUID()."','".$urloficial."',".$reftipofigura.",'".$marcapropia."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarPerfilasesores($id,$reftabla,$idreferencia,$imagenperfil,$imagenfirma,$urllinkedin,$urlfacebook,$urlinstagram,$visible,$urloficial,$reftipofigura,$marcapropia) {
 		$sql = "update dbperfilasesores
 		set
-		reftabla = ".$reftabla.",idreferencia = ".$idreferencia.",urllinkedin = '".$urllinkedin."',urlfacebook = '".$urlfacebook."',urlinstagram = '".$urlinstagram."',visible = '".$visible."'
+		reftabla = ".$reftabla.",idreferencia = ".$idreferencia.",urllinkedin = '".$urllinkedin."',urlfacebook = '".$urlfacebook."',urlinstagram = '".$urlinstagram."',visible = '".$visible."',urloficial = '".$urloficial."',reftipofigura = ".$reftipofigura.",marcapropia = '".$marcapropia."'
 		where idperfilasesor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -55,7 +221,11 @@ class ServiciosReferencias {
 		p.urlfacebook,
 		p.urlinstagram,
 		p.visible,
-		p.token
+		p.token,
+		p.urloficial,
+		p.reftipofigura,
+		p.marcapropia,
+		p.imagenlogo
 		from dbperfilasesores p
 		order by 1";
 		$res = $this->query($sql,0);
@@ -73,7 +243,11 @@ class ServiciosReferencias {
 		d.urlfacebook,
 		d.urlinstagram,
 		d.visible,
-		d.token
+		d.token,
+		d.urloficial,
+		d.reftipofigura,
+		d.marcapropia,
+		d.imagenlogo
 		from dbperfilasesores d
 		inner join ".$tabla." v on v.".$idnombre." = d.idreferencia
 		where d.reftabla = ".$idtabla." and d.idreferencia = ".$id;
@@ -83,7 +257,7 @@ class ServiciosReferencias {
 
 
 	function traerPerfilasesoresPorId($id) {
-		$sql = "select idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,visible,token from dbperfilasesores where idperfilasesor =".$id;
+		$sql = "select idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,visible,token,urloficial,reftipofigura,marcapropia,imagenlogo from dbperfilasesores where idperfilasesor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -95,11 +269,15 @@ class ServiciosReferencias {
 		idreferencia,
 		concat('archivos/informacion/',idperfilasesor,'/', imagenperfil) as imagenperfil,
 		concat('archivos/informacion/',idperfilasesor,'/', imagenfirma) as imagenfirma,
+		concat('archivos/informacion/',idperfilasesor,'/', imagenlogo) as imagenlogo,
 		urllinkedin,
 		urlfacebook,
 		urlinstagram,
 		(case when visible = '1' then 'Si' else 'No' end) as visible,
-		token
+		token,
+		urloficial,
+		reftipofigura,
+		(case when marcapropia = '1' then 'Si' else 'No' end) as marcapropia
 		from dbperfilasesores where idperfilasesor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -107,22 +285,35 @@ class ServiciosReferencias {
 
 	function traerPerfilasesoresPorIdImagenCompleto($id,$imagen) {
 
-		if ($imagen == 'imagenperfil') {
-			$cad = " and imagenperfil != ''";
-		} else {
-			$cad = " and imagenfirma != ''";
+		switch ($imagen) {
+			case 'imagenperfil':
+				$cad = " and imagenperfil != ''";
+			break;
+			case 'imagenfirma':
+				$cad = " and imagenfirma != ''";
+			break;
+			case 'imagenlogo':
+				$cad = " and imagenlogo != ''";
+			break;
 		}
+
+
 		$sql = "select
 		idperfilasesor,
 		reftabla,
 		idreferencia,
 		concat('archivos/informacion/',idperfilasesor,'/', imagenperfil) as imagenperfil,
 		concat('archivos/informacion/',idperfilasesor,'/', imagenfirma) as imagenfirma,
+		concat('archivos/informacion/',idperfilasesor,'/', imagenlogo) as imagenlogo,
 		urllinkedin,
 		urlfacebook,
 		urlinstagram,
 		(case when visible = '1' then 'Si' else 'No' end) as visible,
-		token
+		token,
+		urloficial,
+		reftipofigura,
+		(case when marcapropia = '1' then 'Si' else 'No' end) as marcapropia
+
 		from dbperfilasesores where idperfilasesor =".$id.$cad;
 		$res = $this->query($sql,0);
 		return $res;

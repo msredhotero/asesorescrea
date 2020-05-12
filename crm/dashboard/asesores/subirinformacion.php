@@ -39,11 +39,18 @@
 		$id = $_POST['idinformacion'];
 		$iddocumentacion = $_POST['iddocumentacion'];
 
-		if ($iddocumentacion == 88) {
-			$imagenbuscada = 'imagenperfil';
-		} else {
-			$imagenbuscada = 'imagenfirma';
+		switch ($iddocumentacion) {
+			case 88:
+				$imagenbuscada = 'imagenperfil';
+			break;
+			case 89:
+				$imagenbuscada = 'imagenfirma';
+			break;
+			case 90:
+				$imagenbuscada = 'imagenlogo';
+			break;
 		}
+
 
 		$resultado 		= 	$serviciosReferencias->traerPerfilasesoresPorId($id);
 

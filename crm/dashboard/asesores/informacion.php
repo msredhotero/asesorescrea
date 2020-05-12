@@ -58,6 +58,8 @@ $id = $_GET['id'];
 
 $resultado = $serviciosReferencias->traerAsesoresPorId($id);
 
+$tipopersona = mysql_result($resultado,0,'reftipopersonas');
+
 $resInformacion = $serviciosReferencias->traerPerfilasesoresPorTablaReferencia(1, 'dbasesores', 'idasesor', $id);
 
 if (mysql_num_rows($resInformacion) <= 0) {
@@ -73,8 +75,8 @@ if (mysql_num_rows($resInformacion) <= 0) {
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbperfilasesores";
 
-$lblCambio	 	= array('urllinkedin','urlfacebook','urlinstagram');
-$lblreemplazo	= array('URL Linkedin','URL Facebook','URL Instagram');
+$lblCambio	 	= array('urllinkedin','urlfacebook','urlinstagram','urloficial','marcapropia','reftipofigura');
+$lblreemplazo	= array('URL Linkedin','URL Facebook','URL Instagram','URL Oficial','¿marca propia?','Tipo Figura');
 
 if (mysql_result($resInformacion,0,'visible') == '1') {
 	$cadRef5 = "<option value='1' selected>Si</option><option value='0'>No</option>";
@@ -82,11 +84,50 @@ if (mysql_result($resInformacion,0,'visible') == '1') {
 	$cadRef5 = "<option value='1'>Si</option><option value='0' selected>No</option>";
 }
 
-$refdescripcion = array(0=>$cadRef5);
-$refCampo 	=  array('visible');
+if (mysql_result($resInformacion,0,'marcapropia') == '1') {
+	$cadRef6 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+} else {
+	$cadRef6 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+}
+
+$resVar1 = $serviciosReferencias->traerTipoFigura();
+$cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),'',mysql_result($resInformacion,0,'reftipofigura'));
+
+$refdescripcion = array(0=>$cadRef5,1=>$cadRef6,2=>$cadRef1);
+$refCampo 	=  array('visible','marcapropia','reftipofigura');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($idInformacion,'idperfilasesor',$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
+
+
+$lstContactos	= $serviciosFunciones->devolverSelectBox($serviciosReferencias->traerEspecialidades(),array(1),'');
+$resContactos = $serviciosReferencias->traerEspecialidades();
+
+$resContactosCountries = $serviciosReferencias->traerPerfilasesoresespecialidadesPorPerfil($idInformacion);
+
+
+	while ($subrow = mysql_fetch_array($resContactosCountries)) {
+			$arrayFS[] = $subrow;
+	}
+
+
+
+$cadUser = '<ul class="list-inline" id="lstContact">';
+while ($rowFS = mysql_fetch_array($resContactos)) {
+	$check = '';
+	if (mysql_num_rows($resContactosCountries)>0) {
+		foreach ($arrayFS as $item) {
+			if (stripslashes($item['refespecialidades']) == $rowFS[0]) {
+				$check = 'checked';
+				$cadUser = $cadUser.'<li class="user'.$rowFS[0].'">'.'<input id="user'.$rowFS[0].'" '.$check.' class="filled-in checkLstContactos" type="checkbox" required="" name="user'.$rowFS[0].'"><label for="user'.$rowFS[0].'">'.$rowFS[1].'</label>'."</li>";
+			}
+		}
+	}
+}
+
+
+
+$cadUser = $cadUser."</ul>";
 
 
 
@@ -227,12 +268,40 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($idInformacion,'
 								<div class="row frmAjaxModificar">
 									<?php echo $frmUnidadNegocios; ?>
 								</div>
-								<div class="button-demo">
+								<div class="row" id="contContacto" style="margin-left:0px; margin-right:25px;">
+									<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 margTop  frmContespecialidades" style="display:block">
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				                    <label for="buscarcontacto" class="control-label" style="text-align:left">Buscar Especialidades</label>
+
+			                        <select id="buscarcontacto" name="buscarcontacto" class="form-control show-tick">
+			                            <option value=""></option>
+			                            <?php echo $lstContactos; ?>
+			                        </select>
+										</div>
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+			                        <button style="margin-top:18px;" type="button" class="btn btn-success" id="asignarContacto"><span class="glyphicon glyphicon-share-alt"></span> Asignar Especialidad</button>
+										</div>
+				                </div>
+								 <?php } ?>
+
+				                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				                    <label for="contactosasignados" class="control-label" style="text-align:left">Especialidades Asignadas</label>
+				                    <div class="input-group col-md-12">
+				                        <?php echo $cadUser; ?>
+
+				                    </div>
+				                </div>
+
+				            </div>
+							<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+								<div class="button-demo" style="margin-top:25px;">
 									<button type="submit" class="btn bg-light-blue waves-effect modificarDomicilio">
 										<i class="material-icons">save</i>
 										<span>GUARDAR</span>
 									</button>
 								</div>
+							<?php } ?>
 
 							</form>
 
@@ -245,8 +314,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($idInformacion,'
 										</a>
 										<div id="example1"></div>
 
-
-
 									</div>
 									<div class="col-xs-6 col-md-6 col-lg-6">
 										<h4>FIRMA</h4>
@@ -257,17 +324,30 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($idInformacion,'
 
 									</div>
 								</div>
+							</div> <!-- fin del container imagenes -->
 
-							</div> <!-- fin del container veritas -->
+							<div class="row clearfix subirImagen contImagenLogo">
+								<div class="row">
+									<div class="col-xs-6 col-md-6 col-lg-6">
+										<h4>LOGO</h4>
+										<a href="javascript:void(0);" class="thumbnail timagen3">
+											<img class="img-responsive3">
+										</a>
+										<div id="example3"></div>
+
+									</div>
+
+								</div>
+							</div> <!-- fin del container imagenes -->
+
 						</div>
 					</div>
 				</div>
 			</div>
 
+			<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
 			<div class="row">
-
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-
 					<div class="card">
 						<div class="header">
 							<h2>
@@ -345,7 +425,47 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($idInformacion,'
 						</div>
 					</div>
 				</div>
+
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 contSubirLogo">
+					<div class="card">
+						<div class="header">
+							<h2>
+								CARGA/MODIFIQUE EL LOGO
+							</h2>
+							<ul class="header-dropdown m-r--5">
+								<li class="dropdown">
+									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+										<i class="material-icons">more_vert</i>
+									</a>
+
+								</li>
+							</ul>
+						</div>
+						<div class="body">
+
+
+							<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+							<form action="subirinformacion.php" id="frmFileUpload3" class="dropzone" method="post" enctype="multipart/form-data">
+								<div class="dz-message">
+									<div class="drag-icon-cph">
+										<i class="material-icons">touch_app</i>
+									</div>
+									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+
+								</div>
+								<div class="fallback">
+
+									<input name="file" type="file" id="archivos3" />
+									<input type="hidden" id="idinformacion" name="idinformacion" value="<?php echo $idInformacion; ?>" />
+
+								</div>
+							</form>
+							<?php } ?>
+						</div>
+					</div>
+				</div>
 			</div>
+		<?php } ?>
 		</div>
 	</div>
 </section>
@@ -404,6 +524,35 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($idInformacion,'
 <script>
 	$(document).ready(function(){
 
+		<?php if ($tipopersona == 1) { ?>
+			$('.contImagenLogo').hide();
+			$('.frmConturloficial').hide();
+			$('.contSubirLogo').hide();
+		<?php } ?>
+
+		$('#asignarContacto').click(function(e) {
+			//alert($('#buscarcontacto option:selected').html());
+			if (existeAsiganado('user'+$('#buscarcontacto').val()) == 0) {
+				$('#lstContact').prepend('<li class="user'+ $('#buscarcontacto').val() +'"><input type="checkbox" id="user'+ $('#buscarcontacto').val() +'" name="user'+ $('#buscarcontacto').val() +'" class="filled-in" checked ><label for="user'+ $('#buscarcontacto').val() +'">' + $('#buscarcontacto option:selected').html() + '</label></li>');
+			}
+		});
+
+
+
+
+		function existeAsiganado(id) {
+			var existe = 0;
+			$('#lstContact li input').each(function (index, value) {
+			  if (id == $(this).attr('id')) {
+				return existe = 1;
+			  }
+			});
+
+			return existe;
+		}
+
+
+
 		function traerImagen(contenedorpdf, contenedor, imagen) {
 			$.ajax({
 				data:  {idperfilasesor: <?php echo $idInformacion; ?>,
@@ -444,8 +593,21 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($idInformacion,'
 
 		traerImagen('example1','timagen1',1);
 		traerImagen('example2','timagen2',2);
+		traerImagen('example3','timagen3',3);
+
+
 
 		<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+
+
+		$("#lstContact").on("click",'.checkLstContactos', function(){
+			usersid =  $(this).attr("id");
+
+			if  (!($(this).prop('checked'))) {
+				$('.'+usersid).remove();
+			}
+		});
+
 		Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
 
 		Dropzone.options.frmFileUpload = {
@@ -498,6 +660,31 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($idInformacion,'
 			};
 
 
+			Dropzone.options.frmFileUpload3 = {
+					maxFilesize: 10,
+					acceptedFiles: ".jpg,.jpeg",
+					accept: function(file, done) {
+						done();
+					},
+					init: function() {
+						this.on("sending", function(file, xhr, formData){
+							formData.append("idinformacion", '<?php echo $idInformacion; ?>');
+							formData.append("iddocumentacion", '90');
+			         });
+						this.on('success', function( file, resp ){
+							traerImagen('example3','timagen3',3);
+							$('.lblComplemento').hide();
+							swal("Correcto!", resp.replace("1", ""), "success");
+
+						});
+
+						this.on('error', function( file, resp ){
+							swal("Error!", resp.replace("1", ""), "warning");
+						});
+					}
+				};
+
+
 
 		var myDropzone = new Dropzone("#archivos", {
 			params: {
@@ -508,12 +695,22 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($idInformacion,'
 		});
 
 		var myDropzone2 = new Dropzone("#archivos2", {
-				params: {
-					idinformacion: <?php echo $idInformacion; ?>,
-					iddocumentacion: 89
-		      },
-				url: 'subirinformacion.php'
-			});
+			params: {
+				idinformacion: <?php echo $idInformacion; ?>,
+				iddocumentacion: 89
+	      },
+			url: 'subirinformacion.php'
+		});
+
+		var myDropzone3 = new Dropzone("#archivos3", {
+			params: {
+				idinformacion: <?php echo $idInformacion; ?>,
+				iddocumentacion: 90
+	      },
+			url: 'subirinformacion.php'
+		});
+		<?php } else { ?>
+			$('.frmContvisible').hide();
 		<?php } ?>
 
 		$('.frmContreftabla').hide();

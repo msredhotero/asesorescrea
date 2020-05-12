@@ -1201,7 +1201,10 @@ class Servicios {
 
 		switch ($tabla) {
 			case 'dbperfilasesores':
-				$sqlMod = "select idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,(case when visible = '1' then 'Si' else 'No' end) as visible,token from dbperfilasesores where idperfilasesor= ".$id;
+				$sqlMod = "select idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,(case when visible = '1' then 'Si' else 'No' end) as visible,token,
+				urloficial,
+				reftipofigura,
+				(case when marcapropia = '1' then 'Si' else 'No' end) as marcapropia,imagenlogo from dbperfilasesores where idperfilasesor= ".$id;
 				$resMod = $this->query($sqlMod,0);
 			break;
 
@@ -1277,7 +1280,7 @@ class Servicios {
 
 		switch ($tabla) {
 			case 'dbperfilasesores':
-				$ocultar = array("imagenperfil","imagenfirma");
+				$ocultar = array("imagenperfil","imagenfirma","imagenlogo");
 			break;
 			case 'dbentrevistas':
 				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi",'refestadopostulantes');
