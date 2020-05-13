@@ -140,7 +140,6 @@ class Servicios {
 	}
 
 	function devolverSelectBoxActivo($datos, $ar, $delimitador, $idSelect) {
-
 		$cad		= '';
 		while ($rowTT = mysql_fetch_array($datos)) {
 			$contenido	= '';
@@ -1204,7 +1203,8 @@ class Servicios {
 				$sqlMod = "select idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,(case when visible = '1' then 'Si' else 'No' end) as visible,token,
 				urloficial,
 				reftipofigura,
-				(case when marcapropia = '1' then 'Si' else 'No' end) as marcapropia,imagenlogo from dbperfilasesores where idperfilasesor= ".$id;
+				(case when marcapropia = '1' then 'Si' else 'No' end) as marcapropia,imagenlogo,email,
+				emisoremail from dbperfilasesores where idperfilasesor= ".$id;
 				$resMod = $this->query($sqlMod,0);
 			break;
 

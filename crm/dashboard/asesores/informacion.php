@@ -75,8 +75,8 @@ if (mysql_num_rows($resInformacion) <= 0) {
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbperfilasesores";
 
-$lblCambio	 	= array('urllinkedin','urlfacebook','urlinstagram','urloficial','marcapropia','reftipofigura');
-$lblreemplazo	= array('URL Linkedin','URL Facebook','URL Instagram','URL Oficial','¿marca propia?','Tipo Figura');
+$lblCambio	 	= array('urllinkedin','urlfacebook','urlinstagram','urloficial','marcapropia','reftipofigura','email','emisoremail');
+$lblreemplazo	= array('URL Linkedin','URL Facebook','URL Instagram','URL Oficial','¿marca propia?','Puesto','Email Institucional','Emisor de Email');
 
 if (mysql_result($resInformacion,0,'visible') == '1') {
 	$cadRef5 = "<option value='1' selected>Si</option><option value='0'>No</option>";

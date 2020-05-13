@@ -67,6 +67,24 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 }
 
 switch ($tabla) {
+	case 'especialidades':
+
+		$datos = $serviciosReferencias->traerEspecialidadesajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('create','delete');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 1;
+
+	break;
 	case 'directorio':
 
 		$datos = $serviciosReferencias->traerDirectorioasesoresajax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['idasesor_aux']);

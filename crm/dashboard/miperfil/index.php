@@ -61,6 +61,13 @@ $modificar = "modificarEntrevistas";
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $resultado 		= 	$serviciosReferencias->traerPostulantesPorIdUsuario($idusuario);
+$resultadoB		=  $serviciosReferencias->traerAsesoresPorUsuario($idusuario);
+
+if (mysql_num_rows($resultado) > 0) {
+	$idasesor = mysql_result($resultadoB,0,'idasesor');
+} else {
+	$idasesor = 0;
+}
 
 if (mysql_num_rows($resultado)<= 0) {
 	echo "<script>
@@ -407,11 +414,7 @@ if (mysql_result($resultado,0,'rfc') == '') {
 	$alertaRFC = '';
 }
 
-if (mysql_result($resultado,0,'curp') == '') {
-	$alertaCURP = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el CURP!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=6"><b>AQUI</b></a></div>';
-} else {
-	$alertaCURP = '';
-}
+$alertaCURP = '';
 
 if (mysql_result($resultado,0,'ine') == '') {
 	$alertaINE = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el INE!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=3"><b>AQUI</b></a></div>';
@@ -419,11 +422,27 @@ if (mysql_result($resultado,0,'ine') == '') {
 	$alertaINE = '';
 }
 
-if (mysql_result($resultado,0,'nss') == '') {
-	$alertaNSS = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el Nro de Seguro Social!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=8"><b>AQUI</b></a></div>';
+$alertaNSS = '';
+
+$resInformacion = $serviciosReferencias->traerPerfilasesoresPorTablaReferencia(1, 'dbasesores', 'idasesor', $idasesor);
+
+if (mysql_num_rows($resInformacion) > 0) {
+	$resInfoCompleta = $serviciosReferencias->traerPerfilasesoresPorIdCompleto(mysql_result($resInformacion,0,0));
+	$datos = array(
+		'imagenfirma' => mysql_result($resInfoCompleta,0,'imagenfirma'),
+		'imagenlogo' => mysql_result($resInfoCompleta,0,'imagenlogo'),
+		'imagenperfil' => mysql_result($resInfoCompleta,0,'imagenperfil'),
+		'urllinkedin' => mysql_result($resInfoCompleta,0,'urllinkedin'),
+		'urlfacebook' => mysql_result($resInfoCompleta,0,'urlfacebook'),
+		'urlinstagram' => mysql_result($resInfoCompleta,0,'urlinstagram'),
+		'urloficial' => mysql_result($resInfoCompleta,0,'urloficial'),
+		'email' => mysql_result($resInfoCompleta,0,'email')
+	);
+
 } else {
-	$alertaNSS = '';
+	$datos = array();
 }
+
 
 ?>
 
@@ -539,6 +558,120 @@ if (mysql_result($resultado,0,'nss') == '') {
 <section class="content" style="margin-top:-75px;">
 
 	<div class="container-fluid">
+
+
+		<div class="row clearfix">
+			<div class="row">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<div class="card ">
+						<div class="header bg-blue">
+							<h2>
+								INFORMACION GENERAL PUBLICA
+							</h2>
+							<ul class="header-dropdown m-r--5">
+								<li class="dropdown">
+									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+										<i class="material-icons">more_vert</i>
+									</a>
+									<ul class="dropdown-menu pull-right">
+										<li><a href="javascript:void(0);" class=" waves-effect waves-block btnToggle tVisible">Ocultar</a></li>
+									</ul>
+								</li>
+							</ul>
+						</div>
+						<div class="body table-responsive contToggle">
+
+								<?php if (count($datos)>0) { ?>
+									<div class="row">
+										<div class="col-xs-6 col-md-4">
+											<p>Firma</p>
+											<a href="javascript:void(0);" class="thumbnail">
+												<img src="<?php echo $datos['imagenfirma'] == '' ? "http://placehold.it/500x300" : '../../'.$datos['imagenfirma']; ?>" class="img-responsive">
+											</a>
+										</div>
+										<div class="col-xs-6 col-md-4">
+											<p>Logo</p>
+											<a href="javascript:void(0);" class="thumbnail">
+												<img src="<?php echo $datos['imagenlogo'] == '' ? "http://placehold.it/500x300" : '../../'.$datos['imagenlogo']; ?>" class="img-responsive">
+											</a>
+										</div>
+										<div class="col-xs-6 col-md-4">
+											<p>Perfil</p>
+											<a href="javascript:void(0);" class="thumbnail">
+												<img src="<?php echo $datos['imagenperfil'] == '' ? "http://placehold.it/500x300" : '../../'.$datos['imagenperfil']; ?>" class="img-responsive">
+											</a>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-3">
+											<b>URL Linkedin</b>
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="material-icons">link</i>
+												</span>
+												<div class="form-line">
+													<input type="text" readonly class="form-control email" value="<?php echo $datos['urllinkedin']; ?>">
+												</div>
+											</div>
+										</div>
+										<div class="col-md-3">
+											<b>URL Facebook</b>
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="material-icons">link</i>
+												</span>
+												<div class="form-line">
+													<input type="text" readonly class="form-control email" value="<?php echo $datos['urlfacebook']; ?>">
+												</div>
+											</div>
+										</div>
+										<div class="col-md-3">
+											<b>URL Instagram</b>
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="material-icons">link</i>
+												</span>
+												<div class="form-line">
+													<input type="text" readonly class="form-control email" value="<?php echo $datos['urlinstagram']; ?>">
+												</div>
+											</div>
+										</div>
+										<div class="col-md-3">
+											<b>URL Oficial</b>
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="material-icons">link</i>
+												</span>
+												<div class="form-line">
+													<input type="text" readonly class="form-control email" value="<?php echo $datos['urloficial']; ?>">
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-3">
+											<b>Email Institucional</b>
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="material-icons">email</i>
+												</span>
+												<div class="form-line">
+													<input type="text" readonly class="form-control email" value="<?php echo $datos['email']; ?>">
+												</div>
+											</div>
+										</div>
+									</div>
+								<?php } else { ?>
+									<div class="row">
+										<div class="alert alert-info">Sus datos públicos aun no fueron cargados, comunicarse a la Administración para mas información.</div>
+									</div>
+								<?php } ?>
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div> <!-- fin del container datos web -->
 
 
 		<div class="row clearfix">

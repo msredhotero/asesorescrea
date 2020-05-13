@@ -164,6 +164,30 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function traerEspecialidadesajax($length, $start, $busqueda,$colSort,$colSortDir) {
+		$where = '';
+
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where (e.especialidad like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+		e.idespecialidad,
+		e.especialidad
+		from tbespecialidades e
+		".$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
 
 	function traerEspecialidadesPorId($id) {
 		$sql = "select idespecialidad,especialidad from tbespecialidades where idespecialidad =".$id;
@@ -185,10 +209,10 @@ class ServiciosReferencias {
 	}
 
 
-	function modificarPerfilasesores($id,$reftabla,$idreferencia,$imagenperfil,$imagenfirma,$urllinkedin,$urlfacebook,$urlinstagram,$visible,$urloficial,$reftipofigura,$marcapropia) {
+	function modificarPerfilasesores($id,$reftabla,$idreferencia,$imagenperfil,$imagenfirma,$urllinkedin,$urlfacebook,$urlinstagram,$visible,$urloficial,$reftipofigura,$marcapropia,$email,$emisoremail) {
 		$sql = "update dbperfilasesores
 		set
-		reftabla = ".$reftabla.",idreferencia = ".$idreferencia.",urllinkedin = '".$urllinkedin."',urlfacebook = '".$urlfacebook."',urlinstagram = '".$urlinstagram."',visible = '".$visible."',urloficial = '".$urloficial."',reftipofigura = ".$reftipofigura.",marcapropia = '".$marcapropia."'
+		reftabla = ".$reftabla.",idreferencia = ".$idreferencia.",urllinkedin = '".$urllinkedin."',urlfacebook = '".$urlfacebook."',urlinstagram = '".$urlinstagram."',visible = '".$visible."',urloficial = '".$urloficial."',reftipofigura = ".$reftipofigura.",marcapropia = '".$marcapropia."',email = '".$email."',emisoremail = '".$emisoremail."'
 		where idperfilasesor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -225,7 +249,9 @@ class ServiciosReferencias {
 		p.urloficial,
 		p.reftipofigura,
 		p.marcapropia,
-		p.imagenlogo
+		p.imagenlogo,
+		p.email,
+		p.emisoremail
 		from dbperfilasesores p
 		order by 1";
 		$res = $this->query($sql,0);
@@ -247,7 +273,9 @@ class ServiciosReferencias {
 		d.urloficial,
 		d.reftipofigura,
 		d.marcapropia,
-		d.imagenlogo
+		d.imagenlogo,
+		d.email,
+		d.emisoremail
 		from dbperfilasesores d
 		inner join ".$tabla." v on v.".$idnombre." = d.idreferencia
 		where d.reftabla = ".$idtabla." and d.idreferencia = ".$id;
@@ -257,7 +285,7 @@ class ServiciosReferencias {
 
 
 	function traerPerfilasesoresPorId($id) {
-		$sql = "select idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,visible,token,urloficial,reftipofigura,marcapropia,imagenlogo from dbperfilasesores where idperfilasesor =".$id;
+		$sql = "select idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,visible,token,urloficial,reftipofigura,marcapropia,imagenlogo,email,emisoremail from dbperfilasesores where idperfilasesor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -277,7 +305,9 @@ class ServiciosReferencias {
 		token,
 		urloficial,
 		reftipofigura,
-		(case when marcapropia = '1' then 'Si' else 'No' end) as marcapropia
+		(case when marcapropia = '1' then 'Si' else 'No' end) as marcapropia,
+		email,
+		emisoremail
 		from dbperfilasesores where idperfilasesor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -312,8 +342,9 @@ class ServiciosReferencias {
 		token,
 		urloficial,
 		reftipofigura,
-		(case when marcapropia = '1' then 'Si' else 'No' end) as marcapropia
-
+		(case when marcapropia = '1' then 'Si' else 'No' end) as marcapropia,
+		email,
+		emisoremail
 		from dbperfilasesores where idperfilasesor =".$id.$cad;
 		$res = $this->query($sql,0);
 		return $res;

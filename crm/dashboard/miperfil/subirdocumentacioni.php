@@ -622,12 +622,14 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 							</ul>
 						</div>
 						<div class="body">
+							<?php if (in_array(mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'), array(1,2,3,4,6))) { ?>
 							<div class="row">
 								<button type="button" class="btn bg-red waves-effect btnEliminar">
 									<i class="material-icons">remove</i>
 									<span>ELIMINAR</span>
 								</button>
 							</div>
+							<?php } ?>
 							<div class="row">
 								<a href="javascript:void(0);" class="thumbnail timagen1">
 									<img class="img-responsive">
@@ -646,6 +648,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 				</div>
 			</div>
 
+			<?php if (in_array(mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'), array(1,2,3,4,6))) { ?>
 			<div class="row">
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card">
@@ -678,6 +681,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 					</div>
 				</div>
 			</div>
+			<?php } ?>
 		</div>
 	</div>
 </section>
@@ -953,6 +957,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 
 		traerImagen('example1','timagen1');
 
+		<?php if (in_array(mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'), array(1,2,3,4,6))) { ?>
 		Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
 
 		Dropzone.options.frmFileUpload = {
@@ -991,7 +996,7 @@ $puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
 			url: 'subir.php'
 		});
 
-
+		<?php } ?>
 
 		function setButtonWavesEffect(event) {
 			$(event.currentTarget).find('[role="menu"] li a').removeClass('waves-effect');

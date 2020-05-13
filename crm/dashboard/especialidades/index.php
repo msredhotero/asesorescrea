@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../clientes/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../especialidades/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Clientes",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Especialidades",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -39,31 +39,28 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Cliente";
+$singular = "Especialidad";
 
-$plural = "Clientes";
+$plural = "Especialidades";
 
-$eliminar = "eliminarClientes";
+$eliminar = "eliminarEspecialidades";
 
-$insertar = "insertarClientes";
+$insertar = "insertarEspecialidades";
 
-$modificar = "modificarClientes";
+$modificar = "modificarEspecialidades";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbclientes";
+$tabla 			= "tbespecialidades";
 
-$lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial');
-$lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social');
+$lblCambio	 	= array();
+$lblreemplazo	= array();
 
 
-$resVar8 = $serviciosReferencias->traerTipopersonas();
-$cadRef8 = $serviciosFunciones->devolverSelectBox($resVar8,array(1),'');
-
-$refdescripcion = array(0=>$cadRef8);
-$refCampo 	=  array('reftipopersonas');
+$refdescripcion = array();
+$refCampo 	=  array();
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -181,11 +178,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										<div class="button-demo">
 											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
 												<i class="material-icons">add</i>
-												<span>NUEVO - PERSONA FISICA</span>
-											</button>
-											<button type="button" class="btn bg-blue-grey waves-effect btnNuevoMoral" data-toggle="modal" data-target="#lgmNuevo">
-												<i class="material-icons">add</i>
-												<span>NUEVO - PERSONA MORAL</span>
+												<span>NUEVO</span>
 											</button>
 
 										</div>
@@ -197,29 +190,13 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
-												<th>Tipo P.</th>
-												<th>Ape. Paterno</th>
-												<th>Ape. Materno</th>
-												<th>Nombre</th>
-												<th>Razon Social</th>
-												<th>Tel. Fijo</th>
-												<th>Tel. Celular</th>
-												<th>Email</th>
-												<th>Nro Cliente</th>
+												<th>Especialidad</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
-												<th>Tipo P.</th>
-												<th>Ape. Paterno</th>
-												<th>Ape. Materno</th>
-												<th>Nombre</th>
-												<th>Razon Social</th>
-												<th>Tel. Fijo</th>
-												<th>Tel. Celular</th>
-												<th>Email</th>
-												<th>Nro Cliente</th>
+												<th>Especialidad</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -237,7 +214,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 
 <!-- NUEVO -->
-	<form class="formulario" role="form" id="sign_in">
+	<form class="formulario frmNuevo" role="form" id="sign_in">
 	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
 	       <div class="modal-dialog modal-lg" role="document">
 	           <div class="modal-content">
@@ -261,7 +238,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	</form>
 
 	<!-- MODIFICAR -->
-		<form class="formulario" role="form" id="sign_in">
+		<form class="formulario frmModificar" role="form" id="sign_in">
 		   <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
 		       <div class="modal-dialog modal-lg" role="document">
 		           <div class="modal-content">
@@ -274,7 +251,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 								</div>
 		               </div>
 		               <div class="modal-footer">
-		                   <button type="button" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
+		                   <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
 		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
 		               </div>
 		           </div>
@@ -328,58 +305,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 <script>
 	$(document).ready(function(){
 
-		$('.frmContnumerocliente').hide();
-		$('.frmContrefusuarios').hide();
-
-		$('.btnNuevoMoral').click(function() {
-			$('.frmContsexo').hide();
-			$('.frmContrefescolaridades').hide();
-			$('.frmContrefestadocivil').hide();
-			$('.frmConttelefonocasa').hide();
-			$('.frmContafore').hide();
-			$('.frmContnss').hide();
-			$('.frmContvigdesdeafore').hide();
-			$('.frmContvighastaafore').hide();
-			$('.frmContreftipopersonas').hide();
-			$('#refescolaridades').val(6);
-			$('#refestadocivil').val(7);
-			$('#reftipopersonas').val(2);
-			$('#refesquemareclutamiento option[value="1"]').prop("disabled","true");
-			$('#refesquemareclutamiento option[value="2"]').prop("disabled","true");
-			$('#refesquemareclutamiento option[value="3"]').prop("disabled","true");
-			$('#refesquemareclutamiento option[value="4"]').prop("disabled","true");
-			$('#refesquemareclutamiento option[value="5"]').removeAttr("disabled");
-			$('#refesquemareclutamiento option[value="6"]').removeAttr("disabled");
-			$('#refesquemareclutamiento').val(5);
-			$('#sexo').val(1);
-			$('.frmContrazonsocial').show();
-
-		});
-
-		$('.btnNuevo').click(function() {
-			$('.frmContsexo').show();
-			$('.frmContrefescolaridades').show();
-			$('.frmContrefestadocivil').show();
-			$('.frmConttelefonocasa').show();
-			$('.frmContafore').show();
-			$('.frmContnss').show();
-			$('.frmContvigdesdeafore').show();
-			$('.frmContvighastaafore').show();
-			$('.frmContreftipopersonas').hide();
-			$('#refescolaridades').val(6);
-			$('#refestadocivil').val(7);
-			$('#reftipopersonas').val(1);
-
-			$('#refesquemareclutamiento option[value="1"]').removeAttr("disabled");
-			$('#refesquemareclutamiento option[value="2"]').removeAttr("disabled");
-			$('#refesquemareclutamiento option[value="3"]').removeAttr("disabled");
-			$('#refesquemareclutamiento option[value="4"]').removeAttr("disabled");
-			$('#refesquemareclutamiento option[value="5"]').prop("disabled","true");
-			$('#refesquemareclutamiento option[value="6"]').prop("disabled","true");
-			$('#refesquemareclutamiento').val(1);
-			$('.frmContrazonsocial').hide();
-
-		});
 
 		$('.maximizar').click(function() {
 			if ($('.icomarcos').text() == 'web') {
@@ -394,16 +319,11 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 		});
 
-		$("#example").on("click",'.btnDocumentacion', function(){
-			idTable =  $(this).attr("id");
-			url = "subirdocumentacioni.php?id=" + idTable + "&documentacion=3";
-			$(location).attr('href',url);
-		});//fin del boton eliminar
 
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=clientes",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=especialidades",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -433,7 +353,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			e.preventDefault();
 		});
 
-		$('#activo').prop('checked',true);
 
 		function frmAjaxModificar(id) {
 			$.ajax({
@@ -533,120 +452,122 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			$('#lgmModificar').modal();
 		});//fin del boton modificar
 
-		$("#example").on("click",'.btnVer', function(){
-			idTable =  $(this).attr("id");
-			$(location).attr('href','ver.php?id=' + idTable);
 
-		});//fin del boton modificar
+		$('.frmNuevo').submit(function(e){
 
-		$('.nuevo').click(function(){
+			e.preventDefault();
+			if ($('#sign_in')[0].checkValidity()) {
+				//información del formulario
+				var formData = new FormData($(".formulario")[0]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
 
-			//información del formulario
-			var formData = new FormData($(".formulario")[0]);
-			var message = "";
-			//hacemos la petición ajax
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: formData,
-				//necesario para subir archivos via ajax
-				cache: false,
-				contentType: false,
-				processData: false,
-				//mientras enviamos el archivo
-				beforeSend: function(){
+					},
+					//una vez finalizado correctamente
+					success: function(data){
 
-				},
-				//una vez finalizado correctamente
-				success: function(data){
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Creado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
 
-					if (data == '') {
-						swal({
-								title: "Respuesta",
-								text: "Registro Creado con exito!!",
-								type: "success",
-								timer: 1500,
-								showConfirmButton: false
-						});
-
-						$('#lgmNuevo').modal('hide');
-						$('#unidadnegocio').val('');
-						table.ajax.reload();
-					} else {
-						swal({
-								title: "Respuesta",
-								text: data,
-								type: "error",
-								timer: 2500,
-								showConfirmButton: false
-						});
+							$('#lgmNuevo').modal('hide');
+							$('#unidadnegocio').val('');
+							table.ajax.reload();
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
 
 
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
 					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
+				});
+			}
 		});
 
 
-		$('.modificar').click(function(){
+		$('.frmModificar').submit(function(e){
 
-			//información del formulario
-			var formData = new FormData($(".formulario")[1]);
-			var message = "";
-			//hacemos la petición ajax
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: formData,
-				//necesario para subir archivos via ajax
-				cache: false,
-				contentType: false,
-				processData: false,
-				//mientras enviamos el archivo
-				beforeSend: function(){
+			e.preventDefault();
+			if ($('.frmModificar')[0].checkValidity()) {
 
-				},
-				//una vez finalizado correctamente
-				success: function(data){
+				//información del formulario
+				var formData = new FormData($(".formulario")[1]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
 
-					if (data == '') {
-						swal({
-								title: "Respuesta",
-								text: "Registro Modificado con exito!!",
-								type: "success",
-								timer: 1500,
-								showConfirmButton: false
-						});
+					},
+					//una vez finalizado correctamente
+					success: function(data){
 
-						$('#lgmModificar').modal('hide');
-						table.ajax.reload();
-					} else {
-						swal({
-								title: "Respuesta",
-								text: data,
-								type: "error",
-								timer: 2500,
-								showConfirmButton: false
-						});
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Modificado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
+
+							$('#lgmModificar').modal('hide');
+							table.ajax.reload();
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
 
 
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
 					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
+				});
+			}
 		});
 	});
 </script>

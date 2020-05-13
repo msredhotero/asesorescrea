@@ -815,8 +815,58 @@ switch ($accion) {
       traerPerfilasesoresPorIdImagenCompleto($serviciosReferencias);
    break;
 
+   case 'insertarEspecialidades':
+      insertarEspecialidades($serviciosReferencias);
+   break;
+   case 'modificarEspecialidades':
+      modificarEspecialidades($serviciosReferencias);
+   break;
+   case 'eliminarEspecialidades':
+      eliminarEspecialidades($serviciosReferencias);
+   break;
+
 }
 /* FinFinFin */
+
+
+function insertarEspecialidades($serviciosReferencias) {
+   $especialidad = $_POST['especialidad'];
+
+   $res = $serviciosReferencias->insertarEspecialidades($especialidad);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+
+function modificarEspecialidades($serviciosReferencias) {
+   $id = $_POST['id'];
+   $especialidad = $_POST['especialidad'];
+
+   $res = $serviciosReferencias->modificarEspecialidades($id,$especialidad);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+
+function eliminarEspecialidades($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarEspecialidades($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
 
 function traerPerfilasesoresPorIdImagenCompleto($serviciosReferencias) {
 
@@ -914,7 +964,10 @@ function modificarPerfilasesores($serviciosReferencias) {
    $reftipofigura = $_POST['reftipofigura'];
    $marcapropia = $_POST['marcapropia'];
 
-   $res = $serviciosReferencias->modificarPerfilasesores($id,$reftabla,$idreferencia,$imagenperfil,$imagenfirma,$urllinkedin,$urlfacebook,$urlinstagram,$visible,$urloficial,$reftipofigura,$marcapropia);
+   $email = $_POST['email'];
+   $emisoremail = $_POST['emisoremail'];
+
+   $res = $serviciosReferencias->modificarPerfilasesores($id,$reftabla,$idreferencia,$imagenperfil,$imagenfirma,$urllinkedin,$urlfacebook,$urlinstagram,$visible,$urloficial,$reftipofigura,$marcapropia,$email,$emisoremail);
 
    if ($res == true) {
       $resEliminar = $serviciosReferencias->eliminarPerfilasesoresespecialidadesPorPerfil($id);
@@ -2213,7 +2266,7 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones,
                   $asunto = 'No se pudo generar un Agente Temporal por falta de email';
                }
 
-               $destinatario = 'jfoncerrada@icloud.com';
+               $destinatario = 'rlinares@asesorescrea.com';
 
       	      $res = $serviciosReferencias->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
 
@@ -3000,6 +3053,18 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+      case 'tbespecialidades':
+         $resultado = $serviciosReferencias->traerEspecialidadesPorId($id);
+
+         $lblCambio	 	= array();
+         $lblreemplazo	= array();
+
+         $modificar = "modificarEspecialidades";
+         $idTabla = "idespecialidad";
+
+         $refdescripcion = array();
+         $refCampo 	=  array();
+      break;
       case 'dbclientes':
          $resultado = $serviciosReferencias->traerClientesPorId($id);
 
@@ -4456,7 +4521,7 @@ function modificarPostulantes($serviciosReferencias) {
                   $asunto = 'No se pudo generar un Agente Temporal por falta de email';
                }
 
-               $destinatario = 'jfoncerrada@icloud.com';
+               $destinatario = 'rlinares@asesorescrea.com';
 
                $res = $serviciosReferencias->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
             }
