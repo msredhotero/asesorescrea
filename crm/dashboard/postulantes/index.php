@@ -310,15 +310,65 @@ $cadRefFiltro = $cadRef1;
 												<i class="material-icons">add</i>
 												<span>NUEVO - PERSONA MORAL</span>
 											</button>
+											<button type="button" class="btn bg-blue waves-effect btnVigente">
+												<i class="material-icons">timeline</i>
+												<span>VIGENTE</span>
+											</button>
+											<button type="button" class="btn bg-grey waves-effect btnHistorico">
+												<i class="material-icons">history</i>
+												<span>HISTORICO</span>
+											</button>
 
 										</div>
 									</div>
 								</div>
 								<?php } ?>
 
-								<div class="row" style="padding: 5px 20px;">
+								<div class="row contActuales" style="padding: 5px 20px;">
 
 									<table id="example" class="display table " style="width:100%">
+										<thead>
+											<tr>
+												<th>Nombre</th>
+												<th>Apellido P.</th>
+												<th>Apellido M.</th>
+												<th>Email</th>
+												<th>Cod. Postal</th>
+												<th>Fecha</th>
+												<th>Dias de Gestion</th>
+												<th>Estado</th>
+												<?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4) { ?>
+												<th>Tel.</th>
+												<?php } ?>
+												<th class="perfilS">Resp.Comercial</th>
+												<th class="perfilT">Promotor</th>
+												<th>Acciones</th>
+											</tr>
+										</thead>
+										<tfoot>
+											<tr>
+												<th>Nombre</th>
+												<th>Apellido P.</th>
+												<th>Apellido M.</th>
+												<th>Email</th>
+												<th>Cod. Postal</th>
+												<th>Fecha</th>
+												<th>Dias de Gestion</th>
+												<th>Estado</th>
+												<?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4) { ?>
+												<th>Tel.</th>
+												<?php } ?>
+												<th>Ger.Comercial</th>
+												<th>Promotor</th>
+												<th>Acciones</th>
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+
+								<div class="row contHistorico" style="padding: 5px 20px;">
+
+									<table id="example2" class="display table " style="width:100%">
 										<thead>
 											<tr>
 												<th>Nombre</th>
@@ -531,6 +581,18 @@ $cadRefFiltro = $cadRef1;
 
 <script>
 	$(document).ready(function(){
+
+		$('.contHistorico').hide();
+
+		$('.btnHistorico').click(function() {
+			$('.contHistorico').show();
+			$('.contActuales').hide();
+		});
+
+		$('.btnVigente').click(function() {
+			$('.contActuales').show();
+			$('.contHistorico').hide();
+		});
 
 		$('.btnNuevoMoral').click(function() {
 			$('.frmContsexo').hide();
@@ -950,6 +1012,76 @@ $cadRefFiltro = $cadRef1;
 
 
 
+		var table2 = $('#example2').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"order": [[ 5, "desc" ]],
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=postulanteshistorico",
+			"language": {
+				"emptyTable":     "No hay datos cargados",
+				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "Mostrar _MENU_ filas",
+				"loadingRecords": "Cargando...",
+				"processing":     "Procesando...",
+				"search":         "Buscar:",
+				"zeroRecords":    "No se encontraron resultados",
+				"paginate": {
+					"first":      "Primero",
+					"last":       "Ultimo",
+					"next":       "Siguiente",
+					"previous":   "Anterior"
+				},
+				"aria": {
+					"sortAscending":  ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			},
+			"columnDefs": [
+              {
+                  "targets": [ 4 ],
+                  "visible": false,
+                  "searchable": false
+              },
+				  <?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4) { ?>
+				  { "orderable": false, "targets": 9 },
+				  { "orderable": false, "targets": 10 }
+				  <?php } else { ?>
+					{ "orderable": false, "targets": 8 },
+ 				  { "orderable": false, "targets": 9 }
+					<?php }  ?>
+          ],
+			"rowCallback": function( row, data, index ) {
+				if (data[6] > 20) {
+					$('td', row).css('background-color', '#F62121');
+					$('td', row).css('color', 'white');
+				}
+			}
+		});
+
+		$("#example2 .perfilS").each( function ( i ) {
+			<?php
+			if ($_SESSION['idroll_sahilices'] == 3 ) {
+				$cadRefFiltro = '<option value="">'.$_SESSION['nombre_sahilices'].'</option>';
+			}
+			?>
+			var select = $('<select><option value="">-- Seleccione Perfil --</option><?php echo $cadRefFiltro; ?></select>')
+				.appendTo( $(this).empty() )
+				.on( 'change', function () {
+					table2.column( i )
+						.search( $(this).val() )
+						.draw();
+				} );
+			table2.column( i ).data().unique().sort().each( function ( d, j ) {
+				select.append( '<option value="'+d+'">'+d+'</option>' )
+			} );
+		} );
+
+
+
 		$("#sign_in").submit(function(e){
 			e.preventDefault();
 		});
@@ -1116,6 +1248,18 @@ $cadRefFiltro = $cadRef1;
 		$("#example").on("click",'.btnVer', function(){
 			idTable =  $(this).attr("id");
 			$(location).attr('href','ver.php?id=' + idTable);
+
+		});//fin del boton modificar
+
+		$("#example2").on("click",'.btnVer', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','ver.php?id=' + idTable);
+
+		});//fin del boton modificar
+
+		$("#example2").on("click",'.btnDocumentacion', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','documentacioni.php?id=' + idTable);
 
 		});//fin del boton modificar
 

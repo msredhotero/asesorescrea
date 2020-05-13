@@ -354,7 +354,7 @@ switch ($tabla) {
 		inner join dbusuarios usu ON usu.idusuario = p.refusuarios
 		inner join tbescolaridades esc ON esc.idescolaridad = p.refescolaridades
 		inner join tbestadocivil est ON est.idestadocivil = p.refestadocivil
-		inner join tbestadopostulantes ep ON ep.idestadopostulante = p.refestadopostulantes
+		inner join tbestadopostulantes ep ON ep.idestadopostulante = p.refestadopostulantes and ep.idestadopostulante not in (9,11)
 		left join dbasesores rr on rr.refusuarios = p.refusuarios ";
 		if ($_SESSION['idroll_sahilices'] == 9) {
 			$consulta .= 'left join dbreclutadorasores rrr on rrr.refpostulantes = p.idpostulante
@@ -439,6 +439,156 @@ switch ($tabla) {
 				$label = array('btnVer','btnModificar');
 				$class = array('bg-blue','bg-amber');
 				$icon = array('Ver','Modificar');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 10;
+			break;
+			case 9:
+				$label = array('btnVer');
+				$class = array('bg-blue');
+				$icon = array('Ver');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 10;
+			break;
+
+			default:
+				// code...
+				break;
+		}
+
+
+	break;
+	case 'postulanteshistorico':
+
+
+		$filtro = "where rr.idasesor is null and (p.nombre like '%_busqueda%' or p.apellidopaterno like '%_busqueda%' or p.apellidomaterno like '%_busqueda%' or p.email like '%_busqueda%' or p.telefonomovil like '%_busqueda%' or ep.estadopostulante like '%_busqueda%' or est.estadocivil like '%_busqueda%' or DATE_FORMAT( p.fechacrea, '%Y-%m-%d') like '%_busqueda%')";
+
+		$pre = "where rr.idasesor is null";
+
+		$consulta = "select
+			p.idpostulante,
+			p.nombre,
+			p.apellidopaterno,
+			p.apellidomaterno,
+			p.email,
+			p.codigopostal,
+			p.fechacrea,
+			(case when p.refestadopostulantes < 9 then DATEDIFF(CURDATE(),p.fechacrea) else 0 end) as dias,
+			ep.estadopostulante,
+			p.telefonomovil,
+			usur.nombrecompleto,
+			concat(re.apellidopaterno, ' ', re.apellidomaterno, ' ', re.nombre) as promotor,
+			est.estadocivil,
+			p.curp,
+			p.rfc,
+			p.ine,
+			p.fechanacimiento,
+			p.sexo,
+			p.refescolaridades,
+			p.refestadocivil,
+			p.nacionalidad,
+			p.telefonocasa,
+			p.telefonotrabajo,
+			p.refestadopostulantes,
+			p.urlprueba,
+			p.fechamodi,
+			p.usuariocrea,
+			p.usuariomodi,
+			p.refasesores,
+			p.comision,
+			p.refusuarios,
+			p.refsucursalesinbursa
+
+		from dbpostulantes p
+		inner join dbusuarios usu ON usu.idusuario = p.refusuarios
+		inner join tbescolaridades esc ON esc.idescolaridad = p.refescolaridades
+		inner join tbestadocivil est ON est.idestadocivil = p.refestadocivil
+		inner join tbestadopostulantes ep ON ep.idestadopostulante = p.refestadopostulantes and ep.idestadopostulante in (9,11)
+		left join dbasesores rr on rr.refusuarios = p.refusuarios ";
+		if ($_SESSION['idroll_sahilices'] == 9) {
+			$consulta .= 'left join dbreclutadorasores rrr on rrr.refpostulantes = p.idpostulante
+			left join dbusuarios usur on usur.idusuario = rrr.refusuarios
+			inner join tbreferentes re on re.idreferente = p.refreferentes
+			inner join dbusuarios usurf on usurf.idusuario = '.$_SESSION['usuaid_sahilices'].' and re.refusuarios =  usurf.idusuario ';
+		} else {
+			if ($_SESSION['idroll_sahilices'] == 3) {
+				$consulta .= 'inner join dbreclutadorasores rrr on rrr.refpostulantes = p.idpostulante and rrr.refusuarios = '.$_SESSION['usuaid_sahilices'].'
+				inner join dbusuarios usur on usur.idusuario = rrr.refusuarios
+				left join tbreferentes re on re.idreferente = p.refreferentes ';
+				//$res = $serviciosReferencias->traerPostulantesPorGerente($_SESSION['usuaid_sahilices']);
+			} else {
+				$responsableComercial = $_GET['sSearch_0'];
+				if ($responsableComercial == '') {
+					//$res = $serviciosReferencias->traerPostulantes();
+					$consulta .= 'left join dbreclutadorasores rrr on rrr.refpostulantes = p.idpostulante
+					left join dbusuarios usur on usur.idusuario = rrr.refusuarios
+					left join tbreferentes re on re.idreferente = p.refreferentes';
+				} else {
+					//$res = $serviciosReferencias->traerPostulantesPorGerente($responsableComercial);
+					$consulta .= 'inner join dbreclutadorasores rrr on rrr.refpostulantes = p.idpostulante and rrr.refusuarios = '.$responsableComercial.'
+					inner join dbusuarios usur on usur.idusuario = rrr.refusuarios
+					left join tbreferentes re on re.idreferente = p.refreferentes ';
+				}
+
+			}
+		}
+
+		//die(var_dump($consulta));
+
+		$datos = $serviciosReferencias->traerGrillaAjax($length, $start, $busqueda,$colSort,$colSortDir,$filtro,$consulta,$pre);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		//die(var_dump());
+
+
+		switch ($_SESSION['idroll_sahilices']) {
+			case 1:
+				$label = array('btnVer','btnDocumentacion');
+				$class = array('bg-blue','bg-amber');
+				$icon = array('Ver','Documentaciones');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 11;
+			break;
+			case 2:
+				$label = array('btnVer','btnDocumentacion');
+				$class = array('bg-blue','bg-amber');
+				$icon = array('Ver','Documentaciones');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 10;
+			break;
+			case 3:
+				$label = array('btnVer','btnDocumentacion');
+				$class = array('bg-blue','bg-amber');
+				$icon = array('Ver','Documentaciones');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 10;
+			break;
+			case 4:
+				$label = array('btnVer','btnDocumentacion');
+				$class = array('bg-blue','bg-amber');
+				$icon = array('Ver','Documentaciones');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 11;
+			break;
+			case 5:
+				$label = array('btnVer','btnDocumentacion');
+				$class = array('bg-blue','bg-amber');
+				$icon = array('Ver','Documentaciones');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 10;
+			break;
+			case 6:
+				$label = array('btnVer','btnDocumentacion');
+				$class = array('bg-blue','bg-amber');
+				$icon = array('Ver','Documentaciones');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 10;
@@ -825,7 +975,7 @@ $id = 0;
 			array_push($arAux, ($row[$i]));
 		}
 
-		if (($tabla == 'postulantes') || ($tabla == 'asesores') || ($tabla == 'asociadostemporales') || ($tabla == 'asociados') || ($tabla == 'clientes')) {
+		if (($tabla == 'postulantes') || ($tabla == 'postulanteshistorico') || ($tabla == 'asesores') || ($tabla == 'asociadostemporales') || ($tabla == 'asociados') || ($tabla == 'clientes')) {
 			array_push($arAux, armarAccionesDropDown($row[0],$label,$class,$icon));
 		} else {
 			array_push($arAux, armarAcciones($row[0],$label,$class,$icon));
