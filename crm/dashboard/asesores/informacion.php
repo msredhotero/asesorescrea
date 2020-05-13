@@ -129,7 +129,7 @@ while ($rowFS = mysql_fetch_array($resContactos)) {
 
 $cadUser = $cadUser."</ul>";
 
-
+$emailPosible = substr(mysql_result($resultado,0,'nombre'),0,1).mysql_result($resultado,0,'apellidopaterno').'@asesorescrea.com';
 
 ?>
 
@@ -537,7 +537,9 @@ $cadUser = $cadUser."</ul>";
 			}
 		});
 
-
+		if ($('#email').val() == '') {
+			$('#email').val('<?php echo $emailPosible; ?>');
+		}
 
 
 		function existeAsiganado(id) {
