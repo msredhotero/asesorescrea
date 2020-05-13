@@ -580,7 +580,9 @@ if (mysql_num_rows($resInformacion) > 0) {
 							</ul>
 						</div>
 						<div class="body table-responsive contToggle">
-
+								<div class="row">
+									<img src="../../imagenes/logo.png" class="img-responsive">
+								</div>
 								<?php if (count($datos)>0) { ?>
 									<div class="row">
 										<div class="col-xs-6 col-md-4">
