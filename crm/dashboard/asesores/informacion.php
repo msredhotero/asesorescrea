@@ -538,7 +538,7 @@ $emailPosible = substr(mysql_result($resultado,0,'nombre'),0,1).mysql_result($re
 		});
 
 		if ($('#email').val() == '') {
-			$('#email').val('<?php echo $emailPosible; ?>');
+			$('#email').val('<?php echo strtolower($emailPosible); ?>');
 		}
 
 
