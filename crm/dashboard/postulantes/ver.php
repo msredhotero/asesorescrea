@@ -8,9 +8,6 @@ if (!isset($_SESSION['usua_sahilices']))
 	header('Location: ../../error.php');
 } else {
 
-$a = (0?:2);
-
-die(var_dump($a));
 
 include ('../../includes/funciones.php');
 include ('../../includes/funcionesUsuarios.php');
