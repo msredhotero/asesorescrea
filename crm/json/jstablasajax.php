@@ -162,7 +162,7 @@ switch ($tabla) {
 
 		$consulta = 'select
 			p.idasesor,
-			tc.tipocliente,
+			tc.tipopersona,
 			p.nombre,
 			p.apellidopaterno,
 			p.apellidomaterno,
@@ -177,7 +177,7 @@ switch ($tabla) {
 		from dbasesores p
 		inner join tbestadoasesor tea on tea.idestadoasesor = p.refestadoasesor
 		inner join tbestadoasesor teai on teai.idestadoasesor = p.refestadoasesorinbursa
-		inner join tbtipoclientes tc on tc.idtipopersona = p.reftipopersonas
+		inner join tbtipopersonas tc on tc.idtipopersona = p.reftipopersonas
 		';
 		if ($_SESSION['idroll_sahilices'] == 3) {
 			$consulta .= ' inner join dbusuarios usu ON usu.idusuario = p.refusuarios
