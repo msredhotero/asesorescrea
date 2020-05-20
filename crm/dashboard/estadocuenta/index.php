@@ -279,7 +279,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 <section class="content" style="margin-top:-75px;">
 
-	<div class="container-fluid">
+	<div class="container-fluid" style="display: none;">
 		<div class="row clearfix">
 
 			<h3 style="margin-top:-5px; color: #1b2646; ">ESTADO DE CUENTAS</h3>

@@ -498,7 +498,7 @@ if (strlen($asociadoC2) > 0 ) {
 
 
 				<?php if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 10)) { ?>
-				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display: none;">
 					<div class="card ">
 						<div class="header bg-light-blue">
 							<h2 style="color:#fff">
@@ -529,7 +529,7 @@ if (strlen($asociadoC2) > 0 ) {
 				</div>
 
 
-				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display: none;">
 					<div class="card ">
 						<div class="header bg-pink">
 							<h2 style="color:#fff">
