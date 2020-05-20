@@ -7175,8 +7175,8 @@ class ServiciosReferencias {
 						p.vighastacedulaseguro,
 						p.vigdesderc,
 						p.vighastarc,
-						1,
-						1
+						0,
+						0
 						from		dbpostulantes p where idpostulante =".$id;
 
 			$res = $this->query($sql,1);

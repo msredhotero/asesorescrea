@@ -223,12 +223,12 @@ $cadRefFiltro = $cadRef1;
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
+												<th>Tipo Persona</th>
 												<th>Nombre</th>
 												<th>Apellido P.</th>
 												<th>Apellido M.</th>
 												<th>Email</th>
 												<th>ID Inbursa</th>
-												<th>Clave Interb.</th>
 												<th>Clave Asesor</th>
 												<th>Fecha Alta</th>
 												<th class="perfilS">Gte.Comercial</th>
@@ -239,12 +239,12 @@ $cadRefFiltro = $cadRef1;
 										</thead>
 										<tfoot>
 											<tr>
+												<th>Tipo Persona</th>
 												<th>Nombre</th>
 												<th>Apellido P.</th>
 												<th>Apellido M.</th>
 												<th>Email</th>
 												<th>ID Inbursa</th>
-												<th>Clave Interb.</th>
 												<th>Clave Asesor</th>
 												<th>Fecha Alta</th>
 												<th>Gte.Comercial</th>
