@@ -158,7 +158,7 @@ switch ($tabla) {
 
 	break;
 	case 'asesores':
-		$filtro = "where p.nombre like '%_busqueda%' or p.apellidopaterno like '%_busqueda%' or p.apellidomaterno like '%_busqueda%' or p.email like '%_busqueda%' or p.idclienteinbursa like '%_busqueda%' or p.claveinterbancaria like '%_busqueda%' or p.claveasesor like '%_busqueda%' or  DATE_FORMAT( p.fechaalta, '%Y-%m-%d') like '%_busqueda%'";
+		$filtro = "where p.nombre like '%_busqueda%' or p.apellidopaterno like '%_busqueda%' or p.apellidomaterno like '%_busqueda%' or p.email like '%_busqueda%' or p.idclienteinbursa like '%_busqueda%' or tc.tipocliente like '%_busqueda%' or p.claveasesor like '%_busqueda%' or  DATE_FORMAT( p.fechaalta, '%Y-%m-%d') like '%_busqueda%'";
 
 		$consulta = 'select
 			p.idasesor,
