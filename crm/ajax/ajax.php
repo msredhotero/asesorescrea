@@ -3313,7 +3313,7 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          }
 
          $resVar8 = $serviciosReferencias->traerTipopersonas();
-         $cadRef8 = $serviciosFunciones->devolverSelectBoxActivo($resVar8,array(1),'',mysql_result($resultado,0,'codigopostal'));
+         $cadRef8 = $serviciosFunciones->devolverSelectBoxActivo($resVar8,array(1),'',mysql_result($resultado,0,'reftipopersonas'));
 
          $resVar9 = $serviciosReferencias->traerEstadoasesor();
          $cadRef9 = $serviciosFunciones->devolverSelectBoxActivo($resVar9,array(1),'',mysql_result($resultado,0,'refestadoasesor'));
@@ -3814,6 +3814,7 @@ function modificarAsesores($serviciosReferencias) {
 
    $refestadoasesor = $_POST['refestadoasesor'];
    $refestadoasesorinbursa = $_POST['refestadoasesorinbursa'];
+
 
    $res = $serviciosReferencias->modificarAsesores($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechamodi,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc, $vighastarc,$refestadoasesor,$refestadoasesorinbursa);
 
