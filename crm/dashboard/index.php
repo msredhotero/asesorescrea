@@ -469,7 +469,6 @@ if (strlen($asociadoC2) > 0 ) {
 			<div class="row clearfix">
 				<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
 
-
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="card ">
 							<div class="header bg-blue">
@@ -496,6 +495,69 @@ if (strlen($asociadoC2) > 0 ) {
 							</div>
 						</div>
 				</div>
+
+
+				<?php if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 9) || ($_SESSION['idroll_sahilices'] == 10)) { ?>
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+					<div class="card ">
+						<div class="header bg-light-blue">
+							<h2 style="color:#fff">
+								INFORMACION UTIL
+							</h2>
+							<ul class="header-dropdown m-r--5">
+								<li class="dropdown">
+									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+										<i class="material-icons">more_vert</i>
+									</a>
+									<ul class="dropdown-menu pull-right">
+										<li><a href="javascript:void(0);" class="recargar">Recargar</a></li>
+									</ul>
+								</li>
+							</ul>
+						</div>
+						<div class="body table-responsive">
+
+							<ul class="list-group">
+								<li class="list-group-item">Cras justo odio <span class="badge bg-pink">20/05/2020</span></li>
+								<li class="list-group-item">Dapibus ac facilisis in <span class="badge bg-cyan">18/05/2020</span></li>
+								<li class="list-group-item">Morbi leo risus <span class="badge bg-teal">15/05/2020</span></li>
+								<li class="list-group-item">Porta ac consectetur ac <span class="badge bg-orange">12/05/2020</span></li>
+								<li class="list-group-item">Vestibulum at eros <span class="badge bg-purple">10/05/2020</span></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+					<div class="card ">
+						<div class="header bg-pink">
+							<h2 style="color:#fff">
+								ALERTAS
+							</h2>
+							<ul class="header-dropdown m-r--5">
+								<li class="dropdown">
+									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+										<i class="material-icons">more_vert</i>
+									</a>
+									<ul class="dropdown-menu pull-right">
+										<li><a href="javascript:void(0);" class="recargar">Recargar</a></li>
+									</ul>
+								</li>
+							</ul>
+						</div>
+						<div class="body table-responsive">
+							<ul class="list-group">
+								<li class="list-group-item">Cras justo odio <span class="badge bg-pink">20/05/2020</span></li>
+								<li class="list-group-item">Dapibus ac facilisis in <span class="badge bg-cyan">18/05/2020</span></li>
+								<li class="list-group-item">Morbi leo risus <span class="badge bg-teal">15/05/2020</span></li>
+								<li class="list-group-item">Porta ac consectetur ac <span class="badge bg-orange">12/05/2020</span></li>
+								<li class="list-group-item">Vestibulum at eros <span class="badge bg-purple">10/05/2020</span></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			<?php } ?>
 
 				<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11)) { ?>
 				<div class="row">
