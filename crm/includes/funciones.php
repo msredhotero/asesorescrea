@@ -519,7 +519,7 @@ class Servicios {
 			break;
 
 			default:
-				$ocultar = array("fechacrea","fechamodi","usuacrea","usuamodi","usuariocrea","usuariomodi","tipoimagen","utilidad","idusuario",'refestadogeneraloportunidad');
+				$ocultar = array("fechacrea","fechacreacion","fechamodi","usuacrea","usuamodi","usuariocrea","usuariomodi","tipoimagen","utilidad","idusuario",'refestadogeneraloportunidad');
 				break;
 		}
 
@@ -1204,7 +1204,7 @@ class Servicios {
 				urloficial,
 				reftipofigura,
 				(case when marcapropia = '1' then 'Si' else 'No' end) as marcapropia,imagenlogo,email,
-				emisoremail from dbperfilasesores where idperfilasesor= ".$id;
+				emisoremail,domicilio from dbperfilasesores where idperfilasesor= ".$id;
 				$resMod = $this->query($sqlMod,0);
 			break;
 

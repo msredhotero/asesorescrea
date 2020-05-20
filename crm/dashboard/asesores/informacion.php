@@ -131,6 +131,18 @@ $cadUser = $cadUser."</ul>";
 
 $emailPosible = substr(mysql_result($resultado,0,'nombre'),0,1).mysql_result($resultado,0,'apellidopaterno').'@asesorescrea.com';
 
+
+$resDomicilio = $serviciosReferencias->traerDomiciliosPorTablaReferencia(1, 'dbasesores', 'idasesor', $id);
+
+if (mysql_num_rows($resDomicilio)>0) {
+	$contDomicilio = mysql_result($resDomicilio,0,'calle').' '.mysql_result($resDomicilio,0,'numeroext').' '.mysql_result($resDomicilio,0,'numeroint').', '.mysql_result($resDomicilio,0,'colonia').', CP '.mysql_result($resDomicilio,0,'codigopostal').' '.mysql_result($resDomicilio,0,'delegacion').' '.mysql_result($resDomicilio,0,'estado');
+} else {
+	$contDomicilio = '';
+}
+
+$cadSelectDomicilio = '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 margTop  frmContTipoDomicilio" style="display:block"><label for="visible" class="control-label" style="text-align:left">Tipo Domicilio </label><select class="form-control" id="tipodomicilio" name="tipodomicilio"><option value="1" selected="">Domicilio Fiscal</option><option value="2">Otro Domicilio</option><option value="3">Domicilio CREA</option></select></div>';
+
+
 ?>
 
 <!DOCTYPE html>
@@ -267,6 +279,7 @@ $emailPosible = substr(mysql_result($resultado,0,'nombre'),0,1).mysql_result($re
 
 								<div class="row frmAjaxModificar">
 									<?php echo $frmUnidadNegocios; ?>
+									<input type="hidden" id="domicilioaux" name="domicilioaux" value="<?php echo mysql_result($resInformacion,0,'domicilio'); ?>" />
 								</div>
 								<div class="row" id="contContacto" style="margin-left:0px; margin-right:25px;">
 									<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
@@ -458,6 +471,8 @@ $emailPosible = substr(mysql_result($resultado,0,'nombre'),0,1).mysql_result($re
 									<input name="file" type="file" id="archivos3" />
 									<input type="hidden" id="idinformacion" name="idinformacion" value="<?php echo $idInformacion; ?>" />
 
+
+
 								</div>
 							</form>
 							<?php } ?>
@@ -530,6 +545,21 @@ $emailPosible = substr(mysql_result($resultado,0,'nombre'),0,1).mysql_result($re
 			$('.contSubirLogo').hide();
 		<?php } ?>
 
+		$(".frmAjaxModificar").on("change",'#tipodomicilio', function(){
+
+			if ($(this).val() == 1) {
+				$('#domicilio').val('<?php echo $contDomicilio; ?>');
+			} else {
+				if ($(this).val() == 2) {
+					$('#domicilio').val($('#domicilioaux').val());
+				} else {
+					$('#domicilio').val('Periféricos Sur 4302, oficina 212, jardines del Pedregal, CP 04500, Coyoacán, CDMX');
+				}
+			}
+		});
+
+		$('.frmContemisoremail').after('<?php echo $cadSelectDomicilio; ?>');
+
 		$('#asignarContacto').click(function(e) {
 			//alert($('#buscarcontacto option:selected').html());
 			if (existeAsiganado('user'+$('#buscarcontacto').val()) == 0) {
@@ -539,6 +569,20 @@ $emailPosible = substr(mysql_result($resultado,0,'nombre'),0,1).mysql_result($re
 
 		if ($('#email').val() == '') {
 			$('#email').val('<?php echo strtolower($emailPosible); ?>');
+		}
+
+		if ($('#domicilio').val() == '') {
+			$('#domicilio').val('<?php echo $contDomicilio; ?>');
+		} else {
+			if ( $('#domicilio').val() == '<?php echo $contDomicilio; ?>' ) {
+				$('#tipodomicilio').val(1);
+			} else {
+				if ($('#domicilio').val() == 'Periféricos Sur 4302, oficina 212, jardines del Pedregal, CP 04500, Coyoacán, CDMX') {
+					$('#tipodomicilio').val(3);
+				} else {
+					$('#tipodomicilio').val(2);
+				}
+			}
 		}
 
 

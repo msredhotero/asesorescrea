@@ -53,12 +53,13 @@ $modificar = "modificarOportunidades";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
+$resUsuarios = $serviciosReferencias->traerUsuariosPorId($_SESSION['usuaid_sahilices']);
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dboportunidades";
 
-$lblCambio	 	= array('nombredespacho','refusuarios','refreferentes','refestadooportunidad','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refmotivorechazos');
-$lblreemplazo	= array('Nombre del Despacho','Asignar a Gerente','Persona que Recomendo','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Motivos de Rechazos');
+$lblCambio	 	= array('nombredespacho','refusuarios','refreferentes','refestadooportunidad','apellidopaterno','apellidomaterno','telefonomovil','telefonotrabajo','refmotivorechazos','reforigenreclutamiento');
+$lblreemplazo	= array('Nombre del Despacho','Asignar a Gerente','Persona que Recomendo','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Trabajo','Motivos de Rechazos','Origen de Reclutamiento');
 
 
 $resRoles 	= $serviciosUsuario->traerUsuariosPorRol(3);
@@ -91,8 +92,20 @@ $cadRef4 .= $serviciosFunciones->devolverSelectBox($resMotivos,array(1),' ');
 $resGeneralEstado 	= $serviciosReferencias->traerEstadogeneraloportunidadPorId(1);
 $cadRef5 = $serviciosFunciones->devolverSelectBox($resGeneralEstado,array(1),' ');
 
-$refdescripcion = array(0 => $cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef4,4=>$cadRef5);
-$refCampo 	=  array('refusuarios','refreferentes','refestadooportunidad','refmotivorechazos','refestadogeneraloportunidad');
+if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4)) {
+	$resVar9 = $serviciosReferencias->traerOrigenreclutamiento();
+} else {
+	if (mysql_result($resUsuarios,0,'refsocios') == '') {
+		$resVar9 = $serviciosReferencias->traerOrigenreclutamiento();
+	} else {
+		$resVar9 = $serviciosReferencias->traerOrigenreclutamientoPorId(mysql_result($resUsuarios,0,'refsocios'));
+	}
+}
+
+$cadRef9 = $serviciosFunciones->devolverSelectBox($resVar9,array(1),'');
+
+$refdescripcion = array(0 => $cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef4,4=>$cadRef5,5=>$cadRef9);
+$refCampo 	=  array('refusuarios','refreferentes','refestadooportunidad','refmotivorechazos','refestadogeneraloportunidad','reforigenreclutamiento');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////

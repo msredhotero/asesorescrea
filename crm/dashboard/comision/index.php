@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../referentes/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../comision/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Promotor de Talento",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Comision",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -39,40 +39,37 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Promotor de Talento";
+$singular = "Comision";
 
-$plural = "Promotor de Talentos";
+$plural = "Comisiones";
 
-$eliminar = "eliminarReferentes";
+$eliminar = "eliminarComisiones";
 
-$insertar = "insertarReferentes";
+$insertar = "insertarComisiones";
 
-$modificar = "modificarReferentes";
+$modificar = "modificarComisiones";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "tbreferentes";
+$tabla 			= "dbcomisiones";
 
-$lblCambio	 	= array('apellidopaterno','apellidomaterno','refusuarios');
-$lblreemplazo	= array('Apellido Paterno','Apellido Materno','Asignar Usuario');
+$lblCambio	 	= array('reftabla','idreferencia');
+$lblreemplazo	= array('Puesto','Persona');
+
+$resRoles 	= $serviciosReferencias->traerTablaPorIn('1,2,9,10');
+$cadRef1 = $serviciosFunciones->devolverSelectBox($resRoles,array(2),'');
 
 
-$resUsuario = $serviciosUsuario->traerUsuariosPorRolIn('9,6');
-$cadRef3 = "<option value='0'>-- Seleccionar --</option>";
-$cadRef3 .= $serviciosFunciones->devolverSelectBox($resUsuario,array(2,4),' - ');
+$cadRef2 = "";
 
-$refdescripcion = array(0=>$cadRef3);
-$refCampo 	=  array('refusuarios');
+
+$refdescripcion = array(0=>$cadRef1,1=>$cadRef2);
+$refCampo 	=  array('reftabla','idreferencia');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
-
-$resVar9 = $serviciosReferencias->traerOrigenreclutamiento();
-$cadRef9 = '';
-//<option value="0">-- Seleccionar --</option>
-$cadRef9 .= $serviciosFunciones->devolverSelectBox($resVar9,array(1),'');
 
 ?>
 
@@ -208,23 +205,19 @@ $cadRef9 .= $serviciosFunciones->devolverSelectBox($resVar9,array(1),'');
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
-												<th>Apellido Pa.</th>
-												<th>Apellido Ma.</th>
-												<th>Nombre</th>
-												<th>Telefono</th>
-												<th>Email</th>
-												<th>Usuario</th>
+												<th>Puesto</th>
+												<th>Persona</th>
+												<th>Monto</th>
+												<th>Porcentaje</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
-												<th>Apellido Pa.</th>
-												<th>Apellido Ma.</th>
-												<th>Nombre</th>
-												<th>Telefono</th>
-												<th>Email</th>
-												<th>Usuario</th>
+												<th>Puesto</th>
+												<th>Persona</th>
+												<th>Monto</th>
+												<th>Porcentaje</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -252,19 +245,7 @@ $cadRef9 .= $serviciosFunciones->devolverSelectBox($resVar9,array(1),'');
 	               <div class="modal-body">
 							<div class="row">
 	                  	<?php echo $frmUnidadNegocios; ?>
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContrefsocios" style="display:block">
-									<label for="refsocios" class="control-label" style="text-align:left">Socio Comercial</label>
-									<div class="input-group col-md-12">
-										<select class="form-control" id="refsocios" name="refsocios" aria-invalid="false">
-											<?php echo $cadRef9; ?>
-										</select>
-									</div>
-								</div>
 
-							</div>
-							<div class="row demo-checkbox">
-								<input type="checkbox" id="generar_usuario" name="generar_usuario" class="filled-in">
-								<label for="generar_usuario">Generar Usuario con el Email cargado</label>
 							</div>
 	               </div>
 	               <div class="modal-footer">
@@ -343,20 +324,10 @@ $cadRef9 .= $serviciosFunciones->devolverSelectBox($resVar9,array(1),'');
 
 <script>
 	$(document).ready(function(){
-
-		$('#generar_usuario').click(function(){
-			if( $('#generar_usuario').prop('checked') ) {
-				$('.frmContrefusuarios').hide();
-				$('#refusuarios').val(0);
-			} else {
-				$('.frmContrefusuarios').show();
-			}
-		});
-
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=referentes",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=comisiones",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -381,6 +352,35 @@ $cadRef9 .= $serviciosFunciones->devolverSelectBox($resVar9,array(1),'');
 				}
 			}
 		});
+
+
+		function traerPersonaPorTabla(reftabla) {
+			$.ajax({
+				data:  {tabla: reftabla,
+						accion: 'traerPersonaPorTabla'},
+				url:   '../../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+
+				},
+				success:  function (response) {
+					$('#idreferencia').html(response.datos.select);
+
+					$('.frmAjaxModificar #idreferencia').html(response.datos.select);
+
+				}
+			});
+		}
+
+		$('#reftabla').change(function() {
+			traerPersonaPorTabla($(this).val());
+		});
+
+		$(".frmAjaxModificar").on("change",'#reftabla', function(){
+			traerPersonaPorTabla($(this).val());
+		});
+
+		traerPersonaPorTabla($('#reftabla').val());
 
 		$("#sign_in").submit(function(e){
 			e.preventDefault();

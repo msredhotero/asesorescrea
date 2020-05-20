@@ -44,7 +44,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
 $singular = "Domicilio";
 
-$plural = "Domicilio Postulante";
+$plural = "Domicilio Asesor";
 
 $eliminar = "eliminarDomicilios";
 

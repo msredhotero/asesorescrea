@@ -9,6 +9,191 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+	function traerPersonaPorTabla($tabla) {
+		switch ($tabla) {
+			case 1:
+				$res 	 = $this->traerAsesores();
+			break;
+			case 2:
+				$res	 = $this->traerAsociados();
+			break;
+			case 9:
+				$res	 = $this->traerUsuariosPorRol(3);
+			break;
+			case 10:
+				$res	 = $this->traerOrigenreclutamiento();
+			break;
+			default:
+				$res = array();
+		}
+
+		return $res;
+	}
+
+
+	function insertarTabla($tabla,$especifico) {
+		$sql = "insert into tbtabla(idtabla,tabla,especifico)
+		values ('','".$tabla."','".$especifico."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarTabla($id,$tabla,$especifico) {
+		$sql = "update tbtabla
+		set
+		tabla = '".$tabla."',especifico = '".$especifico."'
+		where idtabla =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarTabla($id) {
+		$sql = "delete from tbtabla where idtabla =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerTabla() {
+		$sql = "select
+		t.idtabla,
+		t.tabla,
+		t.especifico,
+		t.nombreid
+		from tbtabla t
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerTablaPorId($id) {
+		$sql = "select idtabla,tabla,especifico,nombreid from tbtabla where idtabla =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerTablaPorIn($in) {
+		$sql = "select idtabla,tabla,especifico,nombreid from tbtabla where idtabla in (".$in.")";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbtabla*/
+
+
+	/* PARA Comisiones */
+
+	function insertarComisiones($reftabla,$idreferencia,$monto,$porcentaje,$fechacreacion) {
+		$sql = "insert into dbcomisiones(idcomision,reftabla,idreferencia,monto,porcentaje,fechacreacion)
+		values ('',".$reftabla.",".$idreferencia.",".$monto.",".$porcentaje.",'".$fechacreacion."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarComisiones($id,$reftabla,$idreferencia,$monto,$porcentaje) {
+		$sql = "update dbcomisiones
+		set
+		reftabla = ".$reftabla.",idreferencia = ".$idreferencia.",monto = ".$monto.",porcentaje = ".$porcentaje."
+		where idcomision =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarComisiones($id) {
+		$sql = "delete from dbcomisiones where idcomision =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerComisiones() {
+		$sql = "select
+		c.idcomision,
+		c.reftabla,
+		c.idreferencia,
+		c.monto,
+		c.porcentaje,
+		c.fechacreacion
+		from dbcomisiones c
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerComisionesPorTablaReferencia($idtabla, $tabla, $idnombre, $id) {
+		$sql = "select
+		c.idcomision,
+		c.reftabla,
+		c.idreferencia,
+		c.monto,
+		c.porcentaje,
+		c.fechacreacion
+		from dbcomisiones c
+		inner join ".$tabla." v on v.".$idnombre." = c.idreferencia
+		where c.reftabla = ".$idtabla." and c.idreferencia = ".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerComisionesajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (tt.especifico '%".$busqueda."%' concat(a_1.apellidopaterno, ' ', a_1.apellidomaterno, ' ', a_1.nombre) like '%".$busqueda."%' or concat(a_2.apellidopaterno, ' ', a_2.apellidomaterno, ' ', a_2.nombre) like '%".$busqueda."%' or a_9.nombrecompleto like '%".$busqueda."%' or a_10.origenreclutamiento like '%".$busqueda."%' )";
+		}
+
+		$resTabla = $this->traerTablaPorIn('1,2,9,10');
+
+		$cadInner = '';
+		while ($row = mysql_fetch_array($resTabla)) {
+			$cadInner .= ' left join '.$row['tabla'].' a_'.$row['idtabla'].' on a_'.$row['idtabla'].'.'.$row['nombreid']." = c.idreferencia and c.reftabla = '".$row['idtabla']."' ";
+		}
+
+		$sql = "select
+		c.idcomision,
+		tt.especifico,
+    	(case when c.reftabla = 1 then concat(a_1.apellidopaterno, ' ', a_1.apellidomaterno, ' ', a_1.nombre)
+		   when c.reftabla = 2 then concat(a_2.apellidopaterno, ' ', a_2.apellidomaterno, ' ', a_2.nombre)
+         when c.reftabla = 9 then a_9.nombrecompleto
+         when c.reftabla = 10 then a_10.origenreclutamiento end) as persona,
+		c.monto,
+		c.porcentaje,
+		c.fechacreacion,
+		c.reftabla,
+		c.idreferencia
+		from dbcomisiones c
+		inner join tbtabla tt on tt.idtabla = c.reftabla
+		".$cadInner."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+
+	function traerComisionesPorId($id) {
+		$sql = "select idcomision,reftabla,idreferencia,monto,porcentaje,fechacreacion from dbcomisiones where idcomision =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbcomisiones*/
+
 
 	/* PARA Perfilasesoresespecialidades */
 
@@ -209,10 +394,10 @@ class ServiciosReferencias {
 	}
 
 
-	function modificarPerfilasesores($id,$reftabla,$idreferencia,$imagenperfil,$imagenfirma,$urllinkedin,$urlfacebook,$urlinstagram,$visible,$urloficial,$reftipofigura,$marcapropia,$email,$emisoremail) {
+	function modificarPerfilasesores($id,$reftabla,$idreferencia,$imagenperfil,$imagenfirma,$urllinkedin,$urlfacebook,$urlinstagram,$visible,$urloficial,$reftipofigura,$marcapropia,$email,$emisoremail,$domicilio) {
 		$sql = "update dbperfilasesores
 		set
-		reftabla = ".$reftabla.",idreferencia = ".$idreferencia.",urllinkedin = '".$urllinkedin."',urlfacebook = '".$urlfacebook."',urlinstagram = '".$urlinstagram."',visible = '".$visible."',urloficial = '".$urloficial."',reftipofigura = ".$reftipofigura.",marcapropia = '".$marcapropia."',email = '".$email."',emisoremail = '".$emisoremail."'
+		reftabla = ".$reftabla.",idreferencia = ".$idreferencia.",urllinkedin = '".$urllinkedin."',urlfacebook = '".$urlfacebook."',urlinstagram = '".$urlinstagram."',visible = '".$visible."',urloficial = '".$urloficial."',reftipofigura = ".$reftipofigura.",marcapropia = '".$marcapropia."',email = '".$email."',emisoremail = '".$emisoremail."',domicilio = '".$domicilio."'
 		where idperfilasesor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -251,7 +436,8 @@ class ServiciosReferencias {
 		p.marcapropia,
 		p.imagenlogo,
 		p.email,
-		p.emisoremail
+		p.emisoremail,
+		p.domicilio
 		from dbperfilasesores p
 		order by 1";
 		$res = $this->query($sql,0);
@@ -275,7 +461,8 @@ class ServiciosReferencias {
 		d.marcapropia,
 		d.imagenlogo,
 		d.email,
-		d.emisoremail
+		d.emisoremail,
+		d.domicilio
 		from dbperfilasesores d
 		inner join ".$tabla." v on v.".$idnombre." = d.idreferencia
 		where d.reftabla = ".$idtabla." and d.idreferencia = ".$id;
@@ -285,7 +472,7 @@ class ServiciosReferencias {
 
 
 	function traerPerfilasesoresPorId($id) {
-		$sql = "select idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,visible,token,urloficial,reftipofigura,marcapropia,imagenlogo,email,emisoremail from dbperfilasesores where idperfilasesor =".$id;
+		$sql = "select idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,visible,token,urloficial,reftipofigura,marcapropia,imagenlogo,email,emisoremail,domicilio from dbperfilasesores where idperfilasesor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -307,7 +494,8 @@ class ServiciosReferencias {
 		reftipofigura,
 		(case when marcapropia = '1' then 'Si' else 'No' end) as marcapropia,
 		email,
-		emisoremail
+		emisoremail,
+		domicilio
 		from dbperfilasesores where idperfilasesor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -344,7 +532,8 @@ class ServiciosReferencias {
 		reftipofigura,
 		(case when marcapropia = '1' then 'Si' else 'No' end) as marcapropia,
 		email,
-		emisoremail
+		emisoremail,
+		domicilio
 		from dbperfilasesores where idperfilasesor =".$id.$cad;
 		$res = $this->query($sql,0);
 		return $res;
@@ -1285,8 +1474,8 @@ class ServiciosReferencias {
 	function asignarOportunidades($id,$refusuarios) {
 		$resO = $this->traerOportunidadesPorId($id);
 
-		$sql = "insert into dboportunidades(idoportunidad,nombredespacho,apellidopaterno,apellidomaterno,nombre,telefonomovil,telefonotrabajo,email,refusuarios,refreferentes,refestadooportunidad,fechacrea,refmotivorechazos,observaciones,refestadogeneraloportunidad)
-		select '',nombredespacho,apellidopaterno,apellidomaterno,nombre,telefonomovil,telefonotrabajo,email,".$refusuarios.",refreferentes,1,'".date('Y-m-d H-i-s')."',0,observaciones,1
+		$sql = "insert into dboportunidades(idoportunidad,nombredespacho,apellidopaterno,apellidomaterno,nombre,telefonomovil,telefonotrabajo,email,refusuarios,refreferentes,refestadooportunidad,fechacrea,refmotivorechazos,observaciones,refestadogeneraloportunidad,reforigenreclutamiento)
+		select '',nombredespacho,apellidopaterno,apellidomaterno,nombre,telefonomovil,telefonotrabajo,email,".$refusuarios.",refreferentes,1,'".date('Y-m-d H-i-s')."',0,observaciones,1,reforigenreclutamiento
 		from dboportunidades
 		where idoportunidad =".$id;
 		$res = $this->query($sql,1);
@@ -3608,18 +3797,18 @@ class ServiciosReferencias {
 		return 0;
 	}
 
-	function insertarOportunidades($nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$telefonomovil,$telefonotrabajo,$email,$refusuarios,$refreferentes,$refestadooportunidad,$refmotivorechazos,$observaciones,$refestadogeneraloportunidad) {
-		$sql = "insert into dboportunidades(idoportunidad,nombredespacho,apellidopaterno,apellidomaterno,nombre,telefonomovil,telefonotrabajo,email,refusuarios,refreferentes,refestadooportunidad,fechacrea,refmotivorechazos,observaciones,refestadogeneraloportunidad)
-		values ('','".$nombredespacho."','".$apellidopaterno."','".$apellidomaterno."','".$nombre."','".$telefonomovil."','".$telefonotrabajo."','".$email."',".$refusuarios.",".$refreferentes.",".$refestadooportunidad.",'".date('Y-m-d H:i:s')."',".$refmotivorechazos.",'".$observaciones."',".$refestadogeneraloportunidad.")";
+	function insertarOportunidades($nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$telefonomovil,$telefonotrabajo,$email,$refusuarios,$refreferentes,$refestadooportunidad,$refmotivorechazos,$observaciones,$refestadogeneraloportunidad,$reforigenreclutamiento) {
+		$sql = "insert into dboportunidades(idoportunidad,nombredespacho,apellidopaterno,apellidomaterno,nombre,telefonomovil,telefonotrabajo,email,refusuarios,refreferentes,refestadooportunidad,fechacrea,refmotivorechazos,observaciones,refestadogeneraloportunidad,reforigenreclutamiento)
+		values ('','".$nombredespacho."','".$apellidopaterno."','".$apellidomaterno."','".$nombre."','".$telefonomovil."','".$telefonotrabajo."','".$email."',".$refusuarios.",".$refreferentes.",".$refestadooportunidad.",'".date('Y-m-d H:i:s')."',".$refmotivorechazos.",'".$observaciones."',".$refestadogeneraloportunidad.",".$reforigenreclutamiento.")";
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarOportunidades($id,$nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$telefonomovil,$telefonotrabajo,$email,$refusuarios,$refreferentes,$refestadooportunidad,$refmotivorechazos,$observaciones,$refestadogeneraloportunidad) {
+	function modificarOportunidades($id,$nombredespacho,$apellidopaterno,$apellidomaterno,$nombre,$telefonomovil,$telefonotrabajo,$email,$refusuarios,$refreferentes,$refestadooportunidad,$refmotivorechazos,$observaciones,$refestadogeneraloportunidad,$reforigenreclutamiento) {
 		$sql = "update dboportunidades
 		set
-		nombredespacho = '".$nombredespacho."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',nombre = '".$nombre."',telefonomovil = '".$telefonomovil."',telefonotrabajo = '".$telefonotrabajo."',email = '".$email."',refusuarios = ".$refusuarios.",refreferentes = ".$refreferentes.",refestadooportunidad = ".$refestadooportunidad.",refmotivorechazos = ".$refmotivorechazos.",observaciones = '".$observaciones."',refestadogeneraloportunidad = ".$refestadogeneraloportunidad."
+		nombredespacho = '".$nombredespacho."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',nombre = '".$nombre."',telefonomovil = '".$telefonomovil."',telefonotrabajo = '".$telefonotrabajo."',email = '".$email."',refusuarios = ".$refusuarios.",refreferentes = ".$refreferentes.",refestadooportunidad = ".$refestadooportunidad.",refmotivorechazos = ".$refmotivorechazos.",observaciones = '".$observaciones."',refestadogeneraloportunidad = ".$refestadogeneraloportunidad.",reforigenreclutamiento = ".$reforigenreclutamiento."
 		where idoportunidad =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -4351,7 +4540,8 @@ class ServiciosReferencias {
 		usu.nombrecompleto,
 		o.refmotivorechazos,
 		o.observaciones,
-		o.refestadogeneraloportunidad
+		o.refestadogeneraloportunidad,
+		o.reforigenreclutamiento
 		from dboportunidades o
 		inner join dbusuarios usu ON usu.idusuario = o.refusuarios
 		inner join tbestadooportunidad est ON est.idestadooportunidad = o.refestadooportunidad
@@ -4361,7 +4551,7 @@ class ServiciosReferencias {
 	}
 
 	function traerOportunidadesPorId($id) {
-		$sql = "select idoportunidad,nombredespacho,apellidopaterno,apellidomaterno,nombre,telefonomovil,telefonotrabajo,email,refusuarios,refreferentes,refestadooportunidad,refmotivorechazos,observaciones,refestadogeneraloportunidad from dboportunidades where idoportunidad =".$id;
+		$sql = "select idoportunidad,nombredespacho,apellidopaterno,apellidomaterno,nombre,telefonomovil,telefonotrabajo,email,refusuarios,refreferentes,refestadooportunidad,refmotivorechazos,observaciones,refestadogeneraloportunidad,reforigenreclutamiento from dboportunidades where idoportunidad =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -8507,6 +8697,20 @@ class ServiciosReferencias {
    $res = $this->query($sql,0);
    return $res;
    }
+
+	function traerUsuariosPorRol($idrol) {
+		$sql = "select u.idusuario,u.usuario, u.email , u.nombrecompleto
+				from dbusuarios u
+				inner join tbroles r on u.refroles = r.idrol
+				where r.idrol = ".$idrol."
+				order by nombrecompleto";
+		$res = $this->query($sql,0);
+		if ($res == false) {
+			return 'Error al traer datos';
+		} else {
+			return $res;
+		}
+	}
 
    /* Fin */
    /* /* Fin de la Tabla: dbusuarios*/

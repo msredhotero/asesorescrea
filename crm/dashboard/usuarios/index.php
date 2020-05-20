@@ -68,7 +68,7 @@ if ($_SESSION['idroll_sahilices'] == 1) {
 
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resRoles,array(1),'');
 
-$resSocio = $serviciosReferencias->traerSocios();
+$resSocio = $serviciosReferencias->traerOrigenreclutamiento();
 $cadRef3 = '<option value="0">-- Seleccionar --</option>';
 $cadRef3 .= $serviciosFunciones->devolverSelectBox($resSocio,array(1),'');
 
