@@ -9,6 +9,42 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+	function calcularConstancias() {
+		$sql = "SELECT
+				    *
+				FROM
+				    (SELECT
+				        a.idasesor,
+						timestampdiff(month, str_to_date(concat(year(a.fechaalta),'-', right(concat('00',month(a.fechaalta)),2) ,'-','01'),'%Y-%m-%d') ,curdate()) as meses,
+						a.fechaalta,
+						str_to_date(concat(year(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)),'-', right(concat('00',month(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))),2) ,'-','01'),'%Y-%m-%d') as nuevafecha,
+						curdate() as fechaactual
+				    FROM
+				        dbasesores a
+				    INNER JOIN tbmesesconstacia tm ON timestampdiff(month, str_to_date(concat(year(a.fechaalta),'-', right(concat('00',month(a.fechaalta)),2) ,'-','01'),'%Y-%m-%d') ,curdate()) between tm.mes and tm.mes +1
+				    WHERE
+				        DAY(a.fechaalta) <= 16
+				UNION ALL
+					SELECT
+				        a.idasesor,
+						timestampdiff(month, str_to_date(concat(year(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)),'-', right(concat('00',month(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))),2) ,'-','01'),'%Y-%m-%d') ,curdate()) as meses,
+						a.fechaalta,
+						str_to_date(concat(year(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)),'-', right(concat('00',month(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))),2) ,'-','01'),'%Y-%m-%d') as nuevafecha,
+						curdate() as fechaactual
+				    FROM
+				        dbasesores a
+				    INNER JOIN tbmesesconstacia tm ON timestampdiff(month, str_to_date(concat(year(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)),'-', right(concat('00',month(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))),2) ,'-','01'),'%Y-%m-%d') ,curdate()) between tm.mes and tm.mes +1
+				    WHERE
+				        DAY(a.fechaalta) > 15) r
+				left
+				join  dbconstancias co on co.refasesores = r.idasesor and co.meses = r.meses
+				where co.idconstancia is null";
+
+		$res = $this->query($sql,0);
+
+		return $res;
+	}
+
 	function traerPersonaPorTabla($tabla) {
 		switch ($tabla) {
 			case 1:

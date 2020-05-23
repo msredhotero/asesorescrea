@@ -23,6 +23,21 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $baseHTML = new BaseHTML();
 $serviciosMensajes 	= new ServiciosMensajes();
 
+require '../../Twilio/Services/Twilio.php';
+
+
+$sid = "ACf8deb1db20c64dddf6d4f3c65a65cee6"; // Your Account SID from www.twilio.com/user/account
+$token = "237471885632e278001342df25be8208"; // Your Auth Token from www.twilio.com/user/account
+
+$client = new Services_Twilio($sid, $token);
+$message = $client->account->messages->sendMessage(
+  '+14155238886 ', // From a valid Twilio number
+  '+546184415', // Text this number
+  "Hello monkey!"
+);
+
+print $message->sid;
+
 //$serviciosMensajes->msgAsesorNuevo(1);
 
 //*** SEGURIDAD ****/
