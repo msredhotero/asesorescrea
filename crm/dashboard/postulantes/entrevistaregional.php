@@ -267,7 +267,7 @@ if (mysql_num_rows($resEntrevista) > 0) {
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
-											<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+											<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 9)) { ?>
 											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
 												<i class="material-icons">add</i>
 												<span>NUEVO</span>
@@ -293,7 +293,7 @@ if (mysql_num_rows($resEntrevista) > 0) {
 												<th>Domicilio</th>
 												<th>Codigo Postal</th>
 												<th>Estado</th>
-												<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+												<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 9)) { ?>
 												<th>Fecha Crea</th>
 												<th>Acciones</th>
 												<?php } ?>
@@ -306,7 +306,7 @@ if (mysql_num_rows($resEntrevista) > 0) {
 												<th>Domicilio</th>
 												<th>Codigo Postal</th>
 												<th>Estado</th>
-												<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+												<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 9)) { ?>
 												<th>Fecha Crea</th>
 												<th>Acciones</th>
 												<?php } ?>

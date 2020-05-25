@@ -383,7 +383,7 @@ if (mysql_result($resultado,0,'refesquemareclutamiento') == 5 || mysql_result($r
 
 	<div class="container-fluid">
 		<div class="row clearfix subirImagen">
-			
+
 			<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
 
 				<?php
@@ -442,7 +442,7 @@ if (mysql_result($resultado,0,'refesquemareclutamiento') == 5 || mysql_result($r
 
 						<div class="alert bg-blue">Postulante: <?php echo $postulante; ?></div>
 
-						<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+						<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 9)) { ?>
 							<?php if ($puedeAvanzar == true) { ?>
 								<button type="button" class="btn bg-green waves-effect btnContinuar">
 									<i class="material-icons">done_all</i>

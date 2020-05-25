@@ -245,7 +245,7 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 			<div class="row">
 				<div class="col-xs-12 col-md-12 col-lg-12">
 					<h4>Postulante: <?php echo $postulante; ?> - Validar registros previos en SIAP, obtener pantallazo y guardar.</h4>
-					<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+					<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 9)) { ?>
 					<button type="button" class="btn bg-green waves-effect btnContinuar">
 						<i class="material-icons">done_all</i>
 						<span>ACEPTAR - CONTINUAR</span>
@@ -266,7 +266,7 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 					</a>
 					<div id="example1"></div>
 
-					<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+					<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 9)) { ?>
 					<button type="button" class="btn bg-red waves-effect btnEliminar">
 						<i class="material-icons">delete</i>
 						<span>ELIMINAR - IMAGEN</span>
@@ -294,7 +294,7 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 							</ul>
 						</div>
 						<div class="body">
-							<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+							<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 9)) { ?>
 							<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
 								<div class="dz-message">
 									<div class="drag-icon-cph">
@@ -425,7 +425,7 @@ $filesPlanilla = array_diff(scandir($pathSIAP), array('.', '..'));
 
 		traerImagen('example1','timagen1');
 
-		<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+		<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 9)) { ?>
 		Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
 
 		Dropzone.options.frmFileUpload = {

@@ -255,7 +255,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 						</div>
 						<div class="body table-responsive">
 							<h4>Descargar pantallazo con aprobación o no acreditamiento de la prueba VERITAS INBURSA.</h4>
-							<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+							<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 9)) { ?>
 							<button type="button" class="btn bg-green waves-effect btnContinuar">
 								<i class="material-icons">done_all</i>
 								<span>ACEPTAR - CONTINUAR</span>
@@ -299,7 +299,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 							</ul>
 						</div>
 						<div class="body">
-							<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+							<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 9)) { ?>
 							<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
 								<div class="dz-message">
 									<div class="drag-icon-cph">
@@ -416,7 +416,7 @@ $filesPlanilla = array_diff(scandir($pathVeritas), array('.', '..'));
 
 		traerImagen('example1','timagen1');
 
-		<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
+		<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 9)) { ?>
 		Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
 
 		Dropzone.options.frmFileUpload = {

@@ -23,21 +23,67 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $baseHTML = new BaseHTML();
 $serviciosMensajes 	= new ServiciosMensajes();
 
+/*
+$curl = curl_init();
+
+
+curl_setopt_array($curl, array(
+  CURLOPT_URL => "https://panel.rapiwha.com/send_message.php?apikey=YU21E0RV0G9ZLYBA6F1R&number=5492213058628&text='hola bb'",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => "",
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 30,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => "GET",
+));
+
+$response = curl_exec($curl);
+$err = curl_error($curl);
+
+curl_close($curl);
+
+if ($err) {
+  echo "cURL Error #:" . $err;
+} else {
+  echo $response;
+}
+*/
+/*
+$my_apikey = "YU21E0RV0G9ZLYBA6F1R";
+$destination = "5492213058628";
+$message = "queres oto??";
+$api_url = "http://panel.rapiwha.com/send_message.php";
+$api_url .= "?apikey=". urlencode ($my_apikey);
+$api_url .= "&number=". urlencode ($destination);
+$api_url .= "&text=". urlencode ($message);
+$my_result_object = json_decode(file_get_contents($api_url, false));
+echo "<br>Result: ". $my_result_object->success;
+echo "<br>Description: ". $my_result_object->description;
+echo "<br>Code: ". $my_result_object->result_code;
+*/
+/*
 require '../../Twilio/Services/Twilio.php';
 
 
+$sid = "ACb322c233afe1ef06586c5d6a57aa653b"; // Your Account SID from www.twilio.com/user/account
+$token = "a671c29d81ef022f7f115029e2628484"; // Your Auth Token from www.twilio.com/user/account
+
+*/
+/*
 $sid = "ACf8deb1db20c64dddf6d4f3c65a65cee6"; // Your Account SID from www.twilio.com/user/account
 $token = "237471885632e278001342df25be8208"; // Your Auth Token from www.twilio.com/user/account
+*/
 
+/*
 $client = new Services_Twilio($sid, $token);
 $message = $client->account->messages->sendMessage(
-  '+14155238886 ', // From a valid Twilio number
-  '+546184415', // Text this number
+  '+15017250604', // From a valid Twilio number
+  '+5492216184415', // Text this number
   "Hello monkey!"
 );
 
 print $message->sid;
-
+*/
 //$serviciosMensajes->msgAsesorNuevo(1);
 
 //*** SEGURIDAD ****/
