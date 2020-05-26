@@ -9,36 +9,244 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
-	function calcularConstancias() {
+	/* PARA db
+	INSERT INTO `u115752684_asesores`.`predio_menu` (`url`, `icono`, `nombre`, `Orden`, `permiso`, `administracion`, `torneo`, `reportes`, `grupo`) VALUES ('../constancias/', 'trending_up', 'Constancias', '10', 'Administrador , AdministradordeReclutamiento', '1', '1', '1', '3');
+
+	*/
+
+	/* PARA Constancias */
+	function existeConstancia($refasesores,$meses,$accion,$id='') {
+
+		if ($accion == 'M') {
+			$sql = "select * from dbconstancias where refasesores = ".$refasesores." and meses = ".$meses." and idconstancia <> ".$id;
+		} else {
+			$sql = "select * from dbconstancias where refasesores = ".$refasesores." and meses = ".$meses;
+		}
+
+		$res = $this->query($sql,0);
+
+		if (mysql_num_rows($res) > 0) {
+			return 1;
+		}
+
+		return 0;
+	}
+
+	function insertarConstancias($refasesores,$meses,$cumplio,$fechacrea,$fechamodi,$base) {
+		$sql = "insert into dbconstancias(idconstancia,refasesores,meses,cumplio,fechacrea,fechamodi,base)
+		values ('',".$refasesores.",".$meses.",'".$cumplio."','".$fechacrea."','".$fechamodi."','".$base."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarConstancias($id,$refasesores,$meses,$cumplio,$fechamodi,$base) {
+		$sql = "update dbconstancias
+		set
+		refasesores = ".$refasesores.",meses = ".$meses.",cumplio = '".$cumplio."',fechamodi = '".$fechamodi."',base = '".$base."'
+		where idconstancia =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarConstancias($id) {
+		$sql = "delete from dbconstancias where idconstancia =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerConstanciasajax($length, $start, $busqueda,$colSort,$colSortDir,$asesor) {
+
+		if ($asesor != '') {
+			$cadAsesor = " ase.idasesor = ".$asesor." and ";
+		} else {
+			$cadAsesor = '';
+		}
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where ".$cadAsesor." concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' )";
+		} else {
+			$where = " where ".$cadAsesor." 1=1 ";
+		}
+
+
+		$sql = "select
+		c.idconstancia,
+		concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
+		c.meses,
+		(case when c.cumplio = 1 then 'Si' else 'No' end) as cumplio,
+		c.fechacrea,
+		c.fechamodi,
+		c.base,
+		c.refasesores
+		from dbconstancias c
+		inner join dbasesores ase ON ase.idasesor = c.refasesores
+		".$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+
+	function traerConstancias() {
+		$sql = "select
+		c.idconstancia,
+		c.refasesores,
+		c.meses,
+		c.cumplio,
+		c.fechacrea,
+		c.fechamodi,
+		c.base
+		from dbconstancias c
+		inner join dbasesores ase ON ase.idasesor = c.refasesores
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerConstanciasPorAsesor($idasesor) {
+		$sql = "select
+		c.idconstancia,
+		c.refasesores,
+		c.meses,
+		c.cumplio,
+		c.fechacrea,
+		c.fechamodi,
+		c.base
+		from dbconstancias c
+		inner join dbasesores ase ON ase.idasesor = c.refasesores
+		where ase.idasesor = ".$idasesor."
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerConstanciasPorUsuario($idusuario) {
+		$sql = "select
+		c.idconstancia,
+		c.refasesores,
+		c.meses,
+		c.cumplio,
+		c.fechacrea,
+		c.fechamodi,
+		c.base
+		from dbconstancias c
+		inner join dbasesores ase ON ase.idasesor = c.refasesores
+		inner join dbusuarios usu ON usu.idusuario = ase.refusuarios
+		where usu.idusuario = ".$idusuario."
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerConstanciasPorId($id) {
+		$sql = "select idconstancia,refasesores,meses,cumplio,fechacrea,fechamodi,base from dbconstancias where idconstancia =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbconstancias*/
+
+	function traerCalcularConstanciasajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and r.nombrecompleto like '%".$busqueda."%' )";
+		}
+
+
 		$sql = "SELECT
-				    *
+				   concat(ase.idasesor,'-',r.meses) as id,
+					concat( ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as nombrecompleto,
+					ase.fechaalta,
+					r.meses
 				FROM
 				    (SELECT
 				        a.idasesor,
-						timestampdiff(month, str_to_date(concat(year(a.fechaalta),'-', right(concat('00',month(a.fechaalta)),2) ,'-','01'),'%Y-%m-%d') ,curdate()) as meses,
-						a.fechaalta,
-						str_to_date(concat(year(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)),'-', right(concat('00',month(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))),2) ,'-','01'),'%Y-%m-%d') as nuevafecha,
-						curdate() as fechaactual
+						coalesce( TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(a.fechaalta), '-', RIGHT(CONCAT('00', MONTH(a.fechaalta)), 2), '-', '01'), '%Y-%m-%d'), CURDATE()),0) AS meses,
+						a.fechaalta
 				    FROM
 				        dbasesores a
-				    INNER JOIN tbmesesconstacia tm ON timestampdiff(month, str_to_date(concat(year(a.fechaalta),'-', right(concat('00',month(a.fechaalta)),2) ,'-','01'),'%Y-%m-%d') ,curdate()) between tm.mes and tm.mes +1
+				    INNER JOIN tbmesesconstacia tm ON TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(a.fechaalta), '-', RIGHT(CONCAT('00', MONTH(a.fechaalta)), 2), '-', '01'), '%Y-%m-%d'), CURDATE()) BETWEEN tm.mes AND tm.mes + 1
 				    WHERE
 				        DAY(a.fechaalta) <= 16
+
 				UNION ALL
+
 					SELECT
 				        a.idasesor,
-						timestampdiff(month, str_to_date(concat(year(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)),'-', right(concat('00',month(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))),2) ,'-','01'),'%Y-%m-%d') ,curdate()) as meses,
-						a.fechaalta,
-						str_to_date(concat(year(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)),'-', right(concat('00',month(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))),2) ,'-','01'),'%Y-%m-%d') as nuevafecha,
-						curdate() as fechaactual
+						coalesce( TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)), '-', RIGHT(CONCAT('00', MONTH(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))), 2), '-', '01'), '%Y-%m-%d'), CURDATE()),0) AS meses,
+						a.fechaalta
 				    FROM
 				        dbasesores a
-				    INNER JOIN tbmesesconstacia tm ON timestampdiff(month, str_to_date(concat(year(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)),'-', right(concat('00',month(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))),2) ,'-','01'),'%Y-%m-%d') ,curdate()) between tm.mes and tm.mes +1
+				    INNER JOIN tbmesesconstacia tm ON TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)), '-', RIGHT(CONCAT('00', MONTH(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))), 2), '-', '01'), '%Y-%m-%d'), CURDATE()) BETWEEN tm.mes AND tm.mes + 1
 				    WHERE
 				        DAY(a.fechaalta) > 15) r
-				left
-				join  dbconstancias co on co.refasesores = r.idasesor and co.meses = r.meses
-				where co.idconstancia is null";
+						  INNER JOIN
+						dbasesores ase ON ase.idasesor = r.idasesor
+				        LEFT JOIN
+				    dbconstancias co ON co.refasesores = r.idasesor
+				        AND co.meses = r.meses
+				WHERE
+				    co.idconstancia IS NULL ".$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+	function calcularConstancias() {
+		$sql = "SELECT
+				   ase.idasesor,
+					concat( ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as nombrecompleto,
+					ase.fechaalta,
+					r.meses
+				FROM
+				    (SELECT
+				        a.idasesor,
+						coalesce( TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(a.fechaalta), '-', RIGHT(CONCAT('00', MONTH(a.fechaalta)), 2), '-', '01'), '%Y-%m-%d'), CURDATE()),0) AS meses,
+						a.fechaalta
+				    FROM
+				        dbasesores a
+				    INNER JOIN tbmesesconstacia tm ON TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(a.fechaalta), '-', RIGHT(CONCAT('00', MONTH(a.fechaalta)), 2), '-', '01'), '%Y-%m-%d'), CURDATE()) BETWEEN tm.mes AND tm.mes + 1
+				    WHERE
+				        DAY(a.fechaalta) <= 16
+
+				UNION ALL
+
+					SELECT
+				        a.idasesor,
+						coalesce( TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)), '-', RIGHT(CONCAT('00', MONTH(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))), 2), '-', '01'), '%Y-%m-%d'), CURDATE()),0) AS meses,
+						a.fechaalta
+				    FROM
+				        dbasesores a
+				    INNER JOIN tbmesesconstacia tm ON TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)), '-', RIGHT(CONCAT('00', MONTH(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))), 2), '-', '01'), '%Y-%m-%d'), CURDATE()) BETWEEN tm.mes AND tm.mes + 1
+				    WHERE
+				        DAY(a.fechaalta) > 15) r
+						  INNER JOIN
+						dbasesores ase ON ase.idasesor = r.idasesor
+				        LEFT JOIN
+				    dbconstancias co ON co.refasesores = r.idasesor
+				        AND co.meses = r.meses
+				WHERE
+				    co.idconstancia IS NULL";
 
 		$res = $this->query($sql,0);
 

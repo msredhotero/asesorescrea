@@ -68,6 +68,50 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 
 switch ($tabla) {
 
+	case 'constanciasactuales':
+
+		$datos = $serviciosReferencias->traerCalcularConstanciasajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		//die(var_dump($datos));
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+
+		$label = array('btnGenerar');
+		$class = array('bg-green');
+		$icon = array('add');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 3;
+
+	break;
+
+	case 'constancias':
+
+		$asesor = $_GET['sSearch_0'];
+
+		$datos = $serviciosReferencias->traerConstanciasajax($length, $start, $busqueda,$colSort,$colSortDir,$asesor);
+
+		//die(var_dump($datos));
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('create','delete');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 3;
+
+	break;
+
 	case 'comisiones':
 
 		$datos = $serviciosReferencias->traerComisionesajax($length, $start, $busqueda,$colSort,$colSortDir);
@@ -177,7 +221,7 @@ switch ($tabla) {
 		from dbasesores p
 		inner join tbestadoasesor tea on tea.idestadoasesor = p.refestadoasesor
 		inner join tbestadoasesor teai on teai.idestadoasesor = p.refestadoasesorinbursa
-	
+
 		';
 		if ($_SESSION['idroll_sahilices'] == 3) {
 			$consulta .= ' inner join dbusuarios usu ON usu.idusuario = p.refusuarios

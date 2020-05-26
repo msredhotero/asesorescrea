@@ -839,8 +839,85 @@ switch ($accion) {
       traerPersonaPorTabla($serviciosReferencias, $serviciosFunciones);
    break;
 
+   case 'insertarConstancias':
+      insertarConstancias($serviciosReferencias);
+   break;
+   case 'modificarConstancias':
+      modificarConstancias($serviciosReferencias);
+   break;
+   case 'eliminarConstancias':
+      eliminarConstancias($serviciosReferencias);
+   break;
+
 }
 /* FinFinFin */
+
+
+function insertarConstancias($serviciosReferencias) {
+   $refasesores = $_POST['refasesores'];
+   $meses = $_POST['meses'];
+   $cumplio = $_POST['cumplio'];
+   $fechacrea = date('Y-m-d H:i:s');
+   $fechamodi = date('Y-m-d H:i:s');
+
+   $resAsesor = $serviciosReferencias->traerAsesoresPorId($refasesores);
+
+   $base = mysql_result($resAsesor,0,'fechaalta');
+
+   $existe = $serviciosReferencias->existeConstancia($refasesores,$meses,'',0);
+
+   if ($existe == 0) {
+      $res = $serviciosReferencias->insertarConstancias($refasesores,$meses,$cumplio,$fechacrea,$fechamodi,$base);
+
+      if ((integer)$res > 0) {
+         echo '';
+      } else {
+         echo 'Hubo un error al insertar datos';
+      }
+   } else {
+      echo 'Hubo un error ya fue cargado este mes para este agente';
+   }
+}
+
+
+function modificarConstancias($serviciosReferencias) {
+   $id = $_POST['id'];
+   $refasesores = $_POST['refasesores'];
+   $meses = $_POST['meses'];
+   $cumplio = $_POST['cumplio'];
+
+   $fechamodi = date('Y-m-d H:i:s');
+
+   $resAsesor = $serviciosReferencias->traerAsesoresPorId($refasesores);
+
+   $base = mysql_result($resAsesor,0,'fechaalta');
+
+   $existe = $serviciosReferencias->existeConstancia($refasesores,$meses,'M',$id);
+
+   if ($existe == 0) {
+      $res = $serviciosReferencias->modificarConstancias($id,$refasesores,$meses,$cumplio,$fechamodi,$base);
+
+      if ($res == true) {
+         echo '';
+      } else {
+         echo 'Hubo un error al modificar datos';
+      }
+   } else {
+      echo 'Hubo un error ya fue cargado este mes para este agente';
+   }
+}
+
+function eliminarConstancias($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarConstancias($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
 
 function traerPersonaPorTabla($serviciosReferencias, $serviciosFunciones) {
    $tabla = $_POST['tabla'];
@@ -3161,6 +3238,40 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+      case 'dbconstancias':
+         $resultado = $serviciosReferencias->traerConstanciasPorId($id);
+
+         $lblCambio	 	= array('refasesores');
+         $lblreemplazo	= array('Asesor');
+
+         $modificar = "modificarConstancias";
+         $idTabla = "idconstancia";
+
+         $resVar = $serviciosReferencias->traerAsesores();
+         $cadRef = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(3,4,2),' ',mysql_result($resultado,0,'refasesores'));
+
+         if (mysql_result($resultado,0,'cumplio') == '1') {
+            $cadRef2 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+         } else {
+            $cadRef2 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+         }
+
+
+         $arMeses = array(6,9,12,18,21,24);
+
+         $cadMeses = '';
+         foreach ($arMeses as $valor) {
+            if (mysql_result($resultado,0,'meses') == $valor) {
+               $cadMeses .= "<option value='".$valor."' selected>".$valor."</option>";
+            } else {
+               $cadMeses .= "<option value='".$valor."'>".$valor."</option>";
+            }
+
+         }
+
+         $refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadMeses);
+         $refCampo 	=  array('refasesores','cumplio','meses');
+      break;
       case 'dbcomisiones':
          $resultado = $serviciosReferencias->traerComisionesPorId($id);
 

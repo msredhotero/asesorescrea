@@ -1199,6 +1199,18 @@ class Servicios {
 	function camposTablaModificar($id,$lblid,$accion,$tabla,$lblcambio,$lblreemplazo,$refdescripcion,$refCampo) {
 
 		switch ($tabla) {
+			case 'dbconstancias':
+				$sqlMod = "select
+									idconstancia,
+									refasesores,
+									meses,
+									(case when cumplio = 1 then 'Si' else 'No' end) as cumplio,
+									fechacrea,
+									fechamodi,
+									base
+									from ".$tabla." where ".$lblid." = ".$id;
+				$resMod = $this->query($sqlMod,0);
+				break;
 			case 'dbperfilasesores':
 				$sqlMod = "select idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,(case when visible = '1' then 'Si' else 'No' end) as visible,token,
 				urloficial,
@@ -1279,6 +1291,9 @@ class Servicios {
 		$res 	=	$this->query($sql,0);
 
 		switch ($tabla) {
+			case 'dbconstancias':
+				$ocultar = array("fechacrea","fechamodi","base");
+			break;
 			case 'dbperfilasesores':
 				$ocultar = array("imagenperfil","imagenfirma","imagenlogo");
 			break;
