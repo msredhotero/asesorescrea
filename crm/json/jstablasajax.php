@@ -108,7 +108,7 @@ switch ($tabla) {
 
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 3;
+		$termina = 5;
 
 	break;
 

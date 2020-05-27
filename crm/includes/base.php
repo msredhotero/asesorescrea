@@ -173,7 +173,14 @@ class BaseHTML extends ServiciosNotificaciones {
     function cargarNAV($breadCumbs, $notificaciones='', $tareas='', $altura = '', $lstTareas='') {
       if ($notificaciones == '') {
          $notificaciones = $this->cargarNotificaciones('',($altura == '..' ? '' : '../'));
-         $cantidadNotificacionesNoLeidas = $this->traerNotificacionesNoLeidaPorUsuarios('rlinares@asesorescrea.com');
+
+         if ($_SESSION['idroll_sahilices'] == 4) {
+            $cantidadNotificacionesNoLeidas = $this->traerNotificacionesNoLeidaPorUsuarios('rlinares@asesorescrea.com');
+         } else {
+            $cantidadNotificacionesNoLeidas = $this->traerNotificacionesNoLeidaPorUsuarios($_SESSION['usua_sahilices']);
+         }
+
+
       }
         $cad = '<nav class="navbar">
                     <div class="container-fluid">

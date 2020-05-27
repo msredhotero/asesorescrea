@@ -9,6 +9,83 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+	/***** para el calculo de las primas netas y de los bonos del reclutador ******/
+	function calcularPrimasNetas() {
+		$sql = "select sum(primaneta) from dbcotizaciones where refestadocotizaciones > 6";
+
+		$res = $this->query($sql,0);
+
+		return mysql_result($res,0,0);
+	}
+
+	function calcularComisionAgente() {
+		$sql = "select sum(importecomisionagente) from dbcotizaciones where refestadocotizaciones > 6";
+
+		$res = $this->query($sql,0);
+
+		return mysql_result($res,0,0);
+	}
+
+	/**** fin del calculo *********************************************************/
+
+	/* PARA Bonogestion */
+	function existeBono() {
+		$sql = 'select * from tbbonogestion';
+		$res = $this->query($sql,0);
+
+		if (mysql_num_rows($res) > 0) {
+			return 1;
+		}
+		return 0;
+	}
+
+	function insertarBonogestion($bonoseguros,$bonoafore,$bonobanca) {
+		$sql = "insert into tbbonogestion(idbonogestion,bonoseguros,bonoafore,bonobanca)
+		values ('',".$bonoseguros.",".$bonoafore.",".$bonobanca.")";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarBonogestion($id,$bonoseguros,$bonoafore,$bonobanca) {
+		$sql = "update tbbonogestion
+		set
+		bonoseguros = ".$bonoseguros.",bonoafore = ".$bonoafore.",bonobanca = ".$bonobanca."
+		where idbonogestion =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarBonogestion($id) {
+		$sql = "delete from tbbonogestion where idbonogestion =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerBonogestion() {
+		$sql = "select
+		b.idbonogestion,
+		b.bonoseguros,
+		b.bonoafore,
+		b.bonobanca
+		from tbbonogestion b
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerBonogestionPorId($id) {
+		$sql = "select idbonogestion,bonoseguros,bonoafore,bonobanca from tbbonogestion where idbonogestion =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbbonogestion*/
 
 	/* PARA Constancias */
 	function existeConstancia($refasesores,$meses,$accion,$id='') {
@@ -28,18 +105,18 @@ class ServiciosReferencias {
 		return 0;
 	}
 
-	function insertarConstancias($refasesores,$meses,$cumplio,$fechacrea,$fechamodi,$base) {
-		$sql = "insert into dbconstancias(idconstancia,refasesores,meses,cumplio,fechacrea,fechamodi,base)
-		values ('',".$refasesores.",".$meses.",'".$cumplio."','".$fechacrea."','".$fechamodi."','".$base."')";
+	function insertarConstancias($refasesores,$meses,$cumplio,$fechacrea,$fechamodi,$base,$importe,$tipo) {
+		$sql = "insert into dbconstancias(idconstancia,refasesores,meses,cumplio,fechacrea,fechamodi,base,importe,tipo)
+		values ('',".$refasesores.",".$meses.",'".$cumplio."','".$fechacrea."','".$fechamodi."','".$base."',".$importe.",'".$tipo."')";
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarConstancias($id,$refasesores,$meses,$cumplio,$fechamodi,$base) {
+	function modificarConstancias($id,$refasesores,$meses,$cumplio,$fechamodi,$base,$importe,$tipo) {
 		$sql = "update dbconstancias
 		set
-		refasesores = ".$refasesores.",meses = ".$meses.",cumplio = '".$cumplio."',fechamodi = '".$fechamodi."',base = '".$base."'
+		refasesores = ".$refasesores.",meses = ".$meses.",cumplio = '".$cumplio."',fechamodi = '".$fechamodi."',base = '".$base."',importe = ".$importe.",tipo = '".$tipo."'
 		where idconstancia =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -76,6 +153,8 @@ class ServiciosReferencias {
 		concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
 		c.meses,
 		(case when c.cumplio = 1 then 'Si' else 'No' end) as cumplio,
+		c.importe,
+		(case when c.tipo = 1 then 'A' else 'B' end) as tipo,
 		c.fechacrea,
 		c.fechamodi,
 		c.base,
@@ -92,6 +171,23 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function calcularImporteBonoReclutamiento() {
+		$sql = "select
+				sum(c.importe)
+				from		dbconstancias c
+				inner
+				join		dbasesores ase on ase.idasesor = c.refasesores
+				inner
+				join		dbusuarios usu on usu.idusuario = ase.refusuarios
+				left
+				join		tborigenreclutamiento sc on sc.idorigenreclutamiento = usu.refsocios
+				where		c.cumplio = '1'";
+
+		$res = $this->query($sql,0);
+
+		return $res;
+	}
+
 
 	function traerConstancias() {
 		$sql = "select
@@ -101,7 +197,9 @@ class ServiciosReferencias {
 		c.cumplio,
 		c.fechacrea,
 		c.fechamodi,
-		c.base
+		c.base,
+		c.importe,
+		c.tipo
 		from dbconstancias c
 		inner join dbasesores ase ON ase.idasesor = c.refasesores
 		order by 1";
@@ -117,7 +215,9 @@ class ServiciosReferencias {
 		c.cumplio,
 		c.fechacrea,
 		c.fechamodi,
-		c.base
+		c.base,
+		c.importe,
+		c.tipo
 		from dbconstancias c
 		inner join dbasesores ase ON ase.idasesor = c.refasesores
 		where ase.idasesor = ".$idasesor."
@@ -134,7 +234,9 @@ class ServiciosReferencias {
 		c.cumplio,
 		c.fechacrea,
 		c.fechamodi,
-		c.base
+		c.base,
+		c.importe,
+		c.tipo
 		from dbconstancias c
 		inner join dbasesores ase ON ase.idasesor = c.refasesores
 		inner join dbusuarios usu ON usu.idusuario = ase.refusuarios
@@ -146,7 +248,7 @@ class ServiciosReferencias {
 
 
 	function traerConstanciasPorId($id) {
-		$sql = "select idconstancia,refasesores,meses,cumplio,fechacrea,fechamodi,base from dbconstancias where idconstancia =".$id;
+		$sql = "select idconstancia,refasesores,meses,cumplio,fechacrea,fechamodi,base,importe,tipo from dbconstancias where idconstancia =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -234,6 +336,48 @@ class ServiciosReferencias {
 				    FROM
 				        dbasesores a
 				    INNER JOIN tbmesesconstacia tm ON TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)), '-', RIGHT(CONCAT('00', MONTH(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))), 2), '-', '01'), '%Y-%m-%d'), CURDATE()) BETWEEN tm.mes AND tm.mes + 1
+				    WHERE
+				        DAY(a.fechaalta) > 15) r
+						  INNER JOIN
+						dbasesores ase ON ase.idasesor = r.idasesor
+				        LEFT JOIN
+				    dbconstancias co ON co.refasesores = r.idasesor
+				        AND co.meses = r.meses
+				WHERE
+				    co.idconstancia IS NULL";
+
+		$res = $this->query($sql,0);
+
+		return $res;
+	}
+
+
+	function calcularConstanciasAnticipadas() {
+		$sql = "SELECT
+				   ase.idasesor,
+					concat( ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as nombrecompleto,
+					ase.fechaalta,
+					r.meses
+				FROM
+				    (SELECT
+				        a.idasesor,
+						coalesce( TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(a.fechaalta), '-', RIGHT(CONCAT('00', MONTH(a.fechaalta)), 2), '-', '01'), '%Y-%m-%d'), CURDATE()),0) AS meses,
+						a.fechaalta
+				    FROM
+				        dbasesores a
+				    INNER JOIN tbmesesconstacia tm ON TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(a.fechaalta), '-', RIGHT(CONCAT('00', MONTH(a.fechaalta)), 2), '-', '01'), '%Y-%m-%d'), CURDATE()) BETWEEN tm.mes - 1 AND tm.mes
+				    WHERE
+				        DAY(a.fechaalta) <= 16
+
+				UNION ALL
+
+					SELECT
+				        a.idasesor,
+						coalesce( TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)), '-', RIGHT(CONCAT('00', MONTH(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))), 2), '-', '01'), '%Y-%m-%d'), CURDATE()),0) AS meses,
+						a.fechaalta
+				    FROM
+				        dbasesores a
+				    INNER JOIN tbmesesconstacia tm ON TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)), '-', RIGHT(CONCAT('00', MONTH(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))), 2), '-', '01'), '%Y-%m-%d'), CURDATE()) BETWEEN tm.mes - 1 AND tm.mes
 				    WHERE
 				        DAY(a.fechaalta) > 15) r
 						  INNER JOIN

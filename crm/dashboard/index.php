@@ -31,6 +31,31 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
+$resConstancias = $serviciosReferencias->calcularConstanciasAnticipadas();
+
+while ($row = mysql_fetch_array($resConstancias)) {
+	$existe = $baseHTML->existeNotificacion(5,$row['idasesor'],$row['meses'],'constancias/index.php');
+
+	$resAsesor = $serviciosReferencias->traerAsesoresPorId($row['idasesor']);
+
+	$emailReferente = 'rlinares@asesorescrea.com'; //por ahora fijo
+	$mensaje = 'Verificar Bono de Reclutamiento: '.mysql_result($resAsesor,0,'apellidopaterno').' '.mysql_result($resAsesor,0,'apellidomaterno').' '.mysql_result($resAsesor,0,'nombre');
+
+	$idpagina = 5;
+	$autor = $_SESSION['usua_sahilices'];
+	$destinatario = $emailReferente;
+	$id1 = $row['idasesor'];
+	$id2 = $row['meses'];
+	$id3 = 0;
+	$icono = 'ring_volume';
+	$estilo = 'bg-light-green';
+	$fecha = date('Y-m-d H:i:s');
+	$url = "constancias/index.php";
+
+	if ($existe == 0) {
+		$resI = $baseHTML->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url);
+	}
+}
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 

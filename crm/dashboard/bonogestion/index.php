@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../constancias/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../bonogestion/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Constancias",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Bono de Gestion",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -39,43 +39,39 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Constancia de Cumplimiento";
+$singular = "Bono de Gestion";
 
-$plural = "Constancias de Cumplimientos";
+$plural = "Bono de Gestion";
 
-$eliminar = "eliminarConstancias";
+$eliminar = "eliminarBonogestion";
 
-$insertar = "insertarConstancias";
+$insertar = "insertarBonogestion";
 
-$modificar = "modificarConstancias";
+$modificar = "modificarBonogestion";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
-
-/////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbconstancias";
-
-$lblCambio	 	= array('refasesores','tipo');
-$lblreemplazo	= array('Asesor','Tipo de Bono');
-
-$resVar = $serviciosReferencias->traerAsesores();
-$cadRef = $serviciosFunciones->devolverSelectBox($resVar,array(3,4,2),' ');
-
-$cadRef2 = "<option value='1'>Si</option><option value='0'>No</option>";
-
-$arMeses = array(6,9,12,18,21,24);
-
-$cadMeses = '';
-foreach ($arMeses as $valor) {
-	$cadMeses .= "<option value='".$valor."'>".$valor."</option>";
+$existe = $serviciosReferencias->existeBono();
+if ($existe == 0) {
+	$id = $serviciosReferencias->insertarBonogestion(0,0,0);
+} else {
+	$res = $serviciosReferencias->traerBonogestion();
+	$id = mysql_result($res,0,0);
 }
 
-$cadRef3 = "<option value='1'>A</option><option value='0'>B</option>";
+$resultado = $serviciosReferencias->traerBonogestionPorId($id);
 
-$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadMeses,3=>$cadRef3);
-$refCampo 	=  array('refasesores','cumplio','meses','tipo');
+/////////////////////// Opciones para la creacion del formulario  /////////////////////
+$tabla 			= "tbbonogestion";
 
-$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+$lblCambio	 	= array('bonoseguros','bonobanca','bonoafore');
+$lblreemplazo	= array('Bono Seguros','Bono Banca','Bono Afore');
+
+
+$refdescripcion = array();
+$refCampo 	=  array();
+
+$frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($id, 'idbonogestion',$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 ?>
@@ -162,51 +158,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 	<div class="container-fluid">
 		<div class="row clearfix">
+
 			<div class="row">
 
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="card ">
-						<div class="header bg-success">
-							<h2>
-								CONSTANCIAS DE CUMPLIMIENTOS (A GENERAR)
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-									<ul class="dropdown-menu pull-right">
-
-									</ul>
-								</li>
-							</ul>
-						</div>
-						<div class="body table-responsive">
-							<form class="form" id="formCountry">
-								<div class="row" style="padding: 5px 20px;">
-									<table id="example2" class="display table " style="width:100%">
-										<thead>
-											<tr>
-												<th>Asesores</th>
-												<th>Fecha Alta</th>
-												<th>Meses</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tfoot>
-											<tr>
-												<th>Asesores</th>
-												<th>Fecha Alta</th>
-												<th>Meses</th>
-												<th>Acciones</th>
-											</tr>
-										</tfoot>
-									</table>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
 
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
@@ -226,46 +180,17 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 							</ul>
 						</div>
 						<div class="body table-responsive">
-							<form class="form" id="formCountry">
-
-								<div class="row">
-									<div class="col-lg-12 col-md-12">
-										<div class="button-demo">
-											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
-												<i class="material-icons">add</i>
-												<span>NUEVO</span>
-											</button>
-
-										</div>
-									</div>
-								</div>
+							<form class="formulario frmNuevo" role="form" id="sign_in">
 
 								<div class="row" style="padding: 5px 20px;">
+									<?php echo $frmUnidadNegocios; ?>
 
-									<table id="example" class="display table " style="width:100%">
-										<thead>
-											<tr>
-												<th class="perfilS">Asesores</th>
-												<th>Meses</th>
-												<th>Cumple</th>
-												<th>Importe</th>
-												<th>Tipo Bono</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tfoot>
-											<tr>
-												<th>Asesores</th>
-												<th>Meses</th>
-												<th>Cumple</th>
-												<th>Importe</th>
-												<th>Tipo Bono</th>
-												<th>Acciones</th>
-											</tr>
-										</tfoot>
-									</table>
+								</div>
+								<div class="row">
+									<button type="submit" class="btn btn-warning waves-effect nuevo">MODIFICAR</button>
 								</div>
 							</form>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -275,76 +200,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 </section>
 
 
-<!-- NUEVO -->
-	<form class="formulario frmNuevo" role="form" id="sign_in">
-	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
-	       <div class="modal-dialog modal-lg" role="document">
-	           <div class="modal-content">
-	               <div class="modal-header">
-	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular); ?></h4>
-	               </div>
-	               <div class="modal-body">
-							<div class="row">
-								<?php echo $frmUnidadNegocios; ?>
-							</div>
-
-	               </div>
-	               <div class="modal-footer">
-	                   <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
-	                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-	               </div>
-	           </div>
-	       </div>
-	   </div>
-		<input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
-	</form>
-
-	<!-- MODIFICAR -->
-		<form class="formulario frmModificar" role="form" id="sign_in">
-		   <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
-		       <div class="modal-dialog modal-lg" role="document">
-		           <div class="modal-content">
-		               <div class="modal-header">
-		                   <h4 class="modal-title" id="largeModalLabel">MODIFICAR <?php echo strtoupper($singular); ?></h4>
-		               </div>
-		               <div class="modal-body">
-								<div class="row frmAjaxModificar">
-
-								</div>
-		               </div>
-		               <div class="modal-footer">
-		                   <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
-		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-		               </div>
-		           </div>
-		       </div>
-		   </div>
-			<input type="hidden" id="accion" name="accion" value="<?php echo $modificar; ?>"/>
-		</form>
-
-
-	<!-- ELIMINAR -->
-		<form class="formulario" role="form" id="sign_in">
-		   <div class="modal fade" id="lgmEliminar" tabindex="-1" role="dialog">
-		       <div class="modal-dialog modal-lg" role="document">
-		           <div class="modal-content">
-		               <div class="modal-header">
-		                   <h4 class="modal-title" id="largeModalLabel">ELIMINAR <?php echo strtoupper($singular); ?></h4>
-		               </div>
-		               <div class="modal-body">
-										 <p>¿Esta seguro que desea eliminar el registro?</p>
-										 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
-		               </div>
-		               <div class="modal-footer">
-		                   <button type="button" class="btn btn-danger waves-effect eliminar">ELIMINAR</button>
-		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-		               </div>
-		           </div>
-		       </div>
-		   </div>
-			<input type="hidden" id="accion" name="accion" value="<?php echo $eliminar; ?>"/>
-			<input type="hidden" name="ideliminar" id="ideliminar" value="0">
-		</form>
 
 
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
@@ -367,7 +222,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 <script>
 	$(document).ready(function(){
 
-		$('.frmContbase').hide();
+		$('#bonoseguros').number( true, 5 );
+		$('#bonobanca').number( true, 5 );
+		$('#bonoafore').number( true, 5 );
 
 
 		$('.maximizar').click(function() {
@@ -383,46 +240,11 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 		});
 
-		var table2 = $('#example2').DataTable({
-			"bProcessing": true,
-			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=constanciasactuales",
-			"columnDefs": [
-		    { "orderable": false, "targets": 0 }
-		 	],
-			"language": {
-				"emptyTable":     "No hay datos cargados",
-				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
-				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
-				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
-				"infoPostFix":    "",
-				"thousands":      ",",
-				"lengthMenu":     "Mostrar _MENU_ filas",
-				"loadingRecords": "Cargando...",
-				"processing":     "Procesando...",
-				"search":         "Buscar:",
-				"zeroRecords":    "No se encontraron resultados",
-				"paginate": {
-					"first":      "Primero",
-					"last":       "Ultimo",
-					"next":       "Siguiente",
-					"previous":   "Anterior"
-				},
-				"aria": {
-					"sortAscending":  ": activate to sort column ascending",
-					"sortDescending": ": activate to sort column descending"
-				}
-			}
-		});
-
 
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=constancias",
-			"columnDefs": [
-		    { "orderable": false, "targets": 0 }
-		 	],
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=especialidades",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -447,19 +269,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 				}
 			}
 		});
-
-		$("#example .perfilS").each( function ( i ) {
-			var select = $('<select><option value="">-- Seleccione Asesor --</option><?php echo $cadRef; ?></select>')
-				.appendTo( $(this).empty() )
-				.on( 'change', function () {
-					table.column( i )
-						.search( $(this).val() )
-						.draw();
-				} );
-			table.column( i ).data().unique().sort().each( function ( d, j ) {
-				select.append( '<option value="'+d+'">'+d+'</option>' )
-			} );
-		} );
 
 		$("#sign_in").submit(function(e){
 			e.preventDefault();
@@ -522,7 +331,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						});
 						$('#lgmEliminar').modal('toggle');
 						table.ajax.reload();
-						table2.ajax.reload();
 					} else {
 						swal({
 								title: "Respuesta",
@@ -548,16 +356,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			});
 
 		}
-
-
-		$("#example2").on("click",'.btnGenerar', function(){
-			idTable =  $(this).attr("id");
-			var arId = idTable.split('-');
-
-			$('#refasesores').val(arId[0]);
-			$('#meses').val(arId[1]);
-			$('#lgmNuevo').modal();
-		});//fin del boton eliminar
 
 		$("#example").on("click",'.btnEliminar', function(){
 			idTable =  $(this).attr("id");
@@ -604,7 +402,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						if (data == '') {
 							swal({
 									title: "Respuesta",
-									text: "Registro Creado con exito!!",
+									text: "Registro Modificado con exito!!",
 									type: "success",
 									timer: 1500,
 									showConfirmButton: false
@@ -613,7 +411,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 							$('#lgmNuevo').modal('hide');
 							$('#unidadnegocio').val('');
 							table.ajax.reload();
-							table2.ajax.reload();
 						} else {
 							swal({
 									title: "Respuesta",
@@ -673,7 +470,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 							$('#lgmModificar').modal('hide');
 							table.ajax.reload();
-							table2.ajax.reload();
 						} else {
 							swal({
 									title: "Respuesta",

@@ -849,8 +849,60 @@ switch ($accion) {
       eliminarConstancias($serviciosReferencias);
    break;
 
+   case 'insertarBonogestion':
+      insertarBonogestion($serviciosReferencias);
+   break;
+   case 'modificarBonogestion':
+      modificarBonogestion($serviciosReferencias);
+   break;
+   case 'eliminarBonogestion':
+      eliminarBonogestion($serviciosReferencias);
+   break;
+
 }
 /* FinFinFin */
+
+
+function insertarBonogestion($serviciosReferencias) {
+   $bonoseguros = $_POST['bonoseguros'];
+   $bonoafore = $_POST['bonoafore'];
+   $bonobanca = $_POST['bonobanca'];
+
+   $res = $serviciosReferencias->insertarBonogestion($bonoseguros,$bonoafore,$bonobanca);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarBonogestion($serviciosReferencias) {
+   $id = $_POST['id'];
+   $bonoseguros = $_POST['bonoseguros'];
+   $bonoafore = $_POST['bonoafore'];
+   $bonobanca = $_POST['bonobanca'];
+
+   $res = $serviciosReferencias->modificarBonogestion($id,$bonoseguros,$bonoafore,$bonobanca);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarBonogestion($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarBonogestion($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
 
 
 function insertarConstancias($serviciosReferencias) {
@@ -859,6 +911,8 @@ function insertarConstancias($serviciosReferencias) {
    $cumplio = $_POST['cumplio'];
    $fechacrea = date('Y-m-d H:i:s');
    $fechamodi = date('Y-m-d H:i:s');
+   $importe = ($_POST['importe'] == '' ? 0 : $_POST['importe']);
+   $tipo = $_POST['tipo'];
 
    $resAsesor = $serviciosReferencias->traerAsesoresPorId($refasesores);
 
@@ -867,7 +921,7 @@ function insertarConstancias($serviciosReferencias) {
    $existe = $serviciosReferencias->existeConstancia($refasesores,$meses,'',0);
 
    if ($existe == 0) {
-      $res = $serviciosReferencias->insertarConstancias($refasesores,$meses,$cumplio,$fechacrea,$fechamodi,$base);
+      $res = $serviciosReferencias->insertarConstancias($refasesores,$meses,$cumplio,$fechacrea,$fechamodi,$base,$importe,$tipo);
 
       if ((integer)$res > 0) {
          echo '';
@@ -888,6 +942,9 @@ function modificarConstancias($serviciosReferencias) {
 
    $fechamodi = date('Y-m-d H:i:s');
 
+   $importe = ($_POST['importe'] == '' ? 0 : $_POST['importe']);
+   $tipo = $_POST['tipo'];
+
    $resAsesor = $serviciosReferencias->traerAsesoresPorId($refasesores);
 
    $base = mysql_result($resAsesor,0,'fechaalta');
@@ -895,7 +952,7 @@ function modificarConstancias($serviciosReferencias) {
    $existe = $serviciosReferencias->existeConstancia($refasesores,$meses,'M',$id);
 
    if ($existe == 0) {
-      $res = $serviciosReferencias->modificarConstancias($id,$refasesores,$meses,$cumplio,$fechamodi,$base);
+      $res = $serviciosReferencias->modificarConstancias($id,$refasesores,$meses,$cumplio,$fechamodi,$base,$importe,$tipo);
 
       if ($res == true) {
          echo '';
@@ -3241,8 +3298,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
       case 'dbconstancias':
          $resultado = $serviciosReferencias->traerConstanciasPorId($id);
 
-         $lblCambio	 	= array('refasesores');
-         $lblreemplazo	= array('Asesor');
+         $lblCambio	 	= array('refasesores','tipo');
+         $lblreemplazo	= array('Asesor','Tipo de Bono');
 
          $modificar = "modificarConstancias";
          $idTabla = "idconstancia";
@@ -3269,8 +3326,15 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 
          }
 
-         $refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadMeses);
-         $refCampo 	=  array('refasesores','cumplio','meses');
+         if (mysql_result($resultado,0,'cumplio') == '1') {
+            $cadRef3 = "<option value='1' selected>A</option><option value='0'>B</option>";
+         } else {
+            $cadRef3 = "<option value='1'>A</option><option value='0' selected>B</option>";
+         }
+
+
+         $refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadMeses,3=>$cadRef3);
+         $refCampo 	=  array('refasesores','cumplio','meses','tipo');
       break;
       case 'dbcomisiones':
          $resultado = $serviciosReferencias->traerComisionesPorId($id);

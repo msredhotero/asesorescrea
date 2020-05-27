@@ -1207,7 +1207,9 @@ class Servicios {
 									(case when cumplio = 1 then 'Si' else 'No' end) as cumplio,
 									fechacrea,
 									fechamodi,
-									base
+									base,
+									(case when tipo = 1 then 'Si' else 'No' end) as tipo,
+									importe
 									from ".$tabla." where ".$lblid." = ".$id;
 				$resMod = $this->query($sqlMod,0);
 				break;
