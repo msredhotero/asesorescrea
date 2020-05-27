@@ -84,6 +84,12 @@ $calcPrimaNeta = $serviciosReferencias->calcularPrimasNetas();
 
 $calcComisionAgente = $serviciosReferencias->calcularComisionAgente();
 
+$calcPrimaNetaSguros = $serviciosReferencias->calcularPrimasNetasSeguros();
+
+$calcComisionAgenteBanca = $serviciosReferencias->calcularComisionAgenteBanca();
+
+$calcComisionAgenteAfore = $serviciosReferencias->calcularComisionAgenteAfore();
+
 //////////////// fin basico PN y CA   ////////////////////////////////////////////
 
 
@@ -227,7 +233,7 @@ $calcComisionAgente = $serviciosReferencias->calcularComisionAgente();
 						</div>
 						<div class="content">
 							<div class="text">SEGUROS <?php echo $calcBonoSeguros; ?> %</div>
-							<div class="number count-to" data-from="0" data-to=20 data-speed="1000" data-fresh-interval="20"><?php echo number_format(($calcPrimaNeta * $calcBonoSeguros / 100), 2, ',', '.'); ?></div>
+							<div class="number count-to" data-from="0" data-to=20 data-speed="1000" data-fresh-interval="20"><?php echo number_format(($calcPrimaNetaSguros * $calcBonoSeguros / 100), 2, ',', '.'); ?></div>
 						</div>
 					</div>
 				</div>
@@ -238,7 +244,7 @@ $calcComisionAgente = $serviciosReferencias->calcularComisionAgente();
 						</div>
 						<div class="content">
 							<div class="text">BANCA <?php echo $calcBonoBanca; ?> %</div>
-							<div class="number count-to" data-from="0" data-to=20 data-speed="1000" data-fresh-interval="20"><?php echo number_format(($calcComisionAgente * $calcBonoBanca / 100), 2, ',', '.'); ?></div>
+							<div class="number count-to" data-from="0" data-to=20 data-speed="1000" data-fresh-interval="20"><?php echo number_format(($calcComisionAgenteBanca * $calcBonoBanca / 100), 2, ',', '.'); ?></div>
 						</div>
 					</div>
 				</div>
@@ -249,7 +255,7 @@ $calcComisionAgente = $serviciosReferencias->calcularComisionAgente();
 						</div>
 						<div class="content">
 							<div class="text">AFORE <?php echo $calcBonoAfore; ?> %</div>
-							<div class="number count-to" data-from="0" data-to=20 data-speed="1000" data-fresh-interval="20"><?php echo number_format(($calcComisionAgente * $calcBonoAfore / 100), 2, ',', '.'); ?></div>
+							<div class="number count-to" data-from="0" data-to=20 data-speed="1000" data-fresh-interval="20"><?php echo number_format(($calcComisionAgenteAfore * $calcBonoAfore / 100), 2, ',', '.'); ?></div>
 						</div>
 					</div>
 				</div>

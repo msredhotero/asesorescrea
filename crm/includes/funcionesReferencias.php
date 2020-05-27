@@ -26,6 +26,36 @@ class ServiciosReferencias {
 		return mysql_result($res,0,0);
 	}
 
+	function calcularPrimasNetasSeguros() {
+		$sql = "select sum(c.primaneta) from dbcotizaciones c
+		inner join tbproductos p on p.idproducto = c.refproductos and p.reftipoproducto = 3
+		where c.refestadocotizaciones > 6";
+
+		$res = $this->query($sql,0);
+
+		return mysql_result($res,0,0);
+	}
+
+	function calcularComisionAgenteAfore() {
+		$sql = "select sum(c.importecomisionagente) from dbcotizaciones c
+		inner join tbproductos p on p.idproducto = c.refproductos and p.reftipoproducto = 1
+		where c.refestadocotizaciones > 6";
+
+		$res = $this->query($sql,0);
+
+		return mysql_result($res,0,0);
+	}
+
+	function calcularComisionAgenteBanca() {
+		$sql = "select sum(c.importecomisionagente) from dbcotizaciones c
+		inner join tbproductos p on p.idproducto = c.refproductos and p.reftipoproducto = 2
+		where c.refestadocotizaciones > 6";
+
+		$res = $this->query($sql,0);
+
+		return mysql_result($res,0,0);
+	}
+
 	/**** fin del calculo *********************************************************/
 
 	/* PARA Bonogestion */
