@@ -9,10 +9,6 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
-	/* PARA db
-	INSERT INTO `u115752684_asesores`.`predio_menu` (`url`, `icono`, `nombre`, `Orden`, `permiso`, `administracion`, `torneo`, `reportes`, `grupo`) VALUES ('../constancias/', 'trending_up', 'Constancias', '10', 'Administrador , AdministradordeReclutamiento', '1', '1', '1', '3');
-
-	*/
 
 	/* PARA Constancias */
 	function existeConstancia($refasesores,$meses,$accion,$id='') {
