@@ -34,7 +34,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 $resConstancias = $serviciosReferencias->calcularConstanciasAnticipadas();
 
 while ($row = mysql_fetch_array($resConstancias)) {
-	$existe = $baseHTML->existeNotificacion(5,$row['idasesor'],$row['meses'],'constancias/index.php');
+	$existe = $baseHTML->existeNotificacion(5,$row['idasesor'],$row['meses'],'constancias/modificar.php?id=');
 
 	$resAsesor = $serviciosReferencias->traerAsesoresPorId($row['idasesor']);
 
@@ -54,7 +54,7 @@ while ($row = mysql_fetch_array($resConstancias)) {
 
 	if ($existe == 0) {
 		$resSegui = $serviciosReferencias->insertarConstanciasseguimiento($id1,$id2,'',$fecha,$fecha,'',0,'','0','null');
-		
+
 		$resI = $baseHTML->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url.$resSegui);
 
 

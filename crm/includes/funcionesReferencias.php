@@ -76,6 +76,16 @@ class ServiciosReferencias {
 		return $res;
 	}
 
+	function habilitarConstanciasseguimiento($refconstancias) {
+		$sql = "update dbconstanciasseguimiento
+		set
+		refconstancias = NULL
+		where refconstancias =".$refconstancias;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 
 	function eliminarConstanciasseguimiento($id) {
 		$sql = "delete from dbconstanciasseguimiento where idconstanciaseguimiento =".$id;
@@ -112,8 +122,8 @@ class ServiciosReferencias {
 		(case when c.tipo = '1' then 'A'
 				when c.tipo = '0' then 'B' else 'No especifica' end) as tipo,
 		(case when c.informado = '1' then 'Si' else 'No' end) as informado,
-		c.fechacrea,
 		DATEDIFF(CURDATE(),c.fechacrea) as dias,
+		c.fechacrea,
 		c.base,
 		c.refconstancias
 		from dbconstanciasseguimiento c

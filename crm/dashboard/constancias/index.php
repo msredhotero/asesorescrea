@@ -215,6 +215,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Importe</th>
 												<th>Tipo</th>
 												<th>Informado</th>
+												<th>Dias Gestion</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -227,6 +228,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Importe</th>
 												<th>Tipo</th>
 												<th>Informado</th>
+												<th>Dias Gestion</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -650,6 +652,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						$('#lgmEliminar').modal('toggle');
 						table.ajax.reload();
 						table2.ajax.reload();
+						table3.ajax.reload();
 					} else {
 						swal({
 								title: "Respuesta",
@@ -747,6 +750,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 							$('#unidadnegocio').val('');
 							table.ajax.reload();
 							table2.ajax.reload();
+							table3.ajax.reload();
 						} else {
 							swal({
 									title: "Respuesta",
@@ -807,6 +811,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 							$('#lgmModificar').modal('hide');
 							table.ajax.reload();
 							table2.ajax.reload();
+							table3.ajax.reload();
 						} else {
 							swal({
 									title: "Respuesta",

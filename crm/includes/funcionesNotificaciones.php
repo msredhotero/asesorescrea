@@ -10,7 +10,7 @@ date_default_timezone_set('America/Mexico_City');
 class ServiciosNotificaciones {
 
    function existeNotificacion($idpagina, $id1, $id2, $url) {
-      $sql = "select * from dbnotificaciones where idpagina = ".$idpagina." and id1 = ".$id1." and id2= ".$id2." and url = '".$url."'";
+      $sql = "select * from dbnotificaciones where idpagina = ".$idpagina." and id1 = ".$id1." and id2= ".$id2." and url like '%".$url."%'";
 
       $res = $this->query($sql,0);
 

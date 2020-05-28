@@ -956,10 +956,12 @@ function modificarConstanciasseguimiento($serviciosReferencias, $serviciosMensaj
                echo 'Se modifico correctamente pero fallo al crear el bono';
             }
          } else {
+            /* se saca por ahora
             if ($informado == '1') {
                $gerentecomercial = $serviciosReferencias->traerGerenteDelAsesor($refasesores);
                $mensaje = $serviciosMensajes->msgBonoReclutamiento($refasesores, $cumplio,$meses, $gerentecomercial);
             }
+            */
 
             echo '';
          }
@@ -1082,6 +1084,7 @@ function eliminarConstancias($serviciosReferencias) {
    $res = $serviciosReferencias->eliminarConstancias($id);
 
    if ($res == true) {
+      $resCs = $serviciosReferencias->habilitarConstanciasseguimiento($id);
       echo '';
    } else {
       echo 'Hubo un error al eliminar datos';
