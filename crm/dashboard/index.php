@@ -50,10 +50,15 @@ while ($row = mysql_fetch_array($resConstancias)) {
 	$icono = 'ring_volume';
 	$estilo = 'bg-light-green';
 	$fecha = date('Y-m-d H:i:s');
-	$url = "constancias/index.php";
+	$url = "constancias/modificar.php?id=";
 
 	if ($existe == 0) {
-		$resI = $baseHTML->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url);
+		$resSegui = $serviciosReferencias->insertarConstanciasseguimiento($id1,$id2,'',$fecha,$fecha,'',0,'','0','null');
+		
+		$resI = $baseHTML->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url.$resSegui);
+
+
+		//die(var_dump($resSegui));
 	}
 }
 

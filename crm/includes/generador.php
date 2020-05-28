@@ -101,7 +101,8 @@ $tablasAr	= array('rolhogar' => 'tbrolhogar',
 							'comisiones' => 'dbcomisiones',
 							'tabla' => 'tbtabla',
 							'constancias' => 'dbconstancias',
-							'bonogestion' => 'tbbonogestion'
+							'bonogestion' => 'tbbonogestion',
+							'constanciasseguimiento' => 'dbconstanciasseguimiento'
 							);
 
 
@@ -173,7 +174,8 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'comisiones' => 'dbcomisiones',
 								'tabla' => 'tbtabla',
 								'constancias' => 'dbconstancias',
-								'bonogestion' => 'tbbonogestion'
+								'bonogestion' => 'tbbonogestion',
+								'constanciasseguimiento' => 'dbconstanciasseguimiento'
 							);
 
 	$tablasArAux	= array('rolhogar' => 1,
@@ -242,7 +244,8 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'comisiones' => 1,
 								'tabla' => 1,
 								'constancias' => 2,
-								'bonogestion' => 1
+								'bonogestion' => 1,
+								'constanciasseguimiento' => 2
 							);
 
 	$inner= '';

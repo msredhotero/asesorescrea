@@ -9,6 +9,157 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+	function traerGerenteDelAsesor($idasesor) {
+		$sql = "select
+			max(r.email) as gerentecomercial
+			from (
+				SELECT
+					usu.email
+				FROM
+					dbasesores a
+						INNER JOIN
+					dbreclutadorasores rrr ON rrr.refasesores = a.idasesor
+						INNER JOIN
+					dbusuarios usu ON usu.idusuario = rrr.refusuarios
+				WHERE
+					a.idasesor = ".$idasesor."
+				UNION ALL
+				SELECT
+					usu.email
+				FROM
+					dbasesores a
+						INNER JOIN
+					dbpostulantes p ON p.refusuarios = a.refusuarios
+						INNER JOIN
+					dbreclutadorasores rrr ON rrr.refpostulantes = p.idpostulante
+						INNER JOIN
+					dbusuarios usu ON usu.idusuario = rrr.refusuarios
+				WHERE
+					a.idasesor = ".$idasesor."
+				) r";
+		$res = $this->query($sql,0);
+
+		if (mysql_num_rows($res) > 0) {
+			return mysql_result($res,0,0);
+		}
+		return '';
+	}
+
+	/* PARA Constanciasseguimiento */
+
+	function insertarConstanciasseguimiento($refasesores,$meses,$cumplio,$fechacrea,$fechamodi,$base,$importe,$tipo,$informado,$refconstancias) {
+		$sql = "insert into dbconstanciasseguimiento(idconstanciaseguimiento,refasesores,meses,cumplio,fechacrea,fechamodi,base,importe,tipo,informado,refconstancias)
+		values ('',".$refasesores.",".$meses.",'".$cumplio."','".$fechacrea."','".$fechamodi."','".$base."',".$importe.",'".$tipo."','".$informado."',".$refconstancias.")";
+
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarConstanciasseguimiento($id,$refasesores,$meses,$cumplio,$fechacrea,$fechamodi,$base,$importe,$tipo,$informado,$refconstancias) {
+		$sql = "update dbconstanciasseguimiento
+		set
+		refasesores = ".$refasesores.",meses = ".$meses.",cumplio = '".$cumplio."',fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',base = '".$base."',importe = ".$importe.",tipo = '".$tipo."',informado = '".$informado."'
+		where idconstanciaseguimiento =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function modificarConstanciasseguimientoFinalizar($id,$refconstancias) {
+		$sql = "update dbconstanciasseguimiento
+		set
+		refconstancias = ".$refconstancias."
+		where idconstanciaseguimiento =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarConstanciasseguimiento($id) {
+		$sql = "delete from dbconstanciasseguimiento where idconstanciaseguimiento =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerConstanciasseguimientoajax($length, $start, $busqueda,$colSort,$colSortDir,$asesor) {
+
+		if ($asesor != '') {
+			$cadAsesor = " ase.idasesor = ".$asesor." and ";
+		} else {
+			$cadAsesor = '';
+		}
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and ".$cadAsesor." concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' )";
+		} else {
+			$where = " and ".$cadAsesor." 1=1 ";
+		}
+
+
+		$sql = "select
+		c.idconstanciaseguimiento,
+		concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
+		ase.fechaalta,
+		c.meses,
+		(case when c.cumplio = '1' then 'Si'
+				when c.cumplio = '0' then 'No' else 'No especifica' end) as cumplio,
+		c.importe,
+		(case when c.tipo = '1' then 'A'
+				when c.tipo = '0' then 'B' else 'No especifica' end) as tipo,
+		(case when c.informado = '1' then 'Si' else 'No' end) as informado,
+		c.fechacrea,
+		DATEDIFF(CURDATE(),c.fechacrea) as dias,
+		c.base,
+		c.refconstancias
+		from dbconstanciasseguimiento c
+		inner join dbasesores ase ON ase.idasesor = c.refasesores
+		where c.refconstancias is null ".$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+
+	function traerConstanciasseguimiento() {
+		$sql = "select
+		c.idconstanciaseguimiento,
+		c.refasesores,
+		c.meses,
+		c.cumplio,
+		c.fechacrea,
+		c.fechamodi,
+		c.base,
+		c.importe,
+		c.tipo,
+		c.informado,
+		c.refconstancias
+		from dbconstanciasseguimiento c
+		inner join dbasesores ase ON ase.idasesor = c.refasesores
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerConstanciasseguimientoPorId($id) {
+		$sql = "select idconstanciaseguimiento,refasesores,meses,cumplio,fechacrea,fechamodi,base,importe,tipo,informado,refconstancias from dbconstanciasseguimiento where idconstanciaseguimiento =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbconstanciasseguimiento*/
+
 	/***** para el calculo de las primas netas y de los bonos del reclutador ******/
 	function calcularPrimasNetas() {
 		$sql = "select sum(primaneta) from dbcotizaciones where refestadocotizaciones > 6";
@@ -182,9 +333,9 @@ class ServiciosReferencias {
 		c.idconstancia,
 		concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
 		c.meses,
-		(case when c.cumplio = 1 then 'Si' else 'No' end) as cumplio,
+		(case when c.cumplio = '1' then 'Si' else 'No' end) as cumplio,
 		c.importe,
-		(case when c.tipo = 1 then 'A' else 'B' end) as tipo,
+		(case when c.cumplio = '0' then '-' else (case when c.tipo = '1' then 'Bajo' else 'Alto' end) end) as tipo,
 		c.fechacrea,
 		c.fechamodi,
 		c.base,

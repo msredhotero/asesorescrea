@@ -47,35 +47,68 @@ $eliminar = "eliminarConstancias";
 
 $insertar = "insertarConstancias";
 
-$modificar = "modificarConstancias";
+$modificar = "modificarConstanciasseguimiento";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
+$id = $_GET['id'];
+
+$resultado = $serviciosReferencias->traerConstanciasseguimientoPorId($id);
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbconstancias";
+$tabla 			= "dbconstanciasseguimiento";
 
 $lblCambio	 	= array('refasesores','tipo');
 $lblreemplazo	= array('Asesor','Tipo de Bono');
 
 $resVar = $serviciosReferencias->traerAsesores();
-$cadRef = $serviciosFunciones->devolverSelectBox($resVar,array(3,4,2),' ');
+$cadRef = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(3,4,2),' ',mysql_result($resultado,0,'refasesores'));
 
-$cadRef2 = "<option value='1'>Si</option><option value='0'>No</option>";
+if (mysql_result($resultado,0,'cumplio') == '1') {
+	$cadRef2 = "<option value='1' selected>Si</option><option value='0'>No</option><option value=''>No Especifico</option>";
+} else {
+	if (mysql_result($resultado,0,'cumplio') == '0') {
+		$cadRef2 = "<option value='1'>Si</option><option value='0' selected>No</option><option value=''>No Especifico</option>";
+	} else {
+		$cadRef2 = "<option value='1'>Si</option><option value='0'>No</option><option value='' selected>No Especifico</option>";
+	}
+
+}
+
 
 $arMeses = array(6,9,12,18,21,24);
 
 $cadMeses = '';
 foreach ($arMeses as $valor) {
-	$cadMeses .= "<option value='".$valor."'>".$valor."</option>";
+	if (mysql_result($resultado,0,'meses') == $valor) {
+		$cadMeses .= "<option value='".$valor."' selected>".$valor."</option>";
+	} else {
+		$cadMeses .= "<option value='".$valor."'>".$valor."</option>";
+	}
+
 }
 
-$cadRef3 = "<option value='1'>Bajo</option><option value='0'>Alto</option>";
+if (mysql_result($resultado,0,'tipo') == '1') {
+	$cadRef3 = "<option value='1' selected>Bajo</option><option value='0'>Alto</option><option value=''>No Especifico</option>";
+} else {
+	if (mysql_result($resultado,0,'tipo') == '0') {
+		$cadRef3 = "<option value='1'>Bajo</option><option value='0' selected>Alto</option><option value=''>No Especifico</option>";
+	} else {
+		$cadRef3 = "<option value='1'>Bajo</option><option value='0'>Alto</option><option value='' selected>No Especifico</option>";
+	}
 
-$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadMeses,3=>$cadRef3);
-$refCampo 	=  array('refasesores','cumplio','meses','tipo');
+}
 
-$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+if (mysql_result($resultado,0,'informado') == '1') {
+	$cadRef4 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+} else {
+	$cadRef4 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+}
+
+$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadMeses,3=>$cadRef3,4=>$cadRef4);
+$refCampo 	=  array('refasesores','cumplio','meses','tipo','informado');
+
+$frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($id, 'idconstanciaseguimiento',$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 ?>
@@ -164,28 +197,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		<div class="row clearfix">
 
 			<div class="row">
-				<div class="col-lg-12 col-md-12">
-					<div class="button-demo">
-						<button type="button" class="btn bg-warning waves-effect btnSeguimiento">
-							<i class="material-icons">swap_horiz</i>
-							<span>SEGUIMIENTO</span>
-						</button>
-						<button type="button" class="btn bg-success waves-effect btnGenerado">
-							<i class="material-icons">timeline</i>
-							<span>GENERADOS</span>
-						</button>
-						<button type="button" class="btn bg-blue waves-effect btnHistorico">
-							<i class="material-icons">history</i>
-							<span>HISTORICO</span>
-						</button>
 
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 contSeguimiento">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
 						<div class="header bg-warning">
 							<h2>
@@ -203,140 +216,23 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 							</ul>
 						</div>
 						<div class="body table-responsive">
-							<form class="form" id="formCountry">
+							<form class="formulario frmNuevo" role="form" id="sign_in">
+
 								<div class="row" style="padding: 5px 20px;">
-									<table id="example3" class="display table " style="width:100%">
-										<thead>
-											<tr>
-												<th>Asesores</th>
-												<th>Fecha Alta</th>
-												<th>Meses</th>
-												<th>Cumplio</th>
-												<th>Importe</th>
-												<th>Tipo</th>
-												<th>Informado</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tfoot>
-											<tr>
-												<th>Asesores</th>
-												<th>Fecha Alta</th>
-												<th>Meses</th>
-												<th>Cumplio</th>
-												<th>Importe</th>
-												<th>Tipo</th>
-												<th>Informado</th>
-												<th>Acciones</th>
-											</tr>
-										</tfoot>
-									</table>
+									<?php echo $frmUnidadNegocios; ?>
 								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 contGenerado">
-					<div class="card ">
-						<div class="header bg-success">
-							<h2>
-								BONO DE RECLUTAMIENTO (A GENERAR)
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-									<ul class="dropdown-menu pull-right">
-
-									</ul>
-								</li>
-							</ul>
-						</div>
-						<div class="body table-responsive">
-							<form class="form" id="formCountry">
-								<div class="row" style="padding: 5px 20px;">
-									<table id="example2" class="display table " style="width:100%">
-										<thead>
-											<tr>
-												<th>Asesores</th>
-												<th>Fecha Alta</th>
-												<th>Meses</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tfoot>
-											<tr>
-												<th>Asesores</th>
-												<th>Fecha Alta</th>
-												<th>Meses</th>
-												<th>Acciones</th>
-											</tr>
-										</tfoot>
-									</table>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 contHistorico">
-					<div class="card ">
-						<div class="header bg-blue">
-							<h2>
-								BONO DE RECLUTAMIENTO HISTORICO
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-									<ul class="dropdown-menu pull-right">
-
-									</ul>
-								</li>
-							</ul>
-						</div>
-						<div class="body table-responsive">
-							<form class="form" id="formCountry">
-
 								<div class="row">
-									<div class="col-lg-12 col-md-12">
-										<div class="button-demo">
-											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
-												<i class="material-icons">add</i>
-												<span>NUEVO</span>
-											</button>
-
-										</div>
+									<div class="alert alert-info">
+										<p>Recuerde que si el bono no cumple o e tipo de Bono es BAJO, se le enviara un email al Agente y al Gerente Comercial responsable</p>
 									</div>
-								</div>
+									<div class="modal-footer">
+										<?php if (mysql_result($resultado,0,'refconstancias') == null) { ?>
+										<button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
+										<button type="button" class="btn btn-success waves-effect btnAplicar">APLICAR</button>
+										<?php } ?>
+										<button type="button" class="btn btn-default waves-effect btnVolver">VOLVER</button>
+									</div>
 
-								<div class="row" style="padding: 5px 20px;">
-
-									<table id="example" class="display table " style="width:100%">
-										<thead>
-											<tr>
-												<th class="perfilS">Asesores</th>
-												<th>Meses</th>
-												<th>Cumple</th>
-												<th>Importe</th>
-												<th>Tipo Bono</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tfoot>
-											<tr>
-												<th>Asesores</th>
-												<th>Meses</th>
-												<th>Cumple</th>
-												<th>Importe</th>
-												<th>Tipo Bono</th>
-												<th>Acciones</th>
-											</tr>
-										</tfoot>
-									</table>
 								</div>
 							</form>
 						</div>
@@ -348,76 +244,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 </section>
 
 
-<!-- NUEVO -->
-	<form class="formulario frmNuevo" role="form" id="sign_in">
-	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
-	       <div class="modal-dialog modal-lg" role="document">
-	           <div class="modal-content">
-	               <div class="modal-header">
-	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular); ?></h4>
-	               </div>
-	               <div class="modal-body">
-							<div class="row">
-								<?php echo $frmUnidadNegocios; ?>
-							</div>
-
-	               </div>
-	               <div class="modal-footer">
-	                   <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
-	                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-	               </div>
-	           </div>
-	       </div>
-	   </div>
-		<input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
-	</form>
-
-	<!-- MODIFICAR -->
-		<form class="formulario frmModificar" role="form" id="sign_in">
-		   <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
-		       <div class="modal-dialog modal-lg" role="document">
-		           <div class="modal-content">
-		               <div class="modal-header">
-		                   <h4 class="modal-title" id="largeModalLabel">MODIFICAR <?php echo strtoupper($singular); ?></h4>
-		               </div>
-		               <div class="modal-body">
-								<div class="row frmAjaxModificar">
-
-								</div>
-		               </div>
-		               <div class="modal-footer">
-		                   <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
-		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-		               </div>
-		           </div>
-		       </div>
-		   </div>
-			<input type="hidden" id="accion" name="accion" value="<?php echo $modificar; ?>"/>
-		</form>
-
-
-	<!-- ELIMINAR -->
-		<form class="formulario" role="form" id="sign_in">
-		   <div class="modal fade" id="lgmEliminar" tabindex="-1" role="dialog">
-		       <div class="modal-dialog modal-lg" role="document">
-		           <div class="modal-content">
-		               <div class="modal-header">
-		                   <h4 class="modal-title" id="largeModalLabel">ELIMINAR <?php echo strtoupper($singular); ?></h4>
-		               </div>
-		               <div class="modal-body">
-										 <p>¿Esta seguro que desea eliminar el registro?</p>
-										 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
-		               </div>
-		               <div class="modal-footer">
-		                   <button type="button" class="btn btn-danger waves-effect eliminar">ELIMINAR</button>
-		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-		               </div>
-		           </div>
-		       </div>
-		   </div>
-			<input type="hidden" id="accion" name="accion" value="<?php echo $eliminar; ?>"/>
-			<input type="hidden" name="ideliminar" id="ideliminar" value="0">
-		</form>
 
 
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
@@ -440,28 +266,11 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 <script>
 	$(document).ready(function(){
 
-		$('.contHistorico').hide();
-		$('.contGenerado').hide();
-
-		$('.btnGenerado').click(function() {
-			$('.contHistorico').hide();
-			$('.contGenerado').show();
-			$('.contSeguimiento').hide();
-		});
-
-		$('.btnHistorico').click(function() {
-			$('.contHistorico').show();
-			$('.contGenerado').hide();
-			$('.contSeguimiento').hide();
-		});
-
-		$('.btnSeguimiento').click(function() {
-			$('.contHistorico').hide();
-			$('.contGenerado').hide();
-			$('.contSeguimiento').show();
-		});
 
 		$('.frmContbase').hide();
+		$('.frmContfechacrea').hide();
+		$('.frmContfechamodi').hide();
+		$('.frmContrefconstancias').hide();
 
 
 		$('.maximizar').click(function() {
@@ -475,6 +284,11 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 				$('.icomarcos').html('web');
 			}
 
+		});
+
+		$('.btnVolver').click(function() {
+			url = "index.php";
+			$(location).attr('href',url);
 		});
 
 
@@ -592,6 +406,50 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			e.preventDefault();
 		});
 
+		$('.btnAplicar').click(function() {
+			modificarConstanciasseguimientoFinalizar();
+		});
+
+		function modificarConstanciasseguimientoFinalizar() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificarConstanciasseguimientoFinalizar',
+					id: <?php echo $id; ?>},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.nuevo').hide();
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data == '') {
+						swal({
+								title: "Respuesta",
+								text: "Registro aplicado con exito!!",
+								type: "success",
+								timer: 1500,
+								showConfirmButton: false
+						});
+
+						$('.nuevo').hide();
+						$('.btnAplicar').hide();
+					} else {
+						swal("Error!", data, "warning");
+
+						$('.nuevo').show();
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
 
 		function frmAjaxModificar(id) {
 			$.ajax({
@@ -703,12 +561,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		});//fin del boton modificar
 
 
-		$("#example3").on("click",'.btnVer', function(){
-			idTable =  $(this).attr("id");
-			$(location).attr('href', 'modificar.php?id=' + idTable);
-		});//fin del boton modificar
-
-
 		$('.frmNuevo').submit(function(e){
 
 			e.preventDefault();
@@ -734,10 +586,11 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 					//una vez finalizado correctamente
 					success: function(data){
 
+
 						if (data == '') {
 							swal({
 									title: "Respuesta",
-									text: "Registro Creado con exito!!",
+									text: "Registro guardado con exito!!",
 									type: "success",
 									timer: 1500,
 									showConfirmButton: false
@@ -748,13 +601,27 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 							table.ajax.reload();
 							table2.ajax.reload();
 						} else {
-							swal({
-									title: "Respuesta",
-									text: data,
-									type: "error",
-									timer: 2500,
-									showConfirmButton: false
-							});
+							if (data == '1') {
+								swal({
+										title: "Respuesta",
+										text: "Registro guardado con exito!!. Y se genero el registro en el historico del bono",
+										type: "success",
+										timer: 1500,
+										showConfirmButton: false
+								});
+								$('.nuevo').hide();
+								$('.btnAplicar').hide();
+
+							} else {
+								swal({
+										title: "Respuesta",
+										text: data,
+										type: "error",
+										timer: 2500,
+										showConfirmButton: false
+								});
+							}
+
 
 
 						}

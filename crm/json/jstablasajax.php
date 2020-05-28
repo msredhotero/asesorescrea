@@ -68,6 +68,29 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 
 switch ($tabla) {
 
+	case 'constanciasseguimiento':
+
+		$asesor = $_GET['sSearch_0'];
+
+		$datos = $serviciosReferencias->traerConstanciasseguimientoajax($length, $start, $busqueda,$colSort,$colSortDir,$asesor);
+
+		//die(var_dump($datos));
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+
+		$label = array('btnVer');
+		$class = array('bg-yellow');
+		$icon = array('report_problem');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 7;
+
+	break;
+
 	case 'constanciasactuales':
 
 		$datos = $serviciosReferencias->traerCalcularConstanciasajax($length, $start, $busqueda,$colSort,$colSortDir);

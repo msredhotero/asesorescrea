@@ -302,7 +302,7 @@ class ServiciosMensajes {
 
 		$resCantidad = $this->cantidadAsesores();
 
-		$resDetalle = $this->traerAsesoresPorGerente();
+		$resDetalle = $this->traerAsesoresPorGerente(mysql_result($resAsesor,0,'refusuarios'));
 
 		if (mysql_num_rows($resCantidad) > 0) {
 			$cantidadAsesores = mysql_result($resCantidad,0,0);
@@ -333,6 +333,34 @@ class ServiciosMensajes {
 
       return '';
 
+	}
+
+	function msgBonoReclutamiento($idasesor, $cumplio,$mes, $gerentecomercial) {
+		$resAsesor = $this->traerAsesoresPorId($idasesor);
+
+		$email = mysql_result($resAsesor,0,'email');
+
+		$cuerpo = '';
+		$cuerpo .= '<h4>Bono Reclutamiento Asesor: '.mysql_result($resAsesor,0,'apellidopaterno').' '.mysql_result($resAsesor,0,'apellidomaterno').' '.mysql_result($resAsesor,0,'nombre').'</h4>';
+
+		if ($cumplio == '0') {
+			$cuerpo .= '<h5>El bono de reclutamiento del mes '.$mes.' no cumplio con los puntos necesarios para aplicarse</h5>';
+		} else {
+			$cuerpo .= '<h5>El bono de reclutamiento del mes '.$mes.' cumplio con los puntos necesarios para aplicarse para el bono mas bajo, queda tiempo para completar el bono Alto</h5>';
+		}
+
+		//$destinatario = 'msredhotero@msn.com, msredhotero@gmail.com';
+		if ($gerentecomercial == '') {
+			$destinatario = $email;
+		} else {
+			$destinatario = $email.', '.$gerentecomercial;
+		}
+
+		$asunto = 'Seguimiento del Bono de Reclutamiento';
+
+      $resEmail = $this->enviarEmail($destinatario,$asunto,$cuerpo);
+
+      return '';
 	}
 
 

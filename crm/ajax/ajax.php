@@ -859,8 +859,120 @@ switch ($accion) {
       eliminarBonogestion($serviciosReferencias);
    break;
 
+   case 'insertarConstanciasseguimiento':
+      insertarConstanciasseguimiento($serviciosReferencias);
+   break;
+   case 'modificarConstanciasseguimiento':
+      modificarConstanciasseguimiento($serviciosReferencias,$serviciosMensajes);
+   break;
+   case 'eliminarConstanciasseguimiento':
+      eliminarConstanciasseguimiento($serviciosReferencias);
+   break;
+   case 'modificarConstanciasseguimientoFinalizar':
+      modificarConstanciasseguimientoFinalizar($serviciosReferencias);
+   break;
+
 }
 /* FinFinFin */
+
+function modificarConstanciasseguimientoFinalizar($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->traerConstanciasseguimientoPorId($id);
+
+   $resASesores = $serviciosReferencias->traerAsesoresPorId(mysql_result($res,0,'refasesores'));
+
+   if ((mysql_result($res,0,'informado') == '1') && (mysql_result($res,0,'cumplio') != '')) {
+      $resC = $serviciosReferencias->insertarConstancias(mysql_result($res,0,'refasesores'),mysql_result($res,0,'meses'),mysql_result($res,0,'cumplio'),date('Y-m-d H-i-s'),date('Y-m-d H-i-s'),mysql_result($resASesores,0,'fechaalta'),mysql_result($res,0,'importe'),mysql_result($res,0,'tipo'));
+
+      if ((integer)$resC > 0) {
+         $resM = $serviciosReferencias->modificarConstanciasseguimientoFinalizar($id,$resC);
+         echo '';
+      } else {
+         echo 'Hubo un error al insertar datos';
+      }
+   } else {
+      echo 'Faltan cargar datos para poder generar el bono';
+   }
+}
+
+
+function insertarConstanciasseguimiento($serviciosReferencias) {
+   $refasesores = $_POST['refasesores'];
+   $meses = $_POST['meses'];
+   $cumplio = $_POST['cumplio'];
+   $fechacrea = $_POST['fechacrea'];
+   $fechamodi = $_POST['fechamodi'];
+   $base = $_POST['base'];
+   $importe = ($_POST['importe'] == '' ? 0 : $_POST['importe']);
+   $tipo = $_POST['tipo'];
+   $informado = $_POST['informado'];
+   $refconstancias = $_POST['refconstancias'];
+
+   $res = $serviciosReferencias->insertarConstanciasseguimiento($refasesores,$meses,$cumplio,$fechacrea,$fechamodi,$base,$importe,$tipo,$informado,$refconstancias);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarConstanciasseguimiento($serviciosReferencias, $serviciosMensajes) {
+   $id = $_POST['id'];
+   $refasesores = $_POST['refasesores'];
+   $meses = $_POST['meses'];
+   $cumplio = $_POST['cumplio'];
+   $fechacrea = $_POST['fechacrea'];
+   $fechamodi = $_POST['fechamodi'];
+   $base = $_POST['base'];
+   $importe = ($_POST['importe'] == '' ? 0 : $_POST['importe']);
+   $tipo = $_POST['tipo'];
+   $informado = $_POST['informado'];
+   $refconstancias = $_POST['refconstancias'];
+
+   $error = '';
+
+   if ($informado == '1') {
+      if ($cumplio == '') {
+         $error = 'Debe elegir si CUMPLIO o no ';
+      }
+      if (($cumplio == '1') && ($tipo == '')) {
+         $error .= '- Debe elegir el Tipo de Bono ';
+      }
+   }
+
+   if ($error == '') {
+      $res = $serviciosReferencias->modificarConstanciasseguimiento($id,$refasesores,$meses,$cumplio,$fechacrea,$fechamodi,$base,$importe,$tipo,$informado,$refconstancias);
+
+      if ($res == true) {
+
+         if (($informado == '1') && ($cumplio == '1') && ($tipo == '0')) {
+            $resC = $serviciosReferencias->insertarConstancias($refasesores,$meses,$cumplio,date('Y-m-d H-i-s'),date('Y-m-d H-i-s'),$base,$importe,$tipo);
+            if ((integer)$resC > 0) {
+               $resM = $serviciosReferencias->modificarConstanciasseguimientoFinalizar($id,$resC);
+               echo '1';
+            } else {
+               echo 'Se modifico correctamente pero fallo al crear el bono';
+            }
+         } else {
+            if ($informado == '1') {
+               $gerentecomercial = $serviciosReferencias->traerGerenteDelAsesor($refasesores);
+               $mensaje = $serviciosMensajes->msgBonoReclutamiento($refasesores, $cumplio,$meses, $gerentecomercial);
+            }
+
+            echo '';
+         }
+
+
+      } else {
+         echo 'Hubo un error al modificar datos';
+      }
+   } else {
+      echo $error;
+   }
+}
+
 
 
 function insertarBonogestion($serviciosReferencias) {
@@ -3327,9 +3439,9 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          }
 
          if (mysql_result($resultado,0,'cumplio') == '1') {
-            $cadRef3 = "<option value='1' selected>A</option><option value='0'>B</option>";
+         	$cadRef3 = "<option value='1' selected>Bajo</option><option value='0'>Alto</option>";
          } else {
-            $cadRef3 = "<option value='1'>A</option><option value='0' selected>B</option>";
+         	$cadRef3 = "<option value='1'>Bajo</option><option value='0' selected>Alto</option>";
          }
 
 
