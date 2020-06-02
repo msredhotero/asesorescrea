@@ -4404,7 +4404,9 @@ class ServiciosReferencias {
 		from dbasociados a
 		inner join dbusuarios usu ON usu.idusuario = a.refusuarios
 		inner join tbbancos ban ON ban.idbanco = a.refbancos
-		order by 1";
+		order by a.apellidopaterno,
+		a.apellidomaterno,
+		a.nombre";
 		$res = $this->query($sql,0);
 		return $res;
 	}

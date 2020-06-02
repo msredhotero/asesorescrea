@@ -84,7 +84,7 @@ $cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
 if ($_SESSION['idroll_sahilices'] != 7) {
 	$resVar4	= $serviciosReferencias->traerAsociados();
 	$cadRef4 = '<option value="0">-- Seleccionar --</option>';
-	$cadRef4 .= $serviciosFunciones->devolverSelectBox($resVar4,array(4,2,3),' ');
+	$cadRef4 .= $serviciosFunciones->devolverSelectBox($resVar4,array(2,3,4),' ');
 } else {
 	$cadRef4 = '<option value="0">-- Sin valor --</option>';
 }
@@ -92,14 +92,14 @@ if ($_SESSION['idroll_sahilices'] != 7) {
 if ($_SESSION['idroll_sahilices'] == 7) {
 	$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
 	if (mysql_num_rows($resVar5)>0) {
-		$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(4,2,3),' ');
+		$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(3,4,2),' ');
 	} else {
 		header('Location: ../index.php');
 	}
 
 } else {
 	$resVar5	= $serviciosReferencias->traerAsesores();
-	$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(4,2,3),' ');
+	$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(3,4,2),' ');
 }
 
 
@@ -765,7 +765,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 	        },
 	        onFinishing: function (event, currentIndex) {
 	            form.validate().settings.ignore = ':disabled';
-					
+
 	            return form.valid();
 	        },
 	        onFinished: function (event, currentIndex) {
