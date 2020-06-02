@@ -136,7 +136,7 @@ $cadRef1 	= $serviciosFunciones->devolverSelectBox($resUsuario,array(1),'');
 $resVar2	= $serviciosReferencias->traerClientesPorId(mysql_result($resultado,0,'refclientes'));
 $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(3,4,2),' ',mysql_result($resultado,0,'refclientes'));
 
-$idclienteinbursa = mysql_result($resultado,0,'idclienteinbursa');
+$idclienteinbursa = mysql_result($resVar2,0,'idclienteinbursa');
 
 $resVar3	= $serviciosReferencias->traerProductos();
 $cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resVar3,array(1),'',mysql_result($resultado,0,'refproductos'));
@@ -531,6 +531,8 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('.frmContrecibopago').show();
 		$('.frmContfechaemitido').show();
 		$('.frmContnropoliza').show();
+
+		$("#idclienteinbursa").prop('required',true);
 
 
 		<?php if ($prima == '1') { ?>
