@@ -2495,7 +2495,7 @@ class ServiciosReferencias {
 								p.idasesor
 						FROM
 							(SELECT
-							MAX(c.fechapago) AS ultimafecha, a.idasesor
+							MAX(c.fechaemitido) AS ultimafecha, a.idasesor
 						FROM
 							dbcotizaciones c
 						INNER JOIN dbasesores a ON c.refasesores = a.idasesor
@@ -2559,7 +2559,7 @@ class ServiciosReferencias {
 				from	(
 				    select
 						count(*) as cantidad,
-						month(c.fechapago) as mes
+						month(c.fechaemitido) as mes
 					from		dbcotizaciones c
 					inner
 					join		dbasesores a
@@ -2569,7 +2569,7 @@ class ServiciosReferencias {
 					on			aso.idasociado = c.refasociados
 
 					where		c.refestadocotizaciones>=6
-					group by    month(c.fechapago)
+					group by    month(c.fechaemitido)
 				    ) r
 				    right
 				    join 		tbmeses m
