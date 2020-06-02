@@ -8585,7 +8585,8 @@ class ServiciosReferencias {
 			a.razonsocial
 			from dbasesores a
 			inner join dbusuarios u ON u.idusuario = a.refusuarios
-			order by 1";
+			order by a.apellidopaterno,
+			a.apellidomaterno,a.nombre";
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -8617,7 +8618,8 @@ class ServiciosReferencias {
 			from dbasesores a
 			inner join dbusuarios u ON u.idusuario = a.refusuarios
 			where u.idusuario = ".$idusuario."
-			order by 1";
+			order by a.apellidopaterno,
+			a.apellidomaterno,a.nombre";
 		$res = $this->query($sql,0);
 		return $res;
 	}
