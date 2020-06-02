@@ -284,10 +284,12 @@ $formulario22 = $serviciosFunciones->camposTablaModificar($id, $idTabla22,$modif
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
+											<?php if ($stockMeses > 0) { ?>
 											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
 												<i class="material-icons">add</i>
 												<span>NUEVO</span>
 											</button>
+										<?php } ?>
 											<button type="button" class="btn bg-deep-orange waves-effect">
 												<i class="material-icons">build</i>
 												<span>FALTAN CARGAR <?php echo $stockMeses; ?></span>
