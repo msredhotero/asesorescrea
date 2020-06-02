@@ -864,6 +864,10 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			guardarCotizacion(3);
  		});
 
+		$('.btnRechazar').click(function() {
+			guardarCotizacion(4);
+		});
+
 
 		 $('#fecharenovacion').pickadate({
  			format: 'yyyy-mm-dd',
