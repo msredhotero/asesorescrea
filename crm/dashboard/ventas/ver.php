@@ -195,6 +195,10 @@ $formulario = $serviciosFunciones->camposTablaModificar($id, $idTabla,$modificar
 								</div>
 								<div class="row">
 									<div class="button-demo">
+										<button type="button" class="btn btn-primary waves-effect btnVolver">
+											<i class="material-icons">arrow_back</i>
+											<span>VOLVER</span>
+										</button>
 										<?php if (array_search($_SESSION['idroll_sahilices'], $arRoles) >= 0) { ?>
 											<button type="button" class="btn bg-black waves-effect btnCalcularM">CALCULAR $</button>
 											<button type="button" class="btn bg-black waves-effect btnCalcularP">CALCULAR %</button>
@@ -276,6 +280,11 @@ $formulario = $serviciosFunciones->camposTablaModificar($id, $idTabla,$modificar
 
 <script>
 	$(document).ready(function(){
+
+		$('.btnVolver').click(function() {
+			url = "index.php";
+			$(location).attr('href',url);
+		});
 
 
 
