@@ -872,8 +872,214 @@ switch ($accion) {
       modificarConstanciasseguimientoFinalizar($serviciosReferencias);
    break;
 
+   case 'traerClientescarteraPorCliente':
+      traerClientescarteraPorCliente($serviciosReferencias);
+   break;
+   case 'traerProductosPorTipo':
+      traerProductosPorTipo($serviciosReferencias,$serviciosFunciones);
+   break;
+
+   case 'modificarVentas':
+      modificarVentas($serviciosReferencias);
+   break;
+   case 'eliminarVentas':
+      eliminarVentas($serviciosReferencias);
+   break;
+
+   case 'insertarPeriodicidadventas':
+      insertarPeriodicidadventas($serviciosReferencias);
+   break;
+   case 'modificarPeriodicidadventas':
+      modificarPeriodicidadventas($serviciosReferencias);
+   break;
+   case 'eliminarPeriodicidadventas':
+      eliminarPeriodicidadventas($serviciosReferencias);
+   break;
+
+   case 'insertarPeriodicidadventasdetalle':
+      insertarPeriodicidadventasdetalle($serviciosReferencias);
+   break;
+   case 'modificarPeriodicidadventasdetalle':
+      modificarPeriodicidadventasdetalle($serviciosReferencias);
+   break;
+   case 'eliminarPeriodicidadventasdetalle':
+      eliminarPeriodicidadventasdetalle($serviciosReferencias);
+   break;
+
 }
 /* FinFinFin */
+
+
+function insertarPeriodicidadventasdetalle($serviciosReferencias) {
+   session_start();
+
+   $refperiodicidadventas = $_POST['refperiodicidadventas'];
+   $montototal = $_POST['montototal'];
+   $primaneta = $_POST['primaneta'];
+   $porcentajecomision = $_POST['porcentajecomision'];
+   $montocomision = $_POST['montocomision'];
+   $fechapago = $_POST['fechapago'];
+   $fechavencimiento = $_POST['fechavencimiento'];
+   $refestadopago = $_POST['refestadopago'];
+   $usuariocrea = $_SESSION['usua_sahilices'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+   $fechacrea = date('Y-m-d H:i:s');
+   $fechamodi = date('Y-m-d H:i:s');
+
+   $res = $serviciosReferencias->insertarPeriodicidadventasdetalle($refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+
+function modificarPeriodicidadventasdetalle($serviciosReferencias) {
+   session_start();
+
+   $id = $_POST['id'];
+   $refperiodicidadventas = $_POST['refperiodicidadventas'];
+   $montototal = $_POST['montototal'];
+   $primaneta = $_POST['primaneta'];
+   $porcentajecomision = $_POST['porcentajecomision'];
+   $montocomision = $_POST['montocomision'];
+   $fechapago = $_POST['fechapago'];
+   $fechavencimiento = $_POST['fechavencimiento'];
+   $refestadopago = $_POST['refestadopago'];
+
+   $usuariomodi = $_SESSION['usua_sahilices'];
+
+   $fechamodi = date('Y-m-d H:i:s');
+
+   $res = $serviciosReferencias->modificarPeriodicidadventasdetalle($id,$refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariomodi,$fechamodi);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarPeriodicidadventasdetalle($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarPeriodicidadventasdetalle($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
+
+function insertarPeriodicidadventas($serviciosReferencias) {
+   $refventas = $_POST['refventas'];
+   $reftipoperiodicidad = $_POST['reftipoperiodicidad'];
+   $reftipocobranza = $_POST['reftipocobranza'];
+
+   $res = $serviciosReferencias->insertarPeriodicidadventas($refventas,$reftipoperiodicidad,$reftipocobranza);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+
+function modificarVentas($serviciosReferencias) {
+   session_start();
+
+   $id = $_POST['id'];
+   $refcotizaciones = $_POST['refcotizaciones'];
+   $refestadoventa = $_POST['refestadoventa'];
+   $primaneta = ($_POST['primaneta'] == '' ? 0 : $_POST['primaneta']);
+   $primatotal = ($_POST['primatotal'] == '' ? 0 : $_POST['primatotal']);
+   $porcentajecomision = ($_POST['porcentajecomision'] == '' ? 0 : $_POST['porcentajecomision']);
+   $montocomision = ($_POST['montocomision'] == '' ? 0 : $_POST['montocomision']);
+   $fechavencimientopoliza = $_POST['fechavencimientopoliza'];
+   $nropoliza = $_POST['nropoliza'];
+
+   $fechamodi = date('Y-m-d H:i:s');
+
+   $usuariomodi = $_SESSION['usua_sahilices'];
+
+   $error = '';
+
+   if ($primatotal < $primaneta) {
+      $error = ' La prima total no puede ser menor que la neta ';
+   }
+
+   if ($primatotal == 0 || $primaneta == 0) {
+      $error .= '- La prima total o la neta no pueden ser igual a cero ';
+   }
+
+   if ($error == '') {
+      $res = $serviciosReferencias->modificarVentas($id,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$porcentajecomision,$montocomision,$fechavencimientopoliza,$nropoliza,$fechamodi,$usuariomodi);
+
+      if ($res == true) {
+         echo '';
+      } else {
+         echo 'Hubo un error al modificar datos';
+      }
+   } else {
+      echo $error;
+   }
+
+}
+
+function eliminarVentas($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarVentas($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
+function traerProductosPorTipo($serviciosReferencias, $serviciosFunciones) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->traerProductosPorTipo($id);
+   $cad = $serviciosFunciones->devolverSelectBox($res,array(1),'');
+
+   echo $cad;
+
+}
+
+function traerClientescarteraPorCliente($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->traerClientescarteraPorCliente($id);
+
+   $cad = '';
+   $bg = '';
+   while ($row = mysql_fetch_array($res)) {
+      if ($row['activo'] == '1') {
+         switch ($row['reftipoproducto']) {
+            case 1:
+               $bg = 'teal';
+            break;
+            case 2:
+               $bg = 'brown';
+            break;
+            case 3:
+               $bg = 'indigo';
+            break;
+         }
+         $cad .= '<li class="list-group-item">'.$row['producto'].' <span class="badge bg-'.$bg.'">'.$row['tipoproducto'].'</span></li>';
+      }
+
+   }
+
+   echo $cad;
+}
 
 function modificarConstanciasseguimientoFinalizar($serviciosReferencias) {
    $id = $_POST['id'];
@@ -1887,20 +2093,13 @@ function insertarCotizaciones($serviciosReferencias) {
    $refasociados = ($_POST['refasociados'] == '' ? 'NULL' : $_POST['refasociados']);
    $refestadocotizaciones = $_POST['refestadocotizaciones'];
    $observaciones = $_POST['observaciones'];
-   $fechaemitido = ($_POST['fechaemitido'] == '' ? 'NULL' : $_POST['fechaemitido']);
-   $primaneta = ($_POST['primaneta'] == '' ? 'NULL' : $_POST['primaneta']);
-   $primatotal = ($_POST['primatotal'] == '' ? 'NULL' : $_POST['primatotal']);
-   $recibopago = $_POST['recibopago'];
-   $fechapago = ($_POST['fechapago'] == '' ? 'NULL' : $_POST['fechapago']);
-   $nrorecibo = $_POST['nrorecibo'];
-   $importecomisionagente = ($_POST['importecomisionagente'] == '' ? 'NULL' : $_POST['importecomisionagente']);
-   $importebonopromotor = ($_POST['importebonopromotor'] == '' ? 'NULL' : $_POST['importebonopromotor']);
+
    $fechacrea = date('Y-m-d H:i:s');
    $fechamodi = date('Y-m-d H:i:s');
    $usuariocrea = $_SESSION['usua_sahilices'];
    $usuariomodi = $_SESSION['usua_sahilices'];
    $refusuarios = $_SESSION['usuaid_sahilices'];
-   $nropoliza = $_POST['nropoliza'];
+   $foliotys = $_POST['foliotys'];
 
    $cobertura = $_POST['cobertura'];
    $reasegurodirecto = $_POST['reasegurodirecto'];
@@ -1908,11 +2107,28 @@ function insertarCotizaciones($serviciosReferencias) {
    $fechapropuesta = $_POST['fechapropuesta'];
    $tiponegocio = $_POST['tiponegocio'];
    $presentacotizacion = $_POST['presentacotizacion'];
+   $fechaemitido = $_POST['fechaemitido'];
 
-   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$observaciones,$fechaemitido,$primaneta,$primatotal,$recibopago,$fechapago,$nrorecibo,$importecomisionagente,$importebonopromotor,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$nropoliza,$cobertura,$reasegurodirecto,$fecharenovacion,$fechapropuesta,$tiponegocio,$presentacotizacion);
+   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$foliotys,'',$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones);
 
    if ((integer)$res > 0) {
-      echo '';
+      if ($refestadocotizaciones == 6) {
+         $foliointerno = $serviciosReferencias->generaFolioInterno();
+         $resIV = $serviciosReferencias->insertarVentas($res,1,0,0,0,0,'','',date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$usuariomodi,$usuariomodi);
+
+         // generada la venta lo guardo en la cartera del cliente
+         $resIC = $serviciosReferencias->insertarClientescartera($refclientes,$refproductos,$fechaemitido,'','1');
+
+         //generada la venta solicito el idcliente inbursa
+         $idclienteinbursa = $_POST['idclienteinbursa'];
+         $resModC = $serviciosReferencias->modificarClientesInbursa($refclientes, $idclienteinbursa);
+
+         $res = $resIV;
+      } else {
+         $foliointerno = '';
+      }
+
+      echo $res;
    } else {
       echo 'Hubo un error al insertar datos ';
    }
@@ -1936,19 +2152,12 @@ function modificarCotizaciones($serviciosReferencias) {
 
    $observaciones = $_POST['observaciones'];
    $fechaemitido = ($_POST['fechaemitido'] == '' ? 'NULL' : $_POST['fechaemitido']);
-   $primaneta = ($_POST['primaneta'] == '' ? 'NULL' : $_POST['primaneta']);
-   $primatotal = ($_POST['primatotal'] == '' ? 'NULL' : $_POST['primatotal']);
-   $recibopago = $_POST['recibopago'];
-   $fechapago = ($_POST['fechapago'] == '' ? 'NULL' : $_POST['fechapago']);
-   $nrorecibo = $_POST['nrorecibo'];
-   $importecomisionagente = ($_POST['importecomisionagente'] == '' ? 'NULL' : $_POST['importecomisionagente']);
-   $importebonopromotor = ($_POST['importebonopromotor'] == '' ? 'NULL' : $_POST['importebonopromotor']);
-   $fechacrea = date('Y-m-d H:i:s');
+
    $fechamodi = date('Y-m-d H:i:s');
-   $usuariocrea = $_SESSION['usua_sahilices'];
+
    $usuariomodi = $_SESSION['usua_sahilices'];
    $refusuarios = $_SESSION['usuaid_sahilices'];
-   $nropoliza = $_POST['nropoliza'];
+   $foliotys = $_POST['foliotys'];
 
    $cobertura = $_POST['cobertura'];
    $reasegurodirecto = $_POST['reasegurodirecto'];
@@ -1957,7 +2166,22 @@ function modificarCotizaciones($serviciosReferencias) {
    $tiponegocio = $_POST['tiponegocio'];
    $presentacotizacion = $_POST['presentacotizacion'];
 
-   $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$observaciones,$fechaemitido,$primaneta,$primatotal,$recibopago,$fechapago,$nrorecibo,$importecomisionagente,$importebonopromotor,$fechamodi,$usuariomodi,$refusuarios,$nropoliza,$cobertura,$reasegurodirecto,$fecharenovacion,$fechapropuesta,$tiponegocio,$presentacotizacion);
+   if ($refestadocotizaciones == 6) {
+      $foliointerno = $serviciosReferencias->generaFolioInterno();
+      $resIV = $serviciosReferencias->insertarVentas($id,1,0,0,0,0,'','',date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$usuariomodi,$usuariomodi);
+
+      // generada la venta lo guardo en la cartera del cliente
+      $resIC = $serviciosReferencias->insertarClientescartera($refclientes,$refproductos,$fechaemitido,'','1');
+
+      //generada la venta solicito el idcliente inbursa
+      $idclienteinbursa = $_POST['idclienteinbursa'];
+      $resModC = $serviciosReferencias->modificarClientesInbursa($refclientes, $idclienteinbursa);
+   } else {
+      $foliointerno = '';
+   }
+
+
+   $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$foliotys,$foliointerno,$fechamodi,$usuariomodi,$refusuarios,$observaciones);
 
    if ($res == true) {
       echo '';
@@ -3410,6 +3634,24 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+      case 'dbventas':
+         $resultado = $serviciosReferencias->traerVentasPorId($id);
+
+         $lblCambio	 	= array('refcotizaciones','primaneta','primatotal','porcentajecomision','montocomision','fechavencimientopoliza','nropoliza');
+         $lblreemplazo	= array('Venta','Prima Neta','Prima Total','% Comision','Monto Comision','Fecha Vencimiento de la Poliza','Nro Poliza');
+
+         $modificar = "modificarVentas";
+         $idTabla = "idventa";
+
+         $resVar = $serviciosReferencias->traerCotizacionesPorIdCompleto(mysql_result($resultado,0,'refcotizaciones'));
+         $cadRef = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(1,2,3),' ',mysql_result($resultado,0,'refcotizaciones'));
+
+         $cadRef2 = "<option value='1' selected>cargado</option>";
+
+
+         $refdescripcion = array(0=>$cadRef,1=>$cadRef2);
+         $refCampo 	=  array('refcotizaciones','refestadoventa');
+      break;
       case 'dbconstancias':
          $resultado = $serviciosReferencias->traerConstanciasPorId($id);
 

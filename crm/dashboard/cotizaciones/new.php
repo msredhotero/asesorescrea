@@ -63,8 +63,10 @@ $lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','E
 $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
 
 if ($_SESSION['idroll_sahilices'] == 7) {
+	$idasesor = $_SESSION['usuaid_sahilices'];
 	$resVar2	= $serviciosReferencias->traerClientesasesoresPorAsesor($_SESSION['usuaid_sahilices']);
 } else {
+	$idasesor = 0;
 	$resVar2	= $serviciosReferencias->traerClientes();
 }
 
@@ -104,6 +106,9 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 $resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId(1);
 $cadRef6 = $serviciosFunciones->devolverSelectBox($resVar6,array(1),'');
+
+$resVar7	= $serviciosReferencias->traerTipoproducto();
+$cadRef7 = $serviciosFunciones->devolverSelectBox($resVar7,array(1),'');
 
 
 $refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6);
@@ -176,10 +181,19 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 	<!-- Additional CSS Themes file - not required-->
 	<link rel="stylesheet" href="../../css/easy-autocomplete.themes.min.css">
 
+
+
 	<style>
 		.alert > i{ vertical-align: middle !important; }
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		#codigopostal { width: 400px; }
+
+		.ui-autocomplete { position: absolute; cursor: default;z-index:30 !important;}
+
+		.sectionC {
+			height:360px;
+			z-index:1 !important;
+		}
 
 	</style>
 
@@ -230,92 +244,238 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 	<div class="container-fluid">
 		<div class="row clearfix">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="card">
+                        <div class="header">
+                            <h2>CARGAR COTIZACION</h2>
+                            <ul class="header-dropdown m-r--5">
+                                <li class="dropdown">
+                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                        <i class="material-icons">more_vert</i>
+                                    </a>
+                                    <ul class="dropdown-menu pull-right">
+                                        <li><a href="javascript:void(0);">Action</a></li>
+                                        <li><a href="javascript:void(0);">Another action</a></li>
+                                        <li><a href="javascript:void(0);">Something else here</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="body">
+                           <form id="wizard_with_validation" method="POST">
 
-			<div class="row">
+                              <h3>Seleccione Cliente</h3>
+                              <fieldset>
+											  <div class="form-group form-float">
+													<div class="form-line">
+														  <button type="button" class="btn bg-green waves-effect btnNuevo2" data-toggle="modal" data-target="#lgmNuevo2">
+			  												<i class="material-icons">add</i>
+			  												<span>CLIENTE - PERSONA FISICA</span>
+			  											</button>
+			  											<button type="button" class="btn bg-blue-grey waves-effect btnNuevoMoral" data-toggle="modal" data-target="#lgmNuevo2">
+			  												<i class="material-icons">add</i>
+			  												<span>CLIENTE - PERSONA MORAL</span>
+			  											</button>
+													</div>
+											  </div>
+                                    <div class="form-group form-float">
+                                        <div class="form-line">
+
+															<h4>Busqueda por Nombre Completo</h4>
+															<input id="lstjugadores" style="width:75%;" required>
+
+															<div id="selction-ajax" style="margin-top: 10px;">
+																<h5>Lista de Productos</h5>
+																<ul class="list-group lstCartera">
+
+																</ul>
+															</div>
+															<input type="hidden" name="refclientes" id="refclientes" />
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-float">
+													<label class="form-label" style="margin-top:20px;">Asesor *</label>
+                                       <div class="form-line">
+
+							   						<select style="margin-top:10px;" class="form-control" id="refasesores" name="refasesores" required>
+															<?php echo $cadRef5; ?>
+														</select>
+
+                                       </div>
+                                    </div>
+
+												<div class="form-group form-float frmContasociado">
+													<label class="form-label" style="margin-top:20px;">Asociado *</label>
+                                       <div class="form-line">
+
+							   						<select class="form-control" id="refasociado" name="refasociado" required="" aria-required="true" aria-invalid="false">
+															<?php echo $cadRef4; ?>
+														</select>
+                                       </div>
+                                    </div>
 
 
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="card ">
-						<div class="header bg-blue">
-							<h2>
-								<?php echo strtoupper($plural); ?>
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-									<ul class="dropdown-menu pull-right">
+                              </fieldset>
 
-									</ul>
-								</li>
-							</ul>
-						</div>
-						<div class="body table-responsive">
-							<form class="form" id="formCountry">
-								<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)|| ($_SESSION['idroll_sahilices'] == 7)) { ?>
-								<div class="row">
-									<div class="col-lg-12 col-md-12">
-										<div class="button-demo">
-											<?php if (mysql_num_rows($resVar2) > 0) { ?>
-											<button type="button" class="btn bg-light-green waves-effect btnNuevo">
-												<i class="material-icons">add</i>
-												<span>NUEVO</span>
-											</button>
-										<?php } else { ?>
-											<button type="button" class="btn bg-red waves-effect">
-												<i class="material-icons">block</i>
-												<span>NUEVO</span>
-											</button>
-										<?php }  ?>
+                              <h3>Producto</h3>
+                                 <fieldset>
+												<div class="form-group form-float">
+													<label class="form-label" style="margin-top:20px;">Tipo Producto *</label>
+                                       <div class="form-line">
 
-											<button type="button" class="btn bg-green waves-effect btnNuevo2" data-toggle="modal" data-target="#lgmNuevo2">
-												<i class="material-icons">add</i>
-												<span>CLIENTE - PERSONA FISICA</span>
-											</button>
-											<button type="button" class="btn bg-blue-grey waves-effect btnNuevoMoral" data-toggle="modal" data-target="#lgmNuevo2">
-												<i class="material-icons">add</i>
-												<span>CLIENTE - PERSONA MORAL</span>
-											</button>
+							   						<select style="margin-top:10px;" class="form-control" id="reftipoproducto" name="reftipoproducto" required>
+															<?php echo $cadRef7; ?>
+														</select>
 
-										</div>
-									</div>
-								</div>
-								<?php } ?>
+                                       </div>
+                                    </div>
+												<div class="form-group form-float">
+													<label class="form-label" style="margin-top:20px;">Producto *</label>
+                                       <div class="form-line">
 
-								<div class="row" style="padding: 5px 20px;">
+							   						<select style="margin-top:10px;" class="form-control" id="refproductos" name="refproductos" required>
+														</select>
 
-									<table id="example" class="display table " style="width:100%">
-										<thead>
-											<tr>
-												<th>Cliente</th>
-												<th>Producto</th>
-												<th>Asesor</th>
-												<th>Asociado</th>
-												<th>Estado</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tfoot>
-											<tr>
-												<th>Cliente</th>
-												<th>Producto</th>
-												<th>Asesor</th>
-												<th>Asociado</th>
-												<th>Estado</th>
-												<th>Acciones</th>
-											</tr>
-										</tfoot>
-									</table>
-								</div>
+                                       </div>
+                                    </div>
 
-							</form>
-							</div>
-						</div>
-					</div>
+                              </fieldset>
 
-				</div>
-			</div>
+                                <h3>Información Adicional</h3>
+                                <fieldset>
+											  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcobertura" style="display:block">
+												  <label class="form-label">Cobertura Requiere Reaseguro </label>
+												  <div class="form-group input-group">
+													  <div class="form-line">
+														  <input type="text" class="form-control" id="cobertura" name="cobertura">
+
+													  </div>
+												  </div>
+											  </div>
+											  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContreasegurodirecto" style="display:block">
+													<label class="form-label">Reaseguro Directo Con Inbursa O Broker </label>
+													<div class="form-group input-group">
+														<div class="form-line">
+															<input type="text" class="form-control" id="reasegurodirecto" name="reasegurodirecto">
+
+														</div>
+													</div>
+												</div>
+												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContpresentacotizacion" style="display:block">
+													<label class="form-label">Presenta Cotizacion O Poliza De Competencia </label>
+													<div class="form-group input-group">
+														<div class="form-line">
+															<input type="text" class="form-control" id="presentacotizacion" name="presentacotizacion">
+
+														</div>
+													</div>
+												</div>
+
+												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmConttiponegocio" style="display:block">
+													<label class="form-label">Tipo De Negocio Para Agente </label>
+													<div class="form-group input-group">
+														<div class="form-line">
+															<input type="text" class="form-control" id="tiponegocio" name="tiponegocio">
+
+														</div>
+													</div>
+												</div>
+
+												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContfecharenovacion" >
+													<b>Fecha Renovación O Presentación De Propueta Al Cliente</b>
+													<div class="input-group">
+
+													<span class="input-group-addon">
+														 <i class="material-icons">date_range</i>
+													</span>
+			                                <div class="form-line">
+
+													   	<input style="width:200px;" type="text" class="datepicker form-control" id="fecharenovacion" name="fecharenovacion" />
+
+			                                </div>
+			                              </div>
+		                              </div>
+                                </fieldset>
+
+										  <h3>Aceptado</h3>
+                                <fieldset>
+											   <div class="row">
+												   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContfechapropuesta" >
+													   <b>Fecha En Que Se Entrega Propuesta</b>
+													   <div class="input-group form-group">
+
+														   <span class="input-group-addon">
+																<i class="material-icons">date_range</i>
+														   </span>
+															<div class="form-line">
+
+																<input readonly="readonly" style="width:200px;" type="text" class="datepicker form-control" id="fechapropuesta" name="fechapropuesta" required/>
+
+															</div>
+													   </div>
+												   </div>
+													<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContfechaemitido" >
+													   <b>Fecha Emitido</b>
+													   <div class="input-group form-group">
+
+														   <span class="input-group-addon">
+																<i class="material-icons">date_range</i>
+														   </span>
+															<div class="form-line">
+
+																<input readonly="readonly" style="width:200px;" type="text" class="datepicker form-control" id="fechaemitido" name="fechaemitido" required/>
+
+															</div>
+													   </div>
+												   </div>
+												</div>
+												<div class="row">
+													<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContfoliotys" style="display:block">
+														<label class="form-label">Folio TYS </label>
+														<div class="form-group input-group">
+															<div class="form-line">
+																<input type="text" class="form-control" id="foliotys" name="foliotys" required>
+
+															</div>
+														</div>
+													</div>
+													<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContidclienteinbursa" style="display:block">
+														<label class="form-label">ID Cliente Inbursa </label>
+														<div class="form-group input-group">
+															<div class="form-line">
+																<input type="text" class="form-control" id="idclienteinbursa" name="idclienteinbursa" required>
+
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+
+													<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContobservaciones" style="display:block">
+														<label class="form-label">Observaciones </label>
+														<div class="form-group input-group">
+															<div class="form-line">
+																<textarea id="observaciones" name="observaciones"  rows="2" class="form-control no-resize"></textarea>
+
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+
+	                                    <button type="button" class="btn bg-blue waves-effect btnGuardar">GUARDAR</button>
+	                                    <button type="button" class="btn btn-danger waves-effect btnRechazar">RECHAZAR</button>
+												</div>
+                                </fieldset>
+
+                            </form>
+
+                    </div>
+                </div>
+            </div>
+
+
 		</div>
 	</div>
 </section>
@@ -441,6 +601,8 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
+
+<script src="../../js/jquery.easy-autocomplete.min.js"></script>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
 
@@ -459,22 +621,345 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 <script src="../../js/picker.js"></script>
 <script src="../../js/picker.date.js"></script>
 
-<script src="../../js/jquery.easy-autocomplete.min.js"></script>
+<!-- Moment Plugin Js -->
+    <script src="../../plugins/momentjs/moment.js"></script>
+	 <script src="../../js/moment-with-locales.js"></script>
 
+<script src="../../plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
+
+<script src="../../plugins/jquery-steps/jquery.steps.js"></script>
+
+<script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
 <!-- Chart Plugins Js -->
-<script src="../../plugins/chartjs/Chart.bundle.js"></script>
+
 
 <script>
 	$(document).ready(function(){
 
+
+		function traerClientescarteraPorCliente(idcliente) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'traerClientescarteraPorCliente', id: idcliente},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.lstCartera').html('');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						$('.lstCartera').html(data);
+					} else {
+						swal({
+								title: "Respuesta",
+								text: 'El cliente no posee cartera actualmente',
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+
+		}
+
+		function traerProductosPorTipo(idtipoproducto) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'traerProductosPorTipo', id: idtipoproducto},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('#refproductos').html('');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						$('#refproductos').html(data);
+					} else {
+						swal({
+								title: "Respuesta",
+								text: 'No existen tipos de productos',
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+
+		}
+
+		$("#wizard_with_validation").on("change",'#reftipoproducto', function(){
+			traerProductosPorTipo($(this).val());
+		});
+
+		traerProductosPorTipo($('#reftipoproducto').val());
+
+		function setButtonWavesEffect(event) {
+			$(event.currentTarget).find('[role="menu"] li a').removeClass('waves-effect');
+			$(event.currentTarget).find('[role="menu"] li:not(.disabled) a').addClass('waves-effect');
+		}
+
+		//Advanced form with validation
+	    var form = $('#wizard_with_validation').show();
+	    form.steps({
+	        headerTag: 'h3',
+	        bodyTag: 'fieldset',
+	        transitionEffect: 'slideLeft',
+	        onInit: function (event, currentIndex) {
+	            $.AdminBSB.input.activate();
+
+	            //Set tab width
+	            var $tab = $(event.currentTarget).find('ul[role="tablist"] li');
+	            var tabCount = $tab.length;
+	            $tab.css('width', (100 / tabCount) + '%');
+
+	            //set button waves effect
+	            setButtonWavesEffect(event);
+	        },
+	        onStepChanging: function (event, currentIndex, newIndex) {
+	            if (currentIndex > newIndex) { return true; }
+
+	            if (currentIndex < newIndex) {
+	                form.find('.body:eq(' + newIndex + ') label.error').remove();
+	                form.find('.body:eq(' + newIndex + ') .error').removeClass('error');
+	            }
+
+	            form.validate().settings.ignore = ':disabled,:hidden';
+	            return form.valid();
+	        },
+	        onStepChanged: function (event, currentIndex, priorIndex) {
+	            setButtonWavesEffect(event);
+	        },
+	        onFinishing: function (event, currentIndex) {
+	            form.validate().settings.ignore = ':disabled';
+					
+	            return form.valid();
+	        },
+	        onFinished: function (event, currentIndex) {
+	            guardarCotizacion(6);
+	        }
+	    });
+
+	    form.validate({
+	        highlight: function (input) {
+	            $(input).parents('.form-line').addClass('error');
+	        },
+	        unhighlight: function (input) {
+	            $(input).parents('.form-line').removeClass('error');
+	        },
+	        errorPlacement: function (error, element) {
+	            $(element).parents('.form-group').append(error);
+	        },
+	        rules: {
+	            'confirm': {
+	                equalTo: '#password'
+	            }
+	        }
+	    });
+
+
+		function guardarCotizacion(refestadocotizaciones) {
+			$.ajax({
+ 				url: '../../ajax/ajax.php',
+ 				type: 'POST',
+ 				// Form data
+ 				//datos del formulario
+ 				data: {
+ 					accion: 'insertarCotizaciones',
+ 					refclientes: $('#refclientes').val(),
+ 					refproductos: $('#refproductos').val(),
+ 					refasesores: $('#refasesores').val(),
+					refasociados: $('#refasociados').val(),
+ 					observaciones: $('#observaciones').val(),
+ 					cobertura: $('#cobertura').val(),
+					fechaemitido: $('#fechaemitido').val(),
+ 					reasegurodirecto: $('#reasegurodirecto').val(),
+ 					fecharenovacion: $('#fecharenovacion').val(),
+ 					fechapropuesta: $('#fechapropuesta').val(),
+ 					tiponegocio: $('#tiponegocio').val(),
+ 					presentacotizacion: $('#presentacotizacion').val(),
+					refestadocotizaciones: refestadocotizaciones,
+ 					foliotys: $('#foliotys').val(),
+					idclienteinbursa: $('#idclienteinbursa').val()
+ 				},
+ 				//mientras enviamos el archivo
+ 				beforeSend: function(){
+ 					$('.lstCartera').html('');
+ 				},
+ 				//una vez finalizado correctamente
+ 				success: function(data){
+
+ 					if (data != '') {
+						swal({
+ 								title: "Respuesta",
+ 								text: 'Cotizacion Guardada',
+ 								type: "success",
+ 								timer: 2000,
+ 								showConfirmButton: false
+ 						});
+						if (refestadocotizaciones == 6) {
+							$(location).attr('href', '../ventas/ver.php?id='+data);
+						} else {
+							$(location).attr('href', 'modificar.php?id='+data);
+						}
+
+ 					} else {
+ 						swal({
+ 								title: "Respuesta",
+ 								text: 'Se genero un error y no se guardo la cotizacion',
+ 								type: "error",
+ 								timer: 2000,
+ 								showConfirmButton: false
+ 						});
+
+ 					}
+ 				},
+ 				//si ha ocurrido un error
+ 				error: function(){
+ 					swal({
+ 							title: "Respuesta",
+ 							text: 'Actualice la pagina',
+ 							type: "error",
+ 							timer: 2000,
+ 							showConfirmButton: false
+ 					});
+
+ 				}
+ 			});
+		}
+		$('.btnGuardar').click(function() {
+			guardarCotizacion(3);
+ 		});
+
+
+		 $('#fecharenovacion').pickadate({
+ 			format: 'yyyy-mm-dd',
+ 			labelMonthNext: 'Siguiente mes',
+ 			labelMonthPrev: 'Previo mes',
+ 			labelMonthSelect: 'Selecciona el mes del año',
+ 			labelYearSelect: 'Selecciona el año',
+ 			selectMonths: true,
+ 			selectYears: 100,
+ 			today: 'Hoy',
+ 			clear: 'Borrar',
+ 			close: 'Cerrar',
+ 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+ 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+ 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+ 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+ 		});
+
+
+ 		$('#fechapropuesta').pickadate({
+ 			format: 'yyyy-mm-dd',
+ 			labelMonthNext: 'Siguiente mes',
+ 			labelMonthPrev: 'Previo mes',
+ 			labelMonthSelect: 'Selecciona el mes del año',
+ 			labelYearSelect: 'Selecciona el año',
+ 			selectMonths: true,
+ 			selectYears: 100,
+ 			today: 'Hoy',
+ 			clear: 'Borrar',
+ 			close: 'Cerrar',
+ 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+ 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+ 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+ 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+ 		});
+
+ 		$('#fechaemitido').pickadate({
+ 			format: 'yyyy-mm-dd',
+ 			labelMonthNext: 'Siguiente mes',
+ 			labelMonthPrev: 'Previo mes',
+ 			labelMonthSelect: 'Selecciona el mes del año',
+ 			labelYearSelect: 'Selecciona el año',
+ 			selectMonths: true,
+ 			selectYears: 100,
+ 			today: 'Hoy',
+ 			clear: 'Borrar',
+ 			close: 'Cerrar',
+ 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+ 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+ 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+ 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+ 		});
+
+		var options = {
+
+			url: "../../json/jsbuscarclientes.php",
+
+			getValue: function(element) {
+				return element.nombrecompleto;
+			},
+
+			ajaxSettings: {
+		        dataType: "json",
+		        method: "POST",
+		        data: {
+		            busqueda: $("#lstjugadores").val()
+		        }
+		    },
+
+		    preparePostData: function (data) {
+		        data.busqueda = $("#lstjugadores").val();
+				  data.idasesor = <?php echo $idasesor; ?>;
+		        return data;
+		    },
+
+			list: {
+			    maxNumberOfElements: 15,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $("#lstjugadores").getSelectedItemData().id;
+					$('#refclientes').val(value);
+					traerClientescarteraPorCliente(value);
+
+				}
+			},
+			theme: "square"
+		};
+
+		$("#lstjugadores").easyAutocomplete(options);
+
+
+
 		$('.frmContnumerocliente').hide();
 		$('.frmContrefusuarios').hide();
-		$('.frmContfechapropuesta').hide();
-
-		$('.btnNuevo').click(function() {
-			idTable =  $(this).attr("id");
-			$(location).attr('href', 'new.php');
-		});
 
 		$('.btnNuevoMoral').click(function() {
 
@@ -492,16 +977,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 		});
 
-		$('.frmContnropoliza').hide();
-		$('.frmContfechaemitido').hide();
-		$('.frmContprimaneta').hide();
-		$('.frmContprimatotal').hide();
-		$('.frmContrecibopago').hide();
-		$('.frmContfechapago').hide();
-		$('.frmContnrorecibo').hide();
-		$('.frmContimportecomisionagente').hide();
-		$('.frmContimportebonopromotor').hide();
-		$('.frmContobservaciones').hide();
+
 		$('.frmContrefusuarios').hide();
 
 		$('.frmNuevo #fechacrea').val('2020-02-02');
@@ -527,74 +1003,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('#telefonofijo').inputmask('999 9999999', { placeholder: '___ _______' });
 		$('#telefonocelular').inputmask('999 9999999', { placeholder: '___ _______' });
 
-		$('#fecharenovacion').pickadate({
-			format: 'yyyy-mm-dd',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 100,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-		});
-
-
-		$('#fechapropuesta').pickadate({
-			format: 'yyyy-mm-dd',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 100,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-		});
-
-		$('#fechaemitido').pickadate({
-			format: 'yyyy-mm-dd',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 100,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-		});
-
-		$('#fechapago').pickadate({
-			format: 'yyyy-mm-dd',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 100,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-		});
 
 		var table = $('#example').DataTable({
 			"bProcessing": true,
@@ -626,9 +1034,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			}
 		});
 
-		$("#sign_in").submit(function(e){
-			e.preventDefault();
-		});
 
 		$('#activo').prop('checked',true);
 

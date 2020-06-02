@@ -21,6 +21,8 @@ $serviciosReferencias 	= new ServiciosReferencias();
 $fecha = date('Y-m-d');
 
 $busqueda = trim($_POST['busqueda']);
+$asesor = $_POST['idasesor'];
+
 
 //$busqueda = 'a';
 
@@ -32,31 +34,19 @@ $busqueda = trim($_POST['busqueda']);
 $ar = array();
 
 if ($busqueda != '') {
-/*
-switch ($cantidad) {
-	case 1:
-		$resTraerJugadores = $serviciosReferencias->nuevoBuscador($arBusqueda[0]);
-		break;
-	case 2:
-		$resTraerJugadores = $serviciosReferencias->nuevoBuscador($arBusqueda[0],$arBusqueda[1]);
-		break;
-	case 3:
-		$resTraerJugadores = $serviciosReferencias->nuevoBuscador($arBusqueda[0],$arBusqueda[1],$arBusqueda[2]);
-		break;
 
-	default:
-		$resTraerJugadores = $serviciosReferencias->nuevoBuscador($arBusqueda[0],$arBusqueda[1],$arBusqueda[2],$arBusqueda[3]);
-		break;
-}
-*/
-
-$resTraerClientes = $serviciosReferencias->nuevoBuscador($busqueda);
+	if ($asesor == 0) {
+		$resTraerClientes = $serviciosReferencias->bClientes($busqueda);
+	} else {
+		$resTraerClientes = $serviciosReferencias->bClientesasesoresPorAsesor($busqueda,$idasesor);
+	}
 
 
-$cad = '';
+
+	$cad = '';
 	while ($row = mysql_fetch_array($resTraerClientes)) {
 
-		array_push($ar,array('id'=>$row['idcliente'], 'apellido'=> $row['apellido'], 'nombre'=> $row['nombre'], 'cuit'=> $row['cuit']));
+		array_push($ar,array('id'=>$row['idcliente'], 'nombrecompleto'=> $row['nombrecompleto'], 'idclienteinbursa'=>$row['idclienteinbursa']));
 	}
 
 }

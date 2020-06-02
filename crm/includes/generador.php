@@ -102,7 +102,15 @@ $tablasAr	= array('rolhogar' => 'tbrolhogar',
 							'tabla' => 'tbtabla',
 							'constancias' => 'dbconstancias',
 							'bonogestion' => 'tbbonogestion',
-							'constanciasseguimiento' => 'dbconstanciasseguimiento'
+							'constanciasseguimiento' => 'dbconstanciasseguimiento',
+							'clientescartera' => 'dbclientescartera',
+							'estadopago' => 'tbestadopago',
+							'tipocobranza' => 'tbtipocobranza',
+							'tipoperiodicidad' => 'tbtipoperiodicidad',
+							'estadoventa' => 'tbestadoventa',
+							'periodicidadventaspagos' => 'dbperiodicidadventaspagos',
+							'periodicidadventasdetalle' => 'dbperiodicidadventasdetalle',
+							'periodicidadventas' => 'dbperiodicidadventas'
 							);
 
 
@@ -175,7 +183,15 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'tabla' => 'tbtabla',
 								'constancias' => 'dbconstancias',
 								'bonogestion' => 'tbbonogestion',
-								'constanciasseguimiento' => 'dbconstanciasseguimiento'
+								'constanciasseguimiento' => 'dbconstanciasseguimiento',
+								'clientescartera' => 'dbclientescartera',
+								'estadopago' => 'tbestadopago',
+								'tipocobranza' => 'tbtipocobranza',
+								'tipoperiodicidad' => 'tbtipoperiodicidad',
+								'estadoventa' => 'tbestadoventa',
+								'periodicidadventaspagos' => 'dbperiodicidadventaspagos',
+								'periodicidadventasdetalle' => 'dbperiodicidadventasdetalle',
+								'periodicidadventas' => 'dbperiodicidadventas'
 							);
 
 	$tablasArAux	= array('rolhogar' => 1,
@@ -245,7 +261,15 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'tabla' => 1,
 								'constancias' => 2,
 								'bonogestion' => 1,
-								'constanciasseguimiento' => 2
+								'constanciasseguimiento' => 2,
+								'clientescartera' => 3,
+								'estadopago' => 1,
+								'tipocobranza' => 1,
+								'tipoperiodicidad' => 1,
+								'estadoventa' => 1,
+								'periodicidadventaspagos' => 2,
+								'periodicidadventasdetalle' => 2,
+								'periodicidadventas' => 3
 							);
 
 	$inner= '';

@@ -68,6 +68,28 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 
 switch ($tabla) {
 
+	case 'cobros':
+
+		$idventa = $_GET['id'];
+		$datos = $serviciosReferencias->traerPeriodicidadventasdetalleajax($length, $start, $busqueda,$colSort,$colSortDir,$idventa);
+
+		//die(var_dump($datos));
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+
+		$label = array('btnPagar');
+		$class = array('bg-green');
+		$icon = array('add_shopping_cart');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 7;
+
+	break;
+
 	case 'constanciasseguimiento':
 
 		$asesor = $_GET['sSearch_0'];
@@ -189,6 +211,39 @@ switch ($tabla) {
 		$indiceID = 0;
 		$empieza = 1;
 		$termina = 5;
+
+	break;
+
+	case 'ventas':
+
+		if ($_SESSION['idroll_sahilices'] == 7) {
+
+			$datos = $serviciosReferencias->traerVentasajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
+			$label = array('btnModificar','btnEliminar');
+			$class = array('bg-amber','bg-red');
+			$icon = array('create','delete');
+		} else {
+
+			$responsableComercial = $_GET['sSearch_0'];
+
+			$datos = $serviciosReferencias->traerVentasajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
+			$label = array('btnModificar','btnVer','btnEliminar');
+			$class = array('bg-amber','bg-green','bg-red');
+			$icon = array('Modificar','Ver','Eliminar');
+
+		}
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 9;
 
 	break;
 
@@ -1065,7 +1120,7 @@ $id = 0;
 			array_push($arAux, ($row[$i]));
 		}
 
-		if (($tabla == 'postulantes') || ($tabla == 'postulanteshistorico') || ($tabla == 'asesores') || ($tabla == 'asociadostemporales') || ($tabla == 'asociados') || ($tabla == 'clientes')) {
+		if (($tabla == 'postulantes') || ($tabla == 'ventas') || ($tabla == 'postulanteshistorico') || ($tabla == 'asesores') || ($tabla == 'asociadostemporales') || ($tabla == 'asociados') || ($tabla == 'clientes')) {
 			array_push($arAux, armarAccionesDropDown($row[0],$label,$class,$icon));
 		} else {
 			array_push($arAux, armarAcciones($row[0],$label,$class,$icon));

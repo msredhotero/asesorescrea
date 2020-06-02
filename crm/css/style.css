@@ -6229,7 +6229,7 @@ fieldset[disabled] .form-control {
         display: list-item; }
 
 .wizard .content {
-  min-height: 245px;
+  min-height: 360px;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   -ms-border-radius: 0;

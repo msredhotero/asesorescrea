@@ -55,8 +55,8 @@ $resultado = $serviciosReferencias->traerCotizacionesPorId($id);
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbcotizaciones";
 
-$lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones','fechaemitido','primaneta','primatotal','recibopago','fechapago','nrorecibo','importecomisionagente','importebonopromotor','cobertura','reasegurodirecto','fecharenovacion','fechapropuesta','tiponegocio','presentacotizacion','nropoliza');
-$lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor','Cobertura Requiere Reaseguro','Reaseguro Directo con Inbursa o Broker','Fecha renovación o presentación de propueta al cliente','Fecha en que se entrega propuesta','Tipo de negocio para agente','Presenta Cotizacion o Poliza de competencia','Nro Poliza');
+$lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones','fechaemitido','primaneta','primatotal','recibopago','fechapago','nrorecibo','importecomisionagente','importebonopromotor','cobertura','reasegurodirecto','fecharenovacion','fechapropuesta','tiponegocio','presentacotizacion','foliotys','foliointerno');
+$lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor','Cobertura Requiere Reaseguro','Reaseguro Directo con Inbursa o Broker','Fecha renovación o presentación de propueta al cliente','Fecha en que se entrega propuesta','Tipo de negocio para agente','Presenta Cotizacion o Poliza de competencia','Folio TYS','Folio Interno');
 
 
 $modificar = "modificarCotizaciones";
@@ -94,12 +94,12 @@ switch ($orden) {
 	case 5:
 		$ordenPosible = 6;
 		$ordenRechazo = 0;
-		$lblOrden = 'Emitido';
+		$lblOrden = 'Vendido';
 	break;
 	case 6:
-		$ordenPosible = 7;
-		$ordenRechazo = 4;
-		$lblOrden = 'Pagado';
+		$ordenPosible = 0;
+		$ordenRechazo = 0;
+		$lblOrden = 'Finalizado';
 	break;
 	case 7:
 		$ordenPosible = 8;
@@ -133,8 +133,10 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 $resUsuario = $serviciosUsuario->traerUsuarioId(mysql_result($resultado,0,'refusuarios'));
 $cadRef1 	= $serviciosFunciones->devolverSelectBox($resUsuario,array(1),'');
 
-$resVar2	= $serviciosReferencias->traerClientes();
+$resVar2	= $serviciosReferencias->traerClientesPorId(mysql_result($resultado,0,'refclientes'));
 $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(3,4,2),' ',mysql_result($resultado,0,'refclientes'));
+
+$idclienteinbursa = mysql_result($resultado,0,'idclienteinbursa');
 
 $resVar3	= $serviciosReferencias->traerProductos();
 $cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resVar3,array(1),'',mysql_result($resultado,0,'refproductos'));
@@ -348,17 +350,19 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 									<input type="hidden" id="estadoactual" name="estadoactual" value=""/>
 								</div>
 								<div class="row">
+									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContidclienteinbursa" style="display:block">
+										<label class="form-label">ID Cliente Inbursa </label>
+										<div class="form-group input-group">
+											<div class="form-line">
+												<input type="text" class="form-control" id="idclienteinbursa" name="idclienteinbursa" value="<?php echo $idclienteinbursa; ?>">
+
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
 
 									<div class="modal-footer">
-										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style="text-align:left;">
-											<?php
-											if (($ordenPosible > 5) || ($ordenPosible == 0)) {
-											?>
-											<button type="button" class="btn bg-light-blue waves-effect btnArchivos"><i class="material-icons">cloud_upload</i><span> SUBIR ARCHIVOS</span></button>
-											<?php
-											}
-											?>
-										</div>
 										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
 											<?php
 											if ($ordenPosible == 0) {
@@ -426,10 +430,55 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 <script>
 	$(document).ready(function(){
 
+
+		function traerClientescarteraPorCliente(idcliente) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'traerClientescarteraPorCliente', id: idcliente},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						$('#a')
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data,
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+
+		}
+
 		$('.btnArchivos').click(function() {
 			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=35";
 			$(location).attr('href',url);
 		});
+
+		$('.frmContfoliointerno').hide();
 
 		<?php
 		if ($lblOrden == 'Finalizado') {
@@ -465,7 +514,10 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		if ($ordenPosible >= 3) {
 		?>
 		$('.frmContfechapropuesta').show();
+		$('.frmContfechaemitido').show();
 		$("#fechapropuesta").prop('required',true);
+		$("#fechaemitido").prop('required',true);
+		$("#foliotys").prop('required',true);
 		<?php
 		} else {
 		?>
