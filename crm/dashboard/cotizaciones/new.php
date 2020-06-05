@@ -1089,7 +1089,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 				match: {
 					enabled: true
 				},
-				onSelectItemEvent: function() {
+				onClickEvent: function() {
 					var value = $("#lstjugadores").getSelectedItemData().id;
 					$('#refclientes').html("<option value='" + value + "'>" + $("#lstjugadores").getSelectedItemData().nombrecompleto + "</option>");
 					$('.clienteSelect').html($("#lstjugadores").getSelectedItemData().nombrecompleto);
