@@ -311,6 +311,7 @@ $formulario22 = $serviciosFunciones->camposTablaModificar($id, $idTabla22,$modif
 												<th>Fecha Pago</th>
 												<th>Fecha Venc.</th>
 												<th>Estado</th>
+												<th>Nro Recibo</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -323,6 +324,7 @@ $formulario22 = $serviciosFunciones->camposTablaModificar($id, $idTabla22,$modif
 												<th>Fecha Pago</th>
 												<th>Fecha Venc.</th>
 												<th>Estado</th>
+												<th>Nro Recibo</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -442,6 +444,15 @@ $formulario22 = $serviciosFunciones->camposTablaModificar($id, $idTabla22,$modif
 			url = "ver.php?id=<?php echo $id; ?>";
 			$(location).attr('href',url);
 		});
+
+		$("#example").on("click",'.btnRecibo', function(){
+			idTable =  $(this).attr("id");
+			url = "subirdocumentacionic.php?id=" + idTable;
+			$(location).attr('href',url);
+		});
+
+
+
 
 		$('.frmAjaxNuevo #fechacrea').val('2020-01-01');
 		$('.frmAjaxNuevo #fechamodi').val('2020-01-01');

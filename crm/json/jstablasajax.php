@@ -68,6 +68,26 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 
 switch ($tabla) {
 
+	case 'cobranza':
+
+		$datos = $serviciosReferencias->traerCobranzaajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		//die(var_dump($datos));
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+
+		$label = array('btnPagar','btnRecibo');
+		$class = array('bg-green','bg-orange');
+		$icon = array('add_shopping_cart','unarchive');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 8;
+	break;
+
 	case 'cobros':
 
 		$idventa = $_GET['id'];
@@ -79,14 +99,14 @@ switch ($tabla) {
 		$res = $datos[1];
 
 
-		$label = array('btnPagar');
-		$class = array('bg-green');
-		$icon = array('add_shopping_cart');
+		$label = array('btnPagar','btnRecibo');
+		$class = array('bg-green','bg-orange');
+		$icon = array('add_shopping_cart','unarchive');
 
 
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 7;
+		$termina = 8;
 
 	break;
 

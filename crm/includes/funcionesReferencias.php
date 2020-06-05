@@ -9,20 +9,402 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
-	/* PARA Periodicidadventasdetalle */
 
-	function insertarPeriodicidadventasdetalle($refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi) {
-		$sql = "insert into dbperiodicidadventasdetalle(idperiodicidadventadetalle,refperiodicidadventas,montototal,primaneta,porcentajecomision,montocomision,fechapago,fechavencimiento,refestadopago,usuariocrea,usuariomodi,fechacrea,fechamodi)
-		values ('',".$refperiodicidadventas.",".$montototal.",".$primaneta.",".$porcentajecomision.",".$montocomision.",'".$fechapago."','".$fechavencimiento."',".$refestadopago.",'".$usuariocrea."','".$usuariomodi."','".$fechacrea."','".$fechamodi."')";
+	/* PARA Periodicidadventaspagos */
+
+	function insertarPeriodicidadventaspagos($refperiodicidadventasdetalle,$monto,$nrorecibo,$fechapago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi) {
+		$sql = "insert into dbperiodicidadventaspagos(idperiodicidadventapago,refperiodicidadventasdetalle,monto,nrorecibo,fechapago,usuariocrea,usuariomodi,fechacrea,fechamodi)
+		values ('',".$refperiodicidadventasdetalle.",".$monto.",'".$nrorecibo."','".$fechapago."','".$usuariocrea."','".$usuariomodi."','".$fechacrea."','".$fechamodi."')";
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarPeriodicidadventasdetalle($id,$refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariomodi,$fechamodi) {
+	function modificarPeriodicidadventaspagos($id,$refperiodicidadventasdetalle,$monto,$nrorecibo,$fechapago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi) {
+		$sql = "update dbperiodicidadventaspagos
+		set
+		refperiodicidadventasdetalle = ".$refperiodicidadventasdetalle.",monto = ".$monto.",nrorecibo = '".$nrorecibo."',fechapago = '".$fechapago."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."',fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."'
+		where idperiodicidadventapago =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarPeriodicidadventaspagos($id) {
+		$sql = "delete from dbperiodicidadventaspagos where idperiodicidadventapago =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerPeriodicidadventaspagos() {
+		$sql = "select
+		p.idperiodicidadventapago,
+		p.refperiodicidadventasdetalle,
+		p.monto,
+		p.nrorecibo,
+		p.fechapago,
+		p.usuariocrea,
+		p.usuariomodi,
+		p.fechacrea,
+		p.fechamodi
+		from dbperiodicidadventaspagos p
+		inner join dbperiodicidadventasdetalle per ON per.idperiodicidadventadetalle = p.refperiodicidadventasdetalle
+		inner join dbperiodicidadventas pe ON pe.idperiodicidadventa = per.refperiodicidadventas
+		inner join tbestadopago es ON es.idestadopago = per.refestadopago
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerPeriodicidadventaspagosPorCobro($id) {
+		$sql = "select
+		p.idperiodicidadventapago,
+		p.refperiodicidadventasdetalle,
+		p.monto,
+		p.nrorecibo,
+		p.fechapago,
+		p.usuariocrea,
+		p.usuariomodi,
+		p.fechacrea,
+		p.fechamodi
+		from dbperiodicidadventaspagos p
+		inner join dbperiodicidadventasdetalle per ON per.idperiodicidadventadetalle = p.refperiodicidadventasdetalle
+		inner join dbperiodicidadventas pe ON pe.idperiodicidadventa = per.refperiodicidadventas
+		inner join dbventas ve ON ve.idventa = pe.refventas
+		inner join dbcotizaciones co on co.idcotizacion = ve.refcotizaciones
+		inner join dbclientes cli ON cli.idcliente = co.refclientes
+		inner join tbproductos pro ON pro.idproducto = co.refproductos
+		inner join tbestadopago es ON es.idestadopago = per.refestadopago
+		where per.idperiodicidadventadetalle = ".$id."
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerPeriodicidadventaspagosPorId($id) {
+		$sql = "select idperiodicidadventapago,refperiodicidadventasdetalle,monto,nrorecibo,fechapago,usuariocrea,usuariomodi,fechacrea,fechamodi from dbperiodicidadventaspagos where idperiodicidadventapago =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbperiodicidadventaspagos*/
+
+
+	function traerCobranzaajax($length, $start, $busqueda,$colSort,$colSortDir) {
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and ".$roles." (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or p.nrorecibo like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+						p.idperiodicidadventadetalle,
+						concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+						ve.nropoliza,
+						p.fechapago,
+						cli.numerocliente,
+						cli.idclienteinbursa,
+						p.nrorecibo,
+						est.estadopago,
+						p.montototal,
+						p.primaneta,
+						p.porcentajecomision,
+						p.montocomision,
+						p.fechapago,
+						p.fechavencimiento,
+						est.estadopago,
+						p.nrorecibo,
+						ea.estadoasesor,
+						p.refestadopago,
+						p.usuariocrea,
+						p.usuariomodi,
+						p.fechacrea,
+						p.fechamodi,
+						p.refperiodicidadventas
+		from dbperiodicidadventasdetalle p
+		inner join dbperiodicidadventas per ON per.idperiodicidadventa = p.refperiodicidadventas
+		inner join dbventas ve ON ve.idventa = per.refventas
+        inner join dbcotizaciones co on co.idcotizacion = ve.refcotizaciones
+        inner join dbclientes cli on cli.idcliente = co.refclientes
+        inner join dbasesores ase on ase.idasesor = co.refasesores
+        inner join tbestadoasesor ea on ea.idestadoasesor = ase.refestadoasesor
+		inner join tbtipoperiodicidad tp ON tp.idtipoperiodicidad = per.reftipoperiodicidad
+		inner join tbtipocobranza ti ON ti.idtipocobranza = per.reftipocobranza
+		inner join tbestadopago est ON est.idestadopago = p.refestadopago
+		left join dbdocumentacionventas dv on dv.refventas = p.idperiodicidadventadetalle
+        where p.refestadopago in (1,3) ".$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+
+	/* PARA Documentacionventas */
+
+	function modificarVentaUnicaDocumentacion($id, $campo, $valor) {
 		$sql = "update dbperiodicidadventasdetalle
 		set
-		refperiodicidadventas = ".$refperiodicidadventas.",montototal = ".$montototal.",primaneta = ".$primaneta.",porcentajecomision = ".$porcentajecomision.",montocomision = ".$montocomision.",fechapago = '".$fechapago."',fechavencimiento = '".$fechavencimiento."',refestadopago = ".$refestadopago.",usuariomodi = '".$usuariomodi."',fechamodi = '".$fechamodi."'
+		".$campo." = '".$valor."'
+		where idperiodicidadventadetalle =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerDocumentacionPorVentaDocumentacionCompleta($idventa,$iddocumentacion) {
+		$sql = "SELECT
+					    d.iddocumentacion,
+					    d.documentacion,
+					    d.obligatoria,
+					    da.iddocumentacionventa,
+					    da.archivo,
+					    da.type,
+					    coalesce( ed.estadodocumentacion, 'Falta') as estadodocumentacion,
+						 ed.color,
+					    ed.idestadodocumentacion
+					FROM
+					    dbdocumentaciones d
+					        LEFT JOIN
+					    dbdocumentacionventas da ON d.iddocumentacion = da.refdocumentaciones
+					        AND da.refventas = ".$idventa."
+					        LEFT JOIN
+					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
+					where d.iddocumentacion in (".$iddocumentacion.")
+
+					order by 1";
+		$res = $this->query($sql,0);
+ 		return $res;
+	}
+
+	function insertarDocumentacionventas($refventas,$refdocumentaciones,$archivo,$type,$refestadodocumentaciones,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+		$sql = "insert into dbdocumentacionventas(iddocumentacionventa,refventas,refdocumentaciones,archivo,type,refestadodocumentaciones,fechacrea,fechamodi,usuariocrea,usuariomodi)
+		values ('',".$refventas.",".$refdocumentaciones.",'".$archivo."','".$type."',".$refestadodocumentaciones.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarDocumentacionventas($id,$refventas,$refdocumentaciones,$archivo,$type,$refestadodocumentaciones,$fechamodi,$usuariomodi) {
+		$sql = "update dbdocumentacionventas
+		set
+		refventas = ".$refventas.",refdocumentaciones = ".$refdocumentaciones.",archivo = '".$archivo."',type = '".$type."',refestadodocumentaciones = ".$refestadodocumentaciones.",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."'
+		where iddocumentacionventa =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function modificarEstadoDocumentacionventas($id, $refestadodocumentaciones,$usuariomodi) {
+		$sql = "update dbdocumentacionventas
+		set
+		refestadodocumentaciones = ".$refestadodocumentaciones.",fechamodi = '".date('Y-m-d H:i:s')."',usuariomodi = '".$usuariomodi."'
+		where iddocumentacionventa =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function modificarEstadoDocumentacionVentasPorDocumentacion($iddocumentacion,$idventa, $refestadodocumentaciones,$usuariomodi) {
+		$sql = "update dbdocumentacionventas
+		set
+		refestadodocumentaciones = ".$refestadodocumentaciones.",fechamodi = '".date('Y-m-d H:i:s')."',usuariomodi = '".$usuariomodi."'
+		where refdocumentaciones =".$iddocumentacion." and refventas =".$idventa;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarDocumentacionventas($id) {
+		$sql = "delete from dbdocumentacionventas where iddocumentacionventa =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function eliminarDocumentacionventasPorVentaDocumentacion($idventa,$iddocumentacion) {
+		$sql = "delete from dbdocumentacionventas where refventas =".$idventa." and refdocumentaciones = ".$iddocumentacion;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function eliminarDocumentacionventasPorVentasDocumentacionEspecifico($idventa,$iddocumentacion, $archivo) {
+		$sql = "delete from dbdocumentacionventas where refventas =".$idventa =" and refdocumentaciones = ".$iddocumentacion." and archivo like '%".$archivo."%'";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function eliminarDocumentacionVenta($idventa,$iddocumentacion) {
+		/*** auditoria ****/
+
+		/*** fin auditoria ***/
+
+		$resFoto = $this->traerDocumentacionPorVentaDocumentacion($idventa,$iddocumentacion);
+
+		$resDocumentacion = $this->traerDocumentacionesPorId($iddocumentacion);
+
+		$imagen = '';
+
+      if (mysql_num_rows($resFoto) > 0) {
+         /* produccion
+         $imagen = 'https://www.saupureinconsulting.com.ar/aifzn/'.mysql_result($resFoto,0,'archivo').'/'.mysql_result($resFoto,0,'imagen');
+         */
+
+         //desarrollo
+
+         if (mysql_result($resFoto,0,'type') == '') {
+
+            $resV['error'] = true;
+				$resV['leyenda'] = 'Archivo perdido';
+         } else {
+				$archivos = '../archivos/cobros/'.$idventa.'/'.mysql_result($resDocumentacion,0,'carpeta').'/';
+
+            $resBorrar = $this->borrarDirecctorio($archivos);
+
+				$resUpdate = $this->eliminarDocumentacionventas(mysql_result($resFoto,0,'iddocumentacionventa'));
+
+            $resV['error'] = false;
+				$resV['leyenda'] = 'Archivo eliminado correctamente';
+         }
+
+
+
+      } else {
+         $resV['error'] = true;
+			$resV['leyenda'] = 'Archivo no encontrado';
+      }
+
+		return $resV;
+
+	}
+
+
+	function traerDocumentacionventas() {
+		$sql = "select
+		d.iddocumentacionventa,
+		d.refventas,
+		d.refdocumentaciones,
+		d.archivo,
+		d.type,
+		d.refestadodocumentaciones,
+		d.fechacrea,
+		d.fechamodi,
+		d.usuariocrea,
+		d.usuariomodi
+		from dbdocumentacionventas d
+		inner join dbperiodicidadventasdetalle ase ON ase.idperiodicidadventadetalle = d.refventas
+		inner join dbdocumentaciones doc ON doc.iddocumentacion = d.refdocumentaciones
+		inner join tbtipodocumentaciones ti ON ti.idtipodocumentacion = doc.reftipodocumentaciones
+		inner join tbestadodocumentaciones est ON est.idestadodocumentacion = d.refestadodocumentaciones
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerDocumentacionventasPorId($id) {
+		$sql = "select iddocumentacionventa,refventas,refdocumentaciones,archivo,type,refestadodocumentaciones,fechacrea,fechamodi,usuariocrea,usuariomodi from dbdocumentacionventas where iddocumentacionventa =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerDocumentacionPorVentaDocumentacion($id, $iddocumentacion) {
+		$sql = "select
+		da.iddocumentacionventa,da.refventas,da.refdocumentaciones,
+		da.archivo,da.type,da.refestadodocumentaciones,da.fechacrea,da.fechamodi,
+		da.usuariocrea,da.usuariomodi , e.estadodocumentacion, e.color, d.carpeta
+		from dbdocumentacionventas da
+		inner join dbdocumentaciones d on d.iddocumentacion = da.refdocumentaciones
+		inner join tbestadodocumentaciones e on e.idestadodocumentacion = da.refestadodocumentaciones
+		where da.refventas =".$id." and da.refdocumentaciones = ".$iddocumentacion;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* fin para documentaciones de ventas */
+
+   /* PARA Tipoproductorama */
+
+	function insertarTipoproductorama($reftipoproducto,$tipoproductorama) {
+		$sql = "insert into tbtipoproductorama(idtipoproductorama,reftipoproducto,tipoproductorama)
+		values ('',".$reftipoproducto.",'".$tipoproductorama."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarTipoproductorama($id,$reftipoproducto,$tipoproductorama) {
+		$sql = "update tbtipoproductorama
+		set
+		reftipoproducto = ".$reftipoproducto.",tipoproductorama = '".$tipoproductorama."'
+		where idtipoproductorama =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarTipoproductorama($id) {
+		$sql = "delete from tbtipoproductorama where idtipoproductorama =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerTipoproductorama() {
+		$sql = "select
+		t.idtipoproductorama,
+		t.reftipoproducto,
+		t.tipoproductorama
+		from tbtipoproductorama t
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerTipoproductoramaPorId($id) {
+		$sql = "select idtipoproductorama,reftipoproducto,tipoproductorama from tbtipoproductorama where idtipoproductorama =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerTipoproductoramaPorTipoProducto($id) {
+		$sql = "select
+		t.idtipoproductorama,
+		t.tipoproductorama,
+		t.reftipoproducto
+		from tbtipoproductorama t
+		inner join tbtipoproducto tp on tp.idtipoproducto = t.reftipoproducto
+		where tp.idtipoproducto = ".$id."
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: tbtipoproductorama*/
+
+	/* PARA Periodicidadventasdetalle */
+
+	function insertarPeriodicidadventasdetalle($refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi,$nrorecibo) {
+		$sql = "insert into dbperiodicidadventasdetalle(idperiodicidadventadetalle,refperiodicidadventas,montototal,primaneta,porcentajecomision,montocomision,fechapago,fechavencimiento,refestadopago,usuariocrea,usuariomodi,fechacrea,fechamodi,nrorecibo)
+		values ('',".$refperiodicidadventas.",".$montototal.",".$primaneta.",".$porcentajecomision.",".$montocomision.",'".$fechapago."','".$fechavencimiento."',".$refestadopago.",'".$usuariocrea."','".$usuariomodi."','".$fechacrea."','".$fechamodi."','".$nrorecibo."')";
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarPeriodicidadventasdetalle($id,$refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariomodi,$fechamodi,$nrorecibo) {
+		$sql = "update dbperiodicidadventasdetalle
+		set
+		refperiodicidadventas = ".$refperiodicidadventas.",montototal = ".$montototal.",primaneta = ".$primaneta.",porcentajecomision = ".$porcentajecomision.",montocomision = ".$montocomision.",fechapago = '".$fechapago."',fechavencimiento = '".$fechavencimiento."',refestadopago = ".$refestadopago.",usuariomodi = '".$usuariomodi."',fechamodi = '".$fechamodi."',nrorecibo = '".$nrorecibo."'
 		where idperiodicidadventadetalle =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -52,7 +434,8 @@ class ServiciosReferencias {
 		p.montocomision,
 		p.fechapago,
 		p.fechavencimiento,
-		est.estadopago,
+		concat(est.estadopago, ' ', (case when dv.iddocumentacionventa is null then '(*)' else '' end)) as estadopago,
+		p.nrorecibo,
 		p.refestadopago,
 		p.usuariocrea,
 		p.usuariomodi,
@@ -65,6 +448,7 @@ class ServiciosReferencias {
 		inner join tbtipoperiodicidad tp ON tp.idtipoperiodicidad = per.reftipoperiodicidad
 		inner join tbtipocobranza ti ON ti.idtipocobranza = per.reftipocobranza
 		inner join tbestadopago est ON est.idestadopago = p.refestadopago
+		left join dbdocumentacionventas dv on dv.refventas = p.idperiodicidadventadetalle
 		where ve.idventa = ".$idventa."
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
@@ -90,7 +474,8 @@ class ServiciosReferencias {
 		p.usuariocrea,
 		p.usuariomodi,
 		p.fechacrea,
-		p.fechamodi
+		p.fechamodi,
+		p.nrorecibo
 		from dbperiodicidadventasdetalle p
 		inner join dbperiodicidadventas per ON per.idperiodicidadventa = p.refperiodicidadventas
 		inner join dbventas ve ON ve.idventa = per.refventas
@@ -104,7 +489,23 @@ class ServiciosReferencias {
 
 
 	function traerPeriodicidadventasdetallePorId($id) {
-		$sql = "select idperiodicidadventadetalle,refperiodicidadventas,montototal,primaneta,porcentajecomision,montocomision,fechapago,fechavencimiento,refestadopago,usuariocrea,usuariomodi,fechacrea,fechamodi from dbperiodicidadventasdetalle where idperiodicidadventadetalle =".$id;
+		$sql = "select idperiodicidadventadetalle,refperiodicidadventas,montototal,primaneta,porcentajecomision,montocomision,fechapago,fechavencimiento,refestadopago,usuariocrea,usuariomodi,fechacrea,fechamodi,nrorecibo from dbperiodicidadventasdetalle where idperiodicidadventadetalle =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerPeriodicidadventasdetallePorIdCompleto($id) {
+		$sql = "select
+		pvd.idperiodicidadventadetalle,pvd.refperiodicidadventas,pvd.montototal,pvd.primaneta,
+		pvd.porcentajecomision,pvd.montocomision,pvd.fechapago,pvd.fechavencimiento,
+		pvd.refestadopago,
+		pvd.usuariocrea,pvd.usuariomodi,pvd.fechacrea,pvd.fechamodi,
+		pv.refventas,
+		pvd.nrorecibo
+		from dbperiodicidadventasdetalle pvd
+		inner join dbperiodicidadventas pv ON pv.idperiodicidadventa = pvd.refperiodicidadventas
+		where pvd.idperiodicidadventadetalle =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -114,7 +515,7 @@ class ServiciosReferencias {
 		pd.idperiodicidadventadetalle,pd.refperiodicidadventas,pd.montototal,
 		pd.primaneta,pd.porcentajecomision,pd.montocomision,
 		pd.fechapago,pd.fechavencimiento,pd.refestadopago,
-		pd.usuariocrea,pd.usuariomodi,pd.fechacrea,pd.fechamodi
+		pd.usuariocrea,pd.usuariomodi,pd.fechacrea,pd.fechamodi, pd.nrorecibo
 		from dbperiodicidadventasdetalle pd
 		inner join dbperiodicidadventas pv ON pv.idperiodicidadventa = pd.refperiodicidadventas
 		inner join dbventas v on v.idventa = pv.refventas
@@ -198,6 +599,23 @@ class ServiciosReferencias {
 		from dbperiodicidadventas pv
 		inner join tbtipoperiodicidad tp ON tp.idtipoperiodicidad = pv.reftipoperiodicidad
 		where pv.refventas =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerPeriodicidadventasPorIdCompleto($id) {
+		$sql = "select
+			pv.idperiodicidadventa,
+			concat('Cliente: ', cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+			concat('Producto: ', pro.producto) as producto,
+			pv.refventas,
+			pv.reftipoperiodicidad,pv.reftipocobranza
+			from dbperiodicidadventas pv
+			inner join dbventas v on v.idventa = pv.refventas
+			inner join dbcotizaciones co on co.idcotizacion = v.refcotizaciones
+			inner join dbclientes cli ON cli.idcliente = co.refclientes
+			inner join tbproductos pro ON pro.idproducto = co.refproductos
+			where pv.idperiodicidadventa =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -402,19 +820,19 @@ class ServiciosReferencias {
 
 	/* PARA Ventas */
 
-	function insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$porcentajecomision,$montocomision,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
-		$sql = "insert into dbventas(idventa,refcotizaciones,refestadoventa,primaneta,primatotal,porcentajecomision,montocomision,fechavencimientopoliza,nropoliza,fechacrea,fechamodi,usuariocrea,usuariomodi)
-		values ('',".$refcotizaciones.",".$refestadoventa.",".$primaneta.",".$primatotal.",".$porcentajecomision.",".$montocomision.",'".$fechavencimientopoliza."','".$nropoliza."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
+	function insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno) {
+		$sql = "insert into dbventas(idventa,refcotizaciones,refestadoventa,primaneta,primatotal,fechavencimientopoliza,nropoliza,fechacrea,fechamodi,usuariocrea,usuariomodi,foliotys,foliointerno)
+		values ('',".$refcotizaciones.",".$refestadoventa.",".$primaneta.",".$primatotal.",'".$fechavencimientopoliza."','".$nropoliza."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."','".$foliotys."','".$foliointerno."')";
 
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarVentas($id,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$porcentajecomision,$montocomision,$fechavencimientopoliza,$nropoliza,$fechamodi,$usuariomodi) {
+	function modificarVentas($id,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechamodi,$usuariomodi,$foliotys,$foliointerno) {
 		$sql = "update dbventas
 		set
-		refcotizaciones = ".$refcotizaciones.",refestadoventa = ".$refestadoventa.",primaneta = ".$primaneta.",primatotal = ".$primatotal.",porcentajecomision = ".$porcentajecomision.",montocomision = ".$montocomision.",fechavencimientopoliza = '".$fechavencimientopoliza."',nropoliza = '".$nropoliza."',fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."'
+		refcotizaciones = ".$refcotizaciones.",refestadoventa = ".$refestadoventa.",primaneta = ".$primaneta.",primatotal = ".$primatotal.",fechavencimientopoliza = '".$fechavencimientopoliza."',nropoliza = '".$nropoliza."',fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',foliotys = '".$foliotys."',foliointerno = '".$foliointerno."'
 		where idventa =".$id;
 
 		$res = $this->query($sql,0);
@@ -436,9 +854,9 @@ class ServiciosReferencias {
 		v.refestadoventa,
 		v.primaneta,
 		v.primatotal,
-		v.porcentajecomision,
-		v.montocomision,
 		v.fechacrea,
+		v.foliotys,
+		v.foliointerno,
 		v.fechamodi
 		from dbventas v
 		order by 1";
@@ -476,18 +894,18 @@ class ServiciosReferencias {
 		concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
 		v.primaneta,
 		v.primatotal,
-		(case when v.porcentajecomision = 0 then v.montocomision else v.porcentajecomision end) as comision,
+		v.foliotys,
 		v.fechavencimientopoliza,
 		v.nropoliza,
 		est.estadocotizacion,
+
+		v.foliointerno,
 		c.refclientes,
 		c.refproductos,
 		c.refasesores,
 		c.refasociados,
 		c.refestadocotizaciones,
 		c.observaciones,
-		c.foliotys,
-		c.foliointerno,
 		c.fechacrea,
 		c.fechamodi,
 		c.usuariocrea,
@@ -530,7 +948,7 @@ class ServiciosReferencias {
 		concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
 		v.primaneta,
 		v.primatotal,
-		(case when v.porcentajecomision = 0 then v.montocomision else v.porcentajecomision end) as comision,
+		v.foliotys,
 		v.fechavencimientopoliza,
 		v.nropoliza,
 		est.estadocotizacion,
@@ -540,8 +958,8 @@ class ServiciosReferencias {
 		c.refasociados,
 		c.refestadocotizaciones,
 		c.observaciones,
-		c.foliotys,
-		c.foliointerno,
+
+		v.foliointerno,
 		c.fechacrea,
 		c.fechamodi,
 		c.usuariocrea,
@@ -568,13 +986,28 @@ class ServiciosReferencias {
 
 
 	function traerVentasPorId($id) {
-		$sql = "select idventa,refcotizaciones,refestadoventa,primaneta,primatotal,porcentajecomision,montocomision,fechacrea,fechamodi,usuariocrea,usuariomodi,nropoliza,fechavencimientopoliza from dbventas where idventa =".$id;
+		$sql = "select idventa,refcotizaciones,refestadoventa,primaneta,primatotal,fechacrea,fechamodi,usuariocrea,usuariomodi,nropoliza,fechavencimientopoliza,foliotys,foliointerno from dbventas where idventa =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
 	function traerVentasPorCotizacion($id) {
-		$sql = "select idventa,refcotizaciones,refestadoventa,primaneta,primatotal,porcentajecomision,montocomision,fechacrea,fechamodi,usuariocrea,usuariomodi,nropoliza,fechavencimientopoliza from dbventas where refcotizaciones =".$id;
+		$sql = "select idventa,refcotizaciones,refestadoventa,primaneta,primatotal,fechacrea,fechamodi,usuariocrea,usuariomodi,nropoliza,fechavencimientopoliza,foliotys,foliointerno from dbventas where refcotizaciones =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerVentasPorIdCompleto($id) {
+		$sql = "select
+		v.idventa,v.refcotizaciones,v.refestadoventa,v.primaneta,
+		v.primatotal,v.fechacrea,v.fechamodi,v.usuariocrea,
+		v.usuariomodi,v.nropoliza,v.fechavencimientopoliza,
+		v.foliotys,v.foliointerno,
+		c.refclientes,
+		c.refproductos
+		from dbventas v
+		inner join dbcotizaciones c ON c.idcotizacion = v.refcotizaciones
+		where v.idventa =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -3442,7 +3875,7 @@ class ServiciosReferencias {
 	/* PARA Cotizaciones */
 
 	function generaFolioInterno() {
-		$sql = "select max(idcotizacion) from dbcotizaciones";
+		$sql = "select max(idventa) from dbventas";
 		$res = $this->query($sql,0);
 
 		if (mysql_num_rows($res) > 0) {
@@ -3454,18 +3887,18 @@ class ServiciosReferencias {
 	}
 
 
-	function insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$foliotys,$foliointerno,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones) {
-		$sql = "insert into dbcotizaciones(idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion,fechaemitido,foliotys,foliointerno,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,observaciones)
-		values ('',".$refclientes.",".$refproductos.",".$refasesores.",".$refasociados.",".$refestadocotizaciones.",'".$cobertura."','".$reasegurodirecto."','".$tiponegocio."','".$presentacotizacion."',".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",'".$foliotys."','','".date('Y-m-d H:i:s')."','".date('Y-m-d H:i:s')."','".$usuariocrea."','".$usuariomodi."',".$refusuarios.",'".$observaciones."')";
+	function insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual) {
+		$sql = "insert into dbcotizaciones(idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion,fechaemitido,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,observaciones,fechavencimiento,coberturaactual)
+		values ('',".$refclientes.",".$refproductos.",".$refasesores.",".$refasociados.",".$refestadocotizaciones.",'".$cobertura."','".$reasegurodirecto."','".$tiponegocio."','".$presentacotizacion."',".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",'".date('Y-m-d H:i:s')."','".date('Y-m-d H:i:s')."','".$usuariocrea."','".$usuariomodi."',".$refusuarios.",'".$observaciones."','".$fechavencimiento."','".$coberturaactual."')";
 
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
-	function modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$foliotys,$foliointerno,$fechamodi,$usuariomodi,$refusuarios,$observaciones) {
+	function modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual) {
 		$sql = "update dbcotizaciones
 		set
-		refclientes = ".$refclientes.",refproductos = ".$refproductos.",refasesores = ".$refasesores.",refasociados = ".$refasociados.",refestadocotizaciones = ".$refestadocotizaciones.",cobertura = '".$cobertura."',reasegurodirecto = '".$reasegurodirecto."',tiponegocio = '".$tiponegocio."',presentacotizacion = '".$presentacotizacion."',fechapropuesta = ".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",fecharenovacion = ".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",fechaemitido = ".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",foliotys = '".$foliotys."',foliointerno = '".$foliointerno."',fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',refusuarios = ".$refusuarios.",observaciones = '".$observaciones."'
+		refclientes = ".$refclientes.",refproductos = ".$refproductos.",refasesores = ".$refasesores.",refasociados = ".$refasociados.",refestadocotizaciones = ".$refestadocotizaciones.",cobertura = '".$cobertura."',reasegurodirecto = '".$reasegurodirecto."',tiponegocio = '".$tiponegocio."',presentacotizacion = '".$presentacotizacion."',fechapropuesta = ".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",fecharenovacion = ".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",fechaemitido = ".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',refusuarios = ".$refusuarios.",observaciones = '".$observaciones."',fechavencimiento = '".$fechavencimiento."',coberturaactual = '".$coberturaactual."'
 		where idcotizacion =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -3507,8 +3940,8 @@ class ServiciosReferencias {
 		c.fechapropuesta,
 		c.fecharenovacion,
 		c.fechaemitido,
-		c.foliotys,
-		c.foliointerno,
+		c.fechavencimiento,
+		c.coberturaactual,
 		c.fechacrea,
 		c.fechamodi,
 		c.usuariocrea,
@@ -3563,8 +3996,8 @@ class ServiciosReferencias {
 		c.refasociados,
 		c.refestadocotizaciones,
 		c.observaciones,
-		c.foliotys,
-		c.foliointerno,
+		c.fechavencimiento,
+		c.coberturaactual,
 		c.fechacrea,
 		c.fechamodi,
 		c.usuariocrea,
@@ -3612,8 +4045,8 @@ class ServiciosReferencias {
 		c.refasociados,
 		c.refestadocotizaciones,
 		c.observaciones,
-		c.foliotys,
-		c.foliointerno,
+		c.fechavencimiento,
+		c.coberturaactual,
 		c.fechacrea,
 		c.fechamodi,
 		c.usuariocrea,
@@ -3689,8 +4122,8 @@ class ServiciosReferencias {
 		c.refasociados,
 		c.refestadocotizaciones,
 		c.observaciones,
-		c.foliotys,
-		c.foliointerno,
+		c.fechavencimiento,
+		c.coberturaactual,
 		c.fechacrea,
 		c.fechamodi,
 		c.usuariocrea,
@@ -3712,7 +4145,7 @@ class ServiciosReferencias {
 
 
 	function traerCotizacionesPorId($id) {
-		$sql = "select idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,observaciones,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,fechaemitido,foliotys,foliointerno,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion from dbcotizaciones where idcotizacion =".$id;
+		$sql = "select idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,observaciones,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,fechaemitido,fechavencimiento,coberturaactual,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion from dbcotizaciones where idcotizacion =".$id;
 
 		$res = $this->query($sql,0);
 		return $res;
@@ -3727,8 +4160,8 @@ class ServiciosReferencias {
 		concat('Asesor: ', ase.apellidopaterno, ' ', ase.nombre) as asesor,
 		c.refclientes,c.refproductos,c.refasesores,c.refasociados,
 		c.refestadocotizaciones,c.observaciones,
-		c.fechacrea,c.fechamodi,c.usuariocrea,c.usuariomodi,c.refusuarios,c.fechaemitido,c.foliotys,
-		c.foliointerno,c.cobertura,c.reasegurodirecto,c.tiponegocio,
+		c.fechacrea,c.fechamodi,c.usuariocrea,c.usuariomodi,c.refusuarios,c.fechaemitido,c.fechavencimiento,
+		c.coberturaactual,c.cobertura,c.reasegurodirecto,c.tiponegocio,
 		c.presentacotizacion,c.fechapropuesta,c.fecharenovacion
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
@@ -3748,8 +4181,8 @@ class ServiciosReferencias {
 		concat('Asesor: ', ase.apellidopaterno, ' ', ase.nombre) as asesor,
 		c.refclientes,c.refproductos,c.refasesores,c.refasociados,
 		c.refestadocotizaciones,c.observaciones,
-		c.fechacrea,c.fechamodi,c.usuariocrea,c.usuariomodi,c.refusuarios,c.fechaemitido,c.foliotys,
-		c.foliointerno,c.cobertura,c.reasegurodirecto,c.tiponegocio,
+		c.fechacrea,c.fechamodi,c.usuariocrea,c.usuariomodi,c.refusuarios,c.fechaemitido,c.fechavencimiento,
+		c.coberturaactual,c.cobertura,c.reasegurodirecto,c.tiponegocio,
 		c.presentacotizacion,c.fechapropuesta,c.fecharenovacion
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
@@ -4404,6 +4837,33 @@ class ServiciosReferencias {
 		from dbasociados a
 		inner join dbusuarios usu ON usu.idusuario = a.refusuarios
 		inner join tbbancos ban ON ban.idbanco = a.refbancos
+		order by a.apellidopaterno,
+		a.apellidomaterno,
+		a.nombre";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function bAsociados($busqueda, $tipo) {
+		$sql = "select
+		a.idasociado,
+		a.refusuarios,
+		a.apellidopaterno,
+		a.apellidomaterno,
+		a.nombre,
+		a.ine,
+		a.email,
+		a.fechanacimiento,
+		a.telefonomovil,
+		a.telefonotrabajo,
+		a.refbancos,
+		a.claveinterbancaria,
+		a.domicilio,
+		concat(a.apellidopaterno, ' ', a.apellidomaterno, ' ', a.nombre) as nombrecompleto
+		from dbasociados a
+		inner join dbusuarios usu ON usu.idusuario = a.refusuarios
+		inner join tbbancos ban ON ban.idbanco = a.refbancos
+		where concat(a.apellidopaterno, ' ', a.apellidomaterno, ' ', a.nombre) like '%".$busqueda."%' and a.reftipoasociado = ".$tipo."
 		order by a.apellidopaterno,
 		a.apellidomaterno,
 		a.nombre";
@@ -8561,6 +9021,41 @@ class ServiciosReferencias {
 	}
 
 
+	function bAsesores($busqueda) {
+		$sql = "select
+			a.idasesor,
+			a.refusuarios,
+			a.nombre,
+			a.apellidopaterno,
+			a.apellidomaterno,
+			a.email,
+			a.curp,
+			a.rfc,
+			a.ine,
+			a.fechanacimiento,
+			a.sexo,
+			a.codigopostal,
+			a.refescolaridades,
+			a.telefonomovil,
+			a.telefonocasa,
+			a.telefonotrabajo,
+			a.fechacrea,
+			a.fechamodi,
+			a.usuariocrea,
+			a.usuariomodi,
+			a.reftipopersonas,
+			a.razonsocial,
+			concat(a.apellidopaterno, ' ', a.apellidomaterno, ' ', a.nombre) as nombrecompleto
+			from dbasesores a
+			inner join dbusuarios u ON u.idusuario = a.refusuarios
+			where concat(a.apellidopaterno, ' ', a.apellidomaterno, ' ', a.nombre) like '%".$busqueda."%'
+			order by a.apellidopaterno,
+			a.apellidomaterno,a.nombre";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
 	function traerAsesores() {
 		$sql = "select
 			a.idasesor,
@@ -8663,6 +9158,12 @@ class ServiciosReferencias {
 
 	function traerAsesoresPorId($id) {
 	$sql = "select idasesor,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,fechacrea,fechamodi,usuariocrea,usuariomodi,reftipopersonas,claveinterbancaria,idclienteinbursa,claveasesor,fechaalta,nss,razonsocial,nropoliza,vigdesdecedulaseguro,vighastacedulaseguro,vigdesderc,vighastarc,refestadoasesor,refestadoasesorinbursa from dbasesores where idasesor =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	function traerAsesoresPorIdCompleto($id) {
+	$sql = "select idasesor,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,fechacrea,fechamodi,usuariocrea,usuariomodi,reftipopersonas,claveinterbancaria,idclienteinbursa,claveasesor,fechaalta,nss,razonsocial,nropoliza,vigdesdecedulaseguro,vighastacedulaseguro,vigdesderc,vighastarc,refestadoasesor,refestadoasesorinbursa,concat(apellidopaterno, ' ', apellidomaterno, ' ', nombre) as nombrecompleto from dbasesores where idasesor =".$id;
 	$res = $this->query($sql,0);
 	return $res;
 	}

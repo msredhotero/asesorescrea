@@ -906,8 +906,144 @@ switch ($accion) {
       eliminarPeriodicidadventasdetalle($serviciosReferencias);
    break;
 
+   case 'traerTipoproductoramaPorTipoProducto':
+      traerTipoproductoramaPorTipoProducto($serviciosReferencias, $serviciosFunciones);
+   break;
+
+   case 'modificarEstadoDocumentacionVentas':
+      modificarEstadoDocumentacionVentas($serviciosReferencias);
+   break;
+   case 'traerDocumentacionPorVentaDocumentacion':
+      traerDocumentacionPorVentaDocumentacion($serviciosReferencias);
+   break;
+   case 'eliminarDocumentacionVenta':
+      eliminarDocumentacionVenta($serviciosReferencias);
+   break;
+   case 'modificarVentaUnicaDocumentacion':
+      modificarVentaUnicaDocumentacion($serviciosReferencias);
+   break;
+
 }
 /* FinFinFin */
+
+
+function modificarVentaUnicaDocumentacion($serviciosReferencias) {
+   $idventa = $_POST['idventa'];
+   $campo = $_POST['campo'];
+   $valor = $_POST['valor'];
+
+   $res = $serviciosReferencias->modificarVentaUnicaDocumentacion($idventa, $campo, $valor);
+
+   if ($res == true) {
+      $resV['leyenda'] = '';
+      $resV['error'] = false;
+   } else {
+      $resV['leyenda'] = 'Hubo un error al modificar datos';
+      $resV['error'] = true;
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
+
+
+function eliminarDocumentacionVenta($serviciosReferencias) {
+   $idventa = $_POST['idventa'];
+   $iddocumentacion = $_POST['iddocumentacion'];
+
+   $res = $serviciosReferencias->eliminarDocumentacionVenta($idventa, $iddocumentacion);
+
+   header('Content-type: application/json');
+   echo json_encode($res);
+}
+
+
+function traerDocumentacionPorVentaDocumentacion($serviciosReferencias) {
+
+   $idventa = $_POST['idventa'];
+   $iddocumentacion = $_POST['iddocumentacion'];
+
+   $resV['datos'] = '';
+   $resV['error'] = false;
+
+   $resFoto = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($idventa,$iddocumentacion);
+
+   $imagen = '';
+
+   if (mysql_num_rows($resFoto) > 0) {
+      /* produccion
+      $imagen = 'https://www.saupureinconsulting.com.ar/aifzn/'.mysql_result($resFoto,0,'archivo').'/'.mysql_result($resFoto,0,'imagen');
+      */
+
+      //desarrollo
+
+      if (mysql_result($resFoto,0,'type') == '') {
+         $imagen = '../../imagenes/sin_img.jpg';
+
+         $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+         $resV['error'] = true;
+      } else {
+         $imagen = '../../archivos/cobros/'.$idventa.'/'.mysql_result($resFoto,0,'carpeta').'/'.mysql_result($resFoto,0,'archivo');
+
+         $resV['datos'] = array('imagen' => $imagen, 'type' => mysql_result($resFoto,0,'type'));
+
+         $resV['error'] = false;
+      }
+
+
+
+   } else {
+      $imagen = '../../imagenes/sin_img.jpg';
+
+
+      $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+      $resV['error'] = true;
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
+function modificarEstadoDocumentacionVentas($serviciosReferencias) {
+   session_start();
+
+   $iddocumentacionventa = $_POST['iddocumentacionventa'];
+   $idestado = $_POST['idestado'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+
+   if ($iddocumentacionventa == 0) {
+      $resV['leyenda'] = 'Todavia no cargo el archivo, no podra modificar el estado de la documentación';
+      $resV['error'] = true;
+   } else {
+      $res = $serviciosReferencias->modificarEstadoDocumentacionVentas($iddocumentacionventa,$idestado,$usuariomodi);
+
+      if ($res == true) {
+         $resV['leyenda'] = '';
+         $resV['error'] = false;
+      } else {
+         $resV['leyenda'] = 'Hubo un error al modificar datos';
+         $resV['error'] = true;
+      }
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
+function traerTipoproductoramaPorTipoProducto($serviciosReferencias, $serviciosFunciones) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->traerTipoproductoramaPorTipoProducto($id);
+   $cad = $serviciosFunciones->devolverSelectBox($res,array(1),'');
+
+   echo $cad;
+
+}
 
 
 function insertarPeriodicidadventasdetalle($serviciosReferencias) {
@@ -998,10 +1134,12 @@ function modificarVentas($serviciosReferencias) {
    $refestadoventa = $_POST['refestadoventa'];
    $primaneta = ($_POST['primaneta'] == '' ? 0 : $_POST['primaneta']);
    $primatotal = ($_POST['primatotal'] == '' ? 0 : $_POST['primatotal']);
-   $porcentajecomision = ($_POST['porcentajecomision'] == '' ? 0 : $_POST['porcentajecomision']);
-   $montocomision = ($_POST['montocomision'] == '' ? 0 : $_POST['montocomision']);
+
    $fechavencimientopoliza = $_POST['fechavencimientopoliza'];
    $nropoliza = $_POST['nropoliza'];
+
+   $foliotys = $_POST['foliotys'];
+   $foliointerno = $_POST['foliointerno'];
 
    $fechamodi = date('Y-m-d H:i:s');
 
@@ -1018,7 +1156,7 @@ function modificarVentas($serviciosReferencias) {
    }
 
    if ($error == '') {
-      $res = $serviciosReferencias->modificarVentas($id,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$porcentajecomision,$montocomision,$fechavencimientopoliza,$nropoliza,$fechamodi,$usuariomodi);
+      $res = $serviciosReferencias->modificarVentas($id,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechamodi,$usuariomodi,$foliotys,$foliointerno);
 
       if ($res == true) {
          echo '';
@@ -2099,22 +2237,34 @@ function insertarCotizaciones($serviciosReferencias) {
    $usuariocrea = $_SESSION['usua_sahilices'];
    $usuariomodi = $_SESSION['usua_sahilices'];
    $refusuarios = $_SESSION['usuaid_sahilices'];
-   $foliotys = $_POST['foliotys'];
+
+   $tiponegocio = $_POST['tiponegocio'];
+
+   if ($tiponegocio != 'Negocio nuevo') {
+      $fechavencimiento = $_POST['fechavencimiento'];
+      $coberturaactual = $_POST['coberturaactual'];
+   } else {
+      $fechavencimiento = '';
+      $coberturaactual = '';
+   }
+
 
    $cobertura = $_POST['cobertura'];
    $reasegurodirecto = $_POST['reasegurodirecto'];
    $fecharenovacion = $_POST['fecharenovacion'];
    $fechapropuesta = $_POST['fechapropuesta'];
-   $tiponegocio = $_POST['tiponegocio'];
+
    $presentacotizacion = $_POST['presentacotizacion'];
    $fechaemitido = $_POST['fechaemitido'];
 
-   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$foliotys,'',$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones);
+   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual);
 
    if ((integer)$res > 0) {
       if ($refestadocotizaciones == 6) {
          $foliointerno = $serviciosReferencias->generaFolioInterno();
-         $resIV = $serviciosReferencias->insertarVentas($res,1,0,0,0,0,'','',date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$usuariomodi,$usuariomodi);
+         $foliotys = $_POST['foliotys'];
+
+         $resIV = $serviciosReferencias->insertarVentas($res,1,0,0,'','',date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$usuariomodi,$usuariomodi,$foliotys,$foliointerno);
 
          // generada la venta lo guardo en la cartera del cliente
          $resIC = $serviciosReferencias->insertarClientescartera($refclientes,$refproductos,$fechaemitido,'','1');
@@ -2159,6 +2309,9 @@ function modificarCotizaciones($serviciosReferencias) {
    $refusuarios = $_SESSION['usuaid_sahilices'];
    $foliotys = $_POST['foliotys'];
 
+   $fechavencimiento = $_POST['fechavencimiento'];
+   $coberturaactual = $_POST['coberturaactual'];
+
    $cobertura = $_POST['cobertura'];
    $reasegurodirecto = $_POST['reasegurodirecto'];
    $fecharenovacion = $_POST['fecharenovacion'];
@@ -2168,7 +2321,8 @@ function modificarCotizaciones($serviciosReferencias) {
 
    if ($refestadocotizaciones == 6) {
       $foliointerno = $serviciosReferencias->generaFolioInterno();
-      $resIV = $serviciosReferencias->insertarVentas($id,1,0,0,0,0,'','',date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$usuariomodi,$usuariomodi);
+      $resIV = $serviciosReferencias->insertarVentas($id,1,0,0,'','',date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$usuariomodi,$usuariomodi,$foliotys,$foliointerno);
+
 
       // generada la venta lo guardo en la cartera del cliente
       $resIC = $serviciosReferencias->insertarClientescartera($refclientes,$refproductos,$fechaemitido,'','1');
@@ -2181,7 +2335,7 @@ function modificarCotizaciones($serviciosReferencias) {
    }
 
 
-   $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$foliotys,$foliointerno,$fechamodi,$usuariomodi,$refusuarios,$observaciones);
+   $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual);
 
    if ($res == true) {
       echo '';
@@ -3637,8 +3791,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
       case 'dbventas':
          $resultado = $serviciosReferencias->traerVentasPorId($id);
 
-         $lblCambio	 	= array('refcotizaciones','primaneta','primatotal','porcentajecomision','montocomision','fechavencimientopoliza','nropoliza');
-         $lblreemplazo	= array('Venta','Prima Neta','Prima Total','% Comision','Monto Comision','Fecha Vencimiento de la Poliza','Nro Poliza');
+         $lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza');
+         $lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza');
 
          $modificar = "modificarVentas";
          $idTabla = "idventa";

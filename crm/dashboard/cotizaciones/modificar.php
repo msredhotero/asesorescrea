@@ -55,8 +55,8 @@ $resultado = $serviciosReferencias->traerCotizacionesPorId($id);
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbcotizaciones";
 
-$lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones','fechaemitido','primaneta','primatotal','recibopago','fechapago','nrorecibo','importecomisionagente','importebonopromotor','cobertura','reasegurodirecto','fecharenovacion','fechapropuesta','tiponegocio','presentacotizacion','foliotys','foliointerno');
-$lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor','Cobertura Requiere Reaseguro','Reaseguro Directo con Inbursa o Broker','Fecha renovación o presentación de propueta al cliente','Fecha en que se entrega propuesta','Tipo de negocio para agente','Presenta Cotizacion o Poliza de competencia','Folio TYS','Folio Interno');
+$lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones','fechaemitido','primaneta','primatotal','recibopago','fechapago','nrorecibo','importecomisionagente','importebonopromotor','cobertura','reasegurodirecto','fecharenovacion','fechapropuesta','tiponegocio','presentacotizacion','fechavencimiento','coberturaactual');
+$lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor','Cobertura Requiere Reaseguro','Reaseguro Directo con Inbursa o Broker','Fecha renovación o presentación de propueta al cliente','Fecha en que se entrega propuesta','Tipo de negocio para agente','Presenta Cotizacion o Poliza de competencia','Fecha Vencimiento','Cobertura Actual');
 
 
 $modificar = "modificarCotizaciones";
@@ -350,11 +350,20 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 									<input type="hidden" id="estadoactual" name="estadoactual" value=""/>
 								</div>
 								<div class="row">
-									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContidclienteinbursa" style="display:block">
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContidclienteinbursa" style="display:block">
 										<label class="form-label">ID Cliente Inbursa </label>
 										<div class="form-group input-group">
 											<div class="form-line">
 												<input type="text" class="form-control" id="idclienteinbursa" name="idclienteinbursa" value="<?php echo $idclienteinbursa; ?>">
+
+											</div>
+										</div>
+									</div>
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContfoliotys" style="display:block">
+										<label class="form-label">Folio TYS </label>
+										<div class="form-group input-group">
+											<div class="form-line">
+												<input type="text" class="form-control" id="foliotys" name="foliotys">
 
 											</div>
 										</div>
@@ -429,6 +438,8 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 <script>
 	$(document).ready(function(){
+
+		$('.frmContreasegurodirecto').hide();
 
 
 		function traerClientescarteraPorCliente(idcliente) {
@@ -517,7 +528,10 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('.frmContfechaemitido').show();
 		$("#fechapropuesta").prop('required',true);
 		$("#fechaemitido").prop('required',true);
-		$("#foliotys").prop('required',true);
+
+		$('.frmContidclienteinbursa').hide();
+		$('.frmContfoliotys').hide();
+
 		<?php
 		} else {
 		?>
@@ -532,6 +546,10 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('.frmContfechaemitido').show();
 		$('.frmContnropoliza').show();
 
+		$('.frmContidclienteinbursa').show();
+		$('.frmContfoliotys').show();
+
+		$("#foliotys").prop('required',true);
 		$("#idclienteinbursa").prop('required',true);
 
 
@@ -556,8 +574,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		$('.frmContfechaemitido').show();
 		$('.frmContnropoliza').show();
 
-		$('.frmContfechapago').show();
-		$('.frmContnrorecibo').show();
 
 		<?php if ($prima == '1') { ?>
 		$("#primaneta").prop('required',true);
@@ -689,6 +705,15 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 
 		$('#fechapropuesta').bootstrapMaterialDatePicker({
+			format: 'YYYY/MM/DD',
+			lang : 'es',
+			clearButton: true,
+			weekStart: 1,
+			time: false,
+			minDate : new Date()
+		});
+
+		$('#fechavencimiento').bootstrapMaterialDatePicker({
 			format: 'YYYY/MM/DD',
 			lang : 'es',
 			clearButton: true,

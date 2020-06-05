@@ -61,8 +61,8 @@ $idcotizacion = mysql_result($resultado,0,'refcotizaciones');
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbventas";
 
-$lblCambio	 	= array('refcotizaciones','primaneta','primatotal','porcentajecomision','montocomision','fechavencimientopoliza','nropoliza');
-$lblreemplazo	= array('Venta','Prima Neta','Prima Total','% Comision','Monto Comision','Fecha Vencimiento de la Poliza','Nro Poliza');
+$lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza');
+$lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza');
 
 $modificar = "modificarVentas";
 $idTabla = "idventa";
@@ -70,7 +70,8 @@ $idTabla = "idventa";
 $resVar = $serviciosReferencias->traerCotizacionesPorIdCompleto(mysql_result($resultado,0,'refcotizaciones'));
 $cadRef = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(1,2,3),' ',mysql_result($resultado,0,'refcotizaciones'));
 
-$cadRef2 = "<option value='1' selected>cargado</option>";
+$resVar1 = $serviciosReferencias->traerEstadoventa();
+$cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),' ',mysql_result($resultado,0,'refestadoventa'));
 
 
 $refdescripcion = array(0=>$cadRef,1=>$cadRef2);
@@ -195,13 +196,11 @@ $formulario = $serviciosFunciones->camposTablaModificar($id, $idTabla,$modificar
 								</div>
 								<div class="row">
 									<div class="button-demo">
-										<button type="button" class="btn btn-primary waves-effect btnVolver">
+										<button type="button" class="btn btn-black waves-effect btnVolver">
 											<i class="material-icons">arrow_back</i>
 											<span>VOLVER</span>
 										</button>
 										<?php if (array_search($_SESSION['idroll_sahilices'], $arRoles) >= 0) { ?>
-											<button type="button" class="btn bg-black waves-effect btnCalcularM">CALCULAR $</button>
-											<button type="button" class="btn bg-black waves-effect btnCalcularP">CALCULAR %</button>
 											<button type="submit" class="btn bg-light-blue waves-effect modificar">
 												<i class="material-icons">save</i>
 												<span>GUARDAR</span>

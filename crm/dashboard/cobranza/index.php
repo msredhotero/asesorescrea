@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../ventas/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cobranza/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Ventas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cobranza",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -39,26 +39,20 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Venta";
+$singular = "Cobranza";
 
-$plural = "Ventas";
+$plural = "Cobranza";
 
-$eliminar = "eliminarVentas";
+$eliminar = "eliminarEspecialidades";
 
-$insertar = "insertarVentas";
+$insertar = "insertarEspecialidades";
 
-$modificar = "modificarVentas";
+$modificar = "modificarEspecialidades";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
-/////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbventas";
-
-$lblCambio	 	= array('primaneta','primatotal','porcentajecomision','montocomision','fechavencimientopoliza','nropoliza');
-$lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','Fecha Vencimiento de la Poliza','Nro Poliza');
-
-//////////////////////////////////////////////  FIN de los opciones //////////////////////////
+$tabla 			= "dbperiodicidadventaspagos";
 
 ?>
 
@@ -86,9 +80,6 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 
 	<!-- Dropzone Css -->
 	<link href="../../plugins/dropzone/dropzone.css" rel="stylesheet">
-
-	<link rel="stylesheet" type="text/css" href="../../css/classic.css"/>
-	<link rel="stylesheet" type="text/css" href="../../css/classic.date.css"/>
 
 
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
@@ -171,34 +162,33 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 						<div class="body table-responsive">
 							<form class="form" id="formCountry">
 
+
 								<div class="row" style="padding: 5px 20px;">
 
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
 												<th>Cliente</th>
-												<th>Producto</th>
-												<th>Asesor</th>
-												<th>Asociado</th>
-												<th>P. Neta</th>
-												<th>P. Total</th>
-												<th>Folio TYS</th>
-												<th>Fecha Venc.</th>
 												<th>Nro Poliza</th>
+												<th>Fecha Pago</th>
+												<th>Nro Cliente</th>
+												<th>Id Cliente Inbursa</th>
+												<th>Nro Recibo</th>
+												<th>Estado</th>
+												<th>Estado Agente</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
 												<th>Cliente</th>
-												<th>Producto</th>
-												<th>Asesor</th>
-												<th>Asociado</th>
-												<th>P. Neta</th>
-												<th>P. Total</th>
-												<th>Folio TYS</th>
-												<th>Fecha Venc.</th>
 												<th>Nro Poliza</th>
+												<th>Fecha Pago</th>
+												<th>Nro Cliente</th>
+												<th>Id Cliente Inbursa</th>
+												<th>Nro Recibo</th>
+												<th>Estado</th>
+												<th>Estado Agente</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -215,53 +205,6 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 </section>
 
 
-
-	<!-- MODIFICAR -->
-		<form class="formulario frmModificar" role="form" id="sign_in">
-		   <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
-		       <div class="modal-dialog modal-lg" role="document">
-		           <div class="modal-content">
-		               <div class="modal-header">
-		                   <h4 class="modal-title" id="largeModalLabel">MODIFICAR <?php echo strtoupper($singular); ?></h4>
-		               </div>
-		               <div class="modal-body">
-								<div class="row frmAjaxModificar">
-
-								</div>
-		               </div>
-		               <div class="modal-footer">
-		                  <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
-		                  <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-		               </div>
-		           </div>
-		       </div>
-		   </div>
-			<input type="hidden" id="accion" name="accion" value="<?php echo $modificar; ?>"/>
-		</form>
-
-
-	<!-- ELIMINAR -->
-		<form class="formulario" role="form" id="sign_in">
-		   <div class="modal fade" id="lgmEliminar" tabindex="-1" role="dialog">
-		       <div class="modal-dialog modal-lg" role="document">
-		           <div class="modal-content">
-		               <div class="modal-header">
-		                   <h4 class="modal-title" id="largeModalLabel">ELIMINAR <?php echo strtoupper($singular); ?></h4>
-		               </div>
-		               <div class="modal-body">
-										 <p>¿Esta seguro que desea eliminar el registro?</p>
-										 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
-		               </div>
-		               <div class="modal-footer">
-		                   <button type="button" class="btn btn-danger waves-effect eliminar">ELIMINAR</button>
-		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-		               </div>
-		           </div>
-		       </div>
-		   </div>
-			<input type="hidden" id="accion" name="accion" value="<?php echo $eliminar; ?>"/>
-			<input type="hidden" name="ideliminar" id="ideliminar" value="0">
-		</form>
 
 
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
@@ -280,38 +223,9 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 
 <script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
 
-<script src="../../js/picker.js"></script>
-<script src="../../js/picker.date.js"></script>
-
 
 <script>
 	$(document).ready(function(){
-
-
-
-		$('.btnCalcularM').click(function() {
-			calcularBonoMonto();
-		});
-
-		$('.btnCalcularP').click(function() {
-			calcularBonoPorcentaje();
-		});
-
-		function calcularBonoPorcentaje() {
-			if (($('.frmAjaxModificar #montocomision').val() > 0) && $('.frmAjaxModificar #primaneta').val() > 0) {
-				$('.frmAjaxModificar #porcentajecomision').val( parseFloat(parseFloat($('.frmAjaxModificar #montocomision').val()) * 100 / parseFloat($('.frmAjaxModificar #primaneta').val())) );
-			} else {
-				$('.frmAjaxModificar #porcentajecomision').val( 0);
-			}
-		}
-
-		function calcularBonoMonto() {
-			if (($('.frmAjaxModificar #porcentajecomision').val() > 0) && $('.frmAjaxModificar #primaneta').val() > 0) {
-				$('.frmAjaxModificar #montocomision').val( parseFloat(parseFloat($('.frmAjaxModificar #porcentajecomision').val()) / 100 * parseFloat($('.frmAjaxModificar #primaneta').val())) );
-			} else {
-				$('.frmAjaxModificar #montocomision').val( 0);
-			}
-		}
 
 
 		$('.maximizar').click(function() {
@@ -331,7 +245,8 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=ventas",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=cobranza",
+			"order": [[ 2, "asc" ]],
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -357,15 +272,16 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 			}
 		});
 
+
+		$("#example").on("click",'.btnRecibo', function(){
+			idTable =  $(this).attr("id");
+			url = "subirdocumentacioni.php?id=" + idTable;
+			$(location).attr('href',url);
+		});
+
 		$("#sign_in").submit(function(e){
 			e.preventDefault();
 		});
-
-		$("#example").on("click",'.btnVer', function(){
-			idTable =  $(this).attr("id");
-			$(location).attr('href','ver.php?id=' + idTable);
-
-		});//fin del boton modificar
 
 
 		function frmAjaxModificar(id) {
@@ -384,27 +300,6 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 
 					if (data != '') {
 						$('.frmAjaxModificar').html(data);
-						$('#primaneta').number( true, 2 ,'.','');
-						$('#primatotal').number( true, 2,'.','' );
-						$('#montocomision').number( true, 2,'.','' );
-						$('#porcentajecomision').number( true, 2,'.','' );
-
-						$('#fechavencimientopoliza').pickadate({
-							format: 'yyyy-mm-dd',
-							labelMonthNext: 'Siguiente mes',
-							labelMonthPrev: 'Previo mes',
-							labelMonthSelect: 'Selecciona el mes del año',
-							labelYearSelect: 'Selecciona el año',
-							selectMonths: true,
-							selectYears: 100,
-							today: 'Hoy',
-							clear: 'Borrar',
-							close: 'Cerrar',
-							monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-							monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-							weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-							weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-					   });
 					} else {
 						swal("Error!", data, "warning");
 
@@ -488,7 +383,63 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 		});//fin del boton modificar
 
 
+		$('.frmNuevo').submit(function(e){
 
+			e.preventDefault();
+			if ($('#sign_in')[0].checkValidity()) {
+				//información del formulario
+				var formData = new FormData($(".formulario")[0]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
+
+					},
+					//una vez finalizado correctamente
+					success: function(data){
+
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Creado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
+
+							$('#lgmNuevo').modal('hide');
+							$('#unidadnegocio').val('');
+							table.ajax.reload();
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
+
+
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
+					}
+				});
+			}
+		});
 
 
 		$('.frmModificar').submit(function(e){
@@ -497,7 +448,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 			if ($('.frmModificar')[0].checkValidity()) {
 
 				//información del formulario
-				var formData = new FormData($(".formulario")[0]);
+				var formData = new FormData($(".formulario")[1]);
 				var message = "";
 				//hacemos la petición ajax
 				$.ajax({

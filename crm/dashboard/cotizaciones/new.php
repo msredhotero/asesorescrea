@@ -110,6 +110,8 @@ $cadRef6 = $serviciosFunciones->devolverSelectBox($resVar6,array(1),'');
 $resVar7	= $serviciosReferencias->traerTipoproducto();
 $cadRef7 = $serviciosFunciones->devolverSelectBox($resVar7,array(1),'');
 
+$cadRef8 = "<option value='Si'>Si</option><option value='No'>No</option><option value='No lo sabe'>No lo sabe</option>";
+
 
 $refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6);
 $refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones');
@@ -264,7 +266,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
                         <div class="body">
                            <form id="wizard_with_validation" method="POST">
 
-                              <h3>Seleccione Cliente</h3>
+                              <h3>Cliente</h3>
                               <fieldset>
 											  <div class="form-group form-float">
 													<div class="form-line">
@@ -279,43 +281,71 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 													</div>
 											  </div>
                                     <div class="form-group form-float">
-                                        <div class="form-line">
-
-															<h4>Busqueda por Nombre Completo</h4>
-															<input id="lstjugadores" style="width:75%;" required>
-
-															<div id="selction-ajax" style="margin-top: 10px;">
-																<h5>Lista de Productos</h5>
-																<ul class="list-group lstCartera">
-
-																</ul>
-															</div>
-															<input type="hidden" name="refclientes" id="refclientes" />
-
-                                        </div>
-                                    </div>
-                                    <div class="form-group form-float">
-													<label class="form-label" style="margin-top:20px;">Asesor *</label>
                                        <div class="form-line">
 
-							   						<select style="margin-top:10px;" class="form-control" id="refasesores" name="refasesores" required>
-															<?php echo $cadRef5; ?>
-														</select>
+													<h4>Busqueda por Nombre Completo</h4>
+													<input id="lstjugadores" style="width:75%;" />
+
+													<h4 style="padding: 15px 0; ">Cliente Seleccionado: <span class="clienteSelect"></span></h4>
+													<select style="margin-top:10px;" class="form-control" id="refclientes" name="refclientes" required readonly="readonly">
+														<option value=''></option>
+													</select>
+
+
+													<div id="selction-ajax" style="margin-top: 10px;">
+													<h5>Lista de Productos</h5>
+													<ul class="list-group lstCartera">
+
+													</ul>
+													</div>
+
 
                                        </div>
                                     </div>
 
-												<div class="form-group form-float frmContasociado">
-													<label class="form-label" style="margin-top:20px;">Asociado *</label>
-                                       <div class="form-line">
 
-							   						<select class="form-control" id="refasociado" name="refasociado" required="" aria-required="true" aria-invalid="false">
-															<?php echo $cadRef4; ?>
+                              </fieldset>
+
+										<h3>Agente</h3>
+                              <fieldset>
+                                 <div class="form-group form-float">
+                                     <div class="form-line">
+
+														<h4>Busqueda por Nombre Completo</h4>
+														<input id="lstagentes" style="width:75%;" />
+
+														<h4 style="padding: 15px 0; ">Agente Seleccionado: <span class="agenteSelect"></span></h4>
+														<select style="margin-top:10px;" class="form-control" id="refasesores" name="refasesores" required readonly="readonly">
 														</select>
-                                       </div>
-                                    </div>
 
 
+                                     </div>
+                                 </div>
+                              </fieldset>
+
+										<h3>Asociados</h3>
+                              <fieldset>
+											<div class="form-group form-float frmContasociadocheck" style="margin-top:20px;">
+												<div class="form-group">
+													<input type="radio" name="asociado" id="comun" class="with-gap" value="1">
+													<label for="comun">Lleva Asociado</label>
+
+													<input type="radio" name="asociado" id="temporal" class="with-gap" value="2" checked>
+													<label for="temporal" class="m-l-20">Lleva Agente Temporal</label>
+												</div>
+											</div>
+                                 <div class="form-group form-float">
+                                     <div class="form-line">
+
+														<h4>Busqueda por Nombre Completo</h4>
+														<input id="lstasociados" class="contAsesores" style="width:75%;" />
+
+														<h4 style="padding: 15px 0; ">Agente Seleccionado: <span class="asociadoSelect"></span></h4>
+														<select style="margin-top:10px;" class="form-control" id="refasociados" name="refasociados" readonly="readonly">
+														</select>
+
+                                     </div>
+                                 </div>
                               </fieldset>
 
                               <h3>Producto</h3>
@@ -326,6 +356,15 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 							   						<select style="margin-top:10px;" class="form-control" id="reftipoproducto" name="reftipoproducto" required>
 															<?php echo $cadRef7; ?>
+														</select>
+
+                                       </div>
+                                    </div>
+												<div class="form-group form-float">
+													<label class="form-label" style="margin-top:20px;">Rama Producto *</label>
+                                       <div class="form-line">
+
+							   						<select style="margin-top:10px;" class="form-control" id="refproductosrama" name="refproductosrama" required>
 														</select>
 
                                        </div>
@@ -344,46 +383,52 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
                                 <h3>Información Adicional</h3>
                                 <fieldset>
-											  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcobertura" style="display:block">
-												  <label class="form-label">Cobertura Requiere Reaseguro </label>
-												  <div class="form-group input-group">
-													  <div class="form-line">
-														  <input type="text" class="form-control" id="cobertura" name="cobertura">
+											   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcobertura" style="display:block">
+													<div class="form-group form-float">
+														<label class="form-label" style="margin-top:20px;">Cobertura Requiere Reaseguro</label>
+	                                       <div class="form-line">
 
-													  </div>
-												  </div>
-											  </div>
-											  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContreasegurodirecto" style="display:block">
-													<label class="form-label">Reaseguro Directo Con Inbursa O Broker </label>
-													<div class="form-group input-group">
-														<div class="form-line">
-															<input type="text" class="form-control" id="reasegurodirecto" name="reasegurodirecto">
+								   						<select style="margin-top:10px;" class="form-control" id="cobertura" name="cobertura" required>
+																<option value='Si'>Si</option>
+																<option value='No'>No</option>
+																<option value='No lo se'>No lo se</option>
+															</select>
 
-														</div>
-													</div>
+	                                       </div>
+	                                    </div>
 												</div>
-												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContpresentacotizacion" style="display:block">
-													<label class="form-label">Presenta Cotizacion O Poliza De Competencia </label>
-													<div class="form-group input-group">
-														<div class="form-line">
-															<input type="text" class="form-control" id="presentacotizacion" name="presentacotizacion">
+												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcobertura" style="display:block">
+													<input type="hidden" class="form-control" id="reasegurodirecto" name="reasegurodirecto">
 
-														</div>
-													</div>
-												</div>
+													<div class="form-group form-float">
+														<label class="form-label" style="margin-top:20px;">Presenta Cotizacion O Poliza De Competencia</label>
+	                                       <div class="form-line">
+
+								   						<select style="margin-top:10px;" class="form-control" id="presentacotizacion" name="presentacotizacion" required>
+																<option value='Si'>Si</option>
+																<option value='No'>No</option>
+															</select>
+
+	                                       </div>
+	                                    </div>
+											   </div>
+
 
 												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmConttiponegocio" style="display:block">
-													<label class="form-label">Tipo De Negocio Para Agente </label>
-													<div class="form-group input-group">
-														<div class="form-line">
-															<input type="text" class="form-control" id="tiponegocio" name="tiponegocio">
 
+													<div class="form-group input-group">
+														<label class="form-label">Tipo De Negocio Para Agente </label>
+														<div class="form-line">
+															<select style="margin-top:10px;" class="form-control" id="tiponegocio" name="tiponegocio" required>
+																<option value='Negocio nuevo'>Negocio nuevo</option>
+																<option value='Renovación'>Renovación</option>
+																<option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>
+															</select>
 														</div>
 													</div>
 												</div>
-
-												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContfecharenovacion" >
-													<b>Fecha Renovación O Presentación De Propueta Al Cliente</b>
+												<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContfechavencimiento" style="display:block">
+													<b>Fecha Vencimiento</b>
 													<div class="input-group">
 
 													<span class="input-group-addon">
@@ -391,11 +436,25 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 													</span>
 			                                <div class="form-line">
 
-													   	<input style="width:200px;" type="text" class="datepicker form-control" id="fecharenovacion" name="fecharenovacion" />
+													   	<input style="width:200px;" type="text" class="datepicker form-control" id="fechavencimiento" name="fechavencimiento" />
 
 			                                </div>
 			                              </div>
-		                              </div>
+												</div>
+
+												<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcoberturaactual" style="display:block">
+													<label class="form-label">Cobertura Actual </label>
+													<div class="form-group input-group">
+														<div class="form-line">
+															<input type="text" class="form-control" id="coberturaactual" name="coberturaactual">
+
+														</div>
+													</div>
+
+													<input style="width:200px;" type="hidden" class="form-control" id="fecharenovacion" name="fecharenovacion" />
+												</div>
+
+
                                 </fieldset>
 
 										  <h3>Aceptado</h3>
@@ -637,6 +696,13 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 	$(document).ready(function(){
 
 
+
+		$('.frmContfechavencimiento').hide();
+		$('.frmContcoberturaactual').hide();
+
+
+		$('#selction-ajax').hide();
+
 		function traerClientescarteraPorCliente(idcliente) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
@@ -647,18 +713,21 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('.lstCartera').html('');
+					$('#selction-ajax').hide();
 				},
 				//una vez finalizado correctamente
 				success: function(data){
 
 					if (data != '') {
 						$('.lstCartera').html(data);
+						$('#selction-ajax').show();
 					} else {
+						$('#selction-ajax').hide();
 						swal({
 								title: "Respuesta",
 								text: 'El cliente no posee cartera actualmente',
 								type: "error",
-								timer: 2000,
+								timer: 500,
 								showConfirmButton: false
 						});
 
@@ -718,14 +787,79 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 				}
 			});
-
 		}
+
+		function traerTipoproductoramaPorTipoProducto(idtipoproducto) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'traerTipoproductoramaPorTipoProducto', id: idtipoproducto},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('#refproductosrama').html('');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						$('#refproductosrama').html(data);
+					} else {
+						swal({
+								title: "Respuesta",
+								text: 'No existen tipos de productos',
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
+
+		$("#wizard_with_validation").on("change",'#tiponegocio', function(){
+			if (($(this)[0].selectedIndex == 1) || ($(this)[0].selectedIndex == 2)) {
+				$('.frmContfechavencimiento').show();
+				$('.frmContcoberturaactual').show();
+
+				$("#fechavencimiento").prop('required',true);
+				$("#coberturaactual").prop('required',true);
+			} else {
+				$('.frmContfechavencimiento').hide();
+				$('.frmContcoberturaactual').hide();
+				$('#fechavencimiento').val('');
+				$('#coberturaactual').val('');
+
+				$("#fechavencimiento").prop('required',false);
+				$("#coberturaactual").prop('required',false);
+
+			}
+		});
 
 		$("#wizard_with_validation").on("change",'#reftipoproducto', function(){
 			traerProductosPorTipo($(this).val());
+			traerTipoproductoramaPorTipoProducto($(this).val());
 		});
 
+
+
 		traerProductosPorTipo($('#reftipoproducto').val());
+
+		traerTipoproductoramaPorTipoProducto($('#reftipoproducto').val());
 
 		function setButtonWavesEffect(event) {
 			$(event.currentTarget).find('[role="menu"] li a').removeClass('waves-effect');
@@ -790,6 +924,12 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 	        }
 	    });
 
+		$("#wizard_with_validation").on("change",'.with-gap', function(){
+ 			$('#lstasociados').val('');
+ 			$('#refasociados').html('');
+			$('.asociadoSelect').html('');
+ 		});
+
 
 		function guardarCotizacion(refestadocotizaciones) {
 			$.ajax({
@@ -813,7 +953,9 @@ if ($_SESSION['idroll_sahilices'] == 3) {
  					presentacotizacion: $('#presentacotizacion').val(),
 					refestadocotizaciones: refestadocotizaciones,
  					foliotys: $('#foliotys').val(),
-					idclienteinbursa: $('#idclienteinbursa').val()
+					idclienteinbursa: $('#idclienteinbursa').val(),
+					fechavencimiento: $('#fechavencimiento').val(),
+					coberturaactual: $('#coberturaactual').val()
  				},
  				//mientras enviamos el archivo
  				beforeSend: function(){
@@ -869,7 +1011,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		});
 
 
-		 $('#fecharenovacion').pickadate({
+		 $('#fechavencimiento').pickadate({
  			format: 'yyyy-mm-dd',
  			labelMonthNext: 'Siguiente mes',
  			labelMonthPrev: 'Previo mes',
@@ -922,7 +1064,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
  		});
 
 		var options = {
-
 			url: "../../json/jsbuscarclientes.php",
 
 			getValue: function(element) {
@@ -944,21 +1085,105 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		    },
 
 			list: {
+			   maxNumberOfElements: 15,
+				match: {
+					enabled: true
+				},
+				onSelectItemEvent: function() {
+					var value = $("#lstjugadores").getSelectedItemData().id;
+					$('#refclientes').html("<option value='" + value + "'>" + $("#lstjugadores").getSelectedItemData().nombrecompleto + "</option>");
+					$('.clienteSelect').html($("#lstjugadores").getSelectedItemData().nombrecompleto);
+					traerClientescarteraPorCliente(value);
+				}/*,
+				onHideListEvent: function() {
+					$('.clienteSelect').html('');
+					$('#selction-ajax').hide();
+					$('#refclientes').html('');
+				}*/
+			},
+			theme: "square"
+		};
+
+		$("#lstjugadores").easyAutocomplete(options);
+
+
+		var options2 = {
+			url: "../../json/jsbuscarasesores.php",
+
+			getValue: function(element) {
+				return element.nombrecompleto;
+			},
+
+			ajaxSettings: {
+		        dataType: "json",
+		        method: "POST",
+		        data: {
+		            busqueda: $("#lstagentes").val()
+		        }
+		    },
+
+		    preparePostData: function (data) {
+		        data.busqueda = $("#lstagentes").val();
+				  data.idasesor = <?php echo $idasesor; ?>;
+		        return data;
+		    },
+
+			list: {
 			    maxNumberOfElements: 15,
 				match: {
 					enabled: true
 				},
 				onClickEvent: function() {
-					var value = $("#lstjugadores").getSelectedItemData().id;
-					$('#refclientes').val(value);
-					traerClientescarteraPorCliente(value);
+					var value = $("#lstagentes").getSelectedItemData().id;
+
+					$('#refasesores').html("<option value='" + value + "'>" + $("#lstagentes").getSelectedItemData().nombrecompleto + "</option>");
+					$('.agenteSelect').html($("#lstagentes").getSelectedItemData().nombrecompleto);
+				}
+			},
+			theme: "square"
+		};
+
+		$("#lstagentes").easyAutocomplete(options2);
+
+
+		var options3 = {
+			url: "../../json/jsbuscarasociados.php",
+
+			getValue: function(element) {
+				return element.nombrecompleto;
+			},
+
+			ajaxSettings: {
+		        dataType: "json",
+		        method: "POST",
+		        data: {
+		            busqueda: $("#lstasociados").val()
+		        }
+		    },
+
+		    preparePostData: function (data) {
+		        data.busqueda = $("#lstasociados").val();
+				  data.tipo = $('input:radio[name=asociado]:checked').val();
+		        return data;
+		    },
+
+			list: {
+			    maxNumberOfElements: 15,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $("#lstasociados").getSelectedItemData().id;
+
+					$('#refasociados').html("<option value='" + value + "'>" + $("#lstasociados").getSelectedItemData().nombrecompleto + "</option>");
+					$('.asociadoSelect').html($("#lstasociados").getSelectedItemData().nombrecompleto);
 
 				}
 			},
 			theme: "square"
 		};
 
-		$("#lstjugadores").easyAutocomplete(options);
+		$("#lstasociados").easyAutocomplete(options3);
 
 
 
