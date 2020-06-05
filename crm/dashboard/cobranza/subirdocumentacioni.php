@@ -172,7 +172,7 @@ switch ($_SESSION['idroll_sahilices']) {
 		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '40,41');
 	break;
 	default:
-		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '39,40,41');
+		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '38,39,40,41');
 	break;
 }
 
