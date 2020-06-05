@@ -389,9 +389,9 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 	                                       <div class="form-line">
 
 								   						<select style="margin-top:10px;" class="form-control" id="cobertura" name="cobertura" required>
-																<option value='Si'>Si</option>
-																<option value='No'>No</option>
 																<option value='No lo se'>No lo se</option>
+																<option value='No'>No</option>
+																<option value='Si'>Si</option>
 															</select>
 
 	                                       </div>
@@ -405,8 +405,8 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 	                                       <div class="form-line">
 
 								   						<select style="margin-top:10px;" class="form-control" id="presentacotizacion" name="presentacotizacion" required>
-																<option value='Si'>Si</option>
 																<option value='No'>No</option>
+																<option value='Si'>Si</option>
 															</select>
 
 	                                       </div>
