@@ -204,6 +204,14 @@ $refCampo 	=  array('refperiodicidadventasdetalle');
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo('insertarPeriodicidadventaspagos' ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
+$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, 38);
+
+if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
+	$recibo = "<div class='alert alert-info'><p>Descargue su Recibo!, haciendo click <a href='"."../../archivos/cobros/".mysql_result($resDocumentacionReciboExistente,0,'refventas').'/'.mysql_result($resDocumentacionReciboExistente,0,'carpeta').'/'.mysql_result($resDocumentacionReciboExistente,0,'archivo')."' target='_blank'>AQUI</a></div>";
+} else {
+	$recibo = "<div class='alert alert-warning'><p><b>Importante! </b> Todavia no se cargo el Recibo para pagar</div>";
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -366,7 +374,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo('insertarPeriodicida
 							<div class="alert alert-success">
 								<p><?php echo '<b>Producto: </b>'.$producto; ?></p>
 							</div>
-							<form class="formulario" role="form" id="sign_in">
+							<?php echo $recibo; ?>
+							<form class="formulario frmNuevo" role="form" id="sign_in">
 								<div class="row">
 		                  	<?php echo $frmUnidadNegocios; ?>
 								</div>
@@ -532,7 +541,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo('insertarPeriodicida
 		$('#fechapago').val('<?php echo date('Y-m-d'); ?>');
 		<?php if ($_SESSION['idroll_sahilices'] == 16) { ?>
 			$('.frmContrefperiodicidadventasdetalle').hide();
-			$('.frmContmonto').hide();
 			$('.frmContnrofactura').hide();
 
 		<?php } ?>
@@ -797,6 +805,59 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo('insertarPeriodicida
 			}
 
 		});
+
+		$('.frmNuevo').submit(function(e){
+
+			e.preventDefault();
+			if ($('#sign_in')[0].checkValidity()) {
+				//información del formulario
+				var formData = new FormData($(".formulario")[0]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
+
+					},
+					//una vez finalizado correctamente
+					success: function(data){
+
+						if (data == '') {
+							swal("Ok!", 'Se guardo correctamente el formulario, cuando el Prospecto para Asesor confirme su email podra continuar con el Proceso de Reclutamiento', "success");
+
+							$('#lgmNuevo').modal('hide');
+
+							table.ajax.reload();
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
+
+
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
+					}
+				});
+			}
+		});
+
 
 
 	});
