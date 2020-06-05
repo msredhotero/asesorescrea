@@ -443,7 +443,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 												</div>
 
 												<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcoberturaactual" style="display:block">
-													<label class="form-label">Aseguradoras </label>
+													<label class="form-label">Aseguradora Con quien esta suscripta la poliza</label>
 													<div class="form-group input-group">
 														<div class="form-line">
 															<input type="text" class="form-control" id="coberturaactual" name="coberturaactual">
