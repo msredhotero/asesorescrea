@@ -1062,7 +1062,9 @@ function insertarPeriodicidadventasdetalle($serviciosReferencias) {
    $fechacrea = date('Y-m-d H:i:s');
    $fechamodi = date('Y-m-d H:i:s');
 
-   $res = $serviciosReferencias->insertarPeriodicidadventasdetalle($refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi);
+   $nrorecibo = $_POST['nrorecibo'];
+
+   $res = $serviciosReferencias->insertarPeriodicidadventasdetalle($refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi,$nrorecibo);
 
    if ((integer)$res > 0) {
       echo '';
@@ -1084,12 +1086,13 @@ function modificarPeriodicidadventasdetalle($serviciosReferencias) {
    $fechapago = $_POST['fechapago'];
    $fechavencimiento = $_POST['fechavencimiento'];
    $refestadopago = $_POST['refestadopago'];
+   $nrorecibo = $_POST['nrorecibo'];
 
    $usuariomodi = $_SESSION['usua_sahilices'];
 
    $fechamodi = date('Y-m-d H:i:s');
 
-   $res = $serviciosReferencias->modificarPeriodicidadventasdetalle($id,$refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariomodi,$fechamodi);
+   $res = $serviciosReferencias->modificarPeriodicidadventasdetalle($id,$refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariomodi,$fechamodi,$nrorecibo);
 
    if ($res == true) {
       echo '';

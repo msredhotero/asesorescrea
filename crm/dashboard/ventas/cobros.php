@@ -90,8 +90,8 @@ if (mysql_num_rows($resPeriodicidadVenta) > 0) {
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbperiodicidadventasdetalle";
 
-$lblCambio	 	= array('refperiodicidadventas','montototal','primaneta','porcentajecomision','montocomision','fechapago','fechavencimiento','refestadopago');
-$lblreemplazo	= array('Venta','Monto Total','Prima Neta','% Comision','Monto Comision','Fecha Pago','Fecha Vencimiento','Estado Pago');
+$lblCambio	 	= array('refperiodicidadventas','montototal','primaneta','porcentajecomision','montocomision','fechapago','fechavencimiento','refestadopago','nrorecibo');
+$lblreemplazo	= array('Venta','Monto Total','Prima Neta','% Comision','Monto Comision','Fecha Pago','Fecha Vencimiento','Estado Pago','Nro Recibo');
 
 $resVar = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 $cadRef = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(1),' ',$id);
