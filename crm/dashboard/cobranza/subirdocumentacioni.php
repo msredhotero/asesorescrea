@@ -545,6 +545,11 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 
 		<?php } ?>
 
+		$('#fechacrea').val('<?php echo date('Y-m-d'); ?>');
+		$('#fechamodi').val('<?php echo date('Y-m-d'); ?>');
+		$('#usuariocrea').val('<?php echo 'marcos'; ?>');
+		$('#usuariomodi').val('<?php echo 'marcos'; ?>');
+
 		$('#fechapago').pickadate({
 			format: 'yyyy-mm-dd',
 			labelMonthNext: 'Siguiente mes',
@@ -832,7 +837,7 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 					success: function(data){
 
 						if (data == '') {
-							swal("Ok!", 'Se guardo correctamente el formulario, cuando el Prospecto para Asesor confirme su email podra continuar con el Proceso de Reclutamiento', "success");
+							swal("Ok!", 'Se guardo correctamente los datos del pago', "success");
 
 							$('#lgmNuevo').modal('hide');
 
