@@ -114,7 +114,12 @@
 			$icono = 'cloud_upload';
 			$estilo = 'bg-light-blue';
 			$fecha = date('Y-m-d H:i:s');
-			$url = "cotizaciones/subirdocumentacioni.php?id=".$id."&documentacion=".$iddocumentacion;
+			if (mysql_result($resDocumentacion,0,'reftipodocumentaciones') == 3) {
+				$url = "cotizaciones/subirdocumentacioni.php?id=".$id."&documentacion=".$iddocumentacion;
+			} else {
+				$url = "cotizaciones/subirdocumentacionip.php?id=".$id."&documentacion=".$iddocumentacion;
+			}
+
 
 			$res = $serviciosNotificaciones->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url);
 			/*** fin de la notificacion ****/

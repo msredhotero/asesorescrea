@@ -38,7 +38,7 @@ if ($busqueda != '') {
 	if ($asesor == 0) {
 		$resTraerClientes = $serviciosReferencias->bClientes($busqueda);
 	} else {
-		$resTraerClientes = $serviciosReferencias->bClientesasesoresPorAsesor($busqueda,$idasesor);
+		$resTraerClientes = $serviciosReferencias->bClientesasesoresPorAsesor($busqueda,$asesor);
 	}
 
 

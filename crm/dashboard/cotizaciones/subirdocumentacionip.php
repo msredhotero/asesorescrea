@@ -158,7 +158,7 @@ switch ($iddocumentacion) {
 	break;
 }
 
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompleta($id);
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,mysql_result($resDocumentacion,0,'reftipodocumentaciones'));
 
 ?>
 
@@ -401,7 +401,6 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 					</div>
 				</div>
 			</div>
-
 			<?php if ((mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones') != 5)) { ?>
 			<div class="row">
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -669,7 +668,6 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 			},
 			url: 'subir.php'
 		});
-
 		<?php } ?>
 
 

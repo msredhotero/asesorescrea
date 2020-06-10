@@ -257,17 +257,12 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
-											<?php if (mysql_num_rows($resVar2) > 0) { ?>
+
 											<button type="button" class="btn bg-light-green waves-effect btnNuevo">
 												<i class="material-icons">add</i>
 												<span>NUEVO</span>
 											</button>
-										<?php } else { ?>
-											<button type="button" class="btn bg-red waves-effect">
-												<i class="material-icons">block</i>
-												<span>NUEVO</span>
-											</button>
-										<?php }  ?>
+									
 
 											<button type="button" class="btn bg-green waves-effect btnNuevo2" data-toggle="modal" data-target="#lgmNuevo2">
 												<i class="material-icons">add</i>

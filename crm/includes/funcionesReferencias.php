@@ -9,6 +9,54 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+   /* PARA Aseguradora */
+
+   function insertarAseguradora($razonsocial) {
+      $sql = "insert into tbaseguradora(idaseguradora,razonsocial)
+      values ('','".$razonsocial."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarAseguradora($id,$razonsocial) {
+      $sql = "update tbaseguradora
+      set
+      razonsocial = '".$razonsocial."'
+      where idaseguradora =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarAseguradora($id) {
+      $sql = "delete from tbaseguradora where idaseguradora =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerAseguradora() {
+      $sql = "select
+      a.idaseguradora,
+      a.razonsocial
+      from tbaseguradora a
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerAseguradoraPorId($id) {
+      $sql = "select idaseguradora,razonsocial from tbaseguradora where idaseguradora =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: tbaseguradora*/
+
 
 	/* PARA Periodicidadventaspagos */
 
@@ -2713,7 +2761,8 @@ class ServiciosReferencias {
 		c.telefonocelular,
 		c.refasesores,
 		concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) as nombrecompleto,
-		cl.idclienteinbursa
+		cl.idclienteinbursa,
+      cl.idcliente
 		from dbclientesasesores c
 		inner join dbclientes cl ON cl.idcliente = c.refclientes
 		inner join dbasesores ase on ase.refusuarios = c.refasesores
@@ -3325,7 +3374,32 @@ class ServiciosReferencias {
 					        AND da.refcotizaciones = ".$idcotizacion."
 					        LEFT JOIN
 					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
-					where d.iddocumentacion in (35)
+					where d.reftipodocumentaciones in (3)
+
+					order by 1";
+		$res = $this->query($sql,0);
+ 		return $res;
+	}
+
+   function traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($idcotizacion,$tipodocumentacion) {
+		$sql = "SELECT
+					    d.iddocumentacion,
+					    d.documentacion,
+					    d.obligatoria,
+					    da.iddocumentacioncotizacion,
+					    da.archivo,
+					    da.type,
+					    coalesce( ed.estadodocumentacion, 'Falta') as estadodocumentacion,
+						 ed.color,
+					    ed.idestadodocumentacion
+					FROM
+					    dbdocumentaciones d
+					        LEFT JOIN
+					    dbdocumentacioncotizaciones da ON d.iddocumentacion = da.refdocumentaciones
+					        AND da.refcotizaciones = ".$idcotizacion."
+					        LEFT JOIN
+					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
+					where d.reftipodocumentaciones in (".$tipodocumentacion.")
 
 					order by 1";
 		$res = $this->query($sql,0);
@@ -3409,7 +3483,7 @@ class ServiciosReferencias {
             $resV['error'] = true;
 				$resV['leyenda'] = 'Archivo perdido';
          } else {
-				$archivos = '../archivos/cotizacion/'.$idasociadotemporal.'/'.mysql_result($resDocumentacion,0,'carpeta').'/';
+				$archivos = '../archivos/cotizaciones/'.$idcotizacion.'/'.mysql_result($resDocumentacion,0,'carpeta').'/';
 
             $resBorrar = $this->borrarDirecctorio($archivos);
 
@@ -3469,6 +3543,20 @@ class ServiciosReferencias {
 		inner join dbdocumentaciones d on d.iddocumentacion = da.refdocumentaciones
 		inner join tbestadodocumentaciones e on e.idestadodocumentacion = da.refestadodocumentaciones
 		where da.refcotizaciones =".$id." and da.refdocumentaciones = ".$iddocumentacion;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+   function traerDocumentacioncotizacionesPorIdCompleto($id) {
+		$sql = "select
+      dc.iddocumentacioncotizacion,dc.refcotizaciones,dc.refdocumentaciones,
+      dc.archivo,dc.type,dc.refestadodocumentaciones,
+      dc.fechacrea,dc.fechamodi,dc.usuariocrea,dc.usuariomodi ,
+      co.refasesores
+      from dbdocumentacioncotizaciones dc
+      inner join dbcotizaciones co on co.idcotizacion = dc.refcotizaciones
+      where dc.iddocumentacioncotizacion =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -3644,7 +3732,7 @@ class ServiciosReferencias {
 
 
 	function traerProductosPorId($id) {
-		$sql = "select idproducto,producto,prima from tbproductos where idproducto =".$id;
+		$sql = "select idproducto,producto,prima, reftipoproducto,reftipodocumentaciones from tbproductos where idproducto =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -3887,18 +3975,18 @@ class ServiciosReferencias {
 	}
 
 
-	function insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual) {
-		$sql = "insert into dbcotizaciones(idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion,fechaemitido,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,observaciones,fechavencimiento,coberturaactual)
-		values ('',".$refclientes.",".$refproductos.",".$refasesores.",".$refasociados.",".$refestadocotizaciones.",'".$cobertura."','".$reasegurodirecto."','".$tiponegocio."','".$presentacotizacion."',".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",'".date('Y-m-d H:i:s')."','".date('Y-m-d H:i:s')."','".$usuariocrea."','".$usuariomodi."',".$refusuarios.",'".$observaciones."','".$fechavencimiento."','".$coberturaactual."')";
+	function insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo) {
+		$sql = "insert into dbcotizaciones(idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion,fechaemitido,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,observaciones,fechavencimiento,coberturaactual,existeprimaobjetivo,primaobjetivo)
+		values ('',".$refclientes.",".$refproductos.",".$refasesores.",".$refasociados.",".$refestadocotizaciones.",'".$cobertura."','".$reasegurodirecto."','".$tiponegocio."','".$presentacotizacion."',".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",'".date('Y-m-d H:i:s')."','".date('Y-m-d H:i:s')."','".$usuariocrea."','".$usuariomodi."',".$refusuarios.",'".$observaciones."','".$fechavencimiento."','".$coberturaactual."','".$existeprimaobjetivo."',".$primaobjetivo.")";
 
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
-	function modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual) {
+	function modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$bitacoracrea,$bitacorainbursa,$bitacoraagente,$existeprimaobjetivo,$primaobjetivo) {
 		$sql = "update dbcotizaciones
 		set
-		refclientes = ".$refclientes.",refproductos = ".$refproductos.",refasesores = ".$refasesores.",refasociados = ".$refasociados.",refestadocotizaciones = ".$refestadocotizaciones.",cobertura = '".$cobertura."',reasegurodirecto = '".$reasegurodirecto."',tiponegocio = '".$tiponegocio."',presentacotizacion = '".$presentacotizacion."',fechapropuesta = ".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",fecharenovacion = ".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",fechaemitido = ".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',refusuarios = ".$refusuarios.",observaciones = '".$observaciones."',fechavencimiento = '".$fechavencimiento."',coberturaactual = '".$coberturaactual."'
+		refclientes = ".$refclientes.",refproductos = ".$refproductos.",refasesores = ".$refasesores.",refasociados = ".$refasociados.",refestadocotizaciones = ".$refestadocotizaciones.",cobertura = '".$cobertura."',reasegurodirecto = '".$reasegurodirecto."',tiponegocio = '".$tiponegocio."',presentacotizacion = '".$presentacotizacion."',fechapropuesta = ".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",fecharenovacion = ".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",fechaemitido = ".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',refusuarios = ".$refusuarios.",observaciones = '".$observaciones."',fechavencimiento = '".$fechavencimiento."',coberturaactual = '".$coberturaactual."',bitacoracrea = '".$bitacoracrea."',bitacorainbursa = '".$bitacorainbursa."',bitacoraagente = '".$bitacoraagente."',existeprimaobjetivo = '".$existeprimaobjetivo."',primaobjetivo = ".$primaobjetivo."
 		where idcotizacion =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -4145,7 +4233,7 @@ class ServiciosReferencias {
 
 
 	function traerCotizacionesPorId($id) {
-		$sql = "select idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,observaciones,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,fechaemitido,fechavencimiento,coberturaactual,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion from dbcotizaciones where idcotizacion =".$id;
+		$sql = "select idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,observaciones,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,fechaemitido,fechavencimiento,coberturaactual,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion,bitacoracrea,bitacorainbursa,bitacoraagente,existeprimaobjetivo,primaobjetivo from dbcotizaciones where idcotizacion =".$id;
 
 		$res = $this->query($sql,0);
 		return $res;
@@ -4162,7 +4250,8 @@ class ServiciosReferencias {
 		c.refestadocotizaciones,c.observaciones,
 		c.fechacrea,c.fechamodi,c.usuariocrea,c.usuariomodi,c.refusuarios,c.fechaemitido,c.fechavencimiento,
 		c.coberturaactual,c.cobertura,c.reasegurodirecto,c.tiponegocio,
-		c.presentacotizacion,c.fechapropuesta,c.fecharenovacion
+		c.presentacotizacion,c.fechapropuesta,c.fecharenovacion,
+      c.bitacoracrea,c.bitacorainbursa,c.bitacoraagente,c.existeprimaobjetivo,c.primaobjetivo
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join dbasesores ase ON ase.idasesor = c.refasesores
@@ -4183,7 +4272,8 @@ class ServiciosReferencias {
 		c.refestadocotizaciones,c.observaciones,
 		c.fechacrea,c.fechamodi,c.usuariocrea,c.usuariomodi,c.refusuarios,c.fechaemitido,c.fechavencimiento,
 		c.coberturaactual,c.cobertura,c.reasegurodirecto,c.tiponegocio,
-		c.presentacotizacion,c.fechapropuesta,c.fecharenovacion
+		c.presentacotizacion,c.fechapropuesta,c.fecharenovacion,
+      c.bitacoracrea,c.bitacorainbursa,c.bitacoraagente,c.existeprimaobjetivo,c.primaobjetivo
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join dbasesores ase ON ase.idasesor = c.refasesores
@@ -10948,6 +11038,9 @@ class ServiciosReferencias {
 
 
  /*****************************       fin         ************************************************/
+
+
+
 
 function query($sql,$accion) {
 

@@ -56,8 +56,8 @@ $modificar = "modificarCotizaciones";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbcotizaciones";
 
-$lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones','fechaemitido','primaneta','primatotal','recibopago','fechapago','nrorecibo','importecomisionagente','importebonopromotor','cobertura','reasegurodirecto','fecharenovacion','fechapropuesta','tiponegocio','presentacotizacion');
-$lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor','Cobertura Requiere Reaseguro','Reaseguro Directo con Inbursa o Broker','Fecha renovación o presentación de propueta al cliente','Fecha en que se entrega propuesta','Tipo de negocio para agente','Presenta Cotizacion o Poliza de competencia');
+$lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones','fechaemitido','primaneta','primatotal','recibopago','fechapago','nrorecibo','importecomisionagente','importebonopromotor','cobertura','reasegurodirecto','fecharenovacion','fechapropuesta','tiponegocio','presentacotizacion','existeprimaobjetivo','primaobjetivo');
+$lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor','Cobertura Requiere Reaseguro','Reaseguro Directo con Inbursa o Broker','Fecha renovación o presentación de propueta al cliente','Fecha en que se entrega propuesta','Tipo de negocio para agente','Presenta Cotizacion o Poliza de competencia','Existe Prima Objetivo','Prima Objetivo');
 
 
 $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
@@ -122,8 +122,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 $tabla2 			= "dbclientes";
 
-$lblCambio2	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial');
-$lblreemplazo2	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social');
+$lblCambio2	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','idclienteinbursa');
+$lblreemplazo2	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social','ID Cliente Inbursa');
 
 
 $resVar82 = $serviciosReferencias->traerTipopersonas();
@@ -140,6 +140,9 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 } else {
 
 }
+
+$resAseguradoras = $serviciosReferencias->traerAseguradora();
+$cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),'');
 
 
 ?>
@@ -268,18 +271,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
                               <h3>Cliente</h3>
                               <fieldset>
-											  <div class="form-group form-float">
-													<div class="form-line">
-														  <button type="button" class="btn bg-green waves-effect btnNuevo2" data-toggle="modal" data-target="#lgmNuevo2">
-			  												<i class="material-icons">add</i>
-			  												<span>CLIENTE - PERSONA FISICA</span>
-			  											</button>
-			  											<button type="button" class="btn bg-blue-grey waves-effect btnNuevoMoral" data-toggle="modal" data-target="#lgmNuevo2">
-			  												<i class="material-icons">add</i>
-			  												<span>CLIENTE - PERSONA MORAL</span>
-			  											</button>
-													</div>
-											  </div>
+
                                     <div class="form-group form-float">
                                        <div class="form-line">
 
@@ -303,9 +295,24 @@ if ($_SESSION['idroll_sahilices'] == 3) {
                                        </div>
                                     </div>
 
+												<div class="form-group form-float">
+													<div class="alert alert-info">En caso de que no encuentre al cliente puede dar de alta uno nuevo</div>
+													<hr>
+													<div class="form-line">
+														  <button type="button" class="btn bg-green waves-effect btnNuevo2" data-toggle="modal" data-target="#lgmNuevo2">
+			  												<i class="material-icons">add</i>
+			  												<span>NUEVO CLIENTE - PERSONA FISICA</span>
+			  											</button>
+			  											<button type="button" class="btn bg-blue-grey waves-effect btnNuevoMoral" data-toggle="modal" data-target="#lgmNuevo2">
+			  												<i class="material-icons">add</i>
+			  												<span>NUEVO CLIENTE - PERSONA MORAL</span>
+			  											</button>
+													</div>
+											   </div>
+
 
                               </fieldset>
-
+										<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
 										<h3>Agente</h3>
                               <fieldset>
                                  <div class="form-group form-float">
@@ -327,10 +334,13 @@ if ($_SESSION['idroll_sahilices'] == 3) {
                               <fieldset>
 											<div class="form-group form-float frmContasociadocheck" style="margin-top:20px;">
 												<div class="form-group">
+													<input type="radio" name="asociado" id="sin" class="with-gap" value="0" checked>
+													<label for="sin">No Lleva Asociado</label>
+
 													<input type="radio" name="asociado" id="comun" class="with-gap" value="1">
 													<label for="comun">Lleva Asociado</label>
 
-													<input type="radio" name="asociado" id="temporal" class="with-gap" value="2" checked>
+													<input type="radio" name="asociado" id="temporal" class="with-gap" value="2" >
 													<label for="temporal" class="m-l-20">Lleva Agente Temporal</label>
 												</div>
 											</div>
@@ -347,6 +357,11 @@ if ($_SESSION['idroll_sahilices'] == 3) {
                                      </div>
                                  </div>
                               </fieldset>
+										<?php } else { ?>
+											<select style="display:none;" style="margin-top:10px;" class="form-control" id="refasesores" name="refasesores" required readonly="readonly">
+												<?php echo $cadRef5; ?>
+											</select>
+										<?php } ?>
 
                               <h3>Producto</h3>
                                  <fieldset>
@@ -381,160 +396,126 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
                               </fieldset>
 
-                                <h3>Información Adicional</h3>
-                                <fieldset>
-											   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcobertura" style="display:block">
-													<div class="form-group form-float">
-														<label class="form-label" style="margin-top:20px;">Cobertura Requiere Reaseguro</label>
-	                                       <div class="form-line">
+                              <h3>Información Adicional</h3>
+                              <fieldset>
+											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
+												<div class="form-group form-float">
+													<label class="form-label" style="margin-top:20px;">Existe Prima Objetivo</label>
+                                       <div class="form-line">
 
-								   						<select style="margin-top:10px;" class="form-control" id="cobertura" name="cobertura" required>
-																<option value='No lo se'>No lo se</option>
-																<option value='No'>No</option>
-																<option value='Si'>Si</option>
-															</select>
+							   						<select style="margin-top:10px;" class="form-control" id="existeprimaobjetivo" name="existeprimaobjetivo" required>
+															<option value='0'>No</option>
+															<option value='1'>Si</option>
+														</select>
 
-	                                       </div>
-	                                    </div>
-												</div>
-												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcobertura" style="display:block">
-													<input type="hidden" class="form-control" id="reasegurodirecto" name="reasegurodirecto">
+                                       </div>
+                                    </div>
+											</div>
+											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContprimaobjetivo" style="display:block">
+												<div class="form-group form-float">
+													<label class="form-label" style="margin-top:25px;">Prima Objetivo</label>
+		                                <div class="form-line">
 
-													<div class="form-group form-float">
-														<label class="form-label" style="margin-top:20px;">Presenta Cotizacion O Poliza De Competencia</label>
-	                                       <div class="form-line">
-
-								   						<select style="margin-top:10px;" class="form-control" id="presentacotizacion" name="presentacotizacion" required>
-																<option value='No'>No</option>
-																<option value='Si'>Si</option>
-															</select>
-
-	                                       </div>
-	                                    </div>
-											   </div>
+												   	<input style="width:200px;" type="text" class="form-control" id="primaobjetivo" name="primaobjetivo" />
 
 
-												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmConttiponegocio" style="display:block">
+		                                </div>
+		                              </div>
+											</div>
 
-													<div class="form-group input-group">
-														<label class="form-label">Tipo De Negocio Para Agente </label>
-														<div class="form-line">
-															<select style="margin-top:10px;" class="form-control" id="tiponegocio" name="tiponegocio" required>
-																<option value='Negocio nuevo'>Negocio nuevo</option>
-																<option value='Renovación'>Renovación</option>
-																<option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>
-															</select>
-														</div>
+										   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcobertura" style="display:block">
+												<div class="form-group form-float">
+													<label class="form-label" style="margin-top:20px;">Cobertura Requiere Reaseguro</label>
+                                       <div class="form-line">
+
+							   						<select style="margin-top:10px;" class="form-control" id="cobertura" name="cobertura" required>
+															<option value='No lo se'>No lo se</option>
+															<option value='No'>No</option>
+															<option value='Si'>Si</option>
+														</select>
+
+                                       </div>
+                                    </div>
+											</div>
+											<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcobertura" style="display:block">
+												<input type="hidden" class="form-control" id="reasegurodirecto" name="reasegurodirecto">
+
+												<div class="form-group form-float">
+													<label class="form-label" style="margin-top:20px;">Presenta Cotizacion O Poliza De Competencia</label>
+                                       <div class="form-line">
+
+							   						<select style="margin-top:10px;" class="form-control" id="presentacotizacion" name="presentacotizacion" required>
+															<option value='No'>No</option>
+															<option value='Si'>Si</option>
+														</select>
+
+                                       </div>
+                                    </div>
+										   </div>
+
+
+											<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmConttiponegocio" style="display:block">
+
+												<div class="form-group input-group">
+													<label class="form-label">Tipo De Negocio Para Agente </label>
+													<div class="form-line">
+														<select style="margin-top:10px;" class="form-control" id="tiponegocio" name="tiponegocio" required>
+															<option value='Negocio nuevo'>Negocio nuevo</option>
+															<option value='Renovación'>Renovación</option>
+															<option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>
+														</select>
 													</div>
 												</div>
-												<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContfechavencimiento" style="display:block">
-													<b>Poliza Actual</b>
-													<div class="input-group">
+											</div>
+											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContfechavencimiento" style="display:block">
+												<b>Fecha de Vencimiento póliza Actual</b>
+												<div class="input-group">
 
-													<span class="input-group-addon">
-														 <i class="material-icons">date_range</i>
-													</span>
-			                                <div class="form-line">
+												<span class="input-group-addon">
+													 <i class="material-icons">date_range</i>
+												</span>
+		                                <div class="form-line">
 
-													   	<input style="width:200px;" type="text" class="datepicker form-control" id="fechavencimiento" name="fechavencimiento" />
+												   	<input style="width:200px;" type="text" class="datepicker form-control" id="fechavencimiento" name="fechavencimiento" />
 
-			                                </div>
-			                              </div>
-												</div>
+		                                </div>
+		                              </div>
+											</div>
 
-												<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcoberturaactual" style="display:block">
-													<label class="form-label">Aseguradora Con quien esta suscripta la poliza</label>
-													<div class="form-group input-group">
-														<div class="form-line">
-															<input type="text" class="form-control" id="coberturaactual" name="coberturaactual">
+											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcoberturaactual" style="display:block">
 
-														</div>
-													</div>
-
-													<input style="width:200px;" type="hidden" class="form-control" id="fecharenovacion" name="fecharenovacion" />
-												</div>
-
-
-                                </fieldset>
-
-										  <h3>Aceptado</h3>
-                                <fieldset>
-											   <div class="row">
-												   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContfechapropuesta" >
-													   <b>Fecha En Que Se Entrega Propuesta</b>
-													   <div class="input-group form-group">
-
-														   <span class="input-group-addon">
-																<i class="material-icons">date_range</i>
-														   </span>
-															<div class="form-line">
-
-																<input readonly="readonly" style="width:200px;" type="text" class="datepicker form-control" id="fechapropuesta" name="fechapropuesta" required/>
-
-															</div>
-													   </div>
-												   </div>
-													<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContfechaemitido" >
-													   <b>Fecha Emitido</b>
-													   <div class="input-group form-group">
-
-														   <span class="input-group-addon">
-																<i class="material-icons">date_range</i>
-														   </span>
-															<div class="form-line">
-
-																<input readonly="readonly" style="width:200px;" type="text" class="datepicker form-control" id="fechaemitido" name="fechaemitido" required/>
-
-															</div>
-													   </div>
-												   </div>
-												</div>
-												<div class="row">
-													<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContfoliotys" style="display:block">
-														<label class="form-label">Folio TYS </label>
-														<div class="form-group input-group">
-															<div class="form-line">
-																<input type="text" class="form-control" id="foliotys" name="foliotys" required>
-
-															</div>
-														</div>
-													</div>
-													<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContidclienteinbursa" style="display:block">
-														<label class="form-label">ID Cliente Inbursa </label>
-														<div class="form-group input-group">
-															<div class="form-line">
-																<input type="text" class="form-control" id="idclienteinbursa" name="idclienteinbursa" required>
-
-															</div>
-														</div>
+												<div class="form-group input-group">
+													<label class="form-label">Aseguradora con quien esta suscrita la póliza</label>
+													<div class="form-line">
+														<select style="margin-top:10px;" class="form-control" id="coberturaactual" name="coberturaactual" required>
+															<option value='0'>-- Seleccionar --</option>
+															<?php echo $cadRefAse; ?>
+														</select>
 													</div>
 												</div>
-												<div class="row">
 
-													<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContobservaciones" style="display:block">
-														<label class="form-label">Observaciones </label>
-														<div class="form-group input-group">
-															<div class="form-line">
-																<textarea id="observaciones" name="observaciones"  rows="2" class="form-control no-resize"></textarea>
+												<input style="width:200px;" type="hidden" class="form-control" id="fecharenovacion" name="fecharenovacion" />
+											</div>
 
-															</div>
-														</div>
+											<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContobservaciones" style="display:block">
+												<label class="form-label">Observaciones </label>
+												<div class="form-group input-group">
+													<div class="form-line">
+														<textarea id="observaciones" name="observaciones"  rows="2" class="form-control no-resize"></textarea>
+
 													</div>
 												</div>
-												<div class="row">
+											</div>
 
-	                                    <button type="button" class="btn bg-blue waves-effect btnGuardar">GUARDAR</button>
-	                                    <button type="button" class="btn btn-danger waves-effect btnRechazar">RECHAZAR</button>
-												</div>
-                                </fieldset>
 
-                            </form>
+                              </fieldset>
 
-                    </div>
-                </div>
+
+                           </form>
+
+                     </div>
+               </div>
             </div>
-
-
 		</div>
 	</div>
 </section>
@@ -699,6 +680,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 		$('.frmContfechavencimiento').hide();
 		$('.frmContcoberturaactual').hide();
+		$('.frmContprimaobjetivo').hide();
 
 
 		$('#selction-ajax').hide();
@@ -830,6 +812,20 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			});
 		}
 
+		$("#wizard_with_validation").on("change",'#existeprimaobjetivo', function(){
+			if ($(this).val() == 1) {
+				$('.frmContprimaobjetivo').show();
+
+				$("#primaobjetivo").prop('required',true);
+
+			} else {
+				$('.frmContprimaobjetivo').hide();
+
+				$("#primaobjetivo").prop('required',false);
+
+			}
+		});
+
 
 		$("#wizard_with_validation").on("change",'#tiponegocio', function(){
 			if (($(this)[0].selectedIndex == 1) || ($(this)[0].selectedIndex == 2)) {
@@ -903,7 +899,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 	            return form.valid();
 	        },
 	        onFinished: function (event, currentIndex) {
-	            guardarCotizacion(6);
+	            guardarCotizacion(2);
 	        }
 	    });
 
@@ -945,17 +941,18 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 					refasociados: $('#refasociados').val(),
  					observaciones: $('#observaciones').val(),
  					cobertura: $('#cobertura').val(),
-					fechaemitido: $('#fechaemitido').val(),
  					reasegurodirecto: $('#reasegurodirecto').val(),
  					fecharenovacion: $('#fecharenovacion').val(),
- 					fechapropuesta: $('#fechapropuesta').val(),
  					tiponegocio: $('#tiponegocio').val(),
  					presentacotizacion: $('#presentacotizacion').val(),
 					refestadocotizaciones: refestadocotizaciones,
- 					foliotys: $('#foliotys').val(),
-					idclienteinbursa: $('#idclienteinbursa').val(),
 					fechavencimiento: $('#fechavencimiento').val(),
-					coberturaactual: $('#coberturaactual').val()
+					coberturaactual: $('#coberturaactual').val(),
+					bitacoracrea: '',
+					bitacorainbursa: '',
+					bitacoraagente: '',
+					existeprimaobjetivo: $('#existeprimaobjetivo').val(),
+					primaobjetivo: $('#primaobjetivo').val()
  				},
  				//mientras enviamos el archivo
  				beforeSend: function(){
@@ -1028,40 +1025,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
  			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
  		});
 
-
- 		$('#fechapropuesta').pickadate({
- 			format: 'yyyy-mm-dd',
- 			labelMonthNext: 'Siguiente mes',
- 			labelMonthPrev: 'Previo mes',
- 			labelMonthSelect: 'Selecciona el mes del año',
- 			labelYearSelect: 'Selecciona el año',
- 			selectMonths: true,
- 			selectYears: 100,
- 			today: 'Hoy',
- 			clear: 'Borrar',
- 			close: 'Cerrar',
- 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
- 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
- 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
- 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
- 		});
-
- 		$('#fechaemitido').pickadate({
- 			format: 'yyyy-mm-dd',
- 			labelMonthNext: 'Siguiente mes',
- 			labelMonthPrev: 'Previo mes',
- 			labelMonthSelect: 'Selecciona el mes del año',
- 			labelYearSelect: 'Selecciona el año',
- 			selectMonths: true,
- 			selectYears: 100,
- 			today: 'Hoy',
- 			clear: 'Borrar',
- 			close: 'Cerrar',
- 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
- 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
- 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
- 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
- 		});
 
 		var options = {
 			url: "../../json/jsbuscarclientes.php",
@@ -1185,7 +1148,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 		$("#lstasociados").easyAutocomplete(options3);
 
-
+		$('#primaobjetivo').number( true, 2 ,'.','');
 
 		$('.frmContnumerocliente').hide();
 		$('.frmContrefusuarios').hide();

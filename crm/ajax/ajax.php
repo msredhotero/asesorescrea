@@ -722,6 +722,9 @@ switch ($accion) {
    case 'rechazarCotizacion':
       rechazarCotizacion($serviciosReferencias);
    break;
+   case 'rechazarCotizacionValidacion':
+      rechazarCotizacionValidacion($serviciosReferencias, $serviciosMensajes);
+   break;
 
 
    case 'insertarAsociadostemporales':
@@ -741,7 +744,7 @@ switch ($accion) {
       traerDocumentacionPorCotizacionDocumentacion($serviciosReferencias);
    break;
    case 'modificarEstadoDocumentacionCotizaciones':
-      modificarEstadoDocumentacionCotizaciones($serviciosReferencias);
+      modificarEstadoDocumentacionCotizaciones($serviciosReferencias, $serviciosMensajes);
    break;
    case 'modificarCotizacionUnicaDocumentacion':
       modificarCotizacionUnicaDocumentacion($serviciosReferencias);
@@ -2045,7 +2048,7 @@ function modificarCotizacionUnicaDocumentacion($serviciosReferencias) {
 
 }
 
-function modificarEstadoDocumentacionCotizaciones($serviciosReferencias) {
+function modificarEstadoDocumentacionCotizaciones($serviciosReferencias, $serviciosMensajes) {
    session_start();
 
    $iddocumentacioncotizacion = $_POST['iddocumentacioncotizacion'];
@@ -2059,6 +2062,16 @@ function modificarEstadoDocumentacionCotizaciones($serviciosReferencias) {
       $res = $serviciosReferencias->modificarEstadoDocumentacionCotizaciones($iddocumentacioncotizacion,$idestado,$usuariomodi);
 
       if ($res == true) {
+         // se rechaza se notifica al agente
+         if (($idestado == 2) || ($idestado == 3) || ($idestado == 4)) {
+            $resCotizacion = $serviciosReferencias->traerDocumentacioncotizacionesPorIdCompleto($iddocumentacioncotizacion);
+
+            $idasesor = mysql_result($resCotizacion,0,'refasesores');
+            $iddocumentacion = mysql_result($resCotizacion,0,'refdocumentaciones');
+            $idcotizacion = mysql_result($resCotizacion,0,'refcotizaciones');
+
+            $resMensaje = $serviciosMensajes->msgCotizacionDocumentacion($idasesor, $iddocumentacion, $idcotizacion, 'R');
+         }
          $resV['leyenda'] = '';
          $resV['error'] = false;
       } else {
@@ -2220,7 +2233,21 @@ function rechazarCotizacion($serviciosReferencias) {
       echo '';
    }
 
+}
 
+function rechazarCotizacionValidacion($serviciosReferencias, $serviciosMensajes) {
+   session_start();
+
+   $id = $_POST['id'];
+   $idagente = $_POST['idagente'];
+   $bitacoracrea = $_POST['bitacoracrea'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+
+   $sql = "update dbcotizaciones set bitacoracrea = '".$bitacoracrea."' where idcotizacion =".$id;
+   $res = $serviciosReferencias->query($sql,0);
+
+   $res = $serviciosMensajes->msgCotizacionechazaValidacion($id,$idagente,$bitacoracrea);
+   echo '';
 
 }
 
@@ -2255,31 +2282,17 @@ function insertarCotizaciones($serviciosReferencias) {
    $cobertura = $_POST['cobertura'];
    $reasegurodirecto = $_POST['reasegurodirecto'];
    $fecharenovacion = $_POST['fecharenovacion'];
-   $fechapropuesta = $_POST['fechapropuesta'];
+   $fechapropuesta = $fechacrea;
 
    $presentacotizacion = $_POST['presentacotizacion'];
-   $fechaemitido = $_POST['fechaemitido'];
+   $fechaemitido = $fechacrea;
 
-   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual);
+   $existeprimaobjetivo = $_POST['existeprimaobjetivo'];
+   $primaobjetivo = ($_POST['primaobjetivo'] == '' ? 0 : $_POST['primaobjetivo']);
+
+   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo);
 
    if ((integer)$res > 0) {
-      if ($refestadocotizaciones == 6) {
-         $foliointerno = $serviciosReferencias->generaFolioInterno();
-         $foliotys = $_POST['foliotys'];
-
-         $resIV = $serviciosReferencias->insertarVentas($res,1,0,0,'','',date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$usuariomodi,$usuariomodi,$foliotys,$foliointerno);
-
-         // generada la venta lo guardo en la cartera del cliente
-         $resIC = $serviciosReferencias->insertarClientescartera($refclientes,$refproductos,$fechaemitido,'','1');
-
-         //generada la venta solicito el idcliente inbursa
-         $idclienteinbursa = $_POST['idclienteinbursa'];
-         $resModC = $serviciosReferencias->modificarClientesInbursa($refclientes, $idclienteinbursa);
-
-         $res = $resIV;
-      } else {
-         $foliointerno = '';
-      }
 
       echo $res;
    } else {
@@ -2312,17 +2325,31 @@ function modificarCotizaciones($serviciosReferencias) {
    $refusuarios = $_SESSION['usuaid_sahilices'];
    $foliotys = $_POST['foliotys'];
 
-   $fechavencimiento = $_POST['fechavencimiento'];
-   $coberturaactual = $_POST['coberturaactual'];
+   $tiponegocio = $_POST['tiponegocio'];
+
+   if ($tiponegocio != 'Negocio nuevo') {
+      $fechavencimiento = $_POST['fechavencimiento'];
+      $coberturaactual = $_POST['coberturaactual'];
+   } else {
+      $fechavencimiento = '';
+      $coberturaactual = '';
+   }
 
    $cobertura = $_POST['cobertura'];
    $reasegurodirecto = $_POST['reasegurodirecto'];
    $fecharenovacion = $_POST['fecharenovacion'];
    $fechapropuesta = $_POST['fechapropuesta'];
-   $tiponegocio = $_POST['tiponegocio'];
+
    $presentacotizacion = $_POST['presentacotizacion'];
 
-   if ($refestadocotizaciones == 6) {
+   $bitacoracrea = $_POST['bitacoracrea'];
+   $bitacorainbursa = $_POST['bitacorainbursa'];
+   $bitacoraagente = $_POST['bitacoraagente'];
+
+   $existeprimaobjetivo = $_POST['existeprimaobjetivo'];
+   $primaobjetivo = ($_POST['primaobjetivo'] == '' ? 0 : $_POST['primaobjetivo']);
+
+   if ($refestadocotizaciones == 5) {
       $foliointerno = $serviciosReferencias->generaFolioInterno();
       $resIV = $serviciosReferencias->insertarVentas($id,1,0,0,'','',date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$usuariomodi,$usuariomodi,$foliotys,$foliointerno);
 
@@ -2338,7 +2365,7 @@ function modificarCotizaciones($serviciosReferencias) {
    }
 
 
-   $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual);
+   $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$bitacoracrea,$bitacorainbursa,$bitacoraagente,$existeprimaobjetivo,$primaobjetivo);
 
    if ($res == true) {
       echo '';

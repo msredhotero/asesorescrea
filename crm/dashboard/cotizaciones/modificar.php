@@ -55,8 +55,8 @@ $resultado = $serviciosReferencias->traerCotizacionesPorId($id);
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbcotizaciones";
 
-$lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones','fechaemitido','primaneta','primatotal','recibopago','fechapago','nrorecibo','importecomisionagente','importebonopromotor','cobertura','reasegurodirecto','fecharenovacion','fechapropuesta','tiponegocio','presentacotizacion','fechavencimiento','coberturaactual');
-$lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor','Cobertura Requiere Reaseguro','Reaseguro Directo con Inbursa o Broker','Fecha renovación o presentación de propueta al cliente','Fecha en que se entrega propuesta','Tipo de negocio para agente','Presenta Cotizacion o Poliza de competencia','Fecha Vencimiento','Cobertura Actual');
+$lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones','fechaemitido','primaneta','primatotal','recibopago','fechapago','nrorecibo','importecomisionagente','importebonopromotor','cobertura','reasegurodirecto','fecharenovacion','fechapropuesta','tiponegocio','presentacotizacion','fechavencimiento','coberturaactual','bitacoracrea','bitacorainbursa','bitacoraagente','existeprimaobjetivo','primaobjetivo');
+$lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor','Cobertura Requiere Reaseguro','Reaseguro Directo con Inbursa o Broker','Fecha renovación o presentación de propueta al cliente','Fecha en que se entrega propuesta','Tipo de negocio para agente','Presenta Cotizacion o Poliza de competencia','Fecha Vencimiento póliza Actual','Aseguradora con quien esta suscrita la póliza','Bitacora CREA','Bitacora Inbursa','Bitacora Agente','Existe Prima Objetivo','Prima Objetivo');
 
 
 $modificar = "modificarCotizaciones";
@@ -79,7 +79,7 @@ switch ($orden) {
 	case 2:
 		$ordenPosible = 3;
 		$ordenRechazo = 0;
-		$lblOrden = 'Cotizacion en valoracion del cliente';
+		$lblOrden = 'Entrega de Propuesta INBURSA';
 	break;
 	case 3:
 		$ordenPosible = 5;
@@ -92,25 +92,11 @@ switch ($orden) {
 		$lblOrden = 'Finalizado Rechazado';
 	break;
 	case 5:
-		$ordenPosible = 6;
+		$ordenPosible = 0;
 		$ordenRechazo = 0;
 		$lblOrden = 'Vendido';
 	break;
-	case 6:
-		$ordenPosible = 0;
-		$ordenRechazo = 0;
-		$lblOrden = 'Finalizado';
-	break;
-	case 7:
-		$ordenPosible = 8;
-		$ordenRechazo = 0;
-		$lblOrden = 'Comisionado Agente';
-	break;
-	case 8:
-		$ordenPosible = 9;
-		$ordenRechazo = 0;
-		$lblOrden = 'Bono Promotor';
-	break;
+
 	case 9:
 		$ordenPosible = 0;
 		$ordenRechazo = 0;
@@ -123,7 +109,7 @@ switch ($orden) {
 }
 
 if ($_SESSION['idroll_sahilices'] == 7) {
-	if ($orden >= 7) {
+	if ($orden >= 3) {
 		$ordenPosible = 0;
 		$ordenRechazo = 0;
 		$lblOrden = 'Finalizado';
@@ -138,7 +124,7 @@ $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(3,4,2),' 
 
 $idclienteinbursa = mysql_result($resVar2,0,'idclienteinbursa');
 
-$resVar3	= $serviciosReferencias->traerProductos();
+$resVar3	= $serviciosReferencias->traerProductosPorId(mysql_result($resultado,0,'refproductos'));
 $cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resVar3,array(1),'',mysql_result($resultado,0,'refproductos'));
 
 if ($_SESSION['idroll_sahilices'] != 7) {
@@ -151,12 +137,12 @@ if ($_SESSION['idroll_sahilices'] != 7) {
 
 if ($_SESSION['idroll_sahilices'] == 7) {
 	$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
-	$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(4,2,3),' ');
+	$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(2,3,4),' ');
 
-	$resGuia = $serviciosReferencias->traerEstadocotizacionesPorIn('1,2,3,4,5,6,7');
+	$resGuia = $serviciosReferencias->traerEstadocotizacionesPorIn('1,2');
 } else {
 	$resVar5	= $serviciosReferencias->traerAsesores();
-	$cadRef5 = $serviciosFunciones->devolverSelectBoxActivo($resVar5,array(4,2,3),' ',mysql_result($resultado,0,'refasesores'));
+	$cadRef5 = $serviciosFunciones->devolverSelectBoxActivo($resVar5,array(2,3,4),' ',mysql_result($resultado,0,'refasesores'));
 
 	$resGuia = $serviciosReferencias->traerEstadocotizaciones();
 }
@@ -165,8 +151,61 @@ $resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId($ordenPosible);
 $cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$idestado);
 
 
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6);
-$refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones');
+
+switch (mysql_result($resultado,0,'cobertura')) {
+	case 'Si':
+		$cadRef7 = "<option value='Si' selected>Si</option><option value='No'>No</option><option value='No lo se'>No lo se</option>";
+	break;
+	case 'No':
+		$cadRef7 = "<option value='Si'>Si</option><option value='No' selected>No</option><option value='No lo se'>No lo se</option>";
+	break;
+	case 'No lo se':
+		$cadRef7 = "<option value='Si'>Si</option><option value='No'>No</option><option value='No lo se' selected>No lo se</option>";
+	break;
+}
+
+//die(var_dump($ordenPosible));
+
+switch (mysql_result($resultado,0,'presentacotizacion')) {
+	case 'Si':
+		$cadRef8 = "<option value='Si' selected>Si</option><option value='No'>No</option>";
+	break;
+	case 'No':
+		$cadRef8 = "<option value='Si'>Si</option><option value='No' selected>No</option>";
+	break;
+}
+
+switch (mysql_result($resultado,0,'tiponegocio')) {
+	case 'Negocio nuevo':
+		$cadRef9 = "<option value='Negocio nuevo' selected>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
+	break;
+	case 'Renovación':
+		$cadRef9 = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación' selected>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
+	break;
+	case 'Renovación póliza con otro agente':
+		$cadRef9 = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente' selected>Renovación póliza con otro agente</option>";
+	break;
+	default:
+		$cadRef9 = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
+	break;
+}
+
+$cadRef11 = '';
+switch (mysql_result($resultado,0,'existeprimaobjetivo')) {
+	case '1':
+		$cadRef11 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+	break;
+	case '0':
+		$cadRef11 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+	break;
+}
+
+$resVar10	= $serviciosReferencias->traerAseguradora();
+$cadRef10 = $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',mysql_result($resultado,0,'coberturaactual'));
+
+
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadRef7,7=>$cadRef8,8=>$cadRef9,9=>$cadRef10,10=>$cadRef11);
+$refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones','cobertura','presentacotizacion','tiponegocio','coberturaactual','existeprimaobjetivo');
 
 $frmUnidadNegocios = $serviciosFunciones->camposTablaModificar($id, $idTabla,$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -183,6 +222,61 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 }
 
+
+$resDocumentacionCotizaciones1 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacion($id, 45);
+$resDocumentacionCotizaciones2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacion($id, 46);
+$resDocumentacionCotizaciones3 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacion($id, 47);
+
+if (mysql_num_rows($resDocumentacionCotizaciones1)>0) {
+	if (mysql_result($resDocumentacionCotizaciones1,0,'refestadodocumentaciones') == 5) {
+		$bgDoc1 = 'bg-green';
+	} else {
+		if (mysql_result($resDocumentacionCotizaciones1,0,'refestadodocumentaciones') == 1) {
+			$bgDoc1 = 'bg-blue';
+		} else {
+			$bgDoc1 = 'bg-red';
+		}
+	}
+} else {
+	$bgDoc1 = 'bg-default';
+}
+
+if (mysql_num_rows($resDocumentacionCotizaciones2)>0) {
+	if (mysql_result($resDocumentacionCotizaciones2,0,'refestadodocumentaciones') == 5) {
+		$bgDoc2 = 'bg-green';
+	} else {
+		if (mysql_result($resDocumentacionCotizaciones2,0,'refestadodocumentaciones') == 1) {
+			$bgDoc2 = 'bg-blue';
+		} else {
+			$bgDoc2 = 'bg-red';
+		}
+	}
+} else {
+	$bgDoc2 = 'bg-default';
+}
+
+if (mysql_num_rows($resDocumentacionCotizaciones3)>0) {
+	if (mysql_result($resDocumentacionCotizaciones3,0,'refestadodocumentaciones') == 5) {
+		$bgDoc3 = 'bg-green';
+	} else {
+		if (mysql_result($resDocumentacionCotizaciones3,0,'refestadodocumentaciones') == 1) {
+			$bgDoc3 = 'bg-blue';
+		} else {
+			$bgDoc3 = 'bg-red';
+		}
+	}
+} else {
+	$bgDoc3 = 'bg-default';
+}
+
+if (mysql_result($resVar3,0,'reftipodocumentaciones') == '') {
+	$refdoctipo = 0;
+} else {
+	$refdoctipo = mysql_result($resVar3,0,'reftipodocumentaciones');
+}
+$documentacionesrequeridas = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
+
+$documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
 
 ?>
 
@@ -303,7 +397,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 					}
 
 				?>
-				<div class="col-xs-1 bs-wizard-step <?php echo $lblEstado; ?>">
+				<div class="col-xs-2 bs-wizard-step <?php echo $lblEstado; ?>">
 					<div class="text-center bs-wizard-stepnum">Paso <?php echo $i; ?></div>
 					<div class="progress">
 						<div class="progress-bar"></div>
@@ -343,7 +437,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 						<div class="body table-responsive">
 							<form class="formulario frmNuevo" role="form" id="sign_in">
 
-
 								<div class="row" style="padding: 5px 20px;">
 
 									<?php echo $frmUnidadNegocios; ?>
@@ -370,9 +463,9 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 									</div>
 								</div>
 								<div class="row">
-
+									<p>Acciones</p>
 									<div class="modal-footer">
-										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 											<?php
 											if ($ordenPosible == 0) {
 											?>
@@ -381,10 +474,17 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 											} else {
 											?>
 											<button id="<?php echo $idestado; ?>" type="button" class="btn btn-warning waves-effect btnModificar">Modificar</button>
+											<?php if (($idestado == 2) && ($_SESSION['idroll_sahilices'] == 7)) { ?>
+
+											<?php } else { ?>
 											<button type="submit" class="btn btn-success waves-effect btnContinuar"><?php echo $lblOrden; ?></button>
+											<?php if ($idestado == 2) { ?>
+											<button type="button" class="btn btn-danger waves-effect btnRechazarValidacion">RECHAZAR</button>
 											<?php
-											}
+											} } }
 											?>
+
+
 
 											<?php
 											if ($ordenRechazo > 0) {
@@ -395,6 +495,50 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 											?>
 										</div>
 				               </div>
+								</div>
+
+
+								<div class="row">
+									<p>Archivos Solicitados sobre el producto</p>
+									<div class="modal-footer">
+										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+											<?php
+											if (($ordenPosible >= 3) || ($ordenPosible == 0)) {
+												while ($rowD = mysql_fetch_array($documentacionesrequeridas)) {
+											?>
+											<button type="button" class="btn bg-<?php echo $rowD['color']; ?> waves-effect btn<?php echo str_replace(' ','',$rowD['documentacion']); ?>"><i class="material-icons">unarchive</i><span><?php echo $rowD['documentacion']; ?></span></button>
+
+											<?php
+												}
+											}
+											?>
+
+										</div>
+				               </div>
+								</div>
+
+								<div class="row">
+
+									<p>Archivos Solicitados de la cotizacion</p>
+									<div class="modal-footer">
+										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+
+											<button type="button" class="btn <?php echo $bgDoc1; ?> waves-effect btnPolizaVigente"><i class="material-icons">unarchive</i><span>POLIZA VIGENTE</span></button>
+											<?php
+											if ($ordenPosible == 5) {
+											?>
+											<button type="button" class="btn <?php echo $bgDoc2; ?> waves-effect btnCotizacion1"><i class="material-icons">unarchive</i><span>COTIZACION 1</span></button>
+											<button type="button" class="btn <?php echo $bgDoc3; ?> waves-effect btnCotizacion2"><i class="material-icons">unarchive</i><span>COTIZACION 2</span></button>
+											<?php
+											}
+											?>
+
+
+										</div>
+				               </div>
+
 								</div>
 
 							</form>
@@ -439,7 +583,53 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 <script>
 	$(document).ready(function(){
 
+		<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
+			$("#bitacoracrea").prop('readonly',true);
+			$("#bitacorainbursa").prop('readonly',true);
+		<?php } ?>
+
+		<?php if ($_SESSION['idroll_sahilices'] == 17) { ?>
+			$("#bitacoracrea").prop('readonly',true);
+			$("#bitacorainbursa").prop('readonly',true);
+		<?php } ?>
+
+
+
 		$('.frmContreasegurodirecto').hide();
+		$('.frmContfechapropuesta').hide();
+		$('.frmContfechaemitido').hide();
+		$('.frmContfecharenovacion').hide();
+		//$('.frmContfoliotys').hide();
+
+
+		<?php if (mysql_result($resultado,0,'tiponegocio') == 'Negocio nuevo') { ?>
+			$('.frmContfechavencimiento').hide();
+			$('.frmContcoberturaactual').hide();
+			$('#fechavencimiento').val('');
+			$('#coberturaactual').val('');
+
+			$("#fechavencimiento").prop('required',false);
+			$("#coberturaactual").prop('required',false);
+		<?php } ?>
+
+		$("#tiponegocio").change( function(){
+			if (($(this)[0].selectedIndex == 1) || ($(this)[0].selectedIndex == 2)) {
+				$('.frmContfechavencimiento').show();
+				$('.frmContcoberturaactual').show();
+
+				$("#fechavencimiento").prop('required',true);
+				$("#coberturaactual").prop('required',true);
+			} else {
+				$('.frmContfechavencimiento').hide();
+				$('.frmContcoberturaactual').hide();
+				$('#fechavencimiento').val('');
+				$('#coberturaactual').val('');
+
+				$("#fechavencimiento").prop('required',false);
+				$("#coberturaactual").prop('required',false);
+
+			}
+		});
 
 
 		function traerClientescarteraPorCliente(idcliente) {
@@ -484,205 +674,65 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 		}
 
-		$('.btnArchivos').click(function() {
-			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=35";
+		<?php
+		if (($ordenPosible >= 3) || ($ordenPosible == 0)) {
+			while ($rowD = mysql_fetch_array($documentacionesrequeridas2)) {
+		?>
+
+		$('.btn<?php echo str_replace(' ','',$rowD['documentacion']); ?>').click(function() {
+			url = "subirdocumentacionip.php?id=<?php echo $id; ?>&documentacion=<?php echo $rowD['iddocumentacion']; ?>";
 			$(location).attr('href',url);
 		});
-
-		$('.frmContfoliointerno').hide();
-
-		<?php
-		if ($lblOrden == 'Finalizado') {
-		?>
-		$('.frmContfechaemitido').show();
-		$('.frmContprimaneta').show();
-		$('.frmContprimatotal').show();
-		$('.frmContrecibopago').show();
-		$('.frmContfechapago').show();
-		$('.frmContnrorecibo').show();
-		$('.frmContimportecomisionagente').show();
-		$('.frmContimportebonopromotor').show();
-		$('.frmContrefusuarios').hide();
-		$('.frmContrefestadocotizaciones').hide();
-		$('.frmContnropoliza').show();
-		$('.frmContfechapropuesta').show();
-		<?php } else {?>
-		$('.frmContfechaemitido').hide();
-		$('.frmContprimaneta').hide();
-		$('.frmContprimatotal').hide();
-		$('.frmContrecibopago').hide();
-		$('.frmContfechapago').hide();
-		$('.frmContnrorecibo').hide();
-		$('.frmContimportecomisionagente').hide();
-		$('.frmContimportebonopromotor').hide();
-		$('.frmContnropoliza').hide();
-		$('.frmContfechapropuesta').hide();
-
-		$('.frmContrefusuarios').hide();
-		$('.frmContrefestadocotizaciones').hide();
-
-		<?php
-		if ($ordenPosible >= 3) {
-		?>
-		$('.frmContfechapropuesta').show();
-		$('.frmContfechaemitido').show();
-		$("#fechapropuesta").prop('required',true);
-		$("#fechaemitido").prop('required',true);
-
-		$('.frmContidclienteinbursa').hide();
-		$('.frmContfoliotys').hide();
-
-		<?php
-		} else {
-		?>
-		$("#fechapropuesta").prop('required',false);
-		<?php } ?>
-
-		<?php
-		if ($ordenPosible == 6) {
-		?>
-
-		$('.frmContrecibopago').show();
-		$('.frmContfechaemitido').show();
-		$('.frmContnropoliza').show();
-
-		$('.frmContidclienteinbursa').show();
-		$('.frmContfoliotys').show();
-
-		$("#foliotys").prop('required',true);
-		$("#idclienteinbursa").prop('required',true);
-
-
-		<?php if ($prima == '1') { ?>
-		$("#primaneta").prop('required',true);
-		$("#primatotal").prop('required',true);
-		$('.frmContprimaneta').show();
-		$('.frmContprimatotal').show();
-		<?php } ?>
-		$("#recibopago").prop('required',true);
-		$("#fechaemitido").prop('required',true);
-
-		<?php
-		}
-		?>
-
-		<?php
-		if ($ordenPosible == 7) {
-		?>
-
-		$('.frmContrecibopago').show();
-		$('.frmContfechaemitido').show();
-		$('.frmContnropoliza').show();
-
-
-		<?php if ($prima == '1') { ?>
-		$("#primaneta").prop('required',true);
-		$("#primatotal").prop('required',true);
-		$('.frmContprimaneta').show();
-		$('.frmContprimatotal').show();
-		<?php } ?>
-		$("#recibopago").prop('required',true);
-		$("#fechaemitido").prop('required',true);
-
-		$("#fechapago").prop('required',true);
-		$("#nropoliza").prop('required',true);
-		<?php
-		}
-		?>
-
-		<?php
-		if ($ordenPosible == 8) {
-		?>
-
-		$('.frmContrecibopago').show();
-		$('.frmContfechaemitido').show();
-		$('.frmContnropoliza').show();
-
-		$('.frmContfechapago').show();
-		$('.frmContnrorecibo').show();
-
-		$('.frmContimportecomisionagente').show();
-
-		<?php if ($prima == '1') { ?>
-		$("#primaneta").prop('required',true);
-		$("#primatotal").prop('required',true);
-		$('.frmContprimaneta').show();
-		$('.frmContprimatotal').show();
-		<?php } ?>
-		$("#recibopago").prop('required',true);
-		$("#fechaemitido").prop('required',true);
-
-		$("#fechapago").prop('required',true);
-		$("#nropoliza").prop('required',true);
-
-		$("#importecomisionagente").prop('required',true);
-		<?php
-		}
-		?>
-
-		<?php
-		if ($ordenPosible == 9) {
-		?>
-
-		$('.frmContrecibopago').show();
-		$('.frmContfechaemitido').show();
-		$('.frmContnropoliza').show();
-
-		$('.frmContfechapago').show();
-		$('.frmContnrorecibo').show();
-
-		$('.frmContimportecomisionagente').show();
-		$('.frmContimportebonopromotor').show();
-
-		<?php if ($prima == '1') { ?>
-		$("#primaneta").prop('required',true);
-		$("#primatotal").prop('required',true);
-		$('.frmContprimaneta').show();
-		$('.frmContprimatotal').show();
-		<?php } ?>
-		$("#recibopago").prop('required',true);
-		$("#fechaemitido").prop('required',true);
-
-		$("#fechapago").prop('required',true);
-		$("#nropoliza").prop('required',true);
-
-		$("#importecomisionagente").prop('required',true);
-		$("#importebonopromotor").prop('required',true);
-		<?php
-		}
-		?>
-
-		<?php
-		if ($ordenRechazo > 0) {
-		?>
-		$('.frmContobservaciones').show();
-		<?php
-		} else {
-		?>
-		$('.frmContobservaciones').hide();
-		<?php
-		}
-		?>
-
-		<?php
-		}
-		?>
-
-
-		<?php
-		if ($_SESSION['idroll_sahilices'] == 7) {
-			if ($orden >= 7) {
-
-		?>
-		$('.frmContimportecomisionagente').hide();
-		$('.frmContimportebonopromotor').hide();
-		$('.frmContprimaneta').hide();
-		$('.frmContprimatotal').hide();
-
 		<?php
 			}
 		}
 		?>
+
+		$('.btnPolizaVigente').click(function() {
+			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=45";
+			$(location).attr('href',url);
+		});
+
+		$('.btnCotizacion1').click(function() {
+			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=46";
+			$(location).attr('href',url);
+		});
+
+		$('.btnCotizacion2').click(function() {
+			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=47";
+			$(location).attr('href',url);
+		});
+
+
+		$('.frmContrefusuarios').hide();
+		$('.frmContrefestadocotizaciones').hide();
+
+
+
+		<?php
+		if ($ordenPosible == 3) {
+		?>
+
+		$('.frmContidclienteinbursa').hide();
+		$('.frmContfoliotys').hide();
+
+		$("#idclienteinbursa").prop('required',false);
+		$("#foliotys").prop('required',false);
+
+		<?php
+		}
+		if ($ordenPosible == 5) {
+		?>
+
+		$('.frmContidclienteinbursa').show();
+		$('.frmContfoliotys').show();
+
+		$("#idclienteinbursa").prop('required',true);
+		$("#foliotys").prop('required',true);
+		<?php
+		}
+		?>
+
 
 		$('.frmContfechacrea').hide();
 		$('.frmContfechamodi').hide();
@@ -984,6 +1034,57 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 							showConfirmButton: false
 					});
 					setTimeout(refrescar, 2500);
+				} else {
+					swal({
+							title: "Respuesta",
+							text: data,
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+				}
+			},
+			//si ha ocurrido un error
+			error: function(){
+				swal({
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+				});
+
+			}
+		});
+	});
+
+	$('.btnRechazarValidacion').click(function() {
+		$.ajax({
+			url: '../../ajax/ajax.php',
+			type: 'POST',
+			// Form data
+			//datos del formulario
+			data: {
+				accion: 'rechazarCotizacionValidacion',
+				id: <?php echo $id; ?>,
+				idagente: <?php echo mysql_result($resultado,0,'refasesores'); ?>,
+				bitacoracrea: $('#bitacoracrea').val()
+			},
+			//mientras enviamos el archivo
+			beforeSend: function(){
+
+			},
+			//una vez finalizado correctamente
+			success: function(data){
+				if (data == '') {
+					swal({
+							title: "Respuesta",
+							text: "Registro Eliminado con exito!!",
+							type: "success",
+							timer: 1500,
+							showConfirmButton: false
+					});
+					setTimeout(refrescar, 2000);
 				} else {
 					swal({
 							title: "Respuesta",

@@ -8,6 +8,55 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosMensajes {
 
+
+	/* PARA Mensajes */
+
+	function insertarMensajes($mensaje) {
+	$sql = "insert into dbmensajes(idmensaje,mensaje)
+	values ('','".$mensaje."')";
+	$res = $this->query($sql,1);
+	return $res;
+	}
+
+
+	function modificarMensajes($id,$mensaje) {
+	$sql = "update dbmensajes
+	set
+	mensaje = ".$mensaje."
+	where idmensaje =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function eliminarMensajes($id) {
+	$sql = "delete from dbmensajes where idmensaje =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerMensajes() {
+	$sql = "select
+	m.idmensaje,
+	m.mensaje
+	from dbmensajes m
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	function traerMensajesPorId($id) {
+	$sql = "select idmensaje,mensaje from dbmensajes where idmensaje =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbmensajes*/
+
 	function GUID()
 	{
 		if (function_exists('com_create_guid') === true)
@@ -42,6 +91,39 @@ class ServiciosMensajes {
 		$headers .= "Bcc: msredhotero@gmail.com\r\n";
 
 		return mail($destinatario,$asunto,$cuerpo,$headers);
+	}
+
+	function traerProductosPorId($id) {
+		$sql = "select idproducto,producto,prima, reftipoproducto,reftipodocumentaciones from tbproductos where idproducto =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerCotizacionesPorIdCompleto($id) {
+		$sql = "select
+		c.idcotizacion,
+		concat('Producto: ', pro.producto) as producto,
+		concat('Cliente: ', cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+		concat('Asesor: ', ase.apellidopaterno, ' ', ase.nombre) as asesor,
+		c.refclientes,c.refproductos,c.refasesores,c.refasociados,
+		c.refestadocotizaciones,c.observaciones,
+		c.fechacrea,c.fechamodi,c.usuariocrea,c.usuariomodi,c.refusuarios,c.fechaemitido,c.fechavencimiento,
+		c.coberturaactual,c.cobertura,c.reasegurodirecto,c.tiponegocio,
+		c.presentacotizacion,c.fechapropuesta,c.fecharenovacion,c.bitacoracrea,c.bitacorainbursa,c.bitacoraagente,c.existeprimaobjetivo,c.primaobjetivo
+		from dbcotizaciones c
+		inner join dbclientes cli ON cli.idcliente = c.refclientes
+		inner join dbasesores ase ON ase.idasesor = c.refasesores
+		inner join tbproductos pro ON pro.idproducto = c.refproductos
+		where c.idcotizacion =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerDocumentacionesPorId($id) {
+		$sql = "select iddocumentacion,reftipodocumentaciones,documentacion,obligatoria,cantidadarchivos,fechacrea,fechamodi,usuariocrea,usuariomodi,carpeta from dbdocumentaciones where iddocumentacion =".$id;
+		$res = $this->query($sql,0);
+		return $res;
 	}
 
 	function traerAsesoresPorId($id) {
@@ -361,6 +443,87 @@ class ServiciosMensajes {
       $resEmail = $this->enviarEmail($destinatario,$asunto,$cuerpo);
 
       return '';
+	}
+
+	function msgCotizacionDocumentacion($idasesor, $iddocumentacion, $idcotizacion, $tipo) {
+		$resAgente = $this->traerAsesoresPorId($idasesor);
+
+		$resDocumentacion = $this->traerDocumentacionesPorId($iddocumentacion);
+
+		$resCotizacion = $this->traerCotizacionesPorIdCompleto($idcotizacion);
+
+		//$destinatario = mysql_result($resAgente,0,'email');
+		$destinatario = 'rlinares@asesorescrea.com';
+
+		switch ($tipo) {
+			case 'R':
+				$asunto = 'Se rechazo una documentacion presentada';
+				$cuerpo = 'La documentacion '.mysql_result($resDocumentacion,0,'documentacion').' del cliente '.mysql_result($resCotizacion,0,'cliente').' sobre la cotizacion del producto '.mysql_result($resCotizacion,0,'producto').' fue rechazada, por favor volver a cargar';
+			break;
+		}
+
+		//die(var_dump($destinatario.' '.$asunto.' '.$cuerpo));
+
+		$iMensaje = $this->insertarMensajes($destinatario.' '.$asunto.' '.$cuerpo);
+
+		$resEmail = $this->enviarEmail($destinatario,$asunto,$cuerpo);
+
+      return '';
+	}
+
+
+	function msgCotizacionechazaValidacion($idcotizacion,$idasesor, $bitacoracrea) {
+		$resAgente = $this->traerAsesoresPorId($idasesor);
+
+		$resCotizacion = $this->traerCotizacionesPorIdCompleto($idcotizacion);
+
+		$resDocumentacion = $this->traerProductosPorId(mysql_result($resCotizacion,0,'refproductos'));
+
+		$resDocumentaciones = $this->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($idcotizacion,mysql_result($resDocumentacion,0,'reftipodocumentaciones'));
+
+		//$destinatario = mysql_result($resAgente,0,'email');
+		$destinatario = 'rlinares@asesorescrea.com';
+
+		$asunto = 'Se rechazo la cotizacion';
+		$cuerpo = '<p>La cotizacion del cliente '.mysql_result($resCotizacion,0,'cliente').' sobre la cotizacion del producto '.mysql_result($resCotizacion,0,'producto').' fue rechazada, por favor volver a cargar los archivos<p/>';
+
+		$cuerpo .= '<p>Haga click <a href="https://asesorescrea.com/desarrollo/crm/dashboard/cotizaciones/subirdocumentacionip.php?id='.$idcotizacion.'&documentacion='.mysql_result($resDocumentaciones,0,'iddocumentacion').'">AQUI</a> para ingresar</p>';
+
+		$cuerpo .= '<p>'.$bitacoracrea.'</p>';
+
+		//die(var_dump($destinatario.' '.$asunto.' '.$cuerpo));
+
+		$iMensaje = $this->insertarMensajes($destinatario.' '.$asunto.' '.$cuerpo);
+
+		$resEmail = $this->enviarEmail($destinatario,$asunto,$cuerpo);
+
+      return '';
+	}
+
+
+	function traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($idcotizacion,$tipodocumentacion) {
+		$sql = "SELECT
+					    d.iddocumentacion,
+					    d.documentacion,
+					    d.obligatoria,
+					    da.iddocumentacioncotizacion,
+					    da.archivo,
+					    da.type,
+					    coalesce( ed.estadodocumentacion, 'Falta') as estadodocumentacion,
+						 ed.color,
+					    ed.idestadodocumentacion
+					FROM
+					    dbdocumentaciones d
+					        LEFT JOIN
+					    dbdocumentacioncotizaciones da ON d.iddocumentacion = da.refdocumentaciones
+					        AND da.refcotizaciones = ".$idcotizacion."
+					        LEFT JOIN
+					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
+					where d.reftipodocumentaciones in (".$tipodocumentacion.")
+
+					order by 1";
+		$res = $this->query($sql,0);
+ 		return $res;
 	}
 
 
