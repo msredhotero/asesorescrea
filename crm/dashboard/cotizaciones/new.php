@@ -366,7 +366,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
                               <h3>Producto</h3>
                                  <fieldset>
 												<div class="form-group form-float">
-													<label class="form-label" style="margin-top:20px;">Tipo Producto *</label>
+													<label class="form-label" style="margin-top:20px;">Tipo Negocio *</label>
                                        <div class="form-line">
 
 							   						<select style="margin-top:10px;" class="form-control" id="reftipoproducto" name="reftipoproducto" required>
