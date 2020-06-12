@@ -9,6 +9,8 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+
+
    /* PARA Aseguradora */
 
    function insertarAseguradora($razonsocial) {
@@ -1173,12 +1175,14 @@ class ServiciosReferencias {
 		c.vigenciadesde,
 		c.vigenciahasta,
 		tp.tipoproducto,
-		pro.reftipoproducto,
+		pro.reftipoproductorama,
+      tr.reftipoproducto,
 		c.activo
 		from dbclientescartera c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join tbproductos pro ON pro.idproducto = c.refproductos
-		inner join tbtipoproducto tp on tp.idtipoproducto = pro.reftipoproducto
+      inner join tbtipoproductorama tr on tr.idtipoproductorama = pro.reftipoproductorama
+		inner join tbtipoproducto tp on tp.idtipoproducto = tr.reftipoproducto
 		where cli.idcliente = ".$idcliente."
 		order by 1";
 		$res = $this->query($sql,0);
@@ -3681,27 +3685,61 @@ class ServiciosReferencias {
 
 	/* PARA Productos */
 
-	function insertarProductos($producto) {
-		$sql = "insert into tbproductos(idproducto,producto)
-		values ('','".$producto."')";
-		$res = $this->query($sql,1);
-		return $res;
-	}
 
 
-	function modificarProductos($id,$producto) {
-		$sql = "update tbproductos
-		set
-		producto = '".$producto."'
-		where idproducto =".$id;
-		$res = $this->query($sql,0);
-		return $res;
-	}
+   function insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$activo,$puntosporventa,$puntosporpesopagado) {
+      $sql = "insert into tbproductos(idproducto,producto,prima,reftipoproductorama,reftipodocumentaciones,activo,puntosporventa,puntosporpesopagado)
+      values ('','".$producto."','".$prima."',".$reftipoproductorama.",".$reftipodocumentaciones.",'".$activo."',".$puntosporventa.",".$puntosporpesopagado.")";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$activo,$puntosporventa,$puntosporpesopagado) {
+      $sql = "update tbproductos
+      set
+      producto = '".$producto."',prima = '".$prima."',reftipoproductorama = ".$reftipoproductorama.",reftipodocumentaciones = ".$reftipodocumentaciones.",activo = '".$activo."',puntosporventa = ".$puntosporventa.",puntosporpesopagado = ".$puntosporpesopagado."
+      where idproducto =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
 
 
 	function eliminarProductos($id) {
-		$sql = "delete from tbproductos where idproducto =".$id;
+		$sql = "update tbproductos set activo = '0' where idproducto =".$id;
 		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+   function traerProductosajax($length, $start, $busqueda,$colSort,$colSortDir) {
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where ".$roles." p.producto like '%".$busqueda."%' or (case when p.prima = '1' then 'Si' else 'No' end) like '%".$busqueda."%' or tp.tipoproductorama like '%".$busqueda."%' or (case when p.activo = '1' then 'Si' else 'No' end) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+		p.idproducto,
+		p.producto,
+		(case when p.prima = '1' then 'Si' else 'No' end) as prima,
+      tp.tipoproductorama,
+      td.tipodocumentacion,
+      p.puntosporventa,
+      p.puntosporpesopagado,
+      (case when p.activo = '1' then 'Si' else 'No' end) as activo
+		from tbproductos p
+		inner join tbtipoproductorama tp ON tp.idtipoproductorama = p.reftipoproductorama
+      left join tbtipodocumentaciones td ON td.idtipodocumentacion = p.reftipodocumentaciones
+		".$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
 	}
 
@@ -3717,25 +3755,47 @@ class ServiciosReferencias {
 		return $res;
 	}
 
-	function traerProductosPorTipo($idtipoproducto) {
+	function traerProductosPorTipo($reftipoproductorama) {
 		$sql = "select
 		p.idproducto,
 		p.producto,
-		p.prima
+		p.prima,
+      p.activo,
+      p.reftipoproductorama,
+      tp.reftipoproducto
 		from tbproductos p
-		inner join tbtipoproducto tp ON tp.idtipoproducto = p.reftipoproducto
-		where tp.idtipoproducto = ".$idtipoproducto."
+		inner join tbtipoproductorama tp ON tp.idtipoproductorama = p.reftipoproductorama
+      inner join tbtipoproducto t on t.idtipoproducto = tp.reftipoproducto
+		where tp.idtipoproductorama = ".$reftipoproductorama."
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function traerProductosPorIdCompleta($id) {
+		$sql = "select
+		p.idproducto,
+		p.producto,
+		p.prima,
+      p.activo,
+      p.reftipoproductorama,
+      tp.reftipoproducto,
+      p.reftipodocumentaciones
+		from tbproductos p
+		inner join tbtipoproductorama tp ON tp.idtipoproductorama = p.reftipoproductorama
+      inner join tbtipoproducto t on t.idtipoproducto = tp.reftipoproducto
+		where p.idproducto = ".$id."
 		order by 1";
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
 
-	function traerProductosPorId($id) {
-		$sql = "select idproducto,producto,prima, reftipoproducto,reftipodocumentaciones from tbproductos where idproducto =".$id;
-		$res = $this->query($sql,0);
-		return $res;
-	}
+   function traerProductosPorId($id) {
+      $sql = "select idproducto,producto,prima,reftipoproductorama,reftipodocumentaciones,activo,puntosporventa,puntosporpesopagado from tbproductos where idproducto =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
 
 
 	/* Fin */
@@ -4246,6 +4306,7 @@ class ServiciosReferencias {
 		concat('Producto: ', pro.producto) as producto,
 		concat('Cliente: ', cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
 		concat('Asesor: ', ase.apellidopaterno, ' ', ase.nombre) as asesor,
+      concat('Asociado: ', aso.apellidopaterno, ' ', aso.nombre) as asociado,
 		c.refclientes,c.refproductos,c.refasesores,c.refasociados,
 		c.refestadocotizaciones,c.observaciones,
 		c.fechacrea,c.fechamodi,c.usuariocrea,c.usuariomodi,c.refusuarios,c.fechaemitido,c.fechavencimiento,
@@ -4256,6 +4317,7 @@ class ServiciosReferencias {
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join dbasesores ase ON ase.idasesor = c.refasesores
 		inner join tbproductos pro ON pro.idproducto = c.refproductos
+      left join dbasociados aso ON aso.idasociado = c.refasociados
 		where c.idcotizacion =".$id;
 
 		$res = $this->query($sql,0);
@@ -8863,27 +8925,60 @@ class ServiciosReferencias {
 
 	/* PARA Documentaciones */
 
-	function insertarDocumentaciones($reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
-		$sql = "insert into dbdocumentaciones(iddocumentacion,reftipodocumentaciones,documentacion,obligatoria,cantidadarchivos,fechacrea,fechamodi,usuariocrea,usuariomodi)
-		values ('',".$reftipodocumentaciones.",'".$documentacion."','".$obligatoria."',".$cantidadarchivos.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
-		$res = $this->query($sql,1);
-		return $res;
-	}
+   function insertarDocumentaciones($reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$orden,$carpeta,$activo) {
+      $sql = "insert into dbdocumentaciones(iddocumentacion,reftipodocumentaciones,documentacion,obligatoria,cantidadarchivos,fechacrea,fechamodi,usuariocrea,usuariomodi,orden,carpeta,activo)
+      values ('',".$reftipodocumentaciones.",'".$documentacion."','".$obligatoria."',".$cantidadarchivos.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."',".$orden.",'".$carpeta."','".$activo."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
 
 
-	function modificarDocumentaciones($id,$reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
-		$sql = "update dbdocumentaciones
-		set
-		reftipodocumentaciones = ".$reftipodocumentaciones.",documentacion = '".$documentacion."',obligatoria = '".$obligatoria."',cantidadarchivos = ".$cantidadarchivos.",fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."'
-		where iddocumentacion =".$id;
-		$res = $this->query($sql,0);
-		return $res;
-	}
+   function modificarDocumentaciones($id,$reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$orden,$carpeta,$activo) {
+      $sql = "update dbdocumentaciones
+      set
+      reftipodocumentaciones = ".$reftipodocumentaciones.",documentacion = '".$documentacion."',obligatoria = '".$obligatoria."',cantidadarchivos = ".$cantidadarchivos.",fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."',orden = ".$orden.",carpeta = '".$carpeta."',activo = '".$activo."'
+      where iddocumentacion =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
 
 
 	function eliminarDocumentaciones($id) {
-		$sql = "delete from dbdocumentaciones where iddocumentacion =".$id;
+		$sql = "update dbdocumentaciones set activo = '0' where iddocumentacion =".$id;
 		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function traerDocumentacionesajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and tip.tipodocumentacion like '%".$busqueda."%' or d.documentacion like '%".$busqueda."%'";
+		}
+
+		$sql = "select
+      d.iddocumentacion,
+      tip.tipodocumentacion,
+		d.documentacion,
+		(case when d.obligatoria = '1' then 'Si' else 'No' end) as obligatoria,
+      d.orden,
+      d.carpeta,
+      (case when d.activo = '1' then 'Si' else 'No' end) as activo,
+      d.cantidadarchivos,
+		d.fechacrea,
+		d.fechamodi,
+		d.usuariocrea,
+      d.reftipodocumentaciones,
+		d.usuariomodi
+		from dbdocumentaciones d
+		inner join tbtipodocumentaciones tip ON tip.idtipodocumentacion = d.reftipodocumentaciones
+		where d.reftipodocumentaciones > 4 ".$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
 	}
 
@@ -8907,14 +9002,64 @@ class ServiciosReferencias {
 	}
 
 
-	function traerDocumentacionesPorId($id) {
-		$sql = "select iddocumentacion,reftipodocumentaciones,documentacion,obligatoria,cantidadarchivos,fechacrea,fechamodi,usuariocrea,usuariomodi,carpeta from dbdocumentaciones where iddocumentacion =".$id;
-		$res = $this->query($sql,0);
-		return $res;
-	}
+   function traerDocumentacionesPorId($id) {
+      $sql = "select iddocumentacion,reftipodocumentaciones,documentacion,obligatoria,cantidadarchivos,fechacrea,fechamodi,usuariocrea,usuariomodi,orden,carpeta,activo from dbdocumentaciones where iddocumentacion =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
 
 	/* Fin */
 	/* /* Fin de la Tabla: dbdocumentaciones*/
+
+
+   /* PARA Tipodocumentaciones */
+
+   function insertarTipodocumentaciones($tipodocumentacion) {
+   $sql = "insert into tbtipodocumentaciones(idtipodocumentacion,tipodocumentacion)
+   values ('','".$tipodocumentacion."')";
+   $res = $this->query($sql,1);
+   return $res;
+   }
+
+
+   function modificarTipodocumentaciones($id,$tipodocumentacion) {
+   $sql = "update tbtipodocumentaciones
+   set
+   tipodocumentacion = '".$tipodocumentacion."'
+   where idtipodocumentacion =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function eliminarTipodocumentaciones($id) {
+   $sql = "delete from tbtipodocumentaciones where idtipodocumentacion =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function traerTipodocumentaciones() {
+   $sql = "select
+   t.idtipodocumentacion,
+   t.tipodocumentacion
+   from tbtipodocumentaciones t
+   where t.idtipodocumentacion > 4
+   order by 1";
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function traerTipodocumentacionesPorId($id) {
+   $sql = "select idtipodocumentacion,tipodocumentacion from tbtipodocumentaciones where idtipodocumentacion =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: tbtipodocumentaciones*/
 
 
 	/* PARA Documentacionsolicitudes */

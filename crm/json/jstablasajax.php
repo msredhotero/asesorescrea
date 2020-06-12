@@ -68,6 +68,45 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 
 switch ($tabla) {
 
+	case 'productos':
+
+		$datos = $serviciosReferencias->traerProductosajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		//die(var_dump($datos));
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('create','delete');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 7;
+	break;
+	case 'documentaciones':
+
+		$datos = $serviciosReferencias->traerDocumentacionesajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		//die(var_dump($datos));
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('create','delete');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 6;
+	break;
+
 	case 'cobranza':
 
 		$datos = $serviciosReferencias->traerCobranzaajax($length, $start, $busqueda,$colSort,$colSortDir);

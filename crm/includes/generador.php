@@ -112,6 +112,7 @@ $tablasAr	= array('rolhogar' => 'tbrolhogar',
 							'periodicidadventasdetalle' => 'dbperiodicidadventasdetalle',
 							'periodicidadventas' => 'dbperiodicidadventas',
 							'tipoproductorama' => 'tbtipoproductorama',
+							'tipoproducto' => 'tbtipoproducto',
 							'aseguradora' => 'tbaseguradora',
 							'mensajes' => 'dbmensajes'
 							);
@@ -196,6 +197,7 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'periodicidadventasdetalle' => 'dbperiodicidadventasdetalle',
 								'periodicidadventas' => 'dbperiodicidadventas',
 								'tipoproductorama' => 'tbtipoproductorama',
+								'tipoproducto' => 'tbtipoproducto',
 								'aseguradora' => 'tbaseguradora',
 								'mensajes' => 'dbmensajes'
 							);
@@ -277,6 +279,7 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'periodicidadventasdetalle' => 2,
 								'periodicidadventas' => 3,
 								'tipoproductorama' => 1,
+								'tipoproducto' => 1,
 								'aseguradora' => 1,
 								'mensajes' => 1
 							);

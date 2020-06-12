@@ -130,13 +130,13 @@ switch ($accion) {
    traerDocumentacionasesoresPorId($serviciosReferencias);
    break;
    case 'insertarDocumentaciones':
-   insertarDocumentaciones($serviciosReferencias);
+      insertarDocumentaciones($serviciosReferencias);
    break;
    case 'modificarDocumentaciones':
-   modificarDocumentaciones($serviciosReferencias);
+      modificarDocumentaciones($serviciosReferencias);
    break;
    case 'eliminarDocumentaciones':
-   eliminarDocumentaciones($serviciosReferencias);
+      eliminarDocumentaciones($serviciosReferencias);
    break;
    case 'traerDocumentaciones':
    traerDocumentaciones($serviciosReferencias);
@@ -2370,7 +2370,7 @@ function modificarCotizaciones($serviciosReferencias) {
    if ($res == true) {
       echo '';
    } else {
-      echo 'Hubo un error al modificar datos';
+      echo 'Hubo un error al modificar datos ';
    }
 }
 
@@ -3818,6 +3818,64 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+      case 'tbproductos':
+         $resultado = $serviciosReferencias->traerProductosPorId($id);
+
+         $modificar = "modificarProductos";
+         $idTabla = "idproducto";
+
+         $lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado');
+         $lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Puntos x Ventas','Puntos x Peso Pagado');
+
+         $resVar1 = $serviciosReferencias->traerTipoproductorama();
+         $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(2),'',mysql_result($resultado,0,'reftipoproductorama'));
+
+         if (mysql_result($resultado,0,'activo') == '1') {
+            $cadRef2 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+         } else {
+            $cadRef2 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+         }
+
+         if (mysql_result($resultado,0,'prima') == '1') {
+            $cadRef3 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+         } else {
+            $cadRef3 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+         }
+
+         $resVar4 = $serviciosReferencias->traerTipodocumentaciones();
+         $cadRef4 = $serviciosFunciones->devolverSelectBoxActivo($resVar4,array(1),'',mysql_result($resultado,0,'reftipodocumentaciones'));
+
+         $refdescripcion = array(0=>$cadRef1,1=>$cadRef4,2=>$cadRef2,3=>$cadRef3);
+         $refCampo 	=  array('reftipoproductorama','reftipodocumentaciones','activo','prima');
+      break;
+
+      case 'dbdocumentaciones':
+         $resultado = $serviciosReferencias->traerDocumentacionesPorId($id);
+
+         $modificar = "modificarDocumentaciones";
+         $idTabla = "iddocumentacion";
+
+         $lblCambio	 	= array('reftipodocumentaciones');
+         $lblreemplazo	= array('Tipo Documentacion');
+
+         $resVar = $serviciosReferencias->traerTipodocumentaciones();
+         $cadRef = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(1),'',mysql_result($resultado,0,'reftipodocumentaciones'));
+
+         if (mysql_result($resultado,0,'obligatoria') == '1') {
+            $cadRef2 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+         } else {
+            $cadRef2 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+         }
+
+         if (mysql_result($resultado,0,'activo') == '1') {
+            $cadRef3 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+         } else {
+            $cadRef3 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+         }
+
+         $refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3);
+         $refCampo 	=  array('reftipodocumentaciones','obligatoria','activo');
+      break;
       case 'dbventas':
          $resultado = $serviciosReferencias->traerVentasPorId($id);
 
@@ -4737,8 +4795,11 @@ function insertarDocumentaciones($serviciosReferencias) {
    $fechamodi = $_POST['fechamodi'];
    $usuariocrea = $_POST['usuariocrea'];
    $usuariomodi = $_POST['usuariomodi'];
+   $orden = $_POST['orden'];
+   $carpeta = $_POST['carpeta'];
+   $activo = $_POST['activo'];
 
-   $res = $serviciosReferencias->insertarDocumentaciones($reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
+   $res = $serviciosReferencias->insertarDocumentaciones($reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$orden,$carpeta,$activo);
 
    if ((integer)$res > 0) {
       echo '';
@@ -4746,7 +4807,6 @@ function insertarDocumentaciones($serviciosReferencias) {
       echo 'Hubo un error al insertar datos';
    }
 }
-
 
 function modificarDocumentaciones($serviciosReferencias) {
    $id = $_POST['id'];
@@ -4758,8 +4818,11 @@ function modificarDocumentaciones($serviciosReferencias) {
    $fechamodi = $_POST['fechamodi'];
    $usuariocrea = $_POST['usuariocrea'];
    $usuariomodi = $_POST['usuariomodi'];
+   $orden = $_POST['orden'];
+   $carpeta = $_POST['carpeta'];
+   $activo = $_POST['activo'];
 
-   $res = $serviciosReferencias->modificarDocumentaciones($id,$reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
+   $res = $serviciosReferencias->modificarDocumentaciones($id,$reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$orden,$carpeta,$activo);
 
    if ($res == true) {
       echo '';

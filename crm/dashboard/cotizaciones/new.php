@@ -52,6 +52,139 @@ $modificar = "modificarCotizaciones";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
+if (isset($_GET['id'])) {
+	$id = $_GET['id'];
+	$resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+
+	$refCliente = mysql_result($resultado,0,'refclientes');
+	$refAsesores = mysql_result($resultado,0,'refasesores');
+	$refAsociados = mysql_result($resultado,0,'refasociados');
+	$refProductos = mysql_result($resultado,0,'refproductos');
+
+	$resCliente = $serviciosReferencias->traerClientesPorId($refCliente);
+	$cadRef2 = $serviciosFunciones->devolverSelectBox($resCliente,array(3,4,2),' ');
+
+
+	$resAsesor = $serviciosReferencias->traerAsesoresPorId($refAsesores);
+	$cadRef3 = $serviciosFunciones->devolverSelectBox($resAsesor,array(2,3,4),' ');
+
+	$resAsociado = $serviciosReferencias->traerAsociadosPorId(($refAsociados == '' ? 0 : $refAsociados) );
+	$cadRef4 = $serviciosFunciones->devolverSelectBox($resAsociado,array(2,3,4),' ');
+
+	$resProducto = $serviciosReferencias->traerProductosPorIdCompleta($refProductos);
+	$cadRef5 = $serviciosFunciones->devolverSelectBox($resProducto,array(1),' ');
+
+	$lblCliente = mysql_result($resultado,0,'cliente');
+	$lblAsesor = mysql_result($resultado,0,'asesor');
+	$lblAsociado = mysql_result($resultado,0,'asociado');
+	$lblProducto = mysql_result($resultado,0,'producto');
+
+	$resTipoProducto = $serviciosReferencias->traerTipoproductoPorId(mysql_result($resProducto,0,'reftipoproducto'));
+	$cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ');
+
+	$resTipoProductoRama = $serviciosReferencias->traerTipoproductoramaPorId(mysql_result($resProducto,0,'reftipoproductorama'));
+	$cadRef8 = $serviciosFunciones->devolverSelectBox($resTipoProductoRama,array(2),' ');
+
+
+	if (mysql_result($resProducto,0,'reftipodocumentaciones') == '') {
+		$refdoctipo = 0;
+	} else {
+		$refdoctipo = mysql_result($resProducto,0,'reftipodocumentaciones');
+	}
+
+	$documentacionesrequeridas = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
+
+	$documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
+
+	$documentacionesadicionales = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
+
+	$documentacionesadicionales2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
+
+
+	switch (mysql_result($resultado,0,'cobertura')) {
+		case 'Si':
+			$cadRef7b = "<option value='Si' selected>Si</option><option value='No'>No</option><option value='No lo se'>No lo se</option>";
+		break;
+		case 'No':
+			$cadRef7b = "<option value='Si'>Si</option><option value='No' selected>No</option><option value='No lo se'>No lo se</option>";
+		break;
+		case 'No lo se':
+			$cadRef7b = "<option value='Si'>Si</option><option value='No'>No</option><option value='No lo se' selected>No lo se</option>";
+		break;
+	}
+
+	//die(var_dump($ordenPosible));
+
+	switch (mysql_result($resultado,0,'presentacotizacion')) {
+		case 'Si':
+			$cadRef8b = "<option value='Si' selected>Si</option><option value='No'>No</option>";
+		break;
+		case 'No':
+			$cadRef8b = "<option value='Si'>Si</option><option value='No' selected>No</option>";
+		break;
+	}
+
+	switch (mysql_result($resultado,0,'tiponegocio')) {
+		case 'Negocio nuevo':
+			$cadRef9b = "<option value='Negocio nuevo' selected>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
+		break;
+		case 'Renovación':
+			$cadRef9b = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación' selected>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
+		break;
+		case 'Renovación póliza con otro agente':
+			$cadRef9b = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente' selected>Renovación póliza con otro agente</option>";
+		break;
+		default:
+			$cadRef9b = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
+		break;
+	}
+
+	$cadRef11 = '';
+	switch (mysql_result($resultado,0,'existeprimaobjetivo')) {
+		case '1':
+			$cadRef11b = "<option value='1' selected>Si</option><option value='0'>No</option>";
+		break;
+		case '0':
+			$cadRef11b = "<option value='1'>Si</option><option value='0' selected>No</option>";
+		break;
+	}
+
+	$resVar10	= $serviciosReferencias->traerAseguradora();
+	$cadRef10 = $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',mysql_result($resultado,0,'coberturaactual'));
+
+	$primaobjetivo = mysql_result($resultado,0,'primaobjetivo');
+	$fechavencimiento = mysql_result($resultado,0,'fechavencimiento');
+	$observaciones = mysql_result($resultado,0,'observaciones');
+
+} else {
+
+	$id = 0;
+
+	$cadRef7b = "<option value='Si'>Si</option><option value='No'>No</option><option value='No lo se' selected>No lo se</option>";
+	$cadRef8b = "<option value='Si'>Si</option><option value='No' selected>No</option>";
+	$cadRef9b = "<option value='Negocio nuevo' selected>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
+	$cadRef11b = "<option value='1'>Si</option><option value='0' selected>No</option>";
+
+	$primaobjetivo = 0;
+	$fechavencimiento = '';
+	$observaciones = '';
+
+	$resVar10	= $serviciosReferencias->traerAseguradora();
+	$cadRef10 = $serviciosFunciones->devolverSelectBox($resVar10,array(1),'');
+
+	$cadRef2 = "<option value=''></option>";
+	$cadRef3 = "<option value=''></option>";
+	$cadRef4 = "<option value=''></option>";
+	$cadRef5 = "<option value=''></option>";
+
+	$lblCliente = 0;
+	$lblAsesor = 0;
+	$lblAsociado = 0;
+	$lblProducto = 0;
+
+	$resTipoProducto = $serviciosReferencias->traerTipoproducto();
+	$cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ');
+}
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbcotizaciones";
@@ -60,63 +193,24 @@ $lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','r
 $lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor','Cobertura Requiere Reaseguro','Reaseguro Directo con Inbursa o Broker','Fecha renovación o presentación de propueta al cliente','Fecha en que se entrega propuesta','Tipo de negocio para agente','Presenta Cotizacion o Poliza de competencia','Existe Prima Objetivo','Prima Objetivo');
 
 
-$cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
-
-if ($_SESSION['idroll_sahilices'] == 7) {
-	$idasesor = $_SESSION['usuaid_sahilices'];
-	$resVar2	= $serviciosReferencias->traerClientesasesoresPorAsesor($_SESSION['usuaid_sahilices']);
-} else {
-	$idasesor = 0;
-	$resVar2	= $serviciosReferencias->traerClientes();
-}
-
-if (mysql_num_rows($resVar2) > 0) {
-	$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(3,4,2),' ');
-} else {
-	$cadRef2 = "<option value='0'>-- No cargo ningun cliente aun --</option>";
-}
-
-
-$resVar3	= $serviciosReferencias->traerProductos();
-$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
-
-
-if ($_SESSION['idroll_sahilices'] != 7) {
-	$resVar4	= $serviciosReferencias->traerAsociados();
-	$cadRef4 = '<option value="0">-- Seleccionar --</option>';
-	$cadRef4 .= $serviciosFunciones->devolverSelectBox($resVar4,array(2,3,4),' ');
-} else {
-	$cadRef4 = '<option value="0">-- Sin valor --</option>';
-}
-
 if ($_SESSION['idroll_sahilices'] == 7) {
 	$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
 	if (mysql_num_rows($resVar5)>0) {
-		$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(3,4,2),' ');
+		$cadRef6 = $serviciosFunciones->devolverSelectBox($resVar5,array(3,4,2),' ');
 	} else {
 		header('Location: ../index.php');
 	}
 
+	$idasesor = mysql_result($resVar5,0,'idasesor');
+
 } else {
 	$resVar5	= $serviciosReferencias->traerAsesores();
-	$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(3,4,2),' ');
+	$cadRef6 = $serviciosFunciones->devolverSelectBox($resVar5,array(3,4,2),' ');
+	$idasesor = 0;
+
 }
 
 
-
-$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId(1);
-$cadRef6 = $serviciosFunciones->devolverSelectBox($resVar6,array(1),'');
-
-$resVar7	= $serviciosReferencias->traerTipoproducto();
-$cadRef7 = $serviciosFunciones->devolverSelectBox($resVar7,array(1),'');
-
-$cadRef8 = "<option value='Si'>Si</option><option value='No'>No</option><option value='No lo sabe'>No lo sabe</option>";
-
-
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6);
-$refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones');
-
-$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -278,9 +372,9 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 													<h4>Busqueda por Nombre Completo</h4>
 													<input id="lstjugadores" style="width:75%;" />
 
-													<h4 style="padding: 15px 0; ">Cliente Seleccionado: <span class="clienteSelect"></span></h4>
+													<h4 style="padding: 15px 0; ">Cliente Seleccionado: <span class="clienteSelect"><?php echo $lblCliente; ?></span></h4>
 													<select style="margin-top:10px;" class="form-control" id="refclientes" name="refclientes" required readonly="readonly">
-														<option value=''></option>
+														<?php echo $cadRef2; ?>
 													</select>
 
 
@@ -321,8 +415,9 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 														<h4>Busqueda por Nombre Completo</h4>
 														<input id="lstagentes" style="width:75%;" />
 
-														<h4 style="padding: 15px 0; ">Agente Seleccionado: <span class="agenteSelect"></span></h4>
+														<h4 style="padding: 15px 0; ">Agente Seleccionado: <span class="agenteSelect"><?php echo $lblAsesor; ?></span></h4>
 														<select style="margin-top:10px;" class="form-control" id="refasesores" name="refasesores" required readonly="readonly">
+															<?php echo $cadRef3; ?>
 														</select>
 
 
@@ -350,8 +445,9 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 														<h4>Busqueda por Nombre Completo</h4>
 														<input id="lstasociados" class="contAsesores" style="width:75%;" />
 
-														<h4 style="padding: 15px 0; ">Agente Seleccionado: <span class="asociadoSelect"></span></h4>
+														<h4 style="padding: 15px 0; ">Agente Seleccionado: <span class="asociadoSelect"><?php echo $lblAsociado; ?></span></h4>
 														<select style="margin-top:10px;" class="form-control" id="refasociados" name="refasociados" readonly="readonly">
+															<?php echo $cadRef4; ?>
 														</select>
 
                                      </div>
@@ -359,7 +455,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
                               </fieldset>
 										<?php } else { ?>
 											<select style="display:none;" style="margin-top:10px;" class="form-control" id="refasesores" name="refasesores" required readonly="readonly">
-												<?php echo $cadRef5; ?>
+												<?php echo $cadRef6; ?>
 											</select>
 										<?php } ?>
 
@@ -380,6 +476,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
                                        <div class="form-line">
 
 							   						<select style="margin-top:10px;" class="form-control" id="refproductosrama" name="refproductosrama" required>
+															<?php echo $cadRef8; ?>
 														</select>
 
                                        </div>
@@ -389,11 +486,33 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
                                        <div class="form-line">
 
 							   						<select style="margin-top:10px;" class="form-control" id="refproductos" name="refproductos" required>
+															<?php echo $cadRef5; ?>
 														</select>
 
                                        </div>
                                     </div>
+                              </fieldset>
 
+										<h3>Galeria Producto</h3>
+                              <fieldset>
+											<p>Archivos que debera cargar para continuar</p>
+											<?php
+												$i = 0;
+												$cargados = 0;
+												while ($rowD = mysql_fetch_array($documentacionesrequeridas)) {
+													$i += 1;
+													if ($rowD['archivo'] != '') {
+														$cargados += 1;
+													}
+											?>
+											<div class="form-group form-float">
+												<button type="button" class="btn bg-<?php echo $rowD['color']; ?> waves-effect btn<?php echo str_replace(' ','',$rowD['documentacion']); ?>"><i class="material-icons">unarchive</i><span><?php echo $rowD['documentacion']; ?></span></button>
+												<input type="text" readonly="readonly" name="archivo<?php echo $i; ?>" id="archivo<?php echo $i; ?>" value="<?php echo $rowD['archivo']; ?>" required/>
+											</div>
+											<?php
+												}
+
+											?>
                               </fieldset>
 
                               <h3>Información Adicional</h3>
@@ -404,8 +523,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
                                        <div class="form-line">
 
 							   						<select style="margin-top:10px;" class="form-control" id="existeprimaobjetivo" name="existeprimaobjetivo" required>
-															<option value='0'>No</option>
-															<option value='1'>Si</option>
+															<?php echo $cadRef11b; ?>
 														</select>
 
                                        </div>
@@ -413,10 +531,10 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 											</div>
 											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContprimaobjetivo" style="display:block">
 												<div class="form-group form-float">
-													<label class="form-label" style="margin-top:25px;">Prima Objetivo</label>
+													<label class="form-label" style="margin-top:30px;">Prima Objetivo</label>
 		                                <div class="form-line">
 
-												   	<input style="width:200px;" type="text" class="form-control" id="primaobjetivo" name="primaobjetivo" />
+												   	<input style="width:200px;" type="text" class="form-control" id="primaobjetivo" name="primaobjetivo" value="<?php echo $primaobjetivo; ?>" />
 
 
 		                                </div>
@@ -429,9 +547,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
                                        <div class="form-line">
 
 							   						<select style="margin-top:10px;" class="form-control" id="cobertura" name="cobertura" required>
-															<option value='No lo se'>No lo se</option>
-															<option value='No'>No</option>
-															<option value='Si'>Si</option>
+															<?php echo $cadRef7b; ?>
 														</select>
 
                                        </div>
@@ -441,12 +557,11 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 												<input type="hidden" class="form-control" id="reasegurodirecto" name="reasegurodirecto">
 
 												<div class="form-group form-float">
-													<label class="form-label" style="margin-top:20px;">Presenta Cotizacion O Poliza De Competencia</label>
+													<label class="form-label">Presenta Cotizacion O Poliza De Competencia</label>
                                        <div class="form-line">
 
 							   						<select style="margin-top:10px;" class="form-control" id="presentacotizacion" name="presentacotizacion" required>
-															<option value='No'>No</option>
-															<option value='Si'>Si</option>
+															<?php echo $cadRef8b; ?>
 														</select>
 
                                        </div>
@@ -460,9 +575,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 													<label class="form-label">Tipo De Negocio Para Agente </label>
 													<div class="form-line">
 														<select style="margin-top:10px;" class="form-control" id="tiponegocio" name="tiponegocio" required>
-															<option value='Negocio nuevo'>Negocio nuevo</option>
-															<option value='Renovación'>Renovación</option>
-															<option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>
+															<?php echo $cadRef9b; ?>
 														</select>
 													</div>
 												</div>
@@ -476,7 +589,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 												</span>
 		                                <div class="form-line">
 
-												   	<input style="width:200px;" type="text" class="datepicker form-control" id="fechavencimiento" name="fechavencimiento" />
+												   	<input style="width:200px;" type="text" class="datepicker form-control" id="fechavencimiento" name="fechavencimiento" value="<?php echo $fechavencimiento; ?>" />
 
 		                                </div>
 		                              </div>
@@ -487,9 +600,9 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 												<div class="form-group input-group">
 													<label class="form-label">Aseguradora con quien esta suscrita la póliza</label>
 													<div class="form-line">
-														<select style="margin-top:10px;" class="form-control" id="coberturaactual" name="coberturaactual" required>
+														<select class="form-control" id="coberturaactual" name="coberturaactual" required>
 															<option value='0'>-- Seleccionar --</option>
-															<?php echo $cadRefAse; ?>
+															<?php echo $cadRef10; ?>
 														</select>
 													</div>
 												</div>
@@ -506,6 +619,23 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 													</div>
 												</div>
 											</div>
+
+											<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContadjuntos" style="display:block">
+												<label class="form-label">Puede adjuntar los siguientes archivos </label>
+												<?php
+													while ($rowD = mysql_fetch_array($documentacionesadicionales)) {
+
+												?>
+												<div class="form-group form-float">
+													<button type="button" class="btn bg-<?php echo $rowD['color']; ?> waves-effect btnA<?php echo str_replace(' ','',$rowD['documentacion']); ?>"><i class="material-icons">unarchive</i><span><?php echo $rowD['documentacion']; ?></span></button>
+												</div>
+												<?php
+													}
+
+												?>
+											</div>
+
+
 
 
                               </fieldset>
@@ -677,7 +807,6 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	$(document).ready(function(){
 
 
-
 		$('.frmContfechavencimiento').hide();
 		$('.frmContcoberturaactual').hide();
 		$('.frmContprimaobjetivo').hide();
@@ -787,6 +916,8 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 					if (data != '') {
 						$('#refproductosrama').html(data);
+
+						traerProductosPorTipo($('#refproductosrama').val());
 					} else {
 						swal({
 								title: "Respuesta",
@@ -847,15 +978,17 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 		});
 
 		$("#wizard_with_validation").on("change",'#reftipoproducto', function(){
-			traerProductosPorTipo($(this).val());
 			traerTipoproductoramaPorTipoProducto($(this).val());
+
 		});
 
+		$("#wizard_with_validation").on("change",'#refproductosrama', function(){
+			traerProductosPorTipo($(this).val());
+		});
 
-
-		traerProductosPorTipo($('#reftipoproducto').val());
-
+		<?php if (!(isset($_GET['id']))) { ?>
 		traerTipoproductoramaPorTipoProducto($('#reftipoproducto').val());
+		<?php } ?>
 
 		function setButtonWavesEffect(event) {
 			$(event.currentTarget).find('[role="menu"] li a').removeClass('waves-effect');
@@ -892,6 +1025,19 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	        },
 	        onStepChanged: function (event, currentIndex, priorIndex) {
 	            setButtonWavesEffect(event);
+					<?php if (!(isset($_GET['id']))) { ?>
+					<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
+						if (currentIndex == 4) {
+							guardarCotizacion(1);
+						}
+					<?php } else { ?>
+						if (currentIndex == 2) {
+							guardarCotizacion(1);
+						}
+					<?php } ?>
+					<?php } ?>
+
+
 	        },
 	        onFinishing: function (event, currentIndex) {
 	            form.validate().settings.ignore = ':disabled';
@@ -899,9 +1045,28 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	            return form.valid();
 	        },
 	        onFinished: function (event, currentIndex) {
-	            guardarCotizacion(2);
+	            modificarCotizacion(2);
 	        }
 	    });
+
+		<?php if (isset($_GET['id'])) { ?>
+			<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
+				form.steps("next");
+				form.steps("next");
+				form.steps("next");
+				form.steps("next");
+					<?php if ($i == $cargados) { ?>
+						form.steps("next");
+					<?php } ?>
+			<?php } else { ?>
+				form.steps("next");
+				form.steps("next");
+					<?php if ($i == $cargados) { ?>
+						form.steps("next");
+					<?php } ?>
+			<?php } ?>
+		<?php } ?>
+
 
 	    form.validate({
 	        highlight: function (input) {
@@ -925,6 +1090,34 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
  			$('#refasociados').html('');
 			$('.asociadoSelect').html('');
  		});
+
+		<?php
+
+			while ($rowD = mysql_fetch_array($documentacionesrequeridas2)) {
+		?>
+
+		$('#wizard_with_validation .btn<?php echo str_replace(' ','',$rowD['documentacion']); ?>').click(function() {
+			url = "subirdocumentacionip.php?id=<?php echo $id; ?>&documentacion=<?php echo $rowD['iddocumentacion']; ?>";
+			$(location).attr('href',url);
+		});
+		<?php
+			}
+
+		?>
+
+		<?php
+
+			while ($rowD = mysql_fetch_array($documentacionesadicionales2)) {
+		?>
+
+		$('#wizard_with_validation .btnA<?php echo str_replace(' ','',$rowD['documentacion']); ?>').click(function() {
+			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=<?php echo $rowD['iddocumentacion']; ?>";
+			$(location).attr('href',url);
+		});
+		<?php
+			}
+
+		?>
 
 
 		function guardarCotizacion(refestadocotizaciones) {
@@ -969,8 +1162,8 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
  								timer: 2000,
  								showConfirmButton: false
  						});
-						if (refestadocotizaciones == 6) {
-							$(location).attr('href', '../ventas/ver.php?id='+data);
+						if (refestadocotizaciones == 1) {
+							$(location).attr('href', 'new.php?id='+data);
 						} else {
 							$(location).attr('href', 'modificar.php?id='+data);
 						}
@@ -999,6 +1192,83 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
  				}
  			});
 		}
+
+
+		function modificarCotizacion(refestadocotizaciones) {
+			$.ajax({
+ 				url: '../../ajax/ajax.php',
+ 				type: 'POST',
+ 				// Form data
+ 				//datos del formulario
+ 				data: {
+ 					accion: 'modificarCotizaciones',
+ 					refclientes: $('#refclientes').val(),
+ 					refproductos: $('#refproductos').val(),
+ 					refasesores: $('#refasesores').val(),
+					refasociados: $('#refasociados').val(),
+ 					observaciones: $('#observaciones').val(),
+ 					cobertura: $('#cobertura').val(),
+ 					reasegurodirecto: $('#reasegurodirecto').val(),
+ 					fecharenovacion: $('#fecharenovacion').val(),
+ 					tiponegocio: $('#tiponegocio').val(),
+ 					presentacotizacion: $('#presentacotizacion').val(),
+					refestadocotizaciones: refestadocotizaciones,
+					fechavencimiento: $('#fechavencimiento').val(),
+					coberturaactual: $('#coberturaactual').val(),
+					bitacoracrea: '',
+					bitacorainbursa: '',
+					bitacoraagente: '',
+					existeprimaobjetivo: $('#existeprimaobjetivo').val(),
+					primaobjetivo: $('#primaobjetivo').val(),
+					id: <?php echo $id; ?>,
+					estadoactual: 2,
+					fechaemitido: '<?php echo date('Y-m-d'); ?>',
+					fechapropuesta: '<?php echo date('Y-m-d'); ?>',
+					foliotys: ''
+ 				},
+ 				//mientras enviamos el archivo
+ 				beforeSend: function(){
+ 					$('.lstCartera').html('');
+ 				},
+ 				//una vez finalizado correctamente
+ 				success: function(data){
+
+ 					if (data == '') {
+						swal({
+ 								title: "Respuesta",
+ 								text: 'Cotizacion Guardada',
+ 								type: "success",
+ 								timer: 2000,
+ 								showConfirmButton: false
+ 						});
+						$(location).attr('href', 'modificar.php?id=<?php echo $id; ?>');
+
+ 					} else {
+ 						swal({
+ 								title: "Respuesta",
+ 								text: 'Se genero un error y no se guardo la cotizacion',
+ 								type: "error",
+ 								timer: 2000,
+ 								showConfirmButton: false
+ 						});
+
+ 					}
+ 				},
+ 				//si ha ocurrido un error
+ 				error: function(){
+ 					swal({
+ 							title: "Respuesta",
+ 							text: 'Actualice la pagina',
+ 							type: "error",
+ 							timer: 2000,
+ 							showConfirmButton: false
+ 					});
+
+ 				}
+ 			});
+		}
+
+
 		$('.btnGuardar').click(function() {
 			guardarCotizacion(3);
  		});

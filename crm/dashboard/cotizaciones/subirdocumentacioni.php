@@ -116,6 +116,8 @@ if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 			$span = 'text-success glyphicon glyphicon-remove-sign';
 		break;
 	}
+
+	$idestadodocumentacion = mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones');
 } else {
 	$cadRefEstados = $serviciosFunciones->devolverSelectBox($resEstados,array(1),'');
 
@@ -126,6 +128,8 @@ if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 	$color = 'blue';
 
 	$span = 'text-info glyphicon glyphicon-plus-sign';
+
+	$idestadodocumentacion = 1;
 }
 
 switch ($iddocumentacion) {
@@ -402,7 +406,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 				</div>
 			</div>
 
-			<?php if ((mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones') != 5)) { ?>
+			<?php if (($idestadodocumentacion != 5)) { ?>
 			<div class="row">
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card">
@@ -505,10 +509,17 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 			modificarCotizacionUnicaDocumentacion($('#<?php echo $campo; ?>').val());
 		});
 
+		<?php if (mysql_result($resultado,0,'refestadocotizaciones') == 1) { ?>
+		$('.btnVolver').click(function() {
+			url = "new.php?id=" + <?php echo $id; ?>;
+			$(location).attr('href',url);
+		});
+		<?php } else { ?>
 		$('.btnVolver').click(function() {
 			url = "modificar.php?id=" + <?php echo $id; ?>;
 			$(location).attr('href',url);
 		});
+		<?php } ?>
 
 		function modificarCotizacionUnicaDocumentacion(valor) {
 			$.ajax({
@@ -661,7 +672,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 		};
 
 
-		<?php if ((mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones') != 5)) { ?>
+		<?php if (($idestadodocumentacion != 5)) { ?>
 		var myDropzone = new Dropzone("#archivos", {
 			params: {
 				 idasociado: <?php echo $id; ?>,

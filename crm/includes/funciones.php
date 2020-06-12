@@ -1320,6 +1320,9 @@ class Servicios {
 			case 'dbclientes':
 				$ocultar = array("usuariomodi","fechacrea","fechamodi","usuariocrea","usuariomodi");
 			break;
+			case 'dbdocumentaciones':
+				$ocultar = array("usuariomodi","fechacrea","fechamodi","usuariocrea","usuariomodi","cantidadarchivos");
+			break;
 			default:
 				$ocultar = array();
 				break;

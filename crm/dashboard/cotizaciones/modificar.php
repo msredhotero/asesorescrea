@@ -52,6 +52,11 @@ $modificar = "modificarCotizaciones";
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 $id = $_GET['id'];
 $resultado = $serviciosReferencias->traerCotizacionesPorId($id);
+
+if ($id == 0) {
+	header('Location: index.php');
+}
+
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbcotizaciones";
 
@@ -64,6 +69,10 @@ $idTabla = "idcotizacion";
 
 
 $idestado = mysql_result($resultado,0,'refestadocotizaciones');
+
+if ($idestado == 1) {
+	header('Location: new.php?id='.$id);
+}
 
 $resEstados = $serviciosReferencias->traerEstadocotizacionesPorId($idestado);
 
@@ -222,58 +231,16 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 }
 
-
-$resDocumentacionCotizaciones1 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacion($id, 45);
-$resDocumentacionCotizaciones2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacion($id, 46);
-$resDocumentacionCotizaciones3 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacion($id, 47);
-
-if (mysql_num_rows($resDocumentacionCotizaciones1)>0) {
-	if (mysql_result($resDocumentacionCotizaciones1,0,'refestadodocumentaciones') == 5) {
-		$bgDoc1 = 'bg-green';
-	} else {
-		if (mysql_result($resDocumentacionCotizaciones1,0,'refestadodocumentaciones') == 1) {
-			$bgDoc1 = 'bg-blue';
-		} else {
-			$bgDoc1 = 'bg-red';
-		}
-	}
-} else {
-	$bgDoc1 = 'bg-default';
-}
-
-if (mysql_num_rows($resDocumentacionCotizaciones2)>0) {
-	if (mysql_result($resDocumentacionCotizaciones2,0,'refestadodocumentaciones') == 5) {
-		$bgDoc2 = 'bg-green';
-	} else {
-		if (mysql_result($resDocumentacionCotizaciones2,0,'refestadodocumentaciones') == 1) {
-			$bgDoc2 = 'bg-blue';
-		} else {
-			$bgDoc2 = 'bg-red';
-		}
-	}
-} else {
-	$bgDoc2 = 'bg-default';
-}
-
-if (mysql_num_rows($resDocumentacionCotizaciones3)>0) {
-	if (mysql_result($resDocumentacionCotizaciones3,0,'refestadodocumentaciones') == 5) {
-		$bgDoc3 = 'bg-green';
-	} else {
-		if (mysql_result($resDocumentacionCotizaciones3,0,'refestadodocumentaciones') == 1) {
-			$bgDoc3 = 'bg-blue';
-		} else {
-			$bgDoc3 = 'bg-red';
-		}
-	}
-} else {
-	$bgDoc3 = 'bg-default';
-}
-
-if (mysql_result($resVar3,0,'reftipodocumentaciones') == '') {
+if (mysql_result($resProducto,0,'reftipodocumentaciones') == '') {
 	$refdoctipo = 0;
 } else {
-	$refdoctipo = mysql_result($resVar3,0,'reftipodocumentaciones');
+	$refdoctipo = mysql_result($resProducto,0,'reftipodocumentaciones');
 }
+
+$documentacionesadicionales = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
+
+$documentacionesadicionales2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
+
 $documentacionesrequeridas = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
 
 $documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
@@ -436,6 +403,39 @@ $documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotiza
 						</div>
 						<div class="body table-responsive">
 							<form class="formulario frmNuevo" role="form" id="sign_in">
+								<div class="row">
+									<p>Archivos Solicitados sobre el producto</p>
+									<div class="modal-footer">
+										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+											<?php
+											if (($ordenPosible >= 3) || ($ordenPosible == 0)) {
+												while ($rowD = mysql_fetch_array($documentacionesrequeridas)) {
+											?>
+											<button type="button" class="btn bg-<?php echo $rowD['color']; ?> waves-effect btn<?php echo str_replace(' ','',$rowD['documentacion']); ?>"><i class="material-icons">unarchive</i><span><?php echo $rowD['documentacion']; ?></span></button>
+
+											<?php
+												}
+											}
+											?>
+										</div>
+				               </div>
+								</div>
+
+								<div class="row">
+									<p>Archivos Solicitados de la cotizacion</p>
+									<div class="modal-footer">
+										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+											<?php
+												while ($rowD = mysql_fetch_array($documentacionesadicionales)) {
+											?>
+												<button type="button" class="btn bg-<?php echo $rowD['color']; ?> waves-effect btnA<?php echo str_replace(' ','',$rowD['documentacion']); ?>"><i class="material-icons">unarchive</i><span><?php echo $rowD['documentacion']; ?></span></button>
+											<?php
+												}
+
+											?>
+										</div>
+				               </div>
+								</div>
 
 								<div class="row" style="padding: 5px 20px;">
 
@@ -497,50 +497,6 @@ $documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotiza
 				               </div>
 								</div>
 
-
-								<div class="row">
-									<p>Archivos Solicitados sobre el producto</p>
-									<div class="modal-footer">
-										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-
-											<?php
-											if (($ordenPosible >= 3) || ($ordenPosible == 0)) {
-												while ($rowD = mysql_fetch_array($documentacionesrequeridas)) {
-											?>
-											<button type="button" class="btn bg-<?php echo $rowD['color']; ?> waves-effect btn<?php echo str_replace(' ','',$rowD['documentacion']); ?>"><i class="material-icons">unarchive</i><span><?php echo $rowD['documentacion']; ?></span></button>
-
-											<?php
-												}
-											}
-											?>
-
-										</div>
-				               </div>
-								</div>
-
-								<div class="row">
-
-									<p>Archivos Solicitados de la cotizacion</p>
-									<div class="modal-footer">
-										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-
-
-											<button type="button" class="btn <?php echo $bgDoc1; ?> waves-effect btnPolizaVigente"><i class="material-icons">unarchive</i><span>POLIZA VIGENTE</span></button>
-											<?php
-											if ($ordenPosible == 5) {
-											?>
-											<button type="button" class="btn <?php echo $bgDoc2; ?> waves-effect btnCotizacion1"><i class="material-icons">unarchive</i><span>COTIZACION 1</span></button>
-											<button type="button" class="btn <?php echo $bgDoc3; ?> waves-effect btnCotizacion2"><i class="material-icons">unarchive</i><span>COTIZACION 2</span></button>
-											<?php
-											}
-											?>
-
-
-										</div>
-				               </div>
-
-								</div>
-
 							</form>
 							</div>
 						</div>
@@ -582,6 +538,8 @@ $documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotiza
 
 <script>
 	$(document).ready(function(){
+
+		$('.frmContbitacorainbursa').hide();
 
 		<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
 			$("#bitacoracrea").prop('readonly',true);
@@ -673,6 +631,20 @@ $documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotiza
 			});
 
 		}
+
+		<?php
+
+			while ($rowD = mysql_fetch_array($documentacionesadicionales2)) {
+		?>
+
+		$('.btnA<?php echo str_replace(' ','',$rowD['documentacion']); ?>').click(function() {
+			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=<?php echo $rowD['iddocumentacion']; ?>";
+			$(location).attr('href',url);
+		});
+		<?php
+			}
+
+		?>
 
 		<?php
 		if (($ordenPosible >= 3) || ($ordenPosible == 0)) {
