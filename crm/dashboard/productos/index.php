@@ -56,7 +56,7 @@ $modificar = "modificarProductos";
 $tabla 			= "tbproductos";
 
 $lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado');
-$lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Puntos x Ventas','Puntos x Peso Pagado');
+$lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado');
 
 $resVar1 = $serviciosReferencias->traerTipoproductorama();
 $cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(2),'');
@@ -199,7 +199,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Prima</th>
 												<th>Ramo Producto</th>
 												<th>Tipo Documentacion</th>
-												<th>Pts x Ventas</th>
+												<th>Pt x Venta</th>
 												<th>Pts x Peso Pagado</th>
 												<th>Activo</th>
 												<th>Acciones</th>
@@ -211,7 +211,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Prima</th>
 												<th>Ramo Producto</th>
 												<th>Tipo Documentacion</th>
-												<th>Pts x Ventas</th>
+												<th>Pt x Venta</th>
 												<th>Pts x Peso Pagado</th>
 												<th>Activo</th>
 												<th>Acciones</th>
