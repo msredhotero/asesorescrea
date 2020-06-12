@@ -500,7 +500,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
-			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=" + idTable;
+			url = "subirdocumentacionip.php?id=<?php echo $id; ?>&documentacion=" + idTable;
 			$(location).attr('href',url);
 		});
 
