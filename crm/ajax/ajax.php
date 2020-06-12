@@ -926,8 +926,54 @@ switch ($accion) {
       modificarVentaUnicaDocumentacion($serviciosReferencias);
    break;
 
+   case 'insertarProductos':
+insertarProductos($serviciosReferencias);
+break;
+case 'modificarProductos':
+modificarProductos($serviciosReferencias);
+break;
+case 'eliminarProductos':
+eliminarProductos($serviciosReferencias);
+break;
+
 }
 /* FinFinFin */
+
+
+function insertarProductos($serviciosReferencias) {
+$producto = $_POST['producto'];
+$prima = $_POST['prima'];
+$reftipoproducto = $_POST['reftipoproducto'];
+$reftipodocumentaciones = $_POST['reftipodocumentaciones'];
+$res = $serviciosReferencias->insertarProductos($producto,$prima,$reftipoproducto,$reftipodocumentaciones);
+if ((integer)$res > 0) {
+echo '';
+} else {
+echo 'Hubo un error al insertar datos';
+}
+}
+function modificarProductos($serviciosReferencias) {
+$id = $_POST['id'];
+$producto = $_POST['producto'];
+$prima = $_POST['prima'];
+$reftipoproducto = $_POST['reftipoproducto'];
+$reftipodocumentaciones = $_POST['reftipodocumentaciones'];
+$res = $serviciosReferencias->modificarProductos($id,$producto,$prima,$reftipoproducto,$reftipodocumentaciones);
+if ($res == true) {
+echo '';
+} else {
+echo 'Hubo un error al modificar datos';
+}
+}
+function eliminarProductos($serviciosReferencias) {
+$id = $_POST['id'];
+$res = $serviciosReferencias->eliminarProductos($id);
+if ($res == true) {
+echo '';
+} else {
+echo 'Hubo un error al eliminar datos';
+}
+}
 
 
 function modificarVentaUnicaDocumentacion($serviciosReferencias) {
