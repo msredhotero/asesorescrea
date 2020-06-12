@@ -943,9 +943,12 @@ break;
 function insertarProductos($serviciosReferencias) {
 $producto = $_POST['producto'];
 $prima = $_POST['prima'];
-$reftipoproducto = $_POST['reftipoproducto'];
+$reftipoproductorama = $_POST['reftipoproductorama'];
 $reftipodocumentaciones = $_POST['reftipodocumentaciones'];
-$res = $serviciosReferencias->insertarProductos($producto,$prima,$reftipoproducto,$reftipodocumentaciones);
+$puntosporventa = $_POST['puntosporventa'];
+$puntosporpesopagado = $_POST['puntosporpesopagado'];
+$activo = $_POST['activo'];
+$res = $serviciosReferencias->insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo);
 if ((integer)$res > 0) {
 echo '';
 } else {
@@ -956,15 +959,19 @@ function modificarProductos($serviciosReferencias) {
 $id = $_POST['id'];
 $producto = $_POST['producto'];
 $prima = $_POST['prima'];
-$reftipoproducto = $_POST['reftipoproducto'];
+$reftipoproductorama = $_POST['reftipoproductorama'];
 $reftipodocumentaciones = $_POST['reftipodocumentaciones'];
-$res = $serviciosReferencias->modificarProductos($id,$producto,$prima,$reftipoproducto,$reftipodocumentaciones);
+$puntosporventa = $_POST['puntosporventa'];
+$puntosporpesopagado = $_POST['puntosporpesopagado'];
+$activo = $_POST['activo'];
+$res = $serviciosReferencias->modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo);
 if ($res == true) {
 echo '';
 } else {
 echo 'Hubo un error al modificar datos';
 }
 }
+
 function eliminarProductos($serviciosReferencias) {
 $id = $_POST['id'];
 $res = $serviciosReferencias->eliminarProductos($id);
