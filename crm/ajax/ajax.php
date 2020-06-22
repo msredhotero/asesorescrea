@@ -1149,9 +1149,9 @@ function validarCuestionario($serviciosReferencias) {
       $refasesores = $_POST['refasesores'];
       $refasociados = ($_POST['refasociados'] == '' ? 'NULL' : $_POST['refasociados']);
       if ($_SESSION['idroll_sahilices'] != 7) {
-         $refestadocotizaciones = 4;
+         $refestadocotizaciones = 1;
       } else {
-         $refestadocotizaciones = 2;
+         $refestadocotizaciones = 1;
       }
 
       $observaciones = $_POST['observaciones'];

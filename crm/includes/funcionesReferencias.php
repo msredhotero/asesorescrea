@@ -408,11 +408,35 @@ class ServiciosReferencias {
    inner join dbcuestionarios cu ON cu.idcuestionario = pre.refcuestionarios
    inner join tbtiporespuesta ti ON ti.idtiporespuesta = pre.reftiporespuesta
    inner join dbrespuestascuestionario res ON res.idrespuestacuestionario = c.refrespuestascuestionario
-   inner join pr ON pr. = res.refpreguntascuestario
    order by 1";
    $res = $this->query($sql,0);
    return $res;
    }
+
+   function traerCuestionariodetallePorTablaReferencia($idtabla, $tabla, $idnombre, $id) {
+		$sql = "select
+      c.idcuestionariodetalle,
+      c.reftabla,
+      c.idreferencia,
+      c.refpreguntascuestionario,
+      c.refrespuestascuestionario,
+      c.pregunta,
+      c.respuesta,
+      c.respuestavalor,
+      c.fechacrea,
+      c.fechamodi,
+      c.usuariocrea,
+      c.usuariomodi
+      from dbcuestionariodetalle c
+      inner join dbpreguntascuestionario pre ON pre.idpreguntacuestionario = c.refpreguntascuestionario
+      inner join dbcuestionarios cu ON cu.idcuestionario = pre.refcuestionarios
+      inner join tbtiporespuesta ti ON ti.idtiporespuesta = pre.reftiporespuesta
+      inner join dbrespuestascuestionario res ON res.idrespuestacuestionario = c.refrespuestascuestionario
+		inner join ".$tabla." v on v.".$idnombre." = c.idreferencia
+		where c.reftabla = ".$idtabla." and c.idreferencia = ".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
 
 
    function traerCuestionariodetallePorId($id) {

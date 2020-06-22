@@ -53,6 +53,8 @@ $modificar = "modificarCotizaciones";
 $id = $_GET['id'];
 $resultado = $serviciosReferencias->traerCotizacionesPorId($id);
 
+$cuestionario = $serviciosReferencias->traerCuestionariodetallePorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id);
+
 if ($id == 0) {
 	header('Location: index.php');
 }
@@ -461,6 +463,20 @@ $documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotiza
 											</div>
 										</div>
 									</div>
+								</div>
+								<div class="row" style="padding: 5px 20px;">
+									<?php
+									$pregunta = '';
+									while ($rowC = mysql_fetch_array($cuestionario)) {
+										if ($pregunta != $rowC['pregunta']) {
+											$pregunta = $rowC['pregunta'];
+											echo '<h4>Pregunta: '.$pregunta.'</h4>';
+										}
+									?>
+									<h5>Respuesta: <?php echo $rowC['respuesta']; ?></h5>
+									<?php
+									}
+									?>
 								</div>
 								<div class="row">
 									<p>Acciones</p>
