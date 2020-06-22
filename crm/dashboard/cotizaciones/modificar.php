@@ -473,7 +473,7 @@ $documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotiza
 											echo '<div class="alert alert-info">Pregunta: '.$pregunta.'</div>';
 										}
 									?>
-									<h5 style="color:green;">* Respuesta: <?php echo $rowC['respuesta']; ?></h5>
+									<h5 style="color:green;">* Respuesta: <?php echo ($rowC['respuesta'] == 'Lo que el ususario ingrese' ? $rowC['respuestavalor'] : $rowC['respuesta']); ?></h5>
 									<?php
 									}
 									?>
