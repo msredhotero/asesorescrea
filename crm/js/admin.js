@@ -484,6 +484,23 @@ $('.maximizar').click(function() {
   }
 });
 
+
+
+$('.btnVerNotificaciones').click(function () {
+   var altura = $('.itemNotificacion').data('altura');
+
+   var alturaURL = '';
+   if (altura == '') {
+      altura = '../';
+      alturaURL = '';
+   } else {
+      altura = '../../';
+      alturaURL = '../';
+   }
+
+   $(location).attr('href', alturaURL + 'notificaciones/');
+});
+
 $('.itemNotificacion').click(function () {
    id = $(this).attr("id");
    var altura = $(this).data('altura');

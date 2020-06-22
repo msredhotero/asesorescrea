@@ -154,6 +154,37 @@ class ServiciosReferencias {
       return $res;
    }
 
+   function traerNotificacionesGridajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+      $where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where ".$roles." n.mensaje like '%".$busqueda."%' or n.autor like '%".$busqueda."%' or n.destinatario like '%".$busqueda."%')";
+		}
+
+      $sql = "select
+      n.idnotificacion,
+      n.mensaje,
+      n.autor,
+      n.destinatario,
+      n.fecha,
+      (case when n.leido = 1 then 'Si' else 'No' end) as leido,
+      n.idpagina,
+      n.id1,
+      n.id2,
+      n.id3,
+      n.icono,
+      n.estilo,
+      n.url
+      from dbnotificaciones n
+      ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+      $res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+   }
+
    function traerRespuestascuestionarioajax($length, $start, $busqueda,$colSort,$colSortDir,$idpregunta) {
 		$where = '';
 

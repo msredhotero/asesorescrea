@@ -206,7 +206,7 @@ class BaseHTML extends ServiciosNotificaciones {
                                            '.$notificaciones.'
                                         </li>
                                         <li class="footer">
-                                            <a href="javascript:void(0);">Ver Todas</a>
+                                            <a href="javascript:void(0);" class="btnVerNotificaciones">Ver Todas</a>
                                         </li>
                                     </ul>
                                 </li>

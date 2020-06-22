@@ -470,10 +470,10 @@ $documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotiza
 									while ($rowC = mysql_fetch_array($cuestionario)) {
 										if ($pregunta != $rowC['pregunta']) {
 											$pregunta = $rowC['pregunta'];
-											echo '<h4>Pregunta: '.$pregunta.'</h4>';
+											echo '<div class="alert alert-info">Pregunta: '.$pregunta.'</div>';
 										}
 									?>
-									<h5>Respuesta: <?php echo $rowC['respuesta']; ?></h5>
+									<h5 style="color:green;">* Respuesta: <?php echo $rowC['respuesta']; ?></h5>
 									<?php
 									}
 									?>
