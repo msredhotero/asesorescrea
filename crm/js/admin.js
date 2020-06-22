@@ -487,7 +487,7 @@ $('.maximizar').click(function() {
 
 
 $('.btnVerNotificaciones').click(function () {
-   var altura = $('.itemNotificacion').data('altura');
+   var altura = $('.lstNotificaciones').data('altura');
 
    var alturaURL = '';
    if (altura == '') {

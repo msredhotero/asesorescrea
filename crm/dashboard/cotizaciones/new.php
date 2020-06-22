@@ -93,6 +93,7 @@ if (isset($_GET['id'])) {
 	}
 
 	$documentacionesrequeridas = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
+	$documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
 	$documentacionesrequeridas3 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
 
 	if (isset($_GET['iddocumentacion'])) {
@@ -102,11 +103,17 @@ if (isset($_GET['id'])) {
 	}
 
 
-	$documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
+
 
 	$documentacionesadicionales = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
-
 	$documentacionesadicionales2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
+	$documentacionesadicionales3 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
+
+	if (isset($_GET['iddocumentacion'])) {
+		$iddocumentacion2 = $_GET['iddocumentacion'];
+	} else {
+		$iddocumentacion2 = mysql_result($documentacionesadicionales3,0,'iddocumentacion');
+	}
 
 
 	switch (mysql_result($resultado,0,'cobertura')) {
@@ -782,18 +789,20 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 											</div>
 
 											<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContadjuntos" style="display:block">
-												<label class="form-label">Puede adjuntar los siguientes archivos </label>
-												<?php
-													while ($rowD = mysql_fetch_array($documentacionesadicionales)) {
+												<div class="col-xs-4">
+													<label class="form-label">Puede adjuntar los siguientes archivos </label>
+													<?php
+														while ($rowD = mysql_fetch_array($documentacionesadicionales)) {
 
-												?>
-												<div class="form-group form-float">
-													<button type="button" class="btn bg-<?php echo $rowD['color']; ?> waves-effect btnA<?php echo str_replace(' ','',$rowD['documentacion']); ?>"><i class="material-icons">unarchive</i><span><?php echo $rowD['documentacion']; ?></span></button>
+													?>
+													<div class="form-group form-float">
+														<button type="button" class="btn bg-<?php echo $rowD['color']; ?> waves-effect btnA<?php echo str_replace(' ','',$rowD['documentacion']); ?>"><i class="material-icons">unarchive</i><span><?php echo $rowD['documentacion']; ?></span></button>
+													</div>
+													<?php
+														}
+
+													?>
 												</div>
-												<?php
-													}
-
-												?>
 											</div>
 
 

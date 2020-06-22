@@ -102,7 +102,7 @@ class BaseHTML extends ServiciosNotificaciones {
       } else {
          $datos = $this->traerNotificacionesPorUsuarios($_SESSION['usua_sahilices']);
       }
-        $cad = '<ul class="menu lstNotificaciones">';
+        $cad = '<ul class="menu lstNotificaciones" data-altura="'.$altura.'">';
 
         while ($row = mysql_fetch_array($datos)) {
             $cad .= '<li>
