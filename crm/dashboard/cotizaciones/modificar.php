@@ -465,18 +465,33 @@ $documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotiza
 									</div>
 								</div>
 								<div class="row" style="padding: 5px 20px;">
+									<table class="display table table-border" style="border:1px solid #333;">
+										<thead>
+											<th colspan="2">CUESTIONARIO</th>
+										</thead>
+										<tbody>
+											<tr>
+												<th>Pregunta</th>
+												<th>Respuesta</th>
+											</tr>
 									<?php
 									$pregunta = '';
 									while ($rowC = mysql_fetch_array($cuestionario)) {
+										echo '<tr><td>';
 										if ($pregunta != $rowC['pregunta']) {
 											$pregunta = $rowC['pregunta'];
-											echo '<div class="alert alert-info">Pregunta: '.$pregunta.'</div>';
+											echo $pregunta.'</td>';
+										} else {
+											echo '</td>';
 										}
 									?>
-									<h5 style="color:green;">* Respuesta: <?php echo ($rowC['respuesta'] == 'Lo que el ususario ingrese' ? $rowC['respuestavalor'] : $rowC['respuesta']); ?></h5>
+										<td><h5 style="color:green;">* Respuesta: <?php echo ($rowC['respuesta'] == 'Lo que el ususario ingrese' ? $rowC['respuestavalor'] : $rowC['respuesta']); ?></h5></td>
+									</tr>
 									<?php
 									}
 									?>
+										</tbody>
+									</table>
 								</div>
 								<div class="row">
 									<p>Acciones</p>
