@@ -10,6 +10,522 @@ date_default_timezone_set('America/Mexico_City');
 class ServiciosReferencias {
 
 
+   function Cuestionario($idcuestionario) {
+      //die(var_dump($idcuestionario));
+      $resultado = $this->traerCuestionariosPorIdCompleto($idcuestionario);
+      $cad = '';
+      $cad .= '<div class="row" style="padding: 5px 20px;">';
+
+
+         $pregunta = '';
+         $iRadio = 0;
+         $iCheck = 0;
+         $iCheckM = 0;
+         $rules = array();
+
+         while ($row = mysql_fetch_array($resultado)) {
+            if ($pregunta != $row['pregunta']) {
+               $pregunta = $row['pregunta'];
+
+               $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
+                  <h4>'.$row['pregunta'].'</h4>
+               </div>';
+
+               if ($row['idtiporespuesta'] == 1) {
+                  array_push($rules,
+                        array('respuesta' => 'respuesta'.$row['idpreguntacuestionario'],
+                        'pregunta' => $row['pregunta'],
+                        'tipo'=>1,
+                        'idpregunta' => $row['idpreguntacuestionario'],
+                        'idrespuesta' => $row['idrespuestacuestionario'] ));
+               }
+
+               if ($row['idtiporespuesta'] == 2) {
+                  array_push($rules,array('respuesta'=> 'respuesta'.$row['idpreguntacuestionario'],'pregunta' => $row['pregunta'],'tipo'=>2,'idpregunta'=>$row['idpreguntacuestionario'],'idrespuesta'=>$row['idrespuestacuestionario']));
+               }
+               if ($row['idtiporespuesta'] == 3) {
+                  array_push($rules,array('respuesta'=> 'respuestamulti'.$row['idpreguntacuestionario'],'pregunta' => $row['pregunta'],'tipo'=>3,'idpregunta'=>$row['idpreguntacuestionario'],'idrespuesta'=>$row['idrespuestacuestionario']));
+               }
+
+
+            }
+
+         if ($row['idtiporespuesta'] == 1) {
+
+         $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+            <label class="form-label">Ingrese su respuesta</label>
+            <div class="form-group input-group">
+               <div class="form-line">
+                  <input type="text" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false">
+
+               </div>
+            </div>
+         </div>';
+
+         }
+
+
+         if ($row['idtiporespuesta'] == 2) {
+            $iRadio += 1;
+
+         $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+
+            <div class="form-group input-group">
+               <div class="demo-radio-button">
+                  <input type="radio" id="radio_'.$iRadio.'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.$row['idrespuestacuestionario'].'">
+                  <label for="radio_'.$iRadio.'">'.$row['respuesta'].'</label>
+               </div>
+            </div>
+         </div>';
+
+
+
+         }
+
+
+         if ($row['idtiporespuesta'] == 3) {
+            $iCheck += 1;
+
+         $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+
+            <div class="form-group input-group">
+               <div class="demo-radio-button">
+                  <input type="radio" id="radio_multi_'.$iCheck.'" name="respuestamulti'.$row['idpreguntacuestionario'].'" value="'.$row['idrespuestacuestionario'].'">
+                  <label for="radio_multi_'.$iCheck.'">'.$row['respuesta'].'</label>
+               </div>
+            </div>
+         </div>';
+
+
+
+         }
+
+
+         if ($row['idtiporespuesta'] == 4) {
+            $iCheckM += 1;
+
+            $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+
+            <div class="form-group input-group">
+                  <div class="demo-radio-button">
+                     <input type="checkbox" class="filled-in respuestavarias'.$row['idpreguntacuestionario'].'" id="basic_checkbox_'.$row['idrespuestacuestionario'].'" name="respuestamulti'.$row['idrespuestacuestionario'].'" >
+                     <label for="basic_checkbox_'.$row['idrespuestacuestionario'].'">'.$row['respuesta'].'</label>
+                  </div>
+               </div>
+            </div>';
+
+            if ($row['idtiporespuesta'] == 4) {
+               array_push($rules,array('respuesta'=> 'respuestamulti'.$row['idrespuestacuestionario'],'pregunta' => $row['pregunta'],'tipo'=>4,'idpregunta'=>$row['idpreguntacuestionario'],'idrespuesta'=>$row['idrespuestacuestionario']));
+            }
+
+         }
+
+
+         }
+
+      $cad .= '</div>';
+
+      return array('cuestionario'=>$cad,'rules'=>$rules);
+   }
+
+   /* PARA Respuestascuestionario */
+
+   function insertarRespuestascuestionario($respuesta,$refpreguntascuestionario,$orden,$activo) {
+      $sql = "insert into dbrespuestascuestionario(idrespuestacuestionario,respuesta,refpreguntascuestionario,orden,activo)
+      values ('','".$respuesta."',".$refpreguntascuestionario.",".$orden.",'".$activo."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarRespuestascuestionario($id,$respuesta,$refpreguntascuestionario,$orden,$activo) {
+      $sql = "update dbrespuestascuestionario
+      set
+      respuesta = '".$respuesta."',refpreguntascuestionario = ".$refpreguntascuestionario.",orden = ".$orden.",activo = '".$activo."'
+      where idrespuestacuestionario =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarRespuestascuestionario($id) {
+      $sql = "delete from dbrespuestascuestionario where idrespuestacuestionario =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerRespuestascuestionarioajax($length, $start, $busqueda,$colSort,$colSortDir,$idpregunta) {
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and ".$roles." r.respuesta like '%".$busqueda."%' or (case when r.activo = '1' then 'Si' else 'No' end) like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+         r.idrespuestacuestionario,
+         r.respuesta,
+         r.orden,
+         (case when r.activo = '1' then 'Si' else 'No' end) as activo,
+         r.refpreguntascuestionario
+      from dbrespuestascuestionario r
+      inner join dbpreguntascuestionario pre ON pre.idpreguntacuestionario = r.refpreguntascuestionario
+      inner join dbcuestionarios cu ON cu.idcuestionario = pre.refcuestionarios
+      inner join tbtiporespuesta ti ON ti.idtiporespuesta = pre.reftiporespuesta
+      where pre.idpreguntacuestionario = ".$idpregunta." ".$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+
+   function traerRespuestascuestionario() {
+      $sql = "select
+      r.idrespuestacuestionario,
+      r.respuesta,
+      r.refpreguntascuestionario,
+      r.orden,
+      r.activo
+      from dbrespuestascuestionario r
+      inner join dbpreguntascuestionario pre ON pre.idpreguntacuestionario = r.refpreguntascuestionario
+      inner join dbcuestionarios cu ON cu.idcuestionario = pre.refcuestionarios
+      inner join tbtiporespuesta ti ON ti.idtiporespuesta = pre.reftiporespuesta
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerRespuestascuestionarioPorId($id) {
+      $sql = "select idrespuestacuestionario,respuesta,refpreguntascuestionario,orden,activo from dbrespuestascuestionario where idrespuestacuestionario =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: dbrespuestascuestionario*/
+
+
+   /* PARA Preguntascuestionario */
+
+   function insertarPreguntascuestionario($refcuestionarios,$reftiporespuesta,$pregunta,$orden,$valor,$depende,$tiempo,$activo) {
+      $sql = "insert into dbpreguntascuestionario(idpreguntacuestionario,refcuestionarios,reftiporespuesta,pregunta,orden,valor,depende,tiempo,activo)
+      values ('',".$refcuestionarios.",".$reftiporespuesta.",'".$pregunta."',".$orden.",".$valor.",".$depende.",".$tiempo.",'".$activo."')";
+
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarPreguntascuestionario($id,$refcuestionarios,$reftiporespuesta,$pregunta,$orden,$valor,$depende,$tiempo,$activo) {
+      $sql = "update dbpreguntascuestionario
+      set
+      refcuestionarios = ".$refcuestionarios.",reftiporespuesta = ".$reftiporespuesta.",pregunta = '".$pregunta."',orden = ".$orden.",valor = ".$valor.",depende = ".$depende.",tiempo = ".$tiempo.",activo = '".$activo."'
+      where idpreguntacuestionario =".$id;
+
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarPreguntascuestionario($id) {
+      $sql = "update dbpreguntascuestionario set activo = '0' where idpreguntacuestionario =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function eliminarPreguntascuestionarioDefinitivo($id) {
+      $sql = "delete from dbpreguntascuestionario where idpreguntacuestionario =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerPreguntascuestionarioajax($length, $start, $busqueda,$colSort,$colSortDir,$idcuestionario) {
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and ".$roles." cue.cuestionario like '%".$busqueda."%' or tip.tiporespuesta like '%".$busqueda."%' or p.pregunta like '%".$busqueda."%' or (case when p.activo = '1' then 'Si' else 'No' end) like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+         p.idpreguntacuestionario,
+         cue.cuestionario,
+         tip.tiporespuesta,
+         p.pregunta,
+         p.orden,
+         (case when p.activo = '1' then 'Si' else 'No' end) as activo,
+         p.valor,
+         p.depende,
+         p.tiempo,
+         p.refcuestionarios,
+         p.reftiporespuesta
+      from dbpreguntascuestionario p
+      inner join dbcuestionarios cue ON cue.idcuestionario = p.refcuestionarios
+      inner join tbtiporespuesta tip ON tip.idtiporespuesta = p.reftiporespuesta
+      where cue.idcuestionario = ".$idcuestionario." ".$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+
+   function traerPreguntascuestionario() {
+      $sql = "select
+      p.idpreguntacuestionario,
+      p.refcuestionarios,
+      p.reftiporespuesta,
+      p.pregunta,
+      p.orden,
+      p.valor,
+      p.depende,
+      p.tiempo,
+      p.activo
+      from dbpreguntascuestionario p
+      inner join dbcuestionarios cue ON cue.idcuestionario = p.refcuestionarios
+      inner join tbtiporespuesta tip ON tip.idtiporespuesta = p.reftiporespuesta
+      order by 1";
+
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerPreguntascuestionarioPorId($id) {
+      $sql = "select idpreguntacuestionario,refcuestionarios,reftiporespuesta,pregunta,orden,valor,depende,tiempo,activo from dbpreguntascuestionario where idpreguntacuestionario =".$id;
+
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: dbpreguntascuestionario*/
+
+   /* PARA Tiporespuesta */
+
+   function insertarTiporespuesta($tiporespuesta) {
+      $sql = "insert into tbtiporespuesta(idtiporespuesta,tiporespuesta)
+      values ('','".$tiporespuesta."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarTiporespuesta($id,$tiporespuesta) {
+      $sql = "update tbtiporespuesta
+      set
+      tiporespuesta = '".$tiporespuesta."'
+      where idtiporespuesta =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarTiporespuesta($id) {
+      $sql = "delete from tbtiporespuesta where idtiporespuesta =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerTiporespuesta() {
+      $sql = "select
+      t.idtiporespuesta,
+      t.tiporespuesta
+      from tbtiporespuesta t
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerTiporespuestaPorId($id) {
+      $sql = "select idtiporespuesta,tiporespuesta from tbtiporespuesta where idtiporespuesta =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: tbtiporespuesta*/
+
+
+   /* PARA Cuestionariodetalle */
+
+   function insertarCuestionariodetalle($reftabla,$idreferencia,$refpreguntascuestionario,$refrespuestascuestionario,$pregunta,$respuesta,$respuestavalor,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+      $sql = "insert into dbcuestionariodetalle(idcuestionariodetalle,reftabla,idreferencia,refpreguntascuestionario,refrespuestascuestionario,pregunta,respuesta,respuestavalor,fechacrea,fechamodi,usuariocrea,usuariomodi)
+      values ('',".$reftabla.",".$idreferencia.",".$refpreguntascuestionario.",".$refrespuestascuestionario.",'".$pregunta."','".$respuesta."','".$respuestavalor."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarCuestionariodetalle($id,$reftabla,$idreferencia,$refpreguntascuestionario,$refrespuestascuestionario,$pregunta,$respuesta,$respuestavalor,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+   $sql = "update dbcuestionariodetalle
+   set
+   reftabla = ".$reftabla.",idreferencia = ".$idreferencia.",refpreguntascuestionario = ".$refpreguntascuestionario.",refrespuestascuestionario = ".$refrespuestascuestionario.",pregunta = '".$pregunta."',respuesta = '".$respuesta."',respuestavalor = '".$respuestavalor."',fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."'
+   where idcuestionariodetalle =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function eliminarCuestionariodetalle($id) {
+   $sql = "delete from dbcuestionariodetalle where idcuestionariodetalle =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function traerCuestionariodetalle() {
+   $sql = "select
+   c.idcuestionariodetalle,
+   c.reftabla,
+   c.idreferencia,
+   c.refpreguntascuestionario,
+   c.refrespuestascuestionario,
+   c.pregunta,
+   c.respuesta,
+   c.respuestavalor,
+   c.fechacrea,
+   c.fechamodi,
+   c.usuariocrea,
+   c.usuariomodi
+   from dbcuestionariodetalle c
+   inner join dbpreguntascuestionario pre ON pre.idpreguntacuestionario = c.refpreguntascuestionario
+   inner join dbcuestionarios cu ON cu.idcuestionario = pre.refcuestionarios
+   inner join tbtiporespuesta ti ON ti.idtiporespuesta = pre.reftiporespuesta
+   inner join dbrespuestascuestionario res ON res.idrespuestacuestionario = c.refrespuestascuestionario
+   inner join pr ON pr. = res.refpreguntascuestario
+   order by 1";
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function traerCuestionariodetallePorId($id) {
+   $sql = "select idcuestionariodetalle,reftabla,idreferencia,refpreguntascuestionario,refrespuestascuestionario,pregunta,respuesta,respuestavalor,fechacrea,fechamodi,usuariocrea,usuariomodi from dbcuestionariodetalle where idcuestionariodetalle =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: dbcuestionariodetalle*/
+
+
+   /* PARA Cuestionarios */
+
+   function insertarCuestionarios($cuestionario,$activo) {
+   $sql = "insert into dbcuestionarios(idcuestionario,cuestionario,activo)
+   values ('','".$cuestionario."','".$activo."')";
+   $res = $this->query($sql,1);
+   return $res;
+   }
+
+
+   function modificarCuestionarios($id,$cuestionario,$activo) {
+   $sql = "update dbcuestionarios
+   set
+   cuestionario = '".$cuestionario."',activo = '".$activo."'
+   where idcuestionario =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function eliminarCuestionarios($id) {
+      $sql = "update dbcuestionarios set activo = '0' where idcuestionario =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function eliminarCuestionariosDefinitivo($id) {
+      $sql = "delete from dbcuestionarios where idcuestionario =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerCuestionariosajax($length, $start, $busqueda,$colSort,$colSortDir) {
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where ".$roles." c.cuestionario like '%".$busqueda."%' or (case when c.activo = '1' then 'Si' else 'No' end) like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+         c.idcuestionario,
+         c.cuestionario,
+         (case when c.activo = '1' then 'Si' else 'No' end) as activo
+      from dbcuestionarios c
+       ".$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+
+   function traerCuestionarios() {
+   $sql = "select
+   c.idcuestionario,
+   c.cuestionario,
+   c.activo
+   from dbcuestionarios c
+   order by 1";
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function traerCuestionariosPorId($id) {
+   $sql = "select idcuestionario,cuestionario,activo from dbcuestionarios where idcuestionario =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+   function traerCuestionariosPorIdCompleto($id) {
+   $sql = "select
+            c.idcuestionario,
+            c.cuestionario,
+            (case when c.activo = '1' then 'Si' else 'No' end) as activo,
+            pre.pregunta,
+            (case when pre.activo = '1' then 'Si' else 'No' end) as activopregunta,
+            (case when rc.activo = '1' then 'Si' else 'No' end) as activorespuesta,
+            tr.idtiporespuesta,
+            tr.tiporespuesta,
+            rc.respuesta,
+            rc.idrespuestacuestionario,
+            pre.idpreguntacuestionario
+         from dbcuestionarios c
+         inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario
+         inner join tbtiporespuesta tr ON tr.idtiporespuesta = pre.reftiporespuesta
+         inner join dbrespuestascuestionario rc ON rc.refpreguntascuestionario = pre.idpreguntacuestionario
+         where c.idcuestionario =".$id." order by pre.orden,rc.orden ";
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: dbcuestionarios*/
 
    /* PARA Aseguradora */
 
@@ -3687,18 +4203,18 @@ class ServiciosReferencias {
 
 
 
-   function insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$activo,$puntosporventa,$puntosporpesopagado) {
-      $sql = "insert into tbproductos(idproducto,producto,prima,reftipoproductorama,reftipodocumentaciones,activo,puntosporventa,puntosporpesopagado)
-      values ('','".$producto."','".$prima."',".$reftipoproductorama.",".$reftipodocumentaciones.",'".$activo."',".$puntosporventa.",".$puntosporpesopagado.")";
+   function insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios) {
+      $sql = "insert into tbproductos(idproducto,producto,prima,reftipoproductorama,reftipodocumentaciones,activo,puntosporventa,puntosporpesopagado,refcuestionarios)
+      values ('','".$producto."','".$prima."',".$reftipoproductorama.",".$reftipodocumentaciones.",'".$activo."',".$puntosporventa.",".$puntosporpesopagado.",".$refcuestionarios.")";
       $res = $this->query($sql,1);
       return $res;
    }
 
 
-   function modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$activo,$puntosporventa,$puntosporpesopagado) {
+   function modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios) {
       $sql = "update tbproductos
       set
-      producto = '".$producto."',prima = '".$prima."',reftipoproductorama = ".$reftipoproductorama.",reftipodocumentaciones = ".$reftipodocumentaciones.",activo = '".$activo."',puntosporventa = ".$puntosporventa.",puntosporpesopagado = ".$puntosporpesopagado."
+      producto = '".$producto."',prima = '".$prima."',reftipoproductorama = ".$reftipoproductorama.",reftipodocumentaciones = ".$reftipodocumentaciones.",activo = '".$activo."',puntosporventa = ".$puntosporventa.",puntosporpesopagado = ".$puntosporpesopagado.",refcuestionarios = ".$refcuestionarios."
       where idproducto =".$id;
       $res = $this->query($sql,0);
       return $res;
@@ -3717,7 +4233,7 @@ class ServiciosReferencias {
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " where ".$roles." p.producto like '%".$busqueda."%' or (case when p.prima = '1' then 'Si' else 'No' end) like '%".$busqueda."%' or tp.tipoproductorama like '%".$busqueda."%' or (case when p.activo = '1' then 'Si' else 'No' end) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%')";
+			$where = " where ".$roles." p.producto like '%".$busqueda."%' or (case when p.prima = '1' then 'Si' else 'No' end) like '%".$busqueda."%' or tp.tipoproductorama like '%".$busqueda."%' or (case when p.activo = '1' then 'Si' else 'No' end) like '%".$busqueda."%')";
 		}
 
 
@@ -3780,7 +4296,8 @@ class ServiciosReferencias {
       p.activo,
       p.reftipoproductorama,
       tp.reftipoproducto,
-      p.reftipodocumentaciones
+      p.reftipodocumentaciones,
+      p.refcuestionarios
 		from tbproductos p
 		inner join tbtipoproductorama tp ON tp.idtipoproductorama = p.reftipoproductorama
       inner join tbtipoproducto t on t.idtipoproducto = tp.reftipoproducto
@@ -3792,7 +4309,9 @@ class ServiciosReferencias {
 
 
    function traerProductosPorId($id) {
-      $sql = "select idproducto,producto,prima,reftipoproductorama,reftipodocumentaciones,activo,puntosporventa,puntosporpesopagado from tbproductos where idproducto =".$id;
+      $sql = "select idproducto,producto,prima,reftipoproductorama,reftipodocumentaciones,activo,
+      puntosporventa,puntosporpesopagado,refcuestionarios
+      from tbproductos where idproducto =".$id;
       $res = $this->query($sql,0);
       return $res;
    }

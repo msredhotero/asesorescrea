@@ -68,6 +68,64 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 
 switch ($tabla) {
 
+	case 'respuestascuestionario':
+
+		$datos = $serviciosReferencias->traerRespuestascuestionarioajax($length, $start, $busqueda,$colSort,$colSortDir,$_GET['id']);
+
+		//die(var_dump($datos));
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+
+		$label = array('btnModificar','btnEliminar','btnEliminarDefinitivo');
+		$class = array('bg-amber','bg-red','');
+		$icon = array('Modificar','Eliminar','Eliminar Def.');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 3;
+	break;
+	case 'preguntascuestionario':
+
+		$datos = $serviciosReferencias->traerPreguntascuestionarioajax($length, $start, $busqueda,$colSort,$colSortDir,$_GET['id']);
+
+		//die(var_dump($datos));
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+
+		$label = array('btnModificar','btnEliminar','btnEliminarDefinitivo','btnRespuestas');
+		$class = array('bg-amber','bg-red','','');
+		$icon = array('Modificar','Eliminar','Eliminar Def.','Respuestas');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 5;
+	break;
+	case 'cuestionario':
+
+		$datos = $serviciosReferencias->traerCuestionariosajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		//die(var_dump($datos));
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+
+		$label = array('btnModificar','btnEliminar','btnEliminarDefinitivo','btnPreguntas','btnVer');
+		$class = array('bg-amber','bg-red','','','');
+		$icon = array('Modificar','Eliminar','Eliminar Def.','Preguntas','Pre-visualizacion');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 2;
+	break;
+
 	case 'productos':
 
 		$datos = $serviciosReferencias->traerProductosajax($length, $start, $busqueda,$colSort,$colSortDir);
@@ -1179,7 +1237,7 @@ $id = 0;
 			array_push($arAux, ($row[$i]));
 		}
 
-		if (($tabla == 'postulantes') || ($tabla == 'ventas') || ($tabla == 'postulanteshistorico') || ($tabla == 'asesores') || ($tabla == 'asociadostemporales') || ($tabla == 'asociados') || ($tabla == 'clientes')) {
+		if (($tabla == 'postulantes') || ($tabla == 'ventas') || ($tabla == 'postulanteshistorico') || ($tabla == 'asesores') || ($tabla == 'asociadostemporales') || ($tabla == 'asociados') || ($tabla == 'clientes') || ($tabla == 'cuestionario') || ($tabla == 'preguntascuestionario') || ($tabla == 'respuestascuestionario')) {
 			array_push($arAux, armarAccionesDropDown($row[0],$label,$class,$icon));
 		} else {
 			array_push($arAux, armarAcciones($row[0],$label,$class,$icon));

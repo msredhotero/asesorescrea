@@ -927,59 +927,632 @@ switch ($accion) {
    break;
 
    case 'insertarProductos':
-insertarProductos($serviciosReferencias);
-break;
-case 'modificarProductos':
-modificarProductos($serviciosReferencias);
-break;
-case 'eliminarProductos':
-eliminarProductos($serviciosReferencias);
-break;
+      insertarProductos($serviciosReferencias);
+   break;
+   case 'modificarProductos':
+      modificarProductos($serviciosReferencias);
+   break;
+   case 'eliminarProductos':
+      eliminarProductos($serviciosReferencias);
+   break;
+
+   case 'insertarCuestionariodetalle':
+      insertarCuestionariodetalle($serviciosReferencias);
+   break;
+   case 'modificarCuestionariodetalle':
+      modificarCuestionariodetalle($serviciosReferencias);
+   break;
+   case 'eliminarCuestionariodetalle':
+      eliminarCuestionariodetalle($serviciosReferencias);
+   break;
+   case 'traerCuestionariodetalle':
+      traerCuestionariodetalle($serviciosReferencias);
+   break;
+   case 'traerCuestionariodetallePorId':
+      traerCuestionariodetallePorId($serviciosReferencias);
+   break;
+   case 'insertarCuestionarios':
+      insertarCuestionarios($serviciosReferencias);
+   break;
+   case 'modificarCuestionarios':
+      modificarCuestionarios($serviciosReferencias);
+   break;
+   case 'eliminarCuestionarios':
+      eliminarCuestionarios($serviciosReferencias);
+   break;
+   case 'eliminarCuestionariosDefinitivo':
+      eliminarCuestionariosDefinitivo($serviciosReferencias);
+   break;
+   case 'insertarPreguntascuestionario':
+      insertarPreguntascuestionario($serviciosReferencias);
+   break;
+   case 'modificarPreguntascuestionario':
+      modificarPreguntascuestionario($serviciosReferencias);
+   break;
+   case 'eliminarPreguntascuestionario':
+      eliminarPreguntascuestionario($serviciosReferencias);
+   break;
+   case 'eliminarPreguntascuestionarioDefinitivo':
+      eliminarPreguntascuestionarioDefinitivo($serviciosReferencias);
+   break;
+   case 'traerPreguntascuestionario':
+      traerPreguntascuestionario($serviciosReferencias);
+   break;
+   case 'traerPreguntascuestionarioPorId':
+      traerPreguntascuestionarioPorId($serviciosReferencias);
+   break;
+   case 'insertarRespuestascuestionario':
+      insertarRespuestascuestionario($serviciosReferencias);
+   break;
+   case 'modificarRespuestascuestionario':
+      modificarRespuestascuestionario($serviciosReferencias);
+   break;
+   case 'eliminarRespuestascuestionario':
+      eliminarRespuestascuestionario($serviciosReferencias);
+   break;
+   case 'traerRespuestascuestionario':
+      traerRespuestascuestionario($serviciosReferencias);
+   break;
+   case 'traerRespuestascuestionarioPorId':
+      traerRespuestascuestionarioPorId($serviciosReferencias);
+   break;
+
+   case 'cuestionario':
+      cuestionario($serviciosReferencias);
+   break;
+   case 'validarCuestionario':
+      validarCuestionario($serviciosReferencias);
+   break;
+
 
 }
 /* FinFinFin */
 
+function validarCuestionario($serviciosReferencias) {
+   $id = $_POST['refproductos'];
+
+   $resP = $serviciosReferencias->traerProductosPorId($id);
+   $idcuestionario = mysql_result($resP,0,'refcuestionarios');
+
+   $arRespuestas = array();
+   $arErrores = array();
+
+   $resV['errorinsert'] = false;
+
+   //echo die(var_dump($idcuestionario));
+
+   if ($idcuestionario == null) {
+      $ar = array('cuestionario'=>'','rules'=>'');
+   } else {
+      $res = $serviciosReferencias->Cuestionario($idcuestionario);
+
+      $ar = array('cuestionario'=>$res['cuestionario'],'rules'=>$res['rules']);
+   }
+
+   $resV['error'] = false;
+
+   $bandera = 0;
+   $idpregunta = 0;
+   $evaluoVerdadero = 1;
+   $errorGeneral = 0;
+   $tipo = '';
+   $pregunta = '';
+
+   /*
+   refpreguntascuestionario
+   refrespuestascuestionario
+   pregunta
+   respuesta
+   respuestavalor
+   */
+
+   foreach ($ar['rules'] as $valor) {
+      $pregunta = $valor['pregunta'];
+
+      // $array[3] se actualizará con cada valor de $array...
+      if ($valor['tipo'] == 1) {
+         if (!(isset($_POST[$valor['respuesta']]))) {
+            $resV['error'] = true;
+            array_push($arErrores,array('error' => 'Debe completar la respuesta','pregunta'=>$pregunta));
+         } else {
+            array_push($arRespuestas,
+                  array('refpreguntascuestionario' => $valor['idpregunta'],
+                  'refrespuestascuestionario' => $valor['idrespuesta'],
+                  'pregunta' => $pregunta,
+                  'respuesta' => 'Lo que el ususario ingrese',
+                  'respuestavalor' => $_POST[$valor['respuesta']])
+               );
+         }
+      }
+
+      if ($valor['tipo'] == 2) {
+         if (!(isset($_POST[$valor['respuesta']]))) {
+            $resV['error'] = true;
+            array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
+         } else {
+            $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($valor['idrespuesta']);
+            array_push($arRespuestas,
+                  array('refpreguntascuestionario' => $valor['idpregunta'],
+                  'refrespuestascuestionario' => $valor['idrespuesta'],
+                  'pregunta' => $pregunta,
+                  'respuesta' => mysql_result($rRespuesta,0,'respuesta'),
+                  'respuestavalor' => $_POST[$valor['respuesta']])
+               );
+         }
+      }
+
+      if ($valor['tipo'] == 3) {
+         if (!(isset($_POST[$valor['respuesta']]))) {
+            $resV['error'] = true;
+            array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
+         } else {
+            $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($valor['idrespuesta']);
+            array_push($arRespuestas,
+                  array('refpreguntascuestionario' => $valor['idpregunta'],
+                  'refrespuestascuestionario' => $valor['idrespuesta'],
+                  'pregunta' => $pregunta,
+                  'respuesta' => mysql_result($rRespuesta,0,'respuesta'),
+                  'respuestavalor' => $_POST[$valor['respuesta']])
+               );
+         }
+      }
+
+      if ($valor['tipo'] == 4) {
+         if ($idpregunta != $valor['idpregunta']) {
+            $idpregunta = $valor['idpregunta'];
+
+            if (($bandera == 0) && ($evaluoVerdadero == 0)) {
+               $errorGeneral = 1;
+               array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
+               $resV['error'] = true;
+            }
+
+
+            if ( (isset($_POST[$valor['respuesta']])) && $evaluoVerdadero == 1) {
+               $evaluoVerdadero = 0;
+            }
+
+            $bandera = 1;
+         }
+         if ((isset($_POST[$valor['respuesta']]))) {
+            $evaluoVerdadero = 0;
+            //// ya lo inserto porque seria el primero
+            $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($valor['idrespuesta']);
+            array_push($arRespuestas,
+                  array('refpreguntascuestionario' => $valor['idpregunta'],
+                  'refrespuestascuestionario' => $valor['idrespuesta'],
+                  'pregunta' => $pregunta,
+                  'respuesta' => mysql_result($rRespuesta,0,'respuesta'),
+                  'respuestavalor' => $_POST[$valor['respuesta']])
+               );
+         }
+
+
+         $bandera = 0;
+      }
+
+   }
+
+   if (($bandera == 0) && ($evaluoVerdadero == 1)) {
+      $errorGeneral = 1;
+      array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
+      $resV['error'] = true;
+   }
+
+   $resV['errores'] = $arErrores;
+
+   if ($resV['error'] == false) {
+      session_start();
+
+      $refclientes = $_POST['refclientes'];
+      $refproductos = $_POST['refproductos'];
+      $refasesores = $_POST['refasesores'];
+      $refasociados = ($_POST['refasociados'] == '' ? 'NULL' : $_POST['refasociados']);
+      if ($_SESSION['idroll_sahilices'] != 7) {
+         $refestadocotizaciones = 4;
+      } else {
+         $refestadocotizaciones = 2;
+      }
+
+      $observaciones = $_POST['observaciones'];
+
+      $fechacrea = date('Y-m-d H:i:s');
+      $fechamodi = date('Y-m-d H:i:s');
+      $usuariocrea = $_SESSION['usua_sahilices'];
+      $usuariomodi = $_SESSION['usua_sahilices'];
+      $refusuarios = $_SESSION['usuaid_sahilices'];
+
+      $tiponegocio = $_POST['tiponegocio'];
+
+      if ($tiponegocio != 'Negocio nuevo') {
+         $fechavencimiento = $_POST['fechavencimiento'];
+         $coberturaactual = $_POST['coberturaactual'];
+      } else {
+         $fechavencimiento = '';
+         $coberturaactual = '';
+      }
+
+
+      $cobertura = $_POST['cobertura'];
+      $reasegurodirecto = $_POST['reasegurodirecto'];
+      $fecharenovacion = $_POST['fecharenovacion'];
+      $fechapropuesta = $fechacrea;
+
+      $presentacotizacion = $_POST['presentacotizacion'];
+      $fechaemitido = $fechacrea;
+
+      $existeprimaobjetivo = $_POST['existeprimaobjetivo'];
+      $primaobjetivo = ($_POST['primaobjetivo'] == '' ? 0 : $_POST['primaobjetivo']);
+
+      $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo);
+
+      if ((integer)$res > 0) {
+         /**** toda la perta del cuestionario ***/
+         $resP = $serviciosReferencias->traerProductosPorId($refproductos);
+         $idcuestionario = mysql_result($resP,0,'refcuestionarios');
+
+         $resI = '';
+
+         foreach ($arRespuestas as $item) {
+
+            $resI .= $serviciosReferencias->insertarCuestionariodetalle(11,$res,$item['refpreguntascuestionario'],$item['refrespuestascuestionario'],$item['pregunta'],$item['respuesta'],$item['respuestavalor'],$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
+         }
+
+
+         //die(var_dump($resI));
+         /**** fin cuestionario     ****/
+
+         $resV['idcotizacion']= $res;
+      } else {
+         $resV['errorinsert'] = true;
+         $resV['mensaje'] = 'Ocurrio un error al insertar los datos, intente nuevamente';
+
+      }
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function cuestionario($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $resP = $serviciosReferencias->traerProductosPorId($id);
+   $idcuestionario = mysql_result($resP,0,'refcuestionarios');
+
+   //echo die(var_dump($idcuestionario));
+
+   if ($idcuestionario == null) {
+      $ar = array('cuestionario'=>'','rules'=>'');
+   } else {
+      $res = $serviciosReferencias->Cuestionario($idcuestionario);
+
+      $ar = array('cuestionario'=>$res['cuestionario'],'rules'=>$res['rules']);
+   }
+
+   $resV['datos'] = $ar;
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
+
+
+function insertarRespuestascuestionario($serviciosReferencias) {
+   $respuesta = $_POST['respuesta'];
+   $refpreguntascuestionario = $_POST['refpreguntascuestionario'];
+   $orden = $_POST['orden'];
+   $activo = $_POST['activo'];
+
+   $res = $serviciosReferencias->insertarRespuestascuestionario($respuesta,$refpreguntascuestionario,$orden,$activo);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarRespuestascuestionario($serviciosReferencias) {
+   $id = $_POST['id'];
+   $respuesta = $_POST['respuesta'];
+   $refpreguntascuestionario = $_POST['refpreguntascuestionario'];
+   $orden = $_POST['orden'];
+   $activo = $_POST['activo'];
+
+   $res = $serviciosReferencias->modificarRespuestascuestionario($id,$respuesta,$refpreguntascuestionario,$orden,$activo);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarRespuestascuestionario($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarRespuestascuestionario($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
+function traerRespuestascuestionario($serviciosReferencias) {
+   $res = $serviciosReferencias->traerRespuestascuestionario();
+   $ar = array();
+
+   while ($row = mysql_fetch_array($res)) {
+      array_push($ar, $row);
+   }
+
+   $resV['datos'] = $ar;
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
+function insertarPreguntascuestionario($serviciosReferencias) {
+   $refcuestionarios = $_POST['refcuestionarios'];
+   $reftiporespuesta = $_POST['reftiporespuesta'];
+   $pregunta = $_POST['pregunta'];
+   $orden = $_POST['orden'];
+   $valor = $_POST['valor'];
+   $depende = $_POST['depende'];
+   $tiempo = $_POST['tiempo'];
+   $activo = $_POST['activo'];
+
+   $res = $serviciosReferencias->insertarPreguntascuestionario($refcuestionarios,$reftiporespuesta,$pregunta,$orden,$valor,$depende,$tiempo,$activo);
+
+   if ((integer)$res > 0) {
+      if ($reftiporespuesta == 1) {
+         $resRespuesta = $serviciosReferencias->insertarRespuestascuestionario('Respuesta escrita',$res,1,'1');
+      }
+      if ($reftiporespuesta == 2) {
+         $resRespuesta1 = $serviciosReferencias->insertarRespuestascuestionario('Si',$res,1,'1');
+         $resRespuesta2 = $serviciosReferencias->insertarRespuestascuestionario('No',$res,2,'1');
+      }
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarPreguntascuestionario($serviciosReferencias) {
+   $id = $_POST['id'];
+   $refcuestionarios = $_POST['refcuestionarios'];
+   $reftiporespuesta = $_POST['reftiporespuesta'];
+   $pregunta = $_POST['pregunta'];
+   $orden = $_POST['orden'];
+   $valor = $_POST['valor'];
+   $depende = $_POST['depende'];
+   $tiempo = $_POST['tiempo'];
+   $activo = $_POST['activo'];
+
+   $res = $serviciosReferencias->modificarPreguntascuestionario($id,$refcuestionarios,$reftiporespuesta,$pregunta,$orden,$valor,$depende,$tiempo,$activo);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarPreguntascuestionario($serviciosReferencias) {
+   $id = $_POST['id'];
+   $res = $serviciosReferencias->eliminarPreguntascuestionario($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
+function eliminarPreguntascuestionarioDefinitivo($serviciosReferencias) {
+   $id = $_POST['id'];
+   $res = $serviciosReferencias->eliminarPreguntascuestionarioDefinitivo($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
+function traerPreguntascuestionario($serviciosReferencias) {
+   $res = $serviciosReferencias->traerPreguntascuestionario();
+   $ar = array();
+
+   while ($row = mysql_fetch_array($res)) {
+      array_push($ar, $row);
+   }
+
+   $resV['datos'] = $ar;
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
+function insertarCuestionariodetalle($serviciosReferencias) {
+   $reftabla = $_POST['reftabla'];
+   $idreferencia = $_POST['idreferencia'];
+   $refpreguntascuestionario = $_POST['refpreguntascuestionario'];
+   $refrespuestascuestionario = $_POST['refrespuestascuestionario'];
+   $pregunta = $_POST['pregunta'];
+   $respuesta = $_POST['respuesta'];
+   $respuestavalor = $_POST['respuestavalor'];
+   $fechacrea = $_POST['fechacrea'];
+   $fechamodi = $_POST['fechamodi'];
+   $usuariocrea = $_POST['usuariocrea'];
+   $usuariomodi = $_POST['usuariomodi'];
+
+   $res = $serviciosReferencias->insertarCuestionariodetalle($reftabla,$idreferencia,$refpreguntascuestionario,$refrespuestascuestionario,$pregunta,$respuesta,$respuestavalor,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarCuestionariodetalle($serviciosReferencias) {
+   $id = $_POST['id'];
+   $reftabla = $_POST['reftabla'];
+   $idreferencia = $_POST['idreferencia'];
+   $refpreguntascuestionario = $_POST['refpreguntascuestionario'];
+   $refrespuestascuestionario = $_POST['refrespuestascuestionario'];
+   $pregunta = $_POST['pregunta'];
+   $respuesta = $_POST['respuesta'];
+   $respuestavalor = $_POST['respuestavalor'];
+   $fechacrea = $_POST['fechacrea'];
+   $fechamodi = $_POST['fechamodi'];
+   $usuariocrea = $_POST['usuariocrea'];
+   $usuariomodi = $_POST['usuariomodi'];
+
+   $res = $serviciosReferencias->modificarCuestionariodetalle($id,$reftabla,$idreferencia,$refpreguntascuestionario,$refrespuestascuestionario,$pregunta,$respuesta,$respuestavalor,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarCuestionariodetalle($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarCuestionariodetalle($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
+function traerCuestionariodetalle($serviciosReferencias) {
+   $res = $serviciosReferencias->traerCuestionariodetalle();
+   $ar = array();
+
+   while ($row = mysql_fetch_array($res)) {
+      array_push($ar, $row);
+   }
+
+   $resV['datos'] = $ar;
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function insertarCuestionarios($serviciosReferencias) {
+   $cuestionario = $_POST['cuestionario'];
+   $activo = $_POST['activo'];
+
+   $res = $serviciosReferencias->insertarCuestionarios($cuestionario,$activo);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarCuestionarios($serviciosReferencias) {
+   $id = $_POST['id'];
+   $cuestionario = $_POST['cuestionario'];
+   $activo = $_POST['activo'];
+
+   $res = $serviciosReferencias->modificarCuestionarios($id,$cuestionario,$activo);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarCuestionarios($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarCuestionarios($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
+function eliminarCuestionariosDefinitivo($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarCuestionariosDefinitivo($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
+
 
 function insertarProductos($serviciosReferencias) {
-$producto = $_POST['producto'];
-$prima = $_POST['prima'];
-$reftipoproductorama = $_POST['reftipoproductorama'];
-$reftipodocumentaciones = $_POST['reftipodocumentaciones'];
-$puntosporventa = $_POST['puntosporventa'];
-$puntosporpesopagado = $_POST['puntosporpesopagado'];
-$activo = $_POST['activo'];
-$res = $serviciosReferencias->insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo);
-if ((integer)$res > 0) {
-echo '';
-} else {
-echo 'Hubo un error al insertar datos';
+   $producto = $_POST['producto'];
+   $prima = $_POST['prima'];
+   $reftipoproductorama = $_POST['reftipoproductorama'];
+   $reftipodocumentaciones = $_POST['reftipodocumentaciones'];
+   $puntosporventa = ( $_POST['puntosporventa'] == '' ? 0 : $_POST['puntosporventa']);
+   $puntosporpesopagado = ( $_POST['puntosporpesopagado'] == '' ? 0 : $_POST['puntosporpesopagado']);
+   $activo = $_POST['activo'];
+   $refcuestionarios = ( $_POST['refcuestionarios'] == '' ? 0 : $_POST['refcuestionarios']);
+
+   $res = $serviciosReferencias->insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
 }
-}
+
 function modificarProductos($serviciosReferencias) {
-$id = $_POST['id'];
-$producto = $_POST['producto'];
-$prima = $_POST['prima'];
-$reftipoproductorama = $_POST['reftipoproductorama'];
-$reftipodocumentaciones = $_POST['reftipodocumentaciones'];
-$puntosporventa = $_POST['puntosporventa'];
-$puntosporpesopagado = $_POST['puntosporpesopagado'];
-$activo = $_POST['activo'];
-$res = $serviciosReferencias->modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo);
-if ($res == true) {
-echo '';
-} else {
-echo 'Hubo un error al modificar datos';
-}
+   $id = $_POST['id'];
+   $producto = $_POST['producto'];
+   $prima = $_POST['prima'];
+   $reftipoproductorama = $_POST['reftipoproductorama'];
+   $reftipodocumentaciones = $_POST['reftipodocumentaciones'];
+   $puntosporventa = ( $_POST['puntosporventa'] == '' ? 0 : $_POST['puntosporventa']);
+   $puntosporpesopagado = ( $_POST['puntosporpesopagado'] == '' ? 0 : $_POST['puntosporpesopagado']);
+   $activo = $_POST['activo'];
+   $refcuestionarios = ( $_POST['refcuestionarios'] == '' ? 0 : $_POST['refcuestionarios']);
+
+   $res = $serviciosReferencias->modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
 }
 
 function eliminarProductos($serviciosReferencias) {
-$id = $_POST['id'];
-$res = $serviciosReferencias->eliminarProductos($id);
-if ($res == true) {
-echo '';
-} else {
-echo 'Hubo un error al eliminar datos';
-}
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarProductos($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
 }
 
 
@@ -2346,6 +2919,21 @@ function insertarCotizaciones($serviciosReferencias) {
    $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo);
 
    if ((integer)$res > 0) {
+      /**** toda la perta del cuestionario ***/
+      $resP = $serviciosReferencias->traerProductosPorId($refproductos);
+      $idcuestionario = mysql_result($resP,0,'refcuestionarios');
+
+      //echo die(var_dump($idcuestionario));
+
+      if ($idcuestionario != null) {
+         $resC = $serviciosReferencias->traerCuestionariosPorIdCompleto($idcuestionario);
+
+
+      }
+
+
+
+      /**** fin cuestionario     ****/
 
       echo $res;
    } else {
@@ -3871,14 +4459,79 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+      case 'dbrespuestascuestionario':
+         $resultado = $serviciosReferencias->traerRespuestascuestionarioPorId($id);
+
+         $modificar = "modificarRespuestascuestionario";
+         $idTabla = "idrespuestacuestionario";
+
+         $lblCambio	 	= array('refpreguntascuestionario','activo');
+         $lblreemplazo	= array('Pregunta','Activo');
+
+         $resVar1 = $serviciosReferencias->traerPreguntascuestionarioPorId(mysql_result($resultado,0,'refpreguntascuestionario'));
+         $cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(3),'');
+
+         if (mysql_result($resultado,0,'activo') == '1') {
+            $cadRef3 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+         } else {
+            $cadRef3 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+         }
+
+         $refdescripcion = array(0=>$cadRef1,1=>$cadRef3);
+         $refCampo 	=  array('refpreguntascuestionario','activo');
+      break;
+      case 'dbpreguntascuestionario':
+         $resultado = $serviciosReferencias->traerPreguntascuestionarioPorId($id);
+
+         $modificar = "modificarPreguntascuestionario";
+         $idTabla = "idpreguntacuestionario";
+
+         $lblCambio	 	= array('refcuestionarios','reftiporespuesta','activo');
+         $lblreemplazo	= array('Cuestionario','Tipo Respuesta','Activo');
+
+         $resVar1 = $serviciosReferencias->traerCuestionarios();
+         $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),'',mysql_result($resultado,0,'refcuestionarios'));
+
+         $resVar2 = $serviciosReferencias->traerTiporespuestaPorId(mysql_result($resultado,0,'reftiporespuesta'));
+         $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(1),'',mysql_result($resultado,0,'reftiporespuesta'));
+
+         if (mysql_result($resultado,0,'activo') == '1') {
+            $cadRef3 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+         } else {
+            $cadRef3 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+         }
+
+         $refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3);
+         $refCampo 	=  array('refcuestionarios','reftiporespuesta','activo');
+      break;
+
+      case 'dbcuestionarios':
+         $resultado = $serviciosReferencias->traerCuestionariosPorId($id);
+
+         $modificar = "modificarCuestionarios";
+         $idTabla = "idcuestionario";
+
+         $lblCambio	 	= array('activo');
+         $lblreemplazo	= array('Activo');
+
+         if (mysql_result($resultado,0,'activo') == '1') {
+            $cadRef = "<option value='1' selected>Si</option><option value='0'>No</option>";
+         } else {
+            $cadRef = "<option value='1'>Si</option><option value='0' selected>No</option>";
+         }
+
+         $refdescripcion = array(0=>$cadRef);
+         $refCampo 	=  array('activo');
+      break;
+
       case 'tbproductos':
          $resultado = $serviciosReferencias->traerProductosPorId($id);
 
          $modificar = "modificarProductos";
          $idTabla = "idproducto";
 
-         $lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado');
-         $lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Puntos x Ventas','Puntos x Peso Pagado');
+         $lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado','refcuestionarios');
+         $lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Puntos x Ventas','Puntos x Peso Pagado','Cuestionario');
 
          $resVar1 = $serviciosReferencias->traerTipoproductorama();
          $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(2),'',mysql_result($resultado,0,'reftipoproductorama'));
@@ -3898,8 +4551,12 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $resVar4 = $serviciosReferencias->traerTipodocumentaciones();
          $cadRef4 = $serviciosFunciones->devolverSelectBoxActivo($resVar4,array(1),'',mysql_result($resultado,0,'reftipodocumentaciones'));
 
-         $refdescripcion = array(0=>$cadRef1,1=>$cadRef4,2=>$cadRef2,3=>$cadRef3);
-         $refCampo 	=  array('reftipoproductorama','reftipodocumentaciones','activo','prima');
+         $resCuest = $serviciosReferencias->traerCuestionarios();
+         $cadRef5 = '<option value="">-- Seleccionar --</option>';
+         $cadRef5 .= $serviciosFunciones->devolverSelectBoxActivo($resCuest,array(1),'',mysql_result($resultado,0,'refcuestionarios'));
+
+         $refdescripcion = array(0=>$cadRef1,1=>$cadRef4,2=>$cadRef2,3=>$cadRef3,4=>$cadRef5);
+         $refCampo 	=  array('reftipoproductorama','reftipodocumentaciones','activo','prima','refcuestionarios');
       break;
 
       case 'dbdocumentaciones':
@@ -4291,7 +4948,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 
          $refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=>$cadRef4,3=>$cadRef3,4=>$cadRef5,5=>$cadRef6);
          $refCampo 	=  array('refusuarios','refbancos','reftipoasociado','refestadoasociado','refoportunidades','refpostulantes');
-      break;case 'dbasociadostemporales':
+      break;
+      case 'dbasociadostemporales':
          $resultado = $serviciosReferencias->traerAsociadostemporalesPorId($id);
 
          $modificar = "modificarAsociadostemporales";
@@ -4336,7 +4994,7 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 
          $resOportunidades 	= $serviciosReferencias->traerOportunidades();
          $cadRef3 = "<option value='0'>-- Seleccionar --</option>";
-         $cadRef3 .= $serviciosFunciones->devolverSelectBoxActivo($resOportunidades,array(2),'',mysql_result($resultado,0,'refoportunidades'));
+         $cadRef3 .= $serviciosFunciones->devolverSelectBoxActivo($resOportunidades,array(2,3,4),' ',mysql_result($resultado,0,'refoportunidades'));
 
 
          $resAsesores = $serviciosReferencias->traerAsesores();

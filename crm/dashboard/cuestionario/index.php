@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../productos/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cuestionario/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Productos",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cuestionarios",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -39,39 +39,29 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Producto";
+$singular = "Cuestionario";
 
-$plural = "Productos";
+$plural = "Cuestionarios";
 
-$eliminar = "eliminarProductos";
+$eliminar = "eliminarCuestionarios";
 
-$insertar = "insertarProductos";
+$insertar = "insertarCuestionarios";
 
-$modificar = "modificarProductos";
+$modificar = "modificarCuestionarios";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "tbproductos";
+$tabla 			= "dbcuestionarios";
 
-$lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado','refcuestionarios');
-$lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado','Cuestionario');
+$lblCambio	 	= array('activo');
+$lblreemplazo	= array('Activo');
 
-$resVar1 = $serviciosReferencias->traerTipoproductorama();
-$cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(2),'');
+$cadRef = "<option value='1' selected>Si</option><option value='0'>No</option>";
 
-$resVar2 = $serviciosReferencias->traerTipodocumentaciones();
-$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),'');
-
-$cadRef3 = "<option value='1'>Si</option><option value='0'>No</option>";
-
-$resCuest = $serviciosReferencias->traerCuestionarios();
-$cadRef4 = '<option value="">-- Seleccionar --</option>';
-$cadRef4 .= $serviciosFunciones->devolverSelectBox($resCuest,array(1),'');
-
-$refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef3,4=>$cadRef4);
-$refCampo 	=  array('reftipoproductorama','reftipodocumentaciones','activo','prima','refcuestionarios');
+$refdescripcion = array(0=>$cadRef);
+$refCampo 	=  array('activo');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -162,11 +152,13 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		<div class="row clearfix">
 
 			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 contHistorico">
+
+
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								PRODUCTOS
+								<?php echo strtoupper($plural); ?>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -199,24 +191,14 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
-												<th>Producto</th>
-												<th>Prima</th>
-												<th>Ramo Producto</th>
-												<th>Tipo Documentacion</th>
-												<th>Pt x Venta</th>
-												<th>Pts x Peso Pagado</th>
+												<th>Cuestionario</th>
 												<th>Activo</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
-												<th>Producto</th>
-												<th>Prima</th>
-												<th>Ramo Producto</th>
-												<th>Tipo Documentacion</th>
-												<th>Pt x Venta</th>
-												<th>Pts x Peso Pagado</th>
+												<th>Cuestionario</th>
 												<th>Activo</th>
 												<th>Acciones</th>
 											</tr>
@@ -224,6 +206,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									</table>
 								</div>
 							</form>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -291,7 +274,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		               </div>
 		               <div class="modal-body">
 										 <p>¿Esta seguro que desea eliminar el registro?</p>
-										 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
+										 <small>* El registro quedara inactivo.</small>
 		               </div>
 		               <div class="modal-footer">
 		                   <button type="button" class="btn btn-danger waves-effect eliminar">ELIMINAR</button>
@@ -302,6 +285,29 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		   </div>
 			<input type="hidden" id="accion" name="accion" value="<?php echo $eliminar; ?>"/>
 			<input type="hidden" name="ideliminar" id="ideliminar" value="0">
+		</form>
+
+	<!-- ELIMINAR -->
+		<form class="formulario" role="form" id="sign_in">
+		   <div class="modal fade" id="lgmEliminarDef" tabindex="-1" role="dialog">
+		       <div class="modal-dialog modal-lg" role="document">
+		           <div class="modal-content">
+		               <div class="modal-header">
+		                   <h4 class="modal-title" id="largeModalLabel">ELIMINAR <?php echo strtoupper($singular); ?></h4>
+		               </div>
+		               <div class="modal-body">
+										 <p>¿Esta seguro que desea eliminar el registro?</p>
+										 <small>* El registro se eliminara permanentemente si no existe concurrencia en algun otro registro relacionado.</small>
+		               </div>
+		               <div class="modal-footer">
+		                   <button type="button" class="btn btn-danger waves-effect eliminard">ELIMINAR</button>
+		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+		               </div>
+		           </div>
+		       </div>
+		   </div>
+			<input type="hidden" id="accion" name="accion" value="<?php echo $eliminar; ?>Definitivo"/>
+			<input type="hidden" name="ideliminard" id="ideliminard" value="0">
 		</form>
 
 
@@ -325,8 +331,16 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 <script>
 	$(document).ready(function(){
 
-		$('#puntosporventa').number( true, 2,'.','' );
-		$('#puntosporpesopagado').number( true, 2,'.','' );
+		$("#example").on("click",'.btnPreguntas', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','preguntas.php?id=' + idTable);
+		});//fin del boton modificar
+
+		$("#example").on("click",'.btnVer', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','ver.php?id=' + idTable);
+		});//fin del boton modificar
+
 
 		$('.maximizar').click(function() {
 			if ($('.icomarcos').text() == 'web') {
@@ -345,7 +359,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=productos",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=cuestionario",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -371,7 +385,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			}
 		});
 
-
 		$("#sign_in").submit(function(e){
 			e.preventDefault();
 		});
@@ -393,8 +406,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 					if (data != '') {
 						$('.frmAjaxModificar').html(data);
-						$('.frmAjaxModificar #puntosporventa').number( true, 2,'.','' );
-						$('.frmAjaxModificar #puntosporpesopagado').number( true, 2,'.','' );
 					} else {
 						swal("Error!", data, "warning");
 
@@ -409,6 +420,66 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			});
 
 		}
+
+
+		function frmAjaxEliminarDef(id) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: '<?php echo $eliminar; ?>Definitivo', id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data == '') {
+						swal({
+								title: "Respuesta",
+								text: "Registro Eliminado con exito!!",
+								type: "success",
+								timer: 1500,
+								showConfirmButton: false
+						});
+						$('#lgmEliminarDef').modal('toggle');
+						table.ajax.reload();
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data,
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
+		$("#example").on("click",'.btnEliminarDefinitivo', function(){
+			idTable =  $(this).attr("id");
+			$('#ideliminard').val(idTable);
+			$('#lgmEliminarDef').modal();
+		});//fin del boton eliminar
+
+		$('.eliminard').click(function() {
+			frmAjaxEliminarDef($('#ideliminard').val());
+		});
 
 
 		function frmAjaxEliminar(id) {
@@ -435,7 +506,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						});
 						$('#lgmEliminar').modal('toggle');
 						table.ajax.reload();
-
 					} else {
 						swal({
 								title: "Respuesta",
@@ -459,18 +529,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 				}
 			});
-
 		}
-
-
-		$("#example2").on("click",'.btnGenerar', function(){
-			idTable =  $(this).attr("id");
-			var arId = idTable.split('-');
-
-			$('#refasesores').val(arId[0]);
-			$('#meses').val(arId[1]);
-			$('#lgmNuevo').modal();
-		});//fin del boton eliminar
 
 		$("#example").on("click",'.btnEliminar', function(){
 			idTable =  $(this).attr("id");
@@ -486,12 +545,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			idTable =  $(this).attr("id");
 			frmAjaxModificar(idTable);
 			$('#lgmModificar').modal();
-		});//fin del boton modificar
-
-
-		$("#example3").on("click",'.btnVer', function(){
-			idTable =  $(this).attr("id");
-			$(location).attr('href', 'modificar.php?id=' + idTable);
 		});//fin del boton modificar
 
 
@@ -532,7 +585,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 							$('#lgmNuevo').modal('hide');
 							$('#unidadnegocio').val('');
 							table.ajax.reload();
-
 						} else {
 							swal({
 									title: "Respuesta",
@@ -592,7 +644,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 							$('#lgmModificar').modal('hide');
 							table.ajax.reload();
-
 						} else {
 							swal({
 									title: "Respuesta",

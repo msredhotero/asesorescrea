@@ -114,7 +114,12 @@ $tablasAr	= array('rolhogar' => 'tbrolhogar',
 							'tipoproductorama' => 'tbtipoproductorama',
 							'tipoproducto' => 'tbtipoproducto',
 							'aseguradora' => 'tbaseguradora',
-							'mensajes' => 'dbmensajes'
+							'mensajes' => 'dbmensajes',
+							'cuestionarios' => 'dbcuestionarios',
+							'tiporespuesta' => 'tbtiporespuesta',
+							'preguntascuestionario' => 'dbpreguntascuestionario',
+							'respuestascuestionario' => 'dbrespuestascuestionario',
+							'dbcuestionariodetalle' => 'dbcuestionariodetalle'
 							);
 
 
@@ -199,7 +204,12 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'tipoproductorama' => 'tbtipoproductorama',
 								'tipoproducto' => 'tbtipoproducto',
 								'aseguradora' => 'tbaseguradora',
-								'mensajes' => 'dbmensajes'
+								'mensajes' => 'dbmensajes',
+								'cuestionarios' => 'dbcuestionarios',
+								'tiporespuesta' => 'tbtiporespuesta',
+								'preguntascuestionario' => 'dbpreguntascuestionario',
+								'respuestascuestionario' => 'dbrespuestascuestionario',
+								'dbcuestionariodetalle' => 'dbcuestionariodetalle'
 							);
 
 	$tablasArAux	= array('rolhogar' => 1,
@@ -281,7 +291,12 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'tipoproductorama' => 1,
 								'tipoproducto' => 1,
 								'aseguradora' => 1,
-								'mensajes' => 1
+								'mensajes' => 1,
+								'cuestionarios' => 1,
+								'tiporespuesta' => 1,
+								'preguntascuestionario' => 2,
+								'respuestascuestionario' => 1,
+								'dbcuestionariodetalle' => 2
 							);
 
 	$inner= '';

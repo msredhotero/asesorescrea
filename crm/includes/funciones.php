@@ -1293,6 +1293,12 @@ class Servicios {
 		$res 	=	$this->query($sql,0);
 
 		switch ($tabla) {
+			case 'dbrespuestascuestionario':
+				$ocultar = array("refpreguntascuestionario","fechamodi","depende",'valor','tiempo','usuariocrea','usuariomodi');
+			break;
+			case 'dbpreguntascuestionario':
+				$ocultar = array("fechacrea","fechamodi","depende",'valor','tiempo','usuariocrea','usuariomodi');
+			break;
 			case 'dbventas':
 				$ocultar = array("fechacrea","fechamodi","refestadoventa",'usuariocrea','usuariomodi');
 			break;
