@@ -8837,7 +8837,9 @@ class ServiciosReferencias {
 		inner join tbescolaridades esc ON esc.idescolaridad = p.refescolaridades
 		inner join tbestadocivil est ON est.idestadocivil = p.refestadocivil
 		inner join tbestadopostulantes ep ON ep.idestadopostulante = p.refestadopostulantes
-		order by 1";
+		order by p.apellidopaterno,
+      p.apellidomaterno,
+      p.nombre";
 		$res = $this->query($sql,0);
 		return $res;
 	}
