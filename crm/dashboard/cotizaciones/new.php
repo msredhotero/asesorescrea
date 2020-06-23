@@ -1518,6 +1518,21 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 							//guardarCotizacion(1);
 						}
 
+						if (currentIndex == 4) {
+							$('.contSubirArchivos2').hide();
+							$('.contSubirArchivos1').show();
+						}
+
+						if (currentIndex == 5) {
+							$('.contSubirArchivos1').hide();
+							$('.contSubirArchivos2').show();
+						}
+
+						if (currentIndex < 4) {
+							$('.contSubirArchivos1').hide();
+							$('.contSubirArchivos2').hide();
+						}
+
 
 					<?php } else { ?>
 						if (currentIndex == 2) {
