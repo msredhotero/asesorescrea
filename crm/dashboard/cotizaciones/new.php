@@ -95,11 +95,30 @@ if (isset($_GET['id'])) {
 	$documentacionesrequeridas = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
 	$documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
 	$documentacionesrequeridas3 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
+	$documentacionesrequeridas4 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
 
 	if (isset($_GET['iddocumentacion'])) {
 		$iddocumentacion = $_GET['iddocumentacion'];
 	} else {
 		$iddocumentacion = mysql_result($documentacionesrequeridas3,0,'iddocumentacion');
+	}
+
+	$iDoc = 0;
+	$verifarCargaPrincipal = 0;
+	$conCargados = 0;
+
+	while ($rowDD = mysql_fetch_array($documentacionesrequeridas4)) {
+		if ($rowDD['obligatoria'] == '1') {
+			$iDoc += 1;
+		}
+
+		if (($rowDD['archivo'] != '') && ($rowDD['obligatoria'] == '1')) {
+			$conCargados += 1;
+		}
+	}
+
+	if ($conCargados >= $iDoc) {
+		$verifarCargaPrincipal = 1;
 	}
 
 
@@ -109,11 +128,12 @@ if (isset($_GET['id'])) {
 	$documentacionesadicionales2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
 	$documentacionesadicionales3 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
 
-	if (isset($_GET['iddocumentacion'])) {
-		$iddocumentacion2 = $_GET['iddocumentacion'];
+	if (isset($_GET['iddocumentaciona'])) {
+		$iddocumentacion2 = $_GET['iddocumentaciona'];
 	} else {
 		$iddocumentacion2 = mysql_result($documentacionesadicionales3,0,'iddocumentacion');
 	}
+	//die(var_dump($iddocumentacion2));
 
 
 	switch (mysql_result($resultado,0,'cobertura')) {
@@ -221,6 +241,63 @@ if (isset($_GET['id'])) {
 
 		$idestadodocumentacion = 1;
 	}
+
+
+
+	////////////////////  2   ///////////////////////////
+	$resDocumentacionAsesor2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacion($id, $iddocumentacion2);
+
+	$resDocumentacion2 = $serviciosReferencias->traerDocumentacionesPorId($iddocumentacion2);
+
+	$resEstados2 = $serviciosReferencias->traerEstadodocumentaciones();
+
+	if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
+		$cadRefEstados2 = $serviciosFunciones->devolverSelectBoxActivo($resEstados2,array(1),'', mysql_result($resDocumentacionAsesor2,0,'refestadodocumentaciones'));
+
+		$iddocumentacionasociado2 = mysql_result($resDocumentacionAsesor2,0,'iddocumentacioncotizacion');
+
+		$estadoDocumentacion2 = mysql_result($resDocumentacionAsesor2,0,'estadodocumentacion');
+
+		$color2 = mysql_result($resDocumentacionAsesor2,0,'color');
+
+		$span2 = '';
+		switch (mysql_result($resDocumentacionAsesor2,0,'estadodocumentacion')) {
+			case 1:
+				$span2 = 'text-info glyphicon glyphicon-plus-sign';
+			break;
+			case 2:
+				$span2 = 'text-danger glyphicon glyphicon-remove-sign';
+			break;
+			case 3:
+				$span2 = 'text-danger glyphicon glyphicon-remove-sign';
+			break;
+			case 4:
+				$span2 = 'text-danger glyphicon glyphicon-remove-sign';
+			break;
+			case 5:
+				$span2 = 'text-success glyphicon glyphicon-remove-sign';
+			break;
+		}
+
+		$idestadodocumentacion2 = mysql_result($resDocumentacionAsesor2,0,'refestadodocumentaciones');
+	} else {
+		$cadRefEstados2 = $serviciosFunciones->devolverSelectBox($resEstados2,array(1),'');
+
+		$iddocumentacionasociado2 = 0;
+
+		$estadoDocumentacion2 = 'Falta Cargar';
+
+		$color2 = 'blue';
+
+		$span2 = 'text-info glyphicon glyphicon-plus-sign';
+
+		$idestadodocumentacion2 = 1;
+	}
+
+
+
+
+	//////////////////////////////////////////////
 
 	switch ($iddocumentacion) {
 		case 35:
@@ -820,34 +897,34 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 															</div>
 															<div class="body">
 																<div class="row">
-																	<button type="button" class="btn bg-red waves-effect btnEliminar">
+																	<button type="button" class="btn bg-red waves-effect btnEliminar2">
 																		<i class="material-icons">remove</i>
 																		<span>ELIMINAR</span>
 																	</button>
 																</div>
 																<div class="row">
-																	<a href="javascript:void(0);" class="thumbnail timagen1">
+																	<a href="javascript:void(0);" class="thumbnail timagen12">
 																		<img class="img-responsive">
 																	</a>
-																	<div id="example1"></div>
+																	<div id="example12"></div>
 																</div>
 																<div class="row">
-																	<div class="alert bg-<?php echo $color; ?>">
+																	<div class="alert bg-<?php echo $color2; ?>">
 																		<h4>
-																			Estado: <b><?php echo $estadoDocumentacion; ?></b>
+																			Estado: <b><?php echo $estadoDocumentacion2; ?></b>
 																		</h4>
 																	</div>
 																	<div class="col-xs-6 col-md-6" style="display:block">
 																		<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
 																		<div class="input-group col-md-12">
-																			<select class="form-control show-tick" id="refestados" name="refestados">
-																				<?php echo $cadRefEstados; ?>
+																			<select class="form-control show-tick" id="refestados2" name="refestados2">
+																				<?php echo $cadRefEstados2; ?>
 																			</select>
 																		</div>
 																		<?php
 																		if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11)) {
 																		?>
-																		<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
+																		<button type="button" class="btn btn-primary guardarEstado2" style="margin-left:0px;">Guardar Estado</button>
 																	<?php } ?>
 																	</div>
 
@@ -902,6 +979,37 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 							</div>
 						</div>
 					</div>
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 contSubirArchivos2">
+						<div class="card">
+							<div class="header bg-blue">
+								<h2>
+									CARGA/MODIFIQUE LA DOCUMENTACIÓN <?php echo mysql_result($resDocumentacion2,0,'documentacion'); ?> AQUI
+								</h2>
+								<ul class="header-dropdown m-r--5">
+									<li class="dropdown">
+										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+											<i class="material-icons">more_vert</i>
+										</a>
+									</li>
+								</ul>
+							</div>
+							<div class="body">
+								<form action="subir.php" id="frmFileUpload2" class="dropzone" method="post" enctype="multipart/form-data">
+									<div class="dz-message">
+										<div class="drag-icon-cph">
+											<i class="material-icons">touch_app</i>
+										</div>
+										<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+									</div>
+									<div class="fallback">
+										<input name="file" type="file" id="archivos2" />
+										<input type="hidden" id="idasociado2" name="idasociado" value="<?php echo $id; ?>" />
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+
             </div>
 		</div>
 	</div>
@@ -1409,13 +1517,63 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 							validarCuestionario($('#refproductos').val());
 							//guardarCotizacion(1);
 						}
+
+
 					<?php } else { ?>
 						if (currentIndex == 2) {
 							validarCuestionario($('#refproductos').val());
 							//guardarCotizacion(1);
 						}
+
+						if (currentIndex == 3) {
+							$('.contSubirArchivos2').hide();
+							$('.contSubirArchivos1').show();
+						}
+
+						if (currentIndex == 4) {
+							$('.contSubirArchivos1').hide();
+							$('.contSubirArchivos2').show();
+						}
+
+						if (currentIndex < 3) {
+							$('.contSubirArchivos1').hide();
+							$('.contSubirArchivos2').hide();
+						}
 					<?php } ?>
+					<?php } else { ?>
+						<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
+							if (currentIndex == 4) {
+								$('.contSubirArchivos2').hide();
+								$('.contSubirArchivos1').show();
+							}
+
+							if (currentIndex == 5) {
+								$('.contSubirArchivos1').hide();
+								$('.contSubirArchivos2').show();
+							}
+
+							if (currentIndex < 4) {
+								$('.contSubirArchivos1').hide();
+								$('.contSubirArchivos2').hide();
+							}
+						<?php } else { ?>
+							if (currentIndex == 2) {
+								$('.contSubirArchivos2').hide();
+								$('.contSubirArchivos1').show();
+							}
+
+							if (currentIndex == 3) {
+								$('.contSubirArchivos1').hide();
+								$('.contSubirArchivos2').show();
+							}
+
+							if (currentIndex < 2) {
+								$('.contSubirArchivos1').hide();
+								$('.contSubirArchivos2').hide();
+							}
+						<?php } ?>
 					<?php } ?>
+
 
 
 	        },
@@ -1429,20 +1587,26 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	        }
 	    });
 
+		var esconde1 = 0;
+		var esconde2 = 0;
+
 		<?php if (isset($_GET['id'])) { ?>
 			<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
 				form.steps("next");
 				form.steps("next");
 				form.steps("next");
 				form.steps("next");
-					<?php if ($i == $cargados) { ?>
+					<?php if (($i == $cargados) && (!(isset($_GET['iddocumentacion'])))) { ?>
+
 						form.steps("next");
+						//esconde2 = 1;
 					<?php } ?>
 			<?php } else { ?>
 				form.steps("next");
 				form.steps("next");
-					<?php if ($i == $cargados) { ?>
+					<?php if (($i == $cargados) && (!(isset($_GET['iddocumentacion'])))) { ?>
 						form.steps("next");
+						//esconde2 = 1;
 					<?php } ?>
 			<?php } ?>
 		<?php } ?>
@@ -1491,7 +1655,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 		?>
 
 		$('#wizard_with_validation .btnA<?php echo str_replace(' ','',$rowD['documentacion']); ?>').click(function() {
-			url = "new.php?id=<?php echo $id; ?>&iddocumentacion=<?php echo $rowD['iddocumentacion']; ?>";
+			url = "new.php?id=<?php echo $id; ?>&iddocumentaciona=<?php echo $rowD['iddocumentacion']; ?>";
 			$(location).attr('href',url);
 		});
 		<?php
@@ -2279,8 +2443,154 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 
 
+		/////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+		$('.guardarEstado2').click(function() {
+			modificarEstadoDocumentacionCotizaciones2($('#refestados2').val());
+		});
+
+		function modificarEstadoDocumentacionCotizaciones2(idestado) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificarEstadoDocumentacionCotizaciones',
+					iddocumentacioncotizacion: <?php echo $iddocumentacionasociado2; ?>,
+					idestado: idestado
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.guardarEstado2').hide();
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error == false) {
+						swal("Ok!", 'Se modifico correctamente el estado de la documentación <?php echo $campo; ?>', "success");
+						$('.guardarEstado2').show();
+						//location.reload();
+					} else {
+						swal("Error!", data.leyenda, "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
+
+		function traerImagen2(contenedorpdf, contenedor) {
+			$.ajax({
+				data:  {idcotizacion: <?php echo $id; ?>,
+						iddocumentacion: <?php echo $iddocumentacion2; ?>,
+						accion: 'traerDocumentacionPorCotizacionDocumentacion'},
+				url:   '../../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+					$("." + contenedor + " img").attr("src",'');
+				},
+				success:  function (response) {
+					var cadena = response.datos.type.toLowerCase();
+
+					if (response.datos.type != '') {
+						if (cadena.indexOf("pdf") > -1) {
+							PDFObject.embed(response.datos.imagen, "#"+contenedorpdf);
+							$('#'+contenedorpdf).show();
+							$("."+contenedor).hide();
+
+						} else {
+							$("." + contenedor + " img").attr("src",response.datos.imagen);
+							$("."+contenedor).show();
+							$('#'+contenedorpdf).hide();
+						}
+					}
+
+					if (response.error) {
+
+						$('.btnEliminar').hide();
+						$('.guardarEstado').hide();
+					} else {
+
+						$('.btnEliminar').show();
+						$('.guardarEstado').show();
+					}
+
+
+
+				}
+			});
+		}
+
+		traerImagen2('example12','timagen12');
+
+		<?php if (($idestadodocumentacion2 != 5)) { ?>
+		var myDropzone2 = new Dropzone("#archivos2", {
+			params: {
+				 idasociado: <?php echo $id; ?>,
+				 iddocumentacion: <?php echo $iddocumentacion2; ?>
+			},
+			url: 'subir.php'
+		});
 		<?php } ?>
 
+		Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
+
+		Dropzone.options.frmFileUpload2 = {
+			maxFilesize: 30,
+			acceptedFiles: ".jpg,.jpeg,.pdf",
+			accept: function(file, done) {
+				done();
+			},
+			init: function() {
+				this.on("sending", function(file, xhr, formData){
+					formData.append("idasociado", '<?php echo $id; ?>');
+					formData.append("iddocumentacion", '<?php echo $iddocumentacion2; ?>');
+				});
+				this.on('success', function( file, resp ){
+					traerImagen2('example12','timagen12');
+					$('.lblPlanilla').hide();
+					swal("Correcto!", resp.replace("1", ""), "success");
+					$('.btnGuardar').show();
+					$('.infoPlanilla').hide();
+					$('#<?php echo $iddocumentacion2; ?>').addClass('bg-blue');
+					$('#<?php echo $iddocumentacion2; ?> .number').html('Cargada');
+
+					location.reload();
+				});
+
+				this.on('error', function( file, resp ){
+					swal("Error!", resp.replace("1", ""), "warning");
+				});
+			}
+		};
+
+
+
+
+
+
+
+		<?php } ?>
+		/*
+		if (esconde2 == 1) {
+			$('.contSubirArchivos2').hide();
+		} else {
+			$('.contSubirArchivos2').show();
+		}
+
+		if (esconde1 == 1) {
+			$('.contSubirArchivos1').hide();
+		} else {
+			$('.contSubirArchivos1').show();
+		}
+		*/
 
 	});
 </script>
