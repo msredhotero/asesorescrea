@@ -162,7 +162,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								<?php echo strtoupper($plural); ?>
+								<a href='index.php' style='color:white;'><?php echo strtoupper($plural); ?></a>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
