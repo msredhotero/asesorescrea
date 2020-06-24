@@ -29,6 +29,7 @@ $serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../asociados
 
 $fecha = date('Y-m-d');
 
+
 /*
 $destinatario = 'rlinares@asesorescrea.com';
 $asunto = 'Se genero un Asociado Temporal';

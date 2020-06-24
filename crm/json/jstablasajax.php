@@ -68,6 +68,26 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 
 switch ($tabla) {
 
+	case 'tipodocumentaciones':
+
+		$datos = $serviciosReferencias->traerTipodocumentacionesajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		//die(var_dump($datos));
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+
+		$label = array('btnModificar');
+		$class = array('bg-amber');
+		$icon = array('edit');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 1;
+	break;
+
 	case 'notificaciones':
 
 		$datos = $serviciosReferencias->traerNotificacionesGridajax($length, $start, $busqueda,$colSort,$colSortDir);

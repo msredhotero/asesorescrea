@@ -100,7 +100,12 @@ if (isset($_GET['id'])) {
 	if (isset($_GET['iddocumentacion'])) {
 		$iddocumentacion = $_GET['iddocumentacion'];
 	} else {
-		$iddocumentacion = mysql_result($documentacionesrequeridas3,0,'iddocumentacion');
+		if (mysql_num_rows($documentacionesrequeridas3)>0) {
+			$iddocumentacion = mysql_result($documentacionesrequeridas3,0,'iddocumentacion');
+		} else {
+			$iddocumentacion = 0;
+		}
+
 	}
 
 	$iDoc = 0;
@@ -329,6 +334,18 @@ if (isset($_GET['id'])) {
 		break;
 	}
 
+	if (mysql_num_rows($resDocumentacion)>0) {
+		$documentacionNombre = mysql_result($resDocumentacion,0,'documentacion');
+	} else {
+		$documentacionNombre = '';
+	}
+
+	if (mysql_num_rows($resDocumentacion2)>0) {
+		$documentacionNombre2 = mysql_result($resDocumentacion2,0,'documentacion');
+	} else {
+		$documentacionNombre2 = '';
+	}
+
 } else {
 
 	$id = 0;
@@ -365,6 +382,13 @@ if (isset($_GET['id'])) {
 	$documentacionesadicionales = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion(0,3);
 
 	$documentacionesadicionales2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion(0,3);
+
+
+	$documentacionNombre = '';
+
+	$documentacionNombre2 = '';
+
+
 }
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
@@ -418,6 +442,9 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 $resAseguradoras = $serviciosReferencias->traerAseguradora();
 $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),'');
+
+
+
 
 
 ?>
@@ -682,7 +709,11 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 										<h3>Galeria Producto</h3>
                               <fieldset>
-											<p>Archivos que debera cargar para continuar</p>
+											<?php if ($documentacionNombre != '') { ?>
+												<p>Archivos que debera cargar para continuar</p>
+											<?php } else { ?>
+												<p>No existen archivos solicitados para cargar</p>
+											<?php } ?>
 											<div class="col-xs-4">
 											<?php
 												$i = 0;
@@ -949,11 +980,12 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
                      </div>
 
                </div>
+					<?php if ($documentacionNombre != '') { ?>
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 contSubirArchivos1">
 						<div class="card">
 							<div class="header bg-blue">
 								<h2>
-									CARGA/MODIFIQUE LA DOCUMENTACIÓN <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?> AQUI
+									CARGA/MODIFIQUE LA DOCUMENTACIÓN <?php echo $documentacionNombre; ?> AQUI
 								</h2>
 								<ul class="header-dropdown m-r--5">
 									<li class="dropdown">
@@ -979,11 +1011,13 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 							</div>
 						</div>
 					</div>
+				<?php } ?>
+				<?php if ($documentacionNombre2 != '') { ?>
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 contSubirArchivos2">
 						<div class="card">
 							<div class="header bg-blue">
 								<h2>
-									CARGA/MODIFIQUE LA DOCUMENTACIÓN <?php echo mysql_result($resDocumentacion2,0,'documentacion'); ?> AQUI
+									CARGA/MODIFIQUE LA DOCUMENTACIÓN <?php echo $documentacionNombre2; ?> AQUI
 								</h2>
 								<ul class="header-dropdown m-r--5">
 									<li class="dropdown">
@@ -1009,6 +1043,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 							</div>
 						</div>
 					</div>
+				<?php } ?>
 
             </div>
 		</div>
@@ -1228,13 +1263,13 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 		}
 
-		function cuestionario(idproducto) {
+		function cuestionario(idproducto,idcotizacion) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {accion: 'cuestionario', id: idproducto},
+				data: {accion: 'cuestionario', id: idproducto,idcotizacion:idcotizacion},
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('.contCuestionario').html('');
@@ -1355,7 +1390,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 					if (data != '') {
 						$('#refproductos').html(data);
-						cuestionario($('#refproductos').val());
+						cuestionario($('#refproductos').val(),<?php echo $id; ?>);
 					} else {
 						swal({
 								title: "Respuesta",
@@ -1438,6 +1473,17 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 			}
 		});
 
+		$("#wizard_with_validation").on("change",'.with-gap', function(){
+			if (($(this).val() == 1) || ($(this).val() == 2)) {
+
+				$("#refasociados").prop('required',true);
+
+			} else {
+				$("#refasociados").prop('required',false);
+
+			}
+		});
+
 
 		$("#wizard_with_validation").on("change",'#tiponegocio', function(){
 			if (($(this)[0].selectedIndex == 1) || ($(this)[0].selectedIndex == 2)) {
@@ -1464,7 +1510,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 		});
 
 		$("#wizard_with_validation").on("change",'#refproductos', function(){
-			cuestionario($(this).val());
+			cuestionario($(this).val(),<?php echo $id; ?>);
 
 		});
 
@@ -1606,6 +1652,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 		var esconde2 = 0;
 
 		<?php if (isset($_GET['id'])) { ?>
+			cuestionario($('#refproductos').val(),<?php echo $id; ?>);
 			<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
 				form.steps("next");
 				form.steps("next");
@@ -2445,6 +2492,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 		};
 
 
+		<?php if ($documentacionNombre != '') { ?>
 		<?php if (($idestadodocumentacion != 5)) { ?>
 		var myDropzone = new Dropzone("#archivos", {
 			params: {
@@ -2453,6 +2501,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 			},
 			url: 'subir.php'
 		});
+		<?php } ?>
 		<?php } ?>
 
 

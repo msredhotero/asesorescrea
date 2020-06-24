@@ -55,8 +55,8 @@ $modificar = "modificarProductos";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "tbproductos";
 
-$lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado','refcuestionarios');
-$lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado','Cuestionario');
+$lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado','refcuestionarios','puntosporventarenovado','puntosporpesopagadorenovado');
+$lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado','Cuestionario','Punto x Venta Renovacion','Puntos x Peso Pagado Renovacion');
 
 $resVar1 = $serviciosReferencias->traerTipoproductorama();
 $cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(2),'');
@@ -327,6 +327,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 		$('#puntosporventa').number( true, 2,'.','' );
 		$('#puntosporpesopagado').number( true, 2,'.','' );
+		$('#puntosporventarenovado').number( true, 2,'.','' );
+		$('#puntosporpesopagadorenovado').number( true, 2,'.','' );
 
 		$('.maximizar').click(function() {
 			if ($('.icomarcos').text() == 'web') {
@@ -395,6 +397,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						$('.frmAjaxModificar').html(data);
 						$('.frmAjaxModificar #puntosporventa').number( true, 2,'.','' );
 						$('.frmAjaxModificar #puntosporpesopagado').number( true, 2,'.','' );
+						$('.frmAjaxModificar #puntosporventarenovado').number( true, 2,'.','' );
+						$('.frmAjaxModificar #puntosporpesopagadorenovado').number( true, 2,'.','' );
 					} else {
 						swal("Error!", data, "warning");
 

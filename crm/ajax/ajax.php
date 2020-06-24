@@ -1024,7 +1024,7 @@ function validarCuestionario($serviciosReferencias) {
    if ($idcuestionario == null) {
       $ar = array('cuestionario'=>'','rules'=>'');
    } else {
-      $res = $serviciosReferencias->Cuestionario($idcuestionario);
+      $res = $serviciosReferencias->Cuestionario($idcuestionario,0);
 
       $ar = array('cuestionario'=>$res['cuestionario'],'rules'=>$res['rules']);
    }
@@ -1037,6 +1037,7 @@ function validarCuestionario($serviciosReferencias) {
    $errorGeneral = 0;
    $tipo = '';
    $pregunta = '';
+   $existio4 = 0;
 
    /*
    refpreguntascuestionario
@@ -1098,21 +1099,23 @@ function validarCuestionario($serviciosReferencias) {
       }
 
       if ($valor['tipo'] == 4) {
+         $existio4 = 1;
          if ($idpregunta != $valor['idpregunta']) {
             $idpregunta = $valor['idpregunta'];
 
-            if (($bandera == 0) && ($evaluoVerdadero == 0)) {
+
+            if (($bandera == 1) && ($evaluoVerdadero == 1)) {
                $errorGeneral = 1;
                array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
                $resV['error'] = true;
+
+               $evaluoVerdadero = 1;
+
             }
 
 
-            if ( (isset($_POST[$valor['respuesta']])) && $evaluoVerdadero == 1) {
-               $evaluoVerdadero = 0;
-            }
+            $bandera = 0;
 
-            $bandera = 1;
          }
          if ((isset($_POST[$valor['respuesta']]))) {
             $evaluoVerdadero = 0;
@@ -1128,12 +1131,14 @@ function validarCuestionario($serviciosReferencias) {
          }
 
 
-         $bandera = 0;
+         $bandera = 1;
       }
 
    }
 
-   if (($bandera == 0) && ($evaluoVerdadero == 1)) {
+   //die(var_dump($arRespuestas));
+
+   if (($bandera == 1) && ($evaluoVerdadero == 1) && ($existio4 == 1)) {
       $errorGeneral = 1;
       array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
       $resV['error'] = true;
@@ -1217,6 +1222,7 @@ function validarCuestionario($serviciosReferencias) {
 
 function cuestionario($serviciosReferencias) {
    $id = $_POST['id'];
+   $idcotizacion = $_POST['idcotizacion'];
 
    $resP = $serviciosReferencias->traerProductosPorId($id);
    $idcuestionario = mysql_result($resP,0,'refcuestionarios');
@@ -1226,7 +1232,7 @@ function cuestionario($serviciosReferencias) {
    if ($idcuestionario == null) {
       $ar = array('cuestionario'=>'','rules'=>'');
    } else {
-      $res = $serviciosReferencias->Cuestionario($idcuestionario);
+      $res = $serviciosReferencias->Cuestionario($idcuestionario,$idcotizacion);
 
       $ar = array('cuestionario'=>$res['cuestionario'],'rules'=>$res['rules']);
    }
@@ -1514,7 +1520,10 @@ function insertarProductos($serviciosReferencias) {
    $activo = $_POST['activo'];
    $refcuestionarios = ( $_POST['refcuestionarios'] == '' ? 0 : $_POST['refcuestionarios']);
 
-   $res = $serviciosReferencias->insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios);
+   $puntosporventarenovado = ($_POST['puntosporventarenovado'] == '' ? 0 : $_POST['puntosporventarenovado']);
+   $puntosporpesopagadorenovado = ($_POST['puntosporpesopagadorenovado'] == '' ? 0 : $_POST['puntosporpesopagadorenovado']);
+
+   $res = $serviciosReferencias->insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado);
 
    if ((integer)$res > 0) {
       echo '';
@@ -1534,7 +1543,10 @@ function modificarProductos($serviciosReferencias) {
    $activo = $_POST['activo'];
    $refcuestionarios = ( $_POST['refcuestionarios'] == '' ? 0 : $_POST['refcuestionarios']);
 
-   $res = $serviciosReferencias->modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios);
+   $puntosporventarenovado = ($_POST['puntosporventarenovado'] == '' ? 0 : $_POST['puntosporventarenovado']);
+   $puntosporpesopagadorenovado = ($_POST['puntosporpesopagadorenovado'] == '' ? 0 : $_POST['puntosporpesopagadorenovado']);
+
+   $res = $serviciosReferencias->modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado);
 
    if ($res == true) {
       echo '';
@@ -4459,6 +4471,20 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+      case 'tbtipodocumentaciones':
+         $resultado = $serviciosReferencias->traerTipodocumentacionesPorId($id);
+
+         $modificar = "modificarTipodocumentaciones";
+         $idTabla = "idtipodocumentacion";
+
+         $lblCambio	 	= array('tipodocumentacion');
+         $lblreemplazo	= array('Tipo Documentacion');
+
+
+
+         $refdescripcion = array();
+         $refCampo 	=  array();
+      break;
       case 'dbrespuestascuestionario':
          $resultado = $serviciosReferencias->traerRespuestascuestionarioPorId($id);
 
@@ -4530,8 +4556,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $modificar = "modificarProductos";
          $idTabla = "idproducto";
 
-         $lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado','refcuestionarios');
-         $lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Puntos x Ventas','Puntos x Peso Pagado','Cuestionario');
+         $lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado','refcuestionarios','puntosporventarenovado','puntosporpesopagadorenovado');
+         $lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado','Cuestionario','Punto x Venta Renovacion','Puntos x Peso Pagado Renovacion');
 
          $resVar1 = $serviciosReferencias->traerTipoproductorama();
          $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(2),'',mysql_result($resultado,0,'reftipoproductorama'));

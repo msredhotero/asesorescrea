@@ -10,9 +10,10 @@ date_default_timezone_set('America/Mexico_City');
 class ServiciosReferencias {
 
 
-   function Cuestionario($idcuestionario) {
+   function Cuestionario($idcuestionario,$idcotizacion) {
       //die(var_dump($idcuestionario));
-      $resultado = $this->traerCuestionariosPorIdCompleto($idcuestionario);
+
+      $resultado = $this->traerCuestionariosPorIdCompletoR($idcuestionario,$idcotizacion);
       $cad = '';
       $cad .= '<div class="row" style="padding: 5px 20px;">';
 
@@ -56,7 +57,7 @@ class ServiciosReferencias {
             <label class="form-label">Ingrese su respuesta</label>
             <div class="form-group input-group">
                <div class="form-line">
-                  <input type="text" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false">
+                  <input type="text" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
 
                </div>
             </div>
@@ -72,7 +73,7 @@ class ServiciosReferencias {
 
             <div class="form-group input-group">
                <div class="demo-radio-button">
-                  <input type="radio" id="radio_'.$iRadio.'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.$row['idrespuestacuestionario'].'">
+                  <input type="radio" id="radio_'.$iRadio.'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.$row['idrespuestacuestionario'].'" '.($row['respuestacargada'] == '1' ? 'checked' : '').'>
                   <label for="radio_'.$iRadio.'">'.$row['respuesta'].'</label>
                </div>
             </div>
@@ -90,7 +91,7 @@ class ServiciosReferencias {
 
             <div class="form-group input-group">
                <div class="demo-radio-button">
-                  <input type="radio" id="radio_multi_'.$iCheck.'" name="respuestamulti'.$row['idpreguntacuestionario'].'" value="'.$row['idrespuestacuestionario'].'">
+                  <input type="radio" id="radio_multi_'.$iCheck.'" name="respuestamulti'.$row['idpreguntacuestionario'].'" value="'.$row['idrespuestacuestionario'].'" '.($row['respuestacargada'] == '1' ? 'checked' : '').'>
                   <label for="radio_multi_'.$iCheck.'">'.$row['respuesta'].'</label>
                </div>
             </div>
@@ -108,7 +109,7 @@ class ServiciosReferencias {
 
             <div class="form-group input-group">
                   <div class="demo-radio-button">
-                     <input type="checkbox" class="filled-in respuestavarias'.$row['idpreguntacuestionario'].'" id="basic_checkbox_'.$row['idrespuestacuestionario'].'" name="respuestamulti'.$row['idrespuestacuestionario'].'" >
+                     <input type="checkbox" class="filled-in respuestavarias'.$row['idpreguntacuestionario'].'" id="basic_checkbox_'.$row['idrespuestacuestionario'].'" name="respuestamulti'.$row['idrespuestacuestionario'].'" '.($row['respuestacargada'] == '1' ? 'checked' : '').'>
                      <label for="basic_checkbox_'.$row['idrespuestacuestionario'].'">'.$row['respuesta'].'</label>
                   </div>
                </div>
@@ -573,6 +574,30 @@ class ServiciosReferencias {
          inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario
          inner join tbtiporespuesta tr ON tr.idtiporespuesta = pre.reftiporespuesta
          inner join dbrespuestascuestionario rc ON rc.refpreguntascuestionario = pre.idpreguntacuestionario
+         where c.idcuestionario =".$id." order by pre.orden,rc.orden ";
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+   function traerCuestionariosPorIdCompletoR($id, $idcotizacion) {
+   $sql = "select
+            c.idcuestionario,
+            c.cuestionario,
+            (case when c.activo = '1' then 'Si' else 'No' end) as activo,
+            pre.pregunta,
+            (case when pre.activo = '1' then 'Si' else 'No' end) as activopregunta,
+            (case when rc.activo = '1' then 'Si' else 'No' end) as activorespuesta,
+            tr.idtiporespuesta,
+            tr.tiporespuesta,
+            rc.respuesta,
+            rc.idrespuestacuestionario,
+            pre.idpreguntacuestionario,
+            (case when cd.idcuestionariodetalle is null then '0' else (case when tr.idtiporespuesta = 1 then cd.respuestavalor else '1'end) end ) as respuestacargada
+         from dbcuestionarios c
+         inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario
+         inner join tbtiporespuesta tr ON tr.idtiporespuesta = pre.reftiporespuesta
+         inner join dbrespuestascuestionario rc ON rc.refpreguntascuestionario = pre.idpreguntacuestionario
+         left join dbcuestionariodetalle cd on cd.refpreguntascuestionario = pre.idpreguntacuestionario and cd.refrespuestascuestionario = rc.idrespuestacuestionario and cd.idreferencia = ".$idcotizacion."
          where c.idcuestionario =".$id." order by pre.orden,rc.orden ";
    $res = $this->query($sql,0);
    return $res;
@@ -4258,18 +4283,18 @@ class ServiciosReferencias {
 
 
 
-   function insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios) {
-      $sql = "insert into tbproductos(idproducto,producto,prima,reftipoproductorama,reftipodocumentaciones,activo,puntosporventa,puntosporpesopagado,refcuestionarios)
-      values ('','".$producto."','".$prima."',".$reftipoproductorama.",".$reftipodocumentaciones.",'".$activo."',".$puntosporventa.",".$puntosporpesopagado.",".$refcuestionarios.")";
+   function insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado) {
+      $sql = "insert into tbproductos(idproducto,producto,prima,reftipoproductorama,reftipodocumentaciones,activo,puntosporventa,puntosporpesopagado,refcuestionarios,puntosporventarenovado,puntosporpesopagadorenovado)
+      values ('','".$producto."','".$prima."',".$reftipoproductorama.",".$reftipodocumentaciones.",'".$activo."',".$puntosporventa.",".$puntosporpesopagado.",".$refcuestionarios.",".$puntosporventarenovado.",".$puntosporpesopagadorenovado.")";
       $res = $this->query($sql,1);
       return $res;
    }
 
 
-   function modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios) {
+   function modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado) {
       $sql = "update tbproductos
       set
-      producto = '".$producto."',prima = '".$prima."',reftipoproductorama = ".$reftipoproductorama.",reftipodocumentaciones = ".$reftipodocumentaciones.",activo = '".$activo."',puntosporventa = ".$puntosporventa.",puntosporpesopagado = ".$puntosporpesopagado.",refcuestionarios = ".$refcuestionarios."
+      producto = '".$producto."',prima = '".$prima."',reftipoproductorama = ".$reftipoproductorama.",reftipodocumentaciones = ".$reftipodocumentaciones.",activo = '".$activo."',puntosporventa = ".$puntosporventa.",puntosporpesopagado = ".$puntosporpesopagado.",refcuestionarios = ".$refcuestionarios.",puntosporventarenovado = ".$puntosporventarenovado.",puntosporpesopagadorenovado = ".$puntosporpesopagadorenovado."
       where idproducto =".$id;
       $res = $this->query($sql,0);
       return $res;
@@ -4365,7 +4390,7 @@ class ServiciosReferencias {
 
    function traerProductosPorId($id) {
       $sql = "select idproducto,producto,prima,reftipoproductorama,reftipodocumentaciones,activo,
-      puntosporventa,puntosporpesopagado,refcuestionarios
+      puntosporventa,puntosporpesopagado,refcuestionarios,puntosporventarenovado,puntosporpesopagadorenovado
       from tbproductos where idproducto =".$id;
       $res = $this->query($sql,0);
       return $res;
@@ -9612,6 +9637,31 @@ class ServiciosReferencias {
    $sql = "delete from tbtipodocumentaciones where idtipodocumentacion =".$id;
    $res = $this->query($sql,0);
    return $res;
+   }
+
+
+
+   function traerTipodocumentacionesajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+      $where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and ".$roles." t.tipodocumentacion like '%".$busqueda."%')";
+		}
+
+      $sql = "select
+      t.idtipodocumentacion,
+      t.tipodocumentacion
+      from tbtipodocumentaciones t
+      where t.idtipodocumentacion > 4 ".$where."
+      ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+      //die(var_dump($sql));
+
+      $res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
    }
 
 
