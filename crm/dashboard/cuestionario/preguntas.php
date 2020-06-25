@@ -57,8 +57,8 @@ $modificar = "modificarPreguntascuestionario";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbpreguntascuestionario";
 
-$lblCambio	 	= array('refcuestionarios','reftiporespuesta','activo');
-$lblreemplazo	= array('Cuestionario','Tipo Respuesta','Activo');
+$lblCambio	 	= array('refcuestionarios','reftiporespuesta','activo','depende','dependerespuesta');
+$lblreemplazo	= array('Cuestionario','Tipo Respuesta','Activo','Depende','Respuesta');
 
 $resVar1 = $serviciosReferencias->traerCuestionariosPorId($id);
 $cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
@@ -68,8 +68,14 @@ $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),'');
 
 $cadRef3 = "<option value='1' selected>Si</option><option value='0'>No</option>";
 
-$refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3);
-$refCampo 	=  array('refcuestionarios','reftiporespuesta','activo');
+$varCad = '';
+
+$varCad2 = '';
+
+$cadRef6 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+
+$refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$varCad,4=>$varCad2,5=>$cadRef6);
+$refCampo 	=  array('refcuestionarios','reftiporespuesta','activo','depende','dependerespuesta','obligatoria');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -204,6 +210,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Pregunta</th>
 												<th>Orden</th>
 												<th>Activo</th>
+												<th>Obligatoria</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -214,6 +221,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Pregunta</th>
 												<th>Orden</th>
 												<th>Activo</th>
+												<th>Obligatoria</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -351,11 +359,10 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		});//fin del boton modificar
 
 		$('.frmContvalor').hide();
-		$('.frmContdepende').hide();
+		$('.frmContdependerespuesta').hide();
 		$('.frmConttiempo').hide();
 
 		$('#valor').val(0);
-		$('#depende').val(0);
 		$('#tiempo').val(0);
 		$('#orden').val(1);
 
@@ -435,7 +442,80 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 					$("#load").html('');
 				}
 			});
+		}
 
+		$('#depende').change(function() {
+			traerRespuestascuestionarioPorPregunta($(this).val());
+		});
+
+
+		function traerRespuestascuestionarioPorPregunta(id) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'traerRespuestascuestionarioPorPregunta', id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.frmContdependerespuesta').hide();
+					$('#dependerespuesta').html('');
+					$('.frmAjaxModificar #dependerespuesta').html('');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						$('#dependerespuesta').html(data);
+						$('.frmAjaxModificar #dependerespuesta').html(data);
+						$('.frmContdependerespuesta').show();
+					} else {
+						swal("Error!", 'No cargo respuestas', "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
+
+
+
+		traerPreguntascuestionarioPorCuestionario();
+
+
+		function traerPreguntascuestionarioPorCuestionario() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'traerPreguntascuestionarioPorCuestionario', id: <?php echo $id; ?>},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('#depende').html('');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						$('#depende').html(data);
+					} else {
+						swal("Error!", data, "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
 		}
 
 
@@ -494,6 +574,10 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			$('#lgmEliminarDef').modal();
 		});//fin del boton eliminar
 
+		$(".frmAjaxModificar").on("change",'#depende', function(){
+			traerRespuestascuestionarioPorPregunta($(this).val());
+		});
+
 		$('.eliminard').click(function() {
 			frmAjaxEliminarDef($('#ideliminard').val());
 		});
@@ -523,6 +607,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						});
 						$('#lgmEliminar').modal('toggle');
 						table.ajax.reload();
+						traerPreguntascuestionarioPorCuestionario();
 					} else {
 						swal({
 								title: "Respuesta",
@@ -602,6 +687,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 							$('#lgmNuevo').modal('hide');
 							$('#unidadnegocio').val('');
 							table.ajax.reload();
+							traerPreguntascuestionarioPorCuestionario();
 						} else {
 							swal({
 									title: "Respuesta",
@@ -661,6 +747,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 							$('#lgmModificar').modal('hide');
 							table.ajax.reload();
+							traerPreguntascuestionarioPorCuestionario();
 						} else {
 							swal({
 									title: "Respuesta",

@@ -119,7 +119,8 @@ $tablasAr	= array('rolhogar' => 'tbrolhogar',
 							'tiporespuesta' => 'tbtiporespuesta',
 							'preguntascuestionario' => 'dbpreguntascuestionario',
 							'respuestascuestionario' => 'dbrespuestascuestionario',
-							'dbcuestionariodetalle' => 'dbcuestionariodetalle'
+							'cuestionariodetalle' => 'dbcuestionariodetalle',
+							'procesocotizacion' => 'tbprocesocotizacion'
 							);
 
 
@@ -209,7 +210,8 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'tiporespuesta' => 'tbtiporespuesta',
 								'preguntascuestionario' => 'dbpreguntascuestionario',
 								'respuestascuestionario' => 'dbrespuestascuestionario',
-								'dbcuestionariodetalle' => 'dbcuestionariodetalle'
+								'cuestionariodetalle' => 'dbcuestionariodetalle',
+								'procesocotizacion' => 'tbprocesocotizacion'
 							);
 
 	$tablasArAux	= array('rolhogar' => 1,
@@ -296,7 +298,8 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'tiporespuesta' => 1,
 								'preguntascuestionario' => 2,
 								'respuestascuestionario' => 1,
-								'dbcuestionariodetalle' => 2
+								'cuestionariodetalle' => 2,
+								'procesocotizacion' => 1
 							);
 
 	$inner= '';

@@ -29,6 +29,7 @@ $serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cotizacio
 
 $fecha = date('Y-m-d');
 
+
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
 $resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cotizaciones",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
@@ -1279,6 +1280,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 					if (data != '') {
 						$('.contCuestionario').html(data.datos.cuestionario);
+						$('#wizard_with_validation .escondido').hide();
 					} else {
 						swal({
 								title: "Respuesta",
@@ -1458,6 +1460,8 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 				}
 			});
 		}
+
+		$('#wizard_with_validation .escondido').hide();
 
 		$("#wizard_with_validation").on("change",'#existeprimaobjetivo', function(){
 			if ($(this).val() == 1) {

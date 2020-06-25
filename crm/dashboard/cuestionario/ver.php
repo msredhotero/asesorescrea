@@ -183,14 +183,39 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									<?php
 									$pregunta = '';
 									$iRadio = 0;
+									$cantRadio = 0;
 									$iCheck = 0;
 									$iCheckM = 0;
+									$collapse = '';
+									$collapseAux = '';
+									$collapsePregunta = '';
+
+									$primero = 0;
 
 									while ($row = mysql_fetch_array($resultado)) {
+
 										if ($pregunta != $row['pregunta']) {
 											$pregunta = $row['pregunta'];
+											$collapsePregunta = $collapseAux;
+
+											$cantRadio = 0;
+
+											$collapse2 = '';
+											if ($primero == 1) {
+												echo '</div>';
+											}
+
 									?>
-									<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
+
+										<?php
+										if ($row['dependeaux'] > 0) {
+
+											$primero = 1;
+										?>
+										<div class="escondido" id="<?php echo $collapsePregunta; ?>" style="margin-left:25px;color:#888;">
+										<?php } ?>
+
+									<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="display:block">
 										<h4><?php echo $row['pregunta']; ?></h4>
 									</div>
 									<?php
@@ -198,6 +223,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									?>
 									<?php
 									if ($row['idtiporespuesta'] == 1) {
+
 									?>
 									<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
 										<label class="form-label">Ingrese su respuesta</label>
@@ -214,14 +240,29 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 									<?php
 									if ($row['idtiporespuesta'] == 2) {
+
 										$iRadio += 1;
+										$cantRadio += 1;
+
+										if ($row['depende']>0) {
+											$collapse = 'onclick="document.getElementById('."'".'collapse_radio_'.$row['idpreguntacuestionario'].($iRadio + 1)."'".').style.display='."'".'block'."'".';"';
+											$collapse2 = 'onclick="document.getElementById('."'".'collapse_radio_'.$row['idpreguntacuestionario'].($iRadio + 1)."'".').style.display='."'".'none'."'".';"';
+
+											$collapseAux = "collapse_radio_".$row['idpreguntacuestionario'].($iRadio + 1);
+										} else {
+											$collapse = '';
+										}
+
+										if ($cantRadio == 2) {
+											$collapse = $collapse2;
+										}
 									?>
 									<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
 
 										<div class="form-group input-group">
 											<div class="demo-radio-button">
-												<input type="radio" id="radio_<?php echo $iRadio; ?>" name="respuesta" value="<?php echo $row['idrespuestacuestionario']; ?>">
-												<label for="radio_<?php echo $iRadio; ?>"><?php echo $row['respuesta']; ?></label>
+												<input type="radio" id="radio_<?php echo $row['idpreguntacuestionario'].$iRadio; ?>" name="respuesta<?php echo $row['idpreguntacuestionario']; ?>" value="<?php echo $row['idrespuestacuestionario']; ?>" <?php echo $collapse; ?>>
+												<label for="radio_<?php echo $row['idpreguntacuestionario'].$iRadio; ?>"><?php echo $row['respuesta']; ?></label>
 											</div>
 										</div>
 									</div>
@@ -232,12 +273,14 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									<?php
 									if ($row['idtiporespuesta'] == 3) {
 										$iCheck += 1;
+
+
 									?>
 									<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
 
 										<div class="form-group input-group">
 											<div class="demo-radio-button">
-												<input type="radio" id="radio_multi_<?php echo $iCheck; ?>" name="respuestamulti" value="<?php echo $row['idrespuestacuestionario']; ?>">
+												<input type="radio" id="radio_multi_<?php echo $iCheck; ?>" name="respuestamulti" value="<?php echo $row['idrespuestacuestionario']; ?>" >
 												<label for="radio_multi_<?php echo $iCheck; ?>"><?php echo $row['respuesta']; ?></label>
 											</div>
 										</div>
@@ -249,6 +292,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									<?php
 									if ($row['idtiporespuesta'] == 4) {
 										$iCheckM += 1;
+
+
 									?>
 									<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
 
@@ -392,6 +437,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 <script>
 	$(document).ready(function(){
+
+		$('.escondido').hide();
 
 		$("#example").on("click",'.btnPreguntas', function(){
 			idTable =  $(this).attr("id");

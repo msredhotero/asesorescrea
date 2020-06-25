@@ -1297,7 +1297,7 @@ class Servicios {
 				$ocultar = array("refpreguntascuestionario","fechamodi","depende",'valor','tiempo','usuariocrea','usuariomodi');
 			break;
 			case 'dbpreguntascuestionario':
-				$ocultar = array("fechacrea","fechamodi","depende",'valor','tiempo','usuariocrea','usuariomodi');
+				$ocultar = array("fechacrea","fechamodi",'valor','tiempo','usuariocrea','usuariomodi');
 			break;
 			case 'dbventas':
 				$ocultar = array("fechacrea","fechamodi","refestadoventa",'usuariocrea','usuariomodi');
@@ -1327,7 +1327,7 @@ class Servicios {
 				$ocultar = array("usuariomodi","fechacrea","fechamodi","usuariocrea","usuariomodi");
 			break;
 			case 'dbdocumentaciones':
-				$ocultar = array("usuariomodi","fechacrea","fechamodi","usuariocrea","usuariomodi","cantidadarchivos");
+				$ocultar = array("usuariomodi","fechacrea","fechamodi","usuariocrea","usuariomodi","cantidadarchivos",'carpeta');
 			break;
 			default:
 				$ocultar = array();

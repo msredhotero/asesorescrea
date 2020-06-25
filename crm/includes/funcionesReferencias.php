@@ -10,6 +10,57 @@ date_default_timezone_set('America/Mexico_City');
 class ServiciosReferencias {
 
 
+
+/* PARA Procesocotizacion */
+
+function insertarProcesocotizacion($procesocotizacion) {
+$sql = "insert into tbprocesocotizacion(idprocesocotizacion,procesocotizacion)
+values ('','".$procesocotizacion."')";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarProcesocotizacion($id,$procesocotizacion) {
+$sql = "update tbprocesocotizacion
+set
+procesocotizacion = '".$procesocotizacion."'
+where idprocesocotizacion =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarProcesocotizacion($id) {
+$sql = "delete from tbprocesocotizacion where idprocesocotizacion =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerProcesocotizacion() {
+$sql = "select
+p.idprocesocotizacion,
+p.procesocotizacion
+from tbprocesocotizacion p
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerProcesocotizacionPorId($id) {
+$sql = "select idprocesocotizacion,procesocotizacion from tbprocesocotizacion where idprocesocotizacion =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+/* Fin */
+/* /* Fin de la Tabla: tbprocesocotizacion*/
+
+
+
    function Cuestionario($idcuestionario,$idcotizacion) {
       //die(var_dump($idcuestionario));
 
@@ -24,9 +75,31 @@ class ServiciosReferencias {
          $iCheckM = 0;
          $rules = array();
 
+         $collapse = '';
+         $collapseAux = '';
+         $collapsePregunta = '';
+
+         $primero = 0;
+
          while ($row = mysql_fetch_array($resultado)) {
             if ($pregunta != $row['pregunta']) {
                $pregunta = $row['pregunta'];
+
+               $collapsePregunta = $collapseAux;
+
+               $cantRadio = 0;
+
+               $collapse2 = '';
+               if ($primero == 1) {
+                  $cad .= '</div>';
+               }
+
+               if ($row['dependeaux'] > 0) {
+
+                  $primero = 1;
+
+                  $cad .= '<div class="escondido" id="'.$collapsePregunta.'" style="margin-left:25px;color:#888;">';
+               }
 
                $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
                   <h4>'.$row['pregunta'].'</h4>
@@ -38,14 +111,29 @@ class ServiciosReferencias {
                         'pregunta' => $row['pregunta'],
                         'tipo'=>1,
                         'idpregunta' => $row['idpreguntacuestionario'],
-                        'idrespuesta' => $row['idrespuestacuestionario'] ));
+                        'idrespuesta' => $row['idrespuestacuestionario'],
+                        'obligatoria' => $row['obligatoria'],
+                        'depende' => $row['depende'],
+                        'dependerespuesta' => $row['dependerespuesta'],
+                        'dependeaux' => $row['dependeaux'],
+                        'dependerespuestaaux' => $row['dependerespuestaaux'] ));
                }
 
                if ($row['idtiporespuesta'] == 2) {
-                  array_push($rules,array('respuesta'=> 'respuesta'.$row['idpreguntacuestionario'],'pregunta' => $row['pregunta'],'tipo'=>2,'idpregunta'=>$row['idpreguntacuestionario'],'idrespuesta'=>$row['idrespuestacuestionario']));
+                  array_push($rules,array('respuesta'=> 'respuesta'.$row['idpreguntacuestionario'],'pregunta' => $row['pregunta'],'tipo'=>2,'idpregunta'=>$row['idpreguntacuestionario'],'idrespuesta'=>$row['idrespuestacuestionario'],
+                  'obligatoria' => $row['obligatoria'],
+                  'depende' => $row['depende'],
+                  'dependerespuesta' => $row['dependerespuesta'],
+                  'dependeaux' => $row['dependeaux'],
+                  'dependerespuestaaux' => $row['dependerespuestaaux'] ));
                }
                if ($row['idtiporespuesta'] == 3) {
-                  array_push($rules,array('respuesta'=> 'respuestamulti'.$row['idpreguntacuestionario'],'pregunta' => $row['pregunta'],'tipo'=>3,'idpregunta'=>$row['idpreguntacuestionario'],'idrespuesta'=>$row['idrespuestacuestionario']));
+                  array_push($rules,array('respuesta'=> 'respuestamulti'.$row['idpreguntacuestionario'],'pregunta' => $row['pregunta'],'tipo'=>3,'idpregunta'=>$row['idpreguntacuestionario'],'idrespuesta'=>$row['idrespuestacuestionario'],
+                  'obligatoria' => $row['obligatoria'],
+                  'depende' => $row['depende'],
+                  'dependerespuesta' => $row['dependerespuesta'],
+                  'dependeaux' => $row['dependeaux'],
+                  'dependerespuestaaux' => $row['dependerespuestaaux'] ));
                }
 
 
@@ -53,15 +141,27 @@ class ServiciosReferencias {
 
          if ($row['idtiporespuesta'] == 1) {
 
-         $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
-            <label class="form-label">Ingrese su respuesta</label>
-            <div class="form-group input-group">
-               <div class="form-line">
-                  <input type="text" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
+            if ($row['obligatoria'] == '1') {
+               $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+                  <label class="form-label">Ingrese su respuesta</label>
+                  <div class="form-group input-group">
+                     <div class="form-line">
+                        <input type="text" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
 
-               </div>
-            </div>
-         </div>';
+                     </div>
+                  </div>
+               </div>';
+            } else {
+               $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+                  <label class="form-label">Ingrese su respuesta</label>
+                  <div class="form-group input-group">
+                     <div class="form-line">
+                        <input type="text" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
+
+                     </div>
+                  </div>
+               </div>';
+            }
 
          }
 
@@ -69,15 +169,31 @@ class ServiciosReferencias {
          if ($row['idtiporespuesta'] == 2) {
             $iRadio += 1;
 
-         $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+            $cantRadio += 1;
 
-            <div class="form-group input-group">
-               <div class="demo-radio-button">
-                  <input type="radio" id="radio_'.$iRadio.'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.$row['idrespuestacuestionario'].'" '.($row['respuestacargada'] == '1' ? 'checked' : '').'>
-                  <label for="radio_'.$iRadio.'">'.$row['respuesta'].'</label>
+            if ($row['depende']>0) {
+               $collapse = 'onclick="document.getElementById('."'".'collapse_radio_'.$row['idpreguntacuestionario'].($iRadio + 1)."'".').style.display='."'".'block'."'".';"';
+               $collapse2 = 'onclick="document.getElementById('."'".'collapse_radio_'.$row['idpreguntacuestionario'].($iRadio + 1)."'".').style.display='."'".'none'."'".';"';
+
+               $collapseAux = "collapse_radio_".$row['idpreguntacuestionario'].($iRadio + 1);
+            } else {
+               $collapse = '';
+            }
+
+            if ($cantRadio == 2) {
+               $collapse = $collapse2;
+            }
+
+
+            $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+
+               <div class="form-group input-group">
+                  <div class="demo-radio-button">
+                     <input type="radio" id="radio_'.$row['idpreguntacuestionario'].$iRadio.'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.$row['idrespuestacuestionario'].'" '.($row['respuestacargada'] == '1' ? 'checked' : '').' '.$collapse.'>
+                     <label for="radio_'.$row['idpreguntacuestionario'].$iRadio.'">'.$row['respuesta'].'</label>
+                  </div>
                </div>
-            </div>
-         </div>';
+            </div>';
 
 
 
@@ -116,7 +232,12 @@ class ServiciosReferencias {
             </div>';
 
             if ($row['idtiporespuesta'] == 4) {
-               array_push($rules,array('respuesta'=> 'respuestamulti'.$row['idrespuestacuestionario'],'pregunta' => $row['pregunta'],'tipo'=>4,'idpregunta'=>$row['idpreguntacuestionario'],'idrespuesta'=>$row['idrespuestacuestionario']));
+               array_push($rules,array('respuesta'=> 'respuestamulti'.$row['idrespuestacuestionario'],'pregunta' => $row['pregunta'],'tipo'=>4,'idpregunta'=>$row['idpreguntacuestionario'],'idrespuesta'=>$row['idrespuestacuestionario'],
+               'obligatoria' => $row['obligatoria'],
+               'depende' => $row['depende'],
+               'dependerespuesta' => $row['dependerespuesta'],
+               'dependeaux' => $row['dependeaux'],
+               'dependerespuestaaux' => $row['dependerespuestaaux'] ));
             }
 
          }
@@ -232,6 +353,23 @@ class ServiciosReferencias {
       return $res;
    }
 
+   function traerRespuestascuestionarioPorPregunta($idpregunta) {
+      $sql = "select
+      r.idrespuestacuestionario,
+      r.respuesta,
+      r.refpreguntascuestionario,
+      r.orden,
+      r.activo
+      from dbrespuestascuestionario r
+      inner join dbpreguntascuestionario pre ON pre.idpreguntacuestionario = r.refpreguntascuestionario
+      inner join dbcuestionarios cu ON cu.idcuestionario = pre.refcuestionarios
+      inner join tbtiporespuesta ti ON ti.idtiporespuesta = pre.reftiporespuesta
+      where pre.idpreguntacuestionario =".$idpregunta."
+      order by r.orden";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
 
    function traerRespuestascuestionarioPorId($id) {
       $sql = "select idrespuestacuestionario,respuesta,refpreguntascuestionario,orden,activo from dbrespuestascuestionario where idrespuestacuestionario =".$id;
@@ -246,19 +384,19 @@ class ServiciosReferencias {
 
    /* PARA Preguntascuestionario */
 
-   function insertarPreguntascuestionario($refcuestionarios,$reftiporespuesta,$pregunta,$orden,$valor,$depende,$tiempo,$activo) {
-      $sql = "insert into dbpreguntascuestionario(idpreguntacuestionario,refcuestionarios,reftiporespuesta,pregunta,orden,valor,depende,tiempo,activo)
-      values ('',".$refcuestionarios.",".$reftiporespuesta.",'".$pregunta."',".$orden.",".$valor.",".$depende.",".$tiempo.",'".$activo."')";
+   function insertarPreguntascuestionario($refcuestionarios,$reftiporespuesta,$pregunta,$orden,$valor,$depende,$tiempo,$activo,$dependerespuesta,$obligatoria) {
+      $sql = "insert into dbpreguntascuestionario(idpreguntacuestionario,refcuestionarios,reftiporespuesta,pregunta,orden,valor,depende,tiempo,activo,dependerespuesta,obligatoria)
+      values ('',".$refcuestionarios.",".$reftiporespuesta.",'".$pregunta."',".$orden.",".$valor.",".$depende.",".$tiempo.",'".$activo."',".$dependerespuesta.",'".$obligatoria."')";
 
       $res = $this->query($sql,1);
       return $res;
    }
 
 
-   function modificarPreguntascuestionario($id,$refcuestionarios,$reftiporespuesta,$pregunta,$orden,$valor,$depende,$tiempo,$activo) {
+   function modificarPreguntascuestionario($id,$refcuestionarios,$reftiporespuesta,$pregunta,$orden,$valor,$depende,$tiempo,$activo,$dependerespuesta,$obligatoria) {
       $sql = "update dbpreguntascuestionario
       set
-      refcuestionarios = ".$refcuestionarios.",reftiporespuesta = ".$reftiporespuesta.",pregunta = '".$pregunta."',orden = ".$orden.",valor = ".$valor.",depende = ".$depende.",tiempo = ".$tiempo.",activo = '".$activo."'
+      refcuestionarios = ".$refcuestionarios.",reftiporespuesta = ".$reftiporespuesta.",pregunta = '".$pregunta."',orden = ".$orden.",valor = ".$valor.",depende = ".$depende.",tiempo = ".$tiempo.",activo = '".$activo."',dependerespuesta = ".$dependerespuesta.",obligatoria = '".$obligatoria."'
       where idpreguntacuestionario =".$id;
 
       $res = $this->query($sql,0);
@@ -294,6 +432,7 @@ class ServiciosReferencias {
          p.pregunta,
          p.orden,
          (case when p.activo = '1' then 'Si' else 'No' end) as activo,
+         (case when p.obligatoria = '1' then 'Si' else 'No' end) as obligatoria,
          p.valor,
          p.depende,
          p.tiempo,
@@ -333,9 +472,30 @@ class ServiciosReferencias {
       return $res;
    }
 
+   function traerPreguntascuestionarioPorCuestionario($idcuestionario) {
+      $sql = "select
+      p.idpreguntacuestionario,
+      p.refcuestionarios,
+      p.reftiporespuesta,
+      p.pregunta,
+      p.orden,
+      p.valor,
+      p.depende,
+      p.tiempo,
+      p.activo
+      from dbpreguntascuestionario p
+      inner join dbcuestionarios cue ON cue.idcuestionario = p.refcuestionarios
+      inner join tbtiporespuesta tip ON tip.idtiporespuesta = p.reftiporespuesta
+      where cue.idcuestionario = ".$idcuestionario."
+      order by p.orden";
+
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
 
    function traerPreguntascuestionarioPorId($id) {
-      $sql = "select idpreguntacuestionario,refcuestionarios,reftiporespuesta,pregunta,orden,valor,depende,tiempo,activo from dbpreguntascuestionario where idpreguntacuestionario =".$id;
+      $sql = "select idpreguntacuestionario,refcuestionarios,reftiporespuesta,pregunta,orden,valor,depende,tiempo,activo,dependerespuesta,obligatoria from dbpreguntascuestionario where idpreguntacuestionario =".$id;
 
       $res = $this->query($sql,0);
       return $res;
@@ -569,11 +729,16 @@ class ServiciosReferencias {
             tr.tiporespuesta,
             rc.respuesta,
             rc.idrespuestacuestionario,
-            pre.idpreguntacuestionario
+            pre.idpreguntacuestionario,
+            coalesce( prer.depende,0) as depende,
+            coalesce( prer.dependerespuesta,0) as dependerespuesta,
+            coalesce( pre.depende,0) as dependeaux,
+            coalesce( pre.dependerespuesta ,0) as dependerespuestaaux
          from dbcuestionarios c
          inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario
          inner join tbtiporespuesta tr ON tr.idtiporespuesta = pre.reftiporespuesta
          inner join dbrespuestascuestionario rc ON rc.refpreguntascuestionario = pre.idpreguntacuestionario
+         left join dbpreguntascuestionario prer on prer.depende = pre.idpreguntacuestionario and prer.dependerespuesta = rc.idrespuestacuestionario
          where c.idcuestionario =".$id." order by pre.orden,rc.orden ";
    $res = $this->query($sql,0);
    return $res;
@@ -592,12 +757,18 @@ class ServiciosReferencias {
             rc.respuesta,
             rc.idrespuestacuestionario,
             pre.idpreguntacuestionario,
-            (case when cd.idcuestionariodetalle is null then '0' else (case when tr.idtiporespuesta = 1 then cd.respuestavalor else '1'end) end ) as respuestacargada
+            (case when cd.idcuestionariodetalle is null then '0' else (case when tr.idtiporespuesta = 1 then cd.respuestavalor else '1'end) end ) as respuestacargada,
+            coalesce( prer.depende,0) as depende,
+            coalesce( prer.dependerespuesta,0) as dependerespuesta,
+            coalesce( pre.depende,0) as dependeaux,
+            coalesce( pre.dependerespuesta ,0) as dependerespuestaaux,
+            pre.obligatoria
          from dbcuestionarios c
          inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario
          inner join tbtiporespuesta tr ON tr.idtiporespuesta = pre.reftiporespuesta
          inner join dbrespuestascuestionario rc ON rc.refpreguntascuestionario = pre.idpreguntacuestionario
          left join dbcuestionariodetalle cd on cd.refpreguntascuestionario = pre.idpreguntacuestionario and cd.refrespuestascuestionario = rc.idrespuestacuestionario and cd.idreferencia = ".$idcotizacion."
+         left join dbpreguntascuestionario prer on prer.depende = pre.idpreguntacuestionario and prer.dependerespuesta = rc.idrespuestacuestionario
          where c.idcuestionario =".$id." order by pre.orden,rc.orden ";
    $res = $this->query($sql,0);
    return $res;
@@ -3999,7 +4170,7 @@ class ServiciosReferencias {
 					        AND da.refcotizaciones = ".$idcotizacion."
 					        LEFT JOIN
 					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
-					where d.reftipodocumentaciones in (".$tipodocumentacion.")
+					where d.reftipodocumentaciones in (".$tipodocumentacion.") and refprocesocotizacion = 1
 
 					order by 1";
 		$res = $this->query($sql,0);
@@ -9526,18 +9697,18 @@ class ServiciosReferencias {
 
 	/* PARA Documentaciones */
 
-   function insertarDocumentaciones($reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$orden,$carpeta,$activo) {
-      $sql = "insert into dbdocumentaciones(iddocumentacion,reftipodocumentaciones,documentacion,obligatoria,cantidadarchivos,fechacrea,fechamodi,usuariocrea,usuariomodi,orden,carpeta,activo)
-      values ('',".$reftipodocumentaciones.",'".$documentacion."','".$obligatoria."',".$cantidadarchivos.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."',".$orden.",'".$carpeta."','".$activo."')";
+   function insertarDocumentaciones($reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$orden,$carpeta,$activo,$refprocesocotizacion) {
+      $sql = "insert into dbdocumentaciones(iddocumentacion,reftipodocumentaciones,documentacion,obligatoria,cantidadarchivos,fechacrea,fechamodi,usuariocrea,usuariomodi,orden,carpeta,activo,refprocesocotizacion)
+      values ('',".$reftipodocumentaciones.",'".$documentacion."','".$obligatoria."',".$cantidadarchivos.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."',".$orden.",'".$carpeta."','".$activo."',".$refprocesocotizacion.")";
       $res = $this->query($sql,1);
       return $res;
    }
 
 
-   function modificarDocumentaciones($id,$reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$orden,$carpeta,$activo) {
+   function modificarDocumentaciones($id,$reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$orden,$carpeta,$activo,$refprocesocotizacion) {
       $sql = "update dbdocumentaciones
       set
-      reftipodocumentaciones = ".$reftipodocumentaciones.",documentacion = '".$documentacion."',obligatoria = '".$obligatoria."',cantidadarchivos = ".$cantidadarchivos.",fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."',orden = ".$orden.",carpeta = '".$carpeta."',activo = '".$activo."'
+      reftipodocumentaciones = ".$reftipodocumentaciones.",documentacion = '".$documentacion."',obligatoria = '".$obligatoria."',cantidadarchivos = ".$cantidadarchivos.",fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."',orden = ".$orden.",carpeta = '".$carpeta."',activo = '".$activo."',refprocesocotizacion = ".$refprocesocotizacion."
       where iddocumentacion =".$id;
       $res = $this->query($sql,0);
       return $res;
@@ -9565,16 +9736,18 @@ class ServiciosReferencias {
 		d.documentacion,
 		(case when d.obligatoria = '1' then 'Si' else 'No' end) as obligatoria,
       d.orden,
-      d.carpeta,
       (case when d.activo = '1' then 'Si' else 'No' end) as activo,
+      tc.procesocotizacion,
       d.cantidadarchivos,
 		d.fechacrea,
+      d.carpeta,
 		d.fechamodi,
 		d.usuariocrea,
       d.reftipodocumentaciones,
 		d.usuariomodi
 		from dbdocumentaciones d
 		inner join tbtipodocumentaciones tip ON tip.idtipodocumentacion = d.reftipodocumentaciones
+      left join tbprocesocotizacion tc on tc.idprocesocotizacion = d.refprocesocotizacion
 		where d.reftipodocumentaciones > 4 ".$where."
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
@@ -9604,7 +9777,7 @@ class ServiciosReferencias {
 
 
    function traerDocumentacionesPorId($id) {
-      $sql = "select iddocumentacion,reftipodocumentaciones,documentacion,obligatoria,cantidadarchivos,fechacrea,fechamodi,usuariocrea,usuariomodi,orden,carpeta,activo from dbdocumentaciones where iddocumentacion =".$id;
+      $sql = "select iddocumentacion,reftipodocumentaciones,documentacion,obligatoria,cantidadarchivos,fechacrea,fechamodi,usuariocrea,usuariomodi,orden,carpeta,activo,refprocesocotizacion from dbdocumentaciones where iddocumentacion =".$id;
       $res = $this->query($sql,0);
       return $res;
    }

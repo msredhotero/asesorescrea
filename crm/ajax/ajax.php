@@ -1003,10 +1003,41 @@ switch ($accion) {
    case 'validarCuestionario':
       validarCuestionario($serviciosReferencias);
    break;
+   case 'traerRespuestascuestionarioPorPregunta':
+      traerRespuestascuestionarioPorPregunta($serviciosReferencias,$serviciosFunciones);
+   break;
+   case 'traerPreguntascuestionarioPorCuestionario':
+      traerPreguntascuestionarioPorCuestionario($serviciosReferencias,$serviciosFunciones);
+   break;
+
 
 
 }
 /* FinFinFin */
+
+function traerPreguntascuestionarioPorCuestionario($serviciosReferencias, $serviciosFunciones) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->traerPreguntascuestionarioPorCuestionario($id);
+   $varCad = '<option value="0">-- Seleccionar --</option>';
+   $varCad .= $serviciosFunciones->devolverSelectBox($res,array(3),'');
+
+   echo $varCad;
+}
+
+function traerRespuestascuestionarioPorPregunta($serviciosReferencias, $serviciosFunciones) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->traerRespuestascuestionarioPorPregunta($id);
+   if (mysql_num_rows($res)>0) {
+      $varCad = $serviciosFunciones->devolverSelectBox($res,array(1),'');
+   } else {
+      $varCad = '<option value="0">-- Seleccionar --</option>';
+   }
+
+
+   echo $varCad;
+}
 
 function validarCuestionario($serviciosReferencias) {
    $id = $_POST['refproductos'];
@@ -1047,14 +1078,32 @@ function validarCuestionario($serviciosReferencias) {
    respuestavalor
    */
 
+   $dependePreguntaID = '';
+   $dependeRespuestaID = '';
+   $dependeValor = '';
+   $ultimaDependeAux = '';
+
+
    foreach ($ar['rules'] as $valor) {
       $pregunta = $valor['pregunta'];
+
+
 
       // $array[3] se actualizará con cada valor de $array...
       if ($valor['tipo'] == 1) {
          if (!(isset($_POST[$valor['respuesta']]))) {
-            $resV['error'] = true;
-            array_push($arErrores,array('error' => 'Debe completar la respuesta','pregunta'=>$pregunta));
+            if ($valor['obligatoria'] == '1') {
+               if ($dependeValor == '') {
+                  $resV['error'] = true;
+                  array_push($arErrores,array('error' => 'Debe completar la respuesta','pregunta'=>$pregunta));
+               } else {
+                  if ($dependeValor == $valor['dependerespuestaaux']) {
+                     array_push($arErrores,array('error' => 'Debe completar la respuesta','pregunta'=>$pregunta));
+                  }
+               }
+
+            }
+
          } else {
             array_push($arRespuestas,
                   array('refpreguntascuestionario' => $valor['idpregunta'],
@@ -1068,8 +1117,18 @@ function validarCuestionario($serviciosReferencias) {
 
       if ($valor['tipo'] == 2) {
          if (!(isset($_POST[$valor['respuesta']]))) {
-            $resV['error'] = true;
-            array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
+            if ($valor['obligatoria'] == '1') {
+               if ($dependeValor == '') {
+                  $resV['error'] = true;
+                  array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
+               } else {
+                  if ($dependeValor == $valor['dependerespuestaaux']) {
+                     $resV['error'] = true;
+                     array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
+                  }
+               }
+
+            }
          } else {
             $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($valor['idrespuesta']);
             array_push($arRespuestas,
@@ -1084,8 +1143,18 @@ function validarCuestionario($serviciosReferencias) {
 
       if ($valor['tipo'] == 3) {
          if (!(isset($_POST[$valor['respuesta']]))) {
-            $resV['error'] = true;
-            array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
+            if ($valor['obligatoria'] == '1') {
+               if ($dependeValor == '') {
+                  $resV['error'] = true;
+                  array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
+               } else {
+                  if ($dependeValor == $valor['dependerespuestaaux']) {
+                     $resV['error'] = true;
+                     array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
+                  }
+               }
+
+            }
          } else {
             $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($valor['idrespuesta']);
             array_push($arRespuestas,
@@ -1105,9 +1174,20 @@ function validarCuestionario($serviciosReferencias) {
 
 
             if (($bandera == 1) && ($evaluoVerdadero == 1)) {
-               $errorGeneral = 1;
-               array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
-               $resV['error'] = true;
+               if ($valor['obligatoria'] == '1') {
+                  if ($dependeValor == '') {
+                     $errorGeneral = 1;
+                     array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
+                     $resV['error'] = true;
+                  } else {
+                     if ($dependeValor == $valor['dependerespuestaaux']) {
+                        $errorGeneral = 1;
+                        array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
+                        $resV['error'] = true;
+                     }
+                  }
+
+               }
 
                $evaluoVerdadero = 1;
 
@@ -1134,14 +1214,44 @@ function validarCuestionario($serviciosReferencias) {
          $bandera = 1;
       }
 
+
+      if ((integer)$valor['depende'] > 0) {
+         if (isset($_POST[$valor['respuesta']])) {
+            $dependePreguntaID = $valor['depende'];
+            $dependeRespuestaID = $valor['dependerespuesta'];
+            $dependeValor = $_POST[$valor['respuesta']];
+         } else {
+            $dependePreguntaID = $valor['depende'];
+            $dependeRespuestaID = $valor['dependerespuesta'];
+            $dependeValor = 0;
+         }
+
+      }
+
+      if ((integer)($valor['depende'] == 0) && (integer)($valor['dependeaux'] == 0)) {
+         $dependePreguntaID = '';
+         $dependeRespuestaID = '';
+         $dependeValor = '';
+      }
+
+      $ultimaDependeAux = $valor['dependerespuestaaux'];
    }
 
    //die(var_dump($arRespuestas));
 
    if (($bandera == 1) && ($evaluoVerdadero == 1) && ($existio4 == 1)) {
-      $errorGeneral = 1;
-      array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
-      $resV['error'] = true;
+      if ($dependeValor == '') {
+         $errorGeneral = 1;
+         array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
+         $resV['error'] = true;
+      } else {
+         if ($dependeValor == $ultimaDependeAux) {
+            $errorGeneral = 1;
+            array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
+            $resV['error'] = true;
+         }
+      }
+
    }
 
    $resV['errores'] = $arErrores;
@@ -1309,11 +1419,13 @@ function insertarPreguntascuestionario($serviciosReferencias) {
    $pregunta = $_POST['pregunta'];
    $orden = $_POST['orden'];
    $valor = $_POST['valor'];
-   $depende = $_POST['depende'];
+   $depende = ( $_POST['depende'] == '' ? 0 :$_POST['depende']);
    $tiempo = $_POST['tiempo'];
    $activo = $_POST['activo'];
+   $dependerespuesta = ($_POST['dependerespuesta'] == '' ? 0 : $_POST['dependerespuesta']);
+   $obligatoria = $_POST['obligatoria'];
 
-   $res = $serviciosReferencias->insertarPreguntascuestionario($refcuestionarios,$reftiporespuesta,$pregunta,$orden,$valor,$depende,$tiempo,$activo);
+   $res = $serviciosReferencias->insertarPreguntascuestionario($refcuestionarios,$reftiporespuesta,$pregunta,$orden,$valor,$depende,$tiempo,$activo,$dependerespuesta,$obligatoria);
 
    if ((integer)$res > 0) {
       if ($reftiporespuesta == 1) {
@@ -1336,11 +1448,13 @@ function modificarPreguntascuestionario($serviciosReferencias) {
    $pregunta = $_POST['pregunta'];
    $orden = $_POST['orden'];
    $valor = $_POST['valor'];
-   $depende = $_POST['depende'];
+   $depende = ($_POST['depende'] == '' ? 0 : $_POST['depende']);
    $tiempo = $_POST['tiempo'];
    $activo = $_POST['activo'];
+   $dependerespuesta = ($_POST['dependerespuesta'] == '' ? 0 : $_POST['dependerespuesta']);
+   $obligatoria = $_POST['obligatoria'];
 
-   $res = $serviciosReferencias->modificarPreguntascuestionario($id,$refcuestionarios,$reftiporespuesta,$pregunta,$orden,$valor,$depende,$tiempo,$activo);
+   $res = $serviciosReferencias->modificarPreguntascuestionario($id,$refcuestionarios,$reftiporespuesta,$pregunta,$orden,$valor,$depende,$tiempo,$activo,$dependerespuesta,$obligatoria);
 
    if ($res == true) {
       echo '';
@@ -4512,8 +4626,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $modificar = "modificarPreguntascuestionario";
          $idTabla = "idpreguntacuestionario";
 
-         $lblCambio	 	= array('refcuestionarios','reftiporespuesta','activo');
-         $lblreemplazo	= array('Cuestionario','Tipo Respuesta','Activo');
+         $lblCambio	 	= array('refcuestionarios','reftiporespuesta','activo','depende','dependerespuesta');
+         $lblreemplazo	= array('Cuestionario','Tipo Respuesta','Activo','Depende','Respuesta');
 
          $resVar1 = $serviciosReferencias->traerCuestionarios();
          $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),'',mysql_result($resultado,0,'refcuestionarios'));
@@ -4527,8 +4641,26 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
             $cadRef3 = "<option value='1'>Si</option><option value='0' selected>No</option>";
          }
 
-         $refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3);
-         $refCampo 	=  array('refcuestionarios','reftiporespuesta','activo');
+         $resP = $serviciosReferencias->traerPreguntascuestionarioPorCuestionario(mysql_result($resultado,0,'refcuestionarios'));
+         $cadRef4 = "<option value='0'>-- Seleccionar --</option>";
+         $cadRef4 .= $serviciosFunciones->devolverSelectBoxActivo($resP,array(3),'',mysql_result($resultado,0,'depende'));
+
+         if (mysql_result($resultado,0,'depende') > 0) {
+            $resR = $serviciosReferencias->traerRespuestascuestionarioPorPregunta(mysql_result($resultado,0,'depende'));
+            $cadRef5 = $serviciosFunciones->devolverSelectBoxActivo($resR,array(1),'',mysql_result($resultado,0,'dependerespuesta'));
+
+         } else {
+            $cadRef5 = '<option value="0">-- Seleccionar --</option>';
+         }
+
+         if (mysql_result($resultado,0,'obligatoria') == '1') {
+            $cadRef6 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+         } else {
+            $cadRef6 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+         }
+
+         $refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef4,4=>$cadRef5,5=>$cadRef6);
+         $refCampo 	=  array('refcuestionarios','reftiporespuesta','activo','depende','dependerespuesta','obligatoria');
       break;
 
       case 'dbcuestionarios':
@@ -4591,8 +4723,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $modificar = "modificarDocumentaciones";
          $idTabla = "iddocumentacion";
 
-         $lblCambio	 	= array('reftipodocumentaciones');
-         $lblreemplazo	= array('Tipo Documentacion');
+         $lblCambio	 	= array('reftipodocumentaciones','refprocesocotizacion');
+         $lblreemplazo	= array('Tipo Documentacion','Proceso');
 
          $resVar = $serviciosReferencias->traerTipodocumentaciones();
          $cadRef = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(1),'',mysql_result($resultado,0,'reftipodocumentaciones'));
@@ -4609,8 +4741,11 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
             $cadRef3 = "<option value='1'>Si</option><option value='0' selected>No</option>";
          }
 
-         $refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3);
-         $refCampo 	=  array('reftipodocumentaciones','obligatoria','activo');
+         $resVar4 = $serviciosReferencias->traerProcesocotizacion();
+         $cadRef4 = $serviciosFunciones->devolverSelectBoxActivo($resVar4,array(1),'',mysql_result($resultado,0,'refprocesocotizacion'));
+
+         $refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3,3=>$cadRef4);
+         $refCampo 	=  array('reftipodocumentaciones','obligatoria','activo','refprocesocotizacion');
       break;
       case 'dbventas':
          $resultado = $serviciosReferencias->traerVentasPorId($id);
@@ -5533,10 +5668,11 @@ function insertarDocumentaciones($serviciosReferencias) {
    $usuariocrea = $_POST['usuariocrea'];
    $usuariomodi = $_POST['usuariomodi'];
    $orden = $_POST['orden'];
-   $carpeta = $_POST['carpeta'];
+   $carpeta = strtolower(str_replace(' ','', $_POST['documentacion']));
    $activo = $_POST['activo'];
+   $refprocesocotizacion = ( $_POST['refprocesocotizacion'] == '' ? 0 : $_POST['refprocesocotizacion']);
 
-   $res = $serviciosReferencias->insertarDocumentaciones($reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$orden,$carpeta,$activo);
+   $res = $serviciosReferencias->insertarDocumentaciones($reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$orden,$carpeta,$activo,$refprocesocotizacion);
 
    if ((integer)$res > 0) {
       echo '';
@@ -5556,10 +5692,11 @@ function modificarDocumentaciones($serviciosReferencias) {
    $usuariocrea = $_POST['usuariocrea'];
    $usuariomodi = $_POST['usuariomodi'];
    $orden = $_POST['orden'];
-   $carpeta = $_POST['carpeta'];
+   $carpeta = strtolower(str_replace(' ','', $_POST['documentacion']));
    $activo = $_POST['activo'];
+   $refprocesocotizacion = ( $_POST['refprocesocotizacion'] == '' ? 0 : $_POST['refprocesocotizacion']);
 
-   $res = $serviciosReferencias->modificarDocumentaciones($id,$reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$orden,$carpeta,$activo);
+   $res = $serviciosReferencias->modificarDocumentaciones($id,$reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$orden,$carpeta,$activo,$refprocesocotizacion);
 
    if ($res == true) {
       echo '';

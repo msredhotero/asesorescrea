@@ -55,16 +55,19 @@ $modificar = "modificarDocumentaciones";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbdocumentaciones";
 
-$lblCambio	 	= array('reftipodocumentaciones');
-$lblreemplazo	= array('Tipo Documentacion');
+$lblCambio	 	= array('reftipodocumentaciones','refprocesocotizacion');
+$lblreemplazo	= array('Tipo Documentacion','Proceso');
 
 $resVar = $serviciosReferencias->traerTipodocumentaciones();
 $cadRef = $serviciosFunciones->devolverSelectBox($resVar,array(1),'');
 
 $cadRef2 = "<option value='1'>Si</option><option value='0'>No</option>";
 
-$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef2);
-$refCampo 	=  array('reftipodocumentaciones','obligatoria','activo');
+$resVar3 = $serviciosReferencias->traerProcesocotizacion();
+$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
+
+$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef2,3=>$cadRef3);
+$refCampo 	=  array('reftipodocumentaciones','obligatoria','activo','refprocesocotizacion');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -196,8 +199,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Documentacion</th>
 												<th>Obligatoria</th>
 												<th>Orden</th>
-												<th>Carpeta</th>
 												<th>Activo</th>
+												<th>Proceso</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -207,8 +210,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Documentacion</th>
 												<th>Obligatoria</th>
 												<th>Orden</th>
-												<th>Carpeta</th>
 												<th>Activo</th>
+												<th>Proceso</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -317,6 +320,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	$(document).ready(function(){
 
 		$('.frmContcantidadarchivos').hide();
+		$('.frmContcarpeta').hide();
 
 		$('#fechacrea').val('2020-02-02');
 		$('#fechamodi').val('2020-02-02');
