@@ -1019,11 +1019,33 @@ switch ($accion) {
    case 'eliminarProductosexclusivos':
       eliminarProductosexclusivos($serviciosReferencias);
    break;
+   case 'modificarClienteUnicaDocumentacion':
+      modificarClienteUnicaDocumentacion($serviciosReferencias);
+   break;
 
 
 
 }
 /* FinFinFin */
+
+function modificarClienteUnicaDocumentacion($serviciosReferencias) {
+   $idpostulante = $_POST['idasociado'];
+   $campo = $_POST['campo'];
+   $valor = $_POST['valor'];
+
+   $res = $serviciosReferencias->modificarClienteUnicaDocumentacion($idpostulante, $campo, $valor);
+
+   if ($res == true) {
+      $resV['leyenda'] = '';
+      $resV['error'] = false;
+   } else {
+      $resV['leyenda'] = 'Hubo un error al modificar datos';
+      $resV['error'] = true;
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 
 

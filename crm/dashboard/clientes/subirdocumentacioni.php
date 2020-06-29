@@ -600,12 +600,12 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 		});
 
 		$('.btnModificar').click(function() {
-			modificarPostulanteUnicaDocumentacion($('#<?php echo $campo; ?>').val(),'<?php echo $campo; ?>');
+			modificarClienteUnicaDocumentacion($('#<?php echo $campo; ?>').val(),'<?php echo $campo; ?>');
 		});
 
 		<?php if (isset($campo2)) { ?>
 		$('.btnModificar2').click(function() {
-			modificarPostulanteUnicaDocumentacion($('#<?php echo $campo2; ?>').val(),'<?php echo $campo2; ?>');
+			modificarClienteUnicaDocumentacion($('#<?php echo $campo2; ?>').val(),'<?php echo $campo2; ?>');
 		});
 		<?php } ?>
 
@@ -665,14 +665,14 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
  			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
  		});
 
-		function modificarAsociadoUnicaDocumentacion(valor, campo) {
+		function modificarClienteUnicaDocumentacion(valor, campo) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
 				data: {
-					accion: 'modificarAsociadoUnicaDocumentacion',
+					accion: 'modificarClienteUnicaDocumentacion',
 					idasociado: <?php echo $id; ?>,
 					campo: campo,
 					valor: valor

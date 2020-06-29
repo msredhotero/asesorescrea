@@ -4707,7 +4707,10 @@ return $res;
 					    da.type,
 					    coalesce( ed.estadodocumentacion, 'Falta') as estadodocumentacion,
 						 ed.color,
-					    ed.idestadodocumentacion
+					    ed.idestadodocumentacion,
+                   coalesce(cli.emisioncomprobantedomicilio,'') as emisioncomprobantedomicilio,
+                   coalesce(cli.emisionrfc,'') as emisionrfc,
+                   coalesce(cli.vencimientoine,'') as vencimientoine
 					FROM
 					    dbdocumentaciones d
 					        LEFT JOIN
@@ -4715,6 +4718,8 @@ return $res;
 					        AND da.refclientes = ".$idcliente."
 					        LEFT JOIN
 					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
+                     left JOIN
+                  dbclientes cli on cli.idcliente = da.refclientes
 					where d.iddocumentacion in (3,4,7,10,29)
 
 					order by 1";
