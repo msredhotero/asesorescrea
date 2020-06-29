@@ -390,6 +390,31 @@ if (isset($_GET['id'])) {
 	$documentacionNombre2 = '';
 
 
+
+	if ($_SESSION['idroll_sahilices'] == 7) {
+		$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
+		if (mysql_num_rows($resVar5)>0) {
+			$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar5,array(3,4,2),' ');
+		} else {
+			header('Location: ../index.php');
+		}
+
+		$idasesor = mysql_result($resVar5,0,'idasesor');
+
+		$resLstClientes = $serviciosReferencias->traerClientesasesoresPorAsesor($_SESSION['usuaid_sahilices']);
+		$cadRef2 = $serviciosFunciones->devolverSelectBox($resLstClientes,array(14),'');
+
+	} else {
+		$resVar5	= $serviciosReferencias->traerAsesores();
+		$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar5,array(3,4,2),' ');
+		$idasesor = 0;
+
+		$resLstClientes = $serviciosReferencias->traerClientes();
+		$cadRef2 = $serviciosFunciones->devolverSelectBox($resLstClientes,array(19),'');
+
+	}
+
+
 }
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
@@ -399,22 +424,8 @@ $lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','r
 $lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor','Cobertura Requiere Reaseguro','Reaseguro Directo con Inbursa o Broker','Fecha renovación o presentación de propueta al cliente','Fecha en que se entrega propuesta','Tipo de negocio para agente','Presenta Cotizacion o Poliza de competencia','Existe Prima Objetivo','Prima Objetivo');
 
 
-if ($_SESSION['idroll_sahilices'] == 7) {
-	$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
-	if (mysql_num_rows($resVar5)>0) {
-		$cadRef6 = $serviciosFunciones->devolverSelectBox($resVar5,array(3,4,2),' ');
-	} else {
-		header('Location: ../index.php');
-	}
 
-	$idasesor = mysql_result($resVar5,0,'idasesor');
 
-} else {
-	$resVar5	= $serviciosReferencias->traerAsesores();
-	$cadRef6 = $serviciosFunciones->devolverSelectBox($resVar5,array(3,4,2),' ');
-	$idasesor = 0;
-
-}
 
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -587,12 +598,13 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 													</select>
 
 
-													<div id="selction-ajax" style="margin-top: 10px;">
+													<div id="selction-ajax" style="margin-top: 10px; display:none;">
 													<h5>Lista de Productos</h5>
 													<ul class="list-group lstCartera">
 
 													</ul>
 													</div>
+													<input type="hidden" name="reftipopersonasaux" id="reftipopersonasaux" value="1" />
 
 
                                        </div>
@@ -1215,6 +1227,9 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 		$('.frmContfechavencimiento').hide();
 		$('.frmContcoberturaactual').hide();
 		$('.frmContprimaobjetivo').hide();
+		$('.frmContemisioncomprobantedomicilio').hide();
+		$('.frmContemisionrfc').hide();
+		$('.frmContvencimientoine').hide();
 
 
 		$('#selction-ajax').hide();
@@ -1376,13 +1391,13 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 			});
 		}
 
-		function traerProductosPorTipo(idtipoproducto) {
+		function traerProductosPorTipo(idtipoproducto, reftipopersonas, idasesor) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {accion: 'traerProductosPorTipo', id: idtipoproducto},
+				data: {accion: 'traerProductosPorTipo', id: idtipoproducto,reftipopersonasaux: reftipopersonas, idasesor: idasesor},
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('#refproductos').html('');
@@ -1435,7 +1450,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 					if (data != '') {
 						$('#refproductosrama').html(data);
 
-						traerProductosPorTipo($('#refproductosrama').val());
+						traerProductosPorTipo($('#refproductosrama').val(), $('#reftipopersonasaux').val(), $('#refasesores').val());
 					} else {
 						swal({
 								title: "Respuesta",
@@ -1519,8 +1534,15 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 		});
 
 		$("#wizard_with_validation").on("change",'#refproductosrama', function(){
-			traerProductosPorTipo($(this).val());
+			traerProductosPorTipo($(this).val(),$('#reftipopersonasaux').val(), $('#refasesores').val());
 		});
+
+		$("#wizard_with_validation").on("change",'#refclientes', function(){
+			traerProductosPorTipo($('#refproductosrama').val(),$('#reftipopersonasaux').val(), $('#refasesores').val());
+		});
+
+
+
 
 		<?php if (!(isset($_GET['id']))) { ?>
 		traerTipoproductoramaPorTipoProducto($('#reftipoproducto').val());
@@ -1888,7 +1910,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 		});
 
 
-		 $('#fechavencimiento').pickadate({
+		$('#fechavencimiento').pickadate({
  			format: 'yyyy-mm-dd',
  			labelMonthNext: 'Siguiente mes',
  			labelMonthPrev: 'Previo mes',
@@ -1934,9 +1956,10 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 				},
 				onClickEvent: function() {
 					var value = $("#lstjugadores").getSelectedItemData().id;
-					$('#refclientes').html("<option value='" + value + "'>" + $("#lstjugadores").getSelectedItemData().nombrecompleto + "</option>");
+					$('#refclientes').val(value);
 					$('.clienteSelect').html($("#lstjugadores").getSelectedItemData().nombrecompleto);
-					traerClientescarteraPorCliente(value);
+					$('#reftipopersonasaux').val($("#lstjugadores").getSelectedItemData().reftipopersonas);
+					//traerClientescarteraPorCliente(value);
 				}/*,
 				onHideListEvent: function() {
 					$('.clienteSelect').html('');
@@ -1979,7 +2002,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 				onClickEvent: function() {
 					var value = $("#lstagentes").getSelectedItemData().id;
 
-					$('#refasesores').html("<option value='" + value + "'>" + $("#lstagentes").getSelectedItemData().nombrecompleto + "</option>");
+					$('#refasesores').val(value);
 					$('.agenteSelect').html($("#lstagentes").getSelectedItemData().nombrecompleto);
 				}
 			},

@@ -72,6 +72,11 @@ $refCampo 	=  array('reftipodocumentaciones','obligatoria','activo','refprocesoc
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
+$cadRefb = '<option value="">-- Seleccionar --</option>';
+$cadRefb .= $cadRef;
+$cadRef3b = '<option value="">-- Seleccionar --</option>';
+$cadRef3b .= $cadRef3;
+
 ?>
 
 <!DOCTYPE html>
@@ -187,6 +192,17 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 											</button>
 
 										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-lg-12 col-md-12">
+
+										<?php echo $serviciosFunciones->addInput('3,3,3,6','select','estado_filtro','estado_filtro','', 'Proceso','',$cadRef3b); ?>
+										<?php echo $serviciosFunciones->addInput('3,3,3,6','select','asignados_filtro','asignados_filtro','', 'Tipo Documentacion','',$cadRefb); ?>
+									</div>
+									<div class="col-lg-12 col-md-12">
+										<button type="button" class="btn bg-red" id="filtrar">Filtrar</button>
 									</div>
 								</div>
 
@@ -348,6 +364,15 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=documentaciones",
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+				/* Add some extra data to the sender */
+				aoData.push( { "name": "proceso", "value": $('#estado_filtro').val(), } );
+				aoData.push( { "name": "tipodocumentacion", "value": $('#asignados_filtro').val(), } );
+				$.getJSON( sSource, aoData, function (json) {
+				/* Do whatever additional processing you want on the callback, then tell DataTables */
+				fnCallback(json)
+				} );
+			},
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -372,6 +397,11 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 				}
 			}
 		});
+
+		$('#filtrar').click( function() {
+			table.draw();
+
+		} );
 
 
 		$("#sign_in").submit(function(e){

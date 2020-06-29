@@ -264,15 +264,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 											</button>
 									
 
-											<button type="button" class="btn bg-green waves-effect btnNuevo2" data-toggle="modal" data-target="#lgmNuevo2">
-												<i class="material-icons">add</i>
-												<span>CLIENTE - PERSONA FISICA</span>
-											</button>
-											<button type="button" class="btn bg-blue-grey waves-effect btnNuevoMoral" data-toggle="modal" data-target="#lgmNuevo2">
-												<i class="material-icons">add</i>
-												<span>CLIENTE - PERSONA MORAL</span>
-											</button>
-
 										</div>
 									</div>
 								</div>

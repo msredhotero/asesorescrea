@@ -46,7 +46,7 @@ if ($busqueda != '') {
 	$cad = '';
 	while ($row = mysql_fetch_array($resTraerClientes)) {
 
-		array_push($ar,array('id'=>$row['idcliente'], 'nombrecompleto'=> $row['nombrecompleto'], 'idclienteinbursa'=>$row['idclienteinbursa']));
+		array_push($ar,array('id'=>$row['idcliente'], 'nombrecompleto'=> $row['nombrecompleto'], 'idclienteinbursa'=>$row['idclienteinbursa'], 'reftipopersonas' => $row['reftipopersonas']));
 	}
 
 }

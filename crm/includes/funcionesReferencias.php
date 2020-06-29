@@ -11,6 +11,81 @@ class ServiciosReferencias {
 
 
 
+   /* PARA Productosexclusivos */
+
+   function insertarProductosexclusivos($refproductos,$refasesores) {
+      $sql = "insert into dbproductosexclusivos(idproductoexclusivo,refproductos,refasesores)
+      values ('',".$refproductos.",".$refasesores.")";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarProductosexclusivos($id,$refproductos,$refasesores) {
+      $sql = "update dbproductosexclusivos
+      set
+      refproductos = ".$refproductos.",refasesores = ".$refasesores."
+      where idproductoexclusivo =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarProductosexclusivos($id) {
+      $sql = "delete from dbproductosexclusivos where idproductoexclusivo =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerProductosexclusivosajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+      $where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where ".$roles." concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or pro.producto like '%".$busqueda."%')";
+		}
+
+      $sql = "select
+      p.idproductoexclusivo,
+      concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
+      pro.producto,
+      p.refproductos,
+      p.refasesores
+      from dbproductosexclusivos p
+      inner join dbasesores ase ON ase.idasesor = p.refasesores
+      inner join tbproductos pro ON pro.idproducto = p.refproductos
+      ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+      $res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+   }
+
+
+   function traerProductosexclusivos() {
+      $sql = "select
+      p.idproductoexclusivo,
+      p.refproductos,
+      p.refasesores
+      from dbproductosexclusivos p
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerProductosexclusivosPorId($id) {
+      $sql = "select idproductoexclusivo,refproductos,refasesores from dbproductosexclusivos where idproductoexclusivo =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: dbproductosexclusivos*/
+
+
 /* PARA Procesocotizacion */
 
 function insertarProcesocotizacion($procesocotizacion) {
@@ -384,19 +459,19 @@ return $res;
 
    /* PARA Preguntascuestionario */
 
-   function insertarPreguntascuestionario($refcuestionarios,$reftiporespuesta,$pregunta,$orden,$valor,$depende,$tiempo,$activo,$dependerespuesta,$obligatoria) {
-      $sql = "insert into dbpreguntascuestionario(idpreguntacuestionario,refcuestionarios,reftiporespuesta,pregunta,orden,valor,depende,tiempo,activo,dependerespuesta,obligatoria)
-      values ('',".$refcuestionarios.",".$reftiporespuesta.",'".$pregunta."',".$orden.",".$valor.",".$depende.",".$tiempo.",'".$activo."',".$dependerespuesta.",'".$obligatoria."')";
+   function insertarPreguntascuestionario($refcuestionarios,$reftiporespuesta,$pregunta,$orden,$valor,$depende,$tiempo,$activo,$dependerespuesta,$obligatoria,$leyenda) {
+      $sql = "insert into dbpreguntascuestionario(idpreguntacuestionario,refcuestionarios,reftiporespuesta,pregunta,orden,valor,depende,tiempo,activo,dependerespuesta,obligatoria,leyenda)
+      values ('',".$refcuestionarios.",".$reftiporespuesta.",'".$pregunta."',".$orden.",".$valor.",".$depende.",".$tiempo.",'".$activo."',".$dependerespuesta.",'".$obligatoria."','".$leyenda."')";
 
       $res = $this->query($sql,1);
       return $res;
    }
 
 
-   function modificarPreguntascuestionario($id,$refcuestionarios,$reftiporespuesta,$pregunta,$orden,$valor,$depende,$tiempo,$activo,$dependerespuesta,$obligatoria) {
+   function modificarPreguntascuestionario($id,$refcuestionarios,$reftiporespuesta,$pregunta,$orden,$valor,$depende,$tiempo,$activo,$dependerespuesta,$obligatoria,$leyenda) {
       $sql = "update dbpreguntascuestionario
       set
-      refcuestionarios = ".$refcuestionarios.",reftiporespuesta = ".$reftiporespuesta.",pregunta = '".$pregunta."',orden = ".$orden.",valor = ".$valor.",depende = ".$depende.",tiempo = ".$tiempo.",activo = '".$activo."',dependerespuesta = ".$dependerespuesta.",obligatoria = '".$obligatoria."'
+      refcuestionarios = ".$refcuestionarios.",reftiporespuesta = ".$reftiporespuesta.",pregunta = '".$pregunta."',orden = ".$orden.",valor = ".$valor.",depende = ".$depende.",tiempo = ".$tiempo.",activo = '".$activo."',dependerespuesta = ".$dependerespuesta.",obligatoria = '".$obligatoria."',leyenda = '".$leyenda."'
       where idpreguntacuestionario =".$id;
 
       $res = $this->query($sql,0);
@@ -482,7 +557,8 @@ return $res;
       p.valor,
       p.depende,
       p.tiempo,
-      p.activo
+      p.activo,
+      p.leyenda
       from dbpreguntascuestionario p
       inner join dbcuestionarios cue ON cue.idcuestionario = p.refcuestionarios
       inner join tbtiporespuesta tip ON tip.idtiporespuesta = p.reftiporespuesta
@@ -495,7 +571,9 @@ return $res;
 
 
    function traerPreguntascuestionarioPorId($id) {
-      $sql = "select idpreguntacuestionario,refcuestionarios,reftiporespuesta,pregunta,orden,valor,depende,tiempo,activo,dependerespuesta,obligatoria from dbpreguntascuestionario where idpreguntacuestionario =".$id;
+      $sql = "select idpreguntacuestionario,refcuestionarios,reftiporespuesta,pregunta,
+      orden,valor,depende,tiempo,activo,dependerespuesta,obligatoria,leyenda
+      from dbpreguntascuestionario where idpreguntacuestionario =".$id;
 
       $res = $this->query($sql,0);
       return $res;
@@ -3527,7 +3605,7 @@ return $res;
 		c.email,
 		c.rfc,
 		c.ine,
-		c.reftipopersonas,
+		cl.reftipopersonas,
 		c.telefonofijo,
 		c.telefonocelular,
 		c.refasesores,
@@ -4454,18 +4532,18 @@ return $res;
 
 
 
-   function insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado) {
-      $sql = "insert into tbproductos(idproducto,producto,prima,reftipoproductorama,reftipodocumentaciones,activo,puntosporventa,puntosporpesopagado,refcuestionarios,puntosporventarenovado,puntosporpesopagadorenovado)
-      values ('','".$producto."','".$prima."',".$reftipoproductorama.",".$reftipodocumentaciones.",'".$activo."',".$puntosporventa.",".$puntosporpesopagado.",".$refcuestionarios.",".$puntosporventarenovado.",".$puntosporpesopagadorenovado.")";
+   function insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas) {
+      $sql = "insert into tbproductos(idproducto,producto,prima,reftipoproductorama,reftipodocumentaciones,activo,puntosporventa,puntosporpesopagado,refcuestionarios,puntosporventarenovado,puntosporpesopagadorenovado,reftipopersonas)
+      values ('','".$producto."','".$prima."',".$reftipoproductorama.",".$reftipodocumentaciones.",'".$activo."',".$puntosporventa.",".$puntosporpesopagado.",".$refcuestionarios.",".$puntosporventarenovado.",".$puntosporpesopagadorenovado.",".$reftipopersonas.")";
       $res = $this->query($sql,1);
       return $res;
    }
 
 
-   function modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado) {
+   function modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas) {
       $sql = "update tbproductos
       set
-      producto = '".$producto."',prima = '".$prima."',reftipoproductorama = ".$reftipoproductorama.",reftipodocumentaciones = ".$reftipodocumentaciones.",activo = '".$activo."',puntosporventa = ".$puntosporventa.",puntosporpesopagado = ".$puntosporpesopagado.",refcuestionarios = ".$refcuestionarios.",puntosporventarenovado = ".$puntosporventarenovado.",puntosporpesopagadorenovado = ".$puntosporpesopagadorenovado."
+      producto = '".$producto."',prima = '".$prima."',reftipoproductorama = ".$reftipoproductorama.",reftipodocumentaciones = ".$reftipodocumentaciones.",activo = '".$activo."',puntosporventa = ".$puntosporventa.",puntosporpesopagado = ".$puntosporpesopagado.",refcuestionarios = ".$refcuestionarios.",puntosporventarenovado = ".$puntosporventarenovado.",puntosporpesopagadorenovado = ".$puntosporpesopagadorenovado.",reftipopersonas = ".$reftipopersonas."
       where idproducto =".$id;
       $res = $this->query($sql,0);
       return $res;
@@ -4496,10 +4574,13 @@ return $res;
       td.tipodocumentacion,
       p.puntosporventa,
       p.puntosporpesopagado,
+      tpp.tipopersona,
       (case when p.activo = '1' then 'Si' else 'No' end) as activo
+
 		from tbproductos p
 		inner join tbtipoproductorama tp ON tp.idtipoproductorama = p.reftipoproductorama
       left join tbtipodocumentaciones td ON td.idtipodocumentacion = p.reftipodocumentaciones
+      left join tbtipopersonas tpp on tpp.idtipopersona = p.reftipopersonas
 		".$where."
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
@@ -4522,19 +4603,51 @@ return $res;
 		return $res;
 	}
 
-	function traerProductosPorTipo($reftipoproductorama) {
-		$sql = "select
-		p.idproducto,
-		p.producto,
-		p.prima,
-      p.activo,
-      p.reftipoproductorama,
-      tp.reftipoproducto
-		from tbproductos p
-		inner join tbtipoproductorama tp ON tp.idtipoproductorama = p.reftipoproductorama
-      inner join tbtipoproducto t on t.idtipoproducto = tp.reftipoproducto
-		where tp.idtipoproductorama = ".$reftipoproductorama."
-		order by 1";
+	function traerProductosPorTipo($reftipoproductorama,$reftipopersonas,$idasesor) {
+		$sql = "SELECT
+          r.idproducto,
+          r.producto,
+          r.prima,
+          r.activo,
+          r.reftipoproductorama,
+          r.reftipoproducto
+      FROM
+          (SELECT
+              p.idproducto,
+                  p.producto,
+                  p.prima,
+                  p.activo,
+                  p.reftipoproductorama,
+                  tp.reftipoproducto
+          FROM
+              tbproductos p
+          INNER JOIN tbtipoproductorama tp ON tp.idtipoproductorama = p.reftipoproductorama
+          INNER JOIN tbtipoproducto t ON t.idtipoproducto = tp.reftipoproducto
+          INNER JOIN tbtipopersonas tpp ON tpp.idtipopersona = p.reftipopersonas
+          INNER JOIN dbproductosexclusivos px ON px.refproductos = p.idproducto
+              AND px.refasesores = ".$idasesor."
+          WHERE
+              tp.idtipoproductorama = ".$reftipoproductorama."
+                  AND tpp.idtipopersona = ".$reftipopersonas."
+         UNION ALL SELECT
+              p.idproducto,
+                  p.producto,
+                  p.prima,
+                  p.activo,
+                  p.reftipoproductorama,
+                  tp.reftipoproducto
+          FROM
+              tbproductos p
+          INNER JOIN tbtipoproductorama tp ON tp.idtipoproductorama = p.reftipoproductorama
+          INNER JOIN tbtipoproducto t ON t.idtipoproducto = tp.reftipoproducto
+          INNER JOIN tbtipopersonas tpp ON tpp.idtipopersona = p.reftipopersonas
+          LEFT JOIN dbproductosexclusivos px ON px.refproductos = p.idproducto
+              AND px.refasesores = ".$idasesor."
+          WHERE
+              tp.idtipoproductorama = ".$reftipoproductorama."
+                  AND tpp.idtipopersona = ".$reftipopersonas."
+                  AND px.idproductoexclusivo IS NULL) AS r
+		order by r.producto";
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -4548,10 +4661,12 @@ return $res;
       p.reftipoproductorama,
       tp.reftipoproducto,
       p.reftipodocumentaciones,
-      p.refcuestionarios
+      p.refcuestionarios,
+      p.reftipopersonas
 		from tbproductos p
 		inner join tbtipoproductorama tp ON tp.idtipoproductorama = p.reftipoproductorama
       inner join tbtipoproducto t on t.idtipoproducto = tp.reftipoproducto
+      left join tbtipopersonas tpp ON tpp.idtipopersona = p.reftipoproductorama
 		where p.idproducto = ".$id."
 		order by 1";
 		$res = $this->query($sql,0);
@@ -4561,7 +4676,7 @@ return $res;
 
    function traerProductosPorId($id) {
       $sql = "select idproducto,producto,prima,reftipoproductorama,reftipodocumentaciones,activo,
-      puntosporventa,puntosporpesopagado,refcuestionarios,puntosporventarenovado,puntosporpesopagadorenovado
+      puntosporventa,puntosporpesopagado,refcuestionarios,puntosporventarenovado,puntosporpesopagadorenovado,reftipopersonas
       from tbproductos where idproducto =".$id;
       $res = $this->query($sql,0);
       return $res;
@@ -9697,18 +9812,18 @@ return $res;
 
 	/* PARA Documentaciones */
 
-   function insertarDocumentaciones($reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$orden,$carpeta,$activo,$refprocesocotizacion) {
-      $sql = "insert into dbdocumentaciones(iddocumentacion,reftipodocumentaciones,documentacion,obligatoria,cantidadarchivos,fechacrea,fechamodi,usuariocrea,usuariomodi,orden,carpeta,activo,refprocesocotizacion)
-      values ('',".$reftipodocumentaciones.",'".$documentacion."','".$obligatoria."',".$cantidadarchivos.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."',".$orden.",'".$carpeta."','".$activo."',".$refprocesocotizacion.")";
+   function insertarDocumentaciones($reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$orden,$carpeta,$activo,$refprocesocotizacion,$leyenda) {
+      $sql = "insert into dbdocumentaciones(iddocumentacion,reftipodocumentaciones,documentacion,obligatoria,cantidadarchivos,fechacrea,fechamodi,usuariocrea,usuariomodi,orden,carpeta,activo,refprocesocotizacion,leyenda)
+      values ('',".$reftipodocumentaciones.",'".$documentacion."','".$obligatoria."',".$cantidadarchivos.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."',".$orden.",'".$carpeta."','".$activo."',".$refprocesocotizacion.",'".$leyenda."')";
       $res = $this->query($sql,1);
       return $res;
    }
 
 
-   function modificarDocumentaciones($id,$reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$orden,$carpeta,$activo,$refprocesocotizacion) {
+   function modificarDocumentaciones($id,$reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$orden,$carpeta,$activo,$refprocesocotizacion,$leyenda) {
       $sql = "update dbdocumentaciones
       set
-      reftipodocumentaciones = ".$reftipodocumentaciones.",documentacion = '".$documentacion."',obligatoria = '".$obligatoria."',cantidadarchivos = ".$cantidadarchivos.",fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."',orden = ".$orden.",carpeta = '".$carpeta."',activo = '".$activo."',refprocesocotizacion = ".$refprocesocotizacion."
+      reftipodocumentaciones = ".$reftipodocumentaciones.",documentacion = '".$documentacion."',obligatoria = '".$obligatoria."',cantidadarchivos = ".$cantidadarchivos.",fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."',orden = ".$orden.",carpeta = '".$carpeta."',activo = '".$activo."',refprocesocotizacion = ".$refprocesocotizacion.",leyenda = '".$leyenda."'
       where iddocumentacion =".$id;
       $res = $this->query($sql,0);
       return $res;
@@ -9721,9 +9836,19 @@ return $res;
 		return $res;
 	}
 
-   function traerDocumentacionesajax($length, $start, $busqueda,$colSort,$colSortDir) {
+   function traerDocumentacionesajax($length, $start, $busqueda,$colSort,$colSortDir,$proceso,$tipodocumentacion) {
 
 		$where = '';
+
+      $cadProceso = '';
+      if ($proceso != '') {
+         $cadProceso = " and tc.idprocesocotizacion = ".$proceso." ";
+      }
+
+      $cadTipodocumentacion = '';
+      if ($tipodocumentacion != '') {
+         $cadTipodocumentacion = " and d.reftipodocumentaciones = ".$tipodocumentacion." ";
+      }
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
@@ -9748,7 +9873,7 @@ return $res;
 		from dbdocumentaciones d
 		inner join tbtipodocumentaciones tip ON tip.idtipodocumentacion = d.reftipodocumentaciones
       left join tbprocesocotizacion tc on tc.idprocesocotizacion = d.refprocesocotizacion
-		where d.reftipodocumentaciones > 4 ".$where."
+		where d.reftipodocumentaciones > 4 ".$cadProceso.$cadTipodocumentacion.$where."
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
 
@@ -9777,7 +9902,9 @@ return $res;
 
 
    function traerDocumentacionesPorId($id) {
-      $sql = "select iddocumentacion,reftipodocumentaciones,documentacion,obligatoria,cantidadarchivos,fechacrea,fechamodi,usuariocrea,usuariomodi,orden,carpeta,activo,refprocesocotizacion from dbdocumentaciones where iddocumentacion =".$id;
+      $sql = "select iddocumentacion,reftipodocumentaciones,documentacion,obligatoria,cantidadarchivos,
+      fechacrea,fechamodi,usuariocrea,usuariomodi,orden,carpeta,activo,refprocesocotizacion,leyenda
+      from dbdocumentaciones where iddocumentacion =".$id;
       $res = $this->query($sql,0);
       return $res;
    }
@@ -10219,19 +10346,20 @@ return $res;
 		return 'CLI0000001';
 	}
 
-	function insertarClientes($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
-		$sql = "insert into dbclientes(idcliente,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi)
-		values ('',".$reftipopersonas.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$razonsocial."','".$domicilio."','".$telefonofijo."','".$telefonocelular."','".$email."','".$rfc."','".$ine."','".$this->generaNroCliente()."',".$refusuarios.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
+	function insertarClientes($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa) {
+		$sql = "insert into dbclientes(idcliente,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,emisioncomprobantedomicilio,emisionrfc,vencimientoine,idclienteinbursa)
+		values ('',".$reftipopersonas.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$razonsocial."','".$domicilio."','".$telefonofijo."','".$telefonocelular."','".$email."','".$rfc."','".$ine."','".$this->generaNroCliente()."',".$refusuarios.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."','".$emisioncomprobantedomicilio."','".$emisionrfc."','".$vencimientoine."','".$idclienteinbursa."')";
 
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarClientes($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi) {
+	function modificarClientes($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa) {
 		$sql = "update dbclientes
 		set
-		reftipopersonas = ".$reftipopersonas.",nombre = '".$nombre."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',razonsocial = '".$razonsocial."',domicilio = '".$domicilio."',telefonofijo = '".$telefonofijo."',telefonocelular = '".$telefonocelular."',email = '".$email."',rfc = '".$rfc."',ine = '".$ine."',numerocliente = '".$numerocliente."',refusuarios = ".$refusuarios.",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."' where idcliente =".$id;
+		reftipopersonas = ".$reftipopersonas.",nombre = '".$nombre."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',razonsocial = '".$razonsocial."',domicilio = '".$domicilio."',telefonofijo = '".$telefonofijo."',telefonocelular = '".$telefonocelular."',email = '".$email."',rfc = '".$rfc."',ine = '".$ine."',numerocliente = '".$numerocliente."',refusuarios = ".$refusuarios.",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',emisioncomprobantedomicilio = '".$emisioncomprobantedomicilio."',emisionrfc = '".$emisionrfc."',vencimientoine = '".$vencimientoine."',idclienteinbursa = '".$idclienteinbursa."'
+       where idcliente =".$id;
 
 		$res = $this->query($sql,0);
 		return $res;
@@ -10354,7 +10482,7 @@ return $res;
 
 
 	function traerClientesPorId($id) {
-		$sql = "select idcliente,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa from dbclientes where idcliente =".$id;
+		$sql = "select idcliente,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine from dbclientes where idcliente =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}

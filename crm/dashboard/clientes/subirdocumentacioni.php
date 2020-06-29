@@ -166,15 +166,32 @@ if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 	$span = 'text-info glyphicon glyphicon-plus-sign';
 }
 
+
+$input2 = '';
+$boton2 = '';
+$leyenda2 = '';
+$campo2 = '';
+
+$input3 = '';
+$boton3 = '';
+$leyenda3 = '';
+$campo3 = '';
+
 switch ($iddocumentacion) {
 	case 3:
 		// code...
 		$dato = mysql_result($resultado,0,'ine');
+		$dato2 = mysql_result($resultado,0,'vencimientoine');
 
 		$input = '<input type="text" name="ine" maxlength="13" id="ine" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
 		$leyenda = 'Cargue el Nro de INE';
 		$campo = 'ine';
+
+		$input2 = '<input type="text" maxlength="25" name="vencimientoine" id="vencimientoine" class="form-control" value="'.$dato2.'"/> ';
+		$boton2 = '<button type="button" class="btn btn-primary waves-effect btnModificar2">GUARDAR</button>';
+		$leyenda2 = 'Cargue el Vencimiento del INE';
+		$campo2 = 'vencimientoine';
 	break;
 	case 4:
 		// code...
@@ -184,24 +201,42 @@ switch ($iddocumentacion) {
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
 		$leyenda = 'Cargue el Nro de INE';
 		$campo = 'ine';
+
+		$input2 = '<input type="text" maxlength="25" name="vencimientoine" id="vencimientoine" class="form-control" value="'.$dato2.'"/> ';
+		$boton2 = '<button type="button" class="btn btn-primary waves-effect btnModificar2">GUARDAR</button>';
+		$leyenda2 = 'Cargue el Vencimiento del INE';
+		$campo2 = 'vencimientoine';
 	break;
 	case 7:
 		// code...
 		$dato = mysql_result($resultado,0,'rfc');
+		$dato2 = mysql_result($resultado,0,'emisionrfc');
 
 		$input = '<input type="text" name="rfc" maxlength="13" id="rfc" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
 		$leyenda = 'Cargue el RFC';
 		$campo = 'rfc';
+
+		$input2 = '<input type="text" maxlength="25" name="emisionrfc" id="emisionrfc" class="form-control" value="'.$dato2.'"/> ';
+		$boton2 = '<button type="button" class="btn btn-primary waves-effect btnModificar2">GUARDAR</button>';
+		$leyenda2 = 'Cargue la emision del RFC';
+		$campo2 = 'emisionrfc';
 	break;
 	case 10:
 		// code...
 		$dato = mysql_result($resultado,0,'domicilio');
+		$dato2 = mysql_result($resultado,0,'emisioncomprobantedomicilio');
 
 		$input = '<input type="text" name="domicilio" maxlength="250" id="domicilio" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
 		$leyenda = 'Cargue el Domicilio';
 		$campo = 'domicilio';
+
+		$input2 = '<input type="text" maxlength="25" name="emisioncomprobantedomicilio" id="emisioncomprobantedomicilio" class="form-control" value="'.$dato2.'"/> ';
+		$boton2 = '<button type="button" class="btn btn-primary waves-effect btnModificar2">GUARDAR</button>';
+		$leyenda2 = 'Cargue la emision del Comprobante de Domicilio';
+		$campo2 = 'emisioncomprobantedomicilio';
+
 	break;
 
 	default:
@@ -398,6 +433,29 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 										</div>
 									</div>
 								</div>
+
+								<?php if (isset($campo2) && $campo2 != '') { ?>
+									<div class="row" style="padding: 5px 20px;">
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+											<label class="form-label"><?php echo $leyenda2; ?></label>
+											<div class="form-group input-group">
+												<div class="form-line">
+													<?php echo $input2; ?>
+
+												</div>
+											</div>
+										</div>
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+											<label class="form-label"> </label>
+											<div class="form-group input-group">
+												<div class="form-line">
+													<?php echo $boton2; ?>
+
+												</div>
+											</div>
+										</div>
+									</div>
+								<?php } ?>
 							</form>
 						</div>
 					</div>
@@ -542,15 +600,72 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 		});
 
 		$('.btnModificar').click(function() {
-			modificarAsociadoUnicaDocumentacion($('#<?php echo $campo; ?>').val());
+			modificarPostulanteUnicaDocumentacion($('#<?php echo $campo; ?>').val(),'<?php echo $campo; ?>');
 		});
+
+		<?php if (isset($campo2)) { ?>
+		$('.btnModificar2').click(function() {
+			modificarPostulanteUnicaDocumentacion($('#<?php echo $campo2; ?>').val(),'<?php echo $campo2; ?>');
+		});
+		<?php } ?>
 
 		$('.btnVolver').click(function() {
 			url = "index.php";
 			$(location).attr('href',url);
 		});
 
-		function modificarAsociadoUnicaDocumentacion(valor) {
+		$('#emisioncomprobantedomicilio').pickadate({
+ 			format: 'yyyy-mm-dd',
+ 			labelMonthNext: 'Siguiente mes',
+ 			labelMonthPrev: 'Previo mes',
+ 			labelMonthSelect: 'Selecciona el mes del año',
+ 			labelYearSelect: 'Selecciona el año',
+ 			selectMonths: true,
+ 			selectYears: 5,
+ 			today: 'Hoy',
+ 			clear: 'Borrar',
+ 			close: 'Cerrar',
+ 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+ 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+ 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+ 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+ 		});
+
+		$('#emisionrfc').pickadate({
+ 			format: 'yyyy-mm-dd',
+ 			labelMonthNext: 'Siguiente mes',
+ 			labelMonthPrev: 'Previo mes',
+ 			labelMonthSelect: 'Selecciona el mes del año',
+ 			labelYearSelect: 'Selecciona el año',
+ 			selectMonths: true,
+ 			selectYears: 5,
+ 			today: 'Hoy',
+ 			clear: 'Borrar',
+ 			close: 'Cerrar',
+ 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+ 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+ 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+ 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+ 		});
+
+		$('#vencimientoine').pickadate({
+ 			format: 'yyyy-mm-dd',
+ 			labelMonthNext: 'Siguiente mes',
+ 			labelMonthPrev: 'Previo mes',
+ 			labelMonthSelect: 'Selecciona el mes del año',
+ 			labelYearSelect: 'Selecciona el año',
+ 			selectMonths: true,
+ 			selectYears: 40,
+ 			today: 'Hoy',
+ 			clear: 'Borrar',
+ 			close: 'Cerrar',
+ 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+ 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+ 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+ 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+ 		});
+
+		function modificarAsociadoUnicaDocumentacion(valor, campo) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
@@ -559,7 +674,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 				data: {
 					accion: 'modificarAsociadoUnicaDocumentacion',
 					idasociado: <?php echo $id; ?>,
-					campo: '<?php echo $campo; ?>',
+					campo: campo,
 					valor: valor
 				},
 				//mientras enviamos el archivo

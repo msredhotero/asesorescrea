@@ -55,8 +55,8 @@ $modificar = "modificarProductos";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "tbproductos";
 
-$lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado','refcuestionarios','puntosporventarenovado','puntosporpesopagadorenovado');
-$lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado','Cuestionario','Punto x Venta Renovacion','Puntos x Peso Pagado Renovacion');
+$lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado','refcuestionarios','puntosporventarenovado','puntosporpesopagadorenovado','reftipopersonas');
+$lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado','Cuestionario','Punto x Venta Renovacion','Puntos x Peso Pagado Renovacion','Tipo Personas');
 
 $resVar1 = $serviciosReferencias->traerTipoproductorama();
 $cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(2),'');
@@ -70,8 +70,11 @@ $resCuest = $serviciosReferencias->traerCuestionarios();
 $cadRef4 = '<option value="">-- Seleccionar --</option>';
 $cadRef4 .= $serviciosFunciones->devolverSelectBox($resCuest,array(1),'');
 
-$refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef3,4=>$cadRef4);
-$refCampo 	=  array('reftipoproductorama','reftipodocumentaciones','activo','prima','refcuestionarios');
+$resVar8 = $serviciosReferencias->traerTipopersonas();
+$cadRef8 = $serviciosFunciones->devolverSelectBox($resVar8,array(1),'');
+
+$refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef3,4=>$cadRef4,5=>$cadRef8);
+$refCampo 	=  array('reftipoproductorama','reftipodocumentaciones','activo','prima','refcuestionarios','reftipopersonas');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -205,6 +208,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Tipo Documentacion</th>
 												<th>Pt x Venta</th>
 												<th>Pts x Peso Pagado</th>
+												<th>Tipo Persona</th>
 												<th>Activo</th>
 												<th>Acciones</th>
 											</tr>
@@ -217,6 +221,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Tipo Documentacion</th>
 												<th>Pt x Venta</th>
 												<th>Pts x Peso Pagado</th>
+												<th>Tipo Persona</th>
 												<th>Activo</th>
 												<th>Acciones</th>
 											</tr>
