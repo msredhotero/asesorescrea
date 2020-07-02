@@ -57,7 +57,7 @@
 		$resDocumentacion = $serviciosReferencias->traerDocumentacionesPorId($iddocumentacion);
 
 		// desarrollo
-		$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/'.mysql_result($resDocumentacion,0,'carpeta').'/';
+		$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/'.mysql_result($resDocumentacion,0,'carpeta');
 		list($base,$extension) = explode('.',$name);
 		$newname = implode('.', [mysql_result($resDocumentacion,0,'carpeta'), time(), $extension]);
 
@@ -72,6 +72,10 @@
 
 		// produccion
 		// $nuevo_noentrar = 'https://www.saupureinconsulting.com.ar/aifzn/data/'.$_SESSION['idclub_aif'].'/'.'index.php';
+
+		if (!file_exists('../../archivos/postulantes/'.$idpostulante)) {
+			mkdir('../../archivos/postulantes/'.$idpostulante, 0777);
+		}
 
 		if (!file_exists($dir_destino)) {
 			mkdir($dir_destino, 0777);
