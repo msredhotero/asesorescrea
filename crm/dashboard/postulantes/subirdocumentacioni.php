@@ -613,7 +613,7 @@ $frmUnidadNegocios2 	= $serviciosFunciones->camposTablaModificar(mysql_result($r
 				?>
 
 			</div>
-			
+
 
 			<div class="row">
 				<?php
@@ -1120,7 +1120,7 @@ $frmUnidadNegocios2 	= $serviciosFunciones->camposTablaModificar(mysql_result($r
 					swal("Correcto!", resp.replace("1", ""), "success");
 					$('.btnGuardar').show();
 					$('.infoPlanilla').hide();
-					location.reload();
+					//location.reload();
 				});
 
 				this.on('error', function( file, resp ){
