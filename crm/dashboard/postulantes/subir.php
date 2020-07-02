@@ -59,7 +59,7 @@
 		// desarrollo
 		$dir_destino = '../../archivos/postulantes/'.$idpostulante.'/'.mysql_result($resDocumentacion,0,'carpeta');
 		list($base,$extension) = explode('.',$name);
-		$newname = implode('.', [mysql_result($resDocumentacion,0,'carpeta'), time(), $extension]);
+		$newname = str_replace(' ','',mysql_result($resDocumentacion,0,'documentacion').time().$extension);
 
 
 		// produccion
