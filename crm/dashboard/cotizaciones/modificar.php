@@ -354,6 +354,23 @@ $rightsidebar = '<ul class="nav nav-tabs tab-nav-right" role="tablist">
                 </div>
             </div>';
 
+$lblModal ='';
+$modalVigencias = 0;
+if ($vigenciasCliente['errorVCD'] == 'true') {
+	$lblModal .= '<h5>* Ya pasaron 90 dias de la emision del comprobante de domicilio, por favor, solicitelo nuevamente. Fecha de Emision: '.$vigenciasCliente['vcd'].'</h5><br>';
+	$modalVigencias = 1;
+}
+
+if ($vigenciasCliente['errorVRFC'] == 'true') {
+	$lblModal .= '<h5>* Ya pasaron 90 dias de la emision del RFC, por favor, solicitelo nuevamente. Fecha de Emision: '.$vigenciasCliente['vrfc'].'</h5><br>';
+	$modalVigencias = 1;
+}
+
+if ($vigenciasCliente['errorVINE'] == 'true') {
+	$lblModal .= '<h5>* Tiene vencido el INE, por favor, solicitelo nuevamente. Fecha de Emision: '.$vigenciasCliente['vine'].'</h5><br>';
+	$modalVigencias = 1;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -615,7 +632,21 @@ $rightsidebar = '<ul class="nav nav-tabs tab-nav-right" role="tablist">
 </section>
 
 
+<div class="modal fade" id="lgmVigencias" tabindex="-1" role="dialog">
+	 <div class="modal-dialog modal-lg" role="document">
+		  <div class="modal-content">
+				<div class="modal-header bg-red">
+					 <h4 class="modal-title" id="largeModalLabel">IMPORTANTE</h4>
+				</div>
+				<div class="modal-body">
+				<div class="row">
+					<?php echo $lblModal; ?>
+				</div>
+				</div>
 
+		  </div>
+	 </div>
+</div>
 
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
@@ -646,6 +677,10 @@ $rightsidebar = '<ul class="nav nav-tabs tab-nav-right" role="tablist">
 	$(document).ready(function(){
 
 		$('.frmContbitacorainbursa').hide();
+
+		<?php if ($modalVigencias == 1) { ?>
+			$('#lgmVigencias').modal();
+		<?php } ?>
 
 		<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
 			$("#bitacoracrea").prop('readonly',true);
