@@ -137,7 +137,12 @@ if (isset($_GET['id'])) {
 	if (isset($_GET['iddocumentaciona'])) {
 		$iddocumentacion2 = $_GET['iddocumentaciona'];
 	} else {
-		$iddocumentacion2 = mysql_result($documentacionesadicionales3,0,'iddocumentacion');
+		if (mysql_num_rows($documentacionesadicionales3)>0) {
+			$iddocumentacion2 = mysql_result($documentacionesadicionales3,0,'iddocumentacion');
+		} else {
+			$iddocumentacion2 = 0;
+		}
+
 	}
 	//die(var_dump($iddocumentacion2));
 
