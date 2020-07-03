@@ -352,6 +352,8 @@ if (isset($_GET['id'])) {
 		$documentacionNombre2 = '';
 	}
 
+	$idasesor = 0;
+
 } else {
 
 	$id = 0;
