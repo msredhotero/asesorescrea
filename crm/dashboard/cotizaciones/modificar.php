@@ -467,7 +467,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 	<div class="container-fluid">
 		<div class="row clearfix">
 
-			<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
+			<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px; margin-top:-5px;">
 
 				<?php
 				$lblEstado = 'complete';
@@ -642,6 +642,9 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 				<div class="row">
 					<?php echo $lblModal; ?>
 				</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
 				</div>
 
 		  </div>
