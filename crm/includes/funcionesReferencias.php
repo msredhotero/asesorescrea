@@ -10008,7 +10008,7 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and ".$roles." t.tipodocumentacion like '%".$busqueda."%')";
+			$where = " and t.tipodocumentacion like '%".$busqueda."%')";
 		}
 
       $sql = "select

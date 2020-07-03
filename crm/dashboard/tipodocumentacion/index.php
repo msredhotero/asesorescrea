@@ -190,13 +190,13 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
-												<th>Especialidad</th>
+												<th>Tipo Documentacion</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
-												<th>Especialidad</th>
+												<th>Tipo Documentacion</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
