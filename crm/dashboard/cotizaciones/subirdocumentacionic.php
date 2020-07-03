@@ -29,13 +29,19 @@ $serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../clientes/
 
 $fecha = date('Y-m-d');
 
+
 if ($_SESSION['idroll_sahilices'] == 10) {
 	$idusuario = $_SESSION['usuaid_sahilices'];
-	$resultado 		= 	$serviciosReferencias->traerClientesPorUsuario($idusuario);
+	$resultadoC 		= 	$serviciosReferencias->traerCotizacionesPorUsuario($idusuario);
+	$idcotizacion = mysql_result($resultadoC,0,0);
 } else {
-	$id = $_GET['id'];
-	$resultado 		= 	$serviciosReferencias->traerClientesPorId($id);
+	$idcotizacion = $_GET['id'];
+	$resultadoC 		= 	$serviciosReferencias->traerCotizacionesPorId($idcotizacion);
 }
+
+
+$id = mysql_result($resultadoC,0,'refclientes');
+$resultado 		= 	$serviciosReferencias->traerClientesPorId($id);
 
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
@@ -48,8 +54,6 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 
-
-$id = mysql_result($resultado,0,'idcliente');
 
 $iddocumentacion = $_GET['documentacion'];
 
@@ -372,7 +376,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 			<div class="row">
 				<?php
 				while ($row = mysql_fetch_array($resDocumentaciones)) {
-					if (($row['idestadodocumentacion'] != 5) && ($row['idestadodocumentacion'] != 6) && ($row['idestadodocumentacion'] != 7)) {
+
 				?>
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
@@ -385,7 +389,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 							</div>
 						</div>
 					</div>
-				<?php } } ?>
+				<?php }  ?>
 			</div>
 
 			<div class="row">
@@ -497,6 +501,19 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 										Estado: <b><?php echo $estadoDocumentacion; ?></b>
 									</h4>
 								</div>
+								<div class="col-xs-6 col-md-6" style="display:block">
+									<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
+									<div class="input-group col-md-12">
+										<select class="form-control show-tick" id="refestados" name="refestados">
+											<?php echo $cadRefEstados; ?>
+										</select>
+									</div>
+									<?php
+									if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11)) {
+									?>
+									<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
+								<?php } ?>
+								</div>
 
 							</div>
 					</div>
@@ -519,7 +536,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 							</ul>
 						</div>
 						<div class="body">
-							<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+							<form action="subircli.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
 								<div class="dz-message">
 									<div class="drag-icon-cph">
 										<i class="material-icons">touch_app</i>
@@ -596,7 +613,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
-			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=" + idTable;
+			url = "subirdocumentacionic.php?id=<?php echo $idcotizacion; ?>&documentacion=" + idTable;
 			$(location).attr('href',url);
 		});
 
@@ -611,7 +628,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 		<?php } ?>
 
 		$('.btnVolver').click(function() {
-			url = "index.php";
+			url = "modificar.php?id=" + <?php echo $idcotizacion; ?>;
 			$(location).attr('href',url);
 		});
 
@@ -821,7 +838,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 				 idasociado: <?php echo $id; ?>,
 				 iddocumentacion: <?php echo $iddocumentacion; ?>
 			},
-			url: 'subir.php'
+			url: 'subircli.php'
 		});
 
 

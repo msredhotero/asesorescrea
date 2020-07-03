@@ -1023,10 +1023,93 @@ switch ($accion) {
       modificarClienteUnicaDocumentacion($serviciosReferencias);
    break;
 
+   case 'modificarEstadoDocumentacionClientes':
+      modificarEstadoDocumentacionClientes($serviciosReferencias);
+   break;
+   case 'traerDocumentacionPorClienteDocumentacion':
+      traerDocumentacionPorClienteDocumentacion($serviciosReferencias);
+   break;
+
 
 
 }
 /* FinFinFin */
+
+
+function traerDocumentacionPorClienteDocumentacion($serviciosReferencias) {
+
+   $idasociado = $_POST['idcliente'];
+   $iddocumentacion = $_POST['iddocumentacion'];
+
+   $resV['datos'] = '';
+   $resV['error'] = false;
+
+   $resFoto = $serviciosReferencias->traerDocumentacionPorClienteDocumentacion($idasociado,$iddocumentacion);
+
+   $imagen = '';
+
+   if (mysql_num_rows($resFoto) > 0) {
+      /* produccion
+      $imagen = 'https://www.saupureinconsulting.com.ar/aifzn/'.mysql_result($resFoto,0,'archivo').'/'.mysql_result($resFoto,0,'imagen');
+      */
+
+      //desarrollo
+
+      if (mysql_result($resFoto,0,'type') == '') {
+         $imagen = '../../imagenes/sin_img.jpg';
+
+         $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+         $resV['error'] = true;
+      } else {
+         $imagen = '../../archivos/clientes/'.$idasociado.'/'.mysql_result($resFoto,0,'carpeta').'/'.mysql_result($resFoto,0,'archivo');
+
+         $resV['datos'] = array('imagen' => $imagen, 'type' => mysql_result($resFoto,0,'type'));
+
+         $resV['error'] = false;
+      }
+
+
+
+   } else {
+      $imagen = '../../imagenes/sin_img.jpg';
+
+
+      $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+      $resV['error'] = true;
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
+function modificarEstadoDocumentacionClientes($serviciosReferencias) {
+   session_start();
+
+   $iddocumentacionasociado = $_POST['iddocumentacioncliente'];
+   $idestado = $_POST['idestado'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+
+   if ($iddocumentacionasociado == 0) {
+      $resV['leyenda'] = 'Todavia no cargo el archivo, no podra modificar el estado de la documentación';
+      $resV['error'] = true;
+   } else {
+      $res = $serviciosReferencias->modificarEstadoDocumentacionClientes($iddocumentacionasociado,$idestado,$usuariomodi);
+
+      if ($res == true) {
+         $resV['leyenda'] = '';
+         $resV['error'] = false;
+      } else {
+         $resV['leyenda'] = 'Hubo un error al modificar datos';
+         $resV['error'] = true;
+      }
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function modificarClienteUnicaDocumentacion($serviciosReferencias) {
    $idpostulante = $_POST['idasociado'];

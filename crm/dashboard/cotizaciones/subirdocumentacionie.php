@@ -24,22 +24,22 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../clientes/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cotizaciones/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 if ($_SESSION['idroll_sahilices'] == 10) {
 	$idusuario = $_SESSION['usuaid_sahilices'];
-	$resultado 		= 	$serviciosReferencias->traerClientesPorUsuario($idusuario);
+	$resultado 		= 	$serviciosReferencias->traerCotizacionesPorUsuario($idusuario);
 } else {
 	$id = $_GET['id'];
-	$resultado 		= 	$serviciosReferencias->traerClientesPorId($id);
+	$resultado 		= 	$serviciosReferencias->traerCotizacionesPorId($id);
 }
 
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Clientes",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cotizaciones",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -49,7 +49,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 
 
-$id = mysql_result($resultado,0,'idcliente');
+$id = mysql_result($resultado,0,'idcotizacion');
 
 $iddocumentacion = $_GET['documentacion'];
 
@@ -58,70 +58,32 @@ $singular = "Documentación I";
 
 $plural = "Documentaciones I";
 
-$eliminar = "eliminarPostulantes";
+$eliminar = "eliminarCotizaciones";
 
-$insertar = "insertarPostulantes";
+$insertar = "insertarCotizaciones";
 
-$modificar = "modificarPostulantes";
+$modificar = "modificarCotizaciones";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 
-$postulante = mysql_result($resultado,0,'nombre').' '.mysql_result($resultado,0,'apellidopaterno').' '.mysql_result($resultado,0,'apellidomaterno');
+$resCliente = $serviciosReferencias->traerClientesPorId(mysql_result($resultado,0,'refclientes'));
+
+$cliente = mysql_result($resCliente,0,'nombre').' '.mysql_result($resCliente,0,'apellidopaterno').' '.mysql_result($resCliente,0,'apellidomaterno');
 
 
-$path  = '../../archivos/clientes/'.$id;
+$path  = '../../archivos/cotizaciones/'.$id;
 
 if (!file_exists($path)) {
 	mkdir($path, 0777);
 }
 
-/**** son 10 documentaciones */
-$pathINEf  = '../../archivos/clientes/'.$id.'/inef';
-
-if (!file_exists($pathINEf)) {
-	mkdir($pathINEf, 0777);
-}
-
-$filesINEf = array_diff(scandir($pathINEf), array('.', '..'));
-
-/****************************************************************/
-
-$pathINEd  = '../../archivos/clientes/'.$id.'/ined';
-
-if (!file_exists($pathINEd)) {
-	mkdir($pathINEd, 0777);
-}
-
-$filesINEd = array_diff(scandir($pathINEd), array('.', '..'));
-
-/****************************************************************/
-
-$pathCD  = '../../archivos/clientes/'.$id.'/comprobantedomicilio';
-
-if (!file_exists($pathCD)) {
-	mkdir($pathCD, 0777);
-}
-
-$filesCD = array_diff(scandir($pathCD), array('.', '..'));
-
-/****************************************************************/
-
-$pathRC  = '../../archivos/clientes/'.$id.'/mercantil';
-
-if (!file_exists($pathRC)) {
-	mkdir($pathRC, 0777);
-}
-
-$filesRC = array_diff(scandir($pathRC), array('.', '..'));
-
-
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorClienteDocumentacion($id, $iddocumentacion);
+$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacion($id, $iddocumentacion);
 
 $resDocumentacion = $serviciosReferencias->traerDocumentacionesPorId($iddocumentacion);
 
@@ -130,7 +92,7 @@ $resEstados = $serviciosReferencias->traerEstadodocumentaciones();
 if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 	$cadRefEstados = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'));
 
-	$iddocumentacionasociado = mysql_result($resDocumentacionAsesor,0,'iddocumentacioncliente');
+	$iddocumentacionasociado = mysql_result($resDocumentacionAsesor,0,'iddocumentacioncotizacion');
 
 	$estadoDocumentacion = mysql_result($resDocumentacionAsesor,0,'estadodocumentacion');
 
@@ -154,6 +116,8 @@ if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 			$span = 'text-success glyphicon glyphicon-remove-sign';
 		break;
 	}
+
+	$idestadodocumentacion = mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones');
 } else {
 	$cadRefEstados = $serviciosFunciones->devolverSelectBox($resEstados,array(1),'');
 
@@ -164,81 +128,30 @@ if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 	$color = 'blue';
 
 	$span = 'text-info glyphicon glyphicon-plus-sign';
+
+	$idestadodocumentacion = 1;
 }
 
-
-$input2 = '';
-$boton2 = '';
-$leyenda2 = '';
-$campo2 = '';
-
-$input3 = '';
-$boton3 = '';
-$leyenda3 = '';
-$campo3 = '';
-
 switch ($iddocumentacion) {
-	case 3:
+	case 35:
 		// code...
-		$dato = mysql_result($resultado,0,'ine');
-		$dato2 = mysql_result($resultado,0,'vencimientoine');
+		$dato = mysql_result($resultado,0,'nropoliza');
 
-		$input = '<input type="text" name="ine" maxlength="13" id="ine" class="form-control" value="'.$dato.'"/> ';
+		$input = '<input type="text" name="nropoliza" maxlength="13" id="nropoliza" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
-		$leyenda = 'Cargue el Nro de INE';
-		$campo = 'ine';
-
-		$input2 = '<input type="text" maxlength="25" name="vencimientoine" id="vencimientoine" class="form-control" value="'.$dato2.'"/> ';
-		$boton2 = '<button type="button" class="btn btn-primary waves-effect btnModificar2">GUARDAR</button>';
-		$leyenda2 = 'Cargue el Vencimiento del INE';
-		$campo2 = 'vencimientoine';
+		$leyenda = 'Cargue el Nro de Poliza';
+		$campo = 'nropoliza';
 	break;
-	case 4:
+	case 36:
 		// code...
-		$dato = mysql_result($resultado,0,'ine');
-		$dato2 = mysql_result($resultado,0,'vencimientoine');
+		$dato = mysql_result($resultado,0,'nrorecibo');
 
-		$input = '<input type="text" name="ine" maxlength="13" id="ine" class="form-control" value="'.$dato.'"/> ';
+		$input = '<input type="text" name="nrorecibo" maxlength="20" id="nrorecibo" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
-		$leyenda = 'Cargue el Nro de INE';
-		$campo = 'ine';
-
-		$input2 = '<input type="text" maxlength="25" name="vencimientoine" id="vencimientoine" class="form-control" value="'.$dato2.'"/> ';
-		$boton2 = '<button type="button" class="btn btn-primary waves-effect btnModificar2">GUARDAR</button>';
-		$leyenda2 = 'Cargue el Vencimiento del INE';
-		$campo2 = 'vencimientoine';
+		$leyenda = 'Cargue el Nro de Recibo';
+		$campo = 'nrorecibo';
 	break;
-	case 7:
-		// code...
-		$dato = mysql_result($resultado,0,'rfc');
-		$dato2 = mysql_result($resultado,0,'emisionrfc');
 
-		$input = '<input type="text" name="rfc" maxlength="13" id="rfc" class="form-control" value="'.$dato.'"/> ';
-		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
-		$leyenda = 'Cargue el RFC';
-		$campo = 'rfc';
-
-		$input2 = '<input type="text" maxlength="25" name="emisionrfc" id="emisionrfc" class="form-control" value="'.$dato2.'"/> ';
-		$boton2 = '<button type="button" class="btn btn-primary waves-effect btnModificar2">GUARDAR</button>';
-		$leyenda2 = 'Cargue la emision del RFC';
-		$campo2 = 'emisionrfc';
-	break;
-	case 10:
-		// code...
-		$dato = mysql_result($resultado,0,'domicilio');
-		$dato2 = mysql_result($resultado,0,'emisioncomprobantedomicilio');
-
-		$input = '<input type="text" name="domicilio" maxlength="250" id="domicilio" class="form-control" value="'.$dato.'"/> ';
-		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
-		$leyenda = 'Cargue el Domicilio';
-		$campo = 'domicilio';
-
-		$input2 = '<input type="text" maxlength="25" name="emisioncomprobantedomicilio" id="emisioncomprobantedomicilio" class="form-control" value="'.$dato2.'"/> ';
-		$boton2 = '<button type="button" class="btn btn-primary waves-effect btnModificar2">GUARDAR</button>';
-		$leyenda2 = 'Cargue la emision del Comprobante de Domicilio';
-		$campo2 = 'emisioncomprobantedomicilio';
-
-	break;
 
 	default:
 		// code...
@@ -249,7 +162,7 @@ switch ($iddocumentacion) {
 	break;
 }
 
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumentacionCompleta($id);
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($id,mysql_result($resDocumentacion,0,'reftipodocumentaciones'));
 
 ?>
 
@@ -372,7 +285,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 			<div class="row">
 				<?php
 				while ($row = mysql_fetch_array($resDocumentaciones)) {
-					if (($row['idestadodocumentacion'] != 5) && ($row['idestadodocumentacion'] != 6) && ($row['idestadodocumentacion'] != 7)) {
+
 				?>
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
@@ -385,7 +298,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 							</div>
 						</div>
 					</div>
-				<?php } } ?>
+				<?php }  ?>
 			</div>
 
 			<div class="row">
@@ -434,29 +347,6 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 										</div>
 									</div>
 								</div>
-
-								<?php if (isset($campo2) && $campo2 != '') { ?>
-									<div class="row" style="padding: 5px 20px;">
-										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
-											<label class="form-label"><?php echo $leyenda2; ?></label>
-											<div class="form-group input-group">
-												<div class="form-line">
-													<?php echo $input2; ?>
-
-												</div>
-											</div>
-										</div>
-										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
-											<label class="form-label"> </label>
-											<div class="form-group input-group">
-												<div class="form-line">
-													<?php echo $boton2; ?>
-
-												</div>
-											</div>
-										</div>
-									</div>
-								<?php } ?>
 							</form>
 						</div>
 					</div>
@@ -497,12 +387,25 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 										Estado: <b><?php echo $estadoDocumentacion; ?></b>
 									</h4>
 								</div>
+								<div class="col-xs-6 col-md-6" style="display:block">
+									<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
+									<div class="input-group col-md-12">
+										<select class="form-control show-tick" id="refestados" name="refestados">
+											<?php echo $cadRefEstados; ?>
+										</select>
+									</div>
+									<?php
+									if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11)) {
+									?>
+									<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
+								<?php } ?>
+								</div>
 
 							</div>
+						</div>
 					</div>
 				</div>
-			</div>
-
+			<?php if ($idestadodocumentacion != 5) { ?>
 			<div class="row">
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card">
@@ -535,6 +438,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 					</div>
 				</div>
 			</div>
+			<?php } ?>
 		</div>
 	</div>
 </section>
@@ -596,86 +500,36 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
-			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=" + idTable;
+			url = "subirdocumentacionie.php?id=<?php echo $id; ?>&documentacion=" + idTable;
 			$(location).attr('href',url);
 		});
 
 		$('.btnModificar').click(function() {
-			modificarClienteUnicaDocumentacion($('#<?php echo $campo; ?>').val(),'<?php echo $campo; ?>');
+			modificarCotizacionUnicaDocumentacion($('#<?php echo $campo; ?>').val());
 		});
 
-		<?php if (isset($campo2)) { ?>
-		$('.btnModificar2').click(function() {
-			modificarClienteUnicaDocumentacion($('#<?php echo $campo2; ?>').val(),'<?php echo $campo2; ?>');
+		<?php if (mysql_result($resultado,0,'refestadocotizaciones') == 1) { ?>
+		$('.btnVolver').click(function() {
+			url = "new.php?id=" + <?php echo $id; ?>;
+			$(location).attr('href',url);
+		});
+		<?php } else { ?>
+		$('.btnVolver').click(function() {
+			url = "modificar.php?id=" + <?php echo $id; ?>;
+			$(location).attr('href',url);
 		});
 		<?php } ?>
 
-		$('.btnVolver').click(function() {
-			url = "index.php";
-			$(location).attr('href',url);
-		});
-
-		$('#emisioncomprobantedomicilio').pickadate({
- 			format: 'yyyy-mm-dd',
- 			labelMonthNext: 'Siguiente mes',
- 			labelMonthPrev: 'Previo mes',
- 			labelMonthSelect: 'Selecciona el mes del año',
- 			labelYearSelect: 'Selecciona el año',
- 			selectMonths: true,
- 			selectYears: 5,
- 			today: 'Hoy',
- 			clear: 'Borrar',
- 			close: 'Cerrar',
- 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
- 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
- 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
- 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
- 		});
-
-		$('#emisionrfc').pickadate({
- 			format: 'yyyy-mm-dd',
- 			labelMonthNext: 'Siguiente mes',
- 			labelMonthPrev: 'Previo mes',
- 			labelMonthSelect: 'Selecciona el mes del año',
- 			labelYearSelect: 'Selecciona el año',
- 			selectMonths: true,
- 			selectYears: 5,
- 			today: 'Hoy',
- 			clear: 'Borrar',
- 			close: 'Cerrar',
- 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
- 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
- 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
- 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
- 		});
-
-		$('#vencimientoine').pickadate({
- 			format: 'yyyy-mm-dd',
- 			labelMonthNext: 'Siguiente mes',
- 			labelMonthPrev: 'Previo mes',
- 			labelMonthSelect: 'Selecciona el mes del año',
- 			labelYearSelect: 'Selecciona el año',
- 			selectMonths: true,
- 			selectYears: 40,
- 			today: 'Hoy',
- 			clear: 'Borrar',
- 			close: 'Cerrar',
- 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
- 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
- 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
- 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
- 		});
-
-		function modificarClienteUnicaDocumentacion(valor, campo) {
+		function modificarCotizacionUnicaDocumentacion(valor) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
 				data: {
-					accion: 'modificarClienteUnicaDocumentacion',
-					idasociado: <?php echo $id; ?>,
-					campo: campo,
+					accion: 'modificarCotizacionUnicaDocumentacion',
+					idcotizacion: <?php echo $id; ?>,
+					campo: '<?php echo $campo; ?>',
 					valor: valor
 				},
 				//mientras enviamos el archivo
@@ -703,18 +557,18 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 		}
 
 		$('.guardarEstado').click(function() {
-			modificarEstadoDocumentacionClientes($('#refestados').val());
+			modificarEstadoDocumentacionCotizaciones($('#refestados').val());
 		});
 
-		function modificarEstadoDocumentacionClientes(idestado) {
+		function modificarEstadoDocumentacionCotizaciones(idestado) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
 				data: {
-					accion: 'modificarEstadoDocumentacionClientes',
-					iddocumentacioncliente: <?php echo $iddocumentacionasociado; ?>,
+					accion: 'modificarEstadoDocumentacionCotizaciones',
+					iddocumentacioncotizacion: <?php echo $iddocumentacionasociado; ?>,
 					idestado: idestado
 				},
 				//mientras enviamos el archivo
@@ -727,7 +581,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 					if (data.error == false) {
 						swal("Ok!", 'Se modifico correctamente el estado de la documentación <?php echo $campo; ?>', "success");
 						$('.guardarEstado').show();
-						location.reload();
+						//location.reload();
 					} else {
 						swal("Error!", data.leyenda, "warning");
 
@@ -744,9 +598,9 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 
 		function traerImagen(contenedorpdf, contenedor) {
 			$.ajax({
-				data:  {idcliente: <?php echo $id; ?>,
+				data:  {idcotizacion: <?php echo $id; ?>,
 						iddocumentacion: <?php echo $iddocumentacion; ?>,
-						accion: 'traerDocumentacionPorClienteDocumentacion'},
+						accion: 'traerDocumentacionPorCotizacionDocumentacion'},
 				url:   '../../ajax/ajax.php',
 				type:  'post',
 				beforeSend: function () {
@@ -805,6 +659,8 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 					swal("Correcto!", resp.replace("1", ""), "success");
 					$('.btnGuardar').show();
 					$('.infoPlanilla').hide();
+					$('#<?php echo $iddocumentacion; ?>').addClass('bg-blue');
+					$('#<?php echo $iddocumentacion; ?> .number').html('Cargada');
 					//location.reload();
 				});
 
@@ -815,7 +671,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 		};
 
 
-
+		<?php if (($idestadodocumentacion != 5)) { ?>
 		var myDropzone = new Dropzone("#archivos", {
 			params: {
 				 idasociado: <?php echo $id; ?>,
@@ -823,6 +679,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 			},
 			url: 'subir.php'
 		});
+		<?php } ?>
 
 
 
@@ -847,7 +704,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {accion: 'eliminarDocumentacionAsociado',idasociado: <?php echo $id; ?>, iddocumentacion: <?php echo $iddocumentacion; ?>},
+				data: {accion: 'eliminarDocumentacionCotizacion',idcotizacion: <?php echo $id; ?>, iddocumentacion: <?php echo $iddocumentacion; ?>},
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('.btnEliminar').hide();
@@ -858,6 +715,8 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 					if (data.error == false) {
 						swal("Ok!", data.leyenda , "success");
 						traerImagen('example1','timagen1');
+
+						//location.reload();
 
 					} else {
 						swal("Error!", data.leyenda, "warning");
@@ -896,12 +755,6 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 
 	});
 </script>
-
-
-
-
-
-
 
 
 </body>

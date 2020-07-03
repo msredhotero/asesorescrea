@@ -55,6 +55,8 @@ $resultado = $serviciosReferencias->traerCotizacionesPorId($id);
 
 $cuestionario = $serviciosReferencias->traerCuestionariodetallePorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id);
 
+$vigenciasCliente = $serviciosReferencias->vigenciasDocumentacionesClientes(mysql_result($resultado,0,'refclientes'));
+
 if ($id == 0) {
 	header('Location: index.php');
 }
@@ -240,12 +242,117 @@ if (mysql_result($resProducto,0,'reftipodocumentaciones') == '') {
 }
 
 $documentacionesadicionales = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
-
 $documentacionesadicionales2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
+$documentacionesadicionales3 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
 
 $documentacionesrequeridas = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
-
 $documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
+
+$resDocumentacionesCliente = $serviciosReferencias->traerDocumentacionPorClienteDocumentacionCompleta(mysql_result($resultado,0,'refclientes'));
+$resDocumentacionesCliente2 = $serviciosReferencias->traerDocumentacionPorClienteDocumentacionCompleta(mysql_result($resultado,0,'refclientes'));
+
+$documentacionesrequeridasE = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($id,$refdoctipo);
+$documentacionesrequeridasE2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($id,$refdoctipo);
+
+
+$rightsidebar = '';
+//die(var_dump($vigenciasCliente));
+
+$cadArProd = '';
+
+if (($ordenPosible >= 3) || ($ordenPosible == 0)) {
+	while ($rowD = mysql_fetch_array($documentacionesrequeridas)) {
+		$cadArProd .= '<li>
+			 <span>'.substr($rowD['documentacion'],0,18).'</span>
+			 <div class="switch">
+				  <label class="btn bg-'.($rowD['color'] == '' ? 'grey' : $rowD['color']).' btn'.str_replace(' ','',$rowD['documentacion']).'" style="margin-top:-6px; margin-right:5px;">'.$rowD['estadodocumentacion'].'</label>
+			 </div>
+		</li>';
+	}
+}
+
+$cadArProdE = '';
+
+if (($ordenPosible >= 3) || ($ordenPosible == 0)) {
+	while ($rowD = mysql_fetch_array($documentacionesrequeridasE)) {
+		$cadArProdE .= '<li>
+			 <span>'.substr($rowD['documentacion'],0,18).'</span>
+			 <div class="switch">
+				  <label class="btn bg-'.($rowD['color'] == '' ? 'grey' : $rowD['color']).' btnE'.str_replace(' ','',$rowD['documentacion']).'" style="margin-top:-6px; margin-right:5px;">'.$rowD['estadodocumentacion'].'</label>
+			 </div>
+		</li>';
+	}
+}
+
+
+$cadArCotizacion = '';
+
+
+while ($rowD = mysql_fetch_array($documentacionesadicionales3)) {
+	$cadArCotizacion .= '<li>
+		 <span>'.substr($rowD['documentacion'],0,18).'</span>
+		 <div class="switch">
+			  <label class="btn bg-'.($rowD['color'] == '' ? 'grey' : $rowD['color']).' btn'.str_replace(' ','',$rowD['documentacion']).'" style="margin-top:-6px; margin-right:5px;">'.$rowD['estadodocumentacion'].'</label>
+		 </div>
+	</li>';
+}
+
+$cadArCliente = '';
+
+
+while ($rowD = mysql_fetch_array($resDocumentacionesCliente)) {
+	$cadArCliente .= '<li>
+		 <span>'.substr($rowD['documentacion'],0,18).'</span>
+		 <div class="switch">
+			  <label class="btn bg-'.($rowD['color'] == '' ? 'grey' : $rowD['color']).' btnC'.str_replace(' ','',$rowD['documentacion']).'" style="margin-top:-6px; margin-right:5px;">'.$rowD['estadodocumentacion'].'</label>
+		 </div>
+	</li>';
+}
+
+
+$rightsidebar = '<ul class="nav nav-tabs tab-nav-right" role="tablist">
+                <li role="presentation" class="active"><a href="#skins" data-toggle="tab">CLIENTE</a></li>
+                <li role="presentation"><a href="#settings" data-toggle="tab">DOCUMENTACIONES</a></li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active in active" id="skins">
+                    <ul class="demo-choose-skin">
+                        <li>
+                            <div class="'.($vigenciasCliente['errorVCD'] == 'true' ? 'red' : 'green').'"></div>
+                            <span>Comp. de Domicilio: '.($vigenciasCliente['vcd']).'</span>
+                        </li>
+                        <li>
+									<div class="'.($vigenciasCliente['errorVRFC'] == 'true' ? 'red' : 'green').'"></div>
+									<span>Emision RFC: '.($vigenciasCliente['vrfc']).'</span>
+                        </li>
+								<li>
+									<div class="'.($vigenciasCliente['errorVINE'] == 'true' ? 'red' : 'green').'"></div>
+									<span>Venc. INE: '.($vigenciasCliente['vine']).'</span>
+                        </li>
+                    </ul>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="settings">
+                    <div class="demo-settings">
+                        <p>PRODUCTOS</p>
+                        <ul class="setting-list">
+                           '.$cadArProd.'
+                        </ul>
+								<p>EMISION</p>
+                        <ul class="setting-list">
+                           '.$cadArProdE.'
+                        </ul>
+                        <p>CLIENTES</p>
+                        <ul class="setting-list">
+                           '.$cadArCliente.'
+                        </ul>
+
+								<p>ADICIONALES</p>
+                        <ul class="setting-list">
+                           '.$cadArCotizacion.'
+                        </ul>
+                    </div>
+                </div>
+            </div>';
 
 ?>
 
@@ -336,7 +443,7 @@ $documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotiza
 <!-- Top Bar -->
 <?php echo $baseHTML->cargarNAV($breadCumbs); ?>
 <!-- #Top Bar -->
-<?php echo $baseHTML->cargarSECTION($_SESSION['usua_sahilices'], $_SESSION['nombre_sahilices'], $resMenu,'../../'); ?>
+<?php echo $baseHTML->cargarSECTION($_SESSION['usua_sahilices'], $_SESSION['nombre_sahilices'], $resMenu,'../../', $rightsidebar); ?>
 
 <section class="content" style="margin-top:-75px;">
 
@@ -390,7 +497,7 @@ $documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotiza
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								MODIFICAR <?php echo strtoupper($plural); ?>
+								MODIFICAR <?php echo strtoupper($plural); ?> <button type="button" class="btn bg-cyan waves-effect btnLstDocumentaciones"><i class="material-icons">unarchive</i><span class="js-right-sidebar" data-close="true">DOCUMENTACIONES</span></button>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -405,39 +512,7 @@ $documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotiza
 						</div>
 						<div class="body table-responsive">
 							<form class="formulario frmNuevo" role="form" id="sign_in">
-								<div class="row">
-									<p>Archivos Solicitados sobre el producto</p>
-									<div class="modal-footer">
-										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-											<?php
-											if (($ordenPosible >= 3) || ($ordenPosible == 0)) {
-												while ($rowD = mysql_fetch_array($documentacionesrequeridas)) {
-											?>
-											<button type="button" class="btn bg-<?php echo $rowD['color']; ?> waves-effect btn<?php echo str_replace(' ','',$rowD['documentacion']); ?>"><i class="material-icons">unarchive</i><span><?php echo $rowD['documentacion']; ?></span></button>
 
-											<?php
-												}
-											}
-											?>
-										</div>
-				               </div>
-								</div>
-
-								<div class="row">
-									<p>Archivos Solicitados de la cotizacion</p>
-									<div class="modal-footer">
-										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-											<?php
-												while ($rowD = mysql_fetch_array($documentacionesadicionales)) {
-											?>
-												<button type="button" class="btn bg-<?php echo $rowD['color']; ?> waves-effect btnA<?php echo str_replace(' ','',$rowD['documentacion']); ?>"><i class="material-icons">unarchive</i><span><?php echo $rowD['documentacion']; ?></span></button>
-											<?php
-												}
-
-											?>
-										</div>
-				               </div>
-								</div>
 
 								<div class="row" style="padding: 5px 20px;">
 
@@ -665,6 +740,20 @@ $documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotiza
 
 		<?php
 
+			while ($rowD = mysql_fetch_array($resDocumentacionesCliente2)) {
+		?>
+
+		$('.btnC<?php echo str_replace(' ','',$rowD['documentacion']); ?>').click(function() {
+			url = "subirdocumentacionic.php?id=<?php echo $id; ?>&documentacion=<?php echo $rowD['iddocumentacion']; ?>";
+			$(location).attr('href',url);
+		});
+		<?php
+			}
+
+		?>
+
+		<?php
+
 			while ($rowD = mysql_fetch_array($documentacionesadicionales2)) {
 		?>
 
@@ -684,6 +773,20 @@ $documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotiza
 
 		$('.btn<?php echo str_replace(' ','',$rowD['documentacion']); ?>').click(function() {
 			url = "subirdocumentacionip.php?id=<?php echo $id; ?>&documentacion=<?php echo $rowD['iddocumentacion']; ?>";
+			$(location).attr('href',url);
+		});
+		<?php
+			}
+		}
+		?>
+
+		<?php
+		if (($ordenPosible >= 3) || ($ordenPosible == 0)) {
+			while ($rowD = mysql_fetch_array($documentacionesrequeridasE2)) {
+		?>
+
+		$('.btnE<?php echo str_replace(' ','',$rowD['documentacion']); ?>').click(function() {
+			url = "subirdocumentacionie.php?id=<?php echo $id; ?>&documentacion=<?php echo $rowD['iddocumentacion']; ?>";
 			$(location).attr('href',url);
 		});
 		<?php

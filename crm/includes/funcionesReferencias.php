@@ -9,6 +9,22 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+   function vigenciasDocumentacionesClientes($idcliente) {
+      $resCliente = $this->traerClientesPorIdCompleto($idcliente);
+
+      $errorVCD = mysql_result($resCliente,0,'demisioncomprobantedomicilio');
+      $errorVRFC = mysql_result($resCliente,0,'demisionrfc');
+      $errorVINE = mysql_result($resCliente,0,'dvencimientoine');
+
+      $vcd = mysql_result($resCliente,0,'emisioncomprobantedomicilio') == '' ? 'Falta completar' : mysql_result($resCliente,0,'emisioncomprobantedomicilio');
+      $vrfc = mysql_result($resCliente,0,'emisionrfc') == '' ? 'Falta completar' : mysql_result($resCliente,0,'emisionrfc');
+      $vine = mysql_result($resCliente,0,'vencimientoine') == '' ? 'Falta completar' : mysql_result($resCliente,0,'vencimientoine');
+
+
+      return array('errorVCD' => $errorVCD, 'errorVRFC' => $errorVRFC, 'errorVINE' => $errorVINE, 'vcd' => $vcd, 'vrfc' => $vrfc, 'vine' => $vine);
+
+   }
+
 
 
    /* PARA Productosexclusivos */
@@ -255,7 +271,7 @@ return $res;
                $collapse = '';
             }
 
-            if ($cantRadio == 2) {
+            if ($cantRadio >= 2) {
                $collapse = $collapse2;
             }
 
@@ -278,15 +294,30 @@ return $res;
          if ($row['idtiporespuesta'] == 3) {
             $iCheck += 1;
 
-         $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+            $cantRadio += 1;
 
-            <div class="form-group input-group">
-               <div class="demo-radio-button">
-                  <input type="radio" id="radio_multi_'.$iCheck.'" name="respuestamulti'.$row['idpreguntacuestionario'].'" value="'.$row['idrespuestacuestionario'].'" '.($row['respuestacargada'] == '1' ? 'checked' : '').'>
-                  <label for="radio_multi_'.$iCheck.'">'.$row['respuesta'].'</label>
+            if ($row['depende']>0) {
+               $collapse = 'onclick="document.getElementById('."'".'collapse_radio_'.$row['idpreguntacuestionario'].($iRadio + 1)."'".').style.display='."'".'block'."'".';"';
+               $collapse2 = 'onclick="document.getElementById('."'".'collapse_radio_'.$row['idpreguntacuestionario'].($iRadio + 1)."'".').style.display='."'".'none'."'".';"';
+
+               $collapseAux = "collapse_radio_".$row['idpreguntacuestionario'].($iRadio + 1);
+            } else {
+               $collapse = '';
+            }
+
+            if ($cantRadio >= 2) {
+               $collapse = $collapse2;
+            }
+
+            $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+
+               <div class="form-group input-group">
+                  <div class="demo-radio-button">
+                     <input type="radio" id="radio_multi_'.$iCheck.'" name="respuestamulti'.$row['idpreguntacuestionario'].'" value="'.$row['idrespuestacuestionario'].'" '.($row['respuestacargada'] == '1' ? 'checked' : '').'>
+                     <label for="radio_multi_'.$iCheck.'">'.$row['respuesta'].'</label>
+                  </div>
                </div>
-            </div>
-         </div>';
+            </div>';
 
 
 
@@ -4255,6 +4286,31 @@ return $res;
  		return $res;
 	}
 
+   function traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($idcotizacion,$tipodocumentacion) {
+		$sql = "SELECT
+					    d.iddocumentacion,
+					    d.documentacion,
+					    d.obligatoria,
+					    da.iddocumentacioncotizacion,
+					    da.archivo,
+					    da.type,
+					    coalesce( ed.estadodocumentacion, 'Falta') as estadodocumentacion,
+						 ed.color,
+					    ed.idestadodocumentacion
+					FROM
+					    dbdocumentaciones d
+					        LEFT JOIN
+					    dbdocumentacioncotizaciones da ON d.iddocumentacion = da.refdocumentaciones
+					        AND da.refcotizaciones = ".$idcotizacion."
+					        LEFT JOIN
+					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
+					where d.reftipodocumentaciones in (".$tipodocumentacion.") and refprocesocotizacion = 2
+
+					order by 1";
+		$res = $this->query($sql,0);
+ 		return $res;
+	}
+
 	function insertarDocumentacioncotizaciones($refcotizaciones,$refdocumentaciones,$archivo,$type,$refestadodocumentaciones,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
 		$sql = "insert into dbdocumentacioncotizaciones(iddocumentacioncotizacion,refcotizaciones,refdocumentaciones,archivo,type,refestadodocumentaciones,fechacrea,fechamodi,usuariocrea,usuariomodi)
 		values ('',".$refcotizaciones.",".$refdocumentaciones.",'".$archivo."','".$type."',".$refestadodocumentaciones.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
@@ -4728,7 +4784,7 @@ return $res;
 	}
 
 	function insertarDocumentacionclientes($refclientes,$refdocumentaciones,$archivo,$type,$refestadodocumentaciones,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
-		$sql = "insert into dbdocumentacionclientes(iddocumentacioncliente,refasociados,refdocumentaciones,archivo,type,refestadodocumentaciones,fechacrea,fechamodi,usuariocrea,usuariomodi)
+		$sql = "insert into dbdocumentacionclientes(iddocumentacioncliente,refclientes,refdocumentaciones,archivo,type,refestadodocumentaciones,fechacrea,fechamodi,usuariocrea,usuariomodi)
 		values ('',".$refclientes.",".$refdocumentaciones.",'".$archivo."','".$type."',".$refestadodocumentaciones.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
 		$res = $this->query($sql,1);
 		return $res;
@@ -10494,6 +10550,16 @@ return $res;
 
 	function traerClientesPorUsuario($id) {
 		$sql = "select idcliente,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa from dbclientes where refusuarios =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function traerClientesPorIdCompleto($id) {
+		$sql = "select idcliente,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,
+      (case when DATEDIFF(CURDATE(), coalesce( emisioncomprobantedomicilio,'1990-01-01')) > 90 then 'true' else 'false' end) as demisioncomprobantedomicilio,
+      (case when DATEDIFF(CURDATE(),coalesce( emisionrfc,'1990-01-01')) > 90 then 'true' else 'false' end) as demisionrfc,
+      (case when coalesce( vencimientoine,'1990-01-01') > CURDATE() then 'false' else 'true' end) as dvencimientoine
+      from dbclientes where idcliente =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}

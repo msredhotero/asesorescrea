@@ -239,9 +239,10 @@ class BaseHTML extends ServiciosNotificaciones {
         echo $cad;
     }
 
-    function cargarSECTION($usuario, $email, $menu, $altura = '') {
-        $cad = '<section id="marcos">
+    function cargarSECTION($usuario, $email, $menu, $altura = '', $rightsidebar='') {
+        $cad = '<section>
                 <!-- Left Sidebar -->
+                <div id="marcos">
                 <aside id="leftsidebar" class="sidebar">
                     <!-- User Info -->
                     <div class="user-info">
@@ -271,14 +272,11 @@ class BaseHTML extends ServiciosNotificaciones {
                     <!-- #Menu -->
 
                 </aside>
+                </div>
                 <!-- #END# Left Sidebar -->
                 <!-- Right Sidebar -->
                 <aside id="rightsidebar" class="right-sidebar">
-                    <ul class="nav nav-tabs tab-nav-right" role="tablist">
-                        <li role="presentation" class="active"><a href="#skins" data-toggle="tab">SKINS</a></li>
-                        <li role="presentation"><a href="#settings" data-toggle="tab">SETTINGS</a></li>
-                    </ul>
-
+                  '.$rightsidebar.'
                 </aside>
                 <!-- #END# Right Sidebar -->
             </section>';
