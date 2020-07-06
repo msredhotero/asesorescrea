@@ -43,7 +43,7 @@ $id = $_GET['id'];
 
 $resultado = $serviciosReferencias->traerCuestionariosPorIdCompleto($id);
 
-$ver = $serviciosReferencias->CuestionarioAux($id,0);
+$ver = $serviciosReferencias->CuestionarioAux($id);
 
 $singular = "Cuestionario";
 

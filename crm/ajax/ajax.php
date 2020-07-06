@@ -1227,8 +1227,31 @@ function validarCuestionario($serviciosReferencias) {
       $ar = array('cuestionario'=>'','rules'=>'');
    } else {
       $res = $serviciosReferencias->Cuestionario($idcuestionario,0);
+      $resAux = $serviciosReferencias->CuestionarioAux($idcuestionario,0);
 
-      $ar = array('cuestionario'=>$res['cuestionario'],'rules'=>$res['rules']);
+      $pregunta = '';
+      $iRadio = 0;
+      $cantRadio = 0;
+      $iCheck = 0;
+      $iCheckM = 0;
+      $collapse = '';
+      $collapseAux = '';
+      $collapsePregunta = '';
+
+      $primero = 0;
+      $cad = '';
+
+      foreach ($resAux as $valor) {
+         $cad .= $valor['divRow'];
+         $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
+            <h4>'.$valor['pregunta'].'</h4>
+         </div>';
+         $cad .= $valor['respuestas'];
+         $cad .= '</div>';
+
+      }
+
+      $ar = array('cuestionario'=>$cad,'rules'=>$res['rules']);
    }
 
    $resV['error'] = false;
@@ -1327,10 +1350,10 @@ function validarCuestionario($serviciosReferencias) {
 
             }
          } else {
-            $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($valor['idrespuesta']);
+            $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($_POST[$valor['respuesta']]);
             array_push($arRespuestas,
                   array('refpreguntascuestionario' => $valor['idpregunta'],
-                  'refrespuestascuestionario' => $valor['idrespuesta'],
+                  'refrespuestascuestionario' => $_POST[$valor['respuesta']],
                   'pregunta' => $pregunta,
                   'respuesta' => mysql_result($rRespuesta,0,'respuesta'),
                   'respuestavalor' => $_POST[$valor['respuesta']])
@@ -1514,8 +1537,21 @@ function cuestionario($serviciosReferencias) {
       $ar = array('cuestionario'=>'','rules'=>'');
    } else {
       $res = $serviciosReferencias->Cuestionario($idcuestionario,$idcotizacion);
+      $resAux = $serviciosReferencias->CuestionarioAux($idcuestionario,$idcotizacion);
 
-      $ar = array('cuestionario'=>$res['cuestionario'],'rules'=>$res['rules']);
+      $cad = '';
+
+      foreach ($resAux as $valor) {
+         $cad .= $valor['divRow'];
+         $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
+            <h4>'.$valor['pregunta'].'</h4>
+         </div>';
+         $cad .= $valor['respuestas'];
+         $cad .= '</div>';
+
+      }
+
+      $ar = array('cuestionario'=>$cad,'rules'=>$res['rules']);
    }
 
    $resV['datos'] = $ar;
@@ -1593,7 +1629,14 @@ function insertarPreguntascuestionario($serviciosReferencias) {
    $depende = ( $_POST['depende'] == '' ? 0 :$_POST['depende']);
    $tiempo = $_POST['tiempo'];
    $activo = $_POST['activo'];
-   $dependerespuesta = ($_POST['dependerespuesta'] == '' ? 0 : $_POST['dependerespuesta']);
+
+   if (isset($_POST['dependerespuesta'])) {
+      $dependerespuesta = ($_POST['dependerespuesta'] == '' ? 0 : $_POST['dependerespuesta']);
+   } else {
+      $dependerespuesta = 0;
+   }
+
+
    $obligatoria = $_POST['obligatoria'];
    $leyenda = $_POST['leyenda'];
 

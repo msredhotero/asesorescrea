@@ -262,7 +262,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 												<i class="material-icons">add</i>
 												<span>NUEVO</span>
 											</button>
-									
+
 
 										</div>
 									</div>

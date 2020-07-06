@@ -179,6 +179,7 @@ return $res;
                $collapsePregunta = $collapseAux;
 
                $cantRadio = 0;
+               $cantCheck = 0;
 
                $collapse2 = '';
                if ($primero == 1) {
@@ -294,20 +295,410 @@ return $res;
          if ($row['idtiporespuesta'] == 3) {
             $iCheck += 1;
 
-            $cantRadio += 1;
+            $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
 
-            if ($row['depende']>0) {
-               $collapse = 'onclick="document.getElementById('."'".'collapse_radio_'.$row['idpreguntacuestionario'].($iRadio + 1)."'".').style.display='."'".'block'."'".';"';
-               $collapse2 = 'onclick="document.getElementById('."'".'collapse_radio_'.$row['idpreguntacuestionario'].($iRadio + 1)."'".').style.display='."'".'none'."'".';"';
+               <div class="form-group input-group">
+                  <div class="demo-radio-button">
+                     <input type="radio" id="radio_multi_'.$iCheck.'" name="respuestamulti'.$row['idpreguntacuestionario'].'" value="'.$row['idrespuestacuestionario'].'" '.($row['respuestacargada'] == '1' ? 'checked' : '').'>
+                     <label for="radio_multi_'.$iCheck.'">'.$row['respuesta'].'</label>
+                  </div>
+               </div>
+            </div>';
 
-               $collapseAux = "collapse_radio_".$row['idpreguntacuestionario'].($iRadio + 1);
+
+
+         }
+
+
+         if ($row['idtiporespuesta'] == 4) {
+            $iCheckM += 1;
+
+            $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+
+            <div class="form-group input-group">
+                  <div class="demo-radio-button">
+                     <input type="checkbox" class="filled-in respuestavarias'.$row['idpreguntacuestionario'].'" id="basic_checkbox_'.$row['idrespuestacuestionario'].'" name="respuestamultim'.$row['idrespuestacuestionario'].'" '.($row['respuestacargada'] == '1' ? 'checked' : '').'>
+                     <label for="basic_checkbox_'.$row['idrespuestacuestionario'].'">'.$row['respuesta'].'</label>
+                  </div>
+               </div>
+            </div>';
+
+            if ($row['idtiporespuesta'] == 4) {
+               array_push($rules,array('respuesta'=> 'respuestamultim'.$row['idrespuestacuestionario'],'pregunta' => $row['pregunta'],'tipo'=>4,'idpregunta'=>$row['idpreguntacuestionario'],'idrespuesta'=>$row['idrespuestacuestionario'],
+               'obligatoria' => $row['obligatoria'],
+               'depende' => $row['depende'],
+               'dependerespuesta' => $row['dependerespuesta'],
+               'dependeaux' => $row['dependeaux'],
+               'dependerespuestaaux' => $row['dependerespuestaaux'] ));
+            }
+
+         }
+
+
+         }
+
+      $cad .= '</div>';
+
+      return array('cuestionario'=>$cad,'rules'=>$rules);
+   }
+
+   function traerDependencia($idcuestionario, $idpregunta, $idrespuesta) {
+
+      $sql = "
+         select
+         	coalesce(r.idpreguntacuestionario,0) as idpreguntacuestionario
+         from (
+         		select
+                     c.idcuestionario,
+                     c.cuestionario,
+                     (case when c.activo = '1' then 'Si' else 'No' end) as activo,
+                     pre.pregunta,
+                     (case when pre.activo = '1' then 'Si' else 'No' end) as activopregunta,
+                     tr.idtiporespuesta,
+                     tr.tiporespuesta,
+                     pre.idpreguntacuestionario,
+                     coalesce( pre.depende,0) as dependeaux,
+                     coalesce( pre.dependerespuesta ,0) as dependerespuestaaux,
+                     pre.obligatoria
+                  from dbcuestionarios c
+                  inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario
+                  inner join tbtiporespuesta tr ON tr.idtiporespuesta = pre.reftiporespuesta
+
+                  where c.idcuestionario =".$idcuestionario."
+         	) r
+         where r.dependeaux = ".$idpregunta." and r.dependerespuestaaux = ".$idrespuesta;
+
+      if ($idpregunta > 0) {
+         $res = $this->query($sql,0);
+         if (mysql_num_rows($res) > 0 ) {
+            return mysql_result($res,0,0);
+         } else {
+            return 0;
+         }
+      }  else {
+         return 0;
+      }
+   }
+
+   function traerRespuestaGuardada($idpregunta,$idrespuesta,$idcotizacion) {
+      $sql = "SELECT
+                cd.respuesta, cd.respuestavalor
+            FROM
+                dbcuestionariodetalle cd
+            WHERE
+                cd.reftabla = 11
+                    AND cd.idreferencia = ".$idcotizacion."
+                    AND cd.refpreguntascuestionario = ".$idpregunta."
+                    AND cd.refrespuestascuestionario = ".$idrespuesta;
+
+      $res = $this->query($sql,0);
+
+      if (mysql_num_rows($res) > 0) {
+         return array('respuesta'=> mysql_result($res,0,'respuesta'), 'respuestavalor' => mysql_result($res,0,'respuestavalor'),'error'=> true);
+      }
+      return array('respuesta'=> 0, 'respuestavalor' => 0,'error'=> false);
+   }
+
+   function existeRespuestaApreguntaGuardada($idpregunta,$idcotizacion) {
+      $sql = "SELECT
+                cd.respuesta, cd.respuestavalor
+            FROM
+                dbcuestionariodetalle cd
+            WHERE
+                cd.reftabla = 11
+                    AND cd.idreferencia = ".$idcotizacion."
+                    AND cd.refpreguntascuestionario = ".$idpregunta;
+
+      $res = $this->query($sql,0);
+
+      if (mysql_num_rows($res) > 0) {
+         return array('respuesta'=> mysql_result($res,0,'respuesta'), 'respuestavalor' => mysql_result($res,0,'respuestavalor'),'error'=> true);
+      }
+      return array('respuesta'=> 0, 'respuestavalor' => 0,'error'=> false);
+   }
+
+
+   function CuestionarioAux($idcuestionario,$idcotizacion) {
+      //die(var_dump($idcuestionario));
+
+      $resultado = $this->traerPreguntasCuestionarioPorIdCompletoR($idcuestionario);
+
+      $arPreguntas = array();
+      $arRespuestas = array();
+
+      while ($row = mysql_fetch_array($resultado)) {
+
+         $resRespuesta = $this->traerRespuestascuestionarioPorPregunta($row['idpreguntacuestionario']);
+
+         $resPreguntaRespondida = $this->existeRespuestaApreguntaGuardada($row['idpreguntacuestionario'], $idcotizacion);
+
+         $cadInput = '';
+         $cadValorRespuesta = '';
+
+         $dependenciaData = '';
+
+         if (($row['dependeaux'] > 0) && ($resPreguntaRespondida['error']==false)) {
+            $escondido = 'escondido escondido'.$row['dependeaux'];
+         } else {
+            $escondido = '';
+         }
+
+         $aparecer = '';
+
+         while ($rowR = mysql_fetch_array($resRespuesta)) {
+
+            $resDependencia = $this->traerDependencia($idcuestionario, $row['idpreguntacuestionario'], $rowR['idrespuestacuestionario']);
+            $resValorRespuesta = $this->traerRespuestaGuardada($row['idpreguntacuestionario'],$rowR['idrespuestacuestionario'],$idcotizacion);
+
+            //die(var_dump($row['idpreguntacuestionario'].'-'.$rowR['idrespuestacuestionario'].'-'.$resDependencia));
+
+            if ($resDependencia > 0) {
+               $dependenciaData = ' data-pregunta="'.$resDependencia.'" data-respuesta="'.$rowR['idrespuestacuestionario'].'" ';
             } else {
-               $collapse = '';
+               $dependenciaData = '';
             }
 
-            if ($cantRadio >= 2) {
-               $collapse = $collapse2;
+
+            // tipo de pregunta simple
+            if ($row['idtiporespuesta'] == 1) {
+               //traigo el valor de lo que cargo
+               if ($resValorRespuesta['error']) {
+                  $cadValorRespuesta = $resValorRespuesta['respuestavalor'];
+               } else {
+                  $cadValorRespuesta = '';
+               }
+
+               if ($row['obligatoria'] == '1') {
+                  $cadInput .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+                     <label class="form-label">Ingrese su respuesta</label>
+                     <div class="form-group input-group">
+                        <div class="form-line">
+                           <input type="text" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.$cadValorRespuesta.'" >
+
+                        </div>
+                     </div>
+                  </div>';
+               } else {
+                  $cadInput .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+                     <label class="form-label">Ingrese su respuesta</label>
+                     <div class="form-group input-group">
+                        <div class="form-line">
+                           <input type="text" class="form-control" id="respuesta" value="'.$cadValorRespuesta.'" name="respuesta'.$row['idpreguntacuestionario'].'" >
+
+                        </div>
+                     </div>
+                  </div>';
+               }
             }
+
+            // tipo de pregu8nta binaria
+            if ($row['idtiporespuesta'] == 2) {
+
+               //traigo el valor de lo que cargo
+               if ($resValorRespuesta['error']) {
+                  $cadValorRespuesta = 'checked';
+               } else {
+                  $cadValorRespuesta = '';
+               }
+
+               $cadInput .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+
+                  <div class="form-group input-group">
+                     <div class="demo-radio-button">
+                        <input class="aparecer" type="radio" id="radio_'.$rowR['idrespuestacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.$rowR['idrespuestacuestionario'].'" '.$dependenciaData.' data-idpregunta="'.$row['idpreguntacuestionario'].'" '.$cadValorRespuesta.' >
+                        <label for="radio_'.$rowR['idrespuestacuestionario'].'">'.$rowR['respuesta'].'</label>
+                     </div>
+                  </div>
+               </div>';
+            }
+
+            // tipo de pregunta multiple
+            if ($row['idtiporespuesta'] == 3) {
+
+               //traigo el valor de lo que cargo
+               if ($resValorRespuesta['error']) {
+                  $cadValorRespuesta = 'checked';
+               } else {
+                  $cadValorRespuesta = '';
+               }
+
+               $cadInput .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+
+                  <div class="form-group input-group">
+                     <div class="demo-radio-button">
+                        <input class="aparecer" type="radio" id="radio_multi_'.$rowR['idrespuestacuestionario'].'" name="respuestamulti'.$row['idpreguntacuestionario'].'" value="'.$rowR['idrespuestacuestionario'].'" '.$dependenciaData.' data-idpregunta="'.$row['idpreguntacuestionario'].'" '.$cadValorRespuesta.' >
+                        <label for="radio_multi_'.$rowR['idrespuestacuestionario'].'">'.$rowR['respuesta'].'</label>
+                     </div>
+                  </div>
+               </div>';
+            }
+
+            // tipo de pregunta multiple con nultiple seleccion
+            if ($row['idtiporespuesta'] == 4) {
+
+               //traigo el valor de lo que cargo
+               if ($resValorRespuesta['error']) {
+                  $cadValorRespuesta = 'checked';
+               } else {
+                  $cadValorRespuesta = '';
+               }
+
+               $cadInput .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+
+                  <div class="form-group input-group">
+                     <div class="demo-radio-button">
+                        <input type="checkbox" class="filled-in respuestavarias'.$row['idpreguntacuestionario'].'" id="basic_checkbox_'.$rowR['idrespuestacuestionario'].'" name="respuestamultim'.$rowR['idrespuestacuestionario'].'" '.$dependenciaData.' '.$cadValorRespuesta.' >
+                        <label for="basic_checkbox_'.$rowR['idrespuestacuestionario'].'">'.$rowR['respuesta'].'</label>
+                     </div>
+                  </div>
+               </div>';
+            }
+
+
+         }
+
+         array_push($arPreguntas,array(
+            'divRow' => '<div class="row '.$escondido.'" style="padding: 5px 20px;" id="contPregunta'.$row['idpreguntacuestionario'].'">',
+            'pregunta' => $row['pregunta'],
+            'idpregunta'=>$row['idpreguntacuestionario'],
+            'respuestas' => $cadInput
+         ));
+
+
+
+
+      }
+
+      //header('Content-type: application/json');
+      //return json_encode($arPreguntas);
+
+      /*
+      die(var_dump($arPreguntas));
+
+
+
+      $cad = '';
+      $cad .= '<div class="row" style="padding: 5px 20px;">';
+
+
+         $pregunta = '';
+         $iRadio = 0;
+         $iCheck = 0;
+         $iCheckM = 0;
+         $rules = array();
+
+         $collapse = '';
+         $collapseAux = '';
+         $collapsePregunta = '';
+
+         $primero = 0;
+
+         while ($row = mysql_fetch_array($resultado)) {
+            if ($pregunta != $row['pregunta']) {
+               $pregunta = $row['pregunta'];
+
+               $collapsePregunta = $collapseAux;
+
+               $cantRadio = 0;
+               $cantCheck = 0;
+
+               $collapse2 = '';
+               if ($primero == 1) {
+                  $cad .= '</div>';
+               }
+
+               if ($row['dependeaux'] > 0) {
+
+                  $primero = 1;
+
+                  $cad .= '<div class="escondido" id="'.$collapsePregunta.'" style="margin-left:25px;color:#888;">';
+               }
+
+               $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
+                  <h4>'.$row['pregunta'].'</h4>
+               </div>';
+
+               if ($row['idtiporespuesta'] == 1) {
+                  array_push($rules,
+                        array('respuesta' => 'respuesta'.$row['idpreguntacuestionario'],
+                        'pregunta' => $row['pregunta'],
+                        'tipo'=>1,
+                        'idpregunta' => $row['idpreguntacuestionario'],
+                        'idrespuesta' => $row['idrespuestacuestionario'],
+                        'obligatoria' => $row['obligatoria'],
+                        'depende' => $row['depende'],
+                        'dependerespuesta' => $row['dependerespuesta'],
+                        'dependeaux' => $row['dependeaux'],
+                        'dependerespuestaaux' => $row['dependerespuestaaux'] ));
+               }
+
+               if ($row['idtiporespuesta'] == 2) {
+                  array_push($rules,array('respuesta'=> 'respuesta'.$row['idpreguntacuestionario'],'pregunta' => $row['pregunta'],'tipo'=>2,'idpregunta'=>$row['idpreguntacuestionario'],'idrespuesta'=>$row['idrespuestacuestionario'],
+                  'obligatoria' => $row['obligatoria'],
+                  'depende' => $row['depende'],
+                  'dependerespuesta' => $row['dependerespuesta'],
+                  'dependeaux' => $row['dependeaux'],
+                  'dependerespuestaaux' => $row['dependerespuestaaux'] ));
+               }
+               if ($row['idtiporespuesta'] == 3) {
+                  array_push($rules,array('respuesta'=> 'respuestamulti'.$row['idpreguntacuestionario'],'pregunta' => $row['pregunta'],'tipo'=>3,'idpregunta'=>$row['idpreguntacuestionario'],'idrespuesta'=>$row['idrespuestacuestionario'],
+                  'obligatoria' => $row['obligatoria'],
+                  'depende' => $row['depende'],
+                  'dependerespuesta' => $row['dependerespuesta'],
+                  'dependeaux' => $row['dependeaux'],
+                  'dependerespuestaaux' => $row['dependerespuestaaux'] ));
+               }
+
+
+            }
+
+         if ($row['idtiporespuesta'] == 1) {
+
+            if ($row['obligatoria'] == '1') {
+               $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+                  <label class="form-label">Ingrese su respuesta</label>
+                  <div class="form-group input-group">
+                     <div class="form-line">
+                        <input type="text" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
+
+                     </div>
+                  </div>
+               </div>';
+            } else {
+               $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+                  <label class="form-label">Ingrese su respuesta</label>
+                  <div class="form-group input-group">
+                     <div class="form-line">
+                        <input type="text" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
+
+                     </div>
+                  </div>
+               </div>';
+            }
+
+         }
+
+
+         if ($row['idtiporespuesta'] == 2) {
+            $iRadio += 1;
+
+            $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+
+               <div class="form-group input-group">
+                  <div class="demo-radio-button">
+                     <input type="radio" id="radio_'.$row['idpreguntacuestionario'].$iRadio.'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.$row['idrespuestacuestionario'].'" '.($row['respuestacargada'] == '1' ? 'checked' : '').' '.$collapse.'>
+                     <label for="radio_'.$row['idpreguntacuestionario'].$iRadio.'">'.$row['respuesta'].'</label>
+                  </div>
+               </div>
+            </div>';
+
+
+
+         }
+
+
+         if ($row['idtiporespuesta'] == 3) {
+            $iCheck += 1;
 
             $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
 
@@ -354,6 +745,9 @@ return $res;
       $cad .= '</div>';
 
       return array('cuestionario'=>$cad,'rules'=>$rules);
+      */
+      return $arPreguntas;
+
    }
 
    /* PARA Respuestascuestionario */
@@ -879,6 +1273,28 @@ return $res;
          left join dbcuestionariodetalle cd on cd.refpreguntascuestionario = pre.idpreguntacuestionario and cd.refrespuestascuestionario = rc.idrespuestacuestionario and cd.idreferencia = ".$idcotizacion."
          left join dbpreguntascuestionario prer on prer.depende = pre.idpreguntacuestionario and prer.dependerespuesta = rc.idrespuestacuestionario
          where c.idcuestionario =".$id." order by pre.orden,rc.orden ";
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function traerPreguntasCuestionarioPorIdCompletoR($id) {
+   $sql = "select
+            c.idcuestionario,
+            c.cuestionario,
+            (case when c.activo = '1' then 'Si' else 'No' end) as activo,
+            pre.pregunta,
+            (case when pre.activo = '1' then 'Si' else 'No' end) as activopregunta,
+            tr.idtiporespuesta,
+            tr.tiporespuesta,
+            pre.idpreguntacuestionario,
+            coalesce( pre.depende,0) as dependeaux,
+            coalesce( pre.dependerespuesta ,0) as dependerespuestaaux,
+            pre.obligatoria
+         from dbcuestionarios c
+         inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario
+         inner join tbtiporespuesta tr ON tr.idtiporespuesta = pre.reftiporespuesta
+         where c.idcuestionario =".$id." order by pre.orden ";
    $res = $this->query($sql,0);
    return $res;
    }
@@ -4618,7 +5034,7 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " where ".$roles." p.producto like '%".$busqueda."%' or (case when p.prima = '1' then 'Si' else 'No' end) like '%".$busqueda."%' or tp.tipoproductorama like '%".$busqueda."%' or (case when p.activo = '1' then 'Si' else 'No' end) like '%".$busqueda."%')";
+			$where = " where p.producto like '%".$busqueda."%' or (case when p.prima = '1' then 'Si' else 'No' end) like '%".$busqueda."%' or td.tipodocumentacion like '%".$busqueda."%' or (case when p.activo = '1' then 'Si' else 'No' end) like '%".$busqueda."%'";
 		}
 
 

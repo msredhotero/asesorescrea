@@ -1286,6 +1286,19 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 		}
 
+		$('#wizard_with_validation .escondido').hide();
+
+		$('#wizard_with_validation .aparecer').click(function() {
+			idTable =  $(this).attr("id");
+			idPregunta =  $('#'+idTable).data("pregunta");
+			idRespuesta =  $('#'+idTable).data("respuesta");
+			idPreguntaId =  $('#'+idTable).data("idpregunta");
+
+			$('#wizard_with_validation .escondido'+idPreguntaId).hide();
+
+			$('#wizard_with_validation #contPregunta'+idPregunta).show(400);
+		});
+
 		function cuestionario(idproducto,idcotizacion) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
@@ -1302,7 +1315,20 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 					if (data != '') {
 						$('.contCuestionario').html(data.datos.cuestionario);
+
+
 						$('#wizard_with_validation .escondido').hide();
+
+						$('#wizard_with_validation .aparecer').click(function() {
+							idTable =  $(this).attr("id");
+							idPregunta =  $('#'+idTable).data("pregunta");
+							idRespuesta =  $('#'+idTable).data("respuesta");
+							idPreguntaId =  $('#'+idTable).data("idpregunta");
+
+							$('#wizard_with_validation .escondido'+idPreguntaId).hide();
+
+							$('#wizard_with_validation #contPregunta'+idPregunta).show(400);
+						});
 					} else {
 						swal({
 								title: "Respuesta",
@@ -2526,6 +2552,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 		};
 
 
+		<?php if ($iddocumentacion != 0) { ?>
 		<?php if ($documentacionNombre != '') { ?>
 		<?php if (($idestadodocumentacion != 5)) { ?>
 		var myDropzone = new Dropzone("#archivos", {
@@ -2535,6 +2562,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 			},
 			url: 'subir.php'
 		});
+		<?php } ?>
 		<?php } ?>
 		<?php } ?>
 
@@ -2628,15 +2656,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 		traerImagen2('example12','timagen12');
 
-		<?php if (($idestadodocumentacion2 != 5)) { ?>
-		var myDropzone2 = new Dropzone("#archivos2", {
-			params: {
-				 idasociado: <?php echo $id; ?>,
-				 iddocumentacion: <?php echo $iddocumentacion2; ?>
-			},
-			url: 'subir.php'
-		});
-		<?php } ?>
+
 
 		Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
 
@@ -2668,6 +2688,18 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 				});
 			}
 		};
+
+		<?php if ($iddocumentacion != 0) { ?>
+		<?php if (($idestadodocumentacion2 != 5)) { ?>
+		var myDropzone2 = new Dropzone("#archivos2", {
+			params: {
+				 idasociado: <?php echo $id; ?>,
+				 iddocumentacion: <?php echo $iddocumentacion2; ?>
+			},
+			url: 'subir.php'
+		});
+		<?php } ?>
+		<?php } ?>
 
 
 
