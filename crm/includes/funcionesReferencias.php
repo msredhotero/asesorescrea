@@ -782,7 +782,7 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " where ".$roles." n.mensaje like '%".$busqueda."%' or n.autor like '%".$busqueda."%' or n.destinatario like '%".$busqueda."%')";
+			$where = " where n.mensaje like '%".$busqueda."%' or n.autor like '%".$busqueda."%' or n.destinatario like '%".$busqueda."%')";
 		}
 
       $sql = "select
@@ -2990,7 +2990,7 @@ return $res;
 						a.fechaalta
 				    FROM
 				        dbasesores a
-				    INNER JOIN tbmesesconstacia tm ON TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(a.fechaalta), '-', RIGHT(CONCAT('00', MONTH(a.fechaalta)), 2), '-', '01'), '%Y-%m-%d'), CURDATE()) BETWEEN tm.mes AND tm.mes + 1
+				    INNER JOIN tbmesesconstacia tm ON TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(a.fechaalta), '-', RIGHT(CONCAT('00', MONTH(a.fechaalta)), 2), '-', '01'), '%Y-%m-%d'), CURDATE()) = tm.mes
 				    WHERE
 				        DAY(a.fechaalta) <= 16
 
@@ -3002,7 +3002,7 @@ return $res;
 						a.fechaalta
 				    FROM
 				        dbasesores a
-				    INNER JOIN tbmesesconstacia tm ON TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)), '-', RIGHT(CONCAT('00', MONTH(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))), 2), '-', '01'), '%Y-%m-%d'), CURDATE()) BETWEEN tm.mes AND tm.mes + 1
+				    INNER JOIN tbmesesconstacia tm ON TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)), '-', RIGHT(CONCAT('00', MONTH(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))), 2), '-', '01'), '%Y-%m-%d'), CURDATE()) = tm.mes
 				    WHERE
 				        DAY(a.fechaalta) > 15) r
 						  INNER JOIN
@@ -3032,7 +3032,7 @@ return $res;
 						a.fechaalta
 				    FROM
 				        dbasesores a
-				    INNER JOIN tbmesesconstacia tm ON TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(a.fechaalta), '-', RIGHT(CONCAT('00', MONTH(a.fechaalta)), 2), '-', '01'), '%Y-%m-%d'), CURDATE()) BETWEEN tm.mes - 1 AND tm.mes
+				    INNER JOIN tbmesesconstacia tm ON TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(a.fechaalta), '-', RIGHT(CONCAT('00', MONTH(a.fechaalta)), 2), '-', '01'), '%Y-%m-%d'), CURDATE()) = tm.mes - 1
 				    WHERE
 				        DAY(a.fechaalta) <= 16
 
@@ -3044,7 +3044,7 @@ return $res;
 						a.fechaalta
 				    FROM
 				        dbasesores a
-				    INNER JOIN tbmesesconstacia tm ON TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)), '-', RIGHT(CONCAT('00', MONTH(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))), 2), '-', '01'), '%Y-%m-%d'), CURDATE()) BETWEEN tm.mes - 1 AND tm.mes
+				    INNER JOIN tbmesesconstacia tm ON TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)), '-', RIGHT(CONCAT('00', MONTH(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))), 2), '-', '01'), '%Y-%m-%d'), CURDATE()) = tm.mes - 1
 				    WHERE
 				        DAY(a.fechaalta) > 15) r
 						  INNER JOIN
