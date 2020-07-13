@@ -18,7 +18,7 @@ $serviciosNotificaciones	= new ServiciosNotificaciones();
 $serviciosMensajes	= new ServiciosMensajes();
 $serviciosValidador        = new serviciosValidador();
 $serviciosPostal        = new serviciosPostal();
-$serviciosComercio      = new ServiciosComercio();
+$serviciosComercio      = new serviciosComercio();
 
 $accion = $_POST['accion'];
 
@@ -1033,34 +1033,34 @@ switch ($accion) {
    break;
 
    case 'insertarComerciofin':
-      insertarComerciofin($serviciosReferencias);
+      insertarComerciofin($serviciosComercio);
    break;
    case 'modificarComerciofin':
-      modificarComerciofin($serviciosReferencias);
+      modificarComerciofin($serviciosComercio);
    break;
    case 'eliminarComerciofin':
-      eliminarComerciofin($serviciosReferencias);
+      eliminarComerciofin($serviciosComercio);
    break;
    case 'traerComerciofin':
-      traerComerciofin($serviciosReferencias);
+      traerComerciofin($serviciosComercio);
    break;
    case 'traerComerciofinPorId':
-      traerComerciofinPorId($serviciosReferencias);
+      traerComerciofinPorId($serviciosComercio);
    break;
    case 'insertarComercioinicio':
-      insertarComercioinicio($serviciosReferencias);
+      insertarComercioinicio($serviciosComercio);
    break;
    case 'modificarComercioinicio':
-      modificarComercioinicio($serviciosReferencias);
+      modificarComercioinicio($serviciosComercio);
    break;
    case 'eliminarComercioinicio':
-      eliminarComercioinicio($serviciosReferencias);
+      eliminarComercioinicio($serviciosComercio);
    break;
    case 'traerComercioinicio':
-      traerComercioinicio($serviciosReferencias);
+      traerComercioinicio($serviciosComercio);
    break;
    case 'traerComercioinicioPorId':
-      traerComercioinicioPorId($serviciosReferencias);
+      traerComercioinicioPorId($serviciosComercio);
    break;
 
 

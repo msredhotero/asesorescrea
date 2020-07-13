@@ -2,7 +2,7 @@
 
 date_default_timezone_set('America/Mexico_City');
 
-class seviciosComercio
+class serviciosComercio
 {
 
    /* PARA Comerciofin */
