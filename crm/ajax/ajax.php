@@ -8,6 +8,7 @@ include ('../includes/funcionesNotificaciones.php');
 include ('../includes/funcionesMensajes.php');
 include ('../includes/validadores.php');
 include ('../includes/funcionesPostal.php');
+include ('../includes/funcionesComercio.php');
 
 $serviciosUsuarios  		= new ServiciosUsuarios();
 $serviciosFunciones 		= new Servicios();
@@ -17,6 +18,7 @@ $serviciosNotificaciones	= new ServiciosNotificaciones();
 $serviciosMensajes	= new ServiciosMensajes();
 $serviciosValidador        = new serviciosValidador();
 $serviciosPostal        = new serviciosPostal();
+$serviciosComercio      = new ServiciosComercio();
 
 $accion = $_POST['accion'];
 
@@ -1030,10 +1032,191 @@ switch ($accion) {
       traerDocumentacionPorClienteDocumentacion($serviciosReferencias);
    break;
 
+   case 'insertarComerciofin':
+      insertarComerciofin($serviciosReferencias);
+   break;
+   case 'modificarComerciofin':
+      modificarComerciofin($serviciosReferencias);
+   break;
+   case 'eliminarComerciofin':
+      eliminarComerciofin($serviciosReferencias);
+   break;
+   case 'traerComerciofin':
+      traerComerciofin($serviciosReferencias);
+   break;
+   case 'traerComerciofinPorId':
+      traerComerciofinPorId($serviciosReferencias);
+   break;
+   case 'insertarComercioinicio':
+      insertarComercioinicio($serviciosReferencias);
+   break;
+   case 'modificarComercioinicio':
+      modificarComercioinicio($serviciosReferencias);
+   break;
+   case 'eliminarComercioinicio':
+      eliminarComercioinicio($serviciosReferencias);
+   break;
+   case 'traerComercioinicio':
+      traerComercioinicio($serviciosReferencias);
+   break;
+   case 'traerComercioinicioPorId':
+      traerComercioinicioPorId($serviciosReferencias);
+   break;
+
 
 
 }
 /* FinFinFin */
+
+
+function insertarComerciofin($serviciosReferencias) {
+   $emresponse = $_POST['emresponse'];
+   $emtotal = $_POST['emtotal'];
+   $emordenid = $_POST['emordenid'];
+   $emmerchant = $_POST['emmerchant'];
+   $emstore = $_POST['emstore'];
+   $emterm = $_POST['emterm'];
+   $emrefnum = $_POST['emrefnum'];
+   $emauth = $_POST['emauth'];
+   $emdigest = $_POST['emdigest'];
+   $token = $_POST['token'];
+
+   $res = $serviciosReferencias->insertarComerciofin($emresponse,$emtotal,$emordenid,$emmerchant,$emstore,$emterm,$emrefnum,$emauth,$emdigest,$token);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarComerciofin($serviciosReferencias) {
+   $id = $_POST['id'];
+   $emresponse = $_POST['emresponse'];
+   $emtotal = $_POST['emtotal'];
+   $emordenid = $_POST['emordenid'];
+   $emmerchant = $_POST['emmerchant'];
+   $emstore = $_POST['emstore'];
+   $emterm = $_POST['emterm'];
+   $emrefnum = $_POST['emrefnum'];
+   $emauth = $_POST['emauth'];
+   $emdigest = $_POST['emdigest'];
+   $token = $_POST['token'];
+
+   $res = $serviciosReferencias->modificarComerciofin($id,$emresponse,$emtotal,$emordenid,$emmerchant,$emstore,$emterm,$emrefnum,$emauth,$emdigest,$token);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarComerciofin($serviciosReferencias) {
+   $id = $_POST['id'];
+   $res = $serviciosReferencias->eliminarComerciofin($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
+function traerComerciofin($serviciosReferencias) {
+   $res = $serviciosReferencias->traerComerciofin();
+   $ar = array();
+
+   while ($row = mysql_fetch_array($res)) {
+      array_push($ar, $row);
+   }
+
+   $resV['datos'] = $ar;
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function insertarComercioinicio($serviciosReferencias) {
+   $token = $_POST['token'];
+   $comtotal = $_POST['comtotal'];
+   $comcurrency = $_POST['comcurrency'];
+   $comaddres = $_POST['comaddres'];
+   $comorderid = $_POST['comorderid'];
+   $commerchant = $_POST['commerchant'];
+   $comstore = $_POST['comstore'];
+   $comterm = $_POST['comterm'];
+   $comdigest = $_POST['comdigest'];
+   $urlback = $_POST['urlback'];
+   $reforigencomercio = $_POST['reforigencomercio'];
+   $refestadotransaccion = 1;
+   $refafiliados = $_POST['refafiliados'];
+   $fechacrea = $_POST['fechacrea'];
+   $usuariocrea = $_POST['usuariocrea'];
+   $vigencia = $_POST['vigencia'];
+   $observaciones = $_POST['observaciones'];
+
+   $res = $serviciosReferencias->insertarComercioinicio($token,$comtotal,$comcurrency,$comaddres,$comorderid,$commerchant,$comstore,$comterm,$comdigest,$urlback,$reforigencomercio,$refestadotransaccion,$refafiliados,$fechacrea,$usuariocrea,$vigencia,$observaciones);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarComercioinicio($serviciosReferencias) {
+   $id = $_POST['id'];
+   $token = $_POST['token'];
+   $comtotal = $_POST['comtotal'];
+   $comcurrency = $_POST['comcurrency'];
+   $comaddres = $_POST['comaddres'];
+   $comorderid = $_POST['comorderid'];
+   $commerchant = $_POST['commerchant'];
+   $comstore = $_POST['comstore'];
+   $comterm = $_POST['comterm'];
+   $comdigest = $_POST['comdigest'];
+   $urlback = $_POST['urlback'];
+   $reforigencomercio = $_POST['reforigencomercio'];
+   $refestadotransaccion = $_POST['refestadotransaccion'];
+   $refafiliados = $_POST['refafiliados'];
+   $fechacrea = $_POST['fechacrea'];
+   $usuariocrea = $_POST['usuariocrea'];
+   $vigencia = $_POST['vigencia'];
+   $observaciones = $_POST['observaciones'];
+
+   $res = $serviciosReferencias->modificarComercioinicio($id,$token,$comtotal,$comcurrency,$comaddres,$comorderid,$commerchant,$comstore,$comterm,$comdigest,$urlback,$reforigencomercio,$refestadotransaccion,$refafiliados,$fechacrea,$usuariocrea,$vigencia,$observaciones);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarComercioinicio($serviciosReferencias) {
+   $id = $_POST['id'];
+   $res = $serviciosReferencias->eliminarComercioinicio($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
+function traerComercioinicio($serviciosReferencias) {
+   $res = $serviciosReferencias->traerComercioinicio();
+   $ar = array();
+
+   while ($row = mysql_fetch_array($res)) {
+      array_push($ar, $row);
+   }
+
+   $resV['datos'] = $ar;
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 
 function traerDocumentacionPorClienteDocumentacion($serviciosReferencias) {

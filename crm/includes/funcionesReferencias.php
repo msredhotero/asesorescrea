@@ -1267,9 +1267,9 @@ return $res;
             coalesce( pre.dependerespuesta ,0) as dependerespuestaaux,
             pre.obligatoria
          from dbcuestionarios c
-         inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario
+         inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario and pre.activo='1'
          inner join tbtiporespuesta tr ON tr.idtiporespuesta = pre.reftiporespuesta
-         inner join dbrespuestascuestionario rc ON rc.refpreguntascuestionario = pre.idpreguntacuestionario
+         inner join dbrespuestascuestionario rc ON rc.refpreguntascuestionario = pre.idpreguntacuestionario and rc.activo='1'
          left join dbcuestionariodetalle cd on cd.refpreguntascuestionario = pre.idpreguntacuestionario and cd.refrespuestascuestionario = rc.idrespuestacuestionario and cd.idreferencia = ".$idcotizacion."
          left join dbpreguntascuestionario prer on prer.depende = pre.idpreguntacuestionario and prer.dependerespuesta = rc.idrespuestacuestionario
          where c.idcuestionario =".$id." order by pre.orden,rc.orden ";
@@ -1292,7 +1292,7 @@ return $res;
             coalesce( pre.dependerespuesta ,0) as dependerespuestaaux,
             pre.obligatoria
          from dbcuestionarios c
-         inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario
+         inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario and pre.activo='1'
          inner join tbtiporespuesta tr ON tr.idtiporespuesta = pre.reftiporespuesta
          where c.idcuestionario =".$id." order by pre.orden ";
    $res = $this->query($sql,0);
@@ -2958,7 +2958,7 @@ return $res;
 						a.fechaalta
 				    FROM
 				        dbasesores a
-				    INNER JOIN tbmesesconstacia tm ON TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)), '-', RIGHT(CONCAT('00', MONTH(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))), 2), '-', '01'), '%Y-%m-%d'), CURDATE()) = tm.mes 
+				    INNER JOIN tbmesesconstacia tm ON TIMESTAMPDIFF(MONTH, STR_TO_DATE(CONCAT(YEAR(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH)), '-', RIGHT(CONCAT('00', MONTH(DATE_ADD(a.fechaalta, INTERVAL 1 MONTH))), 2), '-', '01'), '%Y-%m-%d'), CURDATE()) = tm.mes
 				    WHERE
 				        DAY(a.fechaalta) > 15) r
 						  INNER JOIN
@@ -12601,7 +12601,7 @@ return $res;
 
 
 
-function query($sql,$accion) {
+   function query($sql,$accion) {
 
 
 
