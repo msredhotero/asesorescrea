@@ -1296,7 +1296,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 			$('#wizard_with_validation .escondido'+idPreguntaId).hide();
 
-			$('#wizard_with_validation #contPregunta'+idPregunta).show(400);
+			$('#wizard_with_validation .clcontPregunta'+idRespuesta).show(400);
 		});
 
 		function cuestionario(idproducto,idcotizacion) {
