@@ -558,7 +558,7 @@ return $res;
          }
 
          array_push($arPreguntas,array(
-            'divRow' => '<div class="row '.$escondido.'" style="padding: 5px 20px;" id="contPregunta'.$row['idpreguntacuestionario'].'">',
+            'divRow' => '<div class="row '.$escondido.' clcontPregunta'.$row['idpreguntacuestionario'].'" style="padding: 5px 20px;" id="contPregunta'.$row['idpreguntacuestionario'].'">',
             'pregunta' => $row['pregunta'],
             'idpregunta'=>$row['idpreguntacuestionario'],
             'respuestas' => $cadInput
