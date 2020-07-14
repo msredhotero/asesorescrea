@@ -347,7 +347,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 			$('.escondido'+idPreguntaId).hide();
 
-			$('.clcontPregunta'+idPregunta).show(400);
+			$('.clcontPregunta'+idRespuesta).show(400);
 		});
 
 		$("#example").on("click",'.btnPreguntas', function(){
