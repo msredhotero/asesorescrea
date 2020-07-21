@@ -483,7 +483,7 @@ switch ($tabla) {
 		inner join tbestadoasesor teai on teai.idestadoasesor = p.refestadoasesorinbursa
 
 		';
-		if ($_SESSION['idroll_sahilices'] == 3) {
+		if ($_SESSION['idroll_sahilices'] == 3 && ($_SESSION['usuaid_sahilices'] != 30)) {
 			$consulta .= ' inner join dbusuarios usu ON usu.idusuario = p.refusuarios
 			inner join dbpostulantes pp on pp.refusuarios = usu.idusuario
 			inner join dbreclutadorasores rrr on (rrr.refasesores = p.idasesor
