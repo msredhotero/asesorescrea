@@ -337,7 +337,7 @@ $cadRefFiltro = $cadRef1;
 												<th>Fecha</th>
 												<th>Dias de Gestion</th>
 												<th>Estado</th>
-												<?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4) { ?>
+												<?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4 || $_SESSION['idroll_sahilices'] == 8) { ?>
 												<th>Tel.</th>
 												<?php } ?>
 												<th class="perfilS">Resp.Comercial</th>
@@ -355,7 +355,7 @@ $cadRefFiltro = $cadRef1;
 												<th>Fecha</th>
 												<th>Dias de Gestion</th>
 												<th>Estado</th>
-												<?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4) { ?>
+												<?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4 || $_SESSION['idroll_sahilices'] == 8) { ?>
 												<th>Tel.</th>
 												<?php } ?>
 												<th>Ger.Comercial</th>
@@ -379,7 +379,7 @@ $cadRefFiltro = $cadRef1;
 												<th>Fecha</th>
 												<th>Dias de Gestion</th>
 												<th>Estado</th>
-												<?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4) { ?>
+												<?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4 || $_SESSION['idroll_sahilices'] == 8) { ?>
 												<th>Tel.</th>
 												<?php } ?>
 												<th class="perfilS">Resp.Comercial</th>
@@ -397,7 +397,7 @@ $cadRefFiltro = $cadRef1;
 												<th>Fecha</th>
 												<th>Dias de Gestion</th>
 												<th>Estado</th>
-												<?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4) { ?>
+												<?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4 || $_SESSION['idroll_sahilices'] == 8) { ?>
 												<th>Tel.</th>
 												<?php } ?>
 												<th>Ger.Comercial</th>

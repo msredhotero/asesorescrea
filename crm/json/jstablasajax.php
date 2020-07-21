@@ -5,10 +5,12 @@ session_start();
 include ('../includes/funciones.php');
 include ('../includes/funcionesReferencias.php');
 include ('../includes/funcionesUsuarios.php');
+include ('../includes/funcionesComercio.php');
 
 $serviciosFunciones = new Servicios();
 $serviciosReferencias 	= new ServiciosReferencias();
 $serviciosUsuarios  		= new ServiciosUsuarios();
+$serviciosComercio  = new ServiciosComercio();
 
 $tabla = $_GET['tabla'];
 $draw = $_GET['sEcho'];
@@ -776,6 +778,14 @@ switch ($tabla) {
 				$empieza = 1;
 				$termina = 10;
 			break;
+			case 8:
+				$label = array('btnVer','btnModificar');
+				$class = array('bg-blue','bg-amber');
+				$icon = array('Ver','Modificar');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 11;
+			break;
 
 			default:
 				// code...
@@ -925,6 +935,14 @@ switch ($tabla) {
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 10;
+			break;
+			case 8:
+				$label = array('btnVer','btnModificar');
+				$class = array('bg-blue','bg-amber');
+				$icon = array('Ver','Modificar');
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 11;
 			break;
 
 			default:
