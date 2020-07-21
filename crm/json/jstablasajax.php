@@ -847,7 +847,7 @@ switch ($tabla) {
 			inner join tbreferentes re on re.idreferente = p.refreferentes
 			inner join dbusuarios usurf on usurf.idusuario = '.$_SESSION['usuaid_sahilices'].' and re.refusuarios =  usurf.idusuario ';
 		} else {
-			if ($_SESSION['idroll_sahilices'] == 3) {
+			if ($_SESSION['idroll_sahilices'] == 3 && ($_SESSION['usuaid_sahilices'] != 30)) {
 				$consulta .= 'inner join dbreclutadorasores rrr on rrr.refpostulantes = p.idpostulante and rrr.refusuarios = '.$_SESSION['usuaid_sahilices'].'
 				inner join dbusuarios usur on usur.idusuario = rrr.refusuarios
 				left join tbreferentes re on re.idreferente = p.refreferentes ';
