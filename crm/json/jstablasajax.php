@@ -744,7 +744,7 @@ switch ($tabla) {
 				$icon = array('Ver','Modificar');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 10;
+				$termina = 11;
 			break;
 			case 4:
 				$label = array('btnVer','btnModificar');
@@ -902,7 +902,7 @@ switch ($tabla) {
 				$icon = array('Ver','Documentaciones');
 				$indiceID = 0;
 				$empieza = 1;
-				$termina = 10;
+				$termina = 11;
 			break;
 			case 4:
 				$label = array('btnVer','btnDocumentacion');
