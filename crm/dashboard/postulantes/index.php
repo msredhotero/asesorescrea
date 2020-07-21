@@ -976,7 +976,7 @@ $cadRefFiltro = $cadRef1;
                   "visible": false,
                   "searchable": false
               },
-				  <?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4) { ?>
+				  <?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4 || $_SESSION['idroll_sahilices'] == 8 || $_SESSION['idroll_sahilices'] == 3) { ?>
 				  { "orderable": false, "targets": 9 },
 				  { "orderable": false, "targets": 10 }
 				  <?php } else { ?>
@@ -994,7 +994,7 @@ $cadRefFiltro = $cadRef1;
 
 		$("#example .perfilS").each( function ( i ) {
 			<?php
-			if ($_SESSION['idroll_sahilices'] == 3 ) {
+			if ($_SESSION['idroll_sahilices'] == 3 || $_SESSION['usuaid_sahilices'] != 30) {
 				$cadRefFiltro = '<option value="">'.$_SESSION['nombre_sahilices'].'</option>';
 			}
 			?>
@@ -1046,7 +1046,7 @@ $cadRefFiltro = $cadRef1;
                   "visible": false,
                   "searchable": false
               },
-				  <?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4) { ?>
+				  <?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4 || $_SESSION['idroll_sahilices'] == 8 || $_SESSION['idroll_sahilices'] == 3) { ?>
 				  { "orderable": false, "targets": 9 },
 				  { "orderable": false, "targets": 10 }
 				  <?php } else { ?>
@@ -1064,7 +1064,7 @@ $cadRefFiltro = $cadRef1;
 
 		$("#example2 .perfilS").each( function ( i ) {
 			<?php
-			if ($_SESSION['idroll_sahilices'] == 3 ) {
+			if ($_SESSION['idroll_sahilices'] == 3 || $_SESSION['usuaid_sahilices'] != 30) {
 				$cadRefFiltro = '<option value="">'.$_SESSION['nombre_sahilices'].'</option>';
 			}
 			?>
