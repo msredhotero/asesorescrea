@@ -440,8 +440,8 @@ $lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','E
 
 $tabla2 			= "dbclientes";
 
-$lblCambio2	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','idclienteinbursa');
-$lblreemplazo2	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social','ID Cliente Inbursa');
+$lblCambio2	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','idclienteinbursa','nroexterior','nrointerior','codigopostal');
+$lblreemplazo2	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social','ID Cliente Inbursa','Nro Exterior','Nro Interior','Cod. Postal');
 
 
 $resVar82 = $serviciosReferencias->traerTipopersonas();
@@ -1299,13 +1299,18 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 			$('#wizard_with_validation .clcontPregunta'+idRespuesta).show(400);
 		});
 
-		function cuestionario(idproducto,idcotizacion) {
+		function cuestionario(idproducto,idcotizacion,idcliente) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {accion: 'cuestionario', id: idproducto,idcotizacion:idcotizacion},
+				data: {
+					accion: 'cuestionario',
+					id: idproducto,
+					idcotizacion: idcotizacion,
+					idcliente: idcliente
+				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('.contCuestionario').html('');
@@ -1440,7 +1445,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 					if (data != '') {
 						$('#refproductos').html(data);
-						cuestionario($('#refproductos').val(),<?php echo $id; ?>);
+						cuestionario($('#refproductos').val(),<?php echo $id; ?>,$('#refclientes').val());
 					} else {
 						swal({
 								title: "Respuesta",

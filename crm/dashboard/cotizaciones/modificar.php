@@ -55,7 +55,9 @@ $resultado = $serviciosReferencias->traerCotizacionesPorId($id);
 
 $cuestionario = $serviciosReferencias->traerCuestionariodetallePorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id);
 
-$vigenciasCliente = $serviciosReferencias->vigenciasDocumentacionesClientes(mysql_result($resultado,0,'refclientes'));
+$idCliente = mysql_result($resultado,0,'refclientes');
+
+$vigenciasCliente = $serviciosReferencias->vigenciasDocumentacionesClientes($idCliente);
 
 if ($id == 0) {
 	header('Location: index.php');
@@ -568,7 +570,10 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 											</tr>
 									<?php
 									$pregunta = '';
+									$idcuestionario = 0;
+
 									while ($rowC = mysql_fetch_array($cuestionario)) {
+										$idcuestionario = $rowC['idcuestionario'];
 										echo '<tr><td>';
 										if ($pregunta != $rowC['pregunta']) {
 											$pregunta = $rowC['pregunta'];
@@ -577,11 +582,27 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 											echo '</td>';
 										}
 									?>
-										<td><h5 style="color:green;">* Respuesta: <?php echo ($rowC['respuesta'] == 'Lo que el ususario ingrese' ? $rowC['respuestavalor'] : $rowC['respuesta']); ?></h5></td>
+										<td><h5 style="color:green;">* <?php echo ($rowC['respuesta'] == 'Lo que el ususario ingrese' ? $rowC['respuestavalor'] : $rowC['respuesta']); ?></h5></td>
 									</tr>
 									<?php
 									}
+
+									//die(var_dump($idcuestionario.'-'.$idCliente));
+									$resClienteDatos = $serviciosReferencias->necesitoPreguntaSencible($idCliente,$idcuestionario);
+									$pregunta = '';
+									foreach ($resClienteDatos[0] as $rowCC) {
+										echo '<tr><td>';
+										if ($pregunta != $rowCC['pregunta']) {
+											$pregunta = $rowCC['pregunta'];
+											echo $pregunta.'</td>';
+										} else {
+											echo '</td>';
+										}
+
 									?>
+									<td><h5 style="color:green;">* <?php echo $rowCC['valor']; ?></h5></td>
+								</tr>
+								<?php } ?>
 										</tbody>
 									</table>
 								</div>

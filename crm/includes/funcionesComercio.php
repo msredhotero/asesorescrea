@@ -5,6 +5,69 @@ date_default_timezone_set('America/Mexico_City');
 class serviciosComercio
 {
 
+
+   /* PARA Ordenpago */
+
+   function insertarOrdenpago($refcomercioinicio,$refreferencia,$origen,$token) {
+      $sql = "insert into dbordenpago(idordenpago,refcomercioinicio,refreferencia,origen,token)
+      values ('',".$refcomercioinicio.",".$refreferencia.",".$origen.",'".$token."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarOrdenpago($id,$refcomercioinicio,$refreferencia,$origen,$token) {
+      $sql = "update dbordenpago
+      set
+      refcomercioinicio = ".$refcomercioinicio.",refreferencia = ".$refreferencia.",origen = ".$origen.",token = '".$token."'
+      where idordenpago =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarOrdenpago($id) {
+      $sql = "delete from dbordenpago where idordenpago =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerOrdenpago() {
+      $sql = "select
+      o.idordenpago,
+      o.refcomercioinicio,
+      o.refreferencia,
+      o.origen,
+      o.token
+      from dbordenpago o
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerOrdenpagoPorId($id) {
+      $sql = "select idordenpago,refcomercioinicio,refreferencia,origen,token from dbordenpago where idordenpago =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerOrdenPagoPorToken($token) {
+      $sql = "select idordenpago,refcomercioinicio,refreferencia,origen,token from dbordenpago where token = '".$token."'";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerOrdenPagoPorTokenOrigen($token,$origen) {
+      $sql = "select idordenpago,refcomercioinicio,refreferencia,origen,token from dbordenpago where origen = ".$origen." and token = '".$token."'";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   /* Fin */
+   /* /* Fin de la Tabla: dbordenpago*/
+
    /* PARA Comerciofin */
 
    function insertarComerciofin($emresponse,$emtotal,$emordenid,$emmerchant,$emstore,$emterm,$emrefnum,$emauth,$emdigest,$token) {
@@ -58,24 +121,37 @@ class serviciosComercio
    }
 
 
+   function traerComerciofinPorOrderId($emordenid) {
+      $sql = "select idcomerciofin,emresponse,emtotal,emordenid,emmerchant,emstore,emterm,emrefnum,emauth,emdigest,token from dbcomerciofin where emordenid = '".$emordenid."'";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
    /* Fin */
    /* /* Fin de la Tabla: dbcomerciofin*/
 
 
    /* PARA Comercioinicio */
 
-   function insertarComercioinicio($token,$comtotal,$comcurrency,$comaddres,$comorderid,$commerchant,$comstore,$comterm,$comdigest,$urlback,$reforigencomercio,$refestadotransaccion,$refafiliados,$fechacrea,$usuariocrea,$vigencia,$observaciones) {
-      $sql = "insert into dbcomercioinicio(idcomercioinicio,token,comtotal,comcurrency,comaddres,comorderid,commerchant,comstore,comterm,comdigest,urlback,reforigencomercio,refestadotransaccion,refafiliados,fechacrea,usuariocrea,vigencia,observaciones)
-      values ('','".$token."',".$comtotal.",'".$comcurrency."','".$comaddres."',".$comorderid.",'".$commerchant."','".$comstore."','".$comterm."','".$comdigest."','".$urlback."',".$reforigencomercio.",".$refestadotransaccion.",".$refafiliados.",'".$fechacrea."','".$usuariocrea."',adddate(current_date(),1),'".$observaciones."')";
+   function insertarComercioinicio($token,$comtotal,$comcurrency,$comaddres,$comorderid,$commerchant,$comstore,$comterm,$comdigest,$urlback,$reforigencomercio,$refestadotransaccion,$refafiliados,$fechacrea,$usuariocrea,$vigencia,$observaciones,$usuariomodi) {
+      $sql = "insert into dbcomercioinicio(idcomercioinicio,token,comtotal,comcurrency,comaddres,comorderid,commerchant,comstore,comterm,comdigest,urlback,reforigencomercio,refestadotransaccion,refafiliados,fechacrea,usuariocrea,vigencia,observaciones,fechamodi,usuariomodi)
+      values ('','".$token."',".$comtotal.",'".$comcurrency."','".$comaddres."',".$comorderid.",'".$commerchant."','".$comstore."','".$comterm."','".$comdigest."','".$urlback."',".$reforigencomercio.",".$refestadotransaccion.",".$refafiliados.",'".$fechacrea."','".$usuariocrea."',adddate(current_date(),1),'".$observaciones."','".date('Y-m-d H:i:s')."','".$usuariomodi."')";
       $res = $this->query($sql,1);
       return $res;
    }
 
 
-   function modificarComercioinicio($id,$token,$comtotal,$comcurrency,$comaddres,$comorderid,$commerchant,$comstore,$comterm,$comdigest,$urlback,$reforigencomercio,$refestadotransaccion,$refafiliados,$fechacrea,$usuariocrea,$vigencia,$observaciones) {
+   function modificarComercioinicio($id,$token,$comtotal,$comcurrency,$comaddres,$comorderid,$commerchant,$comstore,$comterm,$comdigest,$urlback,$reforigencomercio,$refestadotransaccion,$refafiliados,$fechacrea,$usuariocrea,$vigencia,$observaciones,$usuariomodi) {
       $sql = "update dbcomercioinicio
       set
-      token = '".$token."',comtotal = ".$comtotal.",comcurrency = '".$comcurrency."',comaddres = '".$comaddres."',comorderid = ".$comorderid.",commerchant = '".$commerchant."',comstore = '".$comstore."',comterm = '".$comterm."',comdigest = '".$comdigest."',urlback = '".$urlback."',reforigencomercio = ".$reforigencomercio.",refestadotransaccion = ".$refestadotransaccion.",refafiliados = ".$refafiliados.",fechacrea = '".$fechacrea."',usuariocrea = '".$usuariocrea."',vigencia = '".$vigencia."',observaciones = '".$observaciones."' where idcomercioinicio =".$id;
+      token = '".$token."',comtotal = ".$comtotal.",comcurrency = '".$comcurrency."',comaddres = '".$comaddres."',comorderid = ".$comorderid.",commerchant = '".$commerchant."',comstore = '".$comstore."',comterm = '".$comterm."',comdigest = '".$comdigest."',urlback = '".$urlback."',reforigencomercio = ".$reforigencomercio.",refestadotransaccion = ".$refestadotransaccion.",refafiliados = ".$refafiliados.",fechacrea = '".$fechacrea."',usuariocrea = '".$usuariocrea."',vigencia = '".$vigencia."',observaciones = '".$observaciones."',fechamodi = '".date('Y-m-d H:i:s')."',usuariomodi = '".$usuariomodi."' where idcomercioinicio =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function modificarComercioInicioEstado($token,$idestado) {
+      $sql = "update dbcomercioinicio set refestadotransaccion = ".$idestado.",fechamodi = '".date('Y-m-d H:i:s')."' where token = '".$token."'";
       $res = $this->query($sql,0);
       return $res;
    }
@@ -84,6 +160,26 @@ class serviciosComercio
    function eliminarComercioinicio($id) {
       $sql = "delete from dbcomercioinicio where idcomercioinicio =".$id;
       $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerComercioinicioFacturacion($idcliente) {
+
+      $sql = "select
+               ci.idcomercioinicio, ci.token, p.producto, ci.comtotal, et.estadotransaccion, ci.fechacrea,ci.refestadotransaccion, ci.fechamodi
+               from		dbcomercioinicio ci
+               inner
+               join		tbestadotransaccion et on et.idestadotransaccion = ci.refestadotransaccion
+               inner
+               join		dbcotizaciones c on c.idcotizacion = ci.comorderid
+               inner
+               join		dbclientes cli on cli.idcliente = c.refclientes
+               inner
+               join		tbproductos p on p.idproducto = c.refproductos
+            where ci.refestadotransaccion in (1,2,3,4) and cli.idcliente = ".$idcliente;
+
+      $res = $this->query($sql,0);
+
       return $res;
    }
 
@@ -116,7 +212,20 @@ class serviciosComercio
 
 
    function traerComercioinicioPorId($id) {
-      $sql = "select idcomercioinicio,token,comtotal,comcurrency,comaddres,comorderid,commerchant,comstore,comterm,comdigest,urlback,reforigencomercio,refestadotransaccion,refafiliados,fechacrea,usuariocrea,vigencia,observaciones from dbcomercioinicio where idcomercioinicio =".$id;
+      $sql = "select idcomercioinicio,token,comtotal,comcurrency,comaddres,comorderid,commerchant,comstore,comterm,comdigest,urlback,reforigencomercio,refestadotransaccion,refafiliados,fechacrea,usuariocrea,vigencia,observaciones,fechamodi,usuariomodi from dbcomercioinicio where idcomercioinicio =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerComercioinicioPorToken($token) {
+      $sql = "select idcomercioinicio,token,comtotal,comcurrency,comaddres,comorderid,commerchant,comstore,comterm,comdigest,urlback,reforigencomercio,refestadotransaccion,refafiliados,fechacrea,usuariocrea,vigencia,observaciones,fechamodi,usuariomodi from dbcomercioinicio where token ='".$token."'";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerComercioinicioPorOrderId($orderid) {
+      $sql = "select idcomercioinicio,token,comtotal,comcurrency,comaddres,comorderid,commerchant,comstore,comterm,comdigest,urlback,reforigencomercio,refestadotransaccion,refafiliados,fechacrea,usuariocrea,vigencia,observaciones,fechamodi,usuariomodi from dbcomercioinicio where comorderid = '".$orderid."'";
       $res = $this->query($sql,0);
       return $res;
    }

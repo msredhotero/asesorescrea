@@ -191,10 +191,24 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
-											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
-												<i class="material-icons">add</i>
-												<span>NUEVO</span>
-											</button>
+											<div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 frmContreftiporespuesta" style="display:block">
+												<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
+													<i class="material-icons">add</i>
+													<span>NUEVO</span>
+												</button>
+											</div>
+											<div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 frmContreftiporespuesta" style="display:block">
+												<label for="reftiporespuesta" class="control-label" style="text-align:left">Agregue las Preguntas Sencibles de ser necesarias </label>
+												<div class="input-group col-md-12">
+													<select class="form-control" id="refpreguntasencible" name="refpreguntasencible"></select>
+												</div>
+											</div>
+											<div class="col-lg-2 col-md-2 col-sm-3 col-xs-4 frmContreftiporespuesta" style="display:block">
+												<button type="button" class="btn bg-green waves-effect btnAgregar">
+													<i class="material-icons">add</i>
+													<span>AGREGAR</span>
+												</button>
+											</div>
 
 										</div>
 									</div>
@@ -473,6 +487,117 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						swal("Error!", 'No cargo respuestas', "warning");
 
 						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
+
+		traerPreguntassenciblesPorCuestionario();
+
+		function traerPreguntassenciblesPorCuestionario() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'traerPreguntassenciblesPorCuestionario', idcuestionario: <?php echo $id; ?>},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+					$('#refpreguntasencible').html('');
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						$('#refpreguntasencible').html(data);
+					} else {
+						swal("Error!", 'Ya selecciono todas las preguntas sencibles', "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
+
+		$('.btnAgregar').click(function() {
+			if ($('#refpreguntasencible').val() != '') {
+
+				//alert($('#refpreguntasencible').val() + ' ' + $('#refpreguntasencible option:selected').text());
+				insertarPreguntasSencibles($('#refpreguntasencible').val() , $('#refpreguntasencible option:selected').text());
+			} else {
+				swal({
+						title: "Respuesta",
+						text: 'No existen mas preguntas sencibles',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+				});
+			}
+		});
+
+
+		function insertarPreguntasSencibles(idps, valor) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'insertarPreguntascuestionario',
+					refcuestionarios: <?php echo $id; ?>,
+					reftiporespuesta: 1,
+					pregunta: valor,
+					idps: idps,
+					orden: 0,
+					valor: 1,
+					depende: 0,
+					tiempo: '0',
+					activo: '1',
+					dependerespuesta: 0,
+					leyenda: '',
+					obligatoria: '1'
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+					$('#refpreguntasencible').html('');
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data == '') {
+						swal({
+								title: "Respuesta",
+								text: "Registro Eliminado con exito!!",
+								type: "success",
+								timer: 1500,
+								showConfirmButton: false
+						});
+
+						table.ajax.reload();
+						traerPreguntassenciblesPorCuestionario();
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data,
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
 					}
 				},
 				//si ha ocurrido un error

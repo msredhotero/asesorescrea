@@ -112,6 +112,13 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.jqueryui.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.css">
 
+	<script src="https://cdn.tiny.cloud/1/250yr8s6bkp1q3322lambprpw1glcn1b50hpg2hm8knawsa0/tinymce/5/tinymce.min.js" referrerpolicy="origin"/></script>
+	<script>
+	 tinymce.init({
+		selector: '#detalle'
+	 });
+	</script>
+
 	<style>
 		.alert > i{ vertical-align: middle !important; }
 	</style>

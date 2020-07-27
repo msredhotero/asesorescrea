@@ -519,7 +519,7 @@ class Servicios {
 			break;
 
 			default:
-				$ocultar = array("fechacrea","fechacreacion","fechamodi","usuacrea","usuamodi","usuariocrea","usuariomodi","tipoimagen","utilidad","idusuario",'refestadogeneraloportunidad');
+				$ocultar = array("fechacrea","fechacreacion","fechamodi","usuacrea","usuamodi","usuariocrea","usuariomodi","tipoimagen","utilidad","idusuario",'refestadogeneraloportunidad','refpreguntassencibles');
 				break;
 		}
 
@@ -737,20 +737,16 @@ class Servicios {
 										';
 
 									} else {
-										if ($row[1] == 'MEDIUMTEXT') {
+										if (($row[1] == 'MEDIUMTEXT') || ($row[1] == 'text')) {
 											$label = ucwords($label);
 											$campo = strtolower($row[0]);
 
 											$form	=	$form.'
 
-											<div class="form-group col-md-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
+											<div class="form-group col-xs-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 												<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.' '.$lblObligatorioAsterisco.'</label>
 												<div class="input-group col-md-12">
-													<textarea name="'.$campo.'" id="'.$campo.'" rows="200" cols="160">
-														Ingrese la noticia.
-													</textarea>
-
-
+													<textarea name="'.$campo.'" id="'.$campo.'"></textarea>
 												</div>
 
 											</div>
@@ -764,7 +760,7 @@ class Servicios {
 												$campo = strtolower($row[0]);
 
 												$form	=	$form.'
-												<div class="col-sm-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
+												<div class="col-xs-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 												<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.' '.$lblObligatorioAsterisco.'</label>
 													<div class="form-group">
 														<div class="form-line">
@@ -1294,7 +1290,7 @@ class Servicios {
 
 		switch ($tabla) {
 			case 'dbrespuestascuestionario':
-				$ocultar = array("refpreguntascuestionario","fechamodi","depende",'valor','tiempo','usuariocrea','usuariomodi');
+				$ocultar = array("refpreguntascuestionario","fechamodi","depende",'valor','tiempo','usuariocrea','usuariomodi','refpreguntassencibles');
 			break;
 			case 'dbpreguntascuestionario':
 				$ocultar = array("fechacrea","fechamodi",'valor','tiempo','usuariocrea','usuariomodi');

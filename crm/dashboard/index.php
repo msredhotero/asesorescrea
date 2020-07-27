@@ -31,6 +31,8 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
+
+//////////////////// RECORDAR APSARLO AL CRON NOCTURNO /////////////////////////
 $resConstancias = $serviciosReferencias->calcularConstanciasAnticipadas();
 
 while ($row = mysql_fetch_array($resConstancias)) {
@@ -62,8 +64,12 @@ while ($row = mysql_fetch_array($resConstancias)) {
 	}
 }
 
+//////////////////// RECORDAR APSARLO AL CRON NOCTURNO /////////////////////////
+
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 
+
+///// SI EL ROL ES DEL ASESOR
 if ($_SESSION['idroll_sahilices'] == 7) {
 	$resultado = $serviciosReferencias->traerPostulantesPorIdUsuario($_SESSION['usuaid_sahilices']);
 
@@ -102,6 +108,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 } else {
 
+	//// SI EL ROL ES DEL GERENTE REGIONAL
 	if ($_SESSION['idroll_sahilices'] == 3) {
 		$singular = "Entrev. Oportnidad";
 
@@ -131,257 +138,266 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 	}
 	//////////////////////// Fin opciones ////////////////////////////////////////////////
 
-}
+	/////////// ROL DEL CLIENTE ///////////////
+	if ($_SESSION['idroll_sahilices'] == 16) {
+		$resCliente = $serviciosReferencias->traerClientesPorUsuarioCompleto($_SESSION['usuaid_sahilices']);
 
-$resGrafico = $serviciosReferencias->graficoTotalFinalizados();
-$ar = array();
-
-$aceptado = '';
-$rechazado = '';
-$noatendido = '';
-$nocontacto = '';
-$asociado = '';
-$totalPie1 = 0;
-
-$aceptadoCant1 = 0;
-$rechazadoCant1 = 0;
-$noatendidoCant1 = 0;
-$nocontactoCant1 = 0;
-$asociadoCant1 = 0;
-while ($rowG = mysql_fetch_array($resGrafico)) {
-	$aceptado .= $rowG['aceptado'].",";
-	$rechazado .= $rowG['rechazado'].",";
-	$noatendido .= $rowG['noatendido'].",";
-	$nocontacto .= $rowG['nocontacto'].",";
-	$asociado .= $rowG['asociado'].",";
-
-	$aceptadoCant1 += (integer)$rowG['aceptado'];
-	$rechazadoCant1 += (integer)$rowG['rechazado'];
-	$noatendidoCant1 += (integer)$rowG['noatendido'];
-	$nocontactoCant1 += (integer)$rowG['nocontacto'];
-	$asociadoCant1 += (integer)$rowG['asociado'];
-
-	$totalPie1 = (integer)$rowG['aceptado'] + (integer)$rowG['rechazado'] + (integer)$rowG['noatendido'] + (integer)$rowG['nocontacto'] + (integer)$rowG['asociado'];
-}
-
-
-if (strlen($aceptado) > 0 ) {
-	$aceptado = substr($aceptado,0,-1);
-}
-
-if (strlen($rechazado) > 0 ) {
-	$rechazado = substr($rechazado,0,-1);
-}
-
-if (strlen($noatendido) > 0 ) {
-	$noatendido = substr($noatendido,0,-1);
-}
-
-if (strlen($nocontacto) > 0 ) {
-	$nocontacto = substr($nocontacto,0,-1);
-}
-
-if (strlen($asociado) > 0 ) {
-	$asociado = substr($asociado,0,-1);
-}
-
-/***************************************************************/
-
-$resGraficoA = $serviciosReferencias->graficoTotalActuales();
-
-$nombresA = '';
-$poratender = '';
-$citaprogramada = '';
-$mayor = 5;
-while ($rowG = mysql_fetch_array($resGraficoA)) {
-	$nombresA .= "'".$rowG['meses']."',";
-	$poratender .= $rowG['poratender'].",";
-	$citaprogramada .= $rowG['citaprogramada'].",";
-	if ($mayor < $rowG['poratender']) {
-		$mayor = $rowG['poratender'];
+		$nombrecompleto = mysql_result($resCliente,0,'nombrecompleto');
 	}
-	if ($mayor < $rowG['citaprogramada']) {
-		$mayor = $rowG['citaprogramada'];
+
+}
+
+	///// POR AHORA DISTINTO DE CLIENTE
+	if ($_SESSION['idroll_sahilices'] != 16) {
+		$resGrafico = $serviciosReferencias->graficoTotalFinalizados();
+		$ar = array();
+
+		$aceptado = '';
+		$rechazado = '';
+		$noatendido = '';
+		$nocontacto = '';
+		$asociado = '';
+		$totalPie1 = 0;
+
+		$aceptadoCant1 = 0;
+		$rechazadoCant1 = 0;
+		$noatendidoCant1 = 0;
+		$nocontactoCant1 = 0;
+		$asociadoCant1 = 0;
+		while ($rowG = mysql_fetch_array($resGrafico)) {
+			$aceptado .= $rowG['aceptado'].",";
+			$rechazado .= $rowG['rechazado'].",";
+			$noatendido .= $rowG['noatendido'].",";
+			$nocontacto .= $rowG['nocontacto'].",";
+			$asociado .= $rowG['asociado'].",";
+
+			$aceptadoCant1 += (integer)$rowG['aceptado'];
+			$rechazadoCant1 += (integer)$rowG['rechazado'];
+			$noatendidoCant1 += (integer)$rowG['noatendido'];
+			$nocontactoCant1 += (integer)$rowG['nocontacto'];
+			$asociadoCant1 += (integer)$rowG['asociado'];
+
+			$totalPie1 = (integer)$rowG['aceptado'] + (integer)$rowG['rechazado'] + (integer)$rowG['noatendido'] + (integer)$rowG['nocontacto'] + (integer)$rowG['asociado'];
+		}
+
+
+		if (strlen($aceptado) > 0 ) {
+			$aceptado = substr($aceptado,0,-1);
+		}
+
+		if (strlen($rechazado) > 0 ) {
+			$rechazado = substr($rechazado,0,-1);
+		}
+
+		if (strlen($noatendido) > 0 ) {
+			$noatendido = substr($noatendido,0,-1);
+		}
+
+		if (strlen($nocontacto) > 0 ) {
+			$nocontacto = substr($nocontacto,0,-1);
+		}
+
+		if (strlen($asociado) > 0 ) {
+			$asociado = substr($asociado,0,-1);
+		}
+
+		/***************************************************************/
+
+		$resGraficoA = $serviciosReferencias->graficoTotalActuales();
+
+		$nombresA = '';
+		$poratender = '';
+		$citaprogramada = '';
+		$mayor = 5;
+		while ($rowG = mysql_fetch_array($resGraficoA)) {
+			$nombresA .= "'".$rowG['meses']."',";
+			$poratender .= $rowG['poratender'].",";
+			$citaprogramada .= $rowG['citaprogramada'].",";
+			if ($mayor < $rowG['poratender']) {
+				$mayor = $rowG['poratender'];
+			}
+			if ($mayor < $rowG['citaprogramada']) {
+				$mayor = $rowG['citaprogramada'];
+			}
+		}
+
+		if (strlen($nombresA) > 0 ) {
+			$nombresA = substr($nombresA,0,-1);
+		}
+
+		if (strlen($poratender) > 0 ) {
+			$poratender = substr($poratender,0,-1);
+		}
+
+		if (strlen($citaprogramada) > 0 ) {
+			$citaprogramada = substr($citaprogramada,0,-1);
+		}
+
+		/***************************************************************/
+
+		$resGraficoM = $serviciosReferencias->graficoTotalMensual();
+		$ar = array();
+
+		$aceptadoM = '';
+		$rechazadoM = '';
+		$noatendidoM = '';
+		$nocontactoM = '';
+		$asociadoM = '';
+
+		$aceptadoCant2 = 0;
+		$rechazadoCant2 = 0;
+		$noatendidoCant2 = 0;
+		$nocontactoCant2 = 0;
+		$asociadoCant2 = 0;
+
+		$totalPie2 = 0;
+		while ($rowG = mysql_fetch_array($resGraficoM)) {
+			$aceptadoM .= $rowG['aceptado'].",";
+			$rechazadoM .= $rowG['rechazado'].",";
+			$noatendidoM .= $rowG['noatendido'].",";
+			$nocontactoM .= $rowG['nocontacto'].",";
+			$asociadoM .= $rowG['asociado'].",";
+
+			$aceptadoCant2 += (integer)$rowG['aceptado'];
+			$rechazadoCant2 += (integer)$rowG['rechazado'];
+			$noatendidoCant2 += (integer)$rowG['noatendido'];
+			$nocontactoCant2 += (integer)$rowG['nocontacto'];
+			$asociadoCant2 += (integer)$rowG['asociado'];
+
+			$totalPie2 = (integer)$rowG['aceptado'] + (integer)$rowG['rechazado'] + (integer)$rowG['noatendido'] + (integer)$rowG['nocontacto'] + (integer)$rowG['asociado'];
+		}
+
+
+		if (strlen($aceptadoM) > 0 ) {
+			$aceptadoM = substr($aceptadoM,0,-1);
+		}
+
+		if (strlen($rechazadoM) > 0 ) {
+			$rechazadoM = substr($rechazadoM,0,-1);
+		}
+
+		if (strlen($noatendidoM) > 0 ) {
+			$noatendidoM = substr($noatendidoM,0,-1);
+		}
+
+		if (strlen($nocontactoM) > 0 ) {
+			$nocontactoM = substr($nocontactoM,0,-1);
+		}
+
+		if (strlen($asociadoM) > 0 ) {
+			$asociadoM = substr($asociadoM,0,-1);
+		}
+
+		/*
+		$poratender = '144,0,0,0,0,0,0,0,0,0,0,0';
+		$citaprogramada = '67,0,0,0,0,0,0,0,0,0,0,0';
+		$mayor = 144;
+		*/
+		///////////////////////////              fin                   ////////////////////////
+		$resComparativo = $serviciosReferencias->graficoIndiceAceptacion();
+
+		$aceptadoC = '';
+		$rechazadoC = '';
+		$noatendidoC = '';
+		$nocontactoC = '';
+		$asociadoC = '';
+
+		$nombresC = '';
+		while ($rowG = mysql_fetch_array($resComparativo)) {
+			$aceptadoC .= $rowG['aceptado'].",";
+			$rechazadoC .= $rowG['rechazado'].",";
+			$noatendidoC .= $rowG['noatendido'].",";
+			$nocontactoC .= $rowG['nocontacto'].",";
+			$asociadoC .= $rowG['asociado'].",";
+
+			$nombresC .= "'".$rowG['nombrecompleto']."',";
+		}
+
+		if (strlen($nombresC) > 0 ) {
+			$nombresC = substr($nombresC,0,-1);
+		}
+
+		if (strlen($aceptadoC) > 0 ) {
+			$aceptadoC = substr($aceptadoC,0,-1);
+		}
+
+		if (strlen($rechazadoC) > 0 ) {
+			$rechazadoC = substr($rechazadoC,0,-1);
+		}
+
+		if (strlen($noatendidoC) > 0 ) {
+			$noatendidoC = substr($noatendidoC,0,-1);
+		}
+
+		if (strlen($nocontactoC) > 0 ) {
+			$nocontactoC = substr($nocontactoC,0,-1);
+		}
+
+		if (strlen($asociadoC) > 0 ) {
+			$asociadoC = substr($asociadoC,0,-1);
+		}
+
+		//////////////////////////////////////////////////////////////
+		// grafica de ventas anuales
+		$resVentasAnuales = $serviciosReferencias->graficosVentasAnuales();
+
+		$resVentasGerentes = $serviciosReferencias->graficoVentasPorGerentes();
+
+		////////////////////////////////////////////////////////////////////////
+
+		$resComparativo2 = $serviciosReferencias->graficoIndiceAceptacionMesual();
+
+		$aceptadoC2 = '';
+		$rechazadoC2 = '';
+		$noatendidoC2 = '';
+		$nocontactoC2 = '';
+		$asociadoC2 = '';
+		$iniciadoC2 = '';
+
+		$nombresC2 = '';
+		while ($rowG = mysql_fetch_array($resComparativo2)) {
+			$aceptadoC2 .= $rowG['aceptado'].",";
+			$rechazadoC2 .= $rowG['rechazado'].",";
+			$noatendidoC2 .= $rowG['noatendido'].",";
+			$nocontactoC2 .= $rowG['nocontacto'].",";
+			$asociadoC2 .= $rowG['asociado'].",";
+			$iniciadoC2 .= $rowG['iniciado'].",";
+
+			$nombresC2 .= "'".$rowG['nombrecompleto']."',";
+		}
+
+		if (strlen($nombresC2) > 0 ) {
+			$nombresC2 = substr($nombresC2,0,-1);
+		}
+
+		if (strlen($aceptadoC2) > 0 ) {
+			$aceptadoC2 = substr($aceptadoC2,0,-1);
+		}
+
+		if (strlen($rechazadoC2) > 0 ) {
+			$rechazadoC2 = substr($rechazadoC2,0,-1);
+		}
+
+		if (strlen($iniciadoC2) > 0 ) {
+			$iniciadoC2 = substr($iniciadoC2,0,-1);
+		}
+
+		if (strlen($noatendidoC2) > 0 ) {
+			$noatendidoC2 = substr($noatendidoC2,0,-1);
+		}
+
+		if (strlen($nocontactoC2) > 0 ) {
+			$nocontactoC2 = substr($nocontactoC2,0,-1);
+		}
+
+		if (strlen($asociadoC2) > 0 ) {
+			$asociadoC2 = substr($asociadoC2,0,-1);
+		}
+
+		//////////////////////////////////////////////////////////////
+
+		/********************* fin ********************************************/
 	}
-}
-
-if (strlen($nombresA) > 0 ) {
-	$nombresA = substr($nombresA,0,-1);
-}
-
-if (strlen($poratender) > 0 ) {
-	$poratender = substr($poratender,0,-1);
-}
-
-if (strlen($citaprogramada) > 0 ) {
-	$citaprogramada = substr($citaprogramada,0,-1);
-}
-
-/***************************************************************/
-
-$resGraficoM = $serviciosReferencias->graficoTotalMensual();
-$ar = array();
-
-$aceptadoM = '';
-$rechazadoM = '';
-$noatendidoM = '';
-$nocontactoM = '';
-$asociadoM = '';
-
-$aceptadoCant2 = 0;
-$rechazadoCant2 = 0;
-$noatendidoCant2 = 0;
-$nocontactoCant2 = 0;
-$asociadoCant2 = 0;
-
-$totalPie2 = 0;
-while ($rowG = mysql_fetch_array($resGraficoM)) {
-	$aceptadoM .= $rowG['aceptado'].",";
-	$rechazadoM .= $rowG['rechazado'].",";
-	$noatendidoM .= $rowG['noatendido'].",";
-	$nocontactoM .= $rowG['nocontacto'].",";
-	$asociadoM .= $rowG['asociado'].",";
-
-	$aceptadoCant2 += (integer)$rowG['aceptado'];
-	$rechazadoCant2 += (integer)$rowG['rechazado'];
-	$noatendidoCant2 += (integer)$rowG['noatendido'];
-	$nocontactoCant2 += (integer)$rowG['nocontacto'];
-	$asociadoCant2 += (integer)$rowG['asociado'];
-
-	$totalPie2 = (integer)$rowG['aceptado'] + (integer)$rowG['rechazado'] + (integer)$rowG['noatendido'] + (integer)$rowG['nocontacto'] + (integer)$rowG['asociado'];
-}
-
-
-if (strlen($aceptadoM) > 0 ) {
-	$aceptadoM = substr($aceptadoM,0,-1);
-}
-
-if (strlen($rechazadoM) > 0 ) {
-	$rechazadoM = substr($rechazadoM,0,-1);
-}
-
-if (strlen($noatendidoM) > 0 ) {
-	$noatendidoM = substr($noatendidoM,0,-1);
-}
-
-if (strlen($nocontactoM) > 0 ) {
-	$nocontactoM = substr($nocontactoM,0,-1);
-}
-
-if (strlen($asociadoM) > 0 ) {
-	$asociadoM = substr($asociadoM,0,-1);
-}
-
-/*
-$poratender = '144,0,0,0,0,0,0,0,0,0,0,0';
-$citaprogramada = '67,0,0,0,0,0,0,0,0,0,0,0';
-$mayor = 144;
-*/
-///////////////////////////              fin                   ////////////////////////
-$resComparativo = $serviciosReferencias->graficoIndiceAceptacion();
-
-$aceptadoC = '';
-$rechazadoC = '';
-$noatendidoC = '';
-$nocontactoC = '';
-$asociadoC = '';
-
-$nombresC = '';
-while ($rowG = mysql_fetch_array($resComparativo)) {
-	$aceptadoC .= $rowG['aceptado'].",";
-	$rechazadoC .= $rowG['rechazado'].",";
-	$noatendidoC .= $rowG['noatendido'].",";
-	$nocontactoC .= $rowG['nocontacto'].",";
-	$asociadoC .= $rowG['asociado'].",";
-
-	$nombresC .= "'".$rowG['nombrecompleto']."',";
-}
-
-if (strlen($nombresC) > 0 ) {
-	$nombresC = substr($nombresC,0,-1);
-}
-
-if (strlen($aceptadoC) > 0 ) {
-	$aceptadoC = substr($aceptadoC,0,-1);
-}
-
-if (strlen($rechazadoC) > 0 ) {
-	$rechazadoC = substr($rechazadoC,0,-1);
-}
-
-if (strlen($noatendidoC) > 0 ) {
-	$noatendidoC = substr($noatendidoC,0,-1);
-}
-
-if (strlen($nocontactoC) > 0 ) {
-	$nocontactoC = substr($nocontactoC,0,-1);
-}
-
-if (strlen($asociadoC) > 0 ) {
-	$asociadoC = substr($asociadoC,0,-1);
-}
-
-//////////////////////////////////////////////////////////////
-// grafica de ventas anuales
-$resVentasAnuales = $serviciosReferencias->graficosVentasAnuales();
-
-$resVentasGerentes = $serviciosReferencias->graficoVentasPorGerentes();
-
-////////////////////////////////////////////////////////////////////////
-
-$resComparativo2 = $serviciosReferencias->graficoIndiceAceptacionMesual();
-
-$aceptadoC2 = '';
-$rechazadoC2 = '';
-$noatendidoC2 = '';
-$nocontactoC2 = '';
-$asociadoC2 = '';
-$iniciadoC2 = '';
-
-$nombresC2 = '';
-while ($rowG = mysql_fetch_array($resComparativo2)) {
-	$aceptadoC2 .= $rowG['aceptado'].",";
-	$rechazadoC2 .= $rowG['rechazado'].",";
-	$noatendidoC2 .= $rowG['noatendido'].",";
-	$nocontactoC2 .= $rowG['nocontacto'].",";
-	$asociadoC2 .= $rowG['asociado'].",";
-	$iniciadoC2 .= $rowG['iniciado'].",";
-
-	$nombresC2 .= "'".$rowG['nombrecompleto']."',";
-}
-
-if (strlen($nombresC2) > 0 ) {
-	$nombresC2 = substr($nombresC2,0,-1);
-}
-
-if (strlen($aceptadoC2) > 0 ) {
-	$aceptadoC2 = substr($aceptadoC2,0,-1);
-}
-
-if (strlen($rechazadoC2) > 0 ) {
-	$rechazadoC2 = substr($rechazadoC2,0,-1);
-}
-
-if (strlen($iniciadoC2) > 0 ) {
-	$iniciadoC2 = substr($iniciadoC2,0,-1);
-}
-
-if (strlen($noatendidoC2) > 0 ) {
-	$noatendidoC2 = substr($noatendidoC2,0,-1);
-}
-
-if (strlen($nocontactoC2) > 0 ) {
-	$nocontactoC2 = substr($nocontactoC2,0,-1);
-}
-
-if (strlen($asociadoC2) > 0 ) {
-	$asociadoC2 = substr($asociadoC2,0,-1);
-}
-
-//////////////////////////////////////////////////////////////
-
-/********************* fin ********************************************/
-
 
 ?>
 <!DOCTYPE html>
@@ -503,7 +519,7 @@ if (strlen($asociadoC2) > 0 ) {
 						<div class="card ">
 							<div class="header bg-blue">
 								<h2 style="color:#fff">
-									BIENVENIDO
+									ASESORES CREA
 								</h2>
 								<ul class="header-dropdown m-r--5">
 									<li class="dropdown">
@@ -518,9 +534,15 @@ if (strlen($asociadoC2) > 0 ) {
 							</div>
 							<div class="body table-responsive">
 								<form class="form" id="formFacturas">
+									<?php if ($_SESSION['idroll_sahilices'] == 16) { ?>
+										<h3>Bienvenido a la Plataforma de Asesores Crea, <?php echo strtoupper($nombrecompleto); ?></h3>
+										<h4>Gracias por unirte a nuestra plataforma y confiar en nosostros.</h4>
+										<p>Puedes contactarnos en el Tel fijo: <b><span style="color:#5DC1FD;">55 51 35 02 59</span></b></p>
+										<p>Correo: <a href="mailto:ventas@asesorescrea.com" style="color:#5DC1FD !important;"><b>ventas@asesorescrea.com</b></a></p>
+									<?php }  else { ?>
 									<h3>Bienvenido al CRM de Asesores Crea</h3>
 									<p>Aqui usted encontrara avisos importantes sobre su estado en el Proceso de Reclutamiento</p>
-
+									<?php } ?>
 								</form>
 							</div>
 						</div>

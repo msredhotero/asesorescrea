@@ -1063,10 +1063,44 @@ switch ($accion) {
       traerComercioinicioPorId($serviciosComercio);
    break;
 
-
+   case 'traerPreguntassenciblesPorCuestionario':
+      traerPreguntassenciblesPorCuestionario($serviciosReferencias, $serviciosFunciones);
+   break;
+   case 'nuevoOrdenPreguntas':
+      nuevoOrdenPreguntas($serviciosReferencias);
+   break;
 
 }
 /* FinFinFin */
+
+
+function nuevoOrdenPreguntas($serviciosReferencias) {
+   $idcuestionario = $_POST['idcuestionario'];
+
+   $res = $serviciosReferencias->nuevoOrdenPreguntas($idcuestionario);
+
+   $ar = array();
+
+   while ($row = mysql_fetch_array($res)) {
+      array_push($ar, $row);
+   }
+
+   $resV['datos'] = $ar;
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
+
+function traerPreguntassenciblesPorCuestionario($serviciosReferencias, $serviciosFunciones) {
+   $idcuestionario = $_POST['idcuestionario'];
+
+   $res = $serviciosReferencias->traerPreguntassenciblesPorCuestionario($idcuestionario);
+   $cadRef = $serviciosFunciones->devolverSelectBox($res,array(1),'');
+
+   echo $cadRef;
+
+}
 
 
 function insertarComerciofin($serviciosReferencias) {
@@ -1138,6 +1172,8 @@ function traerComerciofin($serviciosReferencias) {
 }
 
 function insertarComercioinicio($serviciosReferencias) {
+   session_start();
+
    $token = $_POST['token'];
    $comtotal = $_POST['comtotal'];
    $comcurrency = $_POST['comcurrency'];
@@ -1151,10 +1187,12 @@ function insertarComercioinicio($serviciosReferencias) {
    $reforigencomercio = $_POST['reforigencomercio'];
    $refestadotransaccion = 1;
    $refafiliados = $_POST['refafiliados'];
-   $fechacrea = $_POST['fechacrea'];
-   $usuariocrea = $_POST['usuariocrea'];
+   $fechacrea = date('Y-m-d H:i:s');
+   $usuariocrea = $_SESSION['usua_sahilices'];
    $vigencia = $_POST['vigencia'];
    $observaciones = $_POST['observaciones'];
+
+   $usuariomodi = $_SESSION['usua_sahilices'];
 
    $res = $serviciosReferencias->insertarComercioinicio($token,$comtotal,$comcurrency,$comaddres,$comorderid,$commerchant,$comstore,$comterm,$comdigest,$urlback,$reforigencomercio,$refestadotransaccion,$refafiliados,$fechacrea,$usuariocrea,$vigencia,$observaciones);
 
@@ -1166,6 +1204,8 @@ function insertarComercioinicio($serviciosReferencias) {
 }
 
 function modificarComercioinicio($serviciosReferencias) {
+   session_start();
+
    $id = $_POST['id'];
    $token = $_POST['token'];
    $comtotal = $_POST['comtotal'];
@@ -1180,10 +1220,12 @@ function modificarComercioinicio($serviciosReferencias) {
    $reforigencomercio = $_POST['reforigencomercio'];
    $refestadotransaccion = $_POST['refestadotransaccion'];
    $refafiliados = $_POST['refafiliados'];
-   $fechacrea = $_POST['fechacrea'];
-   $usuariocrea = $_POST['usuariocrea'];
+   $fechacrea = date('Y-m-d H:i:s');
+   $usuariocrea = $_SESSION['usua_sahilices'];
    $vigencia = $_POST['vigencia'];
    $observaciones = $_POST['observaciones'];
+
+   $usuariomodi = $_SESSION['usua_sahilices'];
 
    $res = $serviciosReferencias->modificarComercioinicio($id,$token,$comtotal,$comcurrency,$comaddres,$comorderid,$commerchant,$comstore,$comterm,$comdigest,$urlback,$reforigencomercio,$refestadotransaccion,$refafiliados,$fechacrea,$usuariocrea,$vigencia,$observaciones);
 
@@ -1395,6 +1437,7 @@ function traerRespuestascuestionarioPorPregunta($serviciosReferencias, $servicio
 
 function validarCuestionario($serviciosReferencias) {
    $id = $_POST['refproductos'];
+   $refclientes = $_POST['refclientes'];
 
    $resP = $serviciosReferencias->traerProductosPorId($id);
    $idcuestionario = mysql_result($resP,0,'refcuestionarios');
@@ -1409,8 +1452,10 @@ function validarCuestionario($serviciosReferencias) {
    if ($idcuestionario == null) {
       $ar = array('cuestionario'=>'','rules'=>'');
    } else {
-      $res = $serviciosReferencias->Cuestionario($idcuestionario,0);
-      $resAux = $serviciosReferencias->CuestionarioAux($idcuestionario,0);
+      $res = $serviciosReferencias->Cuestionario($idcuestionario,0,$refclientes);
+      $resAux = $serviciosReferencias->CuestionarioAux($idcuestionario,0,$refclientes);
+
+      $preguntasSencibles = $serviciosReferencias->necesitoPreguntaSencible($refclientes,$idcuestionario);
 
       $pregunta = '';
       $iRadio = 0;
@@ -1636,7 +1681,7 @@ function validarCuestionario($serviciosReferencias) {
    if ($resV['error'] == false) {
       session_start();
 
-      $refclientes = $_POST['refclientes'];
+
       $refproductos = $_POST['refproductos'];
       $refasesores = $_POST['refasesores'];
       $refasociados = ($_POST['refasociados'] == '' ? 'NULL' : $_POST['refasociados']);
@@ -1678,6 +1723,8 @@ function validarCuestionario($serviciosReferencias) {
 
       $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo);
 
+      $sqlC = $serviciosReferencias->insertarCotizacionesSQL($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo);
+
       if ((integer)$res > 0) {
          /**** toda la perta del cuestionario ***/
          $resP = $serviciosReferencias->traerProductosPorId($refproductos);
@@ -1686,7 +1733,18 @@ function validarCuestionario($serviciosReferencias) {
          $resI = '';
 
          foreach ($arRespuestas as $item) {
+            foreach ($preguntasSencibles[1] as $itemsencibles) {
+               if ($itemsencibles['idpreguntanecesario'] == $item['refpreguntascuestionario']) {
+                  $resPP = $serviciosReferencias->traerPreguntascuestionarioPorId($item['refpreguntascuestionario']);
+                  $resPS = $serviciosReferencias->traerPreguntaSenciblePorId(mysql_result($resPP,0,'refpreguntassencibles'));
 
+                  if (mysql_num_rows($resPS)>0) {
+
+                     $resMC = $serviciosReferencias->modificarCampoParticularClientes($refclientes,mysql_result($resPS,0,'campo'),$item['respuestavalor']);
+                  }
+               }
+            }
+            
             $resI .= $serviciosReferencias->insertarCuestionariodetalle(11,$res,$item['refpreguntascuestionario'],$item['refrespuestascuestionario'],$item['pregunta'],$item['respuesta'],$item['respuestavalor'],$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
          }
 
@@ -1697,7 +1755,7 @@ function validarCuestionario($serviciosReferencias) {
          $resV['idcotizacion']= $res;
       } else {
          $resV['errorinsert'] = true;
-         $resV['mensaje'] = 'Ocurrio un error al insertar los datos, intente nuevamente';
+         $resV['mensaje'] = 'Ocurrio un error al insertar los datos, intente nuevamente '.$sqlC;
 
       }
    }
@@ -1710,6 +1768,7 @@ function validarCuestionario($serviciosReferencias) {
 function cuestionario($serviciosReferencias) {
    $id = $_POST['id'];
    $idcotizacion = $_POST['idcotizacion'];
+   $idcliente = $_POST['idcliente'];
 
    $resP = $serviciosReferencias->traerProductosPorId($id);
    $idcuestionario = mysql_result($resP,0,'refcuestionarios');
@@ -1720,7 +1779,8 @@ function cuestionario($serviciosReferencias) {
       $ar = array('cuestionario'=>'','rules'=>'');
    } else {
       $res = $serviciosReferencias->Cuestionario($idcuestionario,$idcotizacion);
-      $resAux = $serviciosReferencias->CuestionarioAux($idcuestionario,$idcotizacion);
+      $resAux = $serviciosReferencias->CuestionarioAux($idcuestionario,$idcotizacion,$idcliente);
+
 
       $cad = '';
 
@@ -1750,8 +1810,9 @@ function insertarRespuestascuestionario($serviciosReferencias) {
    $refpreguntascuestionario = $_POST['refpreguntascuestionario'];
    $orden = $_POST['orden'];
    $activo = $_POST['activo'];
+   $leyenda = $_POST['leyenda'];
 
-   $res = $serviciosReferencias->insertarRespuestascuestionario($respuesta,$refpreguntascuestionario,$orden,$activo);
+   $res = $serviciosReferencias->insertarRespuestascuestionario($respuesta,$refpreguntascuestionario,$orden,$activo,$leyenda,0);
 
    if ((integer)$res > 0) {
       echo '';
@@ -1766,8 +1827,9 @@ function modificarRespuestascuestionario($serviciosReferencias) {
    $refpreguntascuestionario = $_POST['refpreguntascuestionario'];
    $orden = $_POST['orden'];
    $activo = $_POST['activo'];
+   $leyenda = $_POST['leyenda'];
 
-   $res = $serviciosReferencias->modificarRespuestascuestionario($id,$respuesta,$refpreguntascuestionario,$orden,$activo);
+   $res = $serviciosReferencias->modificarRespuestascuestionario($id,$respuesta,$refpreguntascuestionario,$orden,$activo,$leyenda);
 
    if ($res == true) {
       echo '';
@@ -1823,19 +1885,29 @@ function insertarPreguntascuestionario($serviciosReferencias) {
    $obligatoria = $_POST['obligatoria'];
    $leyenda = $_POST['leyenda'];
 
-   $res = $serviciosReferencias->insertarPreguntascuestionario($refcuestionarios,$reftiporespuesta,$pregunta,$orden,$valor,$depende,$tiempo,$activo,$dependerespuesta,$obligatoria,$leyenda);
+   if ($valor == 1) {
+      $orden = $serviciosReferencias->nuevoOrdenPreguntas($refcuestionarios);
+   }
+
+   if (isset($_POST['idps'])) {
+      $idps = $_POST['idps'];
+   } else {
+      $idps = 0;
+   }
+
+   $res = $serviciosReferencias->insertarPreguntascuestionario($refcuestionarios,$reftiporespuesta,$pregunta,$orden,$valor,$depende,$tiempo,$activo,$dependerespuesta,$obligatoria,$leyenda,$idps);
 
    if ((integer)$res > 0) {
       if ($reftiporespuesta == 1) {
-         $resRespuesta = $serviciosReferencias->insertarRespuestascuestionario('Respuesta escrita',$res,1,'1');
+         $resRespuesta = $serviciosReferencias->insertarRespuestascuestionario('Respuesta escrita',$res,1,'1','',$idps);
       }
       if ($reftiporespuesta == 2) {
-         $resRespuesta1 = $serviciosReferencias->insertarRespuestascuestionario('Si',$res,1,'1');
-         $resRespuesta2 = $serviciosReferencias->insertarRespuestascuestionario('No',$res,2,'1');
+         $resRespuesta1 = $serviciosReferencias->insertarRespuestascuestionario('Si',$res,1,'1','',$idps);
+         $resRespuesta2 = $serviciosReferencias->insertarRespuestascuestionario('No',$res,2,'1','',$idps);
       }
       echo '';
    } else {
-      echo 'Hubo un error al insertar datos';
+      echo 'Hubo un error al insertar datos '.$res;
    }
 }
 
@@ -5279,8 +5351,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
       case 'dbclientes':
          $resultado = $serviciosReferencias->traerClientesPorId($id);
 
-         $lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','emisioncomprobantedomicilio','emisionrfc','vencimientoine','idclienteinbursa');
-         $lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social','Fecha Emision Compr. Domicilio','Fecha Emision RFC','Vencimiento INE','ID Cliente Inbursa');
+         $lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','emisioncomprobantedomicilio','emisionrfc','vencimientoine','idclienteinbursa','nroexterior','nrointerior','codigopostal');
+         $lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social','Fecha Emision Compr. Domicilio','Fecha Emision RFC','Vencimiento INE','ID Cliente Inbursa','Nro Exterior','Nro Interior','Cod. Postal');
 
          $modificar = "modificarClientes";
          $idTabla = "idcliente";
@@ -5950,7 +6022,14 @@ function insertarClientes($serviciosReferencias) {
    $emisionrfc = $_POST['emisionrfc'];
    $vencimientoine = $_POST['vencimientoine'];
 
-   $res = $serviciosReferencias->insertarClientes($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa);
+   $colonia = $_POST['colonia'];
+   $municipio = $_POST['municipio'];
+   $codigopostal = $_POST['codigopostal'];
+   $edificio = $_POST['edificio'];
+   $nroexterior = $_POST['nroexterior'];
+   $nrointerior = $_POST['nrointerior'];
+
+   $res = $serviciosReferencias->insertarClientes($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior);
 
    if ((integer)$res > 0) {
       if ($_SESSION['idroll_sahilices'] == 7) {
@@ -5991,7 +6070,14 @@ function modificarClientes($serviciosReferencias) {
    $emisionrfc = $_POST['emisionrfc'];
    $vencimientoine = $_POST['vencimientoine'];
 
-   $res = $serviciosReferencias->modificarClientes($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa);
+   $colonia = $_POST['colonia'];
+   $municipio = $_POST['municipio'];
+   $codigopostal = $_POST['codigopostal'];
+   $edificio = $_POST['edificio'];
+   $nroexterior = $_POST['nroexterior'];
+   $nrointerior = $_POST['nrointerior'];
+
+   $res = $serviciosReferencias->modificarClientes($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior);
 
    if ($res == true) {
       echo '';
