@@ -121,7 +121,13 @@ $tablasAr	= array('rolhogar' => 'tbrolhogar',
 							'respuestascuestionario' => 'dbrespuestascuestionario',
 							'cuestionariodetalle' => 'dbcuestionariodetalle',
 							'procesocotizacion' => 'tbprocesocotizacion',
-							'productosexclusivos' => 'dbproductosexclusivos'
+							'productosexclusivos' => 'dbproductosexclusivos',
+							'comerciofin' => 'dbcomerciofin',
+							'comercioinicio' => 'dbcomercioinicio',
+							'afiliados' => 'tbafiliados',
+							'origencomercio' => 'tborigencomercio',
+							'estadotransaccion' => 'tbestadotransaccion',
+							'ordenpago' => 'dbordenpago'
 							);
 
 
@@ -213,7 +219,13 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'respuestascuestionario' => 'dbrespuestascuestionario',
 								'cuestionariodetalle' => 'dbcuestionariodetalle',
 								'procesocotizacion' => 'tbprocesocotizacion',
-								'productosexclusivos' => 'dbproductosexclusivos'
+								'productosexclusivos' => 'dbproductosexclusivos',
+								'comerciofin' => 'dbcomerciofin',
+								'comercioinicio' => 'dbcomercioinicio',
+								'afiliados' => 'tbafiliados',
+								'origencomercio' => 'tborigencomercio',
+								'estadotransaccion' => 'tbestadotransaccion',
+								'ordenpago' => 'dbordenpago'
 							);
 
 	$tablasArAux	= array('rolhogar' => 1,
@@ -302,7 +314,13 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'respuestascuestionario' => 1,
 								'cuestionariodetalle' => 2,
 								'procesocotizacion' => 1,
-								'productosexclusivos' => 1
+								'productosexclusivos' => 1,
+								'comerciofin' => 1,
+								'comercioinicio' => 1,
+								'afiliados' => 1,
+								'origencomercio' => 1,
+								'estadotransaccion' => 1,
+								'ordenpago' => 1
 							);
 
 	$inner= '';
