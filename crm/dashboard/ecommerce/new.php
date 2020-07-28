@@ -24,14 +24,22 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cotizaciones/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../ecommerce/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
+$rCliente = $serviciosReferencias->traerClientesPorUsuario($_SESSION['usuaid_sahilices']);
+//die(var_dump($_SESSION['usuaid_sahilices']));
+$rIdCliente = mysql_result($rCliente,0,0);
+
+$rTipoPersona = mysql_result($rCliente,0,'reftipopersonas');
+
+$rIdProducto = $_GET['producto'];
+
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cotizaciones",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Ecommerce",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -58,7 +66,7 @@ if (isset($_GET['id'])) {
 	$resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
 	$refCliente = mysql_result($resultado,0,'refclientes');
-	$refAsesores = mysql_result($resultado,0,'refasesores');
+	$refAsesores = 114;
 	$refAsociados = mysql_result($resultado,0,'refasociados');
 	$refProductos = mysql_result($resultado,0,'refproductos');
 
@@ -352,8 +360,9 @@ if (isset($_GET['id'])) {
 		$documentacionNombre2 = '';
 	}
 
-	$idasesor = 0;
+	$idasesor = 114;
 
+// fin de cuando ya graba el producto
 } else {
 
 	$id = 0;
@@ -373,7 +382,9 @@ if (isset($_GET['id'])) {
 	$cadRef2 = "<option value=''></option>";
 	$cadRef3 = "<option value=''></option>";
 	$cadRef4 = "<option value=''></option>";
-	$cadRef5 = "<option value=''></option>";
+
+	$resProducto = $serviciosReferencias->traerProductosPorIdCompleta($rIdProducto);
+	$cadRef5 = $serviciosFunciones->devolverSelectBox($resProducto,array(1),' ');
 
 	$lblCliente = 0;
 	$lblAsesor = 0;
@@ -398,28 +409,8 @@ if (isset($_GET['id'])) {
 
 
 
-	if ($_SESSION['idroll_sahilices'] == 7) {
-		$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
-		if (mysql_num_rows($resVar5)>0) {
-			$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar5,array(3,4,2),' ');
-		} else {
-			header('Location: ../index.php');
-		}
 
-		$idasesor = mysql_result($resVar5,0,'idasesor');
-
-		$resLstClientes = $serviciosReferencias->traerClientesasesoresPorAsesor($_SESSION['usuaid_sahilices']);
-		$cadRef2 = $serviciosFunciones->devolverSelectBox($resLstClientes,array(14),'');
-
-	} else {
-		$resVar5	= $serviciosReferencias->traerAsesores();
-		$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar5,array(3,4,2),' ');
-		$idasesor = 0;
-
-		$resLstClientes = $serviciosReferencias->traerClientes();
-		$cadRef2 = $serviciosFunciones->devolverSelectBox($resLstClientes,array(19),'');
-
-	}
+	$idasesor = 114;
 
 
 }
@@ -438,19 +429,6 @@ $lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','E
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
-$tabla2 			= "dbclientes";
-
-$lblCambio2	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','idclienteinbursa','nroexterior','nrointerior','codigopostal','ine','rfc','curp');
-$lblreemplazo2	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social','ID Cliente Inbursa','Nro Exterior','Nro Interior','Cod. Postal','INE','RFC','CURP');
-
-
-$resVar82 = $serviciosReferencias->traerTipopersonas();
-$cadRef82 = $serviciosFunciones->devolverSelectBox($resVar82,array(1),'');
-
-$refdescripcion2 = array(0=>$cadRef82);
-$refCampo2 	=  array('reftipopersonas');
-
-$frmUnidadNegocios2 	= $serviciosFunciones->camposTablaViejo('insertarClientes' ,$tabla2,$lblCambio2,$lblreemplazo2,$refdescripcion2,$refCampo2);
 
 if ($_SESSION['idroll_sahilices'] == 3) {
 
@@ -573,7 +551,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="card">
                         <div class="header">
-                            <h2>CARGAR COTIZACION</h2>
+                            <h2>COTIZAR</h2>
                             <ul class="header-dropdown m-r--5">
                                 <li class="dropdown">
                                     <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -590,125 +568,14 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
                         <div class="body">
                            <form id="wizard_with_validation" method="POST">
 										<input type="hidden" name="accion" value="validarCuestionario"/>
-                              <h3>Cliente</h3>
-                              <fieldset>
-
-                                    <div class="form-group form-float">
-                                       <div class="form-line">
-
-													<h4>Busqueda por Nombre Completo</h4>
-													<input id="lstjugadores" style="width:75%;" />
-
-													<h4 style="padding: 15px 0; ">Cliente Seleccionado: <span class="clienteSelect"><?php echo $lblCliente; ?></span></h4>
-													<select style="margin-top:10px;" class="form-control" id="refclientes" name="refclientes" required readonly="readonly">
-														<?php echo $cadRef2; ?>
-													</select>
-
-
-													<div id="selction-ajax" style="margin-top: 10px; display:none;">
-													<h5>Lista de Productos</h5>
-													<ul class="list-group lstCartera">
-
-													</ul>
-													</div>
-													<input type="hidden" name="reftipopersonasaux" id="reftipopersonasaux" value="1" />
-
-
-                                       </div>
-                                    </div>
-
-												<div class="form-group form-float">
-													<div class="alert alert-info">En caso de que no encuentre al cliente puede dar de alta uno nuevo</div>
-													<hr>
-													<div class="form-line">
-														  <button type="button" class="btn bg-green waves-effect btnNuevo2" data-toggle="modal" data-target="#lgmNuevo2">
-			  												<i class="material-icons">add</i>
-			  												<span>NUEVO CLIENTE - PERSONA FISICA</span>
-			  											</button>
-			  											<button type="button" class="btn bg-blue-grey waves-effect btnNuevoMoral" data-toggle="modal" data-target="#lgmNuevo2">
-			  												<i class="material-icons">add</i>
-			  												<span>NUEVO CLIENTE - PERSONA MORAL</span>
-			  											</button>
-													</div>
-											   </div>
-
-
-                              </fieldset>
-										<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
-										<h3>Agente</h3>
-                              <fieldset>
-                                 <div class="form-group form-float">
-                                     <div class="form-line">
-
-														<h4>Busqueda por Nombre Completo</h4>
-														<input id="lstagentes" style="width:75%;" />
-
-														<h4 style="padding: 15px 0; ">Agente Seleccionado: <span class="agenteSelect"><?php echo $lblAsesor; ?></span></h4>
-														<select style="margin-top:10px;" class="form-control" id="refasesores" name="refasesores" required readonly="readonly">
-															<?php echo $cadRef3; ?>
-														</select>
-
-
-                                     </div>
-                                 </div>
-                              </fieldset>
-
-										<h3>Asociados</h3>
-                              <fieldset>
-											<div class="form-group form-float frmContasociadocheck" style="margin-top:20px;">
-												<div class="form-group">
-													<input type="radio" name="asociado" id="sin" class="with-gap" value="0" checked>
-													<label for="sin">No Lleva Asociado</label>
-
-													<input type="radio" name="asociado" id="comun" class="with-gap" value="1">
-													<label for="comun">Lleva Asociado</label>
-
-													<input type="radio" name="asociado" id="temporal" class="with-gap" value="2" >
-													<label for="temporal" class="m-l-20">Lleva Agente Temporal</label>
-												</div>
-											</div>
-                                 <div class="form-group form-float">
-                                     <div class="form-line">
-
-														<h4>Busqueda por Nombre Completo</h4>
-														<input id="lstasociados" class="contAsesores" style="width:75%;" />
-
-														<h4 style="padding: 15px 0; ">Agente Seleccionado: <span class="asociadoSelect"><?php echo $lblAsociado; ?></span></h4>
-														<select style="margin-top:10px;" class="form-control" id="refasociados" name="refasociados" readonly="readonly">
-															<?php echo $cadRef4; ?>
-														</select>
-
-                                     </div>
-                                 </div>
-                              </fieldset>
-										<?php } else { ?>
-											<select style="display:none;" style="margin-top:10px;" class="form-control" id="refasesores" name="refasesores" required readonly="readonly">
-												<?php echo $cadRef6; ?>
-											</select>
-										<?php } ?>
+										<input type="hidden" name="refclientes" id="refclientes" value="<?php echo $rIdCliente; ?>"/>
+										<input type="hidden" name="refasesores" id="refasesores" value="<?php echo $idasesor; ?>"/>
+										<input type="hidden" name="refasociados" id="refasociados" value="0"/>
+										<input type="hidden" name="reftipopersonasaux" id="reftipopersonasaux" value="<?php echo $rTipoPersona; ?>" />
 
                               <h3>Producto</h3>
                                  <fieldset>
-												<div class="form-group form-float">
-													<label class="form-label" style="margin-top:20px;">Ramo de Negocio *</label>
-                                       <div class="form-line">
 
-							   						<select style="margin-top:10px;" class="form-control" id="reftipoproducto" name="reftipoproducto" required>
-															<?php echo $cadRef7; ?>
-														</select>
-
-                                       </div>
-                                    </div>
-												<div class="form-group form-float">
-													<label class="form-label" style="margin-top:20px;">Rama Producto *</label>
-                                       <div class="form-line">
-
-							   						<select style="margin-top:10px;" class="form-control" id="refproductosrama" name="refproductosrama" required>
-															<?php echo $cadRef8; ?>
-														</select>
-
-                                       </div>
-                                    </div>
 												<div class="form-group form-float">
 													<label class="form-label" style="margin-top:20px;">Producto *</label>
                                        <div class="form-line">
@@ -1071,125 +938,6 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 </section>
 
 
-<!-- NUEVO -->
-	<form class="formulario frmNuevo" role="form" id="sign_in">
-	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
-	       <div class="modal-dialog modal-lg" role="document">
-	           <div class="modal-content">
-	               <div class="modal-header">
-	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular); ?></h4>
-	               </div>
-	               <div class="modal-body">
-						<div class="row">
-							<?php echo $frmUnidadNegocios; ?>
-						</div>
-	               </div>
-	               <div class="modal-footer">
-	                   <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
-	                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-	               </div>
-	           </div>
-	       </div>
-	   </div>
-		<input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
-	</form>
-
-	<!-- MODIFICAR -->
-		<form class="formulario frmModificar" role="form" id="sign_in">
-		   <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
-		       <div class="modal-dialog modal-lg" role="document">
-		           <div class="modal-content">
-		               <div class="modal-header">
-		                   <h4 class="modal-title" id="largeModalLabel">MODIFICAR <?php echo strtoupper($singular); ?></h4>
-		               </div>
-		               <div class="modal-body">
-							<div class="row frmAjaxModificar">
-
-							</div>
-		               </div>
-		               <div class="modal-footer">
-		                   <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
-		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-		               </div>
-		           </div>
-		       </div>
-		   </div>
-			<input type="hidden" id="accion" name="accion" value="<?php echo $modificar; ?>"/>
-		</form>
-
-
-	<!-- ELIMINAR -->
-		<form class="formulario" role="form" id="sign_in">
-		   <div class="modal fade" id="lgmEliminar" tabindex="-1" role="dialog">
-		       <div class="modal-dialog modal-lg" role="document">
-		           <div class="modal-content">
-		               <div class="modal-header">
-		                   <h4 class="modal-title" id="largeModalLabel">ELIMINAR <?php echo strtoupper($singular); ?></h4>
-		               </div>
-		               <div class="modal-body">
-							 <p>¿Esta seguro que desea eliminar el registro?</p>
-							 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
-		               </div>
-		               <div class="modal-footer">
-		                   <button type="button" class="btn btn-danger waves-effect eliminar">ELIMINAR</button>
-		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-		               </div>
-		           </div>
-		       </div>
-		   </div>
-			<input type="hidden" id="accion" name="accion" value="<?php echo $eliminar; ?>"/>
-			<input type="hidden" name="ideliminar" id="ideliminar" value="0">
-		</form>
-
-	<!-- ELIMINAR DEFINITIVO -->
-		<form class="formulario" role="form" id="sign_in">
-		   <div class="modal fade" id="lgmEliminarDefinitivo" tabindex="-1" role="dialog">
-		       <div class="modal-dialog modal-lg" role="document">
-		           <div class="modal-content">
-		               <div class="modal-header">
-		                   <h4 class="modal-title" id="largeModalLabel">ELIMINAR DEFINITIVO <?php echo strtoupper($singular); ?></h4>
-		               </div>
-		               <div class="modal-body">
-							 <p>¿Esta seguro que desea eliminar el registro?</p>
-							 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
-		               </div>
-		               <div class="modal-footer">
-		                   <button type="button" class="btn btn-danger waves-effect eliminarDefinitivo">ELIMINAR</button>
-		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-		               </div>
-		           </div>
-		       </div>
-		   </div>
-			<input type="hidden" id="accion" name="accion" value="eliminarPostulantesDefinitivo"/>
-			<input type="hidden" name="ideliminarDefinitivo" id="ideliminarDefinitivo" value="0">
-		</form>
-
-
-	<!-- NUEVO -->
-	<form class="formulario frmNuevo2" role="form" id="sign_in">
-	   <div class="modal fade" id="lgmNuevo2" tabindex="-1" role="dialog">
-	       <div class="modal-dialog modal-lg" role="document">
-	           <div class="modal-content">
-	               <div class="modal-header">
-	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular2); ?></h4>
-	               </div>
-	               <div class="modal-body">
-							<div class="row">
-								<?php echo $frmUnidadNegocios2; ?>
-							</div>
-
-	               </div>
-	               <div class="modal-footer">
-	                   <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
-	                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-	               </div>
-	           </div>
-	       </div>
-	   </div>
-		<input type="hidden" id="accion" name="accion" value="<?php echo 'insertarClientes'; ?>"/>
-	</form>
-
-
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 
 <script src="../../js/jquery.easy-autocomplete.min.js"></script>
@@ -1241,50 +989,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 		$('#selction-ajax').hide();
 
-		function traerClientescarteraPorCliente(idcliente) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {accion: 'traerClientescarteraPorCliente', id: idcliente},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-					$('.lstCartera').html('');
-					$('#selction-ajax').hide();
-				},
-				//una vez finalizado correctamente
-				success: function(data){
 
-					if (data != '') {
-						$('.lstCartera').html(data);
-						$('#selction-ajax').show();
-					} else {
-						$('#selction-ajax').hide();
-						swal({
-								title: "Respuesta",
-								text: 'El cliente no posee cartera actualmente',
-								type: "error",
-								timer: 500,
-								showConfirmButton: false
-						});
-
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					swal({
-							title: "Respuesta",
-							text: 'Actualice la pagina',
-							type: "error",
-							timer: 2000,
-							showConfirmButton: false
-					});
-
-				}
-			});
-
-		}
 
 		$('#wizard_with_validation .escondido').hide();
 
@@ -1299,18 +1004,13 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 			$('#wizard_with_validation .clcontPregunta'+idRespuesta).show(400);
 		});
 
-		function cuestionario(idproducto,idcotizacion,idcliente) {
+		function cuestionario(idproducto,idcotizacion) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {
-					accion: 'cuestionario',
-					id: idproducto,
-					idcotizacion: idcotizacion,
-					idcliente: idcliente
-				},
+				data: {accion: 'cuestionario', id: idproducto,idcotizacion:idcotizacion},
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('.contCuestionario').html('');
@@ -1358,6 +1058,8 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 				}
 			});
 		}
+
+		cuestionario(<?php echo $rIdProducto; ?>,<?php echo $id; ?>);
 
 		function validarCuestionario(idproducto) {
 			var formData = new FormData($("#wizard_with_validation")[0]);
@@ -1409,7 +1111,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	 								timer: 2000,
 	 								showConfirmButton: false
 	 						});
-							$(location).attr('href', 'new.php?id='+data.idcotizacion);
+							$(location).attr('href', 'new.php?producto=<?php echo $rIdProducto; ?>&id='+data.idcotizacion);
 						}
 
 
@@ -1429,90 +1131,6 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 			});
 		}
 
-		function traerProductosPorTipo(idtipoproducto, reftipopersonas, idasesor) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {accion: 'traerProductosPorTipo', id: idtipoproducto,reftipopersonasaux: reftipopersonas, idasesor: idasesor},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-					$('#refproductos').html('');
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data != '') {
-						$('#refproductos').html(data);
-						cuestionario($('#refproductos').val(),<?php echo $id; ?>,$('#refclientes').val());
-					} else {
-						swal({
-								title: "Respuesta",
-								text: 'No existen tipos de productos',
-								type: "error",
-								timer: 2000,
-								showConfirmButton: false
-						});
-
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					swal({
-							title: "Respuesta",
-							text: 'Actualice la pagina',
-							type: "error",
-							timer: 2000,
-							showConfirmButton: false
-					});
-
-				}
-			});
-		}
-
-		function traerTipoproductoramaPorTipoProducto(idtipoproducto) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {accion: 'traerTipoproductoramaPorTipoProducto', id: idtipoproducto},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-					$('#refproductosrama').html('');
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data != '') {
-						$('#refproductosrama').html(data);
-
-						traerProductosPorTipo($('#refproductosrama').val(), $('#reftipopersonasaux').val(), $('#refasesores').val());
-					} else {
-						swal({
-								title: "Respuesta",
-								text: 'No existen tipos de productos',
-								type: "error",
-								timer: 2000,
-								showConfirmButton: false
-						});
-
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					swal({
-							title: "Respuesta",
-							text: 'Actualice la pagina',
-							type: "error",
-							timer: 2000,
-							showConfirmButton: false
-					});
-
-				}
-			});
-		}
 
 		$('#wizard_with_validation .escondido').hide();
 
@@ -1530,16 +1148,6 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 			}
 		});
 
-		$("#wizard_with_validation").on("change",'.with-gap', function(){
-			if (($(this).val() == 1) || ($(this).val() == 2)) {
-
-				$("#refasociados").prop('required',true);
-
-			} else {
-				$("#refasociados").prop('required',false);
-
-			}
-		});
 
 
 		$("#wizard_with_validation").on("change",'#tiponegocio', function(){
@@ -1561,30 +1169,13 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 			}
 		});
 
-		$("#wizard_with_validation").on("change",'#reftipoproducto', function(){
-			traerTipoproductoramaPorTipoProducto($(this).val());
-
-		});
 
 		$("#wizard_with_validation").on("change",'#refproductos', function(){
 			cuestionario($(this).val(),<?php echo $id; ?>);
 
 		});
 
-		$("#wizard_with_validation").on("change",'#refproductosrama', function(){
-			traerProductosPorTipo($(this).val(),$('#reftipopersonasaux').val(), $('#refasesores').val());
-		});
 
-		$("#wizard_with_validation").on("change",'#refclientes', function(){
-			traerProductosPorTipo($('#refproductosrama').val(),$('#reftipopersonasaux').val(), $('#refasesores').val());
-		});
-
-
-
-
-		<?php if (!(isset($_GET['id']))) { ?>
-		traerTipoproductoramaPorTipoProducto($('#reftipoproducto').val());
-		<?php } ?>
 
 		function setButtonWavesEffect(event) {
 			$(event.currentTarget).find('[role="menu"] li a').removeClass('waves-effect');
@@ -1621,82 +1212,45 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	        },
 	        onStepChanged: function (event, currentIndex, priorIndex) {
 	            setButtonWavesEffect(event);
+
 					<?php if (!(isset($_GET['id']))) { ?>
-					<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
-						if (currentIndex == 4) {
+						if (currentIndex == 1) {
 							validarCuestionario($('#refproductos').val());
 							//guardarCotizacion(1);
 						}
 
-						if (currentIndex == 4) {
+						if (currentIndex == 1) {
 							$('.contSubirArchivos2').hide();
 							$('.contSubirArchivos1').show();
 						}
 
-						if (currentIndex == 5) {
-							$('.contSubirArchivos1').hide();
-							$('.contSubirArchivos2').show();
-						}
-
-						if (currentIndex < 4) {
-							$('.contSubirArchivos1').hide();
-							$('.contSubirArchivos2').hide();
-						}
-
-
-					<?php } else { ?>
 						if (currentIndex == 2) {
-							validarCuestionario($('#refproductos').val());
-							//guardarCotizacion(1);
-						}
-
-						if (currentIndex == 3) {
-							$('.contSubirArchivos2').hide();
-							$('.contSubirArchivos1').show();
-						}
-
-						if (currentIndex == 4) {
 							$('.contSubirArchivos1').hide();
 							$('.contSubirArchivos2').show();
 						}
 
-						if (currentIndex < 3) {
+						if (currentIndex < 1) {
 							$('.contSubirArchivos1').hide();
 							$('.contSubirArchivos2').hide();
 						}
-					<?php } ?>
+
+
 					<?php } else { ?>
-						<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
-							if (currentIndex == 4) {
+
+							if (currentIndex == 1) {
 								$('.contSubirArchivos2').hide();
 								$('.contSubirArchivos1').show();
 							}
 
-							if (currentIndex == 5) {
-								$('.contSubirArchivos1').hide();
-								$('.contSubirArchivos2').show();
-							}
-
-							if (currentIndex < 4) {
-								$('.contSubirArchivos1').hide();
-								$('.contSubirArchivos2').hide();
-							}
-						<?php } else { ?>
 							if (currentIndex == 2) {
-								$('.contSubirArchivos2').hide();
-								$('.contSubirArchivos1').show();
-							}
-
-							if (currentIndex == 3) {
 								$('.contSubirArchivos1').hide();
 								$('.contSubirArchivos2').show();
 							}
 
-							if (currentIndex < 2) {
+							if (currentIndex < 1) {
 								$('.contSubirArchivos1').hide();
 								$('.contSubirArchivos2').hide();
 							}
-						<?php } ?>
 					<?php } ?>
 
 
@@ -1717,24 +1271,14 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 		<?php if (isset($_GET['id'])) { ?>
 			cuestionario($('#refproductos').val(),<?php echo $id; ?>);
-			<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
-				form.steps("next");
-				form.steps("next");
-				form.steps("next");
+
 				form.steps("next");
 					<?php if (($i == $cargados) && (!(isset($_GET['iddocumentacion'])))) { ?>
 
 						form.steps("next");
 						//esconde2 = 1;
 					<?php } ?>
-			<?php } else { ?>
-				form.steps("next");
-				form.steps("next");
-					<?php if (($i == $cargados) && (!(isset($_GET['iddocumentacion'])))) { ?>
-						form.steps("next");
-						//esconde2 = 1;
-					<?php } ?>
-			<?php } ?>
+
 		<?php } ?>
 
 
@@ -1911,7 +1455,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
  								timer: 2000,
  								showConfirmButton: false
  						});
-						$(location).attr('href', 'modificar.php?id=<?php echo $id; ?>');
+						$(location).attr('href', 'comercio_fin.php?id=<?php echo $id; ?>');
 
  					} else {
  						swal({
@@ -1966,129 +1510,6 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
  		});
 
 
-		var options = {
-			url: "../../json/jsbuscarclientes.php",
-
-			getValue: function(element) {
-				return element.nombrecompleto;
-			},
-
-			ajaxSettings: {
-		        dataType: "json",
-		        method: "POST",
-		        data: {
-		            busqueda: $("#lstjugadores").val()
-		        }
-		    },
-
-		    preparePostData: function (data) {
-		        data.busqueda = $("#lstjugadores").val();
-				  data.idasesor = <?php echo $idasesor; ?>;
-		        return data;
-		    },
-
-			list: {
-			   maxNumberOfElements: 15,
-				match: {
-					enabled: true
-				},
-				onClickEvent: function() {
-					var value = $("#lstjugadores").getSelectedItemData().id;
-					$('#refclientes').val(value);
-					$('.clienteSelect').html($("#lstjugadores").getSelectedItemData().nombrecompleto);
-					$('#reftipopersonasaux').val($("#lstjugadores").getSelectedItemData().reftipopersonas);
-					//traerClientescarteraPorCliente(value);
-				}/*,
-				onHideListEvent: function() {
-					$('.clienteSelect').html('');
-					$('#selction-ajax').hide();
-					$('#refclientes').html('');
-				}*/
-			},
-			theme: "square"
-		};
-
-		$("#lstjugadores").easyAutocomplete(options);
-
-
-		var options2 = {
-			url: "../../json/jsbuscarasesores.php",
-
-			getValue: function(element) {
-				return element.nombrecompleto;
-			},
-
-			ajaxSettings: {
-		        dataType: "json",
-		        method: "POST",
-		        data: {
-		            busqueda: $("#lstagentes").val()
-		        }
-		    },
-
-		    preparePostData: function (data) {
-		        data.busqueda = $("#lstagentes").val();
-				  data.idasesor = <?php echo $idasesor; ?>;
-		        return data;
-		    },
-
-			list: {
-			    maxNumberOfElements: 15,
-				match: {
-					enabled: true
-				},
-				onClickEvent: function() {
-					var value = $("#lstagentes").getSelectedItemData().id;
-
-					$('#refasesores').val(value);
-					$('.agenteSelect').html($("#lstagentes").getSelectedItemData().nombrecompleto);
-				}
-			},
-			theme: "square"
-		};
-
-		$("#lstagentes").easyAutocomplete(options2);
-
-
-		var options3 = {
-			url: "../../json/jsbuscarasociados.php",
-
-			getValue: function(element) {
-				return element.nombrecompleto;
-			},
-
-			ajaxSettings: {
-		        dataType: "json",
-		        method: "POST",
-		        data: {
-		            busqueda: $("#lstasociados").val()
-		        }
-		    },
-
-		    preparePostData: function (data) {
-		        data.busqueda = $("#lstasociados").val();
-				  data.tipo = $('input:radio[name=asociado]:checked').val();
-		        return data;
-		    },
-
-			list: {
-			    maxNumberOfElements: 15,
-				match: {
-					enabled: true
-				},
-				onClickEvent: function() {
-					var value = $("#lstasociados").getSelectedItemData().id;
-
-					$('#refasociados').html("<option value='" + value + "'>" + $("#lstasociados").getSelectedItemData().nombrecompleto + "</option>");
-					$('.asociadoSelect').html($("#lstasociados").getSelectedItemData().nombrecompleto);
-
-				}
-			},
-			theme: "square"
-		};
-
-		$("#lstasociados").easyAutocomplete(options3);
-
 		$('#primaobjetivo').number( true, 2 ,'.','');
 
 		$('.frmContnumerocliente').hide();
@@ -2125,47 +1546,11 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 		$('.frmNuevo2 #usuariomodi').val('2020-02-02');
 
 
-
-		<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
-			$('.frmContrefasociados').hide();
-			$('#refasociados').prepend('<option value="0">sin valor</option>');
-			$('#refasociados').val(0);
-		<?php } ?>
-
-
 		$('#telefonofijo').inputmask('999 9999999', { placeholder: '___ _______' });
 		$('#telefonocelular').inputmask('999 9999999', { placeholder: '___ _______' });
 
 
-		var table = $('#example').DataTable({
-			"bProcessing": true,
-			"bServerSide": true,
-			"order": [[ 5, "desc" ]],
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizaciones",
-			"language": {
-				"emptyTable":     "No hay datos cargados",
-				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
-				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
-				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
-				"infoPostFix":    "",
-				"thousands":      ",",
-				"lengthMenu":     "Mostrar _MENU_ filas",
-				"loadingRecords": "Cargando...",
-				"processing":     "Procesando...",
-				"search":         "Buscar:",
-				"zeroRecords":    "No se encontraron resultados",
-				"paginate": {
-					"first":      "Primero",
-					"last":       "Ultimo",
-					"next":       "Siguiente",
-					"previous":   "Anterior"
-				},
-				"aria": {
-					"sortAscending":  ": activate to sort column ascending",
-					"sortDescending": ": activate to sort column descending"
-				}
-			}
-		});
+
 
 
 		$('#activo').prop('checked',true);
