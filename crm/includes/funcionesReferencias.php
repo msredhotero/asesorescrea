@@ -1010,6 +1010,11 @@ return $res;
    }
 
    function eliminarPreguntascuestionarioDefinitivo($id) {
+      
+
+      $sqlRespuestas = "delete from dbrespuestascuestionario where refpreguntascuestionario = ".$id;
+      $res = $this->query($sqlRespuestas,0);
+
       $sql = "delete from dbpreguntascuestionario where idpreguntacuestionario =".$id;
       $res = $this->query($sql,0);
       return $res;
