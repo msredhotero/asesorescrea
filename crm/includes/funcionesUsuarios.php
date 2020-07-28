@@ -591,6 +591,58 @@ function registrarSocio($email, $password,$apellido, $nombre,$refcliente) {
 }
 
 
+function registrarCliente($email, $password,$apellido, $nombre,$refcliente) {
+
+	$token = $this->GUID();
+	$cuerpo = '';
+
+	$fecha = date_create(date('Y').'-'.date('m').'-'.date('d'));
+	date_add($fecha, date_interval_create_from_date_string('30 days'));
+	$fechaprogramada =  date_format($fecha, 'Y-m-d');
+
+   $cuerpo .= '<img src="http://asesorescrea.com/img/logo.png" alt="RIDERZ" width="190">';
+
+   $cuerpo .= '<h2>¡Bienvenido a Asesores CREA!</h2>';
+
+
+   $cuerpo .= '<p>Usa el siguente <a href="http://asesorescrea.com/desarrollo/crm/activacion.php?token='.$token.'" target="_blank">enlace</a> para confirmar tu cuenta.</p>';
+
+
+	$sql = "INSERT INTO dbusuarios
+				(idusuario,
+				usuario,
+				password,
+				refroles,
+				email,
+				nombrecompleto,
+				activo)
+			VALUES
+				(null,
+				'".$apellido.' '.$nombre."',
+				'".$password."',
+				16,
+				'".$email."',
+				'".$apellido.' '.$nombre."',
+				0)";
+
+	$res = $this->query($sql,1);
+
+   if ($res == false) {
+		return 'Error al insertar datos ';
+	} else {
+		$this->insertarActivacionusuarios($res,$token,'','');
+
+      $sqlUpdateRelacion = "update dbclientes set refusuarios = ".$res." where idcliente =".$refcliente;
+      // actualizo la relacion cliente y usuario
+      $resRelacion = $this->query($sqlUpdateRelacion,0);
+
+		$retorno = $this->enviarEmail($email,'Alta de Usuario',utf8_decode($cuerpo));
+
+		return $res;
+	}
+}
+
+
 function confirmarEmail($email, $password,$apellido, $nombre, $idusuario) {
 
 	$token = $this->GUID();
