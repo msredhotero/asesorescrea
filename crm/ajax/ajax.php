@@ -1100,6 +1100,26 @@ switch ($accion) {
 }
 /* FinFinFin */
 
+function recuperar($serviciosUsuarios) {
+   $email = $_POST['email'];
+
+   $res = $serviciosUsuarios->traerUsuario($email);
+
+
+   $destinatario = $email;
+   $asunto = "ASESORES CREA - Recupero de credenciales";
+
+   if (mysql_num_rows($res)>0) {
+      $cuerpo = 'Su password es: '.mysql_result($res,0,'password');
+
+      $serviciosUsuarios->enviarEmail($destinatario,$asunto,$cuerpo);
+      echo '';
+   } else {
+      echo 'El email no existe';
+   }
+
+}
+
 function validarCuestionarioPersona($serviciosReferencias) {
    $id = $_POST['refproductos'];
    $refclientes = $_POST['refclientes'];
