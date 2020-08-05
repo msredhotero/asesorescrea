@@ -24,7 +24,7 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../venta/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cotizacionesvigentes/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
@@ -35,11 +35,72 @@ $rIdCliente = mysql_result($rCliente,0,0);
 
 $rTipoPersona = mysql_result($rCliente,0,'reftipopersonas');
 
-$rIdProducto = $_GET['producto'];
+
+
+
+
+
+if (isset($_GET['id'])) {
+	$resCotizacionPrincipal = $serviciosReferencias->traerCotizacionesPorIdCompleto($_GET['id']);
+
+	$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta(mysql_result($resCotizacionPrincipal,0,'refproductos'));
+	if (mysql_result($resProductoPrincipal,0,'ventaenlinea') == '1') {
+		if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 5) {
+			header('Location: ../venta/comercio_fin.php?id='.$_GET['id']);
+		} else {
+
+			header('Location: ../venta/new.php?id='.$_GET['id'].'&producto='.mysql_result($resCotizacionPrincipal,0,'refproductos'));
+
+		}
+
+		//die(var_dump('Location: ../venta/new.php?id='.$_GET['id'].'&producto='.mysql_result($resCotizacionPrincipal,0,'refproductos')));
+	} else {
+		if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 2) {
+			header('Location: ver.php?id='.$_GET['id']);
+		}
+	}
+	$rIdProducto = mysql_result($resCotizacionPrincipal,0,'refproductos');
+
+	if (mysql_result($resProductoPrincipal,0,'beneficiario')) {
+		$llevaBeneficiario = 1;
+	} else {
+		$llevaBeneficiario = 0;
+	}
+
+	if (mysql_result($resProductoPrincipal,0,'asegurado')) {
+		$llevaAsegurado = 1;
+	} else {
+		$llevaAsegurado = 0;
+	}
+} else {
+	if (isset($_GET['producto'])) {
+		$rIdProducto = $_GET['producto'];
+
+		$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta($rIdProducto);
+
+		if (mysql_result($resProductoPrincipal,0,'beneficiario')) {
+			$llevaBeneficiario = 1;
+		} else {
+			$llevaBeneficiario = 0;
+		}
+
+		if (mysql_result($resProductoPrincipal,0,'asegurado')) {
+			$llevaAsegurado = 1;
+		} else {
+			$llevaAsegurado = 0;
+		}
+
+
+	} else {
+		header('Location: ../index.php');
+	}
+
+}
+
 
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Venta",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cotizaciones Vigentes",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -623,6 +684,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
                               </fieldset>
 
+										<?php if ($llevaAsegurado == 1) { ?>
 										<h3>ASEGURADO</h3>
                                  <fieldset>
 												<div class="row">
@@ -662,6 +724,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 												</div>
 
                               </fieldset>
+									<?php } ?>
 
 
 
@@ -931,6 +994,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
                               </fieldset>
 
+										<?php if ($llevaBeneficiario == 1) { ?>
 										<h3>BENEFICIARIO</h3>
                                  <fieldset>
 												<div class="row">
@@ -965,6 +1029,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 												</div>
 
                               </fieldset>
+									<?php } ?>
 
 
                            </form>
@@ -1502,18 +1567,18 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 							//guardarCotizacion(1);
 						}
 
-						if (currentIndex == 2) {
+						if (currentIndex == 1) {
 							$('.contSubirArchivos2').hide();
 							$('.contSubirArchivos1').show();
 						}
 
-						if (currentIndex == 3) {
+						if (currentIndex == 2) {
 
 							$('.contSubirArchivos1').hide();
 							$('.contSubirArchivos2').show();
 						}
 
-						if (currentIndex < 2) {
+						if (currentIndex < 1) {
 							$('.contSubirArchivos1').hide();
 							$('.contSubirArchivos2').hide();
 						}
@@ -1526,7 +1591,9 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 								$('.contSubirArchivos1').show();
 							}
 
+							<?php if ($llevaAsegurado == 1) { ?>
 							if (currentIndex == 2) {
+
 								if ($('#wizard_with_validation #tieneasegurado').val() == '1') {
 									validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
 								} else {
@@ -1535,10 +1602,11 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 								$('.contSubirArchivos1').show();
 								$('.contSubirArchivos2').hide();
+
 							}
 
-							if (currentIndex == 3) {
 
+							if (currentIndex == 3) {
 
 								$('.contSubirArchivos1').hide();
 								$('.contSubirArchivos2').show();
@@ -1548,6 +1616,26 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 								$('.contSubirArchivos1').hide();
 								$('.contSubirArchivos2').hide();
 							}
+							<?php } else { ?>
+								if (currentIndex == 1) {
+
+									$('.contSubirArchivos1').show();
+									$('.contSubirArchivos2').hide();
+								}
+
+								if (currentIndex == 2) {
+
+									$('.contSubirArchivos1').hide();
+									$('.contSubirArchivos2').show();
+								}
+
+
+
+								if (currentIndex < 1) {
+									$('.contSubirArchivos1').hide();
+									$('.contSubirArchivos2').hide();
+								}
+							<?php } ?>
 					<?php } ?>
 
 
@@ -1559,7 +1647,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	            return form.valid();
 	        },
 	        onFinished: function (event, currentIndex) {
-	            modificarCotizacion(5);
+	            modificarCotizacion(2);
 	        }
 	    });
 
@@ -1733,7 +1821,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					existeprimaobjetivo: $('#existeprimaobjetivo').val(),
 					primaobjetivo: $('#primaobjetivo').val(),
 					id: <?php echo $id; ?>,
-					estadoactual: 5,
+					estadoactual: 2,
 					fechaemitido: '<?php echo date('Y-m-d'); ?>',
 					fechapropuesta: '<?php echo date('Y-m-d'); ?>',
 					foliotys: '',
@@ -1754,7 +1842,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
  								timer: 2000,
  								showConfirmButton: false
  						});
-						$(location).attr('href', 'comercio_fin.php?id=<?php echo $id; ?>');
+						$(location).attr('href', 'index.php');
 
  					} else {
  						swal({

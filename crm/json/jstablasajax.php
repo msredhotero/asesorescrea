@@ -69,7 +69,24 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 }
 
 switch ($tabla) {
+	case 'cotizacionesvigentes':
 
+
+		$datos = $serviciosReferencias->traerCotizacionesajaxPorUsuarioCliente($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('search','delete');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 3;
+
+	break;
 	case 'mejorarcondiciones':
 		$datos = $serviciosReferencias->traerMejorarcondicionesajax($length, $start, $busqueda,$colSort,$colSortDir);
 

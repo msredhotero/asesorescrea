@@ -568,7 +568,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 													 <?php while ($rowV = mysql_fetch_array($resProductosCotizaciones)) { ?>
  										            <h1 class="card-title pricing-card-title"><?php echo $rowV['producto']; ?></h1>
  										            <?php echo $rowV['detalle']; ?>
- 										            <button type="button" class="btn btn-lg btn-block bg-cyan" onclick="window.location='venta/new.php?producto=<?php echo $rowV['idproducto']; ?>'">SOLICITAR COTIZACION</button>
+ 										            <button type="button" class="btn btn-lg btn-block bg-cyan" onclick="window.location='cotizacionesvigentes/new.php?producto=<?php echo $rowV['idproducto']; ?>'">SOLICITAR COTIZACION</button>
  														<hr>
  													<?php } ?>
 									          </div>

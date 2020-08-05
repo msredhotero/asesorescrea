@@ -205,7 +205,7 @@ $datos = $serviciosComercio->traerComercioinicioFacturacion($idCliente);
 												</th>
 												<?php } else { ?>
 												<th>
-													<button type="button" class="btn bg-blue" id="btnPagar" onClick="window.location='../ecommerce/comercio_fin.php?token=<?php echo $row['token']; ?>'">
+													<button type="button" class="btn bg-blue" id="btnPagar" onClick="window.location='../venta/comercio_fin.php?token=<?php echo $row['token']; ?>'">
 														<i class="material-icons" style="font-size:1.5em;">verified_user</i>
 														<span>Pagar</span>
 													</button>

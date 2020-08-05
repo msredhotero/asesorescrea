@@ -4156,8 +4156,13 @@ function modificarCotizaciones($serviciosReferencias) {
       $resIC = $serviciosReferencias->insertarClientescartera($refclientes,$refproductos,$fechaemitido,'','1');
 
       //generada la venta solicito el idcliente inbursa
-      $idclienteinbursa = $_POST['idclienteinbursa'];
-      $resModC = $serviciosReferencias->modificarClientesInbursa($refclientes, $idclienteinbursa);
+      if (isset($_POST['idclienteinbursa'])) {
+         $idclienteinbursa = $_POST['idclienteinbursa'];
+         $resModC = $serviciosReferencias->modificarClientesInbursa($refclientes, $idclienteinbursa);
+      } else {
+         $idclienteinbursa = 0;
+      }
+
    } else {
       $foliointerno = '';
    }

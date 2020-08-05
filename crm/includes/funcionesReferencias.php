@@ -6210,6 +6210,55 @@ return $res;
 	}
 
 
+   function traerCotizacionesajaxPorUsuarioCliente($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial) {
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or pro.producto like '%".$busqueda."%' or concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+		c.idcotizacion,
+		pro.producto,
+      c.fechacrea,
+		est.estadocotizacion,
+		c.refclientes,
+		c.refproductos,
+		c.refasesores,
+		c.refasociados,
+		c.refestadocotizaciones,
+		c.observaciones,
+		c.fechavencimiento,
+		c.coberturaactual,
+		c.fechamodi,
+		c.usuariocrea,
+		c.usuariomodi,
+      concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+      concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
+      concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
+		c.refusuarios
+		from dbcotizaciones c
+		inner join dbclientes cli ON cli.idcliente = c.refclientes
+		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
+		inner join tbproductos pro ON pro.idproducto = c.refproductos
+		inner join dbasesores ase ON ase.idasesor = c.refasesores
+		left join dbusuarios us ON us.idusuario = c.refusuarios
+		left join dbasociados aso ON aso.idasociado = c.refasociados
+		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
+		left join dbventas v on v.refcotizaciones = c.idcotizacion
+		where v.idventa is null and us.idusuario = ".$responsableComercial." ".$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+
 	function traerCotizacionesajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial) {
 		$where = '';
 
@@ -6352,11 +6401,12 @@ return $res;
 		c.coberturaactual,c.cobertura,c.reasegurodirecto,c.tiponegocio,
 		c.presentacotizacion,c.fechapropuesta,c.fecharenovacion,
 	  c.bitacoracrea,c.bitacorainbursa,c.bitacoraagente,c.existeprimaobjetivo,c.primaobjetivo, pro.precio ,
-	  c.tieneasegurado, c.refasegurados, c.refbeneficiarios
+	  c.tieneasegurado, c.refasegurados, c.refbeneficiarios, ec.estadocotizacion
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join dbasesores ase ON ase.idasesor = c.refasesores
 		inner join tbproductos pro ON pro.idproducto = c.refproductos
+      inner join tbestadocotizaciones ec on ec.idestadocotizacion = c.refestadocotizaciones
       left join dbasociados aso ON aso.idasociado = c.refasociados
 		where c.idcotizacion =".$id;
 

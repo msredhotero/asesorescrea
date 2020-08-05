@@ -30,7 +30,7 @@ $serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cotizacio
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cotizaciones",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cotizaciones Vigentes",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -248,6 +248,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 										<thead>
 											<tr>
 												<th>Producto</th>
+												<th>Fecha Solicitud</th>
 												<th>Estado</th>
 												<th>Acciones</th>
 											</tr>
@@ -255,6 +256,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 										<tfoot>
 											<tr>
 												<th>Producto</th>
+												<th>Fecha Solicitud</th>
 												<th>Estado</th>
 												<th>Acciones</th>
 											</tr>
@@ -379,7 +381,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"order": [[ 5, "desc" ]],
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizacionesvigentes",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
