@@ -150,9 +150,9 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 		$existeCartera = $serviciosReferencias->traerClientescarteraPorCliente(mysql_result($resCliente,0,0));
 
 		if (mysql_num_rows($existeCartera)>0) {
-			$resProductosVenta = $serviciosReferencias->traerProductosVentaEnLinea(22);
+			$resProductosVenta = $serviciosReferencias->traerProductosVentaEnLinea(46);
 		} else {
-			$resProductosVenta = $serviciosReferencias->traerProductosVentaEnLineaPorId(22);
+			$resProductosVenta = $serviciosReferencias->traerProductosVentaEnLineaPorId(46);
 		}
 	}
 
