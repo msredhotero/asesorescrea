@@ -144,8 +144,16 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 		$nombrecompleto = mysql_result($resCliente,0,'nombrecompleto');
 
-		$resProductosVenta = $serviciosReferencias->traerProductosVentaEnLinea();
+
 		$resProductosCotizaciones = $serviciosReferencias->traerProductosCotizaEnLinea();
+
+		$existeCartera = $serviciosReferencias->traerClientescarteraPorCliente(mysql_result($resCliente,0,0));
+
+		if (mysql_num_rows($existeCartera)>0) {
+			$resProductosVenta = $serviciosReferencias->traerProductosVentaEnLinea(22);
+		} else {
+			$resProductosVenta = $serviciosReferencias->traerProductosVentaEnLineaPorId(22);
+		}
 	}
 
 }

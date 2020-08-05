@@ -518,7 +518,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 						$(".frmAjaxModificar #numerocliente").prop('readonly',true);
 
-						$('.frmAjaxModificar .frmContrefusuarios').hide();
+						
 
 						$('.frmAjaxModificar #emisioncomprobantedomicilio').pickadate({
 				 			format: 'yyyy-mm-dd',

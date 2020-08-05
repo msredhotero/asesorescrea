@@ -5947,8 +5947,11 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $resVar8 = $serviciosReferencias->traerTipopersonas();
          $cadRef8 = $serviciosFunciones->devolverSelectBoxActivo($resVar8,array(1),'',mysql_result($resultado,0,'reftipopersonas'));
 
-         $refdescripcion = array(0=>$cadRef8);
-         $refCampo 	=  array('reftipopersonas');
+         $resVar9 = $serviciosReferencias->traerUsuariosPorRol(16);
+         $cadRef9 = $serviciosFunciones->devolverSelectBoxActivo($resVar9,array(1),'',mysql_result($resultado,0,'refusuarios'));
+
+         $refdescripcion = array(0=>$cadRef8,1=>$cadRef9);
+         $refCampo 	=  array('reftipopersonas','refusuarios');
       break;
       case 'dbdirectorioasesores':
          $resultado = $serviciosReferencias->traerDirectorioasesoresPorId($id);

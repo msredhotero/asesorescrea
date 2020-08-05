@@ -9,8 +9,15 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
-   function traerProductosVentaEnLinea() {
-      $sql = "select idproducto, producto, precio, detalle from tbproductos p where activo = '1' and ventaenlinea = '1'";
+   function traerProductosVentaEnLinea($id) {
+      $sql = "select idproducto, producto, precio, detalle from tbproductos p where activo = '1' and ventaenlinea = '1' and idproducto not in (".$id.")";
+      $res = $this->query($sql,0);
+
+      return $res;
+   }
+
+   function traerProductosVentaEnLineaPorId($id) {
+      $sql = "select idproducto, producto, precio, detalle from tbproductos p where activo = '1' and ventaenlinea = '1' and idproducto = ".$id;
       $res = $this->query($sql,0);
 
       return $res;
