@@ -127,7 +127,7 @@ if (isset($_GET['id'])) {
 	$resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
 	$refCliente = mysql_result($resultado,0,'refclientes');
-	$refAsesores = 114;
+	$refAsesores = 25;
 	$refAsociados = mysql_result($resultado,0,'refasociados');
 	$refProductos = mysql_result($resultado,0,'refproductos');
 
@@ -424,7 +424,7 @@ if (isset($_GET['id'])) {
 		$documentacionNombre2 = '';
 	}
 
-	$idasesor = 114;
+	$idasesor = 25;
 
 // fin de cuando ya graba el producto
 } else {
@@ -477,7 +477,7 @@ if (isset($_GET['id'])) {
 
 
 
-	$idasesor = 114;
+	$idasesor = 25;
 
 
 }
