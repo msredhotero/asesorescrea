@@ -55,8 +55,8 @@ $modificar = "modificarProductos";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "tbproductos";
 
-$lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado','refcuestionarios','puntosporventarenovado','puntosporpesopagadorenovado','reftipopersonas');
-$lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado','Cuestionario','Punto x Venta Renovacion','Puntos x Peso Pagado Renovacion','Tipo Personas');
+$lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado','refcuestionarios','puntosporventarenovado','puntosporpesopagadorenovado','reftipopersonas','ventaenlinea','cotizaenlinea','beneficiario','asegurado');
+$lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado','Cuestionario','Punto x Venta Renovacion','Puntos x Peso Pagado Renovacion','Tipo Personas','Es de venta en linea','Es para cotizar','Tiene Beneficiario','Tiene Asegurado');
 
 $resVar1 = $serviciosReferencias->traerTipoproductorama();
 $cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(2),'');
@@ -73,8 +73,10 @@ $cadRef4 .= $serviciosFunciones->devolverSelectBox($resCuest,array(1),'');
 $resVar8 = $serviciosReferencias->traerTipopersonas();
 $cadRef8 = $serviciosFunciones->devolverSelectBox($resVar8,array(1),'');
 
-$refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef3,4=>$cadRef4,5=>$cadRef8);
-$refCampo 	=  array('reftipoproductorama','reftipodocumentaciones','activo','prima','refcuestionarios','reftipopersonas');
+$cadRef9 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+
+$refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef3,4=>$cadRef4,5=>$cadRef8,6=>$cadRef9,7=>$cadRef9,8=>$cadRef9,9=>$cadRef9);
+$refCampo 	=  array('reftipoproductorama','reftipodocumentaciones','activo','prima','refcuestionarios','reftipopersonas','ventaenlinea','cotizaenlinea','beneficiario','asegurado');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -114,9 +116,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 	<script src="https://cdn.tiny.cloud/1/250yr8s6bkp1q3322lambprpw1glcn1b50hpg2hm8knawsa0/tinymce/5/tinymce.min.js" referrerpolicy="origin"/></script>
 	<script>
-	 tinymce.init({
-		selector: '#detalle'
-	 });
+
 	</script>
 
 	<style>
@@ -337,6 +337,27 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 <script>
 	$(document).ready(function(){
 
+		tinymce.init({
+		 selector: "#detalle",
+		  height:"350px",
+		  mode: "exact",
+		  plugins: [
+				 "advlist autolink image lists charmap print preview hr anchor pagebreak spellchecker",
+				 "link searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+				 "save table contextmenu directionality emoticons template paste textcolor"
+		 ],
+		 toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
+		 style_formats: [
+				{title: 'Bold text', inline: 'b'},
+				{title: 'Red text', inline: 'span', styles: {color: '#ff0000'}},
+				{title: 'Red header', block: 'h1', styles: {color: '#ff0000'}},
+				{title: 'Example 1', inline: 'span', classes: 'example1'},
+				{title: 'Example 2', inline: 'span', classes: 'example2'},
+				{title: 'Table styles'},
+				{title: 'Table row 1', selector: 'tr', classes: 'tablerow1'}
+		  ]
+	 });
+
 		$('#puntosporventa').number( true, 2,'.','' );
 		$('#puntosporpesopagado').number( true, 2,'.','' );
 		$('#puntosporventarenovado').number( true, 2,'.','' );
@@ -390,8 +411,35 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			e.preventDefault();
 		});
 
+		$('.btnNuevo').click(function() {
+			tinyMCE.remove('.modDetalle');
+
+			tinymce.init({
+				 selector: "#detalle",
+				  height:"350px",
+				  mode: "exact",
+				  plugins: [
+						 "advlist autolink image lists charmap print preview hr anchor pagebreak spellchecker",
+						 "link searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+						 "save table contextmenu directionality emoticons template paste textcolor"
+				 ],
+				 toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
+				 style_formats: [
+						{title: 'Bold text', inline: 'b'},
+						{title: 'Red text', inline: 'span', styles: {color: '#ff0000'}},
+						{title: 'Red header', block: 'h1', styles: {color: '#ff0000'}},
+						{title: 'Example 1', inline: 'span', classes: 'example1'},
+						{title: 'Example 2', inline: 'span', classes: 'example2'},
+						{title: 'Table styles'},
+						{title: 'Table row 1', selector: 'tr', classes: 'tablerow1'}
+				  ]
+			 });
+		});
+
 
 		function frmAjaxModificar(id) {
+
+
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
@@ -411,6 +459,28 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						$('.frmAjaxModificar #puntosporpesopagado').number( true, 2,'.','' );
 						$('.frmAjaxModificar #puntosporventarenovado').number( true, 2,'.','' );
 						$('.frmAjaxModificar #puntosporpesopagadorenovado').number( true, 2,'.','' );
+						tinyMCE.remove('#detalle');
+						tinymce.init({
+					  		 selector: ".modDetalle",
+					  	     height:"350px",
+					  	     plugins: [
+					  	          "advlist autolink image lists charmap print preview hr anchor pagebreak spellchecker",
+					  	          "link searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+					  	          "save table contextmenu directionality emoticons template paste textcolor"
+					  	    ],
+					  	    toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | l      ink image | print preview media fullpage | forecolor backcolor emoticons",
+					  	    style_formats: [
+					  	         {title: 'Bold text', inline: 'b'},
+					  	         {title: 'Red text', inline: 'span', styles: {color: '#ff0000'}},
+					  	         {title: 'Red header', block: 'h1', styles: {color: '#ff0000'}},
+					  	         {title: 'Example 1', inline: 'span', classes: 'example1'},
+					  	         {title: 'Example 2', inline: 'span', classes: 'example2'},
+					  	         {title: 'Table styles'},
+					  	         {title: 'Table row 1', selector: 'tr', classes: 'tablerow1'}
+					  	     ]
+					  	 });
+
+
 					} else {
 						swal("Error!", data, "warning");
 
@@ -512,6 +582,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 
 		$('.frmNuevo').submit(function(e){
+			var ed = tinyMCE.get('detalle');
+
+			$('#detalle').val(ed.getContent());
 
 			e.preventDefault();
 			if ($('#sign_in')[0].checkValidity()) {
@@ -572,6 +645,10 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 
 		$('.frmModificar').submit(function(e){
+
+			var ed = tinyMCE.get('detalle');
+
+			$('.modDetalle').val(ed.getContent());
 
 			e.preventDefault();
 			if ($('.frmModificar')[0].checkValidity()) {

@@ -1070,8 +1070,506 @@ switch ($accion) {
       nuevoOrdenPreguntas($serviciosReferencias);
    break;
 
+   case 'insertarMejorarcondiciones':
+      insertarMejorarcondiciones($serviciosReferencias);
+   break;
+
+   case 'traerAseguradosPorCliente':
+      traerAseguradosPorCliente($serviciosReferencias, $serviciosFunciones);
+   break;
+   case 'insertarAsegurados':
+      insertarAsegurados($serviciosReferencias);
+   break;
+   case 'modificarAsegurados':
+      modificarAsegurados($serviciosReferencias);
+   break;
+   case 'eliminarAsegurados':
+      eliminarAsegurados($serviciosReferencias);
+   break;
+   case 'cuestionarioPersonas':
+      cuestionarioPersonas($serviciosReferencias);
+   break;
+   case 'validarCuestionarioPersona':
+      validarCuestionarioPersona($serviciosReferencias);
+   break;
+   case 'traerAseguradosPorId':
+      traerAseguradosPorId($serviciosReferencias,$serviciosFunciones);
+   break;
+
+
 }
 /* FinFinFin */
+
+function validarCuestionarioPersona($serviciosReferencias) {
+   $id = $_POST['refproductos'];
+   $refclientes = $_POST['refclientes'];
+   $refasegurados = $_POST['refaseguradaaux'];
+   $tieneasegurado = $_POST['tieneasegurado'];
+   $idcotizacion = $_POST['idcotizacion'];
+
+   if ($tieneasegurado == '1') {
+      $refclientes = 0;
+   }
+
+   $resP = $serviciosReferencias->traerProductosPorId($id);
+   $idcuestionario = mysql_result($resP,0,'refcuestionarios');
+
+   $arRespuestas = array();
+   $arErrores = array();
+
+   $resV['errorinsert'] = false;
+
+   //echo die(var_dump($idcuestionario));
+
+   if ($idcuestionario == null) {
+      $ar = array('cuestionario'=>'','rules'=>'');
+   } else {
+      $res = $serviciosReferencias->cuestionarioPersonas($idcuestionario,$idcotizacion,$refclientes,$refasegurados);
+      $resAux = $serviciosReferencias->CuestionarioAuxPersonas($idcuestionario,$idcotizacion,$refclientes,$refasegurados);
+
+      if ($refclientes == 0) {
+         $preguntasSencibles = $serviciosReferencias->necesitoPreguntaSencibleAsegurado($refasegurados,$idcuestionario);
+      } else {
+         $preguntasSencibles = $serviciosReferencias->necesitoPreguntaSencible($refclientes,$idcuestionario);
+      }
+
+
+      $pregunta = '';
+      $iRadio = 0;
+      $cantRadio = 0;
+      $iCheck = 0;
+      $iCheckM = 0;
+      $collapse = '';
+      $collapseAux = '';
+      $collapsePregunta = '';
+
+      $primero = 0;
+      $cad = '';
+
+      foreach ($resAux as $valor) {
+         $cad .= $valor['divRow'];
+         $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
+            <h4>'.$valor['pregunta'].'</h4>
+         </div>';
+         $cad .= $valor['respuestas'];
+         $cad .= '</div>';
+
+      }
+
+      $ar = array('cuestionario'=>$cad,'rules'=>$res['rules']);
+   }
+
+   $resV['error'] = false;
+
+   $bandera = 0;
+   $idpregunta = 0;
+   $evaluoVerdadero = 1;
+   $errorGeneral = 0;
+   $tipo = '';
+   $pregunta = '';
+   $existio4 = 0;
+
+   /*
+   refpreguntascuestionario
+   refrespuestascuestionario
+   pregunta
+   respuesta
+   respuestavalor
+   */
+
+   $dependePreguntaID = '';
+   $dependeRespuestaID = '';
+   $dependeValor = '';
+   $ultimaDependeAux = '';
+
+
+   foreach ($ar['rules'] as $valor) {
+      $pregunta = $valor['pregunta'];
+
+
+
+      // $array[3] se actualizará con cada valor de $array...
+      if ($valor['tipo'] == 1) {
+         if (!(isset($_POST[$valor['respuesta']]))) {
+            if ($valor['obligatoria'] == '1') {
+               if ($dependeValor == '') {
+                  $resV['error'] = true;
+                  array_push($arErrores,array('error' => 'Debe completar la respuesta','pregunta'=>$pregunta));
+               } else {
+                  if ($dependeValor == $valor['dependerespuestaaux']) {
+                     array_push($arErrores,array('error' => 'Debe completar la respuesta','pregunta'=>$pregunta));
+                  }
+               }
+
+            }
+
+         } else {
+            array_push($arRespuestas,
+                  array('refpreguntascuestionario' => $valor['idpregunta'],
+                  'refrespuestascuestionario' => $valor['idrespuesta'],
+                  'pregunta' => $pregunta,
+                  'respuesta' => 'Lo que el ususario ingrese',
+                  'respuestavalor' => $_POST[$valor['respuesta']])
+               );
+         }
+      }
+
+      if ($valor['tipo'] == 2) {
+         if (!(isset($_POST[$valor['respuesta']]))) {
+            if ($valor['obligatoria'] == '1') {
+               if ($dependeValor == '') {
+                  $resV['error'] = true;
+                  array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
+               } else {
+                  if ($dependeValor == $valor['dependerespuestaaux']) {
+                     $resV['error'] = true;
+                     array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
+                  }
+               }
+
+            }
+         } else {
+            $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($valor['idrespuesta']);
+            array_push($arRespuestas,
+                  array('refpreguntascuestionario' => $valor['idpregunta'],
+                  'refrespuestascuestionario' => $valor['idrespuesta'],
+                  'pregunta' => $pregunta,
+                  'respuesta' => mysql_result($rRespuesta,0,'respuesta'),
+                  'respuestavalor' => $_POST[$valor['respuesta']])
+               );
+         }
+      }
+
+      if ($valor['tipo'] == 3) {
+         if (!(isset($_POST[$valor['respuesta']]))) {
+            if ($valor['obligatoria'] == '1') {
+               if ($dependeValor == '') {
+                  $resV['error'] = true;
+                  array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
+               } else {
+                  if ($dependeValor == $valor['dependerespuestaaux']) {
+                     $resV['error'] = true;
+                     array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
+                  }
+               }
+
+            }
+         } else {
+            $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($_POST[$valor['respuesta']]);
+            array_push($arRespuestas,
+                  array('refpreguntascuestionario' => $valor['idpregunta'],
+                  'refrespuestascuestionario' => $_POST[$valor['respuesta']],
+                  'pregunta' => $pregunta,
+                  'respuesta' => mysql_result($rRespuesta,0,'respuesta'),
+                  'respuestavalor' => $_POST[$valor['respuesta']])
+               );
+         }
+      }
+
+      if ($valor['tipo'] == 4) {
+         $existio4 = 1;
+         if ($idpregunta != $valor['idpregunta']) {
+            $idpregunta = $valor['idpregunta'];
+
+
+            if (($bandera == 1) && ($evaluoVerdadero == 1)) {
+               if ($valor['obligatoria'] == '1') {
+                  if ($dependeValor == '') {
+                     $errorGeneral = 1;
+                     array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
+                     $resV['error'] = true;
+                  } else {
+                     if ($dependeValor == $valor['dependerespuestaaux']) {
+                        $errorGeneral = 1;
+                        array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
+                        $resV['error'] = true;
+                     }
+                  }
+
+               }
+
+               $evaluoVerdadero = 1;
+
+            }
+
+
+            $bandera = 0;
+
+         }
+         if ((isset($_POST[$valor['respuesta']]))) {
+            $evaluoVerdadero = 0;
+            //// ya lo inserto porque seria el primero
+            $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($valor['idrespuesta']);
+            array_push($arRespuestas,
+                  array('refpreguntascuestionario' => $valor['idpregunta'],
+                  'refrespuestascuestionario' => $valor['idrespuesta'],
+                  'pregunta' => $pregunta,
+                  'respuesta' => mysql_result($rRespuesta,0,'respuesta'),
+                  'respuestavalor' => $_POST[$valor['respuesta']])
+               );
+         }
+
+
+         $bandera = 1;
+      }
+
+
+      if ((integer)$valor['depende'] > 0) {
+         if (isset($_POST[$valor['respuesta']])) {
+            $dependePreguntaID = $valor['depende'];
+            $dependeRespuestaID = $valor['dependerespuesta'];
+            $dependeValor = $_POST[$valor['respuesta']];
+         } else {
+            $dependePreguntaID = $valor['depende'];
+            $dependeRespuestaID = $valor['dependerespuesta'];
+            $dependeValor = 0;
+         }
+
+      }
+
+      if ((integer)($valor['depende'] == 0) && (integer)($valor['dependeaux'] == 0)) {
+         $dependePreguntaID = '';
+         $dependeRespuestaID = '';
+         $dependeValor = '';
+      }
+
+      $ultimaDependeAux = $valor['dependerespuestaaux'];
+   }
+
+   //die(var_dump($arRespuestas));
+
+   if (($bandera == 1) && ($evaluoVerdadero == 1) && ($existio4 == 1)) {
+      if ($dependeValor == '') {
+         $errorGeneral = 1;
+         array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
+         $resV['error'] = true;
+      } else {
+         if ($dependeValor == $ultimaDependeAux) {
+            $errorGeneral = 1;
+            array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
+            $resV['error'] = true;
+         }
+      }
+
+   }
+
+   $resV['errores'] = $arErrores;
+
+   if ($resV['error'] == false) {
+
+      if ((integer)$idcotizacion > 0) {
+         /**** toda la perta del cuestionario ***/
+         $resP = $serviciosReferencias->traerProductosPorId($id);
+         $idcuestionario = mysql_result($resP,0,'refcuestionarios');
+
+         $resI = '';
+
+         foreach ($arRespuestas as $item) {
+            foreach ($preguntasSencibles[1] as $itemsencibles) {
+               if ($itemsencibles['idpreguntanecesario'] == $item['refpreguntascuestionario']) {
+                  $resPP = $serviciosReferencias->traerPreguntascuestionarioPorId($item['refpreguntascuestionario']);
+                  $resPS = $serviciosReferencias->traerPreguntaSenciblePorId(mysql_result($resPP,0,'refpreguntassencibles'));
+
+                  if (mysql_num_rows($resPS)>0) {
+                     if ($refclientes == 0) {
+                        $resMC = $serviciosReferencias->modificarCampoParticularAsegurados($refasegurados,mysql_result($resPS,0,'campo'),$item['respuestavalor']);
+                     } else {
+                        $resMC = $serviciosReferencias->modificarCampoParticularClientes($refclientes,mysql_result($resPS,0,'campo'),$item['respuestavalor']);
+                     }
+
+                  }
+               }
+            }
+
+
+         }
+
+         if ($refclientes == 0) {
+            $resMCA = $serviciosReferencias->modificarCotizacionesAsegurado($idcotizacion,'1',$refasegurados);
+         } else {
+            $resMCA = $serviciosReferencias->modificarCotizacionesAsegurado($idcotizacion,'0',0);
+         }
+
+
+         //die(var_dump($resI));
+         /**** fin cuestionario     ****/
+
+         $resV['idcotizacion']= $idcotizacion;
+      } else {
+         $resV['errorinsert'] = true;
+         $resV['mensaje'] = 'Ocurrio un error al insertar los datos, intente nuevamente '.$sqlC;
+
+      }
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
+function insertarAsegurados($serviciosReferencias) {
+   session_start();
+
+   $nombre = $_POST['nombre'];
+   $apellidopaterno = $_POST['apellidopaterno'];
+   $apellidomaterno = $_POST['apellidomaterno'];
+   $razonsocial = $_POST['razonsocial'];
+   $domicilio = $_POST['domicilio'];
+   $email = $_POST['email'];
+   $rfc = $_POST['rfc'];
+   $ine = $_POST['ine'];
+   $curp = $_POST['curp'];
+   $fechanacimiento = $_POST['fechanacimiento'];
+   $numerocliente = $_POST['numerocliente'];
+   $refusuarios = 0;
+   $fechacrea = date('Y-m-d H:i:s');
+   $fechamodi = date('Y-m-d H:i:s');
+   $usuariocrea = $_SESSION['usua_sahilices'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+   $reftipopersonas = $_POST['reftipopersonas'];
+   $telefonofijo = $_POST['telefonofijo'];
+   $telefonocelular = $_POST['telefonocelular'];
+   $idclienteinbursa = $_POST['idclienteinbursa'];
+   $emisioncomprobantedomicilio = $_POST['emisioncomprobantedomicilio'];
+   $emisionrfc = $_POST['emisionrfc'];
+   $vencimientoine = $_POST['vencimientoine'];
+   $colonia = $_POST['colonia'];
+   $municipio = $_POST['municipio'];
+   $codigopostal = $_POST['codigopostal'];
+   $edificio = $_POST['edificio'];
+   $nroexterior = $_POST['nroexterior'];
+   $nrointerior = $_POST['nrointerior'];
+   $estado = $_POST['estado'];
+   $ciudad = $_POST['ciudad'];
+   $refclientes = $_POST['refclientes'];
+   $reftipoparentesco = $_POST['reftipoparentesco'];
+
+   $res = $serviciosReferencias->insertarAsegurados($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos ';
+   }
+}
+
+function modificarAsegurados($serviciosReferencias) {
+   $id = $_POST['id'];
+   $nombre = $_POST['nombre'];
+   $apellidopaterno = $_POST['apellidopaterno'];
+   $apellidomaterno = $_POST['apellidomaterno'];
+   $razonsocial = $_POST['razonsocial'];
+   $domicilio = $_POST['domicilio'];
+   $email = $_POST['email'];
+   $rfc = $_POST['rfc'];
+   $ine = $_POST['ine'];
+   $curp = $_POST['curp'];
+   $fechanacimiento = $_POST['fechanacimiento'];
+   $numerocliente = $_POST['numerocliente'];
+   $refusuarios = 0;
+   $fechacrea = date('Y-m-d H:i:s');
+   $fechamodi = date('Y-m-d H:i:s');
+   $usuariocrea = $_SESSION['usua_sahilices'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+   $reftipopersonas = $_POST['reftipopersonas'];
+   $telefonofijo = $_POST['telefonofijo'];
+   $telefonocelular = $_POST['telefonocelular'];
+   $idclienteinbursa = $_POST['idclienteinbursa'];
+   $emisioncomprobantedomicilio = $_POST['emisioncomprobantedomicilio'];
+   $emisionrfc = $_POST['emisionrfc'];
+   $vencimientoine = $_POST['vencimientoine'];
+   $colonia = $_POST['colonia'];
+   $municipio = $_POST['municipio'];
+   $codigopostal = $_POST['codigopostal'];
+   $edificio = $_POST['edificio'];
+   $nroexterior = $_POST['nroexterior'];
+   $nrointerior = $_POST['nrointerior'];
+   $estado = $_POST['estado'];
+   $ciudad = $_POST['ciudad'];
+   $refclientes = $_POST['refclientes'];
+   $reftipoparentesco = $_POST['reftipoparentesco'];
+
+   $res = $serviciosReferencias->modificarAsegurados($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+
+function eliminarAsegurados($serviciosReferencias) {
+   $id = $_POST['id'];
+   $res = $serviciosReferencias->eliminarAsegurados($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
+function traerAseguradosPorCliente($serviciosReferencias, $serviciosFunciones) {
+   $refclientes = $_POST['refclientes'];
+
+   $res = $serviciosReferencias->traerAseguradosPorClienteCompleto($refclientes);
+
+   if ((integer)$res > 0) {
+      $resV['error'] = false;
+      $resV['dato'] = "<option value=''>-- Seleccionar --</option>".$serviciosFunciones->devolverSelectBox($res,array(3,4,2),' ')."<option value=''>Nuevo</option>";
+   } else {
+      $resV['error'] = true;
+      $resV['dato'] = "<option value=''>-- Seleccionar --</option><option value=''>Nuevo</option>";
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+
+}
+
+
+function traerAseguradosPorId($serviciosReferencias, $serviciosFunciones) {
+   $refclientes = $_POST['id'];
+
+   $res = $serviciosReferencias->traerAseguradosPorId($refclientes);
+
+   if ((integer)$res > 0) {
+      $resV['error'] = false;
+      $resV['dato'] = $serviciosFunciones->devolverSelectBox($res,array(3,4,2),' ');
+   } else {
+      $resV['error'] = true;
+      $resV['dato'] = "<option value=''>-- Seleccionar --</option><option value=''>Nuevo</option>";
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+
+}
+
+
+function insertarMejorarcondiciones($serviciosReferencias) {
+   $refclientes = $_POST['refclientes'];
+   $refproductos = $_POST['refproductos'];
+   $fechacrea = date('Y-m-d H:i:s');
+   $fechamodi = date('Y-m-d H:i:s');
+   $observaciones = $_POST['observaciones'];
+   $res = $serviciosReferencias->insertarMejorarcondiciones($refclientes,$refproductos,$fechacrea,$fechamodi,$observaciones);
+
+   if ((integer)$res > 0) {
+      $resV['error'] = false;
+      $resV['dato'] = $res;
+   } else {
+      $resV['error'] = true;
+      $resV['msgerror'] = 'Hubo un error al insertar datos';
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 
 function nuevoOrdenPreguntas($serviciosReferencias) {
@@ -1805,6 +2303,47 @@ function cuestionario($serviciosReferencias) {
 }
 
 
+function cuestionarioPersonas($serviciosReferencias) {
+   $id = $_POST['id'];
+   $idcotizacion = $_POST['idcotizacion'];
+   $idcliente = $_POST['idcliente'];
+   $idasegurado = $_POST['idasegurado'];
+
+   $resP = $serviciosReferencias->traerProductosPorId($id);
+   $idcuestionario = mysql_result($resP,0,'refcuestionarios');
+
+   //echo die(var_dump($idcuestionario));
+
+   if ($idcuestionario == null) {
+      $ar = array('cuestionario'=>'','rules'=>'');
+   } else {
+      $res = $serviciosReferencias->CuestionarioPersonas($idcuestionario,$idcotizacion,$idcliente,$idasegurado);
+      $resAux = $serviciosReferencias->CuestionarioAuxPersonas($idcuestionario,$idcotizacion,$idcliente,$idasegurado);
+
+      //die(var_dump($resAux));
+      $cad = '';
+
+      foreach ($resAux as $valor) {
+         $cad .= $valor['divRow'];
+         $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
+            <h4>'.$valor['pregunta'].'</h4>
+         </div>';
+         $cad .= $valor['respuestas'];
+         $cad .= '</div>';
+
+      }
+
+      $ar = array('cuestionario'=>$cad,'rules'=>$res['rules']);
+   }
+
+   $resV['datos'] = $ar;
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
+
+
 function insertarRespuestascuestionario($serviciosReferencias) {
    $respuesta = $_POST['respuesta'];
    $refpreguntascuestionario = $_POST['refpreguntascuestionario'];
@@ -2109,13 +2648,22 @@ function insertarProductos($serviciosReferencias) {
    $puntosporpesopagadorenovado = ($_POST['puntosporpesopagadorenovado'] == '' ? 0 : $_POST['puntosporpesopagadorenovado']);
    $reftipopersonas = ($_POST['reftipopersonas'] == '' ? 0 : $_POST['reftipopersonas']);
 
-   $res = $serviciosReferencias->insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas);
+   $precio = ($_POST['precio'] == '' ? 0 : $_POST['precio']);
+   $detalle = $_POST['detalle'];
+   $ventaenlinea = $_POST['ventaenlinea'];
+   $cotizaenlinea = $_POST['cotizaenlinea'];
+   $beneficiario = $_POST['beneficiario'];
+   $asegurado = $_POST['asegurado'];
+
+   $res = $serviciosReferencias->insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas,$precio,$detalle,$ventaenlinea,$cotizaenlinea,$beneficiario,$asegurado);
 
    if ((integer)$res > 0) {
       echo '';
    } else {
       echo 'Hubo un error al insertar datos';
    }
+
+
 }
 
 function modificarProductos($serviciosReferencias) {
@@ -2134,7 +2682,14 @@ function modificarProductos($serviciosReferencias) {
 
    $reftipopersonas = ($_POST['reftipopersonas'] == '' ? 0 : $_POST['reftipopersonas']);
 
-   $res = $serviciosReferencias->modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas);
+   $precio = ($_POST['precio'] == '' ? 0 : $_POST['precio']);
+   $detalle = $_POST['detalle'];
+   $ventaenlinea = $_POST['ventaenlinea'];
+   $cotizaenlinea = $_POST['cotizaenlinea'];
+   $beneficiario = $_POST['beneficiario'];
+   $asegurado = $_POST['asegurado'];
+
+   $res = $serviciosReferencias->modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas,$precio,$detalle,$ventaenlinea,$cotizaenlinea,$beneficiario,$asegurado);
 
    if ($res == true) {
       echo '';
@@ -3611,6 +4166,9 @@ function modificarCotizaciones($serviciosReferencias) {
    $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$bitacoracrea,$bitacorainbursa,$bitacoraagente,$existeprimaobjetivo,$primaobjetivo);
 
    if ($res == true) {
+      if (isset($_POST['refbeneficiarioaux'])) {
+         $resModificarCB = $serviciosReferencias->modificarCotizacionesBeneficiario($id,$_POST['refbeneficiarioaux']);
+      }
       echo '';
    } else {
       echo 'Hubo un error al modificar datos ';
@@ -5182,8 +5740,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $modificar = "modificarProductos";
          $idTabla = "idproducto";
 
-         $lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado','refcuestionarios','puntosporventarenovado','puntosporpesopagadorenovado','reftipopersonas');
-         $lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado','Cuestionario','Punto x Venta Renovacion','Puntos x Peso Pagado Renovacion','Tipo de Persona');
+         $lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado','refcuestionarios','puntosporventarenovado','puntosporpesopagadorenovado','reftipopersonas','ventaenlinea','cotizaenlinea','beneficiario','asegurado');
+         $lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado','Cuestionario','Punto x Venta Renovacion','Puntos x Peso Pagado Renovacion','Tipo Personas','Es de venta en linea','Es para cotizar','Tiene Beneficiario','Tiene Asegurado');
 
          $resVar1 = $serviciosReferencias->traerTipoproductorama();
          $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(2),'',mysql_result($resultado,0,'reftipoproductorama'));
@@ -5210,8 +5768,32 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $resVar8 = $serviciosReferencias->traerTipopersonas();
          $cadRef8 = $serviciosFunciones->devolverSelectBoxActivo($resVar8,array(1),'',mysql_result($resultado,0,'reftipopersonas'));
 
-         $refdescripcion = array(0=>$cadRef1,1=>$cadRef4,2=>$cadRef2,3=>$cadRef3,4=>$cadRef5,5=>$cadRef8);
-         $refCampo 	=  array('reftipoproductorama','reftipodocumentaciones','activo','prima','refcuestionarios','reftipopersonas');
+         if (mysql_result($resultado,0,'ventaenlinea') == '1') {
+            $cadRef9 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+         } else {
+            $cadRef9 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+         }
+
+         if (mysql_result($resultado,0,'cotizaenlinea') == '1') {
+            $cadRef99 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+         } else {
+            $cadRef99 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+         }
+
+         if (mysql_result($resultado,0,'beneficiario') == '1') {
+            $cadRef999 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+         } else {
+            $cadRef999 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+         }
+
+         if (mysql_result($resultado,0,'asegurado') == '1') {
+            $cadRef9999 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+         } else {
+            $cadRef9999 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+         }
+
+         $refdescripcion = array(0=>$cadRef1,1=>$cadRef4,2=>$cadRef2,3=>$cadRef3,4=>$cadRef5,5=>$cadRef8,6=>$cadRef9,7=>$cadRef99,8=>$cadRef999,9=>$cadRef9999);
+         $refCampo 	=  array('reftipoproductorama','reftipodocumentaciones','activo','prima','refcuestionarios','reftipopersonas','ventaenlinea','cotizaenlinea','beneficiario','asegurado');
       break;
 
       case 'dbdocumentaciones':

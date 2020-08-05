@@ -70,6 +70,26 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 
 switch ($tabla) {
 
+	case 'mejorarcondiciones':
+		$datos = $serviciosReferencias->traerMejorarcondicionesajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		//die(var_dump($datos));
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+
+		$label = array('btnVer','btnEliminar');
+		$class = array('bg-green','bg-red');
+		$icon = array('search','delete');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 4;
+
+	break;
+
 	case 'productosexclusivos':
 
 		$datos = $serviciosReferencias->traerProductosexclusivosajax($length, $start, $busqueda,$colSort,$colSortDir);
@@ -1315,7 +1335,7 @@ $id = 0;
 		//$id = $row[$indiceID];
 		// forma local utf8_decode
 		for ($i=$empieza;$i<=$termina;$i++) {
-			array_push($arAux, ($row[$i]));
+			array_push($arAux, utf8_decode($row[$i]));
 		}
 
 		if (($tabla == 'postulantes') || ($tabla == 'ventas') || ($tabla == 'postulanteshistorico') || ($tabla == 'asesores') || ($tabla == 'asociadostemporales') || ($tabla == 'asociados') || ($tabla == 'clientes') || ($tabla == 'cuestionario') || ($tabla == 'preguntascuestionario') || ($tabla == 'respuestascuestionario')) {

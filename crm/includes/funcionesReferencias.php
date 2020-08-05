@@ -9,6 +9,258 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+   function traerProductosVentaEnLinea() {
+      $sql = "select idproducto, producto, precio, detalle from tbproductos p where activo = '1' and ventaenlinea = '1'";
+      $res = $this->query($sql,0);
+
+      return $res;
+   }
+
+   function traerProductosCotizaEnLinea() {
+      $sql = "select idproducto, producto,detalle from tbproductos p where activo = '1' and cotizaenlinea = '1'";
+      $res = $this->query($sql,0);
+
+      return $res;
+   }
+
+   function traerProductosPorIdCompletaPorSeguros() {
+		$sql = "select
+		p.idproducto,
+		p.producto,
+		p.prima,
+      p.activo,
+      p.reftipoproductorama,
+      tp.reftipoproducto,
+      p.reftipodocumentaciones,
+      p.refcuestionarios,
+      p.reftipopersonas,
+      p.precio,p.detalle,p.ventaenlinea,p.cotizaenlinea,p.beneficiario,p.asegurado
+		from tbproductos p
+		inner join tbtipoproductorama tp ON tp.idtipoproductorama = p.reftipoproductorama
+      inner join tbtipoproducto t on t.idtipoproducto = tp.reftipoproducto
+      left join tbtipopersonas tpp ON tpp.idtipopersona = p.reftipoproductorama
+		where t.idtipoproducto = 3
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+   /* PARA Tipoparentesco */
+
+   function insertarTipoparentesco($tipoparentesco) {
+      $sql = "insert into tbtipoparentesco(idtipoparentesco,tipoparentesco)
+      values ('','".$tipoparentesco."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarTipoparentesco($id,$tipoparentesco) {
+      $sql = "update tbtipoparentesco
+      set
+      tipoparentesco = '".$tipoparentesco."'
+      where idtipoparentesco =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarTipoparentesco($id) {
+      $sql = "delete from tbtipoparentesco where idtipoparentesco =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerTipoparentesco() {
+      $sql = "select
+      t.idtipoparentesco,
+      t.tipoparentesco
+      from tbtipoparentesco t
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerTipoparentescoPorId($id) {
+      $sql = "select idtipoparentesco,tipoparentesco from tbtipoparentesco where idtipoparentesco =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: tbtipoparentesco*/
+
+   /* PARA Mejorarcondicionesarchivos */
+
+   function insertarMejorarcondicionesarchivos($refmejorarcondiciones,$archivo,$fechacrea) {
+   $sql = "insert into dbmejorarcondicionesarchivos(idmejorarcondicionarchivos,refmejorarcondiciones,archivo,fechacrea)
+   values ('',".$refmejorarcondiciones.",'".$archivo."','".$fechacrea."')";
+   $res = $this->query($sql,1);
+   return $res;
+   }
+
+
+   function modificarMejorarcondicionesarchivos($id,$refmejorarcondiciones,$archivo,$fechacrea) {
+   $sql = "update dbmejorarcondicionesarchivos
+   set
+   refmejorarcondiciones = ".$refmejorarcondiciones.",archivo = '".$archivo."',fechacrea = '".$fechacrea."'
+   where idmejorarcondicionarchivos =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function eliminarMejorarcondicionesarchivos($id) {
+   $sql = "delete from dbmejorarcondicionesarchivos where idmejorarcondicionarchivos =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function traerMejorarcondicionesarchivos() {
+   $sql = "select
+   m.idmejorarcondicionarchivos,
+   m.refmejorarcondiciones,
+   m.archivo,
+   m.fechacrea
+   from dbmejorarcondicionesarchivos m
+   order by 1";
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+   function traerUltimoIdMejorarcondicionesarchivos() {
+   $sql = "select
+   max(m.idmejorarcondicionarchivos)
+   from dbmejorarcondicionesarchivos m";
+   $res = $this->query($sql,0);
+   return mysql_result($res,0,0);
+   }
+
+
+   function traerMejorarcondicionesarchivosPorId($id) {
+      $sql = "select idmejorarcondicionarchivos,refmejorarcondiciones,archivo,fechacrea from dbmejorarcondicionesarchivos where idmejorarcondicionarchivos =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerMejorarcondicionesarchivosPorMejora($id) {
+      $sql = "select idmejorarcondicionarchivos,refmejorarcondiciones,archivo,fechacrea from dbmejorarcondicionesarchivos where refmejorarcondiciones =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerMejorarcondicionesarchivosPorCliente($id) {
+      $sql = "select
+               idmejorarcondicionarchivos,refmejorarcondiciones,archivo,fechacrea
+            from
+            dbmejorarcondicionesarchivos m
+            inner join dbmejorarcondiciones mc on mc.idmejorarcondicion = m.refmejorarcondiciones
+            inner join dbclientes cli ON cli.idcliente = mc.refclientes
+            where cli.idcliente =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: dbmejorarcondicionesarchivos*/
+
+
+
+   /* PARA Mejorarcondiciones */
+
+   function insertarMejorarcondiciones($refclientes,$refproductos,$fechacrea,$fechamodi,$observaciones) {
+      $sql = "insert into dbmejorarcondiciones(idmejorarcondicion,refclientes,refproductos,fechacrea,fechamodi,observaciones)
+      values ('',".$refclientes.",".$refproductos.",'".$fechacrea."','".$fechamodi."','".$observaciones."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarMejorarcondiciones($id,$refclientes,$refproductos,$fechacrea,$fechamodi,$observaciones) {
+      $sql = "update dbmejorarcondiciones
+      set
+      refclientes = ".$refclientes.",refproductos = ".$refproductos.",fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',observaciones = '".$observaciones."'
+      where idmejorarcondicion =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarMejorarcondiciones($id) {
+      $sql = "delete from dbmejorarcondiciones where idmejorarcondicion =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerMejorarcondiciones() {
+      $sql = "select
+      m.idmejorarcondicion,
+      m.refclientes,
+      m.refproductos,
+      m.fechacrea,
+      m.fechamodi,
+      m.observaciones
+      from dbmejorarcondiciones m
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerMejorarcondicionesajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+      $where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where pro.producto like '%".$busqueda."%')";
+		}
+
+      $sql = "select
+      m.idmejorarcondicion,
+      concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+      pro.producto,
+      m.observaciones,
+      m.fechacrea,
+      m.fechamodi,
+      m.refproductos,
+      m.refclientes
+      from dbmejorarcondiciones m
+      inner join dbclientes cli ON cli.idcliente =m.refclientes
+      inner join tbproductos pro ON pro.idproducto = m.refproductos
+      ".$where."
+      ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+      $res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+   }
+
+
+   function traerMejorarcondicionesPorId($id) {
+      $sql = "select idmejorarcondicion,refclientes,refproductos,fechacrea,fechamodi,observaciones from dbmejorarcondiciones where idmejorarcondicion =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerMejorarcondicionesPorClienteEnElDia($id) {
+      $sql = "select count(idmejorarcondicion) from dbmejorarcondiciones where refclientes =".$id." and year(fechacrea) = ".date('Y')." and month(fechacrea) = ".date('m')." and day(fechacrea) = ".date('d');
+      $res = $this->query($sql,0);
+      return mysql_result($res,0,0);
+      //return $sql;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: dbmejorarcondiciones*/
+
    function necesitoPreguntaSencible($idcliente, $idcuestionario) {
       $sql = "select
             ps.campo, p.idpreguntacuestionario, p.pregunta
@@ -23,6 +275,36 @@ class ServiciosReferencias {
       $arNoExiste = array();
       while ($row = mysql_fetch_array($res)) {
          $sqlCliente = "select ".$row['campo']." from dbclientes where idcliente =".$idcliente;
+         $resCC = $this->query($sqlCliente,0,0);
+         if (mysql_num_rows($resCC) > 0) {
+            if (mysql_result($resCC,0,0) != '') {
+               array_push($arExiste,array('idpreguntanecesario' => (integer)$row['idpreguntacuestionario'], 'valor'=> mysql_result($resCC,0,0), 'pregunta'=>$row['pregunta'] ));
+            } else {
+               array_push($arNoExiste,array('idpreguntanecesario' => (integer)$row['idpreguntacuestionario'], 'valor'=> '','campo'=>$row['campo'] ));
+            }
+         }
+
+      }
+
+      return array($arExiste,$arNoExiste);
+
+   }
+
+
+   function necesitoPreguntaSencibleAsegurado($idasegurado, $idcuestionario) {
+      $sql = "select
+            ps.campo, p.idpreguntacuestionario, p.pregunta
+            from		dbpreguntascuestionario p
+            inner
+            join		tbpreguntassencibles ps on ps.idpreguntassencibles = p.refpreguntassencibles
+            where		p.refcuestionarios = ".$idcuestionario;
+
+      $res = $this->query($sql,0);
+
+      $arExiste = array();
+      $arNoExiste = array();
+      while ($row = mysql_fetch_array($res)) {
+         $sqlCliente = "select ".$row['campo']." from dbasegurados where idasegurado =".$idasegurado;
          $resCC = $this->query($sqlCliente,0,0);
          if (mysql_num_rows($resCC) > 0) {
             if (mysql_result($resCC,0,0) != '') {
@@ -69,6 +351,18 @@ class ServiciosReferencias {
             left join	dbpreguntascuestionario pc
             on			ps.idpreguntassencibles = pc.refpreguntassencibles and pc.refcuestionarios = ".$id."
             where		pc.idpreguntacuestionario is null
+            group by    ps.pregunta";
+
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerPreguntassenciblesPorCuestionarioObligatorias($id) {
+      $sql = "select
+             ps.idpreguntassencibles,ps.campo
+            from		tbpreguntassencibles ps
+            inner join	dbpreguntascuestionario pc
+            on			ps.idpreguntassencibles = pc.refpreguntassencibles and pc.refcuestionarios = ".$id."
             group by    ps.pregunta";
 
       $res = $this->query($sql,0);
@@ -225,6 +519,85 @@ return $res;
 
 /* Fin */
 /* /* Fin de la Tabla: tbprocesocotizacion*/
+
+
+
+
+
+   function traerDependencia($idcuestionario, $idpregunta, $idrespuesta) {
+
+      $sql = "
+         select
+         	coalesce(r.idpreguntacuestionario,0) as idpreguntacuestionario
+         from (
+         		select
+                     c.idcuestionario,
+                     c.cuestionario,
+                     (case when c.activo = '1' then 'Si' else 'No' end) as activo,
+                     pre.pregunta,
+                     (case when pre.activo = '1' then 'Si' else 'No' end) as activopregunta,
+                     tr.idtiporespuesta,
+                     tr.tiporespuesta,
+                     pre.idpreguntacuestionario,
+                     coalesce( pre.depende,0) as dependeaux,
+                     coalesce( pre.dependerespuesta ,0) as dependerespuestaaux,
+                     pre.obligatoria
+                  from dbcuestionarios c
+                  inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario
+                  inner join tbtiporespuesta tr ON tr.idtiporespuesta = pre.reftiporespuesta
+
+                  where c.idcuestionario =".$idcuestionario."
+         	) r
+         where r.dependeaux = ".$idpregunta." and r.dependerespuestaaux = ".$idrespuesta;
+
+      if ($idpregunta > 0) {
+         $res = $this->query($sql,0);
+         if (mysql_num_rows($res) > 0 ) {
+            return mysql_result($res,0,0);
+         } else {
+            return 0;
+         }
+      }  else {
+         return 0;
+      }
+   }
+
+   function traerRespuestaGuardada($idpregunta,$idrespuesta,$idcotizacion) {
+      $sql = "SELECT
+                cd.respuesta, cd.respuestavalor
+            FROM
+                dbcuestionariodetalle cd
+            WHERE
+                cd.reftabla = 11
+                    AND cd.idreferencia = ".$idcotizacion."
+                    AND cd.refpreguntascuestionario = ".$idpregunta."
+                    AND cd.refrespuestascuestionario = ".$idrespuesta;
+
+      $res = $this->query($sql,0);
+
+      if (mysql_num_rows($res) > 0) {
+         return array('respuesta'=> mysql_result($res,0,'respuesta'), 'respuestavalor' => mysql_result($res,0,'respuestavalor'),'error'=> true);
+      }
+      return array('respuesta'=> 0, 'respuestavalor' => 0,'error'=> false);
+   }
+
+   function existeRespuestaApreguntaGuardada($idpregunta,$idcotizacion) {
+      $sql = "SELECT
+                cd.respuesta, cd.respuestavalor
+            FROM
+                dbcuestionariodetalle cd
+            WHERE
+                cd.reftabla = 11
+                    AND cd.idreferencia = ".$idcotizacion."
+                    AND cd.refpreguntascuestionario = ".$idpregunta;
+
+      $res = $this->query($sql,0);
+
+      if (mysql_num_rows($res) > 0) {
+         return array('respuesta'=> mysql_result($res,0,'respuesta'), 'respuestavalor' => mysql_result($res,0,'respuestavalor'),'error'=> true);
+      }
+      return array('respuesta'=> 0, 'respuestavalor' => 0,'error'=> false);
+   }
 
 
 
@@ -423,81 +796,6 @@ return $res;
       return array('cuestionario'=>$cad,'rules'=>$rules);
    }
 
-   function traerDependencia($idcuestionario, $idpregunta, $idrespuesta) {
-
-      $sql = "
-         select
-         	coalesce(r.idpreguntacuestionario,0) as idpreguntacuestionario
-         from (
-         		select
-                     c.idcuestionario,
-                     c.cuestionario,
-                     (case when c.activo = '1' then 'Si' else 'No' end) as activo,
-                     pre.pregunta,
-                     (case when pre.activo = '1' then 'Si' else 'No' end) as activopregunta,
-                     tr.idtiporespuesta,
-                     tr.tiporespuesta,
-                     pre.idpreguntacuestionario,
-                     coalesce( pre.depende,0) as dependeaux,
-                     coalesce( pre.dependerespuesta ,0) as dependerespuestaaux,
-                     pre.obligatoria
-                  from dbcuestionarios c
-                  inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario
-                  inner join tbtiporespuesta tr ON tr.idtiporespuesta = pre.reftiporespuesta
-
-                  where c.idcuestionario =".$idcuestionario."
-         	) r
-         where r.dependeaux = ".$idpregunta." and r.dependerespuestaaux = ".$idrespuesta;
-
-      if ($idpregunta > 0) {
-         $res = $this->query($sql,0);
-         if (mysql_num_rows($res) > 0 ) {
-            return mysql_result($res,0,0);
-         } else {
-            return 0;
-         }
-      }  else {
-         return 0;
-      }
-   }
-
-   function traerRespuestaGuardada($idpregunta,$idrespuesta,$idcotizacion) {
-      $sql = "SELECT
-                cd.respuesta, cd.respuestavalor
-            FROM
-                dbcuestionariodetalle cd
-            WHERE
-                cd.reftabla = 11
-                    AND cd.idreferencia = ".$idcotizacion."
-                    AND cd.refpreguntascuestionario = ".$idpregunta."
-                    AND cd.refrespuestascuestionario = ".$idrespuesta;
-
-      $res = $this->query($sql,0);
-
-      if (mysql_num_rows($res) > 0) {
-         return array('respuesta'=> mysql_result($res,0,'respuesta'), 'respuestavalor' => mysql_result($res,0,'respuestavalor'),'error'=> true);
-      }
-      return array('respuesta'=> 0, 'respuestavalor' => 0,'error'=> false);
-   }
-
-   function existeRespuestaApreguntaGuardada($idpregunta,$idcotizacion) {
-      $sql = "SELECT
-                cd.respuesta, cd.respuestavalor
-            FROM
-                dbcuestionariodetalle cd
-            WHERE
-                cd.reftabla = 11
-                    AND cd.idreferencia = ".$idcotizacion."
-                    AND cd.refpreguntascuestionario = ".$idpregunta;
-
-      $res = $this->query($sql,0);
-
-      if (mysql_num_rows($res) > 0) {
-         return array('respuesta'=> mysql_result($res,0,'respuesta'), 'respuestavalor' => mysql_result($res,0,'respuestavalor'),'error'=> true);
-      }
-      return array('respuesta'=> 0, 'respuestavalor' => 0,'error'=> false);
-   }
-
 
    function CuestionarioAux($idcuestionario,$idcotizacion,$idcliente=0) {
       //die(var_dump($idcuestionario));
@@ -517,7 +815,7 @@ return $res;
       while ($row = mysql_fetch_array($resultado)) {
 
 
-         if ($this->getOption($preguntasSencibles[0],$row['idpreguntacuestionario'] ) == 0 ) {
+         //if ($this->getOption($preguntasSencibles[0],$row['idpreguntacuestionario'] ) == 0 ) {
 
 
             $resRespuesta = $this->traerRespuestascuestionarioPorPregunta($row['idpreguntacuestionario']);
@@ -659,15 +957,26 @@ return $res;
 
 
 
-         }
+         //}
 
       }
 
-      //header('Content-type: application/json');
-      //return json_encode($arPreguntas);
 
-      /*
-      die(var_dump($arPreguntas));
+      return $arPreguntas;
+
+   }
+
+
+   function CuestionarioPersonas($idcuestionario,$idcotizacion,$idcliente=0,$idasegurado=0) {
+      //die(var_dump($idcuestionario));
+
+      $resultado = $this->traerCuestionariosPorIdCompletoRSencibles($idcuestionario,$idcotizacion);
+
+      if ($idcliente != 0) {
+         $preguntasSencibles = $this->necesitoPreguntaSencible($idcliente,$idcuestionario);
+      } else {
+         $preguntasSencibles = $this->necesitoPreguntaSencibleAsegurado($idasegurado,$idcuestionario);
+      }
 
 
 
@@ -688,6 +997,8 @@ return $res;
          $primero = 0;
 
          while ($row = mysql_fetch_array($resultado)) {
+            if ($this->getOption($preguntasSencibles[0],$row['idpreguntacuestionario'] ) == 0 ) {
+
             if ($pregunta != $row['pregunta']) {
                $pregunta = $row['pregunta'];
 
@@ -746,100 +1057,288 @@ return $res;
 
             }
 
-         if ($row['idtiporespuesta'] == 1) {
+            if ($row['idtiporespuesta'] == 1) {
 
-            if ($row['obligatoria'] == '1') {
-               $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
-                  <label class="form-label">Ingrese su respuesta</label>
-                  <div class="form-group input-group">
-                     <div class="form-line">
-                        <input type="text" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
+               if ($row['obligatoria'] == '1') {
+                  $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+                     <label class="form-label">Ingrese su respuesta</label>
+                     <div class="form-group input-group">
+                        <div class="form-line">
+                           <input type="text" class="form-control" id="respuesta'.$row['idpreguntacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
 
+                        </div>
                      </div>
-                  </div>
-               </div>';
-            } else {
-               $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
-                  <label class="form-label">Ingrese su respuesta</label>
-                  <div class="form-group input-group">
-                     <div class="form-line">
-                        <input type="text" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
+                  </div>';
+               } else {
+                  $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+                     <label class="form-label">Ingrese su respuesta</label>
+                     <div class="form-group input-group">
+                        <div class="form-line">
+                           <input type="text" class="form-control" id="respuesta'.$row['idpreguntacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
 
+                        </div>
                      </div>
-                  </div>
-               </div>';
+                  </div>';
+               }
+
             }
 
-         }
+
+            if ($row['idtiporespuesta'] == 2) {
+               $iRadio += 1;
+
+               $cantRadio += 1;
+
+               if ($row['depende']>0) {
+                  $collapse = 'onclick="document.getElementById('."'".'collapse_radio_'.$row['idpreguntacuestionario'].($iRadio + 1)."'".').style.display='."'".'block'."'".';"';
+                  $collapse2 = 'onclick="document.getElementById('."'".'collapse_radio_'.$row['idpreguntacuestionario'].($iRadio + 1)."'".').style.display='."'".'none'."'".';"';
+
+                  $collapseAux = "collapse_radio_".$row['idpreguntacuestionario'].($iRadio + 1);
+               } else {
+                  $collapse = '';
+               }
+
+               if ($cantRadio >= 2) {
+                  $collapse = $collapse2;
+               }
 
 
-         if ($row['idtiporespuesta'] == 2) {
-            $iRadio += 1;
+               $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
 
-            $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
-
-               <div class="form-group input-group">
-                  <div class="demo-radio-button">
-                     <input type="radio" id="radio_'.$row['idpreguntacuestionario'].$iRadio.'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.$row['idrespuestacuestionario'].'" '.($row['respuestacargada'] == '1' ? 'checked' : '').' '.$collapse.'>
-                     <label for="radio_'.$row['idpreguntacuestionario'].$iRadio.'">'.$row['respuesta'].'</label>
+                  <div class="form-group input-group">
+                     <div class="demo-radio-button">
+                        <input type="radio" id="radio_'.$row['idpreguntacuestionario'].$iRadio.'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.$row['idrespuestacuestionario'].'" '.($row['respuestacargada'] == '1' ? 'checked' : '').' '.$collapse.'>
+                        <label for="radio_'.$row['idpreguntacuestionario'].$iRadio.'">'.$row['respuesta'].'</label>
+                     </div>
                   </div>
-               </div>
-            </div>';
+               </div>';
 
 
 
-         }
+            }
 
 
-         if ($row['idtiporespuesta'] == 3) {
-            $iCheck += 1;
+            if ($row['idtiporespuesta'] == 3) {
+               $iCheck += 1;
 
-            $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+               $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
 
-               <div class="form-group input-group">
-                  <div class="demo-radio-button">
-                     <input type="radio" id="radio_multi_'.$iCheck.'" name="respuestamulti'.$row['idpreguntacuestionario'].'" value="'.$row['idrespuestacuestionario'].'" '.($row['respuestacargada'] == '1' ? 'checked' : '').'>
-                     <label for="radio_multi_'.$iCheck.'">'.$row['respuesta'].'</label>
+                  <div class="form-group input-group">
+                     <div class="demo-radio-button">
+                        <input type="radio" id="radio_multi_'.$iCheck.'" name="respuestamulti'.$row['idpreguntacuestionario'].'" value="'.$row['idrespuestacuestionario'].'" '.($row['respuestacargada'] == '1' ? 'checked' : '').'>
+                        <label for="radio_multi_'.$iCheck.'">'.$row['respuesta'].'</label>
+                     </div>
                   </div>
-               </div>
-            </div>';
+               </div>';
 
 
 
-         }
+            }
 
-
-         if ($row['idtiporespuesta'] == 4) {
-            $iCheckM += 1;
-
-            $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
-
-            <div class="form-group input-group">
-                  <div class="demo-radio-button">
-                     <input type="checkbox" class="filled-in respuestavarias'.$row['idpreguntacuestionario'].'" id="basic_checkbox_'.$row['idrespuestacuestionario'].'" name="respuestamulti'.$row['idrespuestacuestionario'].'" '.($row['respuestacargada'] == '1' ? 'checked' : '').'>
-                     <label for="basic_checkbox_'.$row['idrespuestacuestionario'].'">'.$row['respuesta'].'</label>
-                  </div>
-               </div>
-            </div>';
 
             if ($row['idtiporespuesta'] == 4) {
-               array_push($rules,array('respuesta'=> 'respuestamulti'.$row['idrespuestacuestionario'],'pregunta' => $row['pregunta'],'tipo'=>4,'idpregunta'=>$row['idpreguntacuestionario'],'idrespuesta'=>$row['idrespuestacuestionario'],
-               'obligatoria' => $row['obligatoria'],
-               'depende' => $row['depende'],
-               'dependerespuesta' => $row['dependerespuesta'],
-               'dependeaux' => $row['dependeaux'],
-               'dependerespuestaaux' => $row['dependerespuestaaux'] ));
+               $iCheckM += 1;
+
+               $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+
+               <div class="form-group input-group">
+                     <div class="demo-radio-button">
+                        <input type="checkbox" class="filled-in respuestavarias'.$row['idpreguntacuestionario'].'" id="basic_checkbox_'.$row['idrespuestacuestionario'].'" name="respuestamultim'.$row['idrespuestacuestionario'].'" '.($row['respuestacargada'] == '1' ? 'checked' : '').'>
+                        <label for="basic_checkbox_'.$row['idrespuestacuestionario'].'">'.$row['respuesta'].'</label>
+                     </div>
+                  </div>
+               </div>';
+
+               if ($row['idtiporespuesta'] == 4) {
+                  array_push($rules,array('respuesta'=> 'respuestamultim'.$row['idrespuestacuestionario'],'pregunta' => $row['pregunta'],'tipo'=>4,'idpregunta'=>$row['idpreguntacuestionario'],'idrespuesta'=>$row['idrespuestacuestionario'],
+                  'obligatoria' => $row['obligatoria'],
+                  'depende' => $row['depende'],
+                  'dependerespuesta' => $row['dependerespuesta'],
+                  'dependeaux' => $row['dependeaux'],
+                  'dependerespuestaaux' => $row['dependerespuestaaux'] ));
+               }
+
             }
 
-         }
-
 
          }
+      }
 
       $cad .= '</div>';
 
       return array('cuestionario'=>$cad,'rules'=>$rules);
-      */
+   }
+
+
+   function CuestionarioAuxPersonas($idcuestionario,$idcotizacion,$idcliente=0,$idasegurado=0) {
+      //die(var_dump($idcuestionario));
+
+      $resultado = $this->traerCuestionariosPorIdCompletoRSencibles($idcuestionario,$idcotizacion);
+
+      if ($idcliente != 0) {
+         $preguntasSencibles = $this->necesitoPreguntaSencible($idcliente,$idcuestionario);
+      } else {
+         $preguntasSencibles = $this->necesitoPreguntaSencibleAsegurado($idasegurado,$idcuestionario);
+      }
+
+
+
+      $arPreguntas = array();
+      $arRespuestas = array();
+
+      //$columna = array_column($preguntasSencibles, 'idpreguntanecesario');
+      //die(var_dump(array_search( '24' , $columna ) ));
+
+      while ($row = mysql_fetch_array($resultado)) {
+
+
+         if ($this->getOption($preguntasSencibles[0],$row['idpreguntacuestionario'] ) == 0 ) {
+
+
+            $resRespuesta = $this->traerRespuestascuestionarioPorPregunta($row['idpreguntacuestionario']);
+
+            $resPreguntaRespondida = $this->existeRespuestaApreguntaGuardada($row['idpreguntacuestionario'], $idcotizacion);
+
+            $cadInput = '';
+            $cadValorRespuesta = '';
+
+            $dependenciaData = '';
+
+            if (($row['dependeaux'] > 0) && ($resPreguntaRespondida['error']==false)) {
+               $escondido = 'escondido escondido'.$row['dependeaux'];
+            } else {
+               $escondido = '';
+            }
+
+            $aparecer = '';
+
+            while ($rowR = mysql_fetch_array($resRespuesta)) {
+
+               $resDependencia = $this->traerDependencia($idcuestionario, $row['idpreguntacuestionario'], $rowR['idrespuestacuestionario']);
+               $resValorRespuesta = $this->traerRespuestaGuardada($row['idpreguntacuestionario'],$rowR['idrespuestacuestionario'],$idcotizacion);
+
+               //die(var_dump($row['idpreguntacuestionario'].'-'.$rowR['idrespuestacuestionario'].'-'.$resDependencia));
+
+               if ($resDependencia > 0) {
+                  $dependenciaData = ' data-pregunta="'.$resDependencia.'" data-respuesta="'.$rowR['idrespuestacuestionario'].'" ';
+               } else {
+                  $dependenciaData = '';
+               }
+
+
+               // tipo de pregunta simple
+               if ($row['idtiporespuesta'] == 1) {
+                  //traigo el valor de lo que cargo
+                  if ($resValorRespuesta['error']) {
+                     $cadValorRespuesta = $resValorRespuesta['respuestavalor'];
+                  } else {
+                     $cadValorRespuesta = '';
+                  }
+
+                  if ($row['obligatoria'] == '1') {
+                     $cadInput .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+                        <label class="form-label">Ingrese su respuesta</label>
+                        <div class="form-group input-group">
+                           <div class="form-line">
+                              <input type="text" class="form-control" id="respuesta'.$row['idpreguntacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.$cadValorRespuesta.'" >
+
+                           </div>
+                        </div>
+                     </div>';
+                  } else {
+                     $cadInput .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+                        <label class="form-label">Ingrese su respuesta</label>
+                        <div class="form-group input-group">
+                           <div class="form-line">
+                              <input type="text" class="form-control" id="respuesta'.$row['idpreguntacuestionario'].'" value="'.$cadValorRespuesta.'" name="respuesta'.$row['idpreguntacuestionario'].'" >
+
+                           </div>
+                        </div>
+                     </div>';
+                  }
+               }
+
+               // tipo de pregu8nta binaria
+               if ($row['idtiporespuesta'] == 2) {
+
+                  //traigo el valor de lo que cargo
+                  if ($resValorRespuesta['error']) {
+                     $cadValorRespuesta = 'checked';
+                  } else {
+                     $cadValorRespuesta = '';
+                  }
+
+                  $cadInput .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+
+                     <div class="form-group input-group">
+                        <div class="demo-radio-button">
+                           <input class="aparecer" type="radio" id="radio_'.$rowR['idrespuestacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.$rowR['idrespuestacuestionario'].'" '.$dependenciaData.' data-idpregunta="'.$row['idpreguntacuestionario'].'" '.$cadValorRespuesta.' >
+                           <label for="radio_'.$rowR['idrespuestacuestionario'].'">'.$rowR['respuesta'].'</label>
+                        </div>
+                     </div>
+                  </div>';
+               }
+
+               // tipo de pregunta multiple
+               if ($row['idtiporespuesta'] == 3) {
+
+                  //traigo el valor de lo que cargo
+                  if ($resValorRespuesta['error']) {
+                     $cadValorRespuesta = 'checked';
+                  } else {
+                     $cadValorRespuesta = '';
+                  }
+
+                  $cadInput .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+
+                     <div class="form-group input-group">
+                        <div class="demo-radio-button">
+                           <input class="aparecer" type="radio" id="radio_multi_'.$rowR['idrespuestacuestionario'].'" name="respuestamulti'.$row['idpreguntacuestionario'].'" value="'.$rowR['idrespuestacuestionario'].'" '.$dependenciaData.' data-idpregunta="'.$row['idpreguntacuestionario'].'" '.$cadValorRespuesta.' >
+                           <label for="radio_multi_'.$rowR['idrespuestacuestionario'].'">'.$rowR['respuesta'].'</label>
+                        </div>
+                     </div>
+                  </div>';
+               }
+
+               // tipo de pregunta multiple con nultiple seleccion
+               if ($row['idtiporespuesta'] == 4) {
+
+                  //traigo el valor de lo que cargo
+                  if ($resValorRespuesta['error']) {
+                     $cadValorRespuesta = 'checked';
+                  } else {
+                     $cadValorRespuesta = '';
+                  }
+
+                  $cadInput .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+
+                     <div class="form-group input-group">
+                        <div class="demo-radio-button">
+                           <input type="checkbox" class="filled-in respuestavarias'.$row['idpreguntacuestionario'].'" id="basic_checkbox_'.$rowR['idrespuestacuestionario'].'" name="respuestamultim'.$rowR['idrespuestacuestionario'].'" '.$dependenciaData.' '.$cadValorRespuesta.' >
+                           <label for="basic_checkbox_'.$rowR['idrespuestacuestionario'].'">'.$rowR['respuesta'].'</label>
+                        </div>
+                     </div>
+                  </div>';
+               }
+
+
+            }
+
+            array_push($arPreguntas,array(
+               'divRow' => '<div class="row '.$escondido.' clcontPregunta'.$row['dependerespuestaaux'].'" style="padding: 5px 20px;" id="contPregunta'.$row['idpreguntacuestionario'].'">',
+               'pregunta' => $row['pregunta'],
+               'idpregunta'=>$row['idpreguntacuestionario'],
+               'respuestas' => $cadInput
+            ));
+
+
+
+
+         }
+
+      }
+
+
       return $arPreguntas;
 
    }
@@ -1381,6 +1880,36 @@ return $res;
          inner join dbrespuestascuestionario rc ON rc.refpreguntascuestionario = pre.idpreguntacuestionario and rc.activo='1'
          left join dbcuestionariodetalle cd on cd.refpreguntascuestionario = pre.idpreguntacuestionario and cd.refrespuestascuestionario = rc.idrespuestacuestionario and cd.idreferencia = ".$idcotizacion."
          left join dbpreguntascuestionario prer on prer.depende = pre.idpreguntacuestionario and prer.dependerespuesta = rc.idrespuestacuestionario
+         where c.idcuestionario =".$id." and (pre.refpreguntassencibles is null or pre.refpreguntassencibles = 0) order by pre.orden,rc.orden ";
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+   function traerCuestionariosPorIdCompletoRSencibles($id, $idcotizacion) {
+   $sql = "select
+            c.idcuestionario,
+            c.cuestionario,
+            (case when c.activo = '1' then 'Si' else 'No' end) as activo,
+            pre.pregunta,
+            (case when pre.activo = '1' then 'Si' else 'No' end) as activopregunta,
+            (case when rc.activo = '1' then 'Si' else 'No' end) as activorespuesta,
+            tr.idtiporespuesta,
+            tr.tiporespuesta,
+            rc.respuesta,
+            rc.idrespuestacuestionario,
+            pre.idpreguntacuestionario,
+            (case when cd.idcuestionariodetalle is null then '0' else (case when tr.idtiporespuesta = 1 then cd.respuestavalor else '1'end) end ) as respuestacargada,
+            coalesce( prer.depende,0) as depende,
+            coalesce( prer.dependerespuesta,0) as dependerespuesta,
+            coalesce( pre.depende,0) as dependeaux,
+            coalesce( pre.dependerespuesta ,0) as dependerespuestaaux,
+            pre.obligatoria
+         from dbcuestionarios c
+         inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario and pre.activo='1' and pre.refpreguntassencibles > 0
+         inner join tbtiporespuesta tr ON tr.idtiporespuesta = pre.reftiporespuesta
+         inner join dbrespuestascuestionario rc ON rc.refpreguntascuestionario = pre.idpreguntacuestionario and rc.activo='1'
+         left join dbcuestionariodetalle cd on cd.refpreguntascuestionario = pre.idpreguntacuestionario and cd.refrespuestascuestionario = rc.idrespuestacuestionario and cd.idreferencia = ".$idcotizacion."
+         left join dbpreguntascuestionario prer on prer.depende = pre.idpreguntacuestionario and prer.dependerespuesta = rc.idrespuestacuestionario
          where c.idcuestionario =".$id." order by pre.orden,rc.orden ";
    $res = $this->query($sql,0);
    return $res;
@@ -1403,7 +1932,7 @@ return $res;
          from dbcuestionarios c
          inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario and pre.activo='1'
          inner join tbtiporespuesta tr ON tr.idtiporespuesta = pre.reftiporespuesta
-         where c.idcuestionario =".$id." order by pre.orden ";
+         where c.idcuestionario =".$id." and (pre.refpreguntassencibles is null or pre.refpreguntassencibles = 0) order by pre.orden ";
    $res = $this->query($sql,0);
    return $res;
    }
@@ -5123,19 +5652,18 @@ return $res;
 
 
 
-   function insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas) {
-      $sql = "insert into tbproductos(idproducto,producto,prima,reftipoproductorama,reftipodocumentaciones,activo,puntosporventa,puntosporpesopagado,refcuestionarios,puntosporventarenovado,puntosporpesopagadorenovado,reftipopersonas)
-      values ('','".$producto."','".$prima."',".$reftipoproductorama.",".$reftipodocumentaciones.",'".$activo."',".$puntosporventa.",".$puntosporpesopagado.",".$refcuestionarios.",".$puntosporventarenovado.",".$puntosporpesopagadorenovado.",".$reftipopersonas.")";
+   function insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas,$precio,$detalle,$ventaenlinea,$cotizaenlinea,$beneficiario,$asegurado) {
+      $sql = "insert into tbproductos(idproducto,producto,prima,reftipoproductorama,reftipodocumentaciones,activo,puntosporventa,puntosporpesopagado,refcuestionarios,puntosporventarenovado,puntosporpesopagadorenovado,reftipopersonas,precio,detalle,ventaenlinea,cotizaenlinea,beneficiario,asegurado)
+      values ('','".$producto."','".$prima."',".$reftipoproductorama.",".$reftipodocumentaciones.",'".$activo."',".$puntosporventa.",".$puntosporpesopagado.",".$refcuestionarios.",".$puntosporventarenovado.",".$puntosporpesopagadorenovado.",".$reftipopersonas.",".$precio.",'".$detalle."','".$ventaenlinea."','".$cotizaenlinea."','".$beneficiario."','".$asegurado."')";
       $res = $this->query($sql,1);
       return $res;
    }
 
 
-   function modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas) {
+   function modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas,$precio,$detalle,$ventaenlinea,$cotizaenlinea,$beneficiario,$asegurado) {
       $sql = "update tbproductos
       set
-      producto = '".$producto."',prima = '".$prima."',reftipoproductorama = ".$reftipoproductorama.",reftipodocumentaciones = ".$reftipodocumentaciones.",activo = '".$activo."',puntosporventa = ".$puntosporventa.",puntosporpesopagado = ".$puntosporpesopagado.",refcuestionarios = ".$refcuestionarios.",puntosporventarenovado = ".$puntosporventarenovado.",puntosporpesopagadorenovado = ".$puntosporpesopagadorenovado.",reftipopersonas = ".$reftipopersonas."
-      where idproducto =".$id;
+      producto = '".$producto."',prima = '".$prima."',reftipoproductorama = ".$reftipoproductorama.",reftipodocumentaciones = ".$reftipodocumentaciones.",activo = '".$activo."',puntosporventa = ".$puntosporventa.",puntosporpesopagado = ".$puntosporpesopagado.",refcuestionarios = ".$refcuestionarios.",puntosporventarenovado = ".$puntosporventarenovado.",puntosporpesopagadorenovado = ".$puntosporpesopagadorenovado.",reftipopersonas = ".$reftipopersonas.",precio = ".$precio.",detalle = '".$detalle."',ventaenlinea = '".$ventaenlinea."',cotizaenlinea = '".$cotizaenlinea."',beneficiario = '".$beneficiario."',asegurado = '".$asegurado."' where idproducto =".$id;
       $res = $this->query($sql,0);
       return $res;
    }
@@ -5254,7 +5782,7 @@ return $res;
       p.reftipodocumentaciones,
       p.refcuestionarios,
       p.reftipopersonas,
-      p.precio
+      p.precio,p.detalle,p.ventaenlinea,p.cotizaenlinea,p.beneficiario,p.asegurado
 		from tbproductos p
 		inner join tbtipoproductorama tp ON tp.idtipoproductorama = p.reftipoproductorama
       inner join tbtipoproducto t on t.idtipoproducto = tp.reftipoproducto
@@ -5268,7 +5796,7 @@ return $res;
 
    function traerProductosPorId($id) {
       $sql = "select idproducto,producto,prima,reftipoproductorama,reftipodocumentaciones,activo,
-      puntosporventa,puntosporpesopagado,refcuestionarios,puntosporventarenovado,puntosporpesopagadorenovado,reftipopersonas, precio
+      puntosporventa,puntosporpesopagado,refcuestionarios,puntosporventarenovado,puntosporpesopagadorenovado,reftipopersonas,precio,detalle,ventaenlinea,cotizaenlinea,beneficiario,asegurado
       from tbproductos where idproducto =".$id;
       $res = $this->query($sql,0);
       return $res;
@@ -5535,8 +6063,7 @@ return $res;
 	function modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$bitacoracrea,$bitacorainbursa,$bitacoraagente,$existeprimaobjetivo,$primaobjetivo) {
 		$sql = "update dbcotizaciones
 		set
-		refclientes = ".$refclientes.",refproductos = ".$refproductos.",refasesores = ".$refasesores.",refasociados = ".$refasociados.",refestadocotizaciones = ".$refestadocotizaciones.",cobertura = '".$cobertura."',reasegurodirecto = '".$reasegurodirecto."',tiponegocio = '".$tiponegocio."',presentacotizacion = '".$presentacotizacion."',fechapropuesta = ".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",fecharenovacion = ".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",fechaemitido = ".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',refusuarios = ".$refusuarios.",observaciones = '".$observaciones."',fechavencimiento = '".$fechavencimiento."',coberturaactual = '".$coberturaactual."',bitacoracrea = '".$bitacoracrea."',bitacorainbursa = '".$bitacorainbursa."',bitacoraagente = '".$bitacoraagente."',existeprimaobjetivo = '".$existeprimaobjetivo."',primaobjetivo = ".$primaobjetivo."
-		where idcotizacion =".$id;
+		refclientes = ".$refclientes.",refproductos = ".$refproductos.",refasesores = ".$refasesores.",refasociados = ".$refasociados.",refestadocotizaciones = ".$refestadocotizaciones.",cobertura = '".$cobertura."',reasegurodirecto = '".$reasegurodirecto."',tiponegocio = '".$tiponegocio."',presentacotizacion = '".$presentacotizacion."',fechapropuesta = ".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",fecharenovacion = ".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",fechaemitido = ".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',refusuarios = ".$refusuarios.",observaciones = '".$observaciones."',fechavencimiento = '".$fechavencimiento."',coberturaactual = '".$coberturaactual."',bitacoracrea = '".$bitacoracrea."',bitacorainbursa = '".$bitacorainbursa."',bitacoraagente = '".$bitacoraagente."',existeprimaobjetivo = '".$existeprimaobjetivo."',primaobjetivo = ".$primaobjetivo." where idcotizacion =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -5548,6 +6075,29 @@ return $res;
 		observaciones = '".$observaciones."',
 		fechamodi = '".date('Y-m-d H:i:s')."',
 		usuariomodi = '".$usuariomodi."' where idcotizacion =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function modificarCotizacionesAsegurado($id,$tieneasegurado,$refasegurados) {
+		$sql = "update dbcotizaciones
+		set
+		tieneasegurado = '".$tieneasegurado."',
+		refasegurados = ".$refasegurados.",
+		fechamodi = '".date('Y-m-d H:i:s')."'
+		 where idcotizacion =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function modificarCotizacionesBeneficiario($id,$refbeneficiarios) {
+		$sql = "update dbcotizaciones
+		set
+		refbeneficiarios = ".$refbeneficiarios.",
+		fechamodi = '".date('Y-m-d H:i:s')."'
+		 where idcotizacion =".$id;
 
 		$res = $this->query($sql,0);
 		return $res;
@@ -5801,7 +6351,8 @@ return $res;
 		c.fechacrea,c.fechamodi,c.usuariocrea,c.usuariomodi,c.refusuarios,c.fechaemitido,c.fechavencimiento,
 		c.coberturaactual,c.cobertura,c.reasegurodirecto,c.tiponegocio,
 		c.presentacotizacion,c.fechapropuesta,c.fecharenovacion,
-      c.bitacoracrea,c.bitacorainbursa,c.bitacoraagente,c.existeprimaobjetivo,c.primaobjetivo, pro.precio
+	  c.bitacoracrea,c.bitacorainbursa,c.bitacoraagente,c.existeprimaobjetivo,c.primaobjetivo, pro.precio ,
+	  c.tieneasegurado, c.refasegurados, c.refbeneficiarios
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join dbasesores ase ON ase.idasesor = c.refasesores
@@ -5824,7 +6375,8 @@ return $res;
 		c.fechacrea,c.fechamodi,c.usuariocrea,c.usuariomodi,c.refusuarios,c.fechaemitido,c.fechavencimiento,
 		c.coberturaactual,c.cobertura,c.reasegurodirecto,c.tiponegocio,
 		c.presentacotizacion,c.fechapropuesta,c.fecharenovacion,
-      c.bitacoracrea,c.bitacorainbursa,c.bitacoraagente,c.existeprimaobjetivo,c.primaobjetivo
+      c.bitacoracrea,c.bitacorainbursa,c.bitacoraagente,c.existeprimaobjetivo,c.primaobjetivo, pro.precio ,
+	  c.tieneasegurado, c.refasegurados
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join dbasesores ase ON ase.idasesor = c.refasesores
@@ -5913,11 +6465,11 @@ return $res;
 	}
 
 
-	function modificarAlertas($id,$reftiposeguimientos,$motivo,$id,$fechacreacion,$refusuarios) {
+	function modificarAlertas($idalerta,$reftiposeguimientos,$motivo,$id,$fechacreacion,$refusuarios) {
 		$sql = "update dbalertas
 		set
 		reftiposeguimientos = ".$reftiposeguimientos.",motivo = '".$motivo."',id = ".$id.",fechacreacion = '".$fechacreacion."',refusuarios = ".$refusuarios."
-		where idalerta =".$id;
+		where idalerta =".$idalerta;
 
 		$res = $this->query($sql,0);
 		return $res;
@@ -11132,6 +11684,516 @@ return $res;
 
 	/* Fin */
 	/* /* Fin de la Tabla: dbclientes*/
+
+
+
+   /* PARA Asegurados */
+
+	function generaNroAsegurado() {
+		$sql = "select max(idasegurado) from dbasegurados";
+		$res = $this->query($sql,0);
+
+		if (mysql_num_rows($res) > 0) {
+			$idcliente = mysql_result($res,0,0);
+			return 'ASG'.substr('0000000'.$idcliente,-7);
+		}
+
+		return 'ASG0000001';
+	}
+
+	function insertarAsegurados($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco) {
+		$sql = "insert into dbasegurados(idasegurado,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,emisioncomprobantedomicilio,emisionrfc,vencimientoine,idclienteinbursa,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,refclientes,reftipoparentesco)
+		values ('',".$reftipopersonas.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$razonsocial."','".$domicilio."','".$telefonofijo."','".$telefonocelular."','".$email."','".$rfc."','".$ine."','".$this->generaNroAsegurado()."',".$refusuarios.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."','".$emisioncomprobantedomicilio."','".$emisionrfc."','".$vencimientoine."','".$idclienteinbursa."','".$colonia."','".$municipio."','".$codigopostal."','".$edificio."','".$nroexterior."','".$nrointerior."','".$estado."','".$ciudad."','".$curp."',".$refclientes.",".$reftipoparentesco.")";
+
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarAsegurados($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco) {
+		$sql = "update dbasegurados
+		set
+		reftipopersonas = ".$reftipopersonas.",nombre = '".$nombre."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',razonsocial = '".$razonsocial."',domicilio = '".$domicilio."',telefonofijo = '".$telefonofijo."',telefonocelular = '".$telefonocelular."',email = '".$email."',rfc = '".$rfc."',ine = '".$ine."',numerocliente = '".$numerocliente."',refusuarios = ".$refusuarios.",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',emisioncomprobantedomicilio = '".$emisioncomprobantedomicilio."',emisionrfc = '".$emisionrfc."',vencimientoine = '".$vencimientoine."',idclienteinbursa = '".$idclienteinbursa."',colonia = '".$colonia."',municipio = '".$municipio."',codigopostal = '".$codigopostal."',edificio = '".$edificio."',nroexterior = '".$nroexterior."',nrointerior = '".$nrointerior."',estado = '".$estado."',ciudad = '".$ciudad."',curp = '".$curp."',refclientes = '".$refclientes."',reftipoparentesco = '".$reftipoparentesco."' where idasegurado =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function modificarAseguradosInbursa($id,$idclienteinbursa) {
+		$sql = "update dbasegurados
+		set
+		idclienteinbursa = '".$idclienteinbursa."' where idasegurado =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function modificarCampoParticularAsegurados($id,$campo,$valor) {
+		$sql = "update dbasegurados
+		set
+		".$campo." = '".$valor."' where idasegurado =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarAsegurados($id) {
+		$sql = "delete from dbasegurados where idasegurado =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerAseguradosClientesajax($length, $start, $busqueda,$colSort,$colSortDir,$idcliente) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (tip.tipopersona like '%".$busqueda."%' or c.nombre like '%".$busqueda."%' or c.apellidopaterno like '%".$busqueda."%' or c.apellidomaterno like '%".$busqueda."%' or c.nombre like '%".$busqueda."%' or c.email like '%".$busqueda."%' or c.razonsocial like '%".$busqueda."%' or c.telefonofijo like '%".$busqueda."%' or c.telefonocelular like '%".$busqueda."%' or c.numerocliente like '%".$busqueda."%' or tp.tipoparentesco like '%".$busqueda."%')";
+		}
+
+		$sql = "select
+		c.idasegurado,
+		tip.tipopersona,
+		c.nombre,
+		c.apellidopaterno,
+		c.apellidomaterno,
+      tp.tipoparentesco,
+		c.razonsocial,
+		c.telefonofijo,
+		c.telefonocelular,
+		c.email,
+		c.numerocliente,
+		c.domicilio,
+		c.rfc,
+		c.ine,
+		c.refusuarios,
+		c.fechacrea,
+		c.fechamodi,
+		c.usuariocrea,
+		c.usuariomodi,
+      c.reftipoparentesco,
+		c.reftipopersonas
+		from dbasegurados c
+		inner join tbtipopersonas tip ON tip.idtipopersona = c.reftipopersonas
+      inner join tbtipoparentesco tp ON tp.idtipoparentesco = c.reftipoparentesco
+		where c.refclientes = ".$idcliente." ".$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+
+   function traerAseguradosajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or tip.tipopersona like '%".$busqueda."%' or c.nombre like '%".$busqueda."%' or c.apellidopaterno like '%".$busqueda."%' or c.apellidomaterno like '%".$busqueda."%' or c.nombre like '%".$busqueda."%' or c.email like '%".$busqueda."%' or c.razonsocial like '%".$busqueda."%' or c.telefonofijo like '%".$busqueda."%' or c.telefonocelular like '%".$busqueda."%' or c.numerocliente like '%".$busqueda."%' or tp.tipoparentesco like '%".$busqueda."%'";
+		}
+
+		$sql = "select
+		c.idasegurado,
+      concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+		tip.tipopersona,
+		c.nombre,
+		c.apellidopaterno,
+		c.apellidomaterno,
+		c.razonsocial,
+		c.telefonofijo,
+		c.telefonocelular,
+		c.email,
+		c.numerocliente,
+		c.domicilio,
+		c.rfc,
+		c.ine,
+		c.refusuarios,
+		c.fechacrea,
+		c.fechamodi,
+		c.usuariocrea,
+		c.usuariomodi,
+		c.reftipopersonas
+		from dbasegurados c
+		inner join tbtipopersonas tip ON tip.idtipopersona = c.reftipopersonas
+      inner join dbclientes cli ON cli.idcliente = c.refclientes
+      inner join tbtipoparentesco tp ON tp.idtipoparentesco = c.reftipoparentesco
+		".$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+	function traeAsegurados() {
+		$sql = "select
+		c.idasegurado,
+		tip.tipopersona,
+		c.nombre,
+		c.apellidopaterno,
+		c.apellidomaterno,
+		c.razonsocial,
+		c.telefonofijo,
+		c.telefonocelular,
+		c.email,
+		c.numerocliente,
+		c.domicilio,
+		c.rfc,
+		c.ine,
+		c.refusuarios,
+		c.fechacrea,
+		c.fechamodi,
+		c.usuariocrea,
+		c.usuariomodi,
+		c.reftipopersonas,
+		concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) as nombrecompleto
+		from dbasegurados c
+		inner join tbtipopersonas tip ON tip.idtipopersona = c.reftipopersonas
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function bAsegurados($busqueda, $idcliente) {
+		$sql = "select
+		c.idasegurado,
+		tip.tipopersona,
+		c.nombre,
+		c.apellidopaterno,
+		c.apellidomaterno,
+		c.razonsocial,
+		c.telefonofijo,
+		c.telefonocelular,
+		c.email,
+		c.numerocliente,
+		c.domicilio,
+		c.rfc,
+		c.ine,
+		c.refusuarios,
+		c.fechacrea,
+		c.fechamodi,
+		c.usuariocrea,
+		c.usuariomodi,
+		c.reftipopersonas,
+		concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) as nombrecompleto,
+		c.idclienteinbursa
+		from dbasegurados c
+		inner join tbtipopersonas tip ON tip.idtipopersona = c.reftipopersonas
+		where c.refclientes = ".$idcliente." and concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) like '%".$busqueda."%'
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerAseguradosPorId($id) {
+		$sql = "select idasegurado,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,refclientes,reftipoparentesco from dbasegurados where idasegurado =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerAseguradosPorUsuario($id) {
+		$sql = "select idasegurado,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,refclientes,reftipoparentesco from dbasegurados where refusuarios =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function traerAseguradosPorUsuarioCompleto($id) {
+		$sql = "select
+      idasegurado,reftipopersonas,nombre,apellidopaterno,apellidomaterno,
+      razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,
+      numerocliente,refusuarios,
+      fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa ,
+      concat(apellidopaterno, ' ', apellidomaterno, ' ', nombre) as nombrecompleto,
+      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,refclientes,reftipoparentesco
+      from dbasegurados where refusuarios =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function traerAseguradosPorIdCompleto($id) {
+		$sql = "select idasegurado,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,
+      (case when DATEDIFF(CURDATE(), coalesce( emisioncomprobantedomicilio,'1990-01-01')) > 90 then 'true' else 'false' end) as demisioncomprobantedomicilio,
+      (case when DATEDIFF(CURDATE(),coalesce( emisionrfc,'1990-01-01')) > 90 then 'true' else 'false' end) as demisionrfc,
+      (case when coalesce( vencimientoine,'1990-01-01') > CURDATE() then 'false' else 'true' end) as dvencimientoine,
+      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp, refclientes,reftipoparentesco
+      from dbasegurados where idasegurado =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+   function traerAseguradosPorClienteCompleto($id) {
+		$sql = "select idasegurado,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,
+      (case when DATEDIFF(CURDATE(), coalesce( emisioncomprobantedomicilio,'1990-01-01')) > 90 then 'true' else 'false' end) as demisioncomprobantedomicilio,
+      (case when DATEDIFF(CURDATE(),coalesce( emisionrfc,'1990-01-01')) > 90 then 'true' else 'false' end) as demisionrfc,
+      (case when coalesce( vencimientoine,'1990-01-01') > CURDATE() then 'false' else 'true' end) as dvencimientoine,
+      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp, refclientes,reftipoparentesco
+      from dbasegurados where refclientes =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbasegurados*/
+
+
+
+   /* PARA Beneficiarios */
+
+	function generaNroBeneficiario() {
+		$sql = "select max(idbeneficiario) from dbbeneficiarios";
+		$res = $this->query($sql,0);
+
+		if (mysql_num_rows($res) > 0) {
+			$idcliente = mysql_result($res,0,0);
+			return 'BEN'.substr('0000000'.$idcliente,-7);
+		}
+
+		return 'BEN0000001';
+	}
+
+	function insertarBeneficiarios($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes) {
+		$sql = "insert into dbbeneficiarios(idbeneficiario,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,emisioncomprobantedomicilio,emisionrfc,vencimientoine,idclienteinbursa,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,refclientes)
+		values ('',".$reftipopersonas.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$razonsocial."','".$domicilio."','".$telefonofijo."','".$telefonocelular."','".$email."','".$rfc."','".$ine."','".$this->generaNroBeneficiario()."',".$refusuarios.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."','".$emisioncomprobantedomicilio."','".$emisionrfc."','".$vencimientoine."','".$idclienteinbursa."','".$colonia."','".$municipio."','".$codigopostal."','".$edificio."','".$nroexterior."','".$nrointerior."','".$estado."','".$ciudad."','".$curp."',".$refclientes.")";
+
+		$res = $this->query($sql,1);
+		return $res;
+	}
+
+
+	function modificarBeneficiarios($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes) {
+		$sql = "update dbbeneficiarios
+		set
+		reftipopersonas = ".$reftipopersonas.",nombre = '".$nombre."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',razonsocial = '".$razonsocial."',domicilio = '".$domicilio."',telefonofijo = '".$telefonofijo."',telefonocelular = '".$telefonocelular."',email = '".$email."',rfc = '".$rfc."',ine = '".$ine."',numerocliente = '".$numerocliente."',refusuarios = ".$refusuarios.",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',emisioncomprobantedomicilio = '".$emisioncomprobantedomicilio."',emisionrfc = '".$emisionrfc."',vencimientoine = '".$vencimientoine."',idclienteinbursa = '".$idclienteinbursa."',colonia = '".$colonia."',municipio = '".$municipio."',codigopostal = '".$codigopostal."',edificio = '".$edificio."',nroexterior = '".$nroexterior."',nrointerior = '".$nrointerior."',estado = '".$estado."',ciudad = '".$ciudad."',curp = '".$curp."',refclientes = ".$refclientes." where idbeneficiario =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function modificarBeneficiariosInbursa($id,$idclienteinbursa) {
+		$sql = "update dbbeneficiarios
+		set
+		idclienteinbursa = '".$idclienteinbursa."' where idbeneficiario =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function modificarCampoParticularBeneficiarios($id,$campo,$valor) {
+		$sql = "update dbbeneficiarios
+		set
+		".$campo." = '".$valor."' where idbeneficiario =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function eliminarBeneficiarios($id) {
+		$sql = "delete from dbbeneficiarios where idbeneficiario =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerBeneficiariosClientesajax($length, $start, $busqueda,$colSort,$colSortDir, $idcliente) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (tip.tipopersona like '%".$busqueda."%' or c.nombre like '%".$busqueda."%' or c.apellidopaterno like '%".$busqueda."%' or c.apellidomaterno like '%".$busqueda."%' or c.nombre like '%".$busqueda."%' or c.email like '%".$busqueda."%' or c.razonsocial like '%".$busqueda."%' or c.telefonofijo like '%".$busqueda."%' or c.telefonocelular like '%".$busqueda."%' or c.numerocliente like '%".$busqueda."%')";
+		}
+
+		$sql = "select
+		c.idbeneficiario,
+		tip.tipopersona,
+		c.nombre,
+		c.apellidopaterno,
+		c.apellidomaterno,
+		c.razonsocial,
+		c.telefonofijo,
+		c.telefonocelular,
+		c.email,
+		c.numerocliente,
+		c.domicilio,
+		c.rfc,
+		c.ine,
+		c.refusuarios,
+		c.fechacrea,
+		c.fechamodi,
+		c.usuariocrea,
+		c.usuariomodi,
+		c.reftipopersonas
+		from dbbeneficiarios c
+		inner join tbtipopersonas tip ON tip.idtipopersona = c.reftipopersonas
+		where c.refclientes = ".$idcliente." ".$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+
+   function traerBeneficiariosajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or tip.tipopersona like '%".$busqueda."%' or c.nombre like '%".$busqueda."%' or c.apellidopaterno like '%".$busqueda."%' or c.apellidomaterno like '%".$busqueda."%' or c.nombre like '%".$busqueda."%' or c.email like '%".$busqueda."%' or c.razonsocial like '%".$busqueda."%' or c.telefonofijo like '%".$busqueda."%' or c.telefonocelular like '%".$busqueda."%' or c.numerocliente like '%".$busqueda."%'";
+		}
+
+		$sql = "select
+		c.idbeneficiario,
+      concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+		tip.tipopersona,
+		c.nombre,
+		c.apellidopaterno,
+		c.apellidomaterno,
+		c.razonsocial,
+		c.telefonofijo,
+		c.telefonocelular,
+		c.email,
+		c.numerocliente,
+		c.domicilio,
+		c.rfc,
+		c.ine,
+		c.refusuarios,
+		c.fechacrea,
+		c.fechamodi,
+		c.usuariocrea,
+		c.usuariomodi,
+		c.reftipopersonas
+		from dbbeneficiarios c
+		inner join tbtipopersonas tip ON tip.idtipopersona = c.reftipopersonas
+      inner join dbclientes cli ON cli.idcliente = c.refclientes
+		 ".$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+	function traeBeneficiarios() {
+		$sql = "select
+		c.idbeneficiario,
+		tip.tipopersona,
+		c.nombre,
+		c.apellidopaterno,
+		c.apellidomaterno,
+		c.razonsocial,
+		c.telefonofijo,
+		c.telefonocelular,
+		c.email,
+		c.numerocliente,
+		c.domicilio,
+		c.rfc,
+		c.ine,
+		c.refusuarios,
+		c.fechacrea,
+		c.fechamodi,
+		c.usuariocrea,
+		c.usuariomodi,
+		c.reftipopersonas,
+		concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) as nombrecompleto
+		from dbbeneficiarios c
+		inner join tbtipopersonas tip ON tip.idtipopersona = c.reftipopersonas
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function bBeneficiarios($busqueda,$idcliente) {
+		$sql = "select
+		c.idbeneficiario,
+		tip.tipopersona,
+		c.nombre,
+		c.apellidopaterno,
+		c.apellidomaterno,
+		c.razonsocial,
+		c.telefonofijo,
+		c.telefonocelular,
+		c.email,
+		c.numerocliente,
+		c.domicilio,
+		c.rfc,
+		c.ine,
+		c.refusuarios,
+		c.fechacrea,
+		c.fechamodi,
+		c.usuariocrea,
+		c.usuariomodi,
+		c.reftipopersonas,
+		concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) as nombrecompleto,
+		c.idclienteinbursa
+		from dbbeneficiarios c
+		inner join tbtipopersonas tip ON tip.idtipopersona = c.reftipopersonas
+		where c.refclientes = ".$idcliente." and concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) like '%".$busqueda."%'
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	function traerBeneficiariosPorId($id) {
+		$sql = "select idbeneficiario,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,refclientes from dbbeneficiarios where idbeneficiario =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerBeneficiariosPorUsuario($id) {
+		$sql = "select idbeneficiario,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,refclientes from dbbeneficiarios where refusuarios =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function traerBeneficiariosPorUsuarioCompleto($id) {
+		$sql = "select
+      idbeneficiario,reftipopersonas,nombre,apellidopaterno,apellidomaterno,
+      razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,
+      numerocliente,refusuarios,
+      fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa ,
+      concat(apellidopaterno, ' ', apellidomaterno, ' ', nombre) as nombrecompleto,
+      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp, refclientes
+      from dbbeneficiarios where refusuarios =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function traerBeneficiariosPorIdCompleto($id) {
+		$sql = "select idbeneficiario,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,
+      (case when DATEDIFF(CURDATE(), coalesce( emisioncomprobantedomicilio,'1990-01-01')) > 90 then 'true' else 'false' end) as demisioncomprobantedomicilio,
+      (case when DATEDIFF(CURDATE(),coalesce( emisionrfc,'1990-01-01')) > 90 then 'true' else 'false' end) as demisionrfc,
+      (case when coalesce( vencimientoine,'1990-01-01') > CURDATE() then 'false' else 'true' end) as dvencimientoine,
+      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp, refclientes
+      from dbbeneficiarios where idbeneficiario =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+   function traerBeneficiariosPorClienteCompleto($id) {
+		$sql = "select idbeneficiario,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,
+      (case when DATEDIFF(CURDATE(), coalesce( emisioncomprobantedomicilio,'1990-01-01')) > 90 then 'true' else 'false' end) as demisioncomprobantedomicilio,
+      (case when DATEDIFF(CURDATE(),coalesce( emisionrfc,'1990-01-01')) > 90 then 'true' else 'false' end) as demisionrfc,
+      (case when coalesce( vencimientoine,'1990-01-01') > CURDATE() then 'false' else 'true' end) as dvencimientoine,
+      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp, refclientes
+      from dbbeneficiarios where refclientes =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+	/* Fin */
+	/* /* Fin de la Tabla: dbbeneficiarios*/
 
 
 

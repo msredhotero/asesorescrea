@@ -127,7 +127,10 @@ $tablasAr	= array('rolhogar' => 'tbrolhogar',
 							'afiliados' => 'tbafiliados',
 							'origencomercio' => 'tborigencomercio',
 							'estadotransaccion' => 'tbestadotransaccion',
-							'ordenpago' => 'dbordenpago'
+							'ordenpago' => 'dbordenpago',
+							'mejorarcondiciones' => 'dbmejorarcondiciones',
+							'mejorarcondicionesarchivos' => 'dbmejorarcondicionesarchivos',
+							'tipoparentesco' => 'tbtipoparentesco'
 							);
 
 
@@ -225,7 +228,10 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'afiliados' => 'tbafiliados',
 								'origencomercio' => 'tborigencomercio',
 								'estadotransaccion' => 'tbestadotransaccion',
-								'ordenpago' => 'dbordenpago'
+								'ordenpago' => 'dbordenpago',
+								'mejorarcondiciones' => 'dbmejorarcondiciones',
+								'mejorarcondicionesarchivos' => 'dbmejorarcondicionesarchivos',
+								'tipoparentesco' => 'tbtipoparentesco'
 							);
 
 	$tablasArAux	= array('rolhogar' => 1,
@@ -320,7 +326,10 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'afiliados' => 1,
 								'origencomercio' => 1,
 								'estadotransaccion' => 1,
-								'ordenpago' => 1
+								'ordenpago' => 1,
+								'mejorarcondiciones' => 1,
+								'mejorarcondicionesarchivos' => 1,
+								'tipoparentesco' => 1
 							);
 
 	$inner= '';

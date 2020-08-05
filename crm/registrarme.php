@@ -3,18 +3,22 @@
 require 'includes/funcionesUsuarios.php';
 require 'includes/funcionesReferencias.php';
 require 'includes/funciones.php';
+require 'includes/validadores.php';
 
 session_start();
 
 $serviciosUsuario = new ServiciosUsuarios();
 $serviciosReferencias = new ServiciosReferencias();
 $serviciosFunciones 	= new Servicios();
+$serviciosValidador = new serviciosValidador();
 
 if (isset($_SESSION['usua_sahilices'])) {
   header('Location: dashboard/index.php');
 } else {
 
-  $error = '';
+  $arInput = array();
+
+  $error = false;
 
   $nombre           = $_POST['nombre'];
   $apellidopaterno  = $_POST['apellidopaterno'];
@@ -25,46 +29,76 @@ if (isset($_SESSION['usua_sahilices'])) {
   $sexo             = $_POST['sexo'];
   $codigopostal     = $_POST['codigo-postal'];
 
+   if ($nombre == '' ) {
+      array_push($arInput,array( 'lblerror' =>"* Debe completar el campo Nombre"));
+      $error = true;
+   }
+
+   if ($apellidopaterno == '' ) {
+      array_push($arInput,array( 'lblerror' =>"* Debe completar el campo Apellido Paterno"));
+      $error = true;
+   }
+
+   if ($apellidomaterno == '') {
+      array_push($arInput,array( 'lblerror' =>"* Debe completar el campo Apellido Materno"));
+      $error = true;
+   }
+
+   if ($email == '') {
+      array_push($arInput,array( 'lblerror' =>"* Debe completar el campo Correo Electronico"));
+      $error = true;
+   } else {
+      if ($serviciosValidador->validaEmail($email) === false) {
+         array_push($arInput,array( 'lblerror' =>"* Correo Electronico invalido"));
+         $error = true;
+      }
+   }
+
+
+
 
   $pass       = $serviciosReferencias->GUID();
 
   $existeEmail = $serviciosUsuario->existeUsuario($email);
 
   if ($existeEmail == 1) {
-     $error .= 'El Email ingresado ya existe!
-     ';
+     array_push($arInput,array( 'lblerror' =>"* El Email ingresado ya existe! "));
+
+     $error = true;
   }
 
-  if ($error == '') {
+  if ($error === false) {
      // todo ok
-     $refestadocivil = 1;
-     $rfc = '0';
-     $curp = '0';
-     $numerocliente = '0000';
-     $nacionalidad = 'Mexico';
-     $refpromotores = 0;
-     $refrolhogar = 1;
-     $reftipoclientes = 1;
-     $refentidadnacimiento = 1;
-     $fechacrea = date('Y-m-d');
-     $fechamodi = date('Y-m-d');
-     $usuariocrea = 'Web';
-     $usuariomodi = '';
+     $refusuarios = $serviciosUsuario->insertarUsuario($nombre,$pass,16,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
 
-     $numerocliente = $serviciosReferencias->generaNroCliente();
+      if ((integer)$refusuarios > 0) {
+         $fechacrea = date('Y-m-d');
+         $fechamodi = date('Y-m-d');
+         $usuariocrea = 'Web';
+         $usuariomodi = date('Y-m-d');
+
+         $numerocliente = $serviciosReferencias->generaNroCliente();
 
 
-     $res = $serviciosReferencias->insertarClientes(1,$nombre,$apellidopaterno,$apellidomaterno,'','','',$telefono,$email,'','',$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp);
+         $res = $serviciosReferencias->insertarClientes(1,$nombre,$apellidopaterno,$apellidomaterno,'','','',$telefono,$email,'','',$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,'','','',0,'','',$codigopostal,'','','','','','');
 
-     // empiezo la activacion del usuarios
-     $resActivacion = $serviciosUsuarios->registrarSocio($email, $pass, $apellidopaterno.' '.$apellidomaterno, $nombre, $res);
+         // empiezo la activacion del usuarios
+         $resActivacion = $serviciosUsuario->registrarCliente($email, $apellidopaterno.' '.$apellidomaterno, $nombre, $res, $refusuarios,$pass);
 
-     if ((integer)$resActivacion > 0) {
+         if ($resActivacion) {
 
-        echo '';
-     } else {
-        $error = 'Hubo un error al insertar datos ';
-     }
+            $error = false;
+         } else {
+            $error = true;
+
+            array_push($arInput,array( 'lblerror' =>"* Se genero un error en el sistema, intentelo nuevamente por favor. "));
+         }
+      } else {
+         $error = true;
+         array_push($arInput,array( 'lblerror' =>"* Se genero un error en el sistema, intentelo nuevamente por favor. "));
+      }
+
+
   }
 
 
@@ -320,182 +354,64 @@ jQuery(document).ready(function(){
                 		<div data-elementor-type="wp-post" data-elementor-id="7099" class="elementor elementor-7099" data-elementor-settings="[]">
 			<div class="elementor-inner">
 				<div class="elementor-section-wrap">
-							<section class="elementor-element elementor-element-1cc1ef4 elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-top-section" data-id="1cc1ef4" data-element_type="section">
-						<div class="elementor-container elementor-column-gap-default">
-				<div class="elementor-row">
-				<div class="elementor-element elementor-element-b4dabbd elementor-column elementor-col-66 elementor-top-column" data-id="b4dabbd" data-element_type="column">
-			<div class="elementor-column-wrap  elementor-element-populated">
-					<div class="elementor-widget-wrap">
-				<div class="elementor-element-custom_font_size elementor-element-custom_font_weight elementor-element-custom_color elementor-element elementor-element-3b0b2e1 elementor-widget elementor-widget-text-editor" data-id="3b0b2e1" data-element_type="widget" data-widget_type="text-editor.default">
-				<div class="elementor-widget-container">
-					<div class="elementor-text-editor elementor-clearfix"><p>Formulario de registro</p></div>
-				</div>
-				</div>
-				<div class="elementor-element elementor-element-2924ba8 elementor-widget elementor-widget-heading" data-id="2924ba8" data-element_type="widget" data-widget_type="heading.default">
-				<div class="elementor-widget-container">
-			<h2 class="elementor-heading-title elementor-size-default">Envíanos sus datos personales solicitados a continuación, para registrarte en nuestro sistema, y asesorarte sin compromiso con las mejores condiciones del mercado.</h2>		</div>
-				</div>
-						</div>
-			</div>
+		<section class="elementor-element elementor-element-1cc1ef4 elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-top-section" data-id="1cc1ef4" data-element_type="section" style="padding: 20px 15%;">
+			<!--<div class="elementor-container elementor-column-gap-default">-->
+		<div class="row">
+
+      <?php
+         //$error = false;
+         //$arInput = array();
+         //$nombre = 'Marcos';
+         //array_push($arInput,array( 'lblerror' =>"* Debe completar el campo Nombre"));
+         //array_push($arInput,array( 'lblerror' =>"* Debe completar el campo Apellido Paterno"));
+         if ($error) {
+      ?>
+
+         <h3>Lo sentimos, su registro no pudo ser procesado, por favor verifique los siguientes datos solicitados para poder finalizar con el proceso de Registro en la Plataforma de <b>ASESORES CREA</b>.</h3>
+      </div>
+
+         <?php
+
+         foreach ($arInput as $errores) {
+            echo '<div class="row" style="margin-top:10px; color:red;"><p>'.$errores['lblerror'].'</p></div>';
+         }
+
+         ?>
+
+      <div class="row">
+         <p><bottom class="wpcf7-form-control" onClick="window.location='registro2.html'" style="display: inline-block;
+          transition: background-color 300ms;
+          color: #fff;
+          border-radius: 0;
+          outline: none;
+          width: auto;
+          height: 49px;
+          cursor: pointer;
+          padding: 11px 25px;
+          line-height: 23px;
+          margin: 0 0 25px 0;
+          font-size: 16px;
+          font-weight: 500;
+          text-transform: none;
+          border: none;background-color: #cfb795;">Volver</bottom></p>
+
+      <?php } else { ?>
+
+         <div class="row">
+            <h3>Felicitaciones <b><?php echo $nombre; ?></b>, su registro fue procesado correctamente, por favor verifique su casilla de correo para poder acceder a nuestra Plataforma de <b>ASESORES CREA</b>.</h3>
+         </div>
+         <div class="row" style="text-align:center; margin-bottom:20px; margin-top:30px;">
+            <img src="imagenes/success-png-icon-7.png" width="18%"/>
+         </div>
+      <?php } ?>
+
+
+
 		</div>
-				<div class="elementor-element elementor-element-24acb3c elementor-column elementor-col-33 elementor-top-column" data-id="24acb3c" data-element_type="column">
-			<div class="elementor-column-wrap  elementor-element-populated">
-					<div class="elementor-widget-wrap">
-				<div class="elementor-element elementor-element-3ad2a99 elementor-widget elementor-widget-shortcode" data-id="3ad2a99" data-element_type="widget" data-widget_type="shortcode.default">
-				<div class="elementor-widget-container">
-					<div class="elementor-shortcode"><div role="form" class="wpcf7" id="wpcf7-f9-p7099-o1" lang="es-ES" dir="ltr">
-<div class="screen-reader-response" aria-live="polite"></div>
-<form action="registrarme.php" method="post" class="wpcf7-form" novalidate="novalidate">
-<div style="display: none;">
-<input type="hidden" name="_wpcf7" value="9" />
-<input type="hidden" name="_wpcf7_version" value="5.1.9" />
-<input type="hidden" name="_wpcf7_locale" value="es_ES" />
-<input type="hidden" name="_wpcf7_unit_tag" value="wpcf7-f9-p7099-o1" />
-<input type="hidden" name="_wpcf7_container_post" value="7099" />
-</div>
-<p><label> Nombre<br />
-    <span class="wpcf7-form-control-wrap nombre"><input type="text" name="nombre" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" /></span> </label></p>
-<p><label> Apellido Paterno<br />
-    <span class="wpcf7-form-control-wrap apellido"><input type="text" name="apellidopaterno" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" /></span> </label></p>
-<p><label> Apellido Materno<br />
-    <span class="wpcf7-form-control-wrap apellido"><input type="text" name="apellidomaterno" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" /></span> </label></p>
-<p><label> Correo electrónico<br />
-    <span class="wpcf7-form-control-wrap correo-eletronico"><input type="email" name="correo-eletronico" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-email wpcf7-validates-as-required wpcf7-validates-as-email" aria-required="true" aria-invalid="false" /></span> </label></p>
-<p><label> Fecha de nacimiento<br />
-    <span class="wpcf7-form-control-wrap fecha-nacimiento"><input type="date" name="fecha-nacimiento" value="" class="wpcf7-form-control wpcf7-date wpcf7-validates-as-required wpcf7-validates-as-date" aria-required="true" aria-invalid="false" /></span> </label></p>
-<p><label> Teléfono<br />
-    <span class="wpcf7-form-control-wrap telefono"><input type="tel" name="telefono" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-tel wpcf7-validates-as-required wpcf7-validates-as-tel" aria-required="true" aria-invalid="false" /></span> </label></p>
-<p><label> Sexo<br />
-    <span class="wpcf7-form-control-wrap sexo"><input type="text" name="sexo" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" /></span> </label></p>
-<p><label> Código postal<br />
-    <span class="wpcf7-form-control-wrap codigo-postal"><input type="text" name="codigo-postal" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" /></span> </label></p>
-<p><input type="submit" value="Enviar" class="wpcf7-form-control wpcf7-submit" /></p>
-<div class="wpcf7-response-output wpcf7-display-none" aria-hidden="true"></div></form></div></div>
-				</div>
-				</div>
-						</div>
-			</div>
-		</div>
-						</div>
-			</div>
-		</section>
-				<section class="elementor-element elementor-element-4db6280 elementor-section-stretched elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-top-section" data-id="4db6280" data-element_type="section" data-settings="{&quot;stretch_section&quot;:&quot;section-stretched&quot;,&quot;background_background&quot;:&quot;classic&quot;}">
-							<div class="elementor-background-overlay"></div>
-							<div class="elementor-container elementor-column-gap-default">
-				<div class="elementor-row">
-				<div class="elementor-element elementor-element-d2372be elementor-column elementor-col-100 elementor-top-column" data-id="d2372be" data-element_type="column">
-			<div class="elementor-column-wrap  elementor-element-populated">
-					<div class="elementor-widget-wrap">
-				<div class="elementor-element elementor-element-2f47c96 elementor-widget elementor-widget-spacer" data-id="2f47c96" data-element_type="widget" data-widget_type="spacer.default">
-				<div class="elementor-widget-container">
-					<div class="elementor-spacer">
-			<div class="elementor-spacer-inner"></div>
-		</div>
-				</div>
-				</div>
-				<div class="elementor-element elementor-element-ff45018 elementor-widget elementor-widget-spacer" data-id="ff45018" data-element_type="widget" data-widget_type="spacer.default">
-				<div class="elementor-widget-container">
-					<div class="elementor-spacer">
-			<div class="elementor-spacer-inner"></div>
-		</div>
-				</div>
-				</div>
-						</div>
-			</div>
-		</div>
-						</div>
-			</div>
-		</section>
-				<section class="elementor-element elementor-element-c810271 elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-top-section" data-id="c810271" data-element_type="section">
-						<div class="elementor-container elementor-column-gap-default">
-				<div class="elementor-row">
-				<div class="elementor-element elementor-element-93cadb6 elementor-column elementor-col-100 elementor-top-column" data-id="93cadb6" data-element_type="column">
-			<div class="elementor-column-wrap  elementor-element-populated">
-					<div class="elementor-widget-wrap">
-				<section class="elementor-element elementor-element-19a3e68 elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-inner-section" data-id="19a3e68" data-element_type="section" data-settings="{&quot;background_background&quot;:&quot;classic&quot;}">
-							<div class="elementor-background-overlay"></div>
-							<div class="elementor-container elementor-column-gap-default">
-				<div class="elementor-row">
-				<div class="elementor-element elementor-element-7e9f375 elementor-column elementor-col-100 elementor-inner-column" data-id="7e9f375" data-element_type="column">
-			<div class="elementor-column-wrap  elementor-element-populated">
-					<div class="elementor-widget-wrap">
-				<div class="elementor-element elementor-element-13c2b03 elementor-widget elementor-widget-spacer" data-id="13c2b03" data-element_type="widget" data-widget_type="spacer.default">
-				<div class="elementor-widget-container">
-					<div class="elementor-spacer">
-			<div class="elementor-spacer-inner"></div>
-		</div>
-				</div>
-				</div>
-				<div class="elementor-element-custom_font_size elementor-element-custom_font_size_mobile elementor-element-custom_line_height elementor-element-custom_line_height_mobile elementor-element-custom_font_weight elementor-element-custom_color elementor-element elementor-element-0c0116e elementor-widget elementor-widget-text-editor" data-id="0c0116e" data-element_type="widget" data-widget_type="text-editor.default">
-				<div class="elementor-widget-container">
-					<div class="elementor-text-editor elementor-clearfix"><h2 style="text-align: center;">Ponte en contacto con nosotros</h2></div>
-				</div>
-				</div>
-				<div class="elementor-element elementor-element-1f90b06 elementor-widget elementor-widget-divider" data-id="1f90b06" data-element_type="widget" data-widget_type="divider.default">
-				<div class="elementor-widget-container">
-					<div class="elementor-divider">
-			<span class="elementor-divider-separator">
-						</span>
-		</div>
-				</div>
-				</div>
-				<div class="elementor-element elementor-element-adce550 elementor-widget elementor-widget-spacer" data-id="adce550" data-element_type="widget" data-widget_type="spacer.default">
-				<div class="elementor-widget-container">
-					<div class="elementor-spacer">
-			<div class="elementor-spacer-inner"></div>
-		</div>
-				</div>
-				</div>
-				<div class="elementor-element-custom_font_size elementor-element-custom_font_weight elementor-element-custom_color elementor-element elementor-element-d73edc7 elementor-widget elementor-widget-text-editor" data-id="d73edc7" data-element_type="widget" data-widget_type="text-editor.default">
-				<div class="elementor-widget-container">
-					<div class="elementor-text-editor elementor-clearfix"><p><span>Te asesoraremos sobre las coberturas que puedes contratar para buscar la mejor propuesta para ti.</span></p></div>
-				</div>
-				</div>
-				<div class="elementor-element-custom_color elementor-element elementor-element-9fd8e29 elementor-widget elementor-widget-text-editor" data-id="9fd8e29" data-element_type="widget" data-widget_type="text-editor.default">
-				<div class="elementor-widget-container">
-					<div class="elementor-text-editor elementor-clearfix"><h3>Teléfono: <a href="tel:5551350259">(55) 5135.0259</a> | Mail: <a href="mailto:consulta@asesorescrea.com">consulta@asesorescrea.com</a></h3></div>
-				</div>
-				</div>
-				<div class="elementor-element elementor-element-605d74f elementor-widget elementor-widget-spacer" data-id="605d74f" data-element_type="widget" data-widget_type="spacer.default">
-				<div class="elementor-widget-container">
-					<div class="elementor-spacer">
-			<div class="elementor-spacer-inner"></div>
-		</div>
-				</div>
-				</div>
-				<div class="elementor-element elementor-element-def996b elementor-widget elementor-widget-spacer" data-id="def996b" data-element_type="widget" data-widget_type="spacer.default">
-				<div class="elementor-widget-container">
-					<div class="elementor-spacer">
-			<div class="elementor-spacer-inner"></div>
-		</div>
-				</div>
-				</div>
-						</div>
-			</div>
-		</div>
-						</div>
-			</div>
-		</section>
-				<div class="elementor-element elementor-element-ac36493 elementor-widget elementor-widget-spacer" data-id="ac36493" data-element_type="widget" data-widget_type="spacer.default">
-				<div class="elementor-widget-container">
-					<div class="elementor-spacer">
-			<div class="elementor-spacer-inner"></div>
-		</div>
-				</div>
-				</div>
-				<div class="elementor-element elementor-element-41f7eb0 elementor-widget elementor-widget-spacer" data-id="41f7eb0" data-element_type="widget" data-widget_type="spacer.default">
-				<div class="elementor-widget-container">
-					<div class="elementor-spacer">
-			<div class="elementor-spacer-inner"></div>
-		</div>
-				</div>
-				</div>
-						</div>
-			</div>
-		</div>
-						</div>
-			</div>
-		</section>
+			<!--</div>-->
+	</section>
+
+
 						</div>
 			</div>
 		</div>
@@ -510,112 +426,11 @@ jQuery(document).ready(function(){
 
 	        </div><!-- .main_wrapper -->
 	</div><!-- .site_wrapper -->
-	<div class='back_to_top_container'><a href='javascript:void(0)' class='gt3_back2top' id='back_to_top'></a></div><footer class='main_footer fadeOnLoad clearfix' style=" background-color :#f9f9f9;" id='footer'><div class='pre_footer align-left' style=" background-color :#2b3034;"><div class='row' style="padding-top:40px;padding-bottom:40px;"><div class='container'><div class='row'><div class='span12'><div style="float: left; width: 100%; max-width: 390px; padding: 10px 0;">	<style>
-		.widget_mailchimpsf_widget .widget-title {
-		line-height: 1.4em;
-		margin-bottom: 0.75em;
-	}
-	#mc_subheader {
-		line-height: 1.25em;
-		margin-bottom: 18px;
-	}
-	.mc_merge_var {
-		margin-bottom: 1.0em;
-	}
-	.mc_var_label,
-	.mc_interest_label {
-		display: block;
-		margin-bottom: 0.5em;
-	}
-	.mc_input {
-		-moz-box-sizing: border-box;
-		-webkit-box-sizing: border-box;
-		box-sizing: border-box;
-		width: 100%;
-	}
-	.mc_input.mc_phone {
-		width: auto;
-	}
-	select.mc_select {
-		margin-top: 0.5em;
-		width: 100%;
-	}
-	.mc_address_label {
-		margin-top: 1.0em;
-		margin-bottom: 0.5em;
-		display: block;
-	}
-	.mc_address_label ~ select {
-		width: 100%;
-	}
-	.mc_list li {
-		list-style: none;
-		background: none !important;
-	}
-	.mc_interests_header {
-		margin-top: 1.0em;
-		margin-bottom: 0.5em;
-	}
-	.mc_interest label,
-	.mc_interest input {
-		margin-bottom: 0.4em;
-	}
-	#mc_signup_submit {
-		margin-top: 1.5em;
-		width: 80%;
-	}
-	#mc_unsub_link a {
-		font-size: 0.75em;
-	}
-	#mc_unsub_link {
-		margin-top: 1.0em;
-	}
-	.mc_header_address,
-	.mc_email_format {
-		display: block;
-		font-weight: bold;
-		margin-top: 1.0em;
-		margin-bottom: 0.5em;
-	}
-	.mc_email_options {
-		margin-top: 0.5em;
-	}
-	.mc_email_type {
-		padding-left: 4px;
-	}
-	</style>
 
-<div id="mc_signup">
-	<form method="post" action="#mc_signup" id="mc_signup_form">
-		<input type="hidden" id="mc_submit_type" name="mc_submit_type" value="html" />
-		<input type="hidden" name="mcsf_action" value="mc_submit_signup_form" />
-		<input type="hidden" id="_mc_submit_signup_form_nonce" name="_mc_submit_signup_form_nonce" value="0500fae5cb" />
+   <div class='back_to_top_container'><a href='javascript:void(0)' class='gt3_back2top' id='back_to_top'></a></div>
 
-	<div class="mc_form_inside">
-
-		<div class="updated" id="mc_message">
-					</div><!-- /mc_message -->
-
-
-<div class="mc_merge_var">
-		<label for="mc_mv_EMAIL" class="mc_var_label mc_header mc_header_email">Email Address</label>
-	<input type="text" size="18" placeholder="" name="mc_mv_EMAIL" id="mc_mv_EMAIL" class="mc_input"/>
-</div><!-- /mc_merge_var --><div style="display:none;"></div><div style="display:none;"></div>
-		<div class="mc_signup_submit">
-			<input type="submit" name="mc_signup_submit" id="mc_signup_submit" value="Suscribirse" class="button" />
-		</div><!-- /mc_signup_submit -->
-
-
-					<br/>
-			<div id="mc_display_rewards" align="center">
-				powered by <a href="http://www.mailchimp.com/affiliates/?aid=86bba6102eca960f1baec8762&#038;afl=1">MailChimp</a>!
-			</div><!-- /mc_display_rewards -->
-
-	</div><!-- /mc_form_inside -->
-	</form><!-- /mc_signup_form -->
-</div><!-- /mc_signup_container -->
-	</div>
-<div style="float: right; padding: 19px 0;"><a class="gt3_icon_link" href="#" target="_blank" style="font-size: 18px; color: inherit; margin-right: 20px;" rel="noopener"><i class="fa fa-linkedin"> </i></a> <a class="gt3_icon_link" href="#" target="_blank" style="font-size: 18px; color: inherit; margin-right: 20px;" rel="noopener"><i class="fa fa-twitter"> </i></a> <a class="gt3_icon_link" href="#" target="_blank" style="font-size: 18px; color: inherit; margin-right: 20px;" rel="noopener"><i class="fa fa-facebook"> </i></a> <a class="gt3_icon_link" href="#" target="_blank" style="font-size: 18px; color: inherit;" rel="noopener"><i class="fa fa-instagram"> </i></a></div></div></div></div></div></div><div class='top_footer column_4 align-left'><div class='container'><div class='row' style="padding-top:70px;padding-bottom:76px;"><div class='span3'><div id="text-8" class="widget gt3_widget widget_text">			<div class="textwidget"><p><img class="wp-image-6266 size-full aligncenter" src="https://asesorescrea.com/wp-content/uploads/2020/06/Asesores-CREA-Vertical-Crema-Oscuro.png" alt="Asesores CREA" width="180" height="180" /></p>
+   <footer class='main_footer fadeOnLoad clearfix' style=" background-color :#f9f9f9;" id='footer'>
+      <div class='top_footer column_4 align-left'><div class='container'><div class='row' style="padding-top:70px;padding-bottom:76px;"><div class='span3'><div id="text-8" class="widget gt3_widget widget_text">			<div class="textwidget"><p><img class="wp-image-6266 size-full aligncenter" src="https://asesorescrea.com/wp-content/uploads/2020/06/Asesores-CREA-Vertical-Crema-Oscuro.png" alt="Asesores CREA" width="180" height="180" /></p>
 </div>
 		</div></div><div class='span3'><div id="text-10" class="widget gt3_widget widget_text"><h4 class="widget-title">EMPRESAS RELACIONADAS</h4>			<div class="textwidget"><p><a href="#">Financiera CREA</a></p>
 <p><a href="#">Grupo Foncerrada y Javelly</a></p>

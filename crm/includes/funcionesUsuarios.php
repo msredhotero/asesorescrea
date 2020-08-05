@@ -466,7 +466,7 @@ function enviarEmail($destinatario,$asunto,$cuerpo, $referencia='') {
    //dirección del remitente
    $headers .= utf8_decode("From: ASESORES CREA <info@asesorescrea.com>\r\n");
 
-	mail($destinatario,$asunto,$cuerpo,$headers);
+	return mail($destinatario,$asunto,$cuerpo,$headers);
 }
 
 
@@ -477,14 +477,16 @@ function insertarUsuario($usuario,$password,$refroles,$email,$nombrecompleto) {
 				password,
 				refroles,
 				email,
-				nombrecompleto)
+				nombrecompleto,
+            activo)
 			VALUES
 				(null,
 				'".($usuario)."',
 				'".($password)."',
 				".$refroles.",
 				'".($email)."',
-				'".($nombrecompleto)."')";
+				'".($nombrecompleto)."',
+            '1')";
 	if ($this->existeUsuario($email) == true) {
 		return "Ya existe el usuario";
 	}
@@ -591,7 +593,7 @@ function registrarSocio($email, $password,$apellido, $nombre,$refcliente) {
 }
 
 
-function registrarCliente($email, $password,$apellido, $nombre,$refcliente) {
+function registrarCliente($email,$apellido, $nombre,$refcliente,$refusuarios,$pass) {
 
 	$token = $this->GUID();
 	$cuerpo = '';
@@ -600,46 +602,29 @@ function registrarCliente($email, $password,$apellido, $nombre,$refcliente) {
 	date_add($fecha, date_interval_create_from_date_string('30 days'));
 	$fechaprogramada =  date_format($fecha, 'Y-m-d');
 
-   $cuerpo .= '<img src="http://asesorescrea.com/img/logo.png" alt="RIDERZ" width="190">';
+   $cuerpo .= '<img src="https://asesorescrea.com/wp-content/uploads/2020/06/Asesores-CREA-horizontal-blanco_.png" alt="ASESORESCREA" width="190">';
 
    $cuerpo .= '<h2>¡Bienvenido a Asesores CREA!</h2>';
 
+   $cuerpo .= '<p>Hola, '.$nombre.'</p>';
 
-   $cuerpo .= '<p>Usa el siguente <a href="http://asesorescrea.com/desarrollo/crm/activacion.php?token='.$token.'" target="_blank">enlace</a> para confirmar tu cuenta.</p>';
+   $cuerpo .= '<p>Accede a las características únicas del portal por medio de tu cuenta de <b>ASESORES CREA</b>. Tus datos de la cuenta son:</p>';
+
+   $cuerpo .= '<h5>Éste es tu nombre de usuario: '.$email.'</h5>';
+
+   $cuerpo .= '<h5>Contraseña: '.$pass.'</h5>';
 
 
-	$sql = "INSERT INTO dbusuarios
-				(idusuario,
-				usuario,
-				password,
-				refroles,
-				email,
-				nombrecompleto,
-				activo)
-			VALUES
-				(null,
-				'".$apellido.' '.$nombre."',
-				'".$password."',
-				16,
-				'".$email."',
-				'".$apellido.' '.$nombre."',
-				0)";
+   $cuerpo .= '<p>Usa el siguente <a href="https://asesorescrea.com/desarrollo/crm/" target="_blank">enlace</a> para acceder.</p>';
 
-	$res = $this->query($sql,1);
 
-   if ($res == false) {
-		return 'Error al insertar datos ';
-	} else {
-		$this->insertarActivacionusuarios($res,$token,'','');
 
-      $sqlUpdateRelacion = "update dbclientes set refusuarios = ".$res." where idcliente =".$refcliente;
-      // actualizo la relacion cliente y usuario
-      $resRelacion = $this->query($sqlUpdateRelacion,0);
+	//$res = $this->insertarActivacionusuarios($refusuarios,$token,'','');
 
-		$retorno = $this->enviarEmail($email,'Alta de Usuario',utf8_decode($cuerpo));
+	$retorno = $this->enviarEmail($email,'Alta de Usuario',utf8_decode($cuerpo));
 
-		return $res;
-	}
+	return $retorno;
+
 }
 
 

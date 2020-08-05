@@ -584,7 +584,7 @@ class Servicios {
 
 							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:'.$lblOculta.'">
 								<label for="'.$label.'" class="control-label" style="text-align:left">'.ucwords($label).' '.$lblObligatorioAsterisco.'</label>
-								<div class="input-group">
+								<div class="form-group input-group">
                            <span class="input-group-addon">$</span>
                            <div class="form-line">
                               <input type="text" class="form-control" id="'.strtolower($row[0]).'" name="'.strtolower($row[0]).'" value="" '.$lblObligatorio.'>
@@ -601,7 +601,7 @@ class Servicios {
 
 							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($row[0]).'" style="display:'.$lblOculta.'">
 								<label for="'.$label.'" class="control-label" style="text-align:left">'.ucwords($label).' '.$lblObligatorioAsterisco.'</label>
-								<div class="input-group">
+								<div class="form-group input-group">
                            <span class="input-group-addon">$</span>
                            <div class="form-line">
                               <input type="text" class="form-control" id="'.strtolower($row[0]).'" name="'.strtolower($row[0]).'" value="" '.$lblObligatorio.'>
@@ -659,18 +659,13 @@ class Servicios {
 
 								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 								<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.' '.$lblObligatorioAsterisco.'</label>
-								<div class="input-group col-md-12">
-									<select class="form-control" id="'.strtolower($campo).'" name="'.strtolower($campo).'" '.$lblObligatorio.'>
-
-											';
+								<div class="form-group input-group col-md-12">
+									<div class="form-line">
+									<select class="form-control" id="'.strtolower($campo).'" name="'.strtolower($campo).'" '.$lblObligatorio.'>';
 
 								$form	=	$form.$option;
 
-								$form	=	$form.'</select>
-								</div>
-								</div>
-
-								';
+								$form	=	$form.'</select></div></div></div>';
 							}
 
 						} else {
@@ -803,7 +798,7 @@ class Servicios {
 														$form	=	$form.'
 														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 															<label class="form-label">'.$label.' '.$lblObligatorioAsterisco.'</label>
-															<div class="form-group">
+															<div class="form-group input-group">
 																<div class="form-line">
 																	<input type="number" class="form-control" id="'.$campo.'" name="'.$campo.'" '.$lblObligatorio.'/>
 
@@ -1391,7 +1386,7 @@ class Servicios {
 
 						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($row[0]).'" style="display:'.$lblOculta.'">
 							<label for="'.$label.'" class="control-label" style="text-align:left">'.ucwords($label).' '.$lblObligatorioAsterisco.'</label>
-							<div class="input-group">
+							<div class="form-group input-group">
                         <span class="input-group-addon">$</span>
                         <div class="form-line">
                            <input type="text" class="form-control" id="'.strtolower($row[0]).'" name="'.strtolower($row[0]).'" value="'.mysql_result($resMod,0,$row[0]).'" '.$lblObligatorio.'>
@@ -1411,19 +1406,15 @@ class Servicios {
 
 							$form	=	$form.'
 
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 margTop  frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 									<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.' '.$lblObligatorioAsterisco.'</label>
-									<select class="form-control show-tick" id="'.strtolower($campo).'" name="'.strtolower($campo).'">
-
-											';
+									<div class="form-group input-group">
+									<div class="form-line">
+									<select class="form-control" id="'.strtolower($campo).'" name="'.strtolower($campo).'">';
 
 								$form	=	$form.$option;
 
-								$form	=	$form.'</select>
-
-								</div>
-
-								';
+								$form	=	$form.'</select></div></div></div>';
 
 						} else {
 
@@ -1466,7 +1457,7 @@ class Servicios {
 
 									$form	=	$form.'
 
-									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12  frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
+									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 										 <b>'.$label.' '.$lblObligatorioAsterisco.'</b>
 										 <div class="input-group">
 											  <span class="input-group-addon">
@@ -1533,32 +1524,28 @@ class Servicios {
 
 										} else {
 
-											if ($row[1] == 'MEDIUMTEXT') {
-											$label = ucwords($label);
-											$campo = strtolower($row[0]);
+											if (($row[1] == 'MEDIUMTEXT') || ($row[1] == 'text')) {
+												$label = ucwords($label);
+												$campo = strtolower($row[0]);
 
-											$form	=	$form.'
+												$form	=	$form.'
 
-											<div class="form-group col-md-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
-												<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.' '.$lblObligatorioAsterisco.'</label>
-												<div class="input-group col-md-12">
-													<textarea name="'.$campo.'" id="'.$campo.'" rows="200" cols="160">
-														Ingrese la noticia.
-													</textarea>
-
+												<div class="form-group col-xs-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
+													<label for="'.$campo.'" class="control-label" style="text-align:left">'.$label.' '.$lblObligatorioAsterisco.'</label>
+													<div class="input-group col-md-12">
+														<textarea class="modDetalle" name="'.$campo.'" id="'.$campo.'">'.(mysql_result($resMod,0,$row[0])).'</textarea>
+													</div>
 
 												</div>
 
-											</div>
-
-											';
+												';
 
 											} else {
 												$label = ucwords($label);
 												$campo = strtolower($row[0]);
 
 												$form	=	$form.'
-												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 margTop frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
+												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($campo).'" style="display:'.$lblOculta.'">
 													<label class="form-label">'.$label.' '.$lblObligatorioAsterisco.'</label>
 													<div class="form-group">
 														<div class="form-line">

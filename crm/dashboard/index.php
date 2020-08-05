@@ -143,6 +143,9 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 		$resCliente = $serviciosReferencias->traerClientesPorUsuarioCompleto($_SESSION['usuaid_sahilices']);
 
 		$nombrecompleto = mysql_result($resCliente,0,'nombrecompleto');
+
+		$resProductosVenta = $serviciosReferencias->traerProductosVentaEnLinea();
+		$resProductosCotizaciones = $serviciosReferencias->traerProductosCotizaEnLinea();
 	}
 
 }
@@ -519,7 +522,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 						<div class="card ">
 							<div class="header bg-blue">
 								<h2 style="color:#fff">
-									ASESORES CREA
+									DASHBOARD
 								</h2>
 								<ul class="header-dropdown m-r--5">
 									<li class="dropdown">
@@ -535,10 +538,70 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 							<div class="body table-responsive">
 								<form class="form" id="formFacturas">
 									<?php if ($_SESSION['idroll_sahilices'] == 16) { ?>
-										<h3>Bienvenido a la Plataforma de Asesores Crea, <?php echo strtoupper($nombrecompleto); ?></h3>
+										<h3>Hola, <?php echo strtoupper($nombrecompleto); ?></h3>
+										<hr>
+
+										<div class="row">
+											<div class="col-xs-4">
+									         <div class="card">
+										         <div class="header bg-blue">
+										            <h4 class="my-0 font-weight-normal">Comprar en Línea</h4>
+										         </div>
+									         	<div class="body table-responsive">
+													<?php while ($rowV = mysql_fetch_array($resProductosVenta)) { ?>
+										            <h1 class="card-title pricing-card-title">$<?php echo $rowV['precio']; ?> <small class="text-muted">/al año</small></h1>
+										            <h4><?php echo $rowV['producto']; ?></h4>
+										            <?php echo $rowV['detalle']; ?>
+										            <button type="button" class="btn btn-lg btn-block btn-success" onclick="window.location='venta/new.php?producto=<?php echo $rowV['idproducto']; ?>'">COMPRAR</button>
+														<hr>
+													<?php } ?>
+									            </div>
+									         </div>
+										   </div>
+
+											<div class="col-xs-4">
+									        <div class="card mb-4 box-shadow">
+									          <div class="header bg-blue">
+									            <h4 class="my-0 font-weight-normal">Cotizar un producto Nuevo</h4>
+									          </div>
+									          <div class="body table-responsive">
+													 <?php while ($rowV = mysql_fetch_array($resProductosCotizaciones)) { ?>
+ 										            <h1 class="card-title pricing-card-title"><?php echo $rowV['producto']; ?></h1>
+ 										            <?php echo $rowV['detalle']; ?>
+ 										            <button type="button" class="btn btn-lg btn-block bg-cyan" onclick="window.location='venta/new.php?producto=<?php echo $rowV['idproducto']; ?>'">SOLICITAR COTIZACION</button>
+ 														<hr>
+ 													<?php } ?>
+									          </div>
+									        </div>
+										  </div>
+										  <div class="col-xs-4">
+									        <div class="card mb-4 box-shadow">
+									          <div class="header bg-blue">
+									            <h4 class="my-0 font-weight-normal">Mejora tus condiciones</h4>
+									          </div>
+									          <div class="body table-responsive">
+
+									            <h4>Beneficios de suscribir tu póliza en Asesores CREA</h4>
+									            <ul class="list-unstyled mt-3 mb-4">
+									              <li>1.- Te asesoramos sin costo sobre las condiciones que actualmente tienes contratada.</li>
+									              <li>2.- Contamos con un area de siniestros 24/7, para apoyarte en cualquier eventualidad.</li>
+									              <li>3.- Ofrecemos el mejor costo posible.</li>
+									            </ul>
+													<h5>Adjunta tu póliza actual</h5>
+													<h5>Revisamos tus condiciones</h5>
+													<h5>Mejoramos tu póliza</h5>
+									            <button type="button" class="btn btn-lg btn-block bg-orange" onclick="window.location='mejorarcondiciones/'">MEJORAR CONDICIONES</button>
+									          </div>
+									        </div>
+									      </div>
+
+
+										</div>
+										<hr>
 										<h4>Gracias por unirte a nuestra plataforma y confiar en nosostros.</h4>
 										<p>Puedes contactarnos en el Tel fijo: <b><span style="color:#5DC1FD;">55 51 35 02 59</span></b></p>
 										<p>Correo: <a href="mailto:ventas@asesorescrea.com" style="color:#5DC1FD !important;"><b>ventas@asesorescrea.com</b></a></p>
+
 									<?php }  else { ?>
 									<h3>Bienvenido al CRM de Asesores Crea</h3>
 									<p>Aqui usted encontrara avisos importantes sobre su estado en el Proceso de Reclutamiento</p>
