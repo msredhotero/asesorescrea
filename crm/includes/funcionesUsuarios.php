@@ -550,7 +550,7 @@ function registrarSocio($email, $password,$apellido, $nombre,$refcliente) {
 	date_add($fecha, date_interval_create_from_date_string('30 days'));
 	$fechaprogramada =  date_format($fecha, 'Y-m-d');
 
-   $cuerpo .= '<img src="http://asesorescrea.com/img/logo.png" alt="RIDERZ" width="190">';
+   $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/logo.png" alt="RIDERZ" width="190">';
 
    $cuerpo .= '<h2>¡Bienvenido a Asesores CREA!</h2>';
 
@@ -602,7 +602,7 @@ function registrarCliente($email,$apellido, $nombre,$refcliente,$refusuarios,$pa
 	date_add($fecha, date_interval_create_from_date_string('30 days'));
 	$fechaprogramada =  date_format($fecha, 'Y-m-d');
 
-   $cuerpo .= '<img src="https://asesorescrea.com/wp-content/uploads/2020/06/Asesores-CREA-horizontal-blanco_.png" alt="ASESORESCREA" width="190">';
+   $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/logo.png" alt="ASESORESCREA" width="190">';
 
    $cuerpo .= '<h2>¡Bienvenido a Asesores CREA!</h2>';
 
