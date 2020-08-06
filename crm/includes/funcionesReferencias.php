@@ -10896,18 +10896,10 @@ return $res;
 
 		$count = 0;
 
-		$sqlcount = "SELECT
-						COUNT(*) AS cantidad
-					FROM
-						dbpostulantes p
-						inner join dbesquemadocumentosestados ese on ese.refesquemareclutamiento = p.refesquemareclutamiento and p.idpostulante = ".$idpostulante."
-						inner join dbdocumentaciones d on d.iddocumentacion = ese.refdocumentaciones
-					WHERE
-						ese.refestadopostulantes in (8)
-						and d.obligatoria = '1'";
-		$resCount = $this->query($sqlcount,0);
+      $resPostulante = $this->traerPostulantesPorId($idpostulante);
 
-		$count = mysql_result($resCount,0,0);
+
+
 
 		// compruebo que haya cargado los datos en postulantes
 		$sqlPrimero = "SELECT
@@ -10928,28 +10920,88 @@ return $res;
 			$apruebaPrimero = 1;
 		}
 
-		// compruebo que haya cargado las documentaciones
-		$sqlSegundo = "SELECT
-						COUNT(*) AS documentacionesaceptadas
-					FROM
-						dbdocumentacionasesores da
-						inner join dbdocumentaciones d on d.iddocumentacion = da.refdocumentaciones
-						inner join dbpostulantes p on p.idpostulante = da.refpostulantes
-						inner join dbesquemadocumentosestados ese on ese.refesquemareclutamiento = p.refesquemareclutamiento
-						and ese.refdocumentaciones = d.iddocumentacion
-					WHERE
-						da.refpostulantes = ".$idpostulante."
-						AND ese.refestadopostulantes in (8)
-						and d.obligatoria = '1'
-						AND da.refestadodocumentaciones in (5,6)";
 
-		$resSegundo = $this->query($sqlSegundo,0);
+      // si es origende javelly descarto codigo etica, carta laborar en gobierno, contrato firma 3, formato firma y carta consar
+      if (mysql_result($resPostulante,0,'reforigenreclutamiento') == 2) {
+         $sqlcount = "SELECT
+   						COUNT(*) AS cantidad
+   					FROM
+   						dbpostulantes p
+   						inner join dbesquemadocumentosestados ese on ese.refesquemareclutamiento = p.refesquemareclutamiento and p.idpostulante = ".$idpostulante."
+   						inner join dbdocumentaciones d on d.iddocumentacion = ese.refdocumentaciones
+   					WHERE
+   						ese.refestadopostulantes in (8)
+                     and d.iddocumentacion not in (17,18,15,16,24)
+   						and d.obligatoria = '1'";
+   		$resCount = $this->query($sqlcount,0);
 
-  		if (mysql_num_rows($resSegundo) > 0) {
-			if (mysql_result($resSegundo,0,0) >= $count) {
-				$apruebaSegundo = 1;
-			}
-  		}
+   		$count = mysql_result($resCount,0,0);
+
+
+   		// compruebo que haya cargado las documentaciones
+   		$sqlSegundo = "SELECT
+   						COUNT(*) AS documentacionesaceptadas
+   					FROM
+   						dbdocumentacionasesores da
+   						inner join dbdocumentaciones d on d.iddocumentacion = da.refdocumentaciones
+   						inner join dbpostulantes p on p.idpostulante = da.refpostulantes
+   						inner join dbesquemadocumentosestados ese on ese.refesquemareclutamiento = p.refesquemareclutamiento
+   						and ese.refdocumentaciones = d.iddocumentacion
+   					WHERE
+   						da.refpostulantes = ".$idpostulante."
+   						AND ese.refestadopostulantes in (8)
+   						and d.obligatoria = '1'
+                     and d.iddocumentacion not in (17,18,15,16,24)
+   						AND da.refestadodocumentaciones in (5,6)";
+
+   		$resSegundo = $this->query($sqlSegundo,0);
+
+     		if (mysql_num_rows($resSegundo) > 0) {
+   			if (mysql_result($resSegundo,0,0) >= $count) {
+   				$apruebaSegundo = 1;
+   			}
+     		}
+
+      } else {
+         $sqlcount = "SELECT
+   						COUNT(*) AS cantidad
+   					FROM
+   						dbpostulantes p
+   						inner join dbesquemadocumentosestados ese on ese.refesquemareclutamiento = p.refesquemareclutamiento and p.idpostulante = ".$idpostulante."
+   						inner join dbdocumentaciones d on d.iddocumentacion = ese.refdocumentaciones
+   					WHERE
+   						ese.refestadopostulantes in (8)
+   						and d.obligatoria = '1'";
+   		$resCount = $this->query($sqlcount,0);
+
+   		$count = mysql_result($resCount,0,0);
+
+
+   		// compruebo que haya cargado las documentaciones
+   		$sqlSegundo = "SELECT
+   						COUNT(*) AS documentacionesaceptadas
+   					FROM
+   						dbdocumentacionasesores da
+   						inner join dbdocumentaciones d on d.iddocumentacion = da.refdocumentaciones
+   						inner join dbpostulantes p on p.idpostulante = da.refpostulantes
+   						inner join dbesquemadocumentosestados ese on ese.refesquemareclutamiento = p.refesquemareclutamiento
+   						and ese.refdocumentaciones = d.iddocumentacion
+   					WHERE
+   						da.refpostulantes = ".$idpostulante."
+   						AND ese.refestadopostulantes in (8)
+   						and d.obligatoria = '1'
+   						AND da.refestadodocumentaciones in (5,6)";
+
+   		$resSegundo = $this->query($sqlSegundo,0);
+
+     		if (mysql_num_rows($resSegundo) > 0) {
+   			if (mysql_result($resSegundo,0,0) >= $count) {
+   				$apruebaSegundo = 1;
+   			}
+     		}
+      }
+
+
 
 		// compruebo que haya cargado las archivos de las documentaciones
 		// falta
