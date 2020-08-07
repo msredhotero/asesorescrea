@@ -695,7 +695,7 @@ return $res;
 
                if ($row['obligatoria'] == '1') {
                   $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
-                     <label class="form-label">Ingrese su respuesta</label>
+
                      <div class="form-group input-group">
                         <div class="form-line">
                            <input type="text" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
@@ -705,7 +705,7 @@ return $res;
                   </div>';
                } else {
                   $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
-                     <label class="form-label">Ingrese su respuesta</label>
+
                      <div class="form-group input-group">
                         <div class="form-line">
                            <input type="text" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
@@ -867,7 +867,7 @@ return $res;
 
                   if ($row['obligatoria'] == '1') {
                      $cadInput .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
-                        <label class="form-label">Ingrese su respuesta</label>
+
                         <div class="form-group input-group">
                            <div class="form-line">
                               <input type="text" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.$cadValorRespuesta.'" >
@@ -877,7 +877,7 @@ return $res;
                      </div>';
                   } else {
                      $cadInput .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
-                        <label class="form-label">Ingrese su respuesta</label>
+
                         <div class="form-group input-group">
                            <div class="form-line">
                               <input type="text" class="form-control" id="respuesta" value="'.$cadValorRespuesta.'" name="respuesta'.$row['idpreguntacuestionario'].'" >
@@ -1068,7 +1068,7 @@ return $res;
 
                if ($row['obligatoria'] == '1') {
                   $cad .= '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContrespuesta" style="display:block">
-                     <label class="form-label">Ingrese su respuesta</label>
+
                      <div class="form-group input-group">
                         <div class="form-line">
                            <input type="text" class="form-control" id="respuesta'.$row['idpreguntacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
@@ -1078,7 +1078,7 @@ return $res;
                   </div>';
                } else {
                   $cad .= '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContrespuesta" style="display:block">
-                     <label class="form-label">Ingrese su respuesta</label>
+
                      <div class="form-group input-group">
                         <div class="form-line">
                            <input type="text" class="form-control" id="respuesta'.$row['idpreguntacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
@@ -1244,7 +1244,7 @@ return $res;
 
                   if ($row['obligatoria'] == '1') {
                      $cadInput .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
-                        <label class="form-label">Ingrese su respuesta</label>
+
                         <div class="form-group input-group">
                            <div class="form-line">
                               <input type="text" class="form-control ts'.$row['campo'].'" id="respuesta'.$row['idpreguntacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.$cadValorRespuesta.'" >
@@ -1254,7 +1254,7 @@ return $res;
                      </div>';
                   } else {
                      $cadInput .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
-                        <label class="form-label">Ingrese su respuesta</label>
+                        
                         <div class="form-group input-group">
                            <div class="form-line">
                               <input type="text" class="form-control" id="respuesta'.$row['idpreguntacuestionario'].'" value="'.$cadValorRespuesta.'" name="respuesta'.$row['idpreguntacuestionario'].'" >
