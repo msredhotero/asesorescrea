@@ -75,6 +75,8 @@ if (mysql_result($resCotizaciones,0,'tieneasegurado') == '1') {
 	$resAsegurado = $serviciosReferencias->traerAseguradosPorId(mysql_result($resCotizaciones,0,'refasegurados'));
 	// asegurado nombre completo
 	$lblAsegurado = mysql_result($resAsegurado,0,'apellidopaterno').' '.mysql_result($resAsegurado,0,'apellidomaterno').' '.mysql_result($resAsegurado,0,'nombre');
+} else {
+	$lblAsegurado = mysql_result($resCotizaciones,0,'clientesolo');
 }
 
 if (mysql_result($resCotizaciones,0,'tieneasegurado') == '0') {
@@ -87,6 +89,8 @@ if (mysql_result($resCotizaciones,0,'refbeneficiarios') > 0) {
 	$resBeneficiario = $serviciosReferencias->traerAseguradosPorId(mysql_result($resCotizaciones,0,'refbeneficiarios'));
 	// beneficiario nombre completo
 	$lblBeneficiario = mysql_result($resBeneficiario,0,'apellidopaterno').' '.mysql_result($resBeneficiario,0,'apellidomaterno').' '.mysql_result($resBeneficiario,0,'nombre');
+} else {
+	$lblBeneficiario = mysql_result($resCotizaciones,0,'clientesolo');
 }
 
 if (!(isset($resDatosSencibles))) {
@@ -260,6 +264,9 @@ $cuestionario = $serviciosReferencias->traerCuestionariodetallePorTablaReferenci
 
 							<h1 class="text-center">MX$<?php echo $precio; ?></h1>
 							<?php echo $detalleProducto; ?>
+							<hr>
+							<h4>Asegurado: <?php echo $lblAsegurado; ?></h4>
+							<h4>Beneficiario: <?php echo $lblBeneficiario; ?></h4>
 							<hr>
 							<div class="row" style="padding: 5px 20px;">
 								<table class="display table table-border" style="border:1px solid #333;">

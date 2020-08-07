@@ -573,12 +573,23 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 									            <h4 class="my-0 font-weight-normal">Cotizar un producto Nuevo</h4>
 									          </div>
 									          <div class="body table-responsive">
-													 <?php while ($rowV = mysql_fetch_array($resProductosCotizaciones)) { ?>
- 										            <h1 class="card-title pricing-card-title"><?php echo $rowV['producto']; ?></h1>
- 										            <?php echo $rowV['detalle']; ?>
- 										            <button type="button" class="btn btn-lg btn-block bg-cyan" onclick="window.location='cotizacionesvigentes/new.php?producto=<?php echo $rowV['idproducto']; ?>'">SOLICITAR COTIZACION</button>
+
+
+ 										            <button type="button" class="btn btn-lg btn-block bg-cyan" onclick="window.location='cotizacionesvigentes/new.php?producto=30'">Cotizar mi seguro de auto en línea</button>
  														<hr>
- 													<?php } ?>
+														<h4>Solicito asesoría personalizada para cotizar un seguro de: </h4>
+														<button type="button" class="btn btn-lg btn-block bg-indigo btnEmailEnviarSeguro" id="VIDA">VIDA</button>
+														<button type="button" class="btn btn-lg btn-block bg-indigo btnEmailEnviarSeguro" id="Autos">Autos</button>
+														<button type="button" class="btn btn-lg btn-block bg-indigo btnEmailEnviarSeguro" id="Gastos Médicos">Gastos Médicos</button>
+														<button type="button" class="btn btn-lg btn-block bg-indigo btnEmailEnviarSeguro" id="Protección Hogar">Protección Hogar</button>
+ 														<hr>
+														<h4>Solicito apoyo en la gestión en la apertura de: </h4>
+														<button type="button" class="btn btn-lg btn-block bg-blue-grey btnEmailEnviarSeguro" id="Crédito hipotecario">Crédito hipotecario</button>
+														<button type="button" class="btn btn-lg btn-block bg-blue-grey btnEmailEnviarSeguro" id="Cuenta de ahorro">Cuenta de ahorro</button>
+														<button type="button" class="btn btn-lg btn-block bg-blue-grey btnEmailEnviarSeguro" id="Tarjeta de Crédito">Tarjeta de Crédito</button>
+														<button type="button" class="btn btn-lg btn-block bg-blue-grey btnEmailEnviarSeguro" id="Crédito Telmex">Crédito Telmex</button>
+ 														<hr>
+
 									          </div>
 									        </div>
 										  </div>
@@ -1061,6 +1072,29 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 	 <?php }  ?>
 
+	 <!-- enviar email -->
+   <div class="modal fade" id="lgmEnviarEmail" tabindex="-1" role="dialog">
+       <div class="modal-dialog modal-lg" role="document">
+           <div class="modal-content">
+               <div class="modal-header">
+                   <h4 class="modal-title" id="largeModalLabel">SOLICITAR INFORMACION</h4>
+               </div>
+               <div class="modal-body">
+						<h4>Usted va a solicitar mas información a uno de nuestros representantes sobre: </h4>
+						<h3 id="lblMasInformacion"></h3>
+						<p>Escribanos un comentario si es necesario</p>
+						<textarea class="form-control" col="50" row="10" id="txtareaInfo"></textarea>
+               </div>
+               <div class="modal-footer">
+                   <button type="button" class="btn btn-success waves-effect btnEnviarEmailInfo">ENVIAR</button>
+                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+               </div>
+           </div>
+       </div>
+   </div>
+
+
+
 
     <?php echo $baseHTML->cargarArchivosJS('../'); ?>
 
@@ -1091,6 +1125,54 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 	<script>
 		$(document).ready(function(){
+
+			$('.btnEmailEnviarSeguro').click(function() {
+				idTable =  $(this).attr("id");
+				$('#lblMasInformacion').html(idTable);
+				$('#lgmEnviarEmail').modal();
+			});
+
+			$('.btnEnviarEmailInfo').click(function() {
+				$.ajax({
+					url: '../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: {
+						accion: 'EnviarEmailInfo',
+						producto: $('#lblMasInformacion').html(),
+						observaciones: $('#txtareaInfo').val()
+					},
+					//mientras enviamos el archivo
+					beforeSend: function(){
+
+					},
+					//una vez finalizado correctamente
+					success: function(data){
+
+						if (data.error) {
+							swal("Error!", data.mensaje, "warning");
+						} else {
+							swal({
+									title: "Respuesta",
+									text: "Su información se envio correctamente, un representante se pondra en contacto con usted!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
+
+							$('#lgmEnviarEmail').modal('toggle');
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
+					}
+				});
+			});
+
+
 			<?php if (($_SESSION['idroll_sahilices'] == 8) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11)) { ?>
 			new Chart(document.getElementById("pie_chart").getContext("2d"), getChartJs('pie'));
 			new Chart(document.getElementById("pie_chart2").getContext("2d"), getChartJs('pie2'));

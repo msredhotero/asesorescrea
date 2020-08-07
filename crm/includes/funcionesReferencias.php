@@ -1026,7 +1026,7 @@ return $res;
                   $cad .= '<div class="escondido" id="'.$collapsePregunta.'" style="margin-left:25px;color:#888;">';
                }
 
-               $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
+               $cad .= '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContpregunta" style="display:block">
                   <h4>'.$row['pregunta'].'</h4>
                </div>';
 
@@ -1067,7 +1067,7 @@ return $res;
             if ($row['idtiporespuesta'] == 1) {
 
                if ($row['obligatoria'] == '1') {
-                  $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+                  $cad .= '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContrespuesta" style="display:block">
                      <label class="form-label">Ingrese su respuesta</label>
                      <div class="form-group input-group">
                         <div class="form-line">
@@ -1077,7 +1077,7 @@ return $res;
                      </div>
                   </div>';
                } else {
-                  $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+                  $cad .= '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContrespuesta" style="display:block">
                      <label class="form-label">Ingrese su respuesta</label>
                      <div class="form-group input-group">
                         <div class="form-line">
@@ -1110,7 +1110,7 @@ return $res;
                }
 
 
-               $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+               $cad .= '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContrespuesta" style="display:block">
 
                   <div class="form-group input-group">
                      <div class="demo-radio-button">
@@ -1128,7 +1128,7 @@ return $res;
             if ($row['idtiporespuesta'] == 3) {
                $iCheck += 1;
 
-               $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+               $cad .= '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContrespuesta" style="display:block">
 
                   <div class="form-group input-group">
                      <div class="demo-radio-button">
@@ -1146,7 +1146,7 @@ return $res;
             if ($row['idtiporespuesta'] == 4) {
                $iCheckM += 1;
 
-               $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+               $cad .= '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContrespuesta" style="display:block">
 
                <div class="form-group input-group">
                      <div class="demo-radio-button">
@@ -1247,7 +1247,7 @@ return $res;
                         <label class="form-label">Ingrese su respuesta</label>
                         <div class="form-group input-group">
                            <div class="form-line">
-                              <input type="text" class="form-control" id="respuesta'.$row['idpreguntacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.$cadValorRespuesta.'" >
+                              <input type="text" class="form-control ts'.$row['campo'].'" id="respuesta'.$row['idpreguntacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.$cadValorRespuesta.'" >
 
                            </div>
                         </div>
@@ -1332,7 +1332,7 @@ return $res;
             }
 
             array_push($arPreguntas,array(
-               'divRow' => '<div class="row '.$escondido.' clcontPregunta'.$row['dependerespuestaaux'].'" style="padding: 5px 20px;" id="contPregunta'.$row['idpreguntacuestionario'].'">',
+               'divRow' => '<div class="row col-xs-4 '.$escondido.' clcontPregunta'.$row['dependerespuestaaux'].'" style="padding: 5px 20px;" id="contPregunta'.$row['idpreguntacuestionario'].'">',
                'pregunta' => $row['pregunta'],
                'idpregunta'=>$row['idpreguntacuestionario'],
                'respuestas' => $cadInput
@@ -1910,13 +1910,15 @@ return $res;
             coalesce( prer.dependerespuesta,0) as dependerespuesta,
             coalesce( pre.depende,0) as dependeaux,
             coalesce( pre.dependerespuesta ,0) as dependerespuestaaux,
-            pre.obligatoria
+            pre.obligatoria,
+            ts.campo
          from dbcuestionarios c
          inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario and pre.activo='1' and pre.refpreguntassencibles > 0
          inner join tbtiporespuesta tr ON tr.idtiporespuesta = pre.reftiporespuesta
          inner join dbrespuestascuestionario rc ON rc.refpreguntascuestionario = pre.idpreguntacuestionario and rc.activo='1'
          left join dbcuestionariodetalle cd on cd.refpreguntascuestionario = pre.idpreguntacuestionario and cd.refrespuestascuestionario = rc.idrespuestacuestionario and cd.idreferencia = ".$idcotizacion."
          left join dbpreguntascuestionario prer on prer.depende = pre.idpreguntacuestionario and prer.dependerespuesta = rc.idrespuestacuestionario
+         inner join tbpreguntassencibles ts ON ts.idpreguntassencibles = pre.refpreguntassencibles
          where c.idcuestionario =".$id." order by pre.orden,rc.orden ";
    $res = $this->query($sql,0);
    return $res;
@@ -6400,6 +6402,7 @@ return $res;
 		c.idcotizacion,
 		concat('Producto: ', pro.producto) as producto,
 		concat('Cliente: ', cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+      concat( cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as clientesolo,
 		concat('Asesor: ', ase.apellidopaterno, ' ', ase.nombre) as asesor,
       concat('Asociado: ', aso.apellidopaterno, ' ', aso.nombre) as asociado,
 		c.refclientes,c.refproductos,c.refasesores,c.refasociados,
@@ -9749,7 +9752,8 @@ return $res;
 				p.estado
 			from postal p
 			where SUBSTRING(concat('00000', cast(p.codigo as UNSIGNED)),-5,5) like '%".$busqueda."%'
-			order by p.codigo,p.estado,p.municipio,p.colonia";
+			order by p.codigo,p.estado,p.municipio,p.colonia
+         limit 20";
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -11810,19 +11814,19 @@ return $res;
 		return 'ASG0000001';
 	}
 
-	function insertarAsegurados($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco) {
-		$sql = "insert into dbasegurados(idasegurado,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,emisioncomprobantedomicilio,emisionrfc,vencimientoine,idclienteinbursa,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,refclientes,reftipoparentesco)
-		values ('',".$reftipopersonas.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$razonsocial."','".$domicilio."','".$telefonofijo."','".$telefonocelular."','".$email."','".$rfc."','".$ine."','".$this->generaNroAsegurado()."',".$refusuarios.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."','".$emisioncomprobantedomicilio."','".$emisionrfc."','".$vencimientoine."','".$idclienteinbursa."','".$colonia."','".$municipio."','".$codigopostal."','".$edificio."','".$nroexterior."','".$nrointerior."','".$estado."','".$ciudad."','".$curp."',".$refclientes.",".$reftipoparentesco.")";
+	function insertarAsegurados($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco,$fechanacimiento) {
+		$sql = "insert into dbasegurados(idasegurado,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,emisioncomprobantedomicilio,emisionrfc,vencimientoine,idclienteinbursa,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,refclientes,reftipoparentesco,fechanacimiento)
+		values ('',".$reftipopersonas.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$razonsocial."','".$domicilio."','".$telefonofijo."','".$telefonocelular."','".$email."','".$rfc."','".$ine."','".$this->generaNroAsegurado()."',".$refusuarios.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."','".$emisioncomprobantedomicilio."','".$emisionrfc."','".$vencimientoine."','".$idclienteinbursa."','".$colonia."','".$municipio."','".$codigopostal."','".$edificio."','".$nroexterior."','".$nrointerior."','".$estado."','".$ciudad."','".$curp."',".$refclientes.",".$reftipoparentesco.",'".$fechanacimiento."')";
 
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarAsegurados($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco) {
+	function modificarAsegurados($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco,$fechanacimiento) {
 		$sql = "update dbasegurados
 		set
-		reftipopersonas = ".$reftipopersonas.",nombre = '".$nombre."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',razonsocial = '".$razonsocial."',domicilio = '".$domicilio."',telefonofijo = '".$telefonofijo."',telefonocelular = '".$telefonocelular."',email = '".$email."',rfc = '".$rfc."',ine = '".$ine."',numerocliente = '".$numerocliente."',refusuarios = ".$refusuarios.",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',emisioncomprobantedomicilio = '".$emisioncomprobantedomicilio."',emisionrfc = '".$emisionrfc."',vencimientoine = '".$vencimientoine."',idclienteinbursa = '".$idclienteinbursa."',colonia = '".$colonia."',municipio = '".$municipio."',codigopostal = '".$codigopostal."',edificio = '".$edificio."',nroexterior = '".$nroexterior."',nrointerior = '".$nrointerior."',estado = '".$estado."',ciudad = '".$ciudad."',curp = '".$curp."',refclientes = '".$refclientes."',reftipoparentesco = '".$reftipoparentesco."' where idasegurado =".$id;
+		reftipopersonas = ".$reftipopersonas.",nombre = '".$nombre."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',razonsocial = '".$razonsocial."',domicilio = '".$domicilio."',telefonofijo = '".$telefonofijo."',telefonocelular = '".$telefonocelular."',email = '".$email."',rfc = '".$rfc."',ine = '".$ine."',numerocliente = '".$numerocliente."',refusuarios = ".$refusuarios.",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',emisioncomprobantedomicilio = '".$emisioncomprobantedomicilio."',emisionrfc = '".$emisionrfc."',vencimientoine = '".$vencimientoine."',idclienteinbursa = '".$idclienteinbursa."',colonia = '".$colonia."',municipio = '".$municipio."',codigopostal = '".$codigopostal."',edificio = '".$edificio."',nroexterior = '".$nroexterior."',nrointerior = '".$nrointerior."',estado = '".$estado."',ciudad = '".$ciudad."',curp = '".$curp."',refclientes = '".$refclientes."',reftipoparentesco = ".$reftipoparentesco.",fechanacimiento = '".$fechanacimiento."' where idasegurado =".$id;
 
 		$res = $this->query($sql,0);
 		return $res;
@@ -12044,6 +12048,19 @@ return $res;
       colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp, refclientes,reftipoparentesco
       from dbasegurados where refclientes =".$id;
 		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+   function traerBeneficiariosPorClienteCompleto($id,$idasegurado) {
+		$sql = "select idasegurado,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,
+      (case when DATEDIFF(CURDATE(), coalesce( emisioncomprobantedomicilio,'1990-01-01')) > 90 then 'true' else 'false' end) as demisioncomprobantedomicilio,
+      (case when DATEDIFF(CURDATE(),coalesce( emisionrfc,'1990-01-01')) > 90 then 'true' else 'false' end) as demisionrfc,
+      (case when coalesce( vencimientoine,'1990-01-01') > CURDATE() then 'false' else 'true' end) as dvencimientoine,
+      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp, refclientes,reftipoparentesco
+      from dbasegurados where idasegurado not in (".$idasegurado.") and refclientes =".$id;
+		$res = $this->query($sql,0);
+      //die(var_dump($sql));
 		return $res;
 	}
 
@@ -12288,17 +12305,6 @@ return $res;
 		return $res;
 	}
 
-
-   function traerBeneficiariosPorClienteCompleto($id) {
-		$sql = "select idbeneficiario,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,
-      (case when DATEDIFF(CURDATE(), coalesce( emisioncomprobantedomicilio,'1990-01-01')) > 90 then 'true' else 'false' end) as demisioncomprobantedomicilio,
-      (case when DATEDIFF(CURDATE(),coalesce( emisionrfc,'1990-01-01')) > 90 then 'true' else 'false' end) as demisionrfc,
-      (case when coalesce( vencimientoine,'1990-01-01') > CURDATE() then 'false' else 'true' end) as dvencimientoine,
-      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp, refclientes
-      from dbbeneficiarios where refclientes =".$id;
-		$res = $this->query($sql,0);
-		return $res;
-	}
 
 
 	/* Fin */

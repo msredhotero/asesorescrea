@@ -139,6 +139,12 @@ function login($usuario,$pass) {
 		if ($error == '') {
 			//die(var_dump($error));
 			session_start();
+
+         if (mysql_result($resppass,0,4) == 16) {
+            $resCliente = $this->traerClientesPorUsuario($idUsua);
+
+            $_SESSION['idcliente_sahilices'] = mysql_result($resCliente,0,0);
+         }
 			$_SESSION['usua_sahilices'] = $usuario;
 			$_SESSION['nombre_sahilices'] = mysql_result($resppass,0,0);
 			$_SESSION['usuaid_sahilices'] = $idUsua;
@@ -269,6 +275,12 @@ function traerRolesSimple() {
 	} else {
 		return $res;
 	}
+}
+
+function traerClientesPorUsuario($id) {
+   $sql = "select idcliente,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp from dbclientes where refusuarios =".$id;
+   $res = $this->query($sql,0);
+   return $res;
 }
 
 

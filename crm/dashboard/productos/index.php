@@ -56,7 +56,7 @@ $modificar = "modificarProductos";
 $tabla 			= "tbproductos";
 
 $lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado','refcuestionarios','puntosporventarenovado','puntosporpesopagadorenovado','reftipopersonas','ventaenlinea','cotizaenlinea','beneficiario','asegurado');
-$lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado','Cuestionario','Punto x Venta Renovacion','Puntos x Peso Pagado Renovacion','Tipo Personas','Es de venta en linea','Es para cotizar','Tiene Beneficiario','Tiene Asegurado');
+$lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado','Cuestionario','Punto x Venta Renovacion','Puntos x Peso Pagado Renovacion','Tipo Personas','Es de venta en linea','Es para cotizar','Podría tener beneficiario ','Podría tener asegurado distinto al contratante');
 
 $resVar1 = $serviciosReferencias->traerTipoproductorama();
 $cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(2),'');

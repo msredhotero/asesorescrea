@@ -45,6 +45,8 @@ $resultado = $serviciosReferencias->traerCuestionariosPorIdCompleto($id);
 
 $ver = $serviciosReferencias->CuestionarioAux($id,0);
 
+$ver2 =  $serviciosReferencias->CuestionarioAuxPersonas($id,0,0,0);
+
 $singular = "Cuestionario";
 
 $plural = "Cuestionarios";
@@ -98,6 +100,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 	<!-- Dropzone Css -->
 	<link href="../../plugins/dropzone/dropzone.css" rel="stylesheet">
+
+	<link rel="stylesheet" type="text/css" href="../../css/classic.css"/>
+	<link rel="stylesheet" type="text/css" href="../../css/classic.date.css"/>
 
 
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
@@ -195,6 +200,36 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									$primero = 0;
 
 									foreach ($ver as $valor) {
+										echo $valor['divRow'];
+										echo '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
+					                  <h4>'.$valor['pregunta'].'</h4>
+					               </div>';
+										echo $valor['respuestas'];
+										echo '</div>';
+
+
+									?>
+
+
+
+									<?php
+									}
+									?>
+
+
+									<?php
+									$pregunta = '';
+									$iRadio = 0;
+									$cantRadio = 0;
+									$iCheck = 0;
+									$iCheckM = 0;
+									$collapse = '';
+									$collapseAux = '';
+									$collapsePregunta = '';
+
+									$primero = 0;
+
+									foreach ($ver2 as $valor) {
 										echo $valor['divRow'];
 										echo '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
 					                  <h4>'.$valor['pregunta'].'</h4>
@@ -333,9 +368,29 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 <script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
 
+<script src="../../js/picker.js"></script>
+<script src="../../js/picker.date.js"></script>
+
 
 <script>
 	$(document).ready(function(){
+
+		$('.tsfechanacimiento').pickadate({
+ 			format: 'yyyy-mm-dd',
+ 			labelMonthNext: 'Siguiente mes',
+ 			labelMonthPrev: 'Previo mes',
+ 			labelMonthSelect: 'Selecciona el mes del año',
+ 			labelYearSelect: 'Selecciona el año',
+ 			selectMonths: true,
+ 			selectYears: 5,
+ 			today: 'Hoy',
+ 			clear: 'Borrar',
+ 			close: 'Cerrar',
+ 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+ 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+ 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+ 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+ 		});
 
 		$('.escondido').hide();
 

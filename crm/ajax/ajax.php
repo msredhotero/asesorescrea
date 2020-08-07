@@ -1077,6 +1077,9 @@ switch ($accion) {
    case 'traerAseguradosPorCliente':
       traerAseguradosPorCliente($serviciosReferencias, $serviciosFunciones);
    break;
+   case 'traerBeneficiariosPorCliente':
+      traerBeneficiariosPorCliente($serviciosReferencias, $serviciosFunciones);
+   break;
    case 'insertarAsegurados':
       insertarAsegurados($serviciosReferencias);
    break;
@@ -1096,9 +1099,40 @@ switch ($accion) {
       traerAseguradosPorId($serviciosReferencias,$serviciosFunciones);
    break;
 
+   case 'EnviarEmailInfo':
+      EnviarEmailInfo($serviciosReferencias, $serviciosUsuarios);
+   break;
+
 
 }
 /* FinFinFin */
+
+
+function EnviarEmailInfo($serviciosReferencias,$serviciosUsuarios) {
+   session_start();
+
+   $producto = $_POST['producto'];
+   $observaciones = $_POST['observaciones'];
+
+   $resCliente = $serviciosReferencias->traerClientesPorUsuario($_SESSION['usuaid_sahilices']);
+
+   $asunto = "Solicitan asesoramiento sobre el producto: ".$producto.", el cliente ".mysql_result($resCliente,0,'nombre').' '.mysql_result($resCliente,0,'apellidopaterno').' '.mysql_result($resCliente,0,'apellidomaterno')." - Email: ".mysql_result($resCliente,0,'email')." - Telefono: ".mysql_result($resCliente,0,'telefonocelular');
+
+   $cuerpo = "Observaciones: ".$observaciones;
+
+   $destinatario = 'fsegovia@asesorescrea.com';
+
+   $exito = $serviciosUsuarios->enviarEmail($destinatario,$asunto,$cuerpo);
+
+   if ($exito) {
+      $resV['error'] = false;
+   } else {
+      $resV['error'] = true;
+      $resV['mensaje'] = 'No se pudo enviar el mensaje, vuelva a intentarlo en unos momentos';
+   }
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function recuperar($serviciosUsuarios) {
    $email = $_POST['email'];
@@ -1126,6 +1160,8 @@ function validarCuestionarioPersona($serviciosReferencias) {
    $refasegurados = $_POST['refaseguradaaux'];
    $tieneasegurado = $_POST['tieneasegurado'];
    $idcotizacion = $_POST['idcotizacion'];
+
+   $actualizacliente = $_POST['actualizacliente'];
 
    if ($tieneasegurado == '1') {
       $refclientes = 0;
@@ -1404,11 +1440,14 @@ function validarCuestionarioPersona($serviciosReferencias) {
 
          }
 
-         if ($refclientes == 0) {
-            $resMCA = $serviciosReferencias->modificarCotizacionesAsegurado($idcotizacion,'1',$refasegurados);
-         } else {
-            $resMCA = $serviciosReferencias->modificarCotizacionesAsegurado($idcotizacion,'0',0);
+         if ($actualizacliente == 0) {
+            if ($refclientes == 0) {
+               $resMCA = $serviciosReferencias->modificarCotizacionesAsegurado($idcotizacion,'1',$refasegurados);
+            } else {
+               $resMCA = $serviciosReferencias->modificarCotizacionesAsegurado($idcotizacion,'0',0);
+            }
          }
+
 
 
          //die(var_dump($resI));
@@ -1434,26 +1473,26 @@ function insertarAsegurados($serviciosReferencias) {
    $nombre = $_POST['nombre'];
    $apellidopaterno = $_POST['apellidopaterno'];
    $apellidomaterno = $_POST['apellidomaterno'];
-   $razonsocial = $_POST['razonsocial'];
+   $razonsocial = '';
    $domicilio = $_POST['domicilio'];
    $email = $_POST['email'];
    $rfc = $_POST['rfc'];
-   $ine = $_POST['ine'];
+   $ine = '';
    $curp = $_POST['curp'];
    $fechanacimiento = $_POST['fechanacimiento'];
-   $numerocliente = $_POST['numerocliente'];
+   $numerocliente = '';
    $refusuarios = 0;
    $fechacrea = date('Y-m-d H:i:s');
    $fechamodi = date('Y-m-d H:i:s');
    $usuariocrea = $_SESSION['usua_sahilices'];
    $usuariomodi = $_SESSION['usua_sahilices'];
-   $reftipopersonas = $_POST['reftipopersonas'];
+   $reftipopersonas = 1;
    $telefonofijo = $_POST['telefonofijo'];
    $telefonocelular = $_POST['telefonocelular'];
-   $idclienteinbursa = $_POST['idclienteinbursa'];
-   $emisioncomprobantedomicilio = $_POST['emisioncomprobantedomicilio'];
-   $emisionrfc = $_POST['emisionrfc'];
-   $vencimientoine = $_POST['vencimientoine'];
+   $idclienteinbursa = '';
+   $emisioncomprobantedomicilio = '';
+   $emisionrfc = '';
+   $vencimientoine = '';
    $colonia = $_POST['colonia'];
    $municipio = $_POST['municipio'];
    $codigopostal = $_POST['codigopostal'];
@@ -1461,7 +1500,7 @@ function insertarAsegurados($serviciosReferencias) {
    $nroexterior = $_POST['nroexterior'];
    $nrointerior = $_POST['nrointerior'];
    $estado = $_POST['estado'];
-   $ciudad = $_POST['ciudad'];
+   $ciudad = '';
    $refclientes = $_POST['refclientes'];
    $reftipoparentesco = $_POST['reftipoparentesco'];
 
@@ -1479,26 +1518,26 @@ function modificarAsegurados($serviciosReferencias) {
    $nombre = $_POST['nombre'];
    $apellidopaterno = $_POST['apellidopaterno'];
    $apellidomaterno = $_POST['apellidomaterno'];
-   $razonsocial = $_POST['razonsocial'];
+   $razonsocial = '';
    $domicilio = $_POST['domicilio'];
    $email = $_POST['email'];
    $rfc = $_POST['rfc'];
-   $ine = $_POST['ine'];
+   $ine = '';
    $curp = $_POST['curp'];
    $fechanacimiento = $_POST['fechanacimiento'];
-   $numerocliente = $_POST['numerocliente'];
+   $numerocliente = '';
    $refusuarios = 0;
    $fechacrea = date('Y-m-d H:i:s');
    $fechamodi = date('Y-m-d H:i:s');
    $usuariocrea = $_SESSION['usua_sahilices'];
    $usuariomodi = $_SESSION['usua_sahilices'];
-   $reftipopersonas = $_POST['reftipopersonas'];
+   $reftipopersonas = 1;
    $telefonofijo = $_POST['telefonofijo'];
    $telefonocelular = $_POST['telefonocelular'];
-   $idclienteinbursa = $_POST['idclienteinbursa'];
-   $emisioncomprobantedomicilio = $_POST['emisioncomprobantedomicilio'];
-   $emisionrfc = $_POST['emisionrfc'];
-   $vencimientoine = $_POST['vencimientoine'];
+   $idclienteinbursa = '';
+   $emisioncomprobantedomicilio = '';
+   $emisionrfc = '';
+   $vencimientoine = '';
    $colonia = $_POST['colonia'];
    $municipio = $_POST['municipio'];
    $codigopostal = $_POST['codigopostal'];
@@ -1506,7 +1545,7 @@ function modificarAsegurados($serviciosReferencias) {
    $nroexterior = $_POST['nroexterior'];
    $nrointerior = $_POST['nrointerior'];
    $estado = $_POST['estado'];
-   $ciudad = $_POST['ciudad'];
+   $ciudad = '';
    $refclientes = $_POST['refclientes'];
    $reftipoparentesco = $_POST['reftipoparentesco'];
 
@@ -1529,6 +1568,35 @@ function eliminarAsegurados($serviciosReferencias) {
    } else {
       echo 'Hubo un error al eliminar datos';
    }
+}
+
+
+
+function traerBeneficiariosPorCliente($serviciosReferencias, $serviciosFunciones) {
+   $refclientes = $_POST['refclientes'];
+   $idcotizacion = $_POST['idcotizacion'];
+
+   if ($idcotizacion > 0) {
+      $resCotizacion = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcotizacion);
+      $idnot = mysql_result($resCotizacion,0,'refasegurados');
+   } else {
+      $idnot = 0;
+   }
+
+   $res = $serviciosReferencias->traerBeneficiariosPorClienteCompleto($refclientes,$idnot);
+
+   if ((integer)$res > 0) {
+      $resV['error'] = false;
+      $resV['dato'] = "<option value='0'>El contratante</option>".$serviciosFunciones->devolverSelectBox($res,array(3,4,2),' ')."<option value=''>Nuevo</option>";
+   } else {
+      $resV['error'] = true;
+      $resV['dato'] = "<option value=''>-- Seleccionar --</option><option value=''>Nuevo</option>";
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+
 }
 
 function traerAseguradosPorCliente($serviciosReferencias, $serviciosFunciones) {
@@ -2336,6 +2404,7 @@ function cuestionarioPersonas($serviciosReferencias) {
 
    if ($idcuestionario == null) {
       $ar = array('cuestionario'=>'','rules'=>'');
+      $resV['error'] = true;
    } else {
       $res = $serviciosReferencias->CuestionarioPersonas($idcuestionario,$idcotizacion,$idcliente,$idasegurado);
       $resAux = $serviciosReferencias->CuestionarioAuxPersonas($idcuestionario,$idcotizacion,$idcliente,$idasegurado);
@@ -2343,7 +2412,11 @@ function cuestionarioPersonas($serviciosReferencias) {
       //die(var_dump($resAux));
       $cad = '';
 
+      $resV['error'] = false;
+      $resV['sigue'] = true;
+
       foreach ($resAux as $valor) {
+         $resV['sigue'] = false;
          $cad .= $valor['divRow'];
          $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
             <h4>'.$valor['pregunta'].'</h4>
@@ -5766,7 +5839,7 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $idTabla = "idproducto";
 
          $lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado','refcuestionarios','puntosporventarenovado','puntosporpesopagadorenovado','reftipopersonas','ventaenlinea','cotizaenlinea','beneficiario','asegurado');
-         $lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado','Cuestionario','Punto x Venta Renovacion','Puntos x Peso Pagado Renovacion','Tipo Personas','Es de venta en linea','Es para cotizar','Tiene Beneficiario','Tiene Asegurado');
+         $lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado','Cuestionario','Punto x Venta Renovacion','Puntos x Peso Pagado Renovacion','Tipo Personas','Es de venta en linea','Es para cotizar','Podría tener beneficiario ','Podría tener asegurado distinto al contratante');
 
          $resVar1 = $serviciosReferencias->traerTipoproductorama();
          $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(2),'',mysql_result($resultado,0,'reftipoproductorama'));

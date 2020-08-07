@@ -1231,6 +1231,24 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	$(document).ready(function(){
 
 
+		$('.tsfechanacimiento').pickadate({
+ 			format: 'yyyy-mm-dd',
+ 			labelMonthNext: 'Siguiente mes',
+ 			labelMonthPrev: 'Previo mes',
+ 			labelMonthSelect: 'Selecciona el mes del año',
+ 			labelYearSelect: 'Selecciona el año',
+ 			selectMonths: true,
+ 			selectYears: 5,
+ 			today: 'Hoy',
+ 			clear: 'Borrar',
+ 			close: 'Cerrar',
+ 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+ 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+ 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+ 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+ 		});
+
+
 		$('.frmContfechavencimiento').hide();
 		$('.frmContcoberturaactual').hide();
 		$('.frmContprimaobjetivo').hide();
