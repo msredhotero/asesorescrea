@@ -69,6 +69,42 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 }
 
 switch ($tabla) {
+	case 'leadshistoricos':
+
+
+		$datos = $serviciosReferencias->traerLeadhistoricosajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array();
+		$class = array();
+		$icon = array();
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 9;
+
+	break;
+	case 'leads':
+
+
+		$datos = $serviciosReferencias->traerLeadajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('search','delete');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 5;
+
+	break;
 	case 'cotizacionesvigentes':
 
 
