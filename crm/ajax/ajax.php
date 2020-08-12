@@ -1102,10 +1102,124 @@ switch ($accion) {
    case 'EnviarEmailInfo':
       EnviarEmailInfo($serviciosReferencias, $serviciosUsuarios);
    break;
+   case 'ModificarTelMovilCliente':
+      ModificarTelMovilCliente($serviciosReferencias);
+   break;
+
+   case 'insertarLead':
+      insertarLead($serviciosReferencias);
+   break;
+   case 'modificarLead':
+      modificarLead($serviciosReferencias);
+   break;
+   case 'eliminarLead':
+      eliminarLead($serviciosReferencias);
+   break;
 
 
 }
 /* FinFinFin */
+
+
+function insertarLead($serviciosReferencias) {
+   session_start();
+
+   $refclientes = $_POST['refclientes'];
+   $refproductos = 0;
+   $fechacrea = date('Y-m-d H:i:s');
+   $fechamodi = date('Y-m-d H:i:s');
+   $contactado = $_POST['contactado'];
+   $usuariocontacto = '';
+   $usuarioresponsable = '';
+   $cita = '';
+   $refestadolead = 1;
+   $fechacreacita = '';
+   $observaciones = $_POST['observaciones'];
+   $refproductosweb = $_POST['tipo'];
+
+   $res = $serviciosReferencias->insertarLead($refclientes,$refproductos,$fechacrea,$fechamodi,$contactado,$usuariocontacto,$usuarioresponsable,$cita,$refestadolead,$fechacreacita,$observaciones,$refproductosweb);
+
+   if ((integer)$res > 0) {
+      $resV['error'] = false;
+   } else {
+      $resV['error'] = true;
+      $resV['mensaje'] = 'Hubo un error al insertar datos, vuelva a intentarlo';
+   }
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
+function modificarLead($serviciosReferencias) {
+   session_start();
+
+   $id = $_POST['id'];
+   $refclientes = $_POST['refclientes'];
+   $refproductos = $_POST['refproductos'];
+
+   $fechamodi = date('Y-m-d H:i:s');
+   $contactado = $_POST['contactado'];
+
+   if ($contactado == '1') {
+      $usuariocontacto = $_SESSION['usua_sahilices'];
+   }
+
+
+   $cita = $_POST['cita'];
+   $refestadolead = $_POST['refestadolead'];
+
+   if ($refestadolead > 1) {
+      $usuarioresponsable = $_SESSION['usua_sahilices'];
+   } else {
+      $usuarioresponsable = '';
+   }
+
+   if ($cita != '0000-00-00 00:00:00') {
+      $fechacreacita = date('Y-m-d H:i:s');
+   } else {
+      $fechacreacita = '0000-00-00 00:00:00';
+   }
+
+   $observaciones = $_POST['observaciones'];
+   $refproductosweb = $_POST['refproductosweb'];
+
+   $res = $serviciosReferencias->modificarLead($id,$refclientes,$refproductos,$fechamodi,$contactado,$usuariocontacto,$usuarioresponsable,$cita,$refestadolead,$fechacreacita,$observaciones,$refproductosweb);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarLead($serviciosReferencias) {
+   session_start();
+
+   $id = $_POST['id'];
+   $res = $serviciosReferencias->eliminarLeadBaja($id, $_SESSION['usua_sahilices']);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
+function ModificarTelMovilCliente($serviciosReferencias) {
+   $idcliente = $_POST['idcliente'];
+   $celphone = $_POST['celphone'];
+
+   $res = $serviciosReferencias->modificarCampoParticularClientes($idcliente,'telefonocelular',$celphone);
+
+   if ($res) {
+      $resV['error'] = false;
+   } else {
+      $resV['error'] = true;
+      $resV['mensaje'] = 'No se pudo modificar su numero de telefono celular, vuelva a intentarlo';
+   }
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 
 function EnviarEmailInfo($serviciosReferencias,$serviciosUsuarios) {
@@ -5717,6 +5831,43 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+      case 'dblead':
+         $resultado = $serviciosReferencias->traerLeadPorId($id);
+
+         $modificar = "modificarLead";
+         $idTabla = "idlead";
+
+         $lblCambio	 	= array('refclientes','refproductos','fechacrea','fechamodi','contactado','usuariocontacto','usuarioresponsable','refestadolead','fechacreacita','tipo','refproductosweb');
+         $lblreemplazo	= array('Cliente','Producto','Fecha Alta','Fecha Ultima','Fue contactado?','Quien contacto','Responsable','Estado','Fecha Cita','Tipo de Producto','Producto Solicitado');
+
+         $resClientes = $serviciosReferencias->traerClientes();
+         $cadRef = $serviciosFunciones->devolverSelectBoxActivo($resClientes,array(3,4,2),' ',mysql_result($resultado,0,'refclientes'));
+
+
+         $resProductosWeb = $serviciosReferencias->traerProductoswebPorId(mysql_result($resultado,0,'refproductosweb'));
+         $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resProductosWeb,array(1),'',mysql_result($resultado,0,'refproductosweb'));
+
+         $resProductos = $serviciosReferencias->traerProductosPorIdCompletaTipo(mysql_result($resProductosWeb,0,'tipo'));
+         $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resProductos,array(1),'',mysql_result($resultado,0,'refproductos'));
+
+         if (mysql_result($resultado,0,'contactado') == '1') {
+            $cadRef3 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+         } else {
+            $cadRef3 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+         }
+
+         if (mysql_result($resultado,0,'refestadolead') == 1) {
+            $resEstado 	= $serviciosReferencias->traerEstadoleadPorIn('1,2,3,4');
+         } else {
+            $resEstado 	= $serviciosReferencias->traerEstadoleadPorId(mysql_result($resultado,0,'refestadolead'));
+         }
+
+         $cadRef4 = $serviciosFunciones->devolverSelectBoxActivo($resEstado,array(1),'',mysql_result($resultado,0,'refestadolead'));
+
+         $refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3,3=>$cadRef4,4=>$cadRef1);
+         $refCampo 	=  array('refclientes','refproductos','contactado','refestadolead','refproductosweb');
+      break;
+
       case 'dbproductosexclusivos':
          $resultado = $serviciosReferencias->traerProductosexclusivosPorId($id);
 
