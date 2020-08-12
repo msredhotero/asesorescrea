@@ -9,6 +9,263 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+
+   /* PARA Productosweb */
+
+   function insertarProductosweb($producto,$tipo) {
+   $sql = "insert into tbproductosweb(idproductosweb,producto,tipo)
+   values ('','".$producto."',".$tipo.")";
+   $res = $this->query($sql,1);
+   return $res;
+   }
+
+
+   function modificarProductosweb($id,$producto,$tipo) {
+   $sql = "update tbproductosweb
+   set
+   producto = '".$producto."',tipo = ".$tipo."
+   where idproductosweb =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function eliminarProductosweb($id) {
+   $sql = "delete from tbproductosweb where idproductosweb =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function traerProductosweb() {
+   $sql = "select
+   p.idproductosweb,
+   p.producto,
+   p.tipo
+   from tbproductosweb p
+   order by 1";
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function traerProductoswebPorId($id) {
+   $sql = "select idproductosweb,producto,tipo from tbproductosweb where idproductosweb =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+   function traerProductoswebPorTipo($id) {
+   $sql = "select idproductosweb,producto,tipo from tbproductosweb where tipo =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: tbproductosweb*/
+
+   /* PARA Lead */
+
+   function insertarLead($refclientes,$refproductos,$fechacrea,$fechamodi,$contactado,$usuariocontacto,$usuarioresponsable,$cita,$refestadolead,$fechacreacita,$observaciones,$refproductosweb) {
+      $sql = "insert into dblead(idlead,refclientes,refproductos,fechacrea,fechamodi,contactado,usuariocontacto,usuarioresponsable,cita,refestadolead,fechacreacita,observaciones,refproductosweb)
+      values ('',".$refclientes.",".$refproductos.",'".$fechacrea."','".$fechamodi."','".$contactado."','".$usuariocontacto."','".$usuarioresponsable."','".$cita."',".$refestadolead.",'".$fechacreacita."','".$observaciones."',".$refproductosweb.")";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarLead($id,$refclientes,$refproductos,$fechamodi,$contactado,$usuariocontacto,$usuarioresponsable,$cita,$refestadolead,$fechacreacita,$observaciones,$refproductosweb) {
+      $sql = "update dblead
+      set
+      refclientes = ".$refclientes.",refproductos = ".$refproductos.",fechamodi = '".$fechamodi."',contactado = '".$contactado."',usuariocontacto = '".$usuariocontacto."',usuarioresponsable = '".$usuarioresponsable."',cita = '".$cita."',refestadolead = ".$refestadolead.",fechacreacita = '".$fechacreacita."',observaciones = '".$observaciones."',refproductosweb = '".$refproductosweb."' where idlead =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarLead($id) {
+      $sql = "delete from dblead where idlead =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function eliminarLeadBaja($id,$usuario) {
+
+      $sql = "update dblead
+      set
+      fechamodi = '".date('Y-m-d H:i:s')."',usuarioresponsable = '".$usuario."',refestadolead = 4 where idlead =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerLeadajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+      $where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and tw.producto like '%".$busqueda."%') and concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%')";
+		}
+
+      $sql = "select
+      l.idlead,
+      concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+      cli.telefonocelular,
+      tw.producto as productoweb,
+      pro.producto,
+      l.fechacrea,
+      l.refproductos,
+      l.fechamodi,
+      l.contactado,
+      l.usuariocontacto,
+      l.usuarioresponsable,
+      l.cita,
+      l.refestadolead,
+      l.fechacreacita,
+      l.observaciones
+      from dblead l
+      inner join dbclientes cli ON cli.idcliente = l.refclientes
+      inner join tbproductosweb tw on tw.idproductosweb = l.refproductosweb
+      left join tbproductos pro ON pro.idproducto = l.refproductos
+      where l.refestadolead = 1 ".$where."
+      ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+      $res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+   }
+
+
+   function traerLeadhistoricosajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+      $where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and tw.producto like '%".$busqueda."%') and concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%')";
+		}
+
+      $sql = "select
+      l.idlead,
+      concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+      cli.telefonocelular,
+      tw.producto as productoweb,
+      pro.producto,
+      l.fechacrea,
+      l.cita,
+      l.usuariocontacto,
+      l.usuarioresponsable,
+      elt.estadolead,
+      l.refproductos,
+      l.fechamodi,
+      l.contactado,
+
+
+
+      l.refestadolead,
+      l.fechacreacita,
+      l.observaciones
+      from dblead l
+      inner join dbclientes cli ON cli.idcliente = l.refclientes
+      inner join tbproductosweb tw on tw.idproductosweb = l.refproductosweb
+      inner join tbestadolead elt on elt.idestadolead = l.refestadolead
+      left join tbproductos pro ON pro.idproducto = l.refproductos
+      where l.refestadolead in (2,3,4,5) ".$where."
+      ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+      $res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+   }
+
+
+   function traerLead() {
+      $sql = "select
+      l.idlead,
+      l.refclientes,
+      l.refproductos,
+      l.fechacrea,
+      l.fechamodi,
+      l.contactado,
+      l.usuariocontacto,
+      l.usuarioresponsable,
+      l.cita,
+      l.refestadolead,
+      l.fechacreacita,
+      l.observaciones
+      from dblead l
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerLeadPorId($id) {
+      $sql = "select idlead,refclientes,refproductos,fechacrea,fechamodi,contactado,usuariocontacto,usuarioresponsable,cita,refestadolead,fechacreacita,observaciones,refproductosweb from dblead where idlead =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: dblead*/
+
+   /* PARA Estadolead */
+
+   function insertarEstadolead($estadolead) {
+      $sql = "insert into tbestadolead(idestadolead,estadolead)
+      values ('','".$estadolead."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarEstadolead($id,$estadolead) {
+      $sql = "update tbestadolead
+      set
+      estadolead = '".$estadolead."'
+      where idestadolead =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarEstadolead($id) {
+      $sql = "delete from tbestadolead where idestadolead =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerEstadolead() {
+      $sql = "select
+      e.idestadolead,
+      e.estadolead
+      from tbestadolead e
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerEstadoleadPorId($id) {
+      $sql = "select idestadolead,estadolead from tbestadolead where idestadolead =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerEstadoleadPorIn($in) {
+      $sql = "select idestadolead,estadolead from tbestadolead where idestadolead in (".$in.")";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: tbestadolead*/
+
    function traerProductosVentaEnLinea($id) {
       $sql = "select idproducto, producto, precio, detalle from tbproductos p where activo = '1' and ventaenlinea = '1' ";
       $res = $this->query($sql,0);
@@ -1254,7 +1511,7 @@ return $res;
                      </div>';
                   } else {
                      $cadInput .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
-                        
+
                         <div class="form-group input-group">
                            <div class="form-line">
                               <input type="text" class="form-control" id="respuesta'.$row['idpreguntacuestionario'].'" value="'.$cadValorRespuesta.'" name="respuesta'.$row['idpreguntacuestionario'].'" >
@@ -5803,6 +6060,29 @@ return $res;
 	}
 
 
+   function traerProductosPorIdCompletaTipo($tipo) {
+		$sql = "select
+		p.idproducto,
+		p.producto,
+		p.prima,
+      p.activo,
+      p.reftipoproductorama,
+      tp.reftipoproducto,
+      p.reftipodocumentaciones,
+      p.refcuestionarios,
+      p.reftipopersonas,
+      p.precio,p.detalle,p.ventaenlinea,p.cotizaenlinea,p.beneficiario,p.asegurado
+		from tbproductos p
+		inner join tbtipoproductorama tp ON tp.idtipoproductorama = p.reftipoproductorama
+      inner join tbtipoproducto t on t.idtipoproducto = tp.reftipoproducto
+      left join tbtipopersonas tpp ON tpp.idtipopersona = p.reftipoproductorama
+		where tp.reftipoproducto = ".$tipo."
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
    function traerProductosPorId($id) {
       $sql = "select idproducto,producto,prima,reftipoproductorama,reftipodocumentaciones,activo,
       puntosporventa,puntosporpesopagado,refcuestionarios,puntosporventarenovado,puntosporpesopagadorenovado,reftipopersonas,precio,detalle,ventaenlinea,cotizaenlinea,beneficiario,asegurado
@@ -6253,7 +6533,7 @@ return $res;
 		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
 		inner join tbproductos pro ON pro.idproducto = c.refproductos
 		inner join dbasesores ase ON ase.idasesor = c.refasesores
-		left join dbusuarios us ON us.idusuario = c.refusuarios
+		left join dbusuarios us ON us.idusuario = cli.refusuarios
 		left join dbasociados aso ON aso.idasociado = c.refasociados
 		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
 		left join dbventas v on v.refcotizaciones = c.idcotizacion
