@@ -24,14 +24,16 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cotizacionesvigentes/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cotizaciones/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
-$rCliente = $serviciosReferencias->traerClientesPorUsuario($_SESSION['usuaid_sahilices']);
+
 //die(var_dump($_SESSION['usuaid_sahilices']));
-$rIdCliente = mysql_result($rCliente,0,0);
+$rIdCliente = $_GET['idcliente'];
+
+$rCliente = $serviciosReferencias->traerClientesPorId($rIdCliente);
 
 $rTipoPersona = mysql_result($rCliente,0,'reftipopersonas');
 
@@ -44,21 +46,7 @@ if (isset($_GET['id'])) {
 	$resCotizacionPrincipal = $serviciosReferencias->traerCotizacionesPorIdCompleto($_GET['id']);
 
 	$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta(mysql_result($resCotizacionPrincipal,0,'refproductos'));
-	if (mysql_result($resProductoPrincipal,0,'ventaenlinea') == '1') {
-		if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 5) {
-			header('Location: ../venta/comercio_fin.php?id='.$_GET['id']);
-		} else {
 
-			header('Location: ../venta/new.php?id='.$_GET['id'].'&producto='.mysql_result($resCotizacionPrincipal,0,'refproductos'));
-
-		}
-
-		//die(var_dump('Location: ../venta/new.php?id='.$_GET['id'].'&producto='.mysql_result($resCotizacionPrincipal,0,'refproductos')));
-	} else {
-		if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 2) {
-			header('Location: ver.php?id='.$_GET['id']);
-		}
-	}
 	$rIdProducto = mysql_result($resCotizacionPrincipal,0,'refproductos');
 
 	if (mysql_result($resProductoPrincipal,0,'beneficiario')) {
@@ -73,8 +61,8 @@ if (isset($_GET['id'])) {
 		$llevaAsegurado = 0;
 	}
 } else {
-	if (isset($_GET['producto'])) {
-		$rIdProducto = $_GET['producto'];
+	if (isset($_GET['idproducto'])) {
+		$rIdProducto = $_GET['idproducto'];
 
 		$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta($rIdProducto);
 
@@ -100,7 +88,7 @@ if (isset($_GET['id'])) {
 
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cotizaciones Vigentes",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cotizaciones",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -1400,7 +1388,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	 								timer: 2000,
 	 								showConfirmButton: false
 	 						});
-							$(location).attr('href', 'new.php?producto=<?php echo $rIdProducto; ?>&id='+data.idcotizacion);
+							$(location).attr('href', 'newfilter.php?idproducto=<?php echo $rIdProducto; ?>&id='+data.idcotizacion+'&idcliente=<?php echo $rIdCliente; ?>');
 						}
 
 
@@ -1466,10 +1454,6 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					} else {
 
 						$('#wizard_with_validation .contCuestionarioPersonas .escondido').hide();
-
-						$('#wizard_with_validation #tieneasegurado').prop('disabled', 'disabled');
-
-						$('#wizard_with_validation #refaseguradaaux').prop('disabled', 'disabled');
 
 					}
 
@@ -1848,7 +1832,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
  								timer: 2000,
  								showConfirmButton: false
  						});
-						$(location).attr('href', 'index.php');
+						$(location).attr('href', 'modificar.php?id=<?php echo $id; ?>');
 
  					} else {
  						swal({

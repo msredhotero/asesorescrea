@@ -71,12 +71,16 @@ if ($_SESSION['idroll_sahilices'] == 16) {
 
 } else {
 
-	$resVar1 = $serviciosReferencias->traerClientesPorId(mysql_result($resultado,0,'refclientes'));
+	$idcliente = mysql_result($resultado,0,'refclientes');
+
+	$resVar1 = $serviciosReferencias->traerClientesPorId($idcliente);
 	$cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(3,4,2),' ');
 
 }
 
-$resVar2 = $serviciosReferencias->traerProductosPorId(mysql_result($resultado,0,'refproductos'));
+$idproducto = mysql_result($resultado,0,'refproductos');
+
+$resVar2 = $serviciosReferencias->traerProductosPorId($idproducto);
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),' ');
 
 $refdescripcion = array(0=>$cadRef1,1=>$cadRef2);
@@ -200,6 +204,10 @@ $resArchivos = $serviciosReferencias->traerMejorarcondicionesarchivosPorMejora($
 							<form class="form" id="sign_in" enctype="multipart/form-data">
 								<div class="row demo-masked-input">
 									<?php echo $frm; ?>
+									<button type="button" class="btn bg-light-green waves-effect btnNuevaCotizacion">
+										<i class="material-icons">add</i>
+										<span>EMPEZAR COTIZACION</span>
+									</button>
 								</div>
 								<hr>
 								<div class="row">
@@ -512,6 +520,11 @@ $resArchivos = $serviciosReferencias->traerMejorarcondicionesarchivosPorMejora($
 			$(location).attr('href',url);
 
 		});//fin del boton modificar
+
+		$('.btnNuevaCotizacion').click(function() {
+			url = "../cotizaciones/newfilter.php?idcliente=" + <?php echo $idcliente; ?> + "&idproducto=" + <?php echo $idproducto; ?>;
+			$(location).attr('href',url);
+		});
 
 
 		$('.modificar').click(function(){

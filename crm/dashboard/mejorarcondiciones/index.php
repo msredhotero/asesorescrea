@@ -70,14 +70,17 @@ if ($_SESSION['idroll_sahilices'] == 16) {
 
 	if ($cantidad > 2) {
 		$puedeCargar = 0;
+		$lblExcedio = '<h4><i class="material-icons">report</i> <span>Ya excedio el limite diario para subir polizas.</span></h4>';
 	} else {
 		$puedeCargar = 1;
+		$lblExcedio = '';
 	}
 
 } else {
 
-	$puedeCargar = 1;
-
+	$puedeCargar = 0;
+	$lblExcedio = '';
+	
 	$resVar1 = $serviciosReferencias->traerClientes();
 	$cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(3,4,2),' ');
 
@@ -276,7 +279,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 							<?php } else { ?>
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
-										<h4><i class="material-icons">report</i> <span>Ya excedio el limite diario para subir polizas.</span></h4>
+										<?php echo $lblExcedio; ?>
 									</div>
 								</div>
 							<?php }  ?>
@@ -346,7 +349,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		$('.frmContrefclientes').hide();
 		$('#observaciones').attr("placeholder", "Ingrese las observaciones necesarias");
 
-
+		<?php if ($puedeCargar == 1) { ?>
 		var myDropzone = new Dropzone("#frmFileUpload", {
 			maxFilesize: 30,
 			acceptedFiles: ".jpg,.jpeg,.pdf",
@@ -376,18 +379,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			}
 		});
 
-		/*
-		const $button = document.getElementById('submit-files')
-      $button.addEventListener('click', function () {
-        // Retrieve selected files
-        const acceptedFiles = myDropzone.getAcceptedFiles()
-        for (let i = 0; i < acceptedFiles.length; i++) {
-          setTimeout(function () {
-            myDropzone.processFile(acceptedFiles[i])
-          }, i * 2000)
-        }
-      })
-		*/
 
 		$('#submit-files').click(function() {
 
@@ -411,6 +402,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 
 		});
+		<?php } ?>
 
 
 

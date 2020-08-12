@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../postulantes/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../especialidades/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Postulantes",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Especialidades",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -38,60 +38,31 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
-$id = $_GET['id'];
-
-////////// validar solo que pueda ingrear los perfiles permitidos /////////////////////////
-
-
-//////////////       FIN                  /////////////////////////////////////////////////
-
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Entrevista VERITA";
+$singular = "Lead";
 
-$plural = "Entrevista VERITA";
+$plural = "Leads";
 
-$eliminar = "eliminarEntrevistas";
+$eliminar = "eliminarLead";
 
-$insertar = "insertarEntrevistas";
+$insertar = "insertarLead";
 
-$modificar = "modificarEntrevistas";
+$modificar = "modificarLead";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$resultado 		= 	$serviciosReferencias->traerPostulantesPorId($id);
+$tabla 			= "dblead";
 
-$postulante = mysql_result($resultado,0,'nombre').' '.mysql_result($resultado,0,'apellidopaterno').' '.mysql_result($resultado,0,'apellidomaterno');
+$lblCambio	 	= array('refclientes','refproductos','fechacrea','fechamodi','contactado','usuariocontacto','usuarioresponsable','refestadolead','fechacreacita','tipo');
+$lblreemplazo	= array('Cliente','Producto','Fecha Alta','Fecha Ultima','Fue contactado?','Quien contacto','Responsable','Estado','Fecha Cita','Tipo de Producto');
 
-$tabla 			= "dbentrevistas";
-
-$lblCambio	 	= array('refpostulantes','codigopostal','refestadopostulantes','refestadoentrevistas');
-$lblreemplazo	= array('Postulante','Cod. Postal','Estado Postulante','Estado Entrevista');
-
-$resVar2	= $serviciosReferencias->traerPostulantesPorId($id);
-$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(2,3,4),' ');
-
-$resVar3	= $serviciosReferencias->traerEstadopostulantesPorId(2);
-$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
-
-$resVar4	= $serviciosReferencias->traerEstadoentrevistasPorId(1);
-$cadRef4 = $serviciosFunciones->devolverSelectBox($resVar4,array(1),'');
-
-
-$refdescripcion = array(0=> $cadRef2,1=> $cadRef3,2=> $cadRef4);
-$refCampo 	=  array('refpostulantes','refestadopostulantes','refestadoentrevistas');
+$refdescripcion = array();
+$refCampo 	=  array();
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
-
-$resEntrevista = $serviciosReferencias->traerEntrevistasActivasPorPostulanteEstadoPostulante($id,2);
-
-if (mysql_num_rows($resEntrevista) > 0) {
-	$existe = 1;
-} else {
-	$existe = 0;
-}
 
 ?>
 
@@ -120,22 +91,13 @@ if (mysql_num_rows($resEntrevista) > 0) {
 	<!-- Dropzone Css -->
 	<link href="../../plugins/dropzone/dropzone.css" rel="stylesheet">
 
-
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.bootstrap.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.jqueryui.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.css">
 
-
-	<!-- CSS file -->
-	<link rel="stylesheet" href="../../css/easy-autocomplete.min.css">
-	<!-- Additional CSS Themes file - not required-->
-	<link rel="stylesheet" href="../../css/easy-autocomplete.themes.min.css">
-
 	<style>
 		.alert > i{ vertical-align: middle !important; }
-		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
-		#codigopostal { width: 400px; }
 	</style>
 
 
@@ -188,11 +150,12 @@ if (mysql_num_rows($resEntrevista) > 0) {
 
 			<div class="row">
 
+
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								<?php echo strtoupper($plural); ?> - POSTULANTE: <?php echo $postulante; ?>
+								<?php echo strtoupper($plural); ?>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -211,42 +174,76 @@ if (mysql_num_rows($resEntrevista) > 0) {
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
-											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
-												<i class="material-icons">add</i>
-												<span>NUEVO</span>
+
+											<button type="button" class="btn bg-blue waves-effect btnVigente">
+												<i class="material-icons">timeline</i>
+												<span>VIGENTE</span>
 											</button>
-											<?php if ($existe == 1) { ?>
-											<button type="button" class="btn bg-green waves-effect btnContinuar">
-												<i class="material-icons">add</i>
-												<span>CONTINUAR</span>
+											<button type="button" class="btn bg-grey waves-effect btnHistorico">
+												<i class="material-icons">history</i>
+												<span>HISTORICO</span>
 											</button>
-											<?php } ?>
+
 										</div>
 									</div>
 								</div>
 
-								<div class="row" style="padding: 5px 20px;">
-
+								<div class="row contActuales" style="padding: 5px 20px;">
+									<h4>VIGENTE</h4>
+									<hr>
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
-												<th>Entrevistador</th>
-												<th>Fecha</th>
-												<th>Domicilio</th>
-												<th>Codigo Postal</th>
-												<th>Estado</th>
-												<th>Fecha Crea</th>
+												<th>Clientes</th>
+												<th>Télefono</th>
+												<th>Solicitud</th>
+												<th>Producto</th>
+												<th>Fecha Alta</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
-												<th>Entrevistador</th>
-												<th>Fecha</th>
-												<th>Domicilio</th>
-												<th>Codigo Postal</th>
+												<th>Clientes</th>
+												<th>Télefono</th>
+												<th>Solicitud</th>
+												<th>Producto</th>
+												<th>Fecha Alta</th>
+												<th>Acciones</th>
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+
+								<div class="row contHistorico" style="padding: 5px 20px;">
+									<h4>HISTORICO</h4>
+									<hr>
+									<table id="example2" class="display table " style="width:100%">
+										<thead>
+											<tr>
+												<th>Clientes</th>
+												<th>Télefono</th>
+												<th>Solicitud</th>
+												<th>Producto</th>
+												<th>Fecha Alta</th>
+												<th>Cita</th>
+												<th>Quien contacto</th>
+												<th>Responsable</th>
 												<th>Estado</th>
-												<th>Fecha Crea</th>
+												<th>Acciones</th>
+											</tr>
+										</thead>
+										<tfoot>
+											<tr>
+												<th>Clientes</th>
+												<th>Télefono</th>
+												<th>Solicitud</th>
+												<th>Producto</th>
+												<th>Fecha Alta</th>
+												<th>Cita</th>
+												<th>Quien contacto</th>
+												<th>Responsable</th>
+												<th>Estado</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -273,7 +270,7 @@ if (mysql_num_rows($resEntrevista) > 0) {
 	               </div>
 	               <div class="modal-body">
 							<div class="row">
-								<?php echo $frmUnidadNegocios; ?>
+								<?php //echo $frmUnidadNegocios; ?>
 							</div>
 
 	               </div>
@@ -349,6 +346,8 @@ if (mysql_num_rows($resEntrevista) > 0) {
 <!-- Bootstrap Material Datetime Picker Plugin Js -->
 <script src="../../plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
 
+<script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
+
 <!-- Moment Plugin Js -->
     <script src="../../plugins/momentjs/moment.js"></script>
 	 <script src="../../js/moment-with-locales.js"></script>
@@ -363,113 +362,15 @@ if (mysql_num_rows($resEntrevista) > 0) {
 <script src="../../js/dateFormat.js"></script>
 <script src="../../js/jquery.dateFormat.js"></script>
 
-<script src="../../js/jquery.easy-autocomplete.min.js"></script>
-
 <script>
 	$(document).ready(function(){
 
-		$('#fecha').bootstrapMaterialDatePicker({
-			format: 'YYYY/MM/DD HH:mm',
-			lang : 'es',
-			clearButton: true,
-			weekStart: 1,
-			time: true
-		});
 
-		var options = {
-
-			url: "../../json/jsbuscarpostal.php",
-
-			getValue: function(element) {
-				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
-			},
-
-			ajaxSettings: {
-				dataType: "json",
-				method: "POST",
-				data: {
-					busqueda: $("#codigopostal").val()
-				}
-			},
-
-			preparePostData: function (data) {
-				data.busqueda = $("#codigopostal").val();
-				return data;
-			},
-
-			list: {
-				maxNumberOfElements: 20,
-				match: {
-					enabled: true
-				},
-				onClickEvent: function() {
-					var value = $("#codigopostal").getSelectedItemData().codigo;
-					$("#codigopostal").val(value);
-
-				}
-			}
-		};
-
-
-		var options2 = {
-
-			url: "../../json/jsbuscarpostal.php",
-
-			getValue: function(element) {
-				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
-			},
-
-			ajaxSettings: {
-				dataType: "json",
-				method: "POST",
-				data: {
-					busqueda: $("#codigopostal2").val()
-				}
-			},
-
-			preparePostData: function (data) {
-				data.busqueda = $("#codigopostal2").val();
-				return data;
-			},
-
-			list: {
-				maxNumberOfElements: 20,
-				match: {
-					enabled: true
-				},
-				onClickEvent: function() {
-					var value = $("#codigopostal2").getSelectedItemData().codigo;
-					$("#codigopostal2").val(value);
-
-				}
-			}
-		};
-
-
-		$("#codigopostal").easyAutocomplete(options);
-
-		$('#usuariocrea').val('marcos');
-		$('#usuariomodi').val('marcos');
-		$('#ultimoestado').val(0);
-
-
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '265px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
-
-		});
 
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=entrevistas&id=<?php echo $id; ?>&idestado=2",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=leads",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -495,48 +396,59 @@ if (mysql_num_rows($resEntrevista) > 0) {
 			}
 		});
 
+		var table2 = $('#example2').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=leadshistoricos",
+			"language": {
+				"emptyTable":     "No hay datos cargados",
+				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "Mostrar _MENU_ filas",
+				"loadingRecords": "Cargando...",
+				"processing":     "Procesando...",
+				"search":         "Buscar:",
+				"zeroRecords":    "No se encontraron resultados",
+				"paginate": {
+					"first":      "Primero",
+					"last":       "Ultimo",
+					"next":       "Siguiente",
+					"previous":   "Anterior"
+				},
+				"aria": {
+					"sortAscending":  ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			}
+		});
+
+
+		$('.contHistorico').hide();
+
+		$('.btnPendientes').click(function() {
+			$('.contHistorico').hide();
+			$('.contActuales').hide();
+		});
+
+		$('.btnHistorico').click(function() {
+			$('.contHistorico').show();
+			$('.contActuales').hide();
+		});
+
+		$('.btnVigente').click(function() {
+			$('.contActuales').show();
+			$('.contHistorico').hide();
+		});
+
 		$("#sign_in").submit(function(e){
 			e.preventDefault();
 		});
 
-		$('#activo').prop('checked',true);
 
-		function modificarEstadoPostulante(id, idestado) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {accion: 'modificarEstadoPostulante',id: id, idestado: idestado},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-					$('.btnContinuar').hide();
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data != '') {
-						$(location).attr('href',data);
-
-					} else {
-						swal("Error!", 'Se genero un error al modificar el estado del postulante', "warning");
-
-						$("#load").html('');
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
-		}
-
-		$('.btnContinuar').click(function() {
-			modificarEstadoPostulante(<?php echo $id; ?>, 2);
-		});
-
-		function frmAjaxModificar(id, options2) {
+		function frmAjaxModificar(id) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
@@ -552,20 +464,31 @@ if (mysql_num_rows($resEntrevista) > 0) {
 
 					if (data != '') {
 						$('.frmAjaxModificar').html(data);
-						$('.show-tick').selectpicker({
-							liveSearch: true
-						});
-						$('.show-tick').selectpicker('refresh');
 
-						$('#fecha').bootstrapMaterialDatePicker({
-							format: 'YYYY/MM/DD HH:mm',
-							lang : 'mx',
+						$('.frmAjaxModificar .frmContusuariocontacto').hide();
+						$('.frmAjaxModificar .frmContusuarioresponsable').hide();
+
+						$('.frmAjaxModificar .frmContfechacrea').hide();
+
+						$('.frmAjaxModificar #fechamodi').prop('readonly',true);
+
+						$('.frmAjaxModificar #cita').bootstrapMaterialDatePicker({
+							format: 'YYYY-MM-DD HH:mm',
+							lang : 'es',
 							clearButton: true,
 							weekStart: 1,
-							time: true
+							time: true,
+							nowButton: true
 						});
 
-						$("#codigopostal2").easyAutocomplete(options2);
+						$('.frmAjaxModificar .frmContfechacreacita').hide();
+
+						if ($('#contactado').val() == 0) {
+							$('.frmAjaxModificar .frmContcita').hide();
+						} else {
+							$('.frmAjaxModificar #contactado').prop('readonly',true);
+							$('.frmAjaxModificar .frmContcita').show();
+						}
 
 
 					} else {
@@ -582,6 +505,14 @@ if (mysql_num_rows($resEntrevista) > 0) {
 			});
 
 		}
+
+		$(".frmAjaxModificar").on("click",'#contactado', function(){
+			if ($(this).val() == 0) {
+				$('.frmAjaxModificar .frmContcita').hide();
+			} else {
+				$('.frmAjaxModificar .frmContcita').show();
+			}
+		});
 
 
 		function frmAjaxEliminar(id) {
@@ -607,7 +538,8 @@ if (mysql_num_rows($resEntrevista) > 0) {
 								showConfirmButton: false
 						});
 						$('#lgmEliminar').modal('toggle');
-						location.reload();
+						table.ajax.reload();
+						table2.ajax.reload();
 					} else {
 						swal({
 								title: "Respuesta",
@@ -646,15 +578,10 @@ if (mysql_num_rows($resEntrevista) > 0) {
 
 		$("#example").on("click",'.btnModificar', function(){
 			idTable =  $(this).attr("id");
-			frmAjaxModificar(idTable, options2);
+			frmAjaxModificar(idTable);
 			$('#lgmModificar').modal();
 		});//fin del boton modificar
 
-		$("#example").on("click",'.btnVer', function(){
-			idTable =  $(this).attr("id");
-			$(location).attr('href','ver.php?id=' + idTable);
-
-		});//fin del boton modificar
 
 		$('.frmNuevo').submit(function(e){
 
@@ -691,8 +618,9 @@ if (mysql_num_rows($resEntrevista) > 0) {
 							});
 
 							$('#lgmNuevo').modal('hide');
-
-							location.reload();
+							$('#unidadnegocio').val('');
+							table.ajax.reload();
+							table2.ajax.reload();
 						} else {
 							swal({
 									title: "Respuesta",
@@ -719,7 +647,6 @@ if (mysql_num_rows($resEntrevista) > 0) {
 
 			e.preventDefault();
 			if ($('.frmModificar')[0].checkValidity()) {
-
 
 				//información del formulario
 				var formData = new FormData($(".formulario")[1]);
@@ -752,7 +679,8 @@ if (mysql_num_rows($resEntrevista) > 0) {
 							});
 
 							$('#lgmModificar').modal('hide');
-							location.reload();
+							table.ajax.reload();
+							table2.ajax.reload();
 						} else {
 							swal({
 									title: "Respuesta",

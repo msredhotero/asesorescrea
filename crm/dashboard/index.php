@@ -144,6 +144,16 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 		$nombrecompleto = mysql_result($resCliente,0,'nombrecompleto');
 
+		$lblTelefonoCelular = mysql_result($resCliente,0,'telefonocelular');
+
+		$idcliente = mysql_result($resCliente,0,0);
+
+		if ($lblTelefonoCelular == '') {
+			$existeCelular = 0;
+		} else {
+			$existeCelular = 1;
+		}
+
 
 		$resProductosCotizaciones = $serviciosReferencias->traerProductosCotizaEnLinea();
 
@@ -578,16 +588,16 @@ if ($_SESSION['idroll_sahilices'] == 7) {
  										            <button type="button" class="btn btn-lg btn-block bg-cyan" onclick="window.location='cotizacionesvigentes/new.php?producto=30'">Cotizar mi seguro de auto en línea</button>
  														<hr>
 														<h4>Solicito asesoría personalizada para cotizar un seguro de: </h4>
-														<button type="button" class="btn btn-lg btn-block bg-indigo btnEmailEnviarSeguro" id="VIDA">VIDA</button>
-														<button type="button" class="btn btn-lg btn-block bg-indigo btnEmailEnviarSeguro" id="Autos">Autos</button>
-														<button type="button" class="btn btn-lg btn-block bg-indigo btnEmailEnviarSeguro" id="Gastos Médicos">Gastos Médicos</button>
-														<button type="button" class="btn btn-lg btn-block bg-indigo btnEmailEnviarSeguro" id="Protección Hogar">Protección Hogar</button>
+														<button type="button" class="btn btn-lg btn-block bg-indigo btnEmailEnviarSeguro" id="VIDA" data-tipo="1">VIDA</button>
+														<button type="button" class="btn btn-lg btn-block bg-indigo btnEmailEnviarSeguro" id="Autos" data-tipo="2">Autos</button>
+														<button type="button" class="btn btn-lg btn-block bg-indigo btnEmailEnviarSeguro" id="GastosMedicos" data-tipo="3">Gastos Médicos</button>
+														<button type="button" class="btn btn-lg btn-block bg-indigo btnEmailEnviarSeguro" id="ProteccionHogar" data-tipo="4">Protección Hogar</button>
  														<hr>
 														<h4>Solicito apoyo en la gestión en la apertura de: </h4>
-														<button type="button" class="btn btn-lg btn-block bg-blue-grey btnEmailEnviarSeguro" id="Crédito hipotecario">Crédito hipotecario</button>
-														<button type="button" class="btn btn-lg btn-block bg-blue-grey btnEmailEnviarSeguro" id="Cuenta de ahorro">Cuenta de ahorro</button>
-														<button type="button" class="btn btn-lg btn-block bg-blue-grey btnEmailEnviarSeguro" id="Tarjeta de Crédito">Tarjeta de Crédito</button>
-														<button type="button" class="btn btn-lg btn-block bg-blue-grey btnEmailEnviarSeguro" id="Crédito Telmex">Crédito Telmex</button>
+														<button type="button" class="btn btn-lg btn-block bg-blue-grey btnEmailEnviarSeguro" id="Creditohipotecario" data-tipo="5">Crédito hipotecario</button>
+														<button type="button" class="btn btn-lg btn-block bg-blue-grey btnEmailEnviarSeguro" id="Cuentadeahorro" data-tipo="6">Cuenta de ahorro</button>
+														<button type="button" class="btn btn-lg btn-block bg-blue-grey btnEmailEnviarSeguro" id="TarjetadeCredito" data-tipo="7">Tarjeta de Crédito</button>
+														<button type="button" class="btn btn-lg btn-block bg-blue-grey btnEmailEnviarSeguro" id="CreditoTelmex" data-tipo="8">Crédito Telmex</button>
  														<hr>
 
 									          </div>
@@ -1077,16 +1087,26 @@ if ($_SESSION['idroll_sahilices'] == 7) {
        <div class="modal-dialog modal-lg" role="document">
            <div class="modal-content">
                <div class="modal-header">
-                   <h4 class="modal-title" id="largeModalLabel">SOLICITAR INFORMACION</h4>
+                   <h4 class="modal-title" id="largeModalLabel">SOLICITAR INFORMACION <span id="lblMasInformacion"></span></h4>
                </div>
                <div class="modal-body">
-						<h4>Usted va a solicitar mas información a uno de nuestros representantes sobre: </h4>
-						<h3 id="lblMasInformacion"></h3>
-						<p>Escribanos un comentario si es necesario</p>
-						<textarea class="form-control" col="50" row="10" id="txtareaInfo"></textarea>
+						<h5>Gracias por confiar en la mejor</h5>
+						<?php if ($existeCelular == 1) { ?>
+							<p>En breve se pondrá en con Teléfono de cliente, si quieren más información sobre algún producto de la página debe de validar su numero de celular registrado , "te vamos a contactar a este número <span id="lblcel"><?php echo $lblTelefonoCelular; ?></span>" o editar el número.</p>
+							<label class="label-form">Editar Nro de Teléfono Celular</label>
+							<input class="form-control" name="celphone" id="celphone" value="<?php echo $lblTelefonoCelular; ?>" />
+							<button type="button" class="btn btn-success waves-effect btnModificarTelMovilCliente"><i class="material-icons">edit</i><span>EDITAR</span></button>
+						<?php }  else { ?>
+							<p>En breve se pondrá en con Teléfono de cliente, si quieren más información sobre algún producto de la página debe de validar si tiene celular registrado. Ingresa número de teléfono y valida tu codigo</p>
+								<label class="label-form">Ingresar Nro de Teléfono Celular</label>
+								<input class="form-control" name="celphone" id="celphone" value="" />
+								<button type="button" class="btn btn-success waves-effect btnModificarTelMovilCliente"><i class="material-icons">add_circle</i><span>AGREGAR</span></button>
+						<?php }  ?>
+
                </div>
                <div class="modal-footer">
-                   <button type="button" class="btn btn-success waves-effect btnEnviarEmailInfo">ENVIAR</button>
+						<input type="hidden" id="tipoProducto" name="tipoProducto" value="0"/>
+                   <button type="button" class="btn bg-blue waves-effect btnEnviarEmailInfo"><i style="color:white;" class="material-icons">send</i><span style="color:white;">ENVIAR</span></button>
                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
                </div>
            </div>
@@ -1128,48 +1148,110 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 			$('.btnEmailEnviarSeguro').click(function() {
 				idTable =  $(this).attr("id");
+
+				$('#tipoProducto').val($('#'+idTable).data('tipo'));
+
 				$('#lblMasInformacion').html(idTable);
 				$('#lgmEnviarEmail').modal();
 			});
 
-			$('.btnEnviarEmailInfo').click(function() {
-				$.ajax({
-					url: '../ajax/ajax.php',
-					type: 'POST',
-					// Form data
-					//datos del formulario
-					data: {
-						accion: 'EnviarEmailInfo',
-						producto: $('#lblMasInformacion').html(),
-						observaciones: $('#txtareaInfo').val()
-					},
-					//mientras enviamos el archivo
-					beforeSend: function(){
 
-					},
-					//una vez finalizado correctamente
-					success: function(data){
+			$('#celphone').inputmask('999 9999999', {
+				placeholder: '___ _______'
+			});
 
-						if (data.error) {
-							swal("Error!", data.mensaje, "warning");
-						} else {
-							swal({
-									title: "Respuesta",
-									text: "Su información se envio correctamente, un representante se pondra en contacto con usted!!",
-									type: "success",
-									timer: 1500,
-									showConfirmButton: false
-							});
 
-							$('#lgmEnviarEmail').modal('toggle');
+
+			$('.btnModificarTelMovilCliente').click(function() {
+				if ($('#celphone').inputmask("isComplete")){
+					$.ajax({
+						url: '../ajax/ajax.php',
+						type: 'POST',
+						// Form data
+						//datos del formulario
+						data: {
+							accion: 'ModificarTelMovilCliente',
+							celphone: $('#celphone').val(),
+							idcliente: <?php echo $idcliente; ?>
+						},
+						//mientras enviamos el archivo
+						beforeSend: function(){
+
+						},
+						//una vez finalizado correctamente
+						success: function(data){
+
+							if (data.error) {
+								swal("Error!", data.mensaje, "warning");
+							} else {
+								swal({
+										title: "Respuesta",
+										text: "Se modifico correctamente su numero de teléfono celular",
+										type: "success",
+										timer: 1500,
+										showConfirmButton: false
+								});
+
+								$('#lblcel').html($('#celphone').val());
+							}
+						},
+						//si ha ocurrido un error
+						error: function(){
+							$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+							$("#load").html('');
 						}
-					},
-					//si ha ocurrido un error
-					error: function(){
-						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-						$("#load").html('');
-					}
-				});
+					});
+				} else {
+					swal("Error!", 'Por favor debe completar el Nro de Telefono', "warning");
+				}
+
+			});
+
+			$('.btnEnviarEmailInfo').click(function() {
+				if ($('#celphone').inputmask("isComplete")){
+					$.ajax({
+						url: '../ajax/ajax.php',
+						type: 'POST',
+						// Form data
+						//datos del formulario
+						data: {
+							accion: 'insertarLead',
+							refproductos: 30,
+							contactado: 0,
+							observaciones: '',
+							refclientes: <?php echo $idcliente; ?>,
+							tipo: $('#tipoProducto').val()
+						},
+						//mientras enviamos el archivo
+						beforeSend: function(){
+
+						},
+						//una vez finalizado correctamente
+						success: function(data){
+
+							if (data.error) {
+								swal("Error!", data.mensaje, "warning");
+							} else {
+								swal({
+										title: "Respuesta",
+										text: "Su información se envio correctamente, un representante se pondra en contacto con usted!!",
+										type: "success",
+										timer: 1500,
+										showConfirmButton: false
+								});
+
+								$('#lgmEnviarEmail').modal('toggle');
+							}
+						},
+						//si ha ocurrido un error
+						error: function(){
+							$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+							$("#load").html('');
+						}
+					});
+				} else {
+					swal("Error!", 'Por favor debe completar el Nro de Telefono', "warning");
+				}
 			});
 
 
