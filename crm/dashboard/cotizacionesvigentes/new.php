@@ -43,35 +43,42 @@ $rTipoPersona = mysql_result($rCliente,0,'reftipopersonas');
 if (isset($_GET['id'])) {
 	$resCotizacionPrincipal = $serviciosReferencias->traerCotizacionesPorIdCompleto($_GET['id']);
 
-	$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta(mysql_result($resCotizacionPrincipal,0,'refproductos'));
-	if (mysql_result($resProductoPrincipal,0,'ventaenlinea') == '1') {
-		if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 5) {
-			header('Location: ../venta/comercio_fin.php?id='.$_GET['id']);
+
+	if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 2) {
+		header('Location: ../cotizacionesvigentes/modificar.php?id='.$_GET['id']);
+	} else {
+		$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta(mysql_result($resCotizacionPrincipal,0,'refproductos'));
+		if (mysql_result($resProductoPrincipal,0,'ventaenlinea') == '1') {
+			if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 5) {
+				header('Location: ../venta/comercio_fin.php?id='.$_GET['id']);
+			} else {
+
+				header('Location: ../venta/new.php?id='.$_GET['id'].'&producto='.mysql_result($resCotizacionPrincipal,0,'refproductos'));
+
+			}
+
+			//die(var_dump('Location: ../venta/new.php?id='.$_GET['id'].'&producto='.mysql_result($resCotizacionPrincipal,0,'refproductos')));
 		} else {
+			if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 2) {
+				header('Location: ver.php?id='.$_GET['id']);
+			}
+		}
+		$rIdProducto = mysql_result($resCotizacionPrincipal,0,'refproductos');
 
-			header('Location: ../venta/new.php?id='.$_GET['id'].'&producto='.mysql_result($resCotizacionPrincipal,0,'refproductos'));
-
+		if (mysql_result($resProductoPrincipal,0,'beneficiario')) {
+			$llevaBeneficiario = 1;
+		} else {
+			$llevaBeneficiario = 0;
 		}
 
-		//die(var_dump('Location: ../venta/new.php?id='.$_GET['id'].'&producto='.mysql_result($resCotizacionPrincipal,0,'refproductos')));
-	} else {
-		if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 2) {
-			header('Location: ver.php?id='.$_GET['id']);
+		if (mysql_result($resProductoPrincipal,0,'asegurado')) {
+			$llevaAsegurado = 1;
+		} else {
+			$llevaAsegurado = 0;
 		}
 	}
-	$rIdProducto = mysql_result($resCotizacionPrincipal,0,'refproductos');
 
-	if (mysql_result($resProductoPrincipal,0,'beneficiario')) {
-		$llevaBeneficiario = 1;
-	} else {
-		$llevaBeneficiario = 0;
-	}
 
-	if (mysql_result($resProductoPrincipal,0,'asegurado')) {
-		$llevaAsegurado = 1;
-	} else {
-		$llevaAsegurado = 0;
-	}
 } else {
 	if (isset($_GET['producto'])) {
 		$rIdProducto = $_GET['producto'];
