@@ -1192,6 +1192,8 @@ function modificarLead($serviciosReferencias) {
 
    if ($contactado == '1') {
       $usuariocontacto = $_SESSION['usua_sahilices'];
+   } else {
+      $usuariocontacto = '';
    }
 
 
