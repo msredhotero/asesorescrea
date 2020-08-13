@@ -61,7 +61,7 @@ $lblreemplazo	= array('Cliente','Producto','Fecha Alta','Fecha Ultima','Fue cont
 $refdescripcion = array();
 $refCampo 	=  array();
 
-$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+//$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 ?>
@@ -179,6 +179,14 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<i class="material-icons">timeline</i>
 												<span>VIGENTE</span>
 											</button>
+											<button type="button" class="btn bg-green waves-effect btnCotizacion">
+												<i class="material-icons">history</i>
+												<span>EN COTIZACION</span>
+											</button>
+											<button type="button" class="btn bg-red waves-effect btnBasura">
+												<i class="material-icons">history</i>
+												<span>BASURA</span>
+											</button>
 											<button type="button" class="btn bg-grey waves-effect btnHistorico">
 												<i class="material-icons">history</i>
 												<span>HISTORICO</span>
@@ -199,6 +207,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Solicitud</th>
 												<th>Producto</th>
 												<th>Fecha Alta</th>
+												<th>Origen</th>
+												<th>Folio</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -209,14 +219,16 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Solicitud</th>
 												<th>Producto</th>
 												<th>Fecha Alta</th>
+												<th>Origen</th>
+												<th>Folio</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
 									</table>
 								</div>
 
-								<div class="row contHistorico" style="padding: 5px 20px;">
-									<h4>HISTORICO</h4>
+								<div class="row contCotizacion" style="padding: 5px 20px;">
+									<h4>EN COTIZACION</h4>
 									<hr>
 									<table id="example2" class="display table " style="width:100%">
 										<thead>
@@ -229,6 +241,82 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Cita</th>
 												<th>Quien contacto</th>
 												<th>Responsable</th>
+												<th>Origen</th>
+												<th>Folio</th>
+												<th>Acciones</th>
+											</tr>
+										</thead>
+										<tfoot>
+											<tr>
+												<th>Clientes</th>
+												<th>Télefono</th>
+												<th>Solicitud</th>
+												<th>Producto</th>
+												<th>Fecha Alta</th>
+												<th>Cita</th>
+												<th>Quien contacto</th>
+												<th>Responsable</th>
+												<th>Origen</th>
+												<th>Folio</th>
+												<th>Acciones</th>
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+
+								<div class="row contBasura" style="padding: 5px 20px;">
+									<h4>BASURA</h4>
+									<hr>
+									<table id="example3" class="display table " style="width:100%">
+										<thead>
+											<tr>
+												<th>Clientes</th>
+												<th>Télefono</th>
+												<th>Solicitud</th>
+												<th>Producto</th>
+												<th>Fecha Alta</th>
+												<th>Cita</th>
+												<th>Quien contacto</th>
+												<th>Responsable</th>
+												<th>Origen</th>
+												<th>Folio</th>
+												<th>Acciones</th>
+											</tr>
+										</thead>
+										<tfoot>
+											<tr>
+												<th>Clientes</th>
+												<th>Télefono</th>
+												<th>Solicitud</th>
+												<th>Producto</th>
+												<th>Fecha Alta</th>
+												<th>Cita</th>
+												<th>Quien contacto</th>
+												<th>Responsable</th>
+												<th>Origen</th>
+												<th>Folio</th>
+												<th>Acciones</th>
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+
+								<div class="row contHistorico" style="padding: 5px 20px;">
+									<h4>HISTORICO</h4>
+									<hr>
+									<table id="example4" class="display table " style="width:100%">
+										<thead>
+											<tr>
+												<th>Clientes</th>
+												<th>Télefono</th>
+												<th>Solicitud</th>
+												<th>Producto</th>
+												<th>Fecha Alta</th>
+												<th>Cita</th>
+												<th>Quien contacto</th>
+												<th>Responsable</th>
+												<th>Origen</th>
+												<th>Folio</th>
 												<th>Estado</th>
 												<th>Acciones</th>
 											</tr>
@@ -243,6 +331,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Cita</th>
 												<th>Quien contacto</th>
 												<th>Responsable</th>
+												<th>Origen</th>
+												<th>Folio</th>
 												<th>Estado</th>
 												<th>Acciones</th>
 											</tr>
@@ -399,7 +489,65 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		var table2 = $('#example2').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=leadshistoricos",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=leadshistoricos&idestado=2",
+			"language": {
+				"emptyTable":     "No hay datos cargados",
+				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "Mostrar _MENU_ filas",
+				"loadingRecords": "Cargando...",
+				"processing":     "Procesando...",
+				"search":         "Buscar:",
+				"zeroRecords":    "No se encontraron resultados",
+				"paginate": {
+					"first":      "Primero",
+					"last":       "Ultimo",
+					"next":       "Siguiente",
+					"previous":   "Anterior"
+				},
+				"aria": {
+					"sortAscending":  ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			}
+		});
+
+		var table2 = $('#example3').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=leadshistoricos&idestado=4",
+			"language": {
+				"emptyTable":     "No hay datos cargados",
+				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "Mostrar _MENU_ filas",
+				"loadingRecords": "Cargando...",
+				"processing":     "Procesando...",
+				"search":         "Buscar:",
+				"zeroRecords":    "No se encontraron resultados",
+				"paginate": {
+					"first":      "Primero",
+					"last":       "Ultimo",
+					"next":       "Siguiente",
+					"previous":   "Anterior"
+				},
+				"aria": {
+					"sortAscending":  ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			}
+		});
+
+		var table2 = $('#example4').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=leadshistoricos&idestado=3",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -427,20 +575,35 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 
 		$('.contHistorico').hide();
+		$('.contCotizacion').hide();
+		$('.contBasura').hide();
 
-		$('.btnPendientes').click(function() {
+		$('.btnCotizacion').click(function() {
 			$('.contHistorico').hide();
 			$('.contActuales').hide();
+			$('.contBasura').hide();
+			$('.contCotizacion').show();
+		});
+
+		$('.btnBasura').click(function() {
+			$('.contHistorico').hide();
+			$('.contActuales').hide();
+			$('.contBasura').show();
+			$('.contCotizacion').hide();
 		});
 
 		$('.btnHistorico').click(function() {
 			$('.contHistorico').show();
 			$('.contActuales').hide();
+			$('.contBasura').hide();
+			$('.contCotizacion').hide();
 		});
 
 		$('.btnVigente').click(function() {
 			$('.contActuales').show();
 			$('.contHistorico').hide();
+			$('.contBasura').hide();
+			$('.contCotizacion').hide();
 		});
 
 		$("#sign_in").submit(function(e){
@@ -467,6 +630,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 						$('.frmAjaxModificar .frmContusuariocontacto').hide();
 						$('.frmAjaxModificar .frmContusuarioresponsable').hide();
+						$('.frmAjaxModificar .frmContreforigencomercio').hide();
+						$('.frmAjaxModificar .frmContrefcotizaciones').hide();
 
 						$('.frmAjaxModificar .frmContfechacrea').hide();
 
@@ -565,6 +730,50 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			});
 
 		}
+
+		$("#example2").on("click",'.btnCotizar', function(){
+			idTable =  $(this).attr("id");
+
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'rutaCotizar', id: idTable,tipo:1},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error == false) {
+
+						$(location).attr('href',data.ruta);
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data.mensaje,
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		});//fin del boton eliminar
 
 		$("#example").on("click",'.btnEliminar', function(){
 			idTable =  $(this).attr("id");

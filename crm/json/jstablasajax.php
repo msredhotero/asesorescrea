@@ -71,20 +71,55 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 switch ($tabla) {
 	case 'leadshistoricos':
 
+		$idestado = $_GET['idestado'];
 
-		$datos = $serviciosReferencias->traerLeadhistoricosajax($length, $start, $busqueda,$colSort,$colSortDir);
+		$datos = $serviciosReferencias->traerLeadhistoricosajax($length, $start, $busqueda,$colSort,$colSortDir,($idestado == 3 ? '3,5,6' : $idestado));
 
 		$resAjax = $datos[0];
 		$res = $datos[1];
 
-		$label = array();
-		$class = array();
-		$icon = array();
+		switch ($idestado) {
+			case 1:
+				$label = array();
+				$class = array();
+				$icon = array();
+
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 10;
+			break;
+			case 2:
+				$label = array('btnCotizar');
+				$class = array('bg-green');
+				$icon = array('monetization_on');
+
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 10;
+			break;
+			case 4:
+				$label = array();
+				$class = array();
+				$icon = array();
+
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 10;
+			break;
+			case 3:
+				$label = array('btnVolver');
+				$class = array('bg-grey');
+				$icon = array('update');
+
+				$indiceID = 0;
+				$empieza = 1;
+				$termina = 11;
+			break;
+		}
 
 
-		$indiceID = 0;
-		$empieza = 1;
-		$termina = 9;
+
+
 
 	break;
 	case 'leads':
@@ -102,7 +137,7 @@ switch ($tabla) {
 
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 5;
+		$termina = 7;
 
 	break;
 	case 'cotizacionesvigentes':

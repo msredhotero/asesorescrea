@@ -1219,6 +1219,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 							refproductos: 30,
 							contactado: 0,
 							observaciones: '',
+							origen: 1,
 							refclientes: <?php echo $idcliente; ?>,
 							tipo: $('#tipoProducto').val()
 						},

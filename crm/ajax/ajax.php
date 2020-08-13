@@ -1115,10 +1115,39 @@ switch ($accion) {
    case 'eliminarLead':
       eliminarLead($serviciosReferencias);
    break;
+   case 'rutaCotizar':
+      rutaCotizar($serviciosReferencias);
+   break;
 
 
 }
 /* FinFinFin */
+
+function rutaCotizar($serviciosReferencias) {
+   $id = $_POST['id'];
+   $tipo = $_POST['tipo'];
+
+   switch ($tipo) {
+      case 1:
+         $res = $serviciosReferencias->traerLeadPorId($id);
+      break;
+   }
+
+   if (mysql_num_rows($res)>0) {
+      $resV['error'] = false;
+
+      $resV['ruta'] = "../cotizaciones/newfilter.php?idcliente=".mysql_result($res,0,'refclientes')."&idproducto=".mysql_result($res,0,'refproductos')."&lead=".$id;
+
+   } else {
+      $resV['error'] = true;
+      $resV['mensaje'] = 'No exite el registro, verifique';
+
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 
 function insertarLead($serviciosReferencias) {
@@ -1136,8 +1165,9 @@ function insertarLead($serviciosReferencias) {
    $fechacreacita = '';
    $observaciones = $_POST['observaciones'];
    $refproductosweb = $_POST['tipo'];
+   $reforigencomercio = $_POST['origen'];
 
-   $res = $serviciosReferencias->insertarLead($refclientes,$refproductos,$fechacrea,$fechamodi,$contactado,$usuariocontacto,$usuarioresponsable,$cita,$refestadolead,$fechacreacita,$observaciones,$refproductosweb);
+   $res = $serviciosReferencias->insertarLead($refclientes,$refproductos,$fechacrea,$fechamodi,$contactado,$usuariocontacto,$usuarioresponsable,$cita,$refestadolead,$fechacreacita,$observaciones,$refproductosweb,$reforigencomercio);
 
    if ((integer)$res > 0) {
       $resV['error'] = false;
@@ -2138,6 +2168,7 @@ function traerRespuestascuestionarioPorPregunta($serviciosReferencias, $servicio
 function validarCuestionario($serviciosReferencias) {
    $id = $_POST['refproductos'];
    $refclientes = $_POST['refclientes'];
+   $lead = $_POST['lead'];
 
    $resP = $serviciosReferencias->traerProductosPorId($id);
    $idcuestionario = mysql_result($resP,0,'refcuestionarios');
@@ -2451,10 +2482,15 @@ function validarCuestionario($serviciosReferencias) {
 
          //die(var_dump($resI));
          /**** fin cuestionario     ****/
+         if ($lead > 0) {
+            $resModificarLead = $serviciosReferencias->modificarLeadCotizacion($lead,$res);
+         }
+
 
          $resV['idcotizacion']= $res;
       } else {
          $resV['errorinsert'] = true;
+         // acordate de sacar el sqlc
          $resV['mensaje'] = 'Ocurrio un error al insertar los datos, intente nuevamente '.$sqlC;
 
       }
@@ -5857,7 +5893,7 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          }
 
          if (mysql_result($resultado,0,'refestadolead') == 1) {
-            $resEstado 	= $serviciosReferencias->traerEstadoleadPorIn('1,2,3,4');
+            $resEstado 	= $serviciosReferencias->traerEstadoleadPorIn('1,2,3,4,6');
          } else {
             $resEstado 	= $serviciosReferencias->traerEstadoleadPorId(mysql_result($resultado,0,'refestadolead'));
          }

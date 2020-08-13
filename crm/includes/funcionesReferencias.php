@@ -67,9 +67,9 @@ class ServiciosReferencias {
 
    /* PARA Lead */
 
-   function insertarLead($refclientes,$refproductos,$fechacrea,$fechamodi,$contactado,$usuariocontacto,$usuarioresponsable,$cita,$refestadolead,$fechacreacita,$observaciones,$refproductosweb) {
-      $sql = "insert into dblead(idlead,refclientes,refproductos,fechacrea,fechamodi,contactado,usuariocontacto,usuarioresponsable,cita,refestadolead,fechacreacita,observaciones,refproductosweb)
-      values ('',".$refclientes.",".$refproductos.",'".$fechacrea."','".$fechamodi."','".$contactado."','".$usuariocontacto."','".$usuarioresponsable."','".$cita."',".$refestadolead.",'".$fechacreacita."','".$observaciones."',".$refproductosweb.")";
+   function insertarLead($refclientes,$refproductos,$fechacrea,$fechamodi,$contactado,$usuariocontacto,$usuarioresponsable,$cita,$refestadolead,$fechacreacita,$observaciones,$refproductosweb,$reforigencomercio) {
+      $sql = "insert into dblead(idlead,refclientes,refproductos,fechacrea,fechamodi,contactado,usuariocontacto,usuarioresponsable,cita,refestadolead,fechacreacita,observaciones,refproductosweb,reforigencomercio)
+      values ('',".$refclientes.",".$refproductos.",'".$fechacrea."','".$fechamodi."','".$contactado."','".$usuariocontacto."','".$usuarioresponsable."','".$cita."',".$refestadolead.",'".$fechacreacita."','".$observaciones."',".$refproductosweb.",".$reforigencomercio.")";
       $res = $this->query($sql,1);
       return $res;
    }
@@ -79,6 +79,14 @@ class ServiciosReferencias {
       $sql = "update dblead
       set
       refclientes = ".$refclientes.",refproductos = ".$refproductos.",fechamodi = '".$fechamodi."',contactado = '".$contactado."',usuariocontacto = '".$usuariocontacto."',usuarioresponsable = '".$usuarioresponsable."',cita = '".$cita."',refestadolead = ".$refestadolead.",fechacreacita = '".$fechacreacita."',observaciones = '".$observaciones."',refproductosweb = '".$refproductosweb."' where idlead =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function modificarLeadCotizacion($id,$refcotizaciones) {
+      $sql = "update dblead
+      set
+      refcotizaciones = ".$refcotizaciones.",refestadolead=5 where idlead =".$id;
       $res = $this->query($sql,0);
       return $res;
    }
@@ -116,6 +124,8 @@ class ServiciosReferencias {
       tw.producto as productoweb,
       pro.producto,
       l.fechacrea,
+      oc.origencomercio,
+      concat('LD',right(concat('00000000',l.idlead),8)) as folio,
       l.refproductos,
       l.fechamodi,
       l.contactado,
@@ -129,6 +139,7 @@ class ServiciosReferencias {
       inner join dbclientes cli ON cli.idcliente = l.refclientes
       inner join tbproductosweb tw on tw.idproductosweb = l.refproductosweb
       left join tbproductos pro ON pro.idproducto = l.refproductos
+      left join tborigencomercio oc on oc.idorigencomercio = l.reforigencomercio
       where l.refestadolead = 1 ".$where."
       ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
@@ -138,7 +149,7 @@ class ServiciosReferencias {
    }
 
 
-   function traerLeadhistoricosajax($length, $start, $busqueda,$colSort,$colSortDir) {
+   function traerLeadhistoricosajax($length, $start, $busqueda,$colSort,$colSortDir,$idestado) {
 
       $where = '';
 
@@ -157,12 +168,12 @@ class ServiciosReferencias {
       l.cita,
       l.usuariocontacto,
       l.usuarioresponsable,
+      oc.origencomercio,
+      concat('LD',right(concat('00000000',l.idlead),8)) as folio,
       elt.estadolead,
       l.refproductos,
       l.fechamodi,
       l.contactado,
-
-
 
       l.refestadolead,
       l.fechacreacita,
@@ -172,7 +183,8 @@ class ServiciosReferencias {
       inner join tbproductosweb tw on tw.idproductosweb = l.refproductosweb
       inner join tbestadolead elt on elt.idestadolead = l.refestadolead
       left join tbproductos pro ON pro.idproducto = l.refproductos
-      where l.refestadolead in (2,3,4,5) ".$where."
+      left join tborigencomercio oc on oc.idorigencomercio = l.reforigencomercio
+      where l.refestadolead in (".$idestado.") ".$where."
       ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
 
@@ -203,7 +215,7 @@ class ServiciosReferencias {
 
 
    function traerLeadPorId($id) {
-      $sql = "select idlead,refclientes,refproductos,fechacrea,fechamodi,contactado,usuariocontacto,usuarioresponsable,cita,refestadolead,fechacreacita,observaciones,refproductosweb from dblead where idlead =".$id;
+      $sql = "select idlead,refclientes,refproductos,fechacrea,fechamodi,contactado,usuariocontacto,usuarioresponsable,cita,refestadolead,fechacreacita,observaciones,refproductosweb,reforigencomercio from dblead where idlead =".$id;
       $res = $this->query($sql,0);
       return $res;
    }

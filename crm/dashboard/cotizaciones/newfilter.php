@@ -37,7 +37,11 @@ $rCliente = $serviciosReferencias->traerClientesPorId($rIdCliente);
 
 $rTipoPersona = mysql_result($rCliente,0,'reftipopersonas');
 
-
+if (isset($_GET['lead'])) {
+	$lead = $_GET['lead'];
+} else {
+	$lead = 0;
+}
 
 
 
@@ -651,6 +655,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 										<input type="hidden" name="reftipopersonasaux" id="reftipopersonasaux" value="<?php echo $rTipoPersona; ?>" />
 										<input type="hidden" name="idcotizacion" id="idcotizacion" value="<?php echo $id; ?>" />
 										<input type="hidden" name="actualizacliente" id="actualizacliente" value="0" />
+										<input type="hidden" name="lead" id="lead" value="<?php echo $lead; ?>" />
 
                               <h3>Producto</h3>
                                  <fieldset>
