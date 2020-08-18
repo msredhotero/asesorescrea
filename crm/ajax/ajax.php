@@ -1238,10 +1238,12 @@ function generaNotificacion($serviciosReferencias, $serviciosMensajes, $servicio
       case 'cotizacionAjustes':
          $lblMensajeNot = 'Ajuste Cotizacion: ';
          $lblAsunto = 'Solicitaron ajustes sobre la cotizacion: ';
+         $resMod = $serviciosReferencias->modificarEstadoCotizacionResultado($id, 2);
       break;
       case 'cotizacionRechazo':
          $lblMensajeNot = 'Rechaza Cotizacion: ';
          $lblAsunto = 'Rechazaron la cotizacion: ';
+         $resMod = $serviciosReferencias->modificarEstadoCotizacionResultado($id, 3);
       break;
    }
 
