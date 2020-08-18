@@ -77,7 +77,7 @@ $idTabla = "idcotizacion";
 $idestado = mysql_result($resultado,0,'refestadocotizaciones');
 
 if ($idestado == 1) {
-	header('Location: new.php?id='.$id);
+	header('Location: newfilter.php?id='.$id);
 }
 
 $resEstados = $serviciosReferencias->traerEstadocotizacionesPorId($idestado);
