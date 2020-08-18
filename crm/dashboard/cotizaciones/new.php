@@ -1348,9 +1348,9 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 						$('#wizard_with_validation .aparecer').click(function() {
 							idTable =  $(this).attr("id");
-							idPregunta =  $('#'+idTable).data("pregunta");
-							idRespuesta =  $('#'+idTable).data("respuesta");
-							idPreguntaId =  $('#'+idTable).data("idpregunta");
+							idPregunta =  $('#wizard_with_validation #'+idTable).data("pregunta");
+							idRespuesta =  $('#wizard_with_validation #'+idTable).data("respuesta");
+							idPreguntaId =  $('#wizard_with_validation #'+idTable).data("idpregunta");
 
 							$('#wizard_with_validation .escondido'+idPreguntaId).hide();
 
