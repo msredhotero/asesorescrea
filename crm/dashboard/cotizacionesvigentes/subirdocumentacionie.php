@@ -29,12 +29,18 @@ $serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cotizacio
 
 $fecha = date('Y-m-d');
 
-if ($_SESSION['idroll_sahilices'] == 10) {
-	$idusuario = $_SESSION['usuaid_sahilices'];
-	$resultado 		= 	$serviciosReferencias->traerCotizacionesPorUsuario($idusuario);
-} else {
-	$id = $_GET['id'];
-	$resultado 		= 	$serviciosReferencias->traerCotizacionesPorId($id);
+
+$id = $_GET['id'];
+$resultado 		= 	$serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+
+$idcliente = mysql_result($resultado,0,'refclientes');
+
+$rCliente = $serviciosReferencias->traerClientesPorUsuario($_SESSION['usuaid_sahilices']);
+//die(var_dump($_SESSION['usuaid_sahilices']));
+$rIdCliente = mysql_result($rCliente,0,0);
+
+if ($rIdCliente != $idcliente) {
+	header('Location: index.php');
 }
 
 
@@ -51,7 +57,15 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 $id = mysql_result($resultado,0,'idcotizacion');
 
-$iddocumentacion = $_GET['documentacion'];
+$resDocumentacionesNecesariasParaEmision = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($id,3);
+
+if (mysql_num_rows($resDocumentacionesNecesariasParaEmision)>0) {
+	$iddocumentacion = mysql_result($resDocumentacionesNecesariasParaEmision,0,0);
+} else {
+	$iddocumentacion = 0;
+}
+
+
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
 $singular = "Documentación I";
@@ -162,7 +176,13 @@ switch ($iddocumentacion) {
 	break;
 }
 
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($id,mysql_result($resDocumentacion,0,'reftipodocumentaciones'));
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($id,3);
+
+if (mysql_num_rows($resDocumentaciones)>0) {
+	$nombreDocumentacion = mysql_result($resDocumentacion,0,'documentacion');
+} else {
+	$nombreDocumentacion = 'No hay documentacion solicitada';
+}
 
 ?>
 
@@ -306,7 +326,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								DOCUMENTACION - <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?>
+								DOCUMENTACION - <?php echo $nombreDocumentacion; ?>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -405,13 +425,13 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 						</div>
 					</div>
 				</div>
-			<?php if ($idestadodocumentacion != 5) { ?>
+			<?php if ($nombreDocumentacion != 'No hay documentacion solicitada') { ?>
 			<div class="row">
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card">
 						<div class="header bg-blue">
 							<h2>
-								CARGA/MODIFIQUE LA DOCUMENTACIÓN <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?> AQUI
+								CARGA/MODIFIQUE LA DOCUMENTACIÓN <?php echo $nombreDocumentacion; ?> AQUI
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -508,17 +528,12 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 			modificarCotizacionUnicaDocumentacion($('#<?php echo $campo; ?>').val());
 		});
 
-		<?php if (mysql_result($resultado,0,'refestadocotizaciones') == 1) { ?>
+
 		$('.btnVolver').click(function() {
-			url = "new.php?id=" + <?php echo $id; ?>;
+			url = "resultado.php?id=" + <?php echo $id; ?>;
 			$(location).attr('href',url);
 		});
-		<?php } else { ?>
-		$('.btnVolver').click(function() {
-			url = "modificar.php?id=" + <?php echo $id; ?>;
-			$(location).attr('href',url);
-		});
-		<?php } ?>
+
 
 		function modificarCotizacionUnicaDocumentacion(valor) {
 			$.ajax({

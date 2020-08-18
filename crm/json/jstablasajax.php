@@ -73,7 +73,7 @@ switch ($tabla) {
 
 		$idestado = $_GET['idestado'];
 
-		$datos = $serviciosReferencias->traerLeadhistoricosajax($length, $start, $busqueda,$colSort,$colSortDir,($idestado == 3 ? '3,5,6' : $idestado));
+		$datos = $serviciosReferencias->traerLeadhistoricosajax($length, $start, $busqueda,$colSort,$colSortDir,($idestado == 3 ? '3,4,5,6' : $idestado));
 
 		$resAjax = $datos[0];
 		$res = $datos[1];
@@ -148,9 +148,9 @@ switch ($tabla) {
 		$resAjax = $datos[0];
 		$res = $datos[1];
 
-		$label = array('btnModificar','btnEliminar');
-		$class = array('bg-amber','bg-red');
-		$icon = array('search','delete');
+		$label = array('btnModificar');
+		$class = array('bg-green');
+		$icon = array('search');
 
 
 		$indiceID = 0;
@@ -539,28 +539,53 @@ switch ($tabla) {
 
 	case 'cotizaciones':
 
+		$idestado = $_GET['estado'];
+
+		switch ($idestado) {
+			case 1:
+				$label = array('btnModificar','btnEliminar');
+				$class = array('bg-amber','bg-red');
+				$icon = array('create','delete');
+				$whereEstado = ' c.refestadocotizaciones in (1,2,3) and c.refestados in (0,1) ';
+			break;
+			case 2:
+				$label = array('btnModificar','btnEliminar');
+				$class = array('bg-amber','bg-red');
+				$icon = array('create','delete');
+				$whereEstado = ' c.refestados in (2) and DATEDIFF(CURDATE(),c.fechacrea) < 62 ';
+			break;
+			case 3:
+				$label = array('btnModificar');
+				$class = array('bg-orange');
+				$icon = array('update');
+				$whereEstado = ' (c.refestadocotizaciones in (5) or (c.refestadocotizaciones = 4 and DATEDIFF(CURDATE(),c.fechacrea) < 62)) ';
+			break;
+			default:
+				$label = array('btnModificar','btnEliminar');
+				$class = array('bg-amber','bg-red');
+				$icon = array('create','delete');
+				$whereEstado = ' c.refestadocotizaciones in (1,2,3) and c.refestados in (0,1) ';
+			break;
+		}
+
 		if ($_SESSION['idroll_sahilices'] == 7) {
 
-			$datos = $serviciosReferencias->traerCotizacionesajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+			$datos = $serviciosReferencias->traerCotizacionesajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices'],$whereEstado);
 
 			$resAjax = $datos[0];
 			$res = $datos[1];
 
-			$label = array('btnModificar','btnEliminar');
-			$class = array('bg-amber','bg-red');
-			$icon = array('create','delete');
+
 		} else {
 
 			$responsableComercial = $_GET['sSearch_0'];
 
-			$datos = $serviciosReferencias->traerCotizacionesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial);
+			$datos = $serviciosReferencias->traerCotizacionesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$whereEstado);
 
 			$resAjax = $datos[0];
 			$res = $datos[1];
 
-			$label = array('btnModificar','btnEliminar');
-			$class = array('bg-amber','bg-red');
-			$icon = array('create','delete');
+
 
 		}
 

@@ -440,6 +440,23 @@ function traerUsuarioId($id) {
 	}
 }
 
+function traerUsuarioIdAutoLogin($id) {
+	$sql = "select
+            u.idusuario,u.usuario,u.refroles,
+            u.nombrecompleto,u.email,
+            (case when u.activo = 1 then 'Si' else 'No' end) as activo,
+            r.descripcion
+         from dbusuarios u
+         inner join tbroles r on u.refroles = r.idrol
+         where u.activo = 1 and u.idusuario = ".$id;
+	$res = $this->query($sql,0);
+	if ($res == false) {
+		return 'Error al traer datos';
+	} else {
+		return $res;
+	}
+}
+
 function existeUsuario($usuario, $id = 0) {
 
    if ($id == 0) {

@@ -590,6 +590,9 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
                         <div class="body">
                            <form id="wizard_with_validation" method="POST">
 										<input type="hidden" name="accion" value="validarCuestionario"/>
+										<input type="hidden" name="actualizacliente" id="actualizacliente" value="0" />
+										<input type="hidden" name="lead" id="lead" value="0" />
+
                               <h3>Cliente</h3>
                               <fieldset>
 
@@ -1427,7 +1430,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	 								timer: 2000,
 	 								showConfirmButton: false
 	 						});
-							$(location).attr('href', 'new.php?id='+data.idcotizacion);
+							$(location).attr('href', 'newfilter.php?id='+data.idcotizacion);
 						}
 
 
@@ -1585,7 +1588,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 		});
 
 		$("#wizard_with_validation").on("change",'#refproductos', function(){
-			cuestionario($(this).val(),<?php echo $id; ?>);
+			cuestionario($(this).val(),<?php echo $id; ?>,$('#refclientes').val());
 
 		});
 
@@ -1734,7 +1737,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 		var esconde2 = 0;
 
 		<?php if (isset($_GET['id'])) { ?>
-			cuestionario($('#refproductos').val(),<?php echo $id; ?>);
+			cuestionario($('#refproductos').val(),<?php echo $id; ?>,$('#refclientes').val());
 			<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
 				form.steps("next");
 				form.steps("next");

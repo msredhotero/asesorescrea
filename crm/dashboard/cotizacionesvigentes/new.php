@@ -44,8 +44,8 @@ if (isset($_GET['id'])) {
 	$resCotizacionPrincipal = $serviciosReferencias->traerCotizacionesPorIdCompleto($_GET['id']);
 
 
-	if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 2) {
-		header('Location: ../cotizacionesvigentes/modificar.php?id='.$_GET['id']);
+	if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') >= 2) {
+		header('Location: ../cotizacionesvigentes/resultado.php?id='.$_GET['id']);
 	} else {
 		$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta(mysql_result($resCotizacionPrincipal,0,'refproductos'));
 		if (mysql_result($resProductoPrincipal,0,'ventaenlinea') == '1') {
@@ -586,13 +586,19 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	<style>
 		.alert > i{ vertical-align: middle !important; }
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
-		#codigopostal { width: 400px; }
+		.tscodigopostal { width: 400px; }
 
 		.ui-autocomplete { position: absolute; cursor: default;z-index:30 !important;}
 
 		.sectionC {
 			height:360px;
 			z-index:1 !important;
+		}
+
+		@media (min-width: 1200px) {
+		   .modal-xlg {
+		      width: 90%;
+		   }
 		}
 
 	</style>
@@ -670,6 +676,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 										<input type="hidden" name="reftipopersonasaux" id="reftipopersonasaux" value="<?php echo $rTipoPersona; ?>" />
 										<input type="hidden" name="idcotizacion" id="idcotizacion" value="<?php echo $id; ?>" />
 										<input type="hidden" name="actualizacliente" id="actualizacliente" value="0" />
+
+										<input type="hidden" name="lead" id="lead" value="0" />
 
                               <h3>Producto</h3>
                                  <fieldset>
@@ -1123,14 +1131,224 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 <!-- NUEVO -->
 	<form class="formulario frmNuevoASG" role="form" id="sign_in">
 	   <div class="modal fade" id="lgmNuevoASG" tabindex="-1" role="dialog">
-	       <div class="modal-dialog modal-lg" role="document">
+	       <div class="modal-dialog modal-xlg" role="document">
 	           <div class="modal-content">
 	               <div class="modal-header">
 	                   <h4 class="modal-title" id="largeModalLabel">CARGAR NUEVO ASEGURADO</h4>
 	               </div>
 	               <div class="modal-body">
 							<div class="row">
-								<?php echo $frmUnidadNegociosASG; ?>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContnombre" style="display:block">
+									<label class="form-label">Nombre  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="nombreASG" name="nombre"  required />
+
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContapellidopaterno" style="display:block">
+									<label class="form-label">Apellido Paterno  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="apellidopaternoASG" name="apellidopaterno"  required />
+
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContapellidomaterno" style="display:block">
+									<label class="form-label">Apellido Materno  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="apellidomaternoASG" name="apellidomaterno"  required />
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContreftipoparentesco" style="display:block">
+									<label for="reftipoparentesco" class="control-label" style="text-align:left">Tipo de Parentesco  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group col-md-12">
+										<div class="form-line">
+											<select class="form-control" id="reftipoparentescoASG" name="reftipoparentesco"  required >
+												<option value="1">Padres</option>
+												<option value="2">Conyuge</option>
+												<option value="3">Hijos</option>
+												<option value="4">Otro</option>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row" style="margin-top:15px;">
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="display:block">
+									<label class="form-label">Email </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="email" class="form-control" id="emailASG" name="email" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">RFC </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="rfcASG" name="rfc" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcurp" style="display:block">
+									<label class="form-label">CURP </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="curpASG" name="curp" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContfechanacimiento" style="display:block">
+									<label class="form-label">Fecha De Nacimiento </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="fechanacimientoASG" name="fechanacimiento" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmConttelefonofijo" style="display:block">
+									<label class="form-label">Tel. Fijo </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="telefonofijoASG" name="telefonofijo" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmConttelefonocelular" style="display:block">
+									<label class="form-label">Tel. Celular </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="telefonocelularASG" name="telefonocelular" />
+										</div>
+									</div>
+								</div>
+
+							</div>
+							<div class="row" style="margin-top:15px;">
+
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContreftipoparentesco" style="display:block">
+									<label for="reftipoparentesco" class="control-label" style="text-align:left">La dirección es la misma que la del contratante?  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group col-md-12">
+										<div class="form-line">
+											<select class="form-control" id="mismadireccionASG" name="mismadireccion"  required >
+												<option value="0">No</option>
+												<option value="1">Si</option>
+											</select>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContdomicilio" style="display:block">
+									<label class="form-label">Calle </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="domicilioASG" name="domicilio" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContnroexterior" style="display:block">
+									<label class="form-label">Nro Exterior </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="nroexteriorASG" name="nroexterior" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContnrointerior" style="display:block">
+									<label class="form-label">Nro Interior </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="nrointeriorASG" name="nrointerior" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContedificio" style="display:block">
+									<label class="form-label">Edificio </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="edificioASG" name="edificio" />
+										</div>
+									</div>
+								</div>
+
+
+
+							</div>
+							<div class="row" style="margin-top:15px;">
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcodigopostal" style="display:block">
+									<label class="form-label">Cod. Postal </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="codigopostalASG" name="codigopostal" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ingresa el Cod. Postal para completar los otros campos de forma automatica"/>
+
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContestado" style="display:block">
+									<label class="form-label">Estado </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="estadoASG" name="estado" readonly />
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContmunicipio" style="display:block">
+									<label class="form-label">Municipio </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="municipioASG" name="municipio" readonly/>
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcolonia" style="display:block">
+									<label class="form-label">Colonia </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="coloniaASG" name="colonia" readonly/>
+
+										</div>
+									</div>
+								</div>
+
+								<input type="hidden" id="accion" name="accion" value="insertarAsegurados"/>
+								<input type="hidden" id="refclientesASG" name="refclientes" value="<?php echo $rIdCliente; ?>"/>
 							</div>
 
 	               </div>
@@ -1148,14 +1366,215 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 <!-- NUEVO -->
 	<form class="formulario frmNuevoBNF" role="form" id="sign_in2">
 	   <div class="modal fade" id="lgmNuevoBNF" tabindex="-1" role="dialog">
-	       <div class="modal-dialog modal-lg" role="document">
+	       <div class="modal-dialog modal-xlg" role="document">
 	           <div class="modal-content">
 	               <div class="modal-header">
 	                   <h4 class="modal-title" id="largeModalLabel">CARGAR NUEVO BENEFICIARIO</h4>
 	               </div>
 	               <div class="modal-body">
 							<div class="row">
-								<?php echo $frmUnidadNegociosASG; ?>
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContnombre" style="display:block">
+									<label class="form-label">Nombre  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="nombreBNF" name="nombre"  required />
+
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContapellidopaterno" style="display:block">
+									<label class="form-label">Apellido Paterno  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="apellidopaternoBNF" name="apellidopaterno"  required />
+
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContapellidomaterno" style="display:block">
+									<label class="form-label">Apellido Materno  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="apellidomaternoBNF" name="apellidomaterno"  required />
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContreftipoparentesco" style="display:block">
+									<label for="reftipoparentesco" class="control-label" style="text-align:left">Tipo de Parentesco  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group col-md-12">
+										<div class="form-line">
+											<select class="form-control" id="reftipoparentescoBNF" name="reftipoparentesco"  required >
+												<option value="1">Padres</option>
+												<option value="2">Conyuge</option>
+												<option value="3">Hijos</option>
+												<option value="4">Otro</option>
+											</select>
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="display:block">
+									<label class="form-label">Email </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="email" class="form-control" id="emailBNF" name="email" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">RFC </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="rfcBNF" name="rfc" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcurp" style="display:block">
+									<label class="form-label">CURP </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="curpBNF" name="curp" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContfechanacimiento" style="display:block">
+									<label class="form-label">Fecha De Nacimiento </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="fechanacimientoBNF" name="fechanacimiento" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmConttelefonofijo" style="display:block">
+									<label class="form-label">Tel. Fijo </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="telefonofijoBNF" name="telefonofijo" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmConttelefonocelular" style="display:block">
+									<label class="form-label">Tel. Celular </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="telefonocelularBNF" name="telefonocelular" />
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContreftipoparentesco" style="display:block">
+									<label for="reftipoparentesco" class="control-label" style="text-align:left">La dirección es la misma que la del contratante?  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group col-md-12">
+										<div class="form-line">
+											<select class="form-control" id="mismadireccionBNF" name="mismadireccionBNF"  required >
+												<option value="0">No</option>
+												<option value="1">Si</option>
+											</select>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContdomicilio" style="display:block">
+									<label class="form-label">Calle </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="domicilioBNF" name="domicilio" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContnroexterior" style="display:block">
+									<label class="form-label">Nro Exterior </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="nroexteriorBNF" name="nroexterior" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContnrointerior" style="display:block">
+									<label class="form-label">Nro Interior </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="nrointeriorBNF" name="nrointerior" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContedificio" style="display:block">
+									<label class="form-label">Edificio </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="edificioBNF" name="edificio" />
+										</div>
+									</div>
+								</div>
+
+
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcodigopostal" style="display:block">
+									<label class="form-label">Cod. Postal </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="codigopostalBNF" name="codigopostal" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ingresa el Cod. Postal para completar los otros campos de forma automatica"/>
+
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContestado" style="display:block">
+									<label class="form-label">Estado </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="estadoBNF" name="estado" readonly/>
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContmunicipio" style="display:block">
+									<label class="form-label">Municipio </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="municipioBNF" name="municipio" readonly/>
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcolonia" style="display:block">
+									<label class="form-label">Colonia </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="coloniaBNF" name="colonia" readonly/>
+
+										</div>
+									</div>
+								</div>
+
+								<input type="hidden" id="accion" name="accion" value="insertarAsegurados"/>
+								<input type="hidden" id="refclientesBNF" name="refclientes" value="<?php echo $rIdCliente; ?>"/>
 							</div>
 
 	               </div>
@@ -1210,7 +1629,152 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 <script>
 	$(document).ready(function(){
 
+		var options = {
 
+			url: "../../json/jsbuscarpostal.php",
+
+			getValue: function(element) {
+				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					busqueda: $(".tscodigopostal").val()
+				}
+			},
+
+			preparePostData: function (data) {
+				data.busqueda = $(".tscodigopostal").val();
+				return data;
+			},
+
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $("#wizard_with_validation .tscodigopostal").getSelectedItemData().codigo;
+					$("#wizard_with_validation .tscodigopostal").val(value);
+					$("#wizard_with_validation .tsmunicipio").val($("#wizard_with_validation .tscodigopostal").getSelectedItemData().municipio);
+					$("#wizard_with_validation .tsestado").val($("#wizard_with_validation .tscodigopostal").getSelectedItemData().estado);
+					$("#wizard_with_validation .tscolonia").val($("#wizard_with_validation .tscodigopostal").getSelectedItemData().colonia);
+
+
+				}
+			}
+		};
+
+		$("#codigopostal").easyAutocomplete(options);
+
+
+		var options2 = {
+
+			url: "../../json/jsbuscarpostal.php",
+
+			getValue: function(element) {
+				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					busqueda: $("#codigopostalASG").val()
+				}
+			},
+
+			preparePostData: function (data) {
+				data.busqueda = $("#codigopostalASG").val();
+				return data;
+			},
+
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $("#codigopostalASG").getSelectedItemData().codigo;
+					$("#codigopostalASG").val(value);
+					$("#municipioASG").val($("#codigopostalASG").getSelectedItemData().municipio);
+					$("#estadoASG").val($("#codigopostalASG").getSelectedItemData().estado);
+					$("#coloniaASG").val($("#codigopostalASG").getSelectedItemData().colonia);
+
+
+				}
+			}
+		};
+
+		$("#codigopostalASG").easyAutocomplete(options2);
+
+
+		var options3 = {
+
+			url: "../../json/jsbuscarpostal.php",
+
+			getValue: function(element) {
+				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					busqueda: $("#codigopostalBNF").val()
+				}
+			},
+
+			preparePostData: function (data) {
+				data.busqueda = $("#codigopostalBNF").val();
+				return data;
+			},
+
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $("#codigopostalBNF").getSelectedItemData().codigo;
+					$("#codigopostalBNF").val(value);
+					$("#municipioBNF").val($("#codigopostalBNF").getSelectedItemData().municipio);
+					$("#estadoBNF").val($("#codigopostalBNF").getSelectedItemData().estado);
+					$("#coloniaBNF").val($("#codigopostalBNF").getSelectedItemData().colonia);
+
+
+				}
+			}
+		};
+
+		$("#codigopostalBNF").easyAutocomplete(options3);
+
+		$('#fechanacimiento').bootstrapMaterialDatePicker({
+			format: 'YYYY-MM-DD',
+			lang : 'es',
+			clearButton: true,
+			weekStart: 1,
+			time: false
+		});
+
+
+		$('#fechanacimientoASG').bootstrapMaterialDatePicker({
+			format: 'YYYY-MM-DD',
+			lang : 'es',
+			clearButton: true,
+			weekStart: 1,
+			time: false
+		});
+
+		$('#fechanacimientoBNF').bootstrapMaterialDatePicker({
+			format: 'YYYY-MM-DD',
+			lang : 'es',
+			clearButton: true,
+			weekStart: 1,
+			time: false
+		});
 
 
 		$('.frmContfechavencimiento').hide();

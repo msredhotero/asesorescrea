@@ -294,7 +294,7 @@ while ($rowD = mysql_fetch_array($documentacionesadicionales3)) {
 	$cadArCotizacion .= '<li>
 		 <span>'.substr($rowD['documentacion'],0,18).'</span>
 		 <div class="switch">
-			  <label class="btn bg-'.($rowD['color'] == '' ? 'grey' : $rowD['color']).' btn'.str_replace(' ','',$rowD['documentacion']).'" style="margin-top:-6px; margin-right:5px;">'.$rowD['estadodocumentacion'].'</label>
+			  <label class="btn bg-'.($rowD['color'] == '' ? 'grey' : $rowD['color']).' btnA'.str_replace(' ','',$rowD['documentacion']).'" style="margin-top:-6px; margin-right:5px;">'.$rowD['estadodocumentacion'].'</label>
 		 </div>
 	</li>';
 }
@@ -516,7 +516,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								MODIFICAR <?php echo strtoupper($plural); ?> <button type="button" class="btn bg-cyan waves-effect btnLstDocumentaciones"><i class="material-icons">unarchive</i><span class="js-right-sidebar" data-close="true">DOCUMENTACIONES</span></button>
+								MODIFICAR <?php echo strtoupper($plural); ?> <button type="button" class="btn bg-cyan waves-effect btnLstDocumentaciones"><i class="material-icons">unarchive</i><span class="js-right-sidebar" data-close="true">DOCUMENTACIONES</span></button> <button type="button" class="btn bg-green waves-effect btnLstEnviar"><i class="material-icons">send</i><span>ENVIAR COTIZACION A CLIENTE</span></button>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -672,6 +672,26 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 	 </div>
 </div>
 
+<div class="modal fade" id="lgmENVIAR" tabindex="-1" role="dialog">
+	 <div class="modal-dialog modal-lg" role="document">
+		  <div class="modal-content">
+				<div class="modal-header bg-green">
+					<h4>IMPORTANTE</h4>
+				</div>
+				<div class="modal-body">
+				<div class="row">
+					<h5>Recuerde cargar la cotizacion en los documentos adicionales, en el apartado "Cotizacion 1" o "Cotizacion 2" o "Cotizacion 3"</h5>
+				</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success waves-effect btnEnviarCotizacionCliente" data-dismiss="modal">ENVIAR</button>
+					<button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+				</div>
+
+		  </div>
+	 </div>
+</div>
+
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
@@ -700,11 +720,71 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 <script>
 	$(document).ready(function(){
 
+		$('.frmConttieneasegurado').hide();
+		$('.frmContrefasegurados').hide();
+		$('.frmContrefbeneficiarios').hide();
+		$('.frmContversion').hide();
+		$('.frmContrefcotizaciones').hide();
+		$('.frmContrefestados').hide();
+
+		$('.btnLstEnviar').click(function() {
+			$('#lgmENVIAR').modal();
+		});
+
+		$('.btnEnviarCotizacionCliente').click(function() {
+			enviarCotizacion();
+		});
+
+		function enviarCotizacion() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'enviarCotizacion',
+					id: <?php echo $id; ?>
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					if (data.error == false) {
+						swal({
+								title: "Respuesta",
+								text: data.mensaje,
+								type: "success",
+								timer: 1000,
+								showConfirmButton: false
+						});
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data.mensaje,
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
 		$('.frmContbitacorainbursa').hide();
 
-		<?php if ($modalVigencias == 1) { ?>
-			$('#lgmVigencias').modal();
-		<?php } ?>
 
 		<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
 			$("#bitacoracrea").prop('readonly',true);

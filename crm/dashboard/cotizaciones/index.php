@@ -262,6 +262,18 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 												<i class="material-icons">add</i>
 												<span>NUEVO</span>
 											</button>
+											<button type="button" class="btn bg-blue waves-effect btnVigente">
+												<i class="material-icons">timeline</i>
+												<span>VIGENTE</span>
+											</button>
+											<button type="button" class="btn bg-orange waves-effect btnCotizacion">
+												<i class="material-icons">alarm_add</i>
+												<span>EN AJUSTE</span>
+											</button>
+											<button type="button" class="btn bg-grey waves-effect btnHistorico">
+												<i class="material-icons">history</i>
+												<span>HISTORICO</span>
+											</button>
 
 
 										</div>
@@ -269,9 +281,64 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 								</div>
 								<?php } ?>
 
-								<div class="row" style="padding: 5px 20px;">
-
+								<div class="row contActuales" style="padding: 5px 20px;">
+									<h4>VIGENTE</h4>
+									<hr>
 									<table id="example" class="display table " style="width:100%">
+										<thead>
+											<tr>
+												<th>Cliente</th>
+												<th>Producto</th>
+												<th>Asesor</th>
+												<th>Asociado</th>
+												<th>Estado</th>
+												<th>Acciones</th>
+											</tr>
+										</thead>
+										<tfoot>
+											<tr>
+												<th>Cliente</th>
+												<th>Producto</th>
+												<th>Asesor</th>
+												<th>Asociado</th>
+												<th>Estado</th>
+												<th>Acciones</th>
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+
+								<div class="row contCotizacion" style="padding: 5px 20px;">
+									<h4>EN AJUSTE</h4>
+									<hr>
+									<table id="example2" class="display table " style="width:100%">
+										<thead>
+											<tr>
+												<th>Cliente</th>
+												<th>Producto</th>
+												<th>Asesor</th>
+												<th>Asociado</th>
+												<th>Estado</th>
+												<th>Acciones</th>
+											</tr>
+										</thead>
+										<tfoot>
+											<tr>
+												<th>Cliente</th>
+												<th>Producto</th>
+												<th>Asesor</th>
+												<th>Asociado</th>
+												<th>Estado</th>
+												<th>Acciones</th>
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+
+								<div class="row contHistorico" style="padding: 5px 20px;">
+									<h4>HISTORICO</h4>
+									<hr>
+									<table id="example3" class="display table " style="width:100%">
 										<thead>
 											<tr>
 												<th>Cliente</th>
@@ -453,6 +520,32 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 <script>
 	$(document).ready(function(){
 
+		$('.contHistorico').hide();
+		$('.contCotizacion').hide();
+
+
+		$('.btnCotizacion').click(function() {
+			$('.contHistorico').hide();
+			$('.contActuales').hide();
+
+			$('.contCotizacion').show();
+		});
+
+
+		$('.btnHistorico').click(function() {
+			$('.contHistorico').show();
+			$('.contActuales').hide();
+
+			$('.contCotizacion').hide();
+		});
+
+		$('.btnVigente').click(function() {
+			$('.contActuales').show();
+			$('.contHistorico').hide();
+
+			$('.contCotizacion').hide();
+		});
+
 		$('.frmContnumerocliente').hide();
 		$('.frmContrefusuarios').hide();
 		$('.frmContfechapropuesta').hide();
@@ -586,7 +679,69 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			"bProcessing": true,
 			"bServerSide": true,
 			"order": [[ 5, "desc" ]],
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizaciones",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizaciones&estado=1",
+			"language": {
+				"emptyTable":     "No hay datos cargados",
+				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "Mostrar _MENU_ filas",
+				"loadingRecords": "Cargando...",
+				"processing":     "Procesando...",
+				"search":         "Buscar:",
+				"zeroRecords":    "No se encontraron resultados",
+				"paginate": {
+					"first":      "Primero",
+					"last":       "Ultimo",
+					"next":       "Siguiente",
+					"previous":   "Anterior"
+				},
+				"aria": {
+					"sortAscending":  ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			}
+		});
+
+
+		var table2 = $('#example2').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"order": [[ 5, "desc" ]],
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizaciones&estado=2",
+			"language": {
+				"emptyTable":     "No hay datos cargados",
+				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "Mostrar _MENU_ filas",
+				"loadingRecords": "Cargando...",
+				"processing":     "Procesando...",
+				"search":         "Buscar:",
+				"zeroRecords":    "No se encontraron resultados",
+				"paginate": {
+					"first":      "Primero",
+					"last":       "Ultimo",
+					"next":       "Siguiente",
+					"previous":   "Anterior"
+				},
+				"aria": {
+					"sortAscending":  ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			}
+		});
+
+
+		var table3 = $('#example3').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"order": [[ 5, "desc" ]],
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizaciones&estado=3",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",

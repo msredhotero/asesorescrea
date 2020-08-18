@@ -31,23 +31,12 @@ $fecha = date('Y-m-d');
 
 
 //die(var_dump($_SESSION['usuaid_sahilices']));
-$rIdCliente = $_GET['idcliente'];
-
-$rCliente = $serviciosReferencias->traerClientesPorId($rIdCliente);
-
-$rTipoPersona = mysql_result($rCliente,0,'reftipopersonas');
-
-if (isset($_GET['lead'])) {
-	$lead = $_GET['lead'];
-} else {
-	$lead = 0;
-}
-
-
 
 
 if (isset($_GET['id'])) {
 	$resCotizacionPrincipal = $serviciosReferencias->traerCotizacionesPorIdCompleto($_GET['id']);
+
+	$rIdCliente = mysql_result($resCotizacionPrincipal,0,'refclientes');
 
 	$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta(mysql_result($resCotizacionPrincipal,0,'refproductos'));
 
@@ -82,11 +71,27 @@ if (isset($_GET['id'])) {
 			$llevaAsegurado = 0;
 		}
 
+		if (isset($_GET['idcliente'])) {
+			$rIdCliente = $_GET['idcliente'];
+		} else {
+			header('Location: ../index.php');
+		}
+
 
 	} else {
 		header('Location: ../index.php');
 	}
 
+}
+
+$rCliente = $serviciosReferencias->traerClientesPorId($rIdCliente);
+
+$rTipoPersona = mysql_result($rCliente,0,'reftipopersonas');
+
+if (isset($_GET['lead'])) {
+	$lead = $_GET['lead'];
+} else {
+	$lead = 0;
 }
 
 
@@ -571,13 +576,19 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	<style>
 		.alert > i{ vertical-align: middle !important; }
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
-		#codigopostal { width: 400px; }
+		.tscodigopostal { width: 400px; }
 
 		.ui-autocomplete { position: absolute; cursor: default;z-index:30 !important;}
 
 		.sectionC {
 			height:360px;
 			z-index:1 !important;
+		}
+
+		@media (min-width: 1200px) {
+		   .modal-xlg {
+		      width: 90%;
+		   }
 		}
 
 	</style>
@@ -989,40 +1000,27 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
                               </fieldset>
 
 										<?php if ($llevaBeneficiario == 1) { ?>
-										<h3>BENEFICIARIO</h3>
-                                 <fieldset>
-												<div class="row">
-													<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
-														<div class="form-group form-float">
-															<label class="form-label" style="margin-top:20px;">El Beneficiario es usted mismo u otra persona *</label>
-		                                       <div class="form-line">
+											<h3>BENEFICIARIO</h3>
+	                                 <fieldset>
+													<div class="row">
 
-									   						<select style="margin-top:10px;" class="form-control" id="tienebeneficiario" name="tienebeneficiario" required>
-																	<option value=''>-- Seleccionar --</option>
-																	<option value='0'>Yo mismo</option>
-																	<option value='1'>Otra persona</option>
-																</select>
 
-		                                       </div>
-		                                    </div>
+														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContbeneficiarioaux" style="display:block">
+															<div class="form-group form-float">
+																<label class="form-label" style="margin-top:20px;">Seleccione el Beneficiario de su catalogo *</label>
+			                                       <div class="form-line">
+
+										   						<select style="margin-top:10px;" class="form-control" id="refbeneficiarioaux" name="refbeneficiarioaux" required>
+																		<option value='0'>El contratante</option>
+																		<option value='0'>Nuevo</option>
+																	</select>
+
+			                                       </div>
+			                                    </div>
+														</div>
 													</div>
 
-													<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContbeneficiarioaux" style="display:block">
-														<div class="form-group form-float">
-															<label class="form-label" style="margin-top:20px;">Seleccione el Beneficiario de su catalogo *</label>
-		                                       <div class="form-line">
-
-									   						<select style="margin-top:10px;" class="form-control" id="refbeneficiarioaux" name="refbeneficiarioaux" required>
-																	<option value=''>-- Seleccionar --</option>
-																	<option value='0'>Nuevo</option>
-																</select>
-
-		                                       </div>
-		                                    </div>
-													</div>
-												</div>
-
-                              </fieldset>
+	                              </fieldset>
 									<?php } ?>
 
 
@@ -1109,14 +1107,224 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 <!-- NUEVO -->
 	<form class="formulario frmNuevoASG" role="form" id="sign_in">
 	   <div class="modal fade" id="lgmNuevoASG" tabindex="-1" role="dialog">
-	       <div class="modal-dialog modal-lg" role="document">
+	       <div class="modal-dialog modal-xlg" role="document">
 	           <div class="modal-content">
 	               <div class="modal-header">
 	                   <h4 class="modal-title" id="largeModalLabel">CARGAR NUEVO ASEGURADO</h4>
 	               </div>
 	               <div class="modal-body">
 							<div class="row">
-								<?php echo $frmUnidadNegociosASG; ?>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContnombre" style="display:block">
+									<label class="form-label">Nombre  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="nombreASG" name="nombre"  required />
+
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContapellidopaterno" style="display:block">
+									<label class="form-label">Apellido Paterno  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="apellidopaternoASG" name="apellidopaterno"  required />
+
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContapellidomaterno" style="display:block">
+									<label class="form-label">Apellido Materno  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="apellidomaternoASG" name="apellidomaterno"  required />
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContreftipoparentesco" style="display:block">
+									<label for="reftipoparentesco" class="control-label" style="text-align:left">Tipo de Parentesco  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group col-md-12">
+										<div class="form-line">
+											<select class="form-control" id="reftipoparentescoASG" name="reftipoparentesco"  required >
+												<option value="1">Padres</option>
+												<option value="2">Conyuge</option>
+												<option value="3">Hijos</option>
+												<option value="4">Otro</option>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row" style="margin-top:15px;">
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="display:block">
+									<label class="form-label">Email </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="email" class="form-control" id="emailASG" name="email" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">RFC </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="rfcASG" name="rfc" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcurp" style="display:block">
+									<label class="form-label">CURP </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="curpASG" name="curp" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContfechanacimiento" style="display:block">
+									<label class="form-label">Fecha De Nacimiento </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="fechanacimientoASG" name="fechanacimiento" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmConttelefonofijo" style="display:block">
+									<label class="form-label">Tel. Fijo </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="telefonofijoASG" name="telefonofijo" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmConttelefonocelular" style="display:block">
+									<label class="form-label">Tel. Celular </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="telefonocelularASG" name="telefonocelular" />
+										</div>
+									</div>
+								</div>
+
+							</div>
+							<div class="row" style="margin-top:15px;">
+
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContreftipoparentesco" style="display:block">
+									<label for="reftipoparentesco" class="control-label" style="text-align:left">La dirección es la misma que la del contratante?  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group col-md-12">
+										<div class="form-line">
+											<select class="form-control" id="mismadireccionASG" name="mismadireccion"  required >
+												<option value="0">No</option>
+												<option value="1">Si</option>
+											</select>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContdomicilio" style="display:block">
+									<label class="form-label">Calle </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="domicilioASG" name="domicilio" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContnroexterior" style="display:block">
+									<label class="form-label">Nro Exterior </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="nroexteriorASG" name="nroexterior" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContnrointerior" style="display:block">
+									<label class="form-label">Nro Interior </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="nrointeriorASG" name="nrointerior" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContedificio" style="display:block">
+									<label class="form-label">Edificio </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="edificioASG" name="edificio" />
+										</div>
+									</div>
+								</div>
+
+
+
+							</div>
+							<div class="row" style="margin-top:15px;">
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcodigopostal" style="display:block">
+									<label class="form-label">Cod. Postal </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="codigopostalASG" name="codigopostal" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ingresa el Cod. Postal para completar los otros campos de forma automatica"/>
+
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContestado" style="display:block">
+									<label class="form-label">Estado </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="estadoASG" name="estado" readonly />
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContmunicipio" style="display:block">
+									<label class="form-label">Municipio </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="municipioASG" name="municipio" readonly/>
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcolonia" style="display:block">
+									<label class="form-label">Colonia </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="coloniaASG" name="colonia" readonly/>
+
+										</div>
+									</div>
+								</div>
+
+								<input type="hidden" id="accion" name="accion" value="insertarAsegurados"/>
+								<input type="hidden" id="refclientesASG" name="refclientes" value="<?php echo $rIdCliente; ?>"/>
 							</div>
 
 	               </div>
@@ -1134,14 +1342,215 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 <!-- NUEVO -->
 	<form class="formulario frmNuevoBNF" role="form" id="sign_in2">
 	   <div class="modal fade" id="lgmNuevoBNF" tabindex="-1" role="dialog">
-	       <div class="modal-dialog modal-lg" role="document">
+	       <div class="modal-dialog modal-xlg" role="document">
 	           <div class="modal-content">
 	               <div class="modal-header">
 	                   <h4 class="modal-title" id="largeModalLabel">CARGAR NUEVO BENEFICIARIO</h4>
 	               </div>
 	               <div class="modal-body">
 							<div class="row">
-								<?php echo $frmUnidadNegociosASG; ?>
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContnombre" style="display:block">
+									<label class="form-label">Nombre  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="nombreBNF" name="nombre"  required />
+
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContapellidopaterno" style="display:block">
+									<label class="form-label">Apellido Paterno  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="apellidopaternoBNF" name="apellidopaterno"  required />
+
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContapellidomaterno" style="display:block">
+									<label class="form-label">Apellido Materno  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="apellidomaternoBNF" name="apellidomaterno"  required />
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContreftipoparentesco" style="display:block">
+									<label for="reftipoparentesco" class="control-label" style="text-align:left">Tipo de Parentesco  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group col-md-12">
+										<div class="form-line">
+											<select class="form-control" id="reftipoparentescoBNF" name="reftipoparentesco"  required >
+												<option value="1">Padres</option>
+												<option value="2">Conyuge</option>
+												<option value="3">Hijos</option>
+												<option value="4">Otro</option>
+											</select>
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="display:block">
+									<label class="form-label">Email </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="email" class="form-control" id="emailBNF" name="email" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">RFC </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="rfcBNF" name="rfc" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcurp" style="display:block">
+									<label class="form-label">CURP </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="curpBNF" name="curp" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContfechanacimiento" style="display:block">
+									<label class="form-label">Fecha De Nacimiento </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="fechanacimientoBNF" name="fechanacimiento" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmConttelefonofijo" style="display:block">
+									<label class="form-label">Tel. Fijo </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="telefonofijoBNF" name="telefonofijo" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmConttelefonocelular" style="display:block">
+									<label class="form-label">Tel. Celular </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="telefonocelularBNF" name="telefonocelular" />
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContreftipoparentesco" style="display:block">
+									<label for="reftipoparentesco" class="control-label" style="text-align:left">La dirección es la misma que la del contratante?  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group col-md-12">
+										<div class="form-line">
+											<select class="form-control" id="mismadireccionBNF" name="mismadireccionBNF"  required >
+												<option value="0">No</option>
+												<option value="1">Si</option>
+											</select>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContdomicilio" style="display:block">
+									<label class="form-label">Calle </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="domicilioBNF" name="domicilio" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContnroexterior" style="display:block">
+									<label class="form-label">Nro Exterior </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="nroexteriorBNF" name="nroexterior" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContnrointerior" style="display:block">
+									<label class="form-label">Nro Interior </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="nrointeriorBNF" name="nrointerior" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContedificio" style="display:block">
+									<label class="form-label">Edificio </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="edificioBNF" name="edificio" />
+										</div>
+									</div>
+								</div>
+
+
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcodigopostal" style="display:block">
+									<label class="form-label">Cod. Postal </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="codigopostalBNF" name="codigopostal" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ingresa el Cod. Postal para completar los otros campos de forma automatica"/>
+
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContestado" style="display:block">
+									<label class="form-label">Estado </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="estadoBNF" name="estado" readonly/>
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContmunicipio" style="display:block">
+									<label class="form-label">Municipio </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="municipioBNF" name="municipio" readonly/>
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcolonia" style="display:block">
+									<label class="form-label">Colonia </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="coloniaBNF" name="colonia" readonly/>
+
+										</div>
+									</div>
+								</div>
+
+								<input type="hidden" id="accion" name="accion" value="insertarAsegurados"/>
+								<input type="hidden" id="refclientesBNF" name="refclientes" value="<?php echo $rIdCliente; ?>"/>
 							</div>
 
 	               </div>
@@ -1193,10 +1602,147 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 <!-- Chart Plugins Js -->
 
 
+
 <script>
 	$(document).ready(function(){
 
 
+		var options = {
+
+			url: "../../json/jsbuscarpostal.php",
+
+			getValue: function(element) {
+				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					busqueda: $(".tscodigopostal").val()
+				}
+			},
+
+			preparePostData: function (data) {
+				data.busqueda = $(".tscodigopostal").val();
+				return data;
+			},
+
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $("#wizard_with_validation .tscodigopostal").getSelectedItemData().codigo;
+					$("#wizard_with_validation .tscodigopostal").val(value);
+					$("#wizard_with_validation .tsmunicipio").val($("#wizard_with_validation .tscodigopostal").getSelectedItemData().municipio);
+					$("#wizard_with_validation .tsestado").val($("#wizard_with_validation .tscodigopostal").getSelectedItemData().estado);
+					$("#wizard_with_validation .tscolonia").val($("#wizard_with_validation .tscodigopostal").getSelectedItemData().colonia);
+
+
+				}
+			}
+		};
+
+
+		var options2 = {
+
+			url: "../../json/jsbuscarpostal.php",
+
+			getValue: function(element) {
+				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					busqueda: $("#codigopostalASG").val()
+				}
+			},
+
+			preparePostData: function (data) {
+				data.busqueda = $("#codigopostalASG").val();
+				return data;
+			},
+
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $("#codigopostalASG").getSelectedItemData().codigo;
+					$("#codigopostalASG").val(value);
+					$("#municipioASG").val($("#codigopostalASG").getSelectedItemData().municipio);
+					$("#estadoASG").val($("#codigopostalASG").getSelectedItemData().estado);
+					$("#coloniaASG").val($("#codigopostalASG").getSelectedItemData().colonia);
+
+
+				}
+			}
+		};
+
+		$("#codigopostalASG").easyAutocomplete(options2);
+
+
+		var options3 = {
+
+			url: "../../json/jsbuscarpostal.php",
+
+			getValue: function(element) {
+				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					busqueda: $("#codigopostalBNF").val()
+				}
+			},
+
+			preparePostData: function (data) {
+				data.busqueda = $("#codigopostalBNF").val();
+				return data;
+			},
+
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $("#codigopostalBNF").getSelectedItemData().codigo;
+					$("#codigopostalBNF").val(value);
+					$("#municipioBNF").val($("#codigopostalBNF").getSelectedItemData().municipio);
+					$("#estadoBNF").val($("#codigopostalBNF").getSelectedItemData().estado);
+					$("#coloniaBNF").val($("#codigopostalBNF").getSelectedItemData().colonia);
+
+
+				}
+			}
+		};
+
+		$("#codigopostalBNF").easyAutocomplete(options3);
+
+
+		$('#fechanacimientoASG').bootstrapMaterialDatePicker({
+			format: 'YYYY-MM-DD',
+			lang : 'es',
+			clearButton: true,
+			weekStart: 1,
+			time: false
+		});
+
+		$('#fechanacimientoBNF').bootstrapMaterialDatePicker({
+			format: 'YYYY-MM-DD',
+			lang : 'es',
+			clearButton: true,
+			weekStart: 1,
+			time: false
+		});
 
 
 		$('.frmContfechavencimiento').hide();
@@ -1228,6 +1774,98 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 			$('#wizard_with_validation .clcontPregunta'+idRespuesta).show(400);
 		});
 
+		cuestionarioPersonasContratante(<?php echo $rIdProducto; ?>,<?php echo $id; ?>);
+
+		function cuestionarioPersonasContratante(idproducto,idcotizacion) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'cuestionarioPersonas', id: idproducto,idcotizacion:idcotizacion, idcliente: <?php echo $rIdCliente; ?>,idasegurado:0},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.contCuestionarioPersonas').html('');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error == false) {
+
+						if (data.sigue) {
+
+							form.steps("next");
+							form.steps("next");
+						} else {
+							form.steps("next");
+						}
+
+						$('.contCuestionarioPersonasContratante').show();
+
+						$('.contCuestionarioPersonasContratante').html(data.datos.cuestionario);
+
+						$('#wizard_with_validation .tsfechanacimiento').pickadate({
+							format: 'yyyy-mm-dd',
+							labelMonthNext: 'Siguiente mes',
+							labelMonthPrev: 'Previo mes',
+							labelMonthSelect: 'Selecciona el mes del año',
+							labelYearSelect: 'Selecciona el año',
+							selectMonths: true,
+							selectYears: 100,
+							today: 'Hoy',
+							clear: 'Borrar',
+							close: 'Cerrar',
+							monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+							monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+							weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+							weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+						});
+
+
+						$("#wizard_with_validation .tsmunicipio").prop('readonly',true);
+						$("#wizard_with_validation .tsestado").prop('readonly',true);
+						$("#wizard_with_validation .tscolonia").prop('readonly',true);
+
+						$("#wizard_with_validation .tscodigopostal").easyAutocomplete(options);
+
+
+						$('#wizard_with_validation .contCuestionarioPersonasContratante .escondido').hide();
+
+						$('#wizard_with_validation .contCuestionarioPersonasContratante .aparecer').click(function() {
+							idTable =  $(this).attr("id");
+							idPregunta =  $('#'+idTable).data("pregunta");
+							idRespuesta =  $('#'+idTable).data("respuesta");
+							idPreguntaId =  $('#'+idTable).data("idpregunta");
+
+							$('#wizard_with_validation .contCuestionarioPersonasContratante .escondido'+idPreguntaId).hide();
+
+							$('#wizard_with_validation .contCuestionarioPersonasContratante #contPregunta'+idPregunta).show(400);
+						});
+					} else {
+						swal({
+								title: "Respuesta",
+								text: 'No existe cuestionario para completar, continue',
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
 		function cuestionarioPersonas(idproducto,idcotizacion,idcliente,idasegurado) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
@@ -1242,10 +1880,35 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 				//una vez finalizado correctamente
 				success: function(data){
 
-					if (data != '') {
+					if (data.error == false) {
+
 						$('.contCuestionarioPersonas').show();
 
 						$('.contCuestionarioPersonas').html(data.datos.cuestionario);
+
+						$('#wizard_with_validation .tsfechanacimiento').pickadate({
+							format: 'yyyy-mm-dd',
+							labelMonthNext: 'Siguiente mes',
+							labelMonthPrev: 'Previo mes',
+							labelMonthSelect: 'Selecciona el mes del año',
+							labelYearSelect: 'Selecciona el año',
+							selectMonths: true,
+							selectYears: 100,
+							today: 'Hoy',
+							clear: 'Borrar',
+							close: 'Cerrar',
+							monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+							monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+							weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+							weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+						});
+
+
+						$("#wizard_with_validation .tsmunicipio").prop('readonly',true);
+						$("#wizard_with_validation .tsestado").prop('readonly',true);
+						$("#wizard_with_validation .tscolonia").prop('readonly',true);
+
+						$("#wizard_with_validation .tscodigopostal").easyAutocomplete(options);
 
 
 						$('#wizard_with_validation .contCuestionarioPersonas .escondido').hide();
@@ -1303,6 +1966,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 						$('.contCuestionario').html(data.datos.cuestionario);
 
 
+
+
 						$('#wizard_with_validation .escondido').hide();
 
 						$('#wizard_with_validation .aparecer').click(function() {
@@ -1314,6 +1979,25 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 							$('#wizard_with_validation .escondido'+idPreguntaId).hide();
 
 							$('#wizard_with_validation #contPregunta'+idPregunta).show(400);
+
+
+
+							$('#wizard_with_validation .tsfechanacimiento').pickadate({
+					 			format: 'yyyy-mm-dd',
+					 			labelMonthNext: 'Siguiente mes',
+					 			labelMonthPrev: 'Previo mes',
+					 			labelMonthSelect: 'Selecciona el mes del año',
+					 			labelYearSelect: 'Selecciona el año',
+					 			selectMonths: true,
+					 			selectYears: 100,
+					 			today: 'Hoy',
+					 			clear: 'Borrar',
+					 			close: 'Cerrar',
+					 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+					 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+					 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+					 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+					 		});
 						});
 					} else {
 						swal({
@@ -1393,7 +2077,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	 								timer: 2000,
 	 								showConfirmButton: false
 	 						});
-							$(location).attr('href', 'newfilter.php?idproducto=<?php echo $rIdProducto; ?>&id='+data.idcotizacion+'&idcliente=<?php echo $rIdCliente; ?>');
+							$(location).attr('href', 'new.php?producto=<?php echo $rIdProducto; ?>&id='+data.idcotizacion);
 						}
 
 
@@ -1425,6 +2109,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 			}
 
 
+
+
 			var formData = new FormData($("#wizard_with_validation")[0]);
 
 			$.ajax({
@@ -1440,6 +2126,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('.contCuestionarioPersonas').html('');
+					$('#wizard_with_validation #accionprincipal').val('validarCuestionarioPersona');
 				},
 				//una vez finalizado correctamente
 				success: function(data){
@@ -1455,10 +2142,108 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 						});
 
 						form.steps("previous");
+						alert('asd');
 
 					} else {
 
+
 						$('#wizard_with_validation .contCuestionarioPersonas .escondido').hide();
+
+						$('#wizard_with_validation .tsfechanacimiento').pickadate({
+				 			format: 'yyyy-mm-dd',
+				 			labelMonthNext: 'Siguiente mes',
+				 			labelMonthPrev: 'Previo mes',
+				 			labelMonthSelect: 'Selecciona el mes del año',
+				 			labelYearSelect: 'Selecciona el año',
+				 			selectMonths: true,
+				 			selectYears: 100,
+				 			today: 'Hoy',
+				 			clear: 'Borrar',
+				 			close: 'Cerrar',
+				 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+				 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+				 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+				 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+				 		});
+
+					}
+
+					$('#wizard_with_validation #accionprincipal').val('validarCuestionario');
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+
+
+		}
+
+		function validarCuestionarioContratante(idcliente,idasegurado) {
+
+			$('#wizard_with_validation #accionprincipal').val('validarCuestionarioPersona');
+			$('#wizard_with_validation #actualizacliente').val(1);
+
+			var formData = new FormData($("#wizard_with_validation")[0]);
+
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: formData,
+				//necesario para subir archivos via ajax
+				cache: false,
+				contentType: false,
+				processData: false,
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.contCuestionarioPersonasContratante').html('');
+					$('#wizard_with_validation #accionprincipal').val('validarCuestionarioPersona');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error) {
+
+						swal({
+								title: "Respuesta",
+								text: 'Ocurrio un error verifique los datos',
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+						form.steps("previous");
+						alert('asd');
+
+					} else {
+
+						$('#wizard_with_validation .contCuestionarioPersonasContratante .escondido').hide();
+
+						$('#wizard_with_validation .tsfechanacimiento').pickadate({
+				 			format: 'yyyy-mm-dd',
+				 			labelMonthNext: 'Siguiente mes',
+				 			labelMonthPrev: 'Previo mes',
+				 			labelMonthSelect: 'Selecciona el mes del año',
+				 			labelYearSelect: 'Selecciona el año',
+				 			selectMonths: true,
+				 			selectYears: 100,
+				 			today: 'Hoy',
+				 			clear: 'Borrar',
+				 			close: 'Cerrar',
+				 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+				 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+				 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+				 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+				 		});
 
 					}
 
@@ -1562,18 +2347,18 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 							//guardarCotizacion(1);
 						}
 
-						if (currentIndex == 1) {
+						if (currentIndex == 2) {
 							$('.contSubirArchivos2').hide();
 							$('.contSubirArchivos1').show();
 						}
 
-						if (currentIndex == 2) {
+						if (currentIndex == 3) {
 
 							$('.contSubirArchivos1').hide();
 							$('.contSubirArchivos2').show();
 						}
 
-						if (currentIndex < 1) {
+						if (currentIndex < 2) {
 							$('.contSubirArchivos1').hide();
 							$('.contSubirArchivos2').hide();
 						}
@@ -1581,56 +2366,33 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 					<?php } else { ?>
 
-							if (currentIndex == 1) {
-								$('.contSubirArchivos2').hide();
-								$('.contSubirArchivos1').show();
-							}
 
-							<?php if ($llevaAsegurado == 1) { ?>
+
 							if (currentIndex == 2) {
 
-								if ($('#wizard_with_validation #tieneasegurado').val() == '1') {
-									validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
-								} else {
-									validarCuestionarioPersona(<?php echo $rIdCliente; ?>,0 );
-								}
-
-								$('.contSubirArchivos1').show();
-								$('.contSubirArchivos2').hide();
+								validarCuestionarioContratante(<?php echo $rIdCliente; ?>,0 );
 
 							}
 
-
 							if (currentIndex == 3) {
+
+								validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
+
+								$('.contSubirArchivos1').show();
+								$('.contSubirArchivos2').hide();
+							}
+
+							if (currentIndex == 4) {
+
 
 								$('.contSubirArchivos1').hide();
 								$('.contSubirArchivos2').show();
 							}
 
-							if (currentIndex < 2) {
+							if (currentIndex < 3) {
 								$('.contSubirArchivos1').hide();
 								$('.contSubirArchivos2').hide();
 							}
-							<?php } else { ?>
-								if (currentIndex == 1) {
-
-									$('.contSubirArchivos1').show();
-									$('.contSubirArchivos2').hide();
-								}
-
-								if (currentIndex == 2) {
-
-									$('.contSubirArchivos1').hide();
-									$('.contSubirArchivos2').show();
-								}
-
-
-
-								if (currentIndex < 1) {
-									$('.contSubirArchivos1').hide();
-									$('.contSubirArchivos2').hide();
-								}
-							<?php } ?>
 					<?php } ?>
 
 
@@ -1652,11 +2414,10 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		<?php if (isset($_GET['id'])) { ?>
 			cuestionario($('#refproductos').val(),<?php echo $id; ?>);
 
-			form.steps("next");
-			form.steps("next");
+			//form.steps("next");
 			<?php if (($i == $cargados) && (!(isset($_GET['iddocumentacion'])))) { ?>
 
-				form.steps("next");
+				//form.steps("next");
 				//esconde2 = 1;
 			<?php } ?>
 
@@ -1816,7 +2577,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					existeprimaobjetivo: $('#existeprimaobjetivo').val(),
 					primaobjetivo: $('#primaobjetivo').val(),
 					id: <?php echo $id; ?>,
-					estadoactual: 2,
+					estadoactual: 5,
 					fechaemitido: '<?php echo date('Y-m-d'); ?>',
 					fechapropuesta: '<?php echo date('Y-m-d'); ?>',
 					foliotys: '',
@@ -1918,20 +2679,11 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 		$('.frmContrefusuarios').hide();
 
-		$('.frmNuevo #fechacrea').val('2020-02-02');
-		$('.frmNuevo #fechamodi').val('2020-02-02');
-		$('.frmNuevo #usuariocrea').val('2020-02-02');
-		$('.frmNuevo #usuariomodi').val('2020-02-02');
 
-		$('.frmNuevo2 #numerocliente').val('123456');
-		$('.frmNuevo2 #fechacrea').val('2020-02-02');
-		$('.frmNuevo2 #fechamodi').val('2020-02-02');
-		$('.frmNuevo2 #usuariocrea').val('2020-02-02');
-		$('.frmNuevo2 #usuariomodi').val('2020-02-02');
-
-
-		$('#telefonofijo').inputmask('999 9999999', { placeholder: '___ _______' });
-		$('#telefonocelular').inputmask('999 9999999', { placeholder: '___ _______' });
+		$('#telefonofijoBNF').inputmask('999 9999999', { placeholder: '___ _______' });
+		$('#telefonofijoASG').inputmask('999 9999999', { placeholder: '___ _______' });
+		$('#telefonocelularBNF').inputmask('999 9999999', { placeholder: '___ _______' });
+		$('#telefonocelularASG').inputmask('999 9999999', { placeholder: '___ _______' });
 
 
 
@@ -1948,7 +2700,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 				$('#wizard_with_validation #tieneasegurado').html("<option value='0'>Yo mismo</option>");
 				$('#wizard_with_validation #refaseguradaaux').html("<option value='0'>Yo mismo</option>");
 				$('#wizard_with_validation .frmContaseguradoaux').hide();
-				form.steps("next");
+
 
 			<?php } ?>
 
@@ -1979,22 +2731,6 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		traerAseguradosPorCliente();
 
 		<?php } ?>
-
-
-		$('#wizard_with_validation .frmContbeneficiarioaux').hide();
-
-		$('#wizard_with_validation #tienebeneficiario').change(function() {
-			if ($(this).val() == '1') {
-				$('#wizard_with_validation .frmContbeneficiarioaux').show();
-				traerBeneficiariosPorCliente();
-
-			} else {
-
-
-				$('#wizard_with_validation .frmContbeneficiarioaux').hide();
-				$('#refbeneficiarioaux').html('<option value="0">Yo mismo</option>');
-			}
-		});
 
 		traerBeneficiariosPorCliente();
 
@@ -2032,18 +2768,14 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 		}
 
-
+		<?php while ($rowJ = mysql_fetch_array($resPreguntasSencibles)) { ?>
+			$("#<?php echo $rowJ['campo'].'ASG'; ?>").prop('required',true);
+			$("#<?php echo $rowJ['campo'].'BNF'; ?>").prop('required',true);
+		<?php } ?>
 
 		$('#wizard_with_validation #refaseguradaaux').change(function() {
 			if ($('#wizard_with_validation #refaseguradaaux option:selected').text() == 'Nuevo') {
 				$('#lgmNuevoASG').modal();
-				<?php while ($rowJ = mysql_fetch_array($resPreguntasSencibles)) { ?>
-					$("#lgmNuevoASG #<?php echo $rowJ['campo']; ?>").prop('required',true);
-				<?php } ?>
-				$('#lgmNuevoASG #fechamodi').val('2020-02-02');
-				$('#lgmNuevoASG #fechacrea').val('2020-02-02');
-				$('#lgmNuevoASG #usuariomodi').val('asesorescrea');
-				$('#lgmNuevoASG #usuariocrea').val('asesorescrea');
 
 			} else {
 				if ( $(this).val() > 0) {
@@ -2052,24 +2784,14 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 			}
 
-			$('.frmNuevoASG #refclientes').val(<?php echo $rIdCliente; ?>);
 		});
 
 
 		$('#wizard_with_validation #refbeneficiarioaux').change(function() {
 			if ($('#wizard_with_validation #refbeneficiarioaux option:selected').text() == 'Nuevo') {
 				$('#lgmNuevoBNF').modal();
-				<?php while ($rowJ = mysql_fetch_array($resPreguntasSencibles)) { ?>
-					$("#lgmNuevoBNF #<?php echo $rowJ['campo']; ?>").prop('required',true);
-				<?php } ?>
-				$('#lgmNuevoBNF #fechamodi').val('2020-02-02');
-				$('#lgmNuevoBNF #fechacrea').val('2020-02-02');
-				$('#lgmNuevoBNF #usuariomodi').val('asesorescrea');
-				$('#lgmNuevoBNF #usuariocrea').val('asesorescrea');
-
 			}
 
-			$('.frmNuevoBNF #refclientes').val(<?php echo $rIdCliente; ?>);
 		});
 
 
@@ -2108,7 +2830,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {accion: 'traerAseguradosPorCliente', refclientes: <?php echo $rIdCliente; ?>},
+				data: {accion: 'traerBeneficiariosPorCliente', refclientes: <?php echo $rIdCliente; ?>,idcotizacion:<?php echo $id; ?>},
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('#refbeneficiarioaux').html();

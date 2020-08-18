@@ -1560,7 +1560,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 <script src="../../js/pdfobject.min.js"></script>
 
-<script src="../../js/jquery.easy-autocomplete.min.js"></script>
+
 <!-- Chart Plugins Js -->
 
 
@@ -1686,7 +1686,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 			}
 		};
 
-		$("#codigopostalBNF").easyAutocomplete(options2);
+		$("#codigopostalBNF").easyAutocomplete(options3);
 
 
 		$('#fechanacimientoASG').bootstrapMaterialDatePicker({

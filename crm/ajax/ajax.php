@@ -1118,10 +1118,198 @@ switch ($accion) {
    case 'rutaCotizar':
       rutaCotizar($serviciosReferencias);
    break;
+   case 'aceptarClienteCotizacion':
+      aceptarClienteCotizacion($serviciosReferencias, $serviciosMensajes);
+   break;
+   case 'generaNotificacion':
+      generaNotificacion($serviciosReferencias, $serviciosMensajes, $serviciosNotificaciones,$serviciosUsuarios);
+   break;
 
+   case 'rechazaCotizacionCliente':
+      rechazaCotizacionCliente($serviciosReferencias);
+   break;
+   case 'enviarCotizacion':
+      enviarCotizacion($serviciosReferencias, $serviciosUsuarios, $serviciosMensajes);
+   break;
 
 }
 /* FinFinFin */
+
+function enviarCotizacion($serviciosReferencias, $serviciosUsuarios, $serviciosMensajes) {
+   $id = $_POST['id'];
+
+   $noenviar = 0;
+
+   $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+
+   if (mysql_num_rows($resCotizaciones) > 0) {
+      $resV['error'] = false;
+
+      if (mysql_result($resCotizaciones,0,'claveasesor') != '28222') {
+         // destinatario del email
+         $destinatario = mysql_result($resCotizaciones,0,'emailasesor');
+         // url para ingreso
+         $url = "cotizaciones/modificar.php?id=".mysql_result($resCotizaciones,0,0);
+         // usuario
+         $idusuario = mysql_result($resCotizaciones,0,'idusuarioasesor');
+      } else {
+         // destinatario del email
+         $destinatario = mysql_result($resCotizaciones,0,'email');
+         // url para ingreso
+         $url = "cotizacionesvigentes/resultado.php?id=".mysql_result($resCotizaciones,0,0);
+
+         if (mysql_result($resCotizaciones,0,'idusuariocliente') >0) {
+            // usuario
+            $idusuario = mysql_result($resCotizaciones,0,'idusuariocliente');
+         } else {
+            // usuario
+            $noenviar = 1;
+         }
+
+      }
+
+      if ($noenviar == 0) {
+         ///// para el auto login ///////////////
+         // usuario 30 fabiola
+         $token = $serviciosReferencias->GUID();
+         $resAutoLogin = $serviciosReferencias->insertarAutologin($idusuario,$token,$url,'0');
+         ////// fin ////////////////////////////
+
+         $asunto = 'Se le envio una cotizacion desde la plataforma, folio: '.mysql_result($resCotizaciones,0,'folio');
+
+         $cuerpo = '';
+
+         $cuerpo .= "<p>El cliente ".mysql_result($resCotizaciones,0,'clientesolo')." - Email: ".mysql_result($resCotizaciones,0,'email')." - Telefono: ".mysql_result($resCotizaciones,0,'telefonocelular')."</p>";
+
+         $cuerpo .= '<p>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</p>';
+
+
+
+         $exito = $serviciosUsuarios->enviarEmail($destinatario,$asunto,$cuerpo);
+
+         $resV['mensaje'] = 'Se envio con exito la cotizacion';
+      } else {
+         $resV['error'] = true;
+         $resV['mensaje'] = 'El cliente aun no tiene un usuario generado';
+      }
+
+   } else {
+      $resV['error'] = true;
+      $resV['mensaje'] = 'No exite el registro, verifique';
+   }
+
+
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
+
+function rechazaCotizacionCliente($serviciosReferencias) {
+   session_start();
+   $id = $_POST['id'];
+   $motivosrechazo = $_POST['motivosrechazo'];
+
+   $usuariomodi = $_SESSION['usua_sahilices'];
+
+   $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+
+   $resModificarEstadoGralCotizacion = $serviciosReferencias->modificarEstadoCotizacionResultado($id,3);
+
+   $resModificarEstadoCotizacion = $serviciosReferencias->modificarCotizacionesRechazar($id,'rechazado por el cliente por: '.$motivosrechazo,$usuariomodi);
+
+   echo '';
+
+}
+
+function generaNotificacion($serviciosReferencias, $serviciosMensajes, $serviciosNotificaciones,$serviciosUsuarios) {
+   $id = $_POST['id'];
+   $interes = $_POST['interes'];
+
+   session_start();
+
+   $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+
+   $lblMensajeNot = '';
+   $lblAsunto = '';
+
+   switch ($interes) {
+      case 'cotizacionAjustes':
+         $lblMensajeNot = 'Ajuste Cotizacion: ';
+         $lblAsunto = 'Solicitaron ajustes sobre la cotizacion: ';
+      break;
+      case 'cotizacionRechazo':
+         $lblMensajeNot = 'Rechaza Cotizacion: ';
+         $lblAsunto = 'Rechazaron la cotizacion: ';
+      break;
+   }
+
+   $emailReferente = 'fsegovia@asesorescrea.com'; //por ahora fijo
+   $mensaje = $lblMensajeNot.mysql_result($resCotizaciones,0,'folio');
+   $idpagina = 1;
+   $autor = $_SESSION['usua_sahilices'];
+   $destinatario = $emailReferente;
+   $id1 = $id;
+   $id2 = 0;
+   $id3 = 0;
+   $icono = 'monetization_on';
+   $estilo = 'bg-light-green';
+   $fecha = date('Y-m-d H:i:s');
+   $url = "cotizaciones/modificar.php?id=".mysql_result($resCotizaciones,0,0);
+
+   $resNotificaciones = $serviciosNotificaciones->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url);
+
+   ///// para el auto login ///////////////
+   // usuario 30 fabiola
+   $token = $serviciosReferencias->GUID();
+   $resAutoLogin = $serviciosReferencias->insertarAutologin(30,$token,$url,'0');
+   ////// fin ////////////////////////////
+
+   $asunto = $lblAsunto.mysql_result($resCotizaciones,0,'folio');
+
+   $cuerpo = '';
+
+   $cuerpo .= "<p>El cliente ".mysql_result($resCotizaciones,0,'clientesolo')." - Email: ".mysql_result($resCotizaciones,0,'email')." - Telefono: ".mysql_result($resCotizaciones,0,'telefonocelular')."</p>";
+
+   $cuerpo .= '<p>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</p>';
+
+   $destinatario = 'fsegovia@asesorescrea.com';
+
+   $exito = $serviciosUsuarios->enviarEmail($destinatario,$asunto,$cuerpo);
+
+   if ($exito) {
+      $resV['error'] = false;
+   } else {
+      $resV['error'] = true;
+      $resV['mensaje'] = 'No se pudo enviar el mensaje, vuelva a intentarlo en unos momentos';
+   }
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
+
+function aceptarClienteCotizacion($serviciosReferencias, $serviciosMensajes) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->modificarEstadoCotizacionResultado($id,2);
+
+   if ($res) {
+      $resV['error'] = false;
+
+      $resV['ruta'] = "subirdocumentacionie.php?id=".$id;
+
+   } else {
+      $resV['error'] = true;
+      $resV['mensaje'] = 'No exite el registro, verifique';
+
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
 
 function rutaCotizar($serviciosReferencias) {
    $id = $_POST['id'];
@@ -2484,8 +2672,10 @@ function validarCuestionario($serviciosReferencias) {
 
          //die(var_dump($resI));
          /**** fin cuestionario     ****/
+
+         // cuando inserto una cotizacion nueva, veo si llega desde un lead y lo relaciono
          if ($lead > 0) {
-            $resModificarLead = $serviciosReferencias->modificarLeadCotizacion($lead,$res);
+            $resModificarLead = $serviciosReferencias->modificarLeadCotizacion($lead,$res,2);
          }
 
 
@@ -4321,6 +4511,9 @@ function insertarCotizaciones($serviciosReferencias) {
    $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo);
 
    if ((integer)$res > 0) {
+
+      $resModificarEST = $serviciosReferencias->modificarCotizacionesPorCampo($res,'refestados',1,$usuariomodi);
+
       /**** toda la perta del cuestionario ***/
       $resP = $serviciosReferencias->traerProductosPorId($refproductos);
       $idcuestionario = mysql_result($resP,0,'refcuestionarios');
@@ -4408,8 +4601,21 @@ function modificarCotizaciones($serviciosReferencias) {
          $idclienteinbursa = 0;
       }
 
+      // busco si existe un lead para updetear
+      $resLead = $serviciosReferencias->traerLeadPorCotizacion($id);
+      if (mysql_num_rows($resLead) > 0) {
+         $resModLead = $serviciosReferencias->modificarLeadCotizacion(mysql_result($resLead,0,0),$id,5);
+      }
    } else {
       $foliointerno = '';
+   }
+
+   if ($refestadocotizaciones == 4) {
+      // busco si existe un lead para updetear
+      $resLead = $serviciosReferencias->traerLeadPorCotizacion($id);
+      if (mysql_num_rows($resLead) > 0) {
+         $resModLead = $serviciosReferencias->modificarLeadCotizacion(mysql_result($resLead,0,0),$id,3);
+      }
    }
 
 
@@ -4419,6 +4625,14 @@ function modificarCotizaciones($serviciosReferencias) {
       if (isset($_POST['refbeneficiarioaux'])) {
          $resModificarCB = $serviciosReferencias->modificarCotizacionesBeneficiario($id,$_POST['refbeneficiarioaux']);
       }
+
+      if (isset($_POST['primaneta'])) {
+         $resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($id,'primaneta',$_POST['primaneta'],$usuariomodi);
+      }
+      if (isset($_POST['primatotal'])) {
+         $resModificarPT = $serviciosReferencias->modificarCotizacionesPorCampo($id,'primatotal',$_POST['primatotal'],$usuariomodi);
+      }
+
       echo '';
    } else {
       echo 'Hubo un error al modificar datos ';
