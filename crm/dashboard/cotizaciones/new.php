@@ -1315,6 +1315,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 			idRespuesta =  $('#wizard_with_validation #'+idTable).data("respuesta");
 			idPreguntaId =  $('#wizard_with_validation #'+idTable).data("idpregunta");
 
+			alert(idRespuesta);
 			$('#wizard_with_validation .escondido'+idPreguntaId).hide();
 
 			$('#wizard_with_validation .clcontPregunta'+idRespuesta).show(400);
