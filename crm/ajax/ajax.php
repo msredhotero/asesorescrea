@@ -1145,7 +1145,7 @@ function enviarCotizacion($serviciosReferencias, $serviciosUsuarios, $serviciosM
    if (mysql_num_rows($resCotizaciones) > 0) {
       $resV['error'] = false;
 
-      if (mysql_result($resCotizaciones,0,'claveasesor') != '28222') {
+      if ((mysql_result($resCotizaciones,0,'claveasesor') != '28222') && (mysql_result($resCotizaciones,0,'envioalcliente') == '0')) {
          // destinatario del email
          $destinatario = mysql_result($resCotizaciones,0,'emailasesor');
          // url para ingreso
@@ -1405,13 +1405,24 @@ function modificarLead($serviciosReferencias) {
    $observaciones = $_POST['observaciones'];
    $refproductosweb = $_POST['refproductosweb'];
 
+   if ($refestadolead == 2) {
+      $refestadolead = 1;
+      $resV['ruta'] = "../cotizaciones/newfilter.php?idcliente=".$refclientes."&idproducto=".$refproductos."&lead=".$id;
+   } else {
+      $resV['ruta'] = "";
+   }
+
    $res = $serviciosReferencias->modificarLead($id,$refclientes,$refproductos,$fechamodi,$contactado,$usuariocontacto,$usuarioresponsable,$cita,$refestadolead,$fechacreacita,$observaciones,$refproductosweb);
 
-   if ($res == true) {
-      echo '';
+
+   if ($res) {
+      $resV['error'] = false;
    } else {
-      echo 'Hubo un error al modificar datos';
+      $resV['error'] = true;
+      $resV['mensaje'] = 'No se pudo modificar su numero de telefono celular, vuelva a intentarlo';
    }
+   header('Content-type: application/json');
+   echo json_encode($resV);
 }
 
 function eliminarLead($serviciosReferencias) {
@@ -6514,8 +6525,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
       case 'dbasesores':
          $resultado = $serviciosReferencias->traerAsesoresPorId($id);
 
-         $lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','nss','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta','urlprueba','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas','razonsocial','vigdesderc','vighastarc','refestadoasesor','refestadoasesorinbursa');
-         $lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Nro de Seguro Social','Clave Interbancaria','ID Cliente Inbursa','Clave Asesor','Fecha de Alta','URL Prueba','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona','Razon Social','Vig. Desde RC','Vig. Hasta RC','Est. CREA','Est. INBURSA');
+         $lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','nss','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta','urlprueba','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas','razonsocial','vigdesderc','vighastarc','refestadoasesor','refestadoasesorinbursa','envioalcliente');
+         $lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Nro de Seguro Social','Clave Interbancaria','ID Cliente Inbursa','Clave Asesor','Fecha de Alta','URL Prueba','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona','Razon Social','Vig. Desde RC','Vig. Hasta RC','Est. CREA','Est. INBURSA','Envia informacion al Cliente');
 
 
 
@@ -6551,8 +6562,14 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $resVar10 = $serviciosReferencias->traerEstadoasesor();
          $cadRef10 = $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',mysql_result($resultado,0,'refestadoasesorinbursa'));
 
-         $refdescripcion = array(0=> $cadRef1,1=> $cadRef2, 2=>$cadRef5,3=>$cadRef8,4=>$cadRef9,5=>$cadRef10);
-         $refCampo 	=  array('refusuarios','refescolaridades','sexo','reftipopersonas','refestadoasesor','refestadoasesorinbursa');
+         if (mysql_result($resultado,0,'envioalcliente') == '1') {
+         	$cadRef55 = "<option value='0'>No</option><option value='1' selected>Si</option>";
+         } else {
+         	$cadRef55 = "<option value='0' selected>No</option><option value='1'>Si</option>";
+         }
+
+         $refdescripcion = array(0=> $cadRef1,1=> $cadRef2, 2=>$cadRef5,3=>$cadRef8,4=>$cadRef9,5=>$cadRef10,6=>$cadRef55);
+         $refCampo 	=  array('refusuarios','refescolaridades','sexo','reftipopersonas','refestadoasesor','refestadoasesorinbursa','envioalcliente');
       break;
       case 'dbpostulantes':
 
@@ -6992,7 +7009,9 @@ function insertarAsesores($serviciosReferencias, $serviciosUsuarios) {
       $refestadoasesor = $_POST['refestadoasesor'];
       $refestadoasesorinbursa = $_POST['refestadoasesorinbursa'];
 
-      $res = $serviciosReferencias->insertarAsesores($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc, $vighastarc , $refestadoasesor,$refestadoasesorinbursa);
+      $envioalcliente = $_POST['envioalcliente'];
+
+      $res = $serviciosReferencias->insertarAsesores($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc, $vighastarc , $refestadoasesor,$refestadoasesorinbursa,$envioalcliente);
 
       if ((integer)$res > 0) {
          echo '';
@@ -7046,8 +7065,9 @@ function modificarAsesores($serviciosReferencias) {
    $refestadoasesor = $_POST['refestadoasesor'];
    $refestadoasesorinbursa = $_POST['refestadoasesorinbursa'];
 
+   $envioalcliente = $_POST['envioalcliente'];
 
-   $res = $serviciosReferencias->modificarAsesores($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechamodi,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc, $vighastarc,$refestadoasesor,$refestadoasesorinbursa);
+   $res = $serviciosReferencias->modificarAsesores($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechamodi,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc, $vighastarc,$refestadoasesor,$refestadoasesorinbursa,$envioalcliente);
 
    if ($res == true) {
       echo '';

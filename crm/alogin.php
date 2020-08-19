@@ -13,7 +13,17 @@ $serviciosFunciones 	= new Servicios();
 $serviciosValidador = new serviciosValidador();
 
 if (isset($_SESSION['usua_sahilices'])) {
-   header('Location: dashboard/index.php');
+   if (isset($_GET['token'])) {
+      $resAutologin = $serviciosReferencias->traerAutologinPorToken($_GET['token']);
+      if (mysql_num_rows($resAutologin) > 0) {
+         header('Location: dashboard/'.mysql_result($resAutologin,0,'url'));
+      } else {
+         header('Location: dashboard/index.php');
+      }
+   } else {
+      header('Location: dashboard/index.php');
+   }
+
 } else {
 
    if (isset($_GET['token'])) {

@@ -597,44 +597,42 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
                               <fieldset>
 
                                     <div class="form-group form-float">
-                                       <div class="form-line">
 
-													<h4>Busqueda por Nombre Completo</h4>
-													<input id="lstjugadores" style="width:75%;" />
+													<button type="button" class="btn bg-green waves-effect btnCF">
+														PERSONA FISICA
+													</button>
 
-													<h4 style="padding: 15px 0; ">Cliente Seleccionado: <span class="clienteSelect"><?php echo $lblCliente; ?></span></h4>
-													<select style="margin-top:10px;" class="form-control" id="refclientes" name="refclientes" required readonly="readonly">
-														<?php echo $cadRef2; ?>
-													</select>
+													<button type="button" class="btn bg-blue-grey waves-effect btnCM">
+														PERSONA MORAL
+													</button>
 
-
-													<div id="selction-ajax" style="margin-top: 10px; display:none;">
-													<h5>Lista de Productos</h5>
-													<ul class="list-group lstCartera">
-
-													</ul>
+													<div class="contFrmExisteCliente escondido" style="margin-top:15px;">
+														<button type="button" class="btn bg-light-blue waves-effect btnCE">
+			  												EXISTE EN LA BASE DE DATOS
+			  											</button>
+			  											<button type="button" class="btn bg-light-green waves-effect btnCN">
+			  												CLIENTE NUEVO
+			  											</button>
 													</div>
-													<input type="hidden" name="reftipopersonasaux" id="reftipopersonasaux" value="1" />
+
+                                       <div class="form-line escondido3">
+
+														<h4>Busqueda por Nombre Completo</h4>
+														<input id="lstjugadores" style="width:75%;" />
+
+														<select style="margin-top:10px;" class="form-control" id="refclientes" name="refclientes" required readonly="readonly">
+															<option value=''>-- Seleccionar --</option>
+															<?php echo $cadRef2; ?>
+														</select>
+
+
+														<div id="selction-ajax" style="margin-top: 10px; display:none;">
+														</div>
+														<input type="hidden" name="reftipopersonasaux" id="reftipopersonasaux" value="1" />
 
 
                                        </div>
                                     </div>
-
-												<div class="form-group form-float">
-													<div class="alert alert-info">En caso de que no encuentre al cliente puede dar de alta uno nuevo</div>
-													<hr>
-													<div class="form-line">
-														  <button type="button" class="btn bg-green waves-effect btnNuevo2" data-toggle="modal" data-target="#lgmNuevo2">
-			  												<i class="material-icons">add</i>
-			  												<span>NUEVO CLIENTE - PERSONA FISICA</span>
-			  											</button>
-			  											<button type="button" class="btn bg-blue-grey waves-effect btnNuevoMoral" data-toggle="modal" data-target="#lgmNuevo2">
-			  												<i class="material-icons">add</i>
-			  												<span>NUEVO CLIENTE - PERSONA MORAL</span>
-			  											</button>
-													</div>
-											   </div>
-
 
                               </fieldset>
 										<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
@@ -1601,7 +1599,50 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 			traerProductosPorTipo($('#refproductosrama').val(),$('#reftipopersonasaux').val(), $('#refasesores').val());
 		});
 
+		$("#wizard_with_validation").on("click",'.btnCF', function(){
+			$('#wizard_with_validation #reftipopersonasaux').val(1);
+			$('#wizard_with_validation .contFrmExisteCliente').show();
+			$('#wizard_with_validation .btnCF').css("opacity", 1);
+			$('#wizard_with_validation .btnCM').css("opacity", 0.2);
 
+			$('#wizard_with_validation .btnCE').css("opacity", 1);
+			$('#wizard_with_validation .btnCN').css("opacity", 1);
+
+			$('#wizard_with_validation .escondido3').hide();
+		});
+
+		$("#wizard_with_validation").on("click",'.btnCM', function(){
+			$('#wizard_with_validation #reftipopersonasaux').val(2);
+			$('#wizard_with_validation .contFrmExisteCliente').show();
+			$('#wizard_with_validation .btnCF').css("opacity", 0.2);
+			$('#wizard_with_validation .btnCM').css("opacity", 1);
+
+			$('#wizard_with_validation .btnCE').css("opacity", 1);
+			$('#wizard_with_validation .btnCN').css("opacity", 1);
+
+			$('#wizard_with_validation .escondido3').hide();
+		});
+
+		$("#wizard_with_validation").on("click",'.btnCE', function(){
+
+			$('#wizard_with_validation .escondido3').show();
+			$('#wizard_with_validation .btnCE').css("opacity", 1);
+			$('#wizard_with_validation .btnCN').css("opacity", 0.2);
+		});
+
+		$("#wizard_with_validation").on("click",'.btnCN', function(){
+			$('#wizard_with_validation .escondido3').hide();
+			if ($('#wizard_with_validation #reftipopersonasaux').val() == 1) {
+				$('#lgmNuevo2').modal();
+				$('#lgmNuevo2 .frmContrazonsocial').hide();
+			}
+			if ($('#wizard_with_validation #reftipopersonasaux').val() == 2) {
+				$('#lgmNuevo2').modal();
+				$('#lgmNuevo2 .frmContrazonsocial').show();
+			}
+			$('#wizard_with_validation .btnCE').css("opacity", 0.2);
+			$('#wizard_with_validation .btnCN').css("opacity", 1);
+		});
 
 
 		<?php if (!(isset($_GET['id']))) { ?>
@@ -1631,15 +1672,23 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	            setButtonWavesEffect(event);
 	        },
 	        onStepChanging: function (event, currentIndex, newIndex) {
-	            if (currentIndex > newIndex) { return true; }
+				  	if (currentIndex == 0) {
+						if ($('#wizard_with_validation #refclientes').val() == '') {
 
-	            if (currentIndex < newIndex) {
-	                form.find('.body:eq(' + newIndex + ') label.error').remove();
-	                form.find('.body:eq(' + newIndex + ') .error').removeClass('error');
-	            }
+							return false;
+						}
+					} else {
+						if (currentIndex > newIndex) { return true; }
 
-	            form.validate().settings.ignore = ':disabled,:hidden';
-	            return form.valid();
+		            if (currentIndex < newIndex) {
+		                form.find('.body:eq(' + newIndex + ') label.error').remove();
+		                form.find('.body:eq(' + newIndex + ') .error').removeClass('error');
+		            }
+
+		            form.validate().settings.ignore = ':disabled,:hidden';
+		            return form.valid();
+					}
+
 	        },
 	        onStepChanged: function (event, currentIndex, priorIndex) {
 	            setButtonWavesEffect(event);
@@ -1772,8 +1821,11 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	        },
 	        rules: {
 	            'confirm': {
-	                equalTo: '#password'
-	            }
+	               equalTo: '#password'
+	            },
+					'refclientes': {
+						required: true
+					}
 	        }
 	    });
 
@@ -2460,6 +2512,8 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 				});
 			}
 		});
+
+		$('.escondido3').hide();
 
 
 		<?php if (($id != 0)) { ?>

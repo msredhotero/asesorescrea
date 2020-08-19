@@ -478,7 +478,7 @@ $refCampo 	=  array();
 
 
 
-		var table2 = $('#example4').DataTable({
+		var table3 = $('#example4').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=leadshistoricos&idestado=3",
@@ -633,6 +633,7 @@ $refCampo 	=  array();
 						$('#lgmEliminar').modal('toggle');
 						table.ajax.reload();
 						table2.ajax.reload();
+						table3.ajax.reload();
 					} else {
 						swal({
 								title: "Respuesta",
@@ -758,6 +759,7 @@ $refCampo 	=  array();
 							$('#unidadnegocio').val('');
 							table.ajax.reload();
 							table2.ajax.reload();
+							table3.ajax.reload();
 						} else {
 							swal({
 									title: "Respuesta",
@@ -806,7 +808,7 @@ $refCampo 	=  array();
 					//una vez finalizado correctamente
 					success: function(data){
 
-						if (data == '') {
+						if (data.error == false) {
 							swal({
 									title: "Respuesta",
 									text: "Registro Modificado con exito!!",
@@ -818,6 +820,12 @@ $refCampo 	=  array();
 							$('#lgmModificar').modal('hide');
 							table.ajax.reload();
 							table2.ajax.reload();
+							table3.ajax.reload();
+
+							if (data.ruta != '') {
+
+								$(location).attr('href',data.ruta);
+							}
 						} else {
 							swal({
 									title: "Respuesta",

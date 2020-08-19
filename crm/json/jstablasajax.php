@@ -89,9 +89,9 @@ switch ($tabla) {
 				$termina = 10;
 			break;
 			case 2:
-				$label = array('btnCotizar');
-				$class = array('bg-green');
-				$icon = array('monetization_on');
+				$label = array();
+				$class = array();
+				$icon = array();
 
 				$indiceID = 0;
 				$empieza = 1;

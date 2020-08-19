@@ -6759,7 +6759,8 @@ return $res;
 	      c.bitacoracrea,c.bitacorainbursa,c.bitacoraagente,c.existeprimaobjetivo,c.primaobjetivo, pro.precio ,
 	      c.tieneasegurado, c.refasegurados, c.refbeneficiarios, ec.estadocotizacion          ,c.folio,c.version,c.refcotizaciones, c.refestados, est.estado, est.color,c.primaneta,c.primatotal,
          pro.reftipodocumentaciones, cli.telefonocelular, cli.email, ase.email as emailasesor,
-         ase.claveasesor, cli.refusuarios as idusuariocliente, ase.refusuarios as idusuarioasesor
+         ase.claveasesor, cli.refusuarios as idusuariocliente, ase.refusuarios as idusuarioasesor,
+         ase.envioalcliente
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join dbasesores ase ON ase.idasesor = c.refasesores
@@ -6786,7 +6787,7 @@ return $res;
 		c.presentacotizacion,c.fechapropuesta,c.fecharenovacion,
       c.bitacoracrea,c.bitacorainbursa,c.bitacoraagente,c.existeprimaobjetivo,c.primaobjetivo, pro.precio ,
 	  c.tieneasegurado, c.refasegurados,c.folio,c.version,c.refcotizaciones, c.refestados,
-     c.primaneta,c.primatotal, pro.reftipodocumentaciones
+     c.primaneta,c.primatotal, pro.reftipodocumentaciones, ase.envioalcliente
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join dbasesores ase ON ase.idasesor = c.refasesores
@@ -11722,7 +11723,8 @@ return $res;
 						vigdesderc,
 						vighastarc,
 						refestadoasesor,
-						refestadoasesorinbursa
+						refestadoasesorinbursa,
+                  envioalcliente
 						)
 						select
 						'',
@@ -11759,7 +11761,8 @@ return $res;
 						p.vigdesderc,
 						p.vighastarc,
 						2,
-						2
+						2,
+                  '0'
 						from		dbpostulantes p where idpostulante =".$id;
 
 			$res = $this->query($sql,1);
@@ -11775,19 +11778,19 @@ return $res;
 	}
 
 
-	function insertarAsesores($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc,$vighastarc,$refestadoasesor,$refestadoasesorinbursa) {
-		$sql = "insert into dbasesores(idasesor,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,fechacrea,fechamodi,usuariocrea,usuariomodi,reftipopersonas,claveinterbancaria,idclienteinbursa,claveasesor,fechaalta,nss,razonsocial,nropoliza,vigdesdecedulaseguro,vighastacedulaseguro,vigdesderc,vighastarc,refestadoasesor,refestadoasesorinbursa)
-		values ('',".$refusuarios.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$email."','".$curp."','".$rfc."','".$ine."','".$fechanacimiento."','".$sexo."','".$codigopostal."',".$refescolaridades.",'".$telefonomovil."','".$telefonocasa."','".$telefonotrabajo."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."',".$reftipopersonas.",'".$claveinterbancaria."','".$idclienteinbursa."','".$claveasesor."','".$fechaalta."','".$nss."','".$razonsocial."','".$nropoliza."',".($vigdesdecedulaseguro == '' ? 'null' : "'".$vigdesdecedulaseguro."'").",".($vighastacedulaseguro == '' ? 'null' : "'".$vighastacedulaseguro."'").",".($vigdesderc == '' ? 'null' : "'".$vigdesderc."'").",".($vighastarc == '' ? 'null' : "'".$vighastarc."'").",".$refestadoasesor.",".$refestadoasesorinbursa.")";
+	function insertarAsesores($refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc,$vighastarc,$refestadoasesor,$refestadoasesorinbursa,$envioalcliente) {
+		$sql = "insert into dbasesores(idasesor,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,fechacrea,fechamodi,usuariocrea,usuariomodi,reftipopersonas,claveinterbancaria,idclienteinbursa,claveasesor,fechaalta,nss,razonsocial,nropoliza,vigdesdecedulaseguro,vighastacedulaseguro,vigdesderc,vighastarc,refestadoasesor,refestadoasesorinbursa,envioalcliente)
+		values ('',".$refusuarios.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$email."','".$curp."','".$rfc."','".$ine."','".$fechanacimiento."','".$sexo."','".$codigopostal."',".$refescolaridades.",'".$telefonomovil."','".$telefonocasa."','".$telefonotrabajo."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."',".$reftipopersonas.",'".$claveinterbancaria."','".$idclienteinbursa."','".$claveasesor."','".$fechaalta."','".$nss."','".$razonsocial."','".$nropoliza."',".($vigdesdecedulaseguro == '' ? 'null' : "'".$vigdesdecedulaseguro."'").",".($vighastacedulaseguro == '' ? 'null' : "'".$vighastacedulaseguro."'").",".($vigdesderc == '' ? 'null' : "'".$vigdesderc."'").",".($vighastarc == '' ? 'null' : "'".$vighastarc."'").",".$refestadoasesor.",".$refestadoasesorinbursa.",'".$envioalcliente."')";
 
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarAsesores($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechamodi,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc,$vighastarc,$refestadoasesor,$refestadoasesorinbursa) {
+	function modificarAsesores($id,$refusuarios,$nombre,$apellidopaterno,$apellidomaterno,$email,$curp,$rfc,$ine,$fechanacimiento,$sexo,$codigopostal,$refescolaridades,$telefonomovil,$telefonocasa,$telefonotrabajo,$fechamodi,$usuariomodi,$reftipopersonas,$claveinterbancaria,$idclienteinbursa,$claveasesor,$fechaalta,$nss,$razonsocial,$nropoliza,$vigdesdecedulaseguro,$vighastacedulaseguro,$vigdesderc,$vighastarc,$refestadoasesor,$refestadoasesorinbursa,$envioalcliente) {
 		$sql = "update dbasesores
 		set
-		refusuarios = ".$refusuarios.",nombre = '".$nombre."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',email = '".$email."',curp = '".$curp."',rfc = '".$rfc."',ine = '".$ine."',fechanacimiento = '".$fechanacimiento."',sexo = '".$sexo."',codigopostal = '".$codigopostal."',refescolaridades = ".$refescolaridades.",telefonomovil = '".$telefonomovil."',telefonocasa = '".$telefonocasa."',telefonotrabajo = '".$telefonotrabajo."',fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',reftipopersonas = ".$reftipopersonas.",claveinterbancaria = '".$claveinterbancaria."',idclienteinbursa = '".$idclienteinbursa."',claveasesor = '".$claveasesor."',fechaalta = '".$fechaalta."',nss = '".$nss."',razonsocial = '".$razonsocial."',nropoliza = '".$nropoliza."',vigdesdecedulaseguro = ".($vigdesdecedulaseguro == '' ? 'null' : "'".$vigdesdecedulaseguro."'").",vighastacedulaseguro = ".($vighastacedulaseguro == '' ? 'null' : "'".$vighastacedulaseguro."'").",vigdesderc = ".($vigdesderc == '' ? 'null' : "'".$vigdesderc."'").",vighastarc = ".($vighastarc == '' ? 'null' : "'".$vighastarc."'").",refestadoasesor = ".$refestadoasesor.",refestadoasesorinbursa = ".$refestadoasesorinbursa." where idasesor =".$id;
+		refusuarios = ".$refusuarios.",nombre = '".$nombre."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',email = '".$email."',curp = '".$curp."',rfc = '".$rfc."',ine = '".$ine."',fechanacimiento = '".$fechanacimiento."',sexo = '".$sexo."',codigopostal = '".$codigopostal."',refescolaridades = ".$refescolaridades.",telefonomovil = '".$telefonomovil."',telefonocasa = '".$telefonocasa."',telefonotrabajo = '".$telefonotrabajo."',fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',reftipopersonas = ".$reftipopersonas.",claveinterbancaria = '".$claveinterbancaria."',idclienteinbursa = '".$idclienteinbursa."',claveasesor = '".$claveasesor."',fechaalta = '".$fechaalta."',nss = '".$nss."',razonsocial = '".$razonsocial."',nropoliza = '".$nropoliza."',vigdesdecedulaseguro = ".($vigdesdecedulaseguro == '' ? 'null' : "'".$vigdesdecedulaseguro."'").",vighastacedulaseguro = ".($vighastacedulaseguro == '' ? 'null' : "'".$vighastacedulaseguro."'").",vigdesderc = ".($vigdesderc == '' ? 'null' : "'".$vigdesderc."'").",vighastarc = ".($vighastarc == '' ? 'null' : "'".$vighastarc."'").",refestadoasesor = ".$refestadoasesor.",refestadoasesorinbursa = ".$refestadoasesorinbursa.",envioalcliente = '".$envioalcliente."' where idasesor =".$id;
 
 		$res = $this->query($sql,0);
 		return $res;
@@ -11937,13 +11940,13 @@ return $res;
 
 
 	function traerAsesoresPorId($id) {
-	$sql = "select idasesor,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,fechacrea,fechamodi,usuariocrea,usuariomodi,reftipopersonas,claveinterbancaria,idclienteinbursa,claveasesor,fechaalta,nss,razonsocial,nropoliza,vigdesdecedulaseguro,vighastacedulaseguro,vigdesderc,vighastarc,refestadoasesor,refestadoasesorinbursa from dbasesores where idasesor =".$id;
+	$sql = "select idasesor,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,fechacrea,fechamodi,usuariocrea,usuariomodi,reftipopersonas,claveinterbancaria,idclienteinbursa,claveasesor,fechaalta,nss,razonsocial,nropoliza,vigdesdecedulaseguro,vighastacedulaseguro,vigdesderc,vighastarc,refestadoasesor,refestadoasesorinbursa,envioalcliente from dbasesores where idasesor =".$id;
 	$res = $this->query($sql,0);
 	return $res;
 	}
 
 	function traerAsesoresPorIdCompleto($id) {
-	$sql = "select idasesor,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,fechacrea,fechamodi,usuariocrea,usuariomodi,reftipopersonas,claveinterbancaria,idclienteinbursa,claveasesor,fechaalta,nss,razonsocial,nropoliza,vigdesdecedulaseguro,vighastacedulaseguro,vigdesderc,vighastarc,refestadoasesor,refestadoasesorinbursa,concat(apellidopaterno, ' ', apellidomaterno, ' ', nombre) as nombrecompleto from dbasesores where idasesor =".$id;
+	$sql = "select idasesor,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,fechacrea,fechamodi,usuariocrea,usuariomodi,reftipopersonas,claveinterbancaria,idclienteinbursa,claveasesor,fechaalta,nss,razonsocial,nropoliza,vigdesdecedulaseguro,vighastacedulaseguro,vigdesderc,vighastarc,refestadoasesor,refestadoasesorinbursa,concat(apellidopaterno, ' ', apellidomaterno, ' ', nombre) as nombrecompleto,envioalcliente from dbasesores where idasesor =".$id;
 	$res = $this->query($sql,0);
 	return $res;
 	}
