@@ -1795,7 +1795,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 						if (data.sigue) {
 
 							form.steps("next");
-							form.steps("next");
+
 						} else {
 							form.steps("next");
 						}
