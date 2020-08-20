@@ -3334,6 +3334,12 @@ return $res;
 		return $res;
 	}
 
+   function traerTipoproductoPorIn($in) {
+		$sql = "select idtipoproducto,tipoproducto from tbtipoproducto where idtipoproducto in (".$in.")";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 
 	/* Fin */
 	/* /* Fin de la Tabla: tbtipoproducto*/

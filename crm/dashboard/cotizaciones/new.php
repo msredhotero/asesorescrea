@@ -380,7 +380,7 @@ if (isset($_GET['id'])) {
 	$lblAsociado = 0;
 	$lblProducto = 0;
 
-	$resTipoProducto = $serviciosReferencias->traerTipoproducto();
+	$resTipoProducto = $serviciosReferencias->traerTipoproductoPorIn('2,3');
 	$cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ');
 
 	$documentacionesrequeridas = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion(0,0);
@@ -1174,7 +1174,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular2); ?></h4>
 	               </div>
 	               <div class="modal-body">
-							<div class="row">
+							<div class="row" id="frmClienteNuevo">
 								<?php echo $frmUnidadNegocios2; ?>
 							</div>
 
@@ -1230,6 +1230,62 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 <script>
 	$(document).ready(function(){
 
+		var options = {
+
+			url: "../../json/jsbuscarpostal.php",
+
+			getValue: function(element) {
+				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					busqueda: $("#frmClienteNuevo #codigopostal").val()
+				}
+			},
+
+			preparePostData: function (data) {
+				data.busqueda = $("#frmClienteNuevo #codigopostal").val();
+				return data;
+			},
+
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $("#frmClienteNuevo #codigopostal").getSelectedItemData().codigo;
+					$("#frmClienteNuevo #codigopostal").val(value);
+					$("#frmClienteNuevo #municipio").val($("#frmClienteNuevo #codigopostal").getSelectedItemData().municipio);
+					$("#frmClienteNuevo #estado").val($("#frmClienteNuevo #codigopostal").getSelectedItemData().estado);
+					$("#frmClienteNuevo #colonia").val($("#frmClienteNuevo #codigopostal").getSelectedItemData().colonia);
+
+
+				}
+			}
+		};
+
+		$("#frmClienteNuevo #codigopostal").easyAutocomplete(options);
+
+		$('#fechanacimiento').pickadate({
+ 			format: 'yyyy-mm-dd',
+ 			labelMonthNext: 'Siguiente mes',
+ 			labelMonthPrev: 'Previo mes',
+ 			labelMonthSelect: 'Selecciona el mes del año',
+ 			labelYearSelect: 'Selecciona el año',
+ 			selectMonths: true,
+ 			selectYears: 80,
+ 			today: 'Hoy',
+ 			clear: 'Borrar',
+ 			close: 'Cerrar',
+ 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+ 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+ 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+ 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+ 		});
 
 		$('.tsfechanacimiento').pickadate({
  			format: 'yyyy-mm-dd',
