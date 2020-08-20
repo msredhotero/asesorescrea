@@ -2519,7 +2519,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
  								showConfirmButton: false
  						});
 						if (refestadocotizaciones == 1) {
-							$(location).attr('href', 'new.php?id='+data);
+							$(location).attr('href', 'modificar.php?id='+data);
 						} else {
 							$(location).attr('href', 'modificar.php?id='+data);
 						}

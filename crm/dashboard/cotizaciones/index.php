@@ -264,7 +264,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 											</button>
 											<button type="button" class="btn bg-blue waves-effect btnVigente">
 												<i class="material-icons">timeline</i>
-												<span>VIGENTE</span>
+												<span>EN GESTION</span>
 											</button>
 											<button type="button" class="btn bg-orange waves-effect btnCotizacion">
 												<i class="material-icons">feedback</i>
@@ -287,7 +287,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 								<?php } ?>
 
 								<div class="row contActuales" style="padding: 5px 20px;">
-									<h4>VIGENTE</h4>
+									<h4>EN GESTION</h4>
 									<hr>
 									<table id="example" class="display table " style="width:100%">
 										<thead>
