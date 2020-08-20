@@ -4972,7 +4972,21 @@ return $res;
 		return $res;
 	}
 
-	function bClientesasesoresPorAsesor($busqueda,$refasesor) {
+   function traerClientesasesoresPorAsesorTipoPersona($refasesor,$tipopersona) {
+		$sql = "select
+		c.idclienteasesor,
+      concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) as nombrecompleto
+      c.razonsocial,
+		c.refclientes
+		from dbclientesasesores c
+		inner join dbclientes cl ON cl.idcliente = c.refclientes
+		inner join dbasesores ase on ase.refusuarios = c.refasesores
+		where ase.refusuarios = ".$refasesor." and c.reftipopersonas =".$tipopersona;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function bClientesasesoresPorAsesor($busqueda,$tipopersona,$refasesor) {
 		$sql = "select
 		c.idclienteasesor,
 		c.refclientes,
@@ -4993,8 +5007,13 @@ return $res;
       cl.idcliente
 		from dbclientesasesores c
 		inner join dbclientes cl ON cl.idcliente = c.refclientes
-		inner join dbasesores ase on ase.refusuarios = c.refasesores
-		where ase.refusuarios = ".$refasesor." and concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) like '%".$busqueda."%'";
+		inner join dbasesores ase on ase.refusuarios = c.refasesores";
+      if ($tipopersona == 1) {
+         $sql .= " where ase.refusuarios = ".$refasesor." and concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) like '%".$busqueda."%' and c.reftipopersonas = ".$tipopersona." order by concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre)";
+      } else {
+         $sql .= " where ase.refusuarios = ".$refasesor." and c.razonsocial like '%".$busqueda."%' and c.reftipopersonas = ".$tipopersona." order by c.razonsocial";
+      }
+
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -12079,7 +12098,30 @@ return $res;
 		return $res;
 	}
 
-	function bClientes($busqueda) {
+   function traerClientesPorTipoPersona($tipopersona) {
+		$sql = "select
+		c.idcliente,
+      concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) as nombrecompleto,
+      c.razonsocial,
+		tip.tipopersona,
+		c.nombre,
+		c.apellidopaterno,
+		c.apellidomaterno,
+
+		c.telefonofijo,
+		c.telefonocelular,
+		c.email,
+		c.numerocliente
+
+		from dbclientes c
+		inner join tbtipopersonas tip ON tip.idtipopersona = c.reftipopersonas
+      where tip.idtipopersona = ".$tipopersona."
+		order by concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre)";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function bClientes($busqueda,$tipopersona) {
 		$sql = "select
 		c.idcliente,
 		tip.tipopersona,
@@ -12103,9 +12145,15 @@ return $res;
 		concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) as nombrecompleto,
 		c.idclienteinbursa
 		from dbclientes c
-		inner join tbtipopersonas tip ON tip.idtipopersona = c.reftipopersonas
-		where concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) like '%".$busqueda."%'
-		order by 1";
+		inner join tbtipopersonas tip ON tip.idtipopersona = c.reftipopersonas";
+      if ($tipopersona == 1) {
+         $sql .= " where concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) like '%".$busqueda."%' and tip.idtipopersona = ".$tipopersona."
+   		order by concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre)";
+      } else {
+         $sql .= " where c.razonsocial like '%".$busqueda."%' and tip.idtipopersona = ".$tipopersona."
+   		order by c.razonsocial";
+      }
+
 		$res = $this->query($sql,0);
 		return $res;
 	}

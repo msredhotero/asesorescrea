@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cotizaciones/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../ajustes/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cotizaciones",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Ajustes",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -253,69 +253,9 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 						</div>
 						<div class="body table-responsive">
 							<form class="form" id="formCountry">
-								<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)|| ($_SESSION['idroll_sahilices'] == 7)) { ?>
-								<div class="row">
-									<div class="col-lg-12 col-md-12">
-										<div class="button-demo">
 
-											<button type="button" class="btn bg-light-green waves-effect btnNuevo">
-												<i class="material-icons">add</i>
-												<span>NUEVO</span>
-											</button>
-											<button type="button" class="btn bg-blue waves-effect btnVigente">
-												<i class="material-icons">timeline</i>
-												<span>VIGENTE</span>
-											</button>
-											<button type="button" class="btn bg-orange waves-effect btnCotizacion">
-												<i class="material-icons">feedback</i>
-												<span>EN AJUSTE</span>
-											</button>
-											<button type="button" class="btn bg-red waves-effect btnRechazos">
-												<i class="material-icons">report_problem</i>
-												<span>RECHAZOS</span>
-											</button>
-											<button type="button" class="btn bg-grey waves-effect btnHistorico">
-												<i class="material-icons">history</i>
-												<span>HISTORICO</span>
-											</button>
+								<div class="row" style="padding: 5px 20px;">
 
-
-
-										</div>
-									</div>
-								</div>
-								<?php } ?>
-
-								<div class="row contActuales" style="padding: 5px 20px;">
-									<h4>VIGENTE</h4>
-									<hr>
-									<table id="example" class="display table " style="width:100%">
-										<thead>
-											<tr>
-												<th>Cliente</th>
-												<th>Producto</th>
-												<th>Asesor</th>
-												<th>Asociado</th>
-												<th>Estado</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tfoot>
-											<tr>
-												<th>Cliente</th>
-												<th>Producto</th>
-												<th>Asesor</th>
-												<th>Asociado</th>
-												<th>Estado</th>
-												<th>Acciones</th>
-											</tr>
-										</tfoot>
-									</table>
-								</div>
-
-								<div class="row contCotizacion" style="padding: 5px 20px;">
-									<h4>EN AJUSTE</h4>
-									<hr>
 									<table id="example2" class="display table " style="width:100%">
 										<thead>
 											<tr>
@@ -341,59 +281,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 								</div>
 
 
-								<div class="row contRechazos" style="padding: 5px 20px;">
-									<h4>RECHAZOS</h4>
-									<hr>
-									<table id="example4" class="display table " style="width:100%">
-										<thead>
-											<tr>
-												<th>Cliente</th>
-												<th>Producto</th>
-												<th>Asesor</th>
-												<th>Asociado</th>
-												<th>Estado</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tfoot>
-											<tr>
-												<th>Cliente</th>
-												<th>Producto</th>
-												<th>Asesor</th>
-												<th>Asociado</th>
-												<th>Estado</th>
-												<th>Acciones</th>
-											</tr>
-										</tfoot>
-									</table>
-								</div>
-
-								<div class="row contHistorico" style="padding: 5px 20px;">
-									<h4>HISTORICO</h4>
-									<hr>
-									<table id="example3" class="display table " style="width:100%">
-										<thead>
-											<tr>
-												<th>Cliente</th>
-												<th>Producto</th>
-												<th>Asesor</th>
-												<th>Asociado</th>
-												<th>Estado</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tfoot>
-											<tr>
-												<th>Cliente</th>
-												<th>Producto</th>
-												<th>Asesor</th>
-												<th>Asociado</th>
-												<th>Estado</th>
-												<th>Acciones</th>
-											</tr>
-										</tfoot>
-									</table>
-								</div>
 
 							</form>
 							</div>
@@ -500,6 +387,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			<input type="hidden" name="ideliminarDefinitivo" id="ideliminarDefinitivo" value="0">
 		</form>
 
+
 	<!-- NUEVO -->
 	<form class="formulario frmNuevo2" role="form" id="sign_in">
 	   <div class="modal fade" id="lgmNuevo2" tabindex="-1" role="dialog">
@@ -523,26 +411,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 	   </div>
 		<input type="hidden" id="accion" name="accion" value="<?php echo 'insertarClientes'; ?>"/>
 	</form>
-
-
-	<div class="modal fade" id="lgmModificarEstado" tabindex="-1" role="dialog">
-		 <div class="modal-dialog modal-lg" role="document">
-			  <div class="modal-content">
-					<div class="modal-header bg-blue">
-						 <h4 class="modal-title" id="largeModalLabel">MODIFICAR ESTADO DEL RECHAZO</h4>
-					</div>
-					<div class="modal-body">
-					 <p>¿Esta seguro que desea <span class="lblModiEstado"></span> la cotizacion?</p>
-					</div>
-					<div class="modal-footer">
-						 <button type="button" class="btn bg-green waves-effect modificarEstadoCotizacionRechazo"></button>
-						 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-					</div>
-			  </div>
-		 </div>
-	</div>
-	<input type="hidden" name="idmodificarestadorechazo" id="idmodificarestadorechazo" value="0">
-	<input type="hidden" name="estadomodificarestadorechazo" id="estadomodificarestadorechazo" value="0">
 
 
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
@@ -571,200 +439,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 <script>
 	$(document).ready(function(){
-
-		$('.contHistorico').hide();
-		$('.contCotizacion').hide();
-		$('.contRechazos').hide();
-
-
-		$('.btnCotizacion').click(function() {
-			$('.contHistorico').hide();
-			$('.contActuales').hide();
-			$('.contRechazos').hide();
-			$('.contCotizacion').show();
-		});
-
-
-		$('.btnHistorico').click(function() {
-			$('.contHistorico').show();
-			$('.contActuales').hide();
-			$('.contRechazos').hide();
-			$('.contCotizacion').hide();
-		});
-
-		$('.btnVigente').click(function() {
-			$('.contActuales').show();
-			$('.contHistorico').hide();
-			$('.contRechazos').hide();
-			$('.contCotizacion').hide();
-		});
-
-		$('.btnRechazos').click(function() {
-			$('.contActuales').hide();
-			$('.contHistorico').hide();
-			$('.contRechazos').show();
-			$('.contCotizacion').hide();
-		});
-
-		$('.frmContnumerocliente').hide();
-		$('.frmContrefusuarios').hide();
-		$('.frmContfechapropuesta').hide();
-
-		$('.btnNuevo').click(function() {
-			idTable =  $(this).attr("id");
-			$(location).attr('href', 'new.php');
-		});
-
-		$('.btnNuevoMoral').click(function() {
-
-			$('.frmContreftipopersonas').hide();
-			$('#reftipopersonas').val(2);
-			$('.frmContrazonsocial').show();
-
-		});
-
-		$('.btnNuevo2').click(function() {
-			$('.frmContreftipopersonas').hide();
-			$('#reftipopersonas').val(1);
-
-			$('.frmContrazonsocial').hide();
-
-		});
-
-		$('.frmContnropoliza').hide();
-		$('.frmContfechaemitido').hide();
-		$('.frmContprimaneta').hide();
-		$('.frmContprimatotal').hide();
-		$('.frmContrecibopago').hide();
-		$('.frmContfechapago').hide();
-		$('.frmContnrorecibo').hide();
-		$('.frmContimportecomisionagente').hide();
-		$('.frmContimportebonopromotor').hide();
-		$('.frmContobservaciones').hide();
-		$('.frmContrefusuarios').hide();
-
-		$('.frmNuevo #fechacrea').val('2020-02-02');
-		$('.frmNuevo #fechamodi').val('2020-02-02');
-		$('.frmNuevo #usuariocrea').val('2020-02-02');
-		$('.frmNuevo #usuariomodi').val('2020-02-02');
-
-		$('.frmNuevo2 #numerocliente').val('123456');
-		$('.frmNuevo2 #fechacrea').val('2020-02-02');
-		$('.frmNuevo2 #fechamodi').val('2020-02-02');
-		$('.frmNuevo2 #usuariocrea').val('2020-02-02');
-		$('.frmNuevo2 #usuariomodi').val('2020-02-02');
-
-
-
-		<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
-			$('.frmContrefasociados').hide();
-			$('#refasociados').prepend('<option value="0">sin valor</option>');
-			$('#refasociados').val(0);
-		<?php } ?>
-
-
-		$('#telefonofijo').inputmask('999 9999999', { placeholder: '___ _______' });
-		$('#telefonocelular').inputmask('999 9999999', { placeholder: '___ _______' });
-
-		$('#fecharenovacion').pickadate({
-			format: 'yyyy-mm-dd',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 100,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-		});
-
-
-		$('#fechapropuesta').pickadate({
-			format: 'yyyy-mm-dd',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 100,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-		});
-
-		$('#fechaemitido').pickadate({
-			format: 'yyyy-mm-dd',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 100,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-		});
-
-		$('#fechapago').pickadate({
-			format: 'yyyy-mm-dd',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 100,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-		});
-
-		var table = $('#example').DataTable({
-			"bProcessing": true,
-			"bServerSide": true,
-			"order": [[ 5, "desc" ]],
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizaciones&estado=1",
-			"language": {
-				"emptyTable":     "No hay datos cargados",
-				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
-				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
-				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
-				"infoPostFix":    "",
-				"thousands":      ",",
-				"lengthMenu":     "Mostrar _MENU_ filas",
-				"loadingRecords": "Cargando...",
-				"processing":     "Procesando...",
-				"search":         "Buscar:",
-				"zeroRecords":    "No se encontraron resultados",
-				"paginate": {
-					"first":      "Primero",
-					"last":       "Ultimo",
-					"next":       "Siguiente",
-					"previous":   "Anterior"
-				},
-				"aria": {
-					"sortAscending":  ": activate to sort column ascending",
-					"sortDescending": ": activate to sort column descending"
-				}
-			}
-		});
-
 
 		var table2 = $('#example2').DataTable({
 			"bProcessing": true,
@@ -797,104 +471,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 		});
 
 
-		var table3 = $('#example3').DataTable({
-			"bProcessing": true,
-			"bServerSide": true,
-			"order": [[ 5, "desc" ]],
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizaciones&estado=3",
-			"language": {
-				"emptyTable":     "No hay datos cargados",
-				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
-				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
-				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
-				"infoPostFix":    "",
-				"thousands":      ",",
-				"lengthMenu":     "Mostrar _MENU_ filas",
-				"loadingRecords": "Cargando...",
-				"processing":     "Procesando...",
-				"search":         "Buscar:",
-				"zeroRecords":    "No se encontraron resultados",
-				"paginate": {
-					"first":      "Primero",
-					"last":       "Ultimo",
-					"next":       "Siguiente",
-					"previous":   "Anterior"
-				},
-				"aria": {
-					"sortAscending":  ": activate to sort column ascending",
-					"sortDescending": ": activate to sort column descending"
-				}
-			}
-		});
-
-		var table4 = $('#example4').DataTable({
-			"bProcessing": true,
-			"bServerSide": true,
-			"order": [[ 5, "desc" ]],
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizaciones&estado=4",
-			"language": {
-				"emptyTable":     "No hay datos cargados",
-				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
-				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
-				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
-				"infoPostFix":    "",
-				"thousands":      ",",
-				"lengthMenu":     "Mostrar _MENU_ filas",
-				"loadingRecords": "Cargando...",
-				"processing":     "Procesando...",
-				"search":         "Buscar:",
-				"zeroRecords":    "No se encontraron resultados",
-				"paginate": {
-					"first":      "Primero",
-					"last":       "Ultimo",
-					"next":       "Siguiente",
-					"previous":   "Anterior"
-				},
-				"aria": {
-					"sortAscending":  ": activate to sort column ascending",
-					"sortDescending": ": activate to sort column descending"
-				}
-			}
-		});
-
-		$("#sign_in").submit(function(e){
-			e.preventDefault();
-		});
-
-		$('#activo').prop('checked',true);
-
-		function frmAjaxModificar(id) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {accion: 'frmAjaxModificar',tabla: '<?php echo $tabla; ?>', id: id,ruta:''},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-					$('.frmAjaxModificar').html('');
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data != '') {
-						$('.frmAjaxModificar').html(data);
-					} else {
-						swal("Error!", data, "warning");
-
-						$("#load").html('');
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
-
-		}
-
-
 		function frmAjaxEliminar(id) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
@@ -918,9 +494,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 						});
 						$('#lgmEliminar').modal('toggle');
 						table.ajax.reload();
-						table2.ajax.reload();
-						table3.ajax.reload();
-						table4.ajax.reload();
 					} else {
 						swal({
 								title: "Respuesta",
@@ -968,9 +541,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 						});
 						$('#lgmEliminarDefinitivo').modal('toggle');
 						table.ajax.reload();
-						table2.ajax.reload();
-						table3.ajax.reload();
-						table4.ajax.reload();
 					} else {
 						swal({
 								title: "Respuesta",
@@ -995,90 +565,10 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			});
 		}
 
-		$('.modificarEstadoCotizacionRechazo').click(function() {
-			modificarCotizacionesPorCampo();
-		});
-
-		function modificarCotizacionesPorCampo() {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {
-					accion: 'modificarCotizacionesPorCampo',
-					id: $('#idmodificarestadorechazo').val(),
-					idestado: $('#estadomodificarestadorechazo').val()
-				},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-					swal({
-							title: "Respuesta",
-							text: data.mensaje,
-							type: data.tipo,
-							timer: 1500,
-							showConfirmButton: false
-					});
-					$('#lgmModificarEstado').modal('toggle');
-					table.ajax.reload();
-					table2.ajax.reload();
-					table3.ajax.reload();
-					table4.ajax.reload();
-				},
-				//si ha ocurrido un error
-				error: function(){
-					swal({
-							title: "Respuesta",
-							text: 'Actualice la pagina',
-							type: "error",
-							timer: 2000,
-							showConfirmButton: false
-					});
-
-				}
-			});
-		}
-
-		$("#example4").on("click",'.btnActivar', function(){
-			idTable =  $(this).attr("id");
-			$('.lblModiEstado').html('ACTIVAR');
-			$('.modificarEstadoCotizacionRechazo').html('ACTIVAR');
-			$('#idmodificarestadorechazo').val(idTable);
-			$('#estadomodificarestadorechazo').val(1);
-			$('#lgmModificarEstado').modal();
-
-		});//fin del boton eliminar
-
-		$("#example4").on("click",'.btnRechazarDefinitivamente', function(){
-			idTable =  $(this).attr("id");
-			$('.lblModiEstado').html('RECHAZAR DEFINITIVAMENTE');
-			$('.modificarEstadoCotizacionRechazo').html('RECHAZAR DEFINITIVAMENTE');
-			$('#idmodificarestadorechazo').val(idTable);
-			$('#estadomodificarestadorechazo').val(3);
-			$('#lgmModificarEstado').modal();
-
-		});//fin del boton eliminar
-
-		$("#example").on("click",'.btnEliminar', function(){
-			idTable =  $(this).attr("id");
-			$('#ideliminar').val(idTable);
-			$('#lgmEliminar').modal();
-		});//fin del boton eliminar
-
 		$("#example2").on("click",'.btnEliminar', function(){
 			idTable =  $(this).attr("id");
 			$('#ideliminar').val(idTable);
 			$('#lgmEliminar').modal();
-		});//fin del boton eliminar
-
-		$("#example").on("click",'.btnEliminarDefinitivo', function(){
-			idTable =  $(this).attr("id");
-			$('#ideliminarDefinitivo').val(idTable);
-			$('#lgmEliminarDefinitivo').modal();
 		});//fin del boton eliminar
 
 		$("#example2").on("click",'.btnEliminarDefinitivo', function(){
@@ -1096,19 +586,14 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			frmAjaxEliminarDefinitivo($('#ideliminarDefinitivo').val());
 		});
 
-		$("#example").on("click",'.btnModificar', function(){
-			idTable =  $(this).attr("id");
-			$(location).attr('href','modificar.php?id=' + idTable);
-		});//fin del boton modificar
-
 		$("#example2").on("click",'.btnModificar', function(){
 			idTable =  $(this).attr("id");
-			$(location).attr('href','modificar.php?id=' + idTable);
+			$(location).attr('href','../cotizaciones/modificar.php?id=' + idTable);
 		});//fin del boton modificar
 
-		$("#example").on("click",'.btnVer', function(){
+		$("#example2").on("click",'.btnVer', function(){
 			idTable =  $(this).attr("id");
-			$(location).attr('href','ver.php?id=' + idTable);
+			$(location).attr('href','../cotizaciones/ver.php?id=' + idTable);
 
 		});//fin del boton modificar
 
@@ -1143,9 +628,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 							$('#lgmNuevo').modal('hide');
 
 							table.ajax.reload();
-							table2.ajax.reload();
-							table3.ajax.reload();
-							table4.ajax.reload();
 						} else {
 							swal({
 									title: "Respuesta",

@@ -1131,9 +1131,51 @@ switch ($accion) {
    case 'enviarCotizacion':
       enviarCotizacion($serviciosReferencias, $serviciosUsuarios, $serviciosMensajes);
    break;
+   case 'traerClientesCotizador':
+      traerClientesCotizador($serviciosReferencias, $serviciosFunciones);
+   break;
+   case 'modificarCotizacionesPorCampo':
+      modificarCotizacionesPorCampo($serviciosReferencias);
+   break;
 
 }
 /* FinFinFin */
+
+function modificarCotizacionesPorCampo($serviciosReferencias) {
+   session_start();
+   $id = $_POST['id'];
+   $idestado = $_POST['idestado'];
+
+   $res1 = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',$idestado, $_SESSION['usua_sahilices']);
+
+   if ($idestado == 1) {
+      $res = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',2, $_SESSION['usua_sahilices']);
+      $mensaje = 'Se volvio a activar la cotizacion correctamente version: ';
+   }
+
+   if ($idestado == 3) {
+      $res = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',6, $_SESSION['usua_sahilices']);
+      $mensaje = 'La cotizacion fue rechazada definitivamente';
+   }
+
+
+
+   if ($res) {
+      $resV['error'] = false;
+      $resV['mensaje'] = $mensaje;
+      $resV['tipo'] = 'success';
+   } else {
+      $resV['error'] = true;
+      $resV['mensaje'] = 'Se genero un error por favor vuelva a intentarlo';
+      $resV['tipo'] = 'danger';
+   }
+
+
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function enviarCotizacion($serviciosReferencias, $serviciosUsuarios, $serviciosMensajes) {
    $id = $_POST['id'];
@@ -7223,6 +7265,31 @@ function traerClientes($serviciosReferencias) {
    }
 
    $resV['datos'] = $ar;
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function traerClientesCotizador($serviciosReferencias, $serviciosFunciones) {
+   $tipopersona = $_POST['tipopersona'];
+   $asesor = $_POST['asesor'];
+
+   if ($asesor == 0) {
+      $res = $serviciosReferencias->traerClientesPorTipoPersona($tipopersona);
+   } else {
+      $res = $serviciosReferencias->traerClientesasesoresPorAsesorTipoPersona($asesor,$tipopersona);
+   }
+
+   if ($tipopersona == 1) {
+      $cad = "<option value=''>-- Seleccionar --</option>";
+      $cad .= $serviciosFunciones->devolverSelectBox($res,array(1),'');
+   } else {
+      $cad = "<option value=''>-- Seleccionar --</option>";
+      $cad .= $serviciosFunciones->devolverSelectBox($res,array(2),'');
+   }
+
+
+   $resV['datos'] = $cad;
 
    header('Content-type: application/json');
    echo json_encode($resV);

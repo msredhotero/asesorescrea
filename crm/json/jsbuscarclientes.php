@@ -22,7 +22,7 @@ $fecha = date('Y-m-d');
 
 $busqueda = trim($_POST['busqueda']);
 $asesor = $_POST['idasesor'];
-
+$tipopersona = $_POST['tipopersona'];
 
 //$busqueda = 'a';
 
@@ -36,18 +36,26 @@ $ar = array();
 if ($busqueda != '') {
 
 	if ($asesor == 0) {
-		$resTraerClientes = $serviciosReferencias->bClientes($busqueda);
+		$resTraerClientes = $serviciosReferencias->bClientes($busqueda,$tipopersona);
 	} else {
-		$resTraerClientes = $serviciosReferencias->bClientesasesoresPorAsesor($busqueda,$asesor);
+		$resTraerClientes = $serviciosReferencias->bClientesasesoresPorAsesor($busqueda,$tipopersona,$asesor);
 	}
 
 
 
 	$cad = '';
-	while ($row = mysql_fetch_array($resTraerClientes)) {
+	if ($tipopersona == 1) {
+		while ($row = mysql_fetch_array($resTraerClientes)) {
 
-		array_push($ar,array('id'=>$row['idcliente'], 'nombrecompleto'=> $row['nombrecompleto'], 'idclienteinbursa'=>$row['idclienteinbursa'], 'reftipopersonas' => $row['reftipopersonas']));
+			array_push($ar,array('id'=>$row['idcliente'], 'nombrecompleto'=> $row['nombrecompleto'], 'idclienteinbursa'=>$row['idclienteinbursa'], 'reftipopersonas' => $row['reftipopersonas']));
+		}
+	} else {
+		while ($row = mysql_fetch_array($resTraerClientes)) {
+
+			array_push($ar,array('id'=>$row['idcliente'], 'nombrecompleto'=> $row['razonsocial'], 'idclienteinbursa'=>$row['idclienteinbursa'], 'reftipopersonas' => $row['reftipopersonas']));
+		}
 	}
+
 
 }
 //echo "[".substr($cad,0,-1)."]";

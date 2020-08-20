@@ -617,12 +617,11 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
                                        <div class="form-line escondido3">
 
-														<h4>Busqueda por Nombre Completo</h4>
+														<h4 class='lblBusquedaNombreCliente'>Busqueda por Nombre Completo</h4>
 														<input id="lstjugadores" style="width:75%;" />
 
 														<select style="margin-top:10px;" class="form-control" id="refclientes" name="refclientes" required readonly="readonly">
 															<option value=''>-- Seleccionar --</option>
-															<?php echo $cadRef2; ?>
 														</select>
 
 
@@ -1260,35 +1259,25 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 		$('#selction-ajax').hide();
 
-		function traerClientescarteraPorCliente(idcliente) {
+		function traerClientesCotizador(asesor,tipopersona) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {accion: 'traerClientescarteraPorCliente', id: idcliente},
+				data: {
+					accion: 'traerClientesCotizador',
+					asesor: <?php echo $idasesor; ?>,
+					tipopersona: tipopersona
+				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
-					$('.lstCartera').html('');
-					$('#selction-ajax').hide();
+					$('#wizard_with_validation #refclientes').html('');
 				},
 				//una vez finalizado correctamente
 				success: function(data){
 
-					if (data != '') {
-						$('.lstCartera').html(data);
-						$('#selction-ajax').show();
-					} else {
-						$('#selction-ajax').hide();
-						swal({
-								title: "Respuesta",
-								text: 'El cliente no posee cartera actualmente',
-								type: "error",
-								timer: 500,
-								showConfirmButton: false
-						});
-
-					}
+					$('#wizard_with_validation #refclientes').html(data.datos);
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -1601,6 +1590,11 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 		$("#wizard_with_validation").on("click",'.btnCF', function(){
 			$('#wizard_with_validation #reftipopersonasaux').val(1);
+			$('#lgmNuevo2 #reftipopersonas').val(1);
+
+			$('#wizard_with_validation .lblBusquedaNombreCliente').html('Busqueda por Nombre Completo');
+			$("#lgmNuevo2 #razonsocial").prop('required',false);
+
 			$('#wizard_with_validation .contFrmExisteCliente').show();
 			$('#wizard_with_validation .btnCF').css("opacity", 1);
 			$('#wizard_with_validation .btnCM').css("opacity", 0.2);
@@ -1609,10 +1603,17 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 			$('#wizard_with_validation .btnCN').css("opacity", 1);
 
 			$('#wizard_with_validation .escondido3').hide();
+			$('#wizard_with_validation #lstjugadores').val('');
+
 		});
 
 		$("#wizard_with_validation").on("click",'.btnCM', function(){
 			$('#wizard_with_validation #reftipopersonasaux').val(2);
+			$('#lgmNuevo2 #reftipopersonas').val(2);
+
+			$('#wizard_with_validation .lblBusquedaNombreCliente').html('Busqueda por Razon Social');
+			$("#lgmNuevo2 #razonsocial").prop('required',true);
+
 			$('#wizard_with_validation .contFrmExisteCliente').show();
 			$('#wizard_with_validation .btnCF').css("opacity", 0.2);
 			$('#wizard_with_validation .btnCM').css("opacity", 1);
@@ -1621,6 +1622,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 			$('#wizard_with_validation .btnCN').css("opacity", 1);
 
 			$('#wizard_with_validation .escondido3').hide();
+			$('#wizard_with_validation #lstjugadores').val('');
 		});
 
 		$("#wizard_with_validation").on("click",'.btnCE', function(){
@@ -1628,13 +1630,17 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 			$('#wizard_with_validation .escondido3').show();
 			$('#wizard_with_validation .btnCE').css("opacity", 1);
 			$('#wizard_with_validation .btnCN').css("opacity", 0.2);
+
+			traerClientesCotizador(0,$('#wizard_with_validation #reftipopersonasaux').val());
 		});
 
 		$("#wizard_with_validation").on("click",'.btnCN', function(){
 			$('#wizard_with_validation .escondido3').hide();
+			$('#lgmNuevo2 .frmContreftipopersonas').hide();
 			if ($('#wizard_with_validation #reftipopersonasaux').val() == 1) {
 				$('#lgmNuevo2').modal();
 				$('#lgmNuevo2 .frmContrazonsocial').hide();
+
 			}
 			if ($('#wizard_with_validation #reftipopersonasaux').val() == 2) {
 				$('#lgmNuevo2').modal();
@@ -1674,8 +1680,9 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	        onStepChanging: function (event, currentIndex, newIndex) {
 				  	if (currentIndex == 0) {
 						if ($('#wizard_with_validation #refclientes').val() == '') {
-
 							return false;
+						} else {
+							return true;
 						}
 					} else {
 						if (currentIndex > newIndex) { return true; }
@@ -2058,6 +2065,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 		    preparePostData: function (data) {
 		        data.busqueda = $("#lstjugadores").val();
 				  data.idasesor = <?php echo $idasesor; ?>;
+				  data.tipopersona = $('#reftipopersonasaux').val();
 		        return data;
 		    },
 
@@ -2491,7 +2499,8 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 									showConfirmButton: false
 							});
 
-							location.reload();
+							traerClientesCotizador(0,$('#wizard_with_validation #reftipopersonasaux').val());
+
 						} else {
 							swal({
 									title: "Respuesta",

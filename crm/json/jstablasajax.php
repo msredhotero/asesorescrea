@@ -555,10 +555,16 @@ switch ($tabla) {
 				$whereEstado = ' c.refestados in (2) and DATEDIFF(CURDATE(),c.fechacrea) < 62 ';
 			break;
 			case 3:
-				$label = array('btnModificar');
-				$class = array('bg-orange');
-				$icon = array('update');
-				$whereEstado = ' (c.refestadocotizaciones in (5) or (c.refestadocotizaciones = 4 and DATEDIFF(CURDATE(),c.fechacrea) < 62)) ';
+				$label = array();
+				$class = array();
+				$icon = array();
+				$whereEstado = ' c.refestadocotizaciones in (5,6) ';
+			break;
+			case 4:
+				$label = array('btnActivar','btnRechazarDefinitivamente');
+				$class = array('bg-green','bg-red');
+				$icon = array('update','delete');
+				$whereEstado = ' c.refestadocotizaciones in (4) ';
 			break;
 			default:
 				$label = array('btnModificar','btnEliminar');

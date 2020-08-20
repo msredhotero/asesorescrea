@@ -159,7 +159,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 	$resVar5	= $serviciosReferencias->traerAsesores();
 	$cadRef5 = $serviciosFunciones->devolverSelectBoxActivo($resVar5,array(2,3,4),' ',mysql_result($resultado,0,'refasesores'));
 
-	$resGuia = $serviciosReferencias->traerEstadocotizaciones();
+	$resGuia = $serviciosReferencias->traerEstadocotizacionesPorIn('1,2,3,4,5');
 }
 
 $resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId($ordenPosible);

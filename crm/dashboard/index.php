@@ -434,7 +434,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
-
+	 
     <?php echo $baseHTML->cargarArchivosCSS('../'); ?>
 
 	 <!-- CSS file -->
@@ -1161,7 +1161,11 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 			});
 
 
-
+			<?php
+			if (!(isset($idcliente))) {
+				$idcliente = 0;
+			}
+			?>
 			$('.btnModificarTelMovilCliente').click(function() {
 				if ($('#celphone').inputmask("isComplete")){
 					$.ajax({
