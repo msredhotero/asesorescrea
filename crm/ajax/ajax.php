@@ -1710,7 +1710,7 @@ function validarCuestionarioPersona($serviciosReferencias) {
 
             }
          } else {
-            $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($valor['idrespuesta']);
+            $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($valor['respuesta']);
             array_push($arRespuestas,
                   array('refpreguntascuestionario' => $valor['idpregunta'],
                   'refrespuestascuestionario' => $valor['idrespuesta'],
@@ -2566,7 +2566,7 @@ function validarCuestionario($serviciosReferencias) {
 
             }
          } else {
-            $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($valor['idrespuesta']);
+            $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($valor['respuesta']);
             array_push($arRespuestas,
                   array('refpreguntascuestionario' => $valor['idpregunta'],
                   'refrespuestascuestionario' => $valor['idrespuesta'],
