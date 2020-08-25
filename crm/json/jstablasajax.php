@@ -543,34 +543,39 @@ switch ($tabla) {
 
 		switch ($idestado) {
 			case 1:
-				$label = array('btnModificar','btnEliminar');
+				$label = array('btnAbandonada','btnBasura');
 				$class = array('bg-amber','bg-red');
-				$icon = array('create','delete');
-				$whereEstado = ' c.refestadocotizaciones in (1,2,3) and c.refestados in (0,1) ';
+				$icon = array('alarm_off','delete');
+				$whereEstado = ' c.refestados in (1) ';
+				$termina = 5;
 			break;
 			case 2:
 				$label = array('btnModificar','btnEliminar');
 				$class = array('bg-amber','bg-red');
 				$icon = array('create','delete');
-				$whereEstado = ' c.refestados in (2) and DATEDIFF(CURDATE(),c.fechacrea) < 62 ';
+				$whereEstado = ' c.refestados in (2) ';
+				$termina = 5;
 			break;
 			case 3:
+				$label = array('btnModificar');
+				$class = array('bg-amber');
+				$icon = array('create');
+				$whereEstado = ' c.refestados in (3) ';
+				$termina = 6;
+			break;
+			case 4:
 				$label = array();
 				$class = array();
 				$icon = array();
-				$whereEstado = ' c.refestadocotizaciones in (5,6) ';
-			break;
-			case 4:
-				$label = array('btnActivar','btnRechazarDefinitivamente');
-				$class = array('bg-green','bg-red');
-				$icon = array('update','delete');
-				$whereEstado = ' c.refestadocotizaciones in (4) ';
+				$whereEstado = ' c.refestados in (4) ';
+				$termina = 6;
 			break;
 			default:
-				$label = array('btnModificar','btnEliminar');
-				$class = array('bg-amber','bg-red');
-				$icon = array('create','delete');
-				$whereEstado = ' c.refestadocotizaciones in (1,2,3) and c.refestados in (0,1) ';
+				$label = array();
+				$class = array();
+				$icon = array();
+				$whereEstado = ' c.refestados in (1) ';
+				$termina = 5;
 			break;
 		}
 
@@ -597,7 +602,7 @@ switch ($tabla) {
 
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 5;
+
 
 	break;
 	case 'asesores':

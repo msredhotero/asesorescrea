@@ -78,6 +78,37 @@ if ($idestado == 1) {
 
 }
 
+switch ($idestado2) {
+	case 1:
+		header('Location: new.php?id='.$id);
+	break;
+	case 2:
+		header('Location: ../index.php');
+	break;
+	case 4:
+		header('Location: ../index.php');
+	break;
+}
+
+switch ($idestado) {
+	case 8:
+		$color = 'bg-blue';
+		$estado = 'Entregada';
+	break;
+	case 9:
+		$color = 'bg-success';
+		$estado = 'Aceptada';
+	break;
+	case 10:
+		$color = 'bg-amber';
+		$estado = 'En ajuste';
+	break;
+	case 11:
+		$color = 'bg-red';
+		$estado = 'Rechazada';
+	break;
+}
+
 $resDocumentacionesCargadas = $serviciosReferencias->traerDocumentacioncotizacionesPorIdCompletoPorCotizacion($id);
 
 ?>
@@ -234,7 +265,7 @@ $resDocumentacionesCargadas = $serviciosReferencias->traerDocumentacioncotizacio
 									<div class="modal-footer btnacciones">
 										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-											<?php if (($idestado == 2) && ($idestado2 == 1)) { ?>
+											<?php if (($idestado == 8) && ($idestado2 == 3)) { ?>
 											<button type="button" class="btn btn-success waves-effect btnAceptarCotizacion">ACEPTO COTIZACION</button>
 											<button type="button" class="btn btn-warning waves-effect btnRequieroAjustes">REQUIERO AJUSTES</button>
 											<button type="button" class="btn btn-danger waves-effect btnRechazarCotizacion">RECHAZAR</button>
@@ -372,7 +403,7 @@ $resDocumentacionesCargadas = $serviciosReferencias->traerDocumentacioncotizacio
 				},
 				//una vez finalizado correctamente
 				success: function(data){
-
+					location.reload();
 				},
 				//si ha ocurrido un error
 				error: function(){

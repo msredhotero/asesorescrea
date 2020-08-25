@@ -6556,7 +6556,8 @@ return $res;
 		pro.producto,
 		concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
 		concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
-		est.estadocotizacion,
+      c.fechamodi,
+      est.estadocotizacion,
 		c.refclientes,
 		c.refproductos,
 		c.refasesores,
@@ -6566,7 +6567,7 @@ return $res;
 		c.fechavencimiento,
 		c.coberturaactual,
 		c.fechacrea,
-		c.fechamodi,
+
 		c.usuariocrea,
 		c.usuariomodi,
 		c.refusuarios
@@ -6869,7 +6870,7 @@ return $res;
 
 	function traerEstadocotizacionesPorId($id) {
 		$sql = "select idestadocotizacion,estadocotizacion,
-		orden from tbestadocotizaciones where idestadocotizacion =".$id;
+		orden,refetapacotizacion,finaliza,renueva,generaestado from tbestadocotizaciones where idestadocotizacion =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -6878,13 +6879,24 @@ return $res;
 		$sql = "select
 		e.idestadocotizacion,
 		e.estadocotizacion,
-		e.orden
+		e.orden,
+      e.refetapacotizacion,
+      e.finaliza,
+      e.renueva,
+      e.generaestado
 		from tbestadocotizaciones e
 		where  idestadocotizacion in (".$in.")
 		order by e.orden";
 		$res = $this->query($sql,0);
 		return $res;
 	}
+
+   function traerEstadocotizacionPorEtapa($idetapa) {
+      $sql = "select idestadocotizacion,estadocotizacion,
+		orden,refetapacotizacion,finaliza,renueva,generaestado from tbestadocotizaciones where refetapacotizacion =".$idetapa;
+		$res = $this->query($sql,0);
+		return $res;
+   }
 
 
 	/* Fin */

@@ -1459,7 +1459,19 @@ $.fn.steps.remove = function (index)
  **/
 $.fn.steps.setStep = function (index, step)
 {
-    throw new Error("Not yet implemented!");
+   //throw new Error("Not yet implemented!");
+   //console.log('dentro:' + index);
+   var currentIndex = $(this).steps('getCurrentIndex');
+   //console.log('dentroa:' + currentIndex);
+     for(var i = 0; i < Math.abs(index - currentIndex); i++){
+        //console.log(i);
+       if(i > currentIndex) {
+         $(this).steps('next');
+       }
+       else{
+         $(this).steps('previous');
+       }
+     }
 };
 
 /**

@@ -1146,21 +1146,41 @@ function modificarCotizacionesPorCampo($serviciosReferencias) {
    $id = $_POST['id'];
    $idestado = $_POST['idestado'];
 
-   $res1 = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',$idestado, $_SESSION['usua_sahilices']);
+   // trai los valores del estado a modificar
+   $resEstado = $serviciosReferencias->traerEstadocotizacionesPorId($idestado);
 
-   if ($idestado == 1) {
-      $res = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',2, $_SESSION['usua_sahilices']);
-      $mensaje = 'Se volvio a activar la cotizacion correctamente version: ';
+   // verifico si me genera un cambio automatico y si finaliza
+   if ((mysql_result($resEstado,0,'generaestado') > 0) && (mysql_result($resEstado,0,'finaliza') == '1')) {
+      // obtengo la nueva etapa
+      $resEstadoNuevo = $serviciosReferencias->traerEstadocotizacionesPorId(mysql_result($resEstado,0,'generaestado'));
+
+      // modifico el estado de la cotizacion
+      $resModEstadoCot = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',mysql_result($resEstado,0,'generaestado'), $_SESSION['usua_sahilices']);
+
+      // modifico la etapa
+      $resModEstadoEtapa = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',mysql_result($resEstadoNuevo,0,'refetapacotizacion'), $_SESSION['usua_sahilices']);
+
+      $mensaje = 'SE MODIFICO CORRECTAMENTE';
+   } else {
+      if  (mysql_result($resEstado,0,'renueva') == '1') {
+         // modifico el estado de la cotizacion
+         $resModEstadoCot = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',$idestado, $_SESSION['usua_sahilices']);
+
+         // modifico la etapa
+         $resModEstadoEtapa = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',mysql_result($resEstado,0,'refetapacotizacion'), $_SESSION['usua_sahilices']);
+
+         $mensaje = 'SE MODIFICO CORRECTAMENTE';
+      } else {
+         // modifico la etapa
+         $resModEstadoEtapa = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',mysql_result($resEstado,0,'refetapacotizacion'), $_SESSION['usua_sahilices']);
+
+         $mensaje = 'SE MODIFICO CORRECTAMENTE';
+      }
+
    }
 
-   if ($idestado == 3) {
-      $res = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',6, $_SESSION['usua_sahilices']);
-      $mensaje = 'La cotizacion fue rechazada definitivamente';
-   }
 
-
-
-   if ($res) {
+   if ($resModEstadoEtapa) {
       $resV['error'] = false;
       $resV['mensaje'] = $mensaje;
       $resV['tipo'] = 'success';
@@ -1178,6 +1198,8 @@ function modificarCotizacionesPorCampo($serviciosReferencias) {
 }
 
 function enviarCotizacion($serviciosReferencias, $serviciosUsuarios, $serviciosMensajes) {
+   session_start();
+
    $id = $_POST['id'];
 
    $noenviar = 0;
@@ -1230,6 +1252,15 @@ function enviarCotizacion($serviciosReferencias, $serviciosUsuarios, $serviciosM
          $exito = $serviciosUsuarios->enviarEmail($destinatario,$asunto,$cuerpo);
 
          $resV['mensaje'] = 'Se envio con exito la cotizacion';
+
+         // modifico la cotizacion a la primer etapa
+         $resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',3,$_SESSION['usua_sahilices']);
+
+         // modifico la cotizacion a la primer estado
+         $resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',8,$_SESSION['usua_sahilices']);
+
+
+
       } else {
          $resV['error'] = true;
          $resV['mensaje'] = 'El cliente aun no tiene un usuario generado';
@@ -1280,12 +1311,14 @@ function generaNotificacion($serviciosReferencias, $serviciosMensajes, $servicio
       case 'cotizacionAjustes':
          $lblMensajeNot = 'Ajuste Cotizacion: ';
          $lblAsunto = 'Solicitaron ajustes sobre la cotizacion: ';
-         $resMod = $serviciosReferencias->modificarEstadoCotizacionResultado($id, 2);
+         //$resMod = $serviciosReferencias->modificarEstadoCotizacionResultado($id, 2);
+         $resMod = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',10,$_SESSION['usua_sahilices']);
       break;
       case 'cotizacionRechazo':
          $lblMensajeNot = 'Rechaza Cotizacion: ';
          $lblAsunto = 'Rechazaron la cotizacion: ';
-         $resMod = $serviciosReferencias->modificarEstadoCotizacionResultado($id, 3);
+         //$resMod = $serviciosReferencias->modificarEstadoCotizacionResultado($id, 3);
+         $resMod = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',11,$_SESSION['usua_sahilices']);
       break;
    }
 
@@ -1335,8 +1368,11 @@ function generaNotificacion($serviciosReferencias, $serviciosMensajes, $servicio
 
 function aceptarClienteCotizacion($serviciosReferencias, $serviciosMensajes) {
    $id = $_POST['id'];
+   session_start();
 
-   $res = $serviciosReferencias->modificarEstadoCotizacionResultado($id,2);
+   //$res = $serviciosReferencias->modificarEstadoCotizacionResultado($id,2);
+
+   $res = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',9,$_SESSION['usua_sahilices']);
 
    if ($res) {
       $resV['error'] = false;
@@ -1835,6 +1871,8 @@ function validarCuestionarioPersona($serviciosReferencias) {
             } else {
                $resMCA = $serviciosReferencias->modificarCotizacionesAsegurado($idcotizacion,'0',0);
             }
+         } else {
+            $resMCA = $serviciosReferencias->modificarCotizacionesAsegurado($idcotizacion,'0',0);
          }
 
 
@@ -2702,6 +2740,10 @@ function validarCuestionario($serviciosReferencias) {
       $sqlC = $serviciosReferencias->insertarCotizacionesSQL($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo);
 
       if ((integer)$res > 0) {
+
+         // modifico la cotizacion a la primer etapa
+         $resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($res,'refestados',1,$usuariomodi);
+
          /**** toda la perta del cuestionario ***/
          $resP = $serviciosReferencias->traerProductosPorId($refproductos);
          $idcuestionario = mysql_result($resP,0,'refcuestionarios');
@@ -4614,7 +4656,12 @@ function modificarCotizaciones($serviciosReferencias) {
 
    $usuariomodi = $_SESSION['usua_sahilices'];
    $refusuarios = $_SESSION['usuaid_sahilices'];
-   $foliotys = $_POST['foliotys'];
+   if (isset($_POST['foliotys'])) {
+      $foliotys = $_POST['foliotys'];
+   } else {
+      $foliotys = 'completar';
+   }
+
 
    $tiponegocio = $_POST['tiponegocio'];
 
@@ -4640,7 +4687,11 @@ function modificarCotizaciones($serviciosReferencias) {
    $existeprimaobjetivo = $_POST['existeprimaobjetivo'];
    $primaobjetivo = ($_POST['primaobjetivo'] == '' ? 0 : $_POST['primaobjetivo']);
 
-   if ($refestadocotizaciones == 5) {
+   if ($refestadocotizaciones == 12) {
+
+      // modifico la cotizacion a la ultima etapa
+      $resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',4,$usuariomodi);
+
       $foliointerno = $serviciosReferencias->generaFolioInterno();
       $resIV = $serviciosReferencias->insertarVentas($id,1,0,0,'','',date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$usuariomodi,$usuariomodi,$foliotys,$foliointerno);
 
@@ -4666,12 +4717,18 @@ function modificarCotizaciones($serviciosReferencias) {
    }
 
    if ($refestadocotizaciones == 4) {
+      // modifico la cotizacion a la ultima etapa
+      $resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',2,$usuariomodi);
+   }
+   /*
+   if ($refestadocotizaciones == 4) {
       // busco si existe un lead para updetear
       $resLead = $serviciosReferencias->traerLeadPorCotizacion($id);
       if (mysql_num_rows($resLead) > 0) {
          $resModLead = $serviciosReferencias->modificarLeadCotizacion(mysql_result($resLead,0,0),$id,3);
       }
    }
+   */
 
 
    $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$bitacoracrea,$bitacorainbursa,$bitacoraagente,$existeprimaobjetivo,$primaobjetivo);

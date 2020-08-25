@@ -8,17 +8,80 @@ class ServiciosHTML {
 function menu($usuario,$titulo,$rol,$empresa) {
 
 	$rol = str_replace(' ','',$rol);
-	$sql = "select idmenu,url,icono, nombre, permiso from predio_menu where permiso like '%".$rol."%' and grupo = 0 order by orden";
-
-	//die(var_dump($sql));
-	$res = $this->query($sql,0);
 
 	$cadmenu = "";
 	$cadhover= "";
 
+	// menu colapsado de cotizaciones //
+	$sql = "select idmenu,url,icono, nombre, permiso from predio_menu where permiso like '%".$rol."%' and grupo = 2 order by orden";
+	$res = $this->query($sql,0);
+
+	$cadmenuCotizacion = '';
+
+	if (mysql_num_rows($res) > 0) {
+		$cadmenuCotizacion .= '<a href="javascript:void(0);" class="menu-toggle">
+	                            <i class="material-icons">monetization_on</i>
+	                            <span>Cotizaciones</span>
+	                        </a>
+	                        <ul class="ml-menu">';
+		$cadhover= "";
+
+
+		$cant = 1;
+		while ($row = mysql_fetch_array($res)) {
+			if ($titulo == $row['nombre']) {
+				$nombre = $row['nombre'];
+				$row['url'] = "index.php";
+			}
+
+			if (strpos($row['permiso'],$rol) !== false) {
+				if ($row['idmenu'] == 1) {
+					$cadmenuCotizacion .= '<li>
+									<a href="'.$row['url'].'">
+										<i class="material-icons">'.$row['icono'].'</i>
+										<span>'.$row['nombre'].'</span>
+									</a>
+								</li>';
+					//$cadmenu = $cadmenu.'<li class="arriba"><div class="'.$row['icono'].'"></div><a href="'.$row['url'].'">'.$row['nombre'].'</a></li>';
+					/*$cadhover = $cadhover.' <li class="arriba">
+												<div class="'.$row['icono'].'2" id="tooltip'.$cant.'"></div>
+												<div class="tooltip-dash">'.$row['nombre'].'</div>
+											</li>';	*/
+				} else {
+
+					$cadmenuCotizacion .= '<li>
+									<a href="'.$row['url'].'">
+										<i class="material-icons">'.$row['icono'].'</i>
+										<span>'.$row['nombre'].'</span>
+									</a>
+								</li>';
+					/*
+					$cadmenu = $cadmenu.'<li><div class="'.$row['icono'].'"></div><a href="'.$row['url'].'">'.$row['nombre'].'</a></li>';
+					$cadhover = $cadhover.'  <li>
+												<div class="'.$row['icono'].'2" id="tooltip'.$cant.'"></div>
+												<div class="tooltip-con">'.$row['nombre'].'</div>
+											</li>';*/
+				}
+			}
+			$cant+=1;
+		}
+
+		$cadmenuCotizacion .= '</ul>';
+	}
+	// fin menu cotizaciones //
+
+	$sql = "select idmenu,url,icono, nombre, permiso, orden from predio_menu where permiso like '%".$rol."%' and grupo = 0 order by orden";
+
+	//die(var_dump($sql));
+	$res = $this->query($sql,0);
+
 
 	$cant = 1;
 	while ($row = mysql_fetch_array($res)) {
+
+		if ($row['orden'] == 3) {
+			$cadmenu .= $cadmenuCotizacion;
+		}
 		if ($titulo == $row['nombre']) {
 			$nombre = $row['nombre'];
 			$row['url'] = "index.php";
@@ -55,60 +118,63 @@ function menu($usuario,$titulo,$rol,$empresa) {
 		}
 		$cant+=1;
 	}
+
+
+
 
 
 	$sql = "select idmenu,url,icono, nombre, permiso from predio_menu where permiso like '%".$rol."%' and grupo = 3 order by orden";
 	$res = $this->query($sql,0);
 
 	if (mysql_num_rows($res) > 0) {
-	$cadmenu .= '<a href="javascript:void(0);" class="menu-toggle">
-                            <i class="material-icons">build</i>
-                            <span>General</span>
-                        </a>
-                        <ul class="ml-menu">';
-	$cadhover= "";
+		$cadmenu .= '<a href="javascript:void(0);" class="menu-toggle">
+	                            <i class="material-icons">build</i>
+	                            <span>General</span>
+	                        </a>
+	                        <ul class="ml-menu">';
+		$cadhover= "";
 
 
-	$cant = 1;
-	while ($row = mysql_fetch_array($res)) {
-		if ($titulo == $row['nombre']) {
-			$nombre = $row['nombre'];
-			$row['url'] = "index.php";
-		}
-
-		if (strpos($row['permiso'],$rol) !== false) {
-			if ($row['idmenu'] == 1) {
-				$cadmenu .= '<li>
-								<a href="'.$row['url'].'">
-									<i class="material-icons">'.$row['icono'].'</i>
-									<span>'.$row['nombre'].'</span>
-								</a>
-							</li>';
-				//$cadmenu = $cadmenu.'<li class="arriba"><div class="'.$row['icono'].'"></div><a href="'.$row['url'].'">'.$row['nombre'].'</a></li>';
-				/*$cadhover = $cadhover.' <li class="arriba">
-											<div class="'.$row['icono'].'2" id="tooltip'.$cant.'"></div>
-											<div class="tooltip-dash">'.$row['nombre'].'</div>
-										</li>';	*/
-			} else {
-
-				$cadmenu .= '<li>
-								<a href="'.$row['url'].'">
-									<i class="material-icons">'.$row['icono'].'</i>
-									<span>'.$row['nombre'].'</span>
-								</a>
-							</li>';
-				/*
-				$cadmenu = $cadmenu.'<li><div class="'.$row['icono'].'"></div><a href="'.$row['url'].'">'.$row['nombre'].'</a></li>';
-				$cadhover = $cadhover.'  <li>
-											<div class="'.$row['icono'].'2" id="tooltip'.$cant.'"></div>
-											<div class="tooltip-con">'.$row['nombre'].'</div>
-										</li>';*/
+		$cant = 1;
+		while ($row = mysql_fetch_array($res)) {
+			if ($titulo == $row['nombre']) {
+				$nombre = $row['nombre'];
+				$row['url'] = "index.php";
 			}
-		}
-		$cant+=1;
-	}
 
-	$cadmenu .= '</ul>';
+			if (strpos($row['permiso'],$rol) !== false) {
+				if ($row['idmenu'] == 1) {
+					$cadmenu .= '<li>
+									<a href="'.$row['url'].'">
+										<i class="material-icons">'.$row['icono'].'</i>
+										<span>'.$row['nombre'].'</span>
+									</a>
+								</li>';
+					//$cadmenu = $cadmenu.'<li class="arriba"><div class="'.$row['icono'].'"></div><a href="'.$row['url'].'">'.$row['nombre'].'</a></li>';
+					/*$cadhover = $cadhover.' <li class="arriba">
+												<div class="'.$row['icono'].'2" id="tooltip'.$cant.'"></div>
+												<div class="tooltip-dash">'.$row['nombre'].'</div>
+											</li>';	*/
+				} else {
+
+					$cadmenu .= '<li>
+									<a href="'.$row['url'].'">
+										<i class="material-icons">'.$row['icono'].'</i>
+										<span>'.$row['nombre'].'</span>
+									</a>
+								</li>';
+					/*
+					$cadmenu = $cadmenu.'<li><div class="'.$row['icono'].'"></div><a href="'.$row['url'].'">'.$row['nombre'].'</a></li>';
+					$cadhover = $cadhover.'  <li>
+												<div class="'.$row['icono'].'2" id="tooltip'.$cant.'"></div>
+												<div class="tooltip-con">'.$row['nombre'].'</div>
+											</li>';*/
+				}
+			}
+			$cant+=1;
+		}
+
+		$cadmenu .= '</ul>';
 	}
 
 

@@ -2369,15 +2369,15 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 
 							if (currentIndex == 2) {
-
+								<?php if ($llevaAsegurado == 1) { ?>
 								validarCuestionarioContratante(<?php echo $rIdCliente; ?>,0 );
-
+								<?php } ?>
 							}
 
 							if (currentIndex == 3) {
-
+								<?php if ($llevaAsegurado == 1) { ?>
 								validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
-
+								<?php } ?>
 								$('.contSubirArchivos1').show();
 								$('.contSubirArchivos2').hide();
 							}
@@ -2404,7 +2404,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	            return form.valid();
 	        },
 	        onFinished: function (event, currentIndex) {
-	            modificarCotizacion(2);
+	            modificarCotizacion(4);
 	        }
 	    });
 
@@ -2577,7 +2577,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					existeprimaobjetivo: $('#existeprimaobjetivo').val(),
 					primaobjetivo: $('#primaobjetivo').val(),
 					id: <?php echo $id; ?>,
-					estadoactual: 5,
+					estadoactual: 4,
 					fechaemitido: '<?php echo date('Y-m-d'); ?>',
 					fechapropuesta: '<?php echo date('Y-m-d'); ?>',
 					foliotys: '',

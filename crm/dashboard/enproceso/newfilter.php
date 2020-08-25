@@ -24,22 +24,80 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../venta/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cotizaciones/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
-$rCliente = $serviciosReferencias->traerClientesPorUsuario($_SESSION['usuaid_sahilices']);
+
 //die(var_dump($_SESSION['usuaid_sahilices']));
-$rIdCliente = mysql_result($rCliente,0,0);
+
+
+if (isset($_GET['id'])) {
+	$resCotizacionPrincipal = $serviciosReferencias->traerCotizacionesPorIdCompleto($_GET['id']);
+
+	$rIdCliente = mysql_result($resCotizacionPrincipal,0,'refclientes');
+
+	$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta(mysql_result($resCotizacionPrincipal,0,'refproductos'));
+
+	$rIdProducto = mysql_result($resCotizacionPrincipal,0,'refproductos');
+
+	if (mysql_result($resProductoPrincipal,0,'beneficiario')) {
+		$llevaBeneficiario = 1;
+	} else {
+		$llevaBeneficiario = 0;
+	}
+
+	if (mysql_result($resProductoPrincipal,0,'asegurado')) {
+		$llevaAsegurado = 1;
+	} else {
+		$llevaAsegurado = 0;
+	}
+} else {
+	if (isset($_GET['idproducto'])) {
+		$rIdProducto = $_GET['idproducto'];
+
+		$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta($rIdProducto);
+
+		if (mysql_result($resProductoPrincipal,0,'beneficiario')) {
+			$llevaBeneficiario = 1;
+		} else {
+			$llevaBeneficiario = 0;
+		}
+
+		if (mysql_result($resProductoPrincipal,0,'asegurado')) {
+			$llevaAsegurado = 1;
+		} else {
+			$llevaAsegurado = 0;
+		}
+
+		if (isset($_GET['idcliente'])) {
+			$rIdCliente = $_GET['idcliente'];
+		} else {
+			header('Location: ../index.php');
+		}
+
+
+	} else {
+		header('Location: ../index.php');
+	}
+
+}
+
+$rCliente = $serviciosReferencias->traerClientesPorId($rIdCliente);
 
 $rTipoPersona = mysql_result($rCliente,0,'reftipopersonas');
 
-$rIdProducto = $_GET['producto'];
+if (isset($_GET['lead'])) {
+	$lead = $_GET['lead'];
+} else {
+	$lead = 0;
+}
+
 
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Venta",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cotizaciones",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -608,7 +666,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 										<input type="hidden" name="reftipopersonasaux" id="reftipopersonasaux" value="<?php echo $rTipoPersona; ?>" />
 										<input type="hidden" name="idcotizacion" id="idcotizacion" value="<?php echo $id; ?>" />
 										<input type="hidden" name="actualizacliente" id="actualizacliente" value="0" />
-										<input type="hidden" name="lead" id="lead" value="0" />
+										<input type="hidden" name="lead" id="lead" value="<?php echo $lead; ?>" />
 
                               <h3>Producto</h3>
                                  <fieldset>
@@ -631,32 +689,13 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
                               </fieldset>
 
-
-										<h3>CONTRATANTE</h3>
-                                 <fieldset>
-												<div class="row">
-													<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
-														<div class="form-group form-float">
-															<label class="form-label" style="margin-top:20px;">Complete la información del cuestionario *</label>
-
-		                                    </div>
-													</div>
-
-												</div>
-												<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContcuestionarioasegurado" style="display:block">
-													<div class="contCuestionarioPersonasContratante">
-
-													</div>
-												</div>
-
-                              </fieldset>
-
+										<?php if ($llevaAsegurado == 1) { ?>
 										<h3>ASEGURADO</h3>
                                  <fieldset>
 												<div class="row">
 													<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
 														<div class="form-group form-float">
-															<label class="form-label" style="margin-top:20px;">El asegurado es usted mismo o deseas asegurar a alguien más  *</label>
+															<label class="form-label" style="margin-top:20px;">El Asegurado es usted mismo u otra persona *</label>
 		                                       <div class="form-line">
 
 									   						<select style="margin-top:10px;" class="form-control" id="tieneasegurado" name="tieneasegurado" required>
@@ -690,6 +729,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 												</div>
 
                               </fieldset>
+									<?php } ?>
 
 
 
@@ -959,27 +999,29 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
                               </fieldset>
 
-										<h3>BENEFICIARIO</h3>
-                                 <fieldset>
-												<div class="row">
+										<?php if ($llevaBeneficiario == 1) { ?>
+											<h3>BENEFICIARIO</h3>
+	                                 <fieldset>
+													<div class="row">
 
 
-													<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContbeneficiarioaux" style="display:block">
-														<div class="form-group form-float">
-															<label class="form-label" style="margin-top:20px;">Seleccione el Beneficiario de su catalogo *</label>
-		                                       <div class="form-line">
+														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContbeneficiarioaux" style="display:block">
+															<div class="form-group form-float">
+																<label class="form-label" style="margin-top:20px;">Seleccione el Beneficiario de su catalogo *</label>
+			                                       <div class="form-line">
 
-									   						<select style="margin-top:10px;" class="form-control" id="refbeneficiarioaux" name="refbeneficiarioaux" required>
-																	<option value='0'>El contratante</option>
-																	<option value='0'>Nuevo</option>
-																</select>
+										   						<select style="margin-top:10px;" class="form-control" id="refbeneficiarioaux" name="refbeneficiarioaux" required>
+																		<option value='0'>El contratante</option>
+																		<option value='0'>Nuevo</option>
+																	</select>
 
-		                                       </div>
-		                                    </div>
+			                                       </div>
+			                                    </div>
+														</div>
 													</div>
-												</div>
 
-                              </fieldset>
+	                              </fieldset>
+									<?php } ?>
 
 
                            </form>
@@ -1529,8 +1571,6 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
 
-<script src="../../js/pages/ui/tooltips-popovers.js"></script>
-
 <!-- Custom Js -->
 <script src="../../js/pages/cards/colored.js"></script>
 
@@ -1559,9 +1599,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 <script src="../../plugins/dropzone/dropzone.js"></script>
 
 <script src="../../js/pdfobject.min.js"></script>
-
-
 <!-- Chart Plugins Js -->
+
 
 
 <script>
@@ -1753,15 +1792,13 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 					if (data.error == false) {
 
-						<?php if (isset($_GET['id'])) { ?>
 						if (data.sigue) {
 
-							form.steps("next");
-							form.steps("next");
+							//form.steps("next");
+
 						} else {
-							form.steps("next");
+							//form.steps("next");
 						}
-						<?php } ?>
 
 						$('.contCuestionarioPersonasContratante').show();
 
@@ -1928,6 +1965,9 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					if (data != '') {
 						$('.contCuestionario').html(data.datos.cuestionario);
 
+
+
+
 						$('#wizard_with_validation .escondido').hide();
 
 						$('#wizard_with_validation .aparecer').click(function() {
@@ -1939,6 +1979,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 							$('#wizard_with_validation .escondido'+idPreguntaId).hide();
 
 							$('#wizard_with_validation #contPregunta'+idPregunta).show(400);
+
+
 
 							$('#wizard_with_validation .tsfechanacimiento').pickadate({
 					 			format: 'yyyy-mm-dd',
@@ -2035,7 +2077,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	 								timer: 2000,
 	 								showConfirmButton: false
 	 						});
-							$(location).attr('href', 'new.php?producto=<?php echo $rIdProducto; ?>&id='+data.idcotizacion);
+							$(location).attr('href', 'newfilter.php?producto=<?php echo $rIdProducto; ?>&id='+data.idcotizacion);
 						}
 
 
@@ -2180,6 +2222,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 						});
 
 						form.steps("previous");
+						alert('asd');
 
 					} else {
 
@@ -2324,32 +2367,60 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					<?php } else { ?>
 
 
+							<?php if ($llevaAsegurado == 1) { ?>
 
-							if (currentIndex == 2) {
+								if (currentIndex == 0) {
+									$('.contSubirArchivos1').hide();
+									$('.contSubirArchivos2').hide();
+								}
+								if (currentIndex == 1) {
+									$('.contSubirArchivos1').hide();
+									$('.contSubirArchivos2').hide();
+								}
+								if (currentIndex == 2) {
+									validarCuestionarioContratante(<?php echo $rIdCliente; ?>,0 );
 
-								validarCuestionarioContratante(<?php echo $rIdCliente; ?>,0 );
+									$('.contSubirArchivos1').show();
+									$('.contSubirArchivos2').hide();
+								}
 
-							}
+								if (currentIndex == 3) {
 
-							if (currentIndex == 3) {
+									validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
 
-								validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
+									$('.contSubirArchivos1').hide();
+									$('.contSubirArchivos2').show();
+								}
 
-								$('.contSubirArchivos1').show();
-								$('.contSubirArchivos2').hide();
-							}
+								if (currentIndex > 3) {
+									$('.contSubirArchivos1').hide();
+									$('.contSubirArchivos2').hide();
+								}
 
-							if (currentIndex == 4) {
+							<?php } else { ?>
+								if (currentIndex == 0) {
+									$('.contSubirArchivos1').hide();
+									$('.contSubirArchivos2').hide();
+								}
+
+								if (currentIndex == 1) {
+									$('.contSubirArchivos1').show();
+									$('.contSubirArchivos2').hide();
+								}
+
+								if (currentIndex == 2) {
+									$('.contSubirArchivos1').hide();
+									$('.contSubirArchivos2').show();
+								}
+
+								if (currentIndex >= 2) {
+									$('.contSubirArchivos1').hide();
+									$('.contSubirArchivos2').hide();
+								}
+							<?php } ?>
 
 
-								$('.contSubirArchivos1').hide();
-								$('.contSubirArchivos2').show();
-							}
 
-							if (currentIndex < 3) {
-								$('.contSubirArchivos1').hide();
-								$('.contSubirArchivos2').hide();
-							}
 					<?php } ?>
 
 
@@ -2361,7 +2432,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	            return form.valid();
 	        },
 	        onFinished: function (event, currentIndex) {
-	            modificarCotizacion(12);
+	            modificarCotizacion(4);
 	        }
 	    });
 
@@ -2379,6 +2450,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 			<?php } ?>
 
 		<?php } ?>
+
+
 
 
 	    form.validate({
@@ -2410,7 +2483,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		?>
 
 		$('#wizard_with_validation .btn<?php echo str_replace(' ','',$rowD['documentacion']); ?>').click(function() {
-			url = "new.php?id=<?php echo $id; ?>&iddocumentacion=<?php echo $rowD['iddocumentacion']; ?>";
+			url = "newfilter.php?id=<?php echo $id; ?>&iddocumentacion=<?php echo $rowD['iddocumentacion']; ?>";
 			$(location).attr('href',url);
 		});
 		<?php
@@ -2424,7 +2497,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		?>
 
 		$('#wizard_with_validation .btnA<?php echo str_replace(' ','',$rowD['documentacion']); ?>').click(function() {
-			url = "new.php?id=<?php echo $id; ?>&iddocumentaciona=<?php echo $rowD['iddocumentacion']; ?>";
+			url = "newfilter.php?id=<?php echo $id; ?>&iddocumentaciona=<?php echo $rowD['iddocumentacion']; ?>";
 			$(location).attr('href',url);
 		});
 		<?php
@@ -2476,9 +2549,9 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
  								showConfirmButton: false
  						});
 						if (refestadocotizaciones == 1) {
-							$(location).attr('href', 'new.php?id='+data);
+							$(location).attr('href', '../engestion/modificar.php?id='+data);
 						} else {
-							$(location).attr('href', 'modificar.php?id='+data);
+							$(location).attr('href', '../engestion/modificar.php?id='+data);
 						}
 
  					} else {
@@ -2534,7 +2607,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					existeprimaobjetivo: $('#existeprimaobjetivo').val(),
 					primaobjetivo: $('#primaobjetivo').val(),
 					id: <?php echo $id; ?>,
-					estadoactual: 12,
+					estadoactual: 4,
 					fechaemitido: '<?php echo date('Y-m-d'); ?>',
 					fechapropuesta: '<?php echo date('Y-m-d'); ?>',
 					foliotys: '',
@@ -2555,7 +2628,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
  								timer: 2000,
  								showConfirmButton: false
  						});
-						$(location).attr('href', 'comercio_fin.php?id=<?php echo $id; ?>');
+						$(location).attr('href', '../engestion/modificar.php?id=<?php echo $id; ?>');
 
  					} else {
  						swal({
@@ -2825,7 +2898,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 				//una vez finalizado correctamente
 				success: function(data){
 					$('#refaseguradaaux').html(data.dato);
-					form.steps("next");
+					//form.steps("next");
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -2959,7 +3032,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 		$("#example").on("click",'.btnModificar', function(){
 			idTable =  $(this).attr("id");
-			$(location).attr('href','modificar.php?id=' + idTable);
+			$(location).attr('href','../engestion/modificar.php?id=' + idTable);
 		});//fin del boton modificar
 
 		$("#example").on("click",'.btnVer', function(){
@@ -3253,6 +3326,15 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		<?php if ($iddocumentacion != 0) { ?>
 		<?php if ($documentacionNombre != '') { ?>
 		<?php if (($idestadodocumentacion != 5)) { ?>
+
+		<?php if (!(isset($_GET['iddocumentaciona']))) { ?>
+			<?php if ($llevaAsegurado == 1) { ?>
+				form.steps("setStep", 3);
+			<?php } else { ?>
+				form.steps("setStep", 2);
+			<?php } ?>
+		<?php } ?>
+
 		var myDropzone = new Dropzone("#archivos", {
 			params: {
 				 idasociado: <?php echo $id; ?>,
@@ -3387,8 +3469,16 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 			}
 		};
 
-		<?php if ($iddocumentacion != 0) { ?>
+		<?php if ($iddocumentacion2 != 0) { ?>
 		<?php if (($idestadodocumentacion2 != 5)) { ?>
+
+		<?php if ((isset($_GET['iddocumentaciona']))) { ?>
+			<?php if ($llevaAsegurado == 1) { ?>
+				form.steps("setStep", 4);
+			<?php } else { ?>
+				form.steps("setStep", 3);
+			<?php } ?>
+		<?php } ?>
 		var myDropzone2 = new Dropzone("#archivos2", {
 			params: {
 				 idasociado: <?php echo $id; ?>,
