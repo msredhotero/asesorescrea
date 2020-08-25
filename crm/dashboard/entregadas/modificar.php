@@ -572,13 +572,13 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 									<div class="modal-footer">
 										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 											<?php if ($idestado == 8 ) { ?>
-											<button id="4" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>
+											<button id="8" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>
 
 											<button type="button" class="btn bg-green waves-effect btnAbandonada">Aceptada</button>
 											<button type="button" class="btn bg-amber waves-effect btnDenegada">En Ajuste</button>
 											<button type="button" class="btn bg-red waves-effect btnInsuficiente">Rechazada</button>
 										<?php } else { ?>
-											<button id="4" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>
+											<button id="<?php echo $idestado; ?>" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>
 
 											<button type="button" class="btn bg-red waves-effect btnRechazadaDefinitivamente">Rechazada Definitivamente</button>
 										<?php } ?>
@@ -1415,8 +1415,9 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 
 
 		$('.frmNuevo').submit(function(e){
-			$('#refestadocotizaciones').val(4);
-			$('#refestados').val(2);
+			idTable =  $('.btnContinuar').attr("id");
+			$('#refestadocotizaciones').val(idTable);
+			$('#refestados').val(3);
 			e.preventDefault();
 			if ($('#sign_in')[0].checkValidity()) {
 				//información del formulario
