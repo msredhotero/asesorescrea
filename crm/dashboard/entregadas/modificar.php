@@ -577,6 +577,10 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 											<button type="button" class="btn bg-green waves-effect btnAbandonada">Aceptada</button>
 											<button type="button" class="btn bg-amber waves-effect btnDenegada">En Ajuste</button>
 											<button type="button" class="btn bg-red waves-effect btnInsuficiente">Rechazada</button>
+										<?php } else { ?>
+											<button id="4" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>
+
+											<button type="button" class="btn bg-red waves-effect btnRechazadaDefinitivamente">Rechazada Definitivamente</button>
 										<?php } ?>
 
 
@@ -758,6 +762,16 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 			$('.modificarEstadoCotizacionRechazo').html('RECHAZADA');
 			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
 			$('#estadomodificarestadorechazo').val(11);
+			$('#lgmModificarEstado').modal();
+
+		});//fin del boton eliminar
+
+		$('.btnRechazadaDefinitivamente').click(function() {
+
+			$('.lblModiEstado').html('RECHAZADA DEFINITIVAMENTE');
+			$('.modificarEstadoCotizacionRechazo').html('RECHAZADA DEFINITIVAMENTE');
+			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
+			$('#estadomodificarestadorechazo').val(13);
 			$('#lgmModificarEstado').modal();
 
 		});//fin del boton eliminar
