@@ -171,7 +171,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								<?php echo strtoupper($plural); ?>
+								HISTORIAL <?php echo strtoupper($plural); ?>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
