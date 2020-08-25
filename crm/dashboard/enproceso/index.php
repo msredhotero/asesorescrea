@@ -762,7 +762,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 		$("#example").on("click",'.btnModificar', function(){
 			idTable =  $(this).attr("id");
-			$(location).attr('href','modificar.php?id=' + idTable);
+			$(location).attr('href','newfilter.php?id=' + idTable);
 		});//fin del boton modificar
 
 		$("#example2").on("click",'.btnModificar', function(){
