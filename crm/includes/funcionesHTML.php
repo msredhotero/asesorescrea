@@ -79,7 +79,7 @@ function menu($usuario,$titulo,$rol,$empresa) {
 	$cant = 1;
 	while ($row = mysql_fetch_array($res)) {
 
-		if ($row['orden'] == 3) {
+		if ($cant == 3) {
 			$cadmenu .= $cadmenuCotizacion;
 		}
 		if ($titulo == $row['nombre']) {
