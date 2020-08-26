@@ -219,6 +219,8 @@ switch (mysql_result($resultado,0,'existeprimaobjetivo')) {
 $resVar10	= $serviciosReferencias->traerAseguradora();
 $cadRef10 = $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',mysql_result($resultado,0,'coberturaactual'));
 
+$resVar10m	= $serviciosReferencias->traerAseguradora();
+//$cadMotivosRechazos = $serviciosFunciones->devolverSelectBox($resVar10m,array(1),'');
 
 $refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadRef7,7=>$cadRef8,8=>$cadRef9,9=>$cadRef10,10=>$cadRef11);
 $refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones','cobertura','presentacotizacion','tiponegocio','coberturaactual','existeprimaobjetivo');
@@ -577,10 +579,18 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 											<button type="button" class="btn bg-green waves-effect btnAbandonada">Aceptada</button>
 											<button type="button" class="btn bg-amber waves-effect btnDenegada">En Ajuste</button>
 											<button type="button" class="btn bg-red waves-effect btnInsuficiente">Rechazada</button>
-										<?php } else { ?>
+										<?php } else {
+											if ($_SESSION['idroll_sahilices'] != 7) {
+												if ($idestado <= 11) {
+											?>
 											<button id="<?php echo $idestado; ?>" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>
-
+											<button type="button" class="btn bg-green waves-effect btnAbandonada">Aceptada</button>
 											<button type="button" class="btn bg-red waves-effect btnRechazadaDefinitivamente">Rechazada Definitivamente</button>
+										<?php } else { ?>
+											<button id="<?php echo $idestado; ?>" type="button" class="btn waves-effect btnContinuar"><?php echo mysql_result($resEstados,0,'estadocotizacion'); ?></button>
+										<?php
+										}
+										} ?>
 										<?php } ?>
 
 
@@ -649,10 +659,68 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 					 <h4 class="modal-title" id="largeModalLabel">MODIFICAR ESTADO DE LA COTIZACION</h4>
 				</div>
 				<div class="modal-body">
-				 <p>¿Esta seguro que desea <span class="lblModiEstado"></span> la cotizacion?</p>
+				 <h3>¿Esta seguro que desea <span class="lblModiEstado"></span> la cotizacion?</h3>
+
+				 <div class="row contFrmRechazoDefinitivo">
+ 					<h4>Por favor ingrese los motivos del rechazo, para poderte afrocer un mejor servicio!!</h4>
+ 					<div class="row">
+	 					<div class="col-xs-6">
+							<div class="form-group input-group">
+								<label class="label-form">Motivo</label>
+		 						<select class="form-control" id="motivo" name="motivo">
+		 							<option value="Precio">Precio</option>
+		 							<option value="Mal Servicio">Mal Servicio</option>
+		 							<option value="Otro">Otro</option>
+		 						</select>
+		 					</div>
+						</div>
+					</div>
+					<div class="contMotivosPrecio">
+
+						<div class="row">
+							<div class="col-xs-3">
+								<div class="form-group input-group">
+									<label class="label-form">No se compartió información</label>
+			 						<select class="form-control" id="nocompartioinformacion" name="nocompartioinformacion">
+			 							<option value="1">Si</option>
+			 							<option value="0">No</option>
+			 						</select>
+								</div>
+		 					</div>
+
+		 					<div class="col-xs-3">
+								<div class="form-group input-group">
+									<label class="label-form">Prima total Inbursa</label>
+			 						<input type="text" class="form-control" id="primatotalinbursa" name="primatotalinbursa" />
+								</div>
+		 					</div>
+							<div class="col-xs-3">
+								<div class="form-group input-group">
+									<label class="label-form">Prima total Competencia</label>
+			 						<input type="text" class="form-control" id="primatotalcompetencia" name="primatotalcompetencia" />
+								</div>
+		 					</div>
+							<div class="col-xs-3">
+								<div class="form-group input-group">
+									<label class="label-form">Aseguradora que se queda negocio</label>
+			 						<select class="form-control" id="aseguradora" name="aseguradora">
+										<?php while ($rowA = mysql_fetch_array($resVar10m)) {
+											echo '<option value="'.$rowA['razonsocial'].'">'.$rowA['razonsocial'].'</option>';
+										}
+										?>
+										<option value="Otra">Otra</option>
+			 						</select>
+								</div>
+		 					</div>
+						</div>
+					</div>
+ 					<hr>
+ 					<p>Puedes contactarnos en el Tel fijo: <b><span style="color:#5DC1FD;">55 51 35 02 59</span></b></p>
+ 					<p>Correo: <a href="mailto:ventas@asesorescrea.com" style="color:#5DC1FD !important;"><b>ventas@asesorescrea.com</b></a></p>
+ 				</div>
 				</div>
 				<div class="modal-footer">
-					 <button type="button" class="btn bg-green waves-effect modificarEstadoCotizacionRechazo"></button>
+					 <button type="button" class="btn waves-effect modificarEstadoCotizacionRechazo"></button>
 					 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
 				</div>
 		  </div>
@@ -689,9 +757,22 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 <script>
 	$(document).ready(function(){
 
+		$('#motivo').change( function() {
+			if ($(this).val() == 'Precio') {
+				$('.contMotivosPrecio').show();
+			} else {
+				$('.contMotivosPrecio').hide();
+			}
+		});
+
 
 		$('.modificarEstadoCotizacionRechazo').click(function() {
-			modificarCotizacionesPorCampo();
+			if ($('#estadomodificarestadorechazo').val() == 13) {
+				modificarCotizacionesPorCampoRechazoDefinitivo();
+			} else {
+				modificarCotizacionesPorCampo();
+			}
+
 		});
 
 		function modificarCotizacionesPorCampo() {
@@ -735,10 +816,68 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 			});
 		}
 
+		function modificarCotizacionesPorCampoRechazoDefinitivo() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificarCotizacionesPorCampoRechazoDefinitivo',
+					id: $('#idmodificarestadorechazo').val(),
+					idestado: $('#estadomodificarestadorechazo').val(),
+					motivo: $('#motivo').val(),
+					nocompartioinformacion: $('#nocompartioinformacion').val(),
+					primatotalinbursa: $('#primatotalinbursa').val(),
+					primatotalcompetencia: $('#primatotalcompetencia').val(),
+					aseguradora: $('#aseguradora').val()
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					swal({
+							title: "Respuesta",
+							text: data.mensaje,
+							type: data.tipo,
+							timer: 1500,
+							showConfirmButton: false
+					});
+
+					if (data.error == false) {
+						$('#lgmModificarEstado').modal('toggle');
+						location.reload();
+					}
+
+					table.ajax.reload();
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
 		$('.btnAbandonada').click(function() {
 
 			$('.lblModiEstado').html('ACEPTADA');
 			$('.modificarEstadoCotizacionRechazo').html('ACEPTADA');
+
+			$('.modificarEstadoCotizacionRechazo').addClass('bg-green');
+			$('.modificarEstadoCotizacionRechazo').removeClass('bg-amber');
+			$('.modificarEstadoCotizacionRechazo').removeClass('bg-red');
+
+			$('.contFrmRechazoDefinitivo').hide();
+
 			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
 			$('#estadomodificarestadorechazo').val(9);
 			$('#lgmModificarEstado').modal();
@@ -749,6 +888,13 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 
 			$('.lblModiEstado').html('EN AJUSTE');
 			$('.modificarEstadoCotizacionRechazo').html('EN AJUSTE');
+
+			$('.contFrmRechazoDefinitivo').hide();
+
+			$('.modificarEstadoCotizacionRechazo').removeClass('bg-green');
+			$('.modificarEstadoCotizacionRechazo').addClass('bg-amber');
+			$('.modificarEstadoCotizacionRechazo').removeClass('bg-red');
+
 			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
 			$('#estadomodificarestadorechazo').val(10);
 			$('#lgmModificarEstado').modal();
@@ -760,6 +906,13 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 
 			$('.lblModiEstado').html('RECHAZADA');
 			$('.modificarEstadoCotizacionRechazo').html('RECHAZADA');
+
+			$('.contFrmRechazoDefinitivo').hide();
+
+			$('.modificarEstadoCotizacionRechazo').removeClass('bg-green');
+			$('.modificarEstadoCotizacionRechazo').removeClass('bg-amber');
+			$('.modificarEstadoCotizacionRechazo').addClass('bg-red');
+
 			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
 			$('#estadomodificarestadorechazo').val(11);
 			$('#lgmModificarEstado').modal();
@@ -770,6 +923,13 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 
 			$('.lblModiEstado').html('RECHAZADA DEFINITIVAMENTE');
 			$('.modificarEstadoCotizacionRechazo').html('RECHAZADA DEFINITIVAMENTE');
+
+			$('.contFrmRechazoDefinitivo').show();
+
+			$('.modificarEstadoCotizacionRechazo').removeClass('bg-green');
+			$('.modificarEstadoCotizacionRechazo').removeClass('bg-amber');
+			$('.modificarEstadoCotizacionRechazo').addClass('bg-red');
+
 			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
 			$('#estadomodificarestadorechazo').val(13);
 			$('#lgmModificarEstado').modal();

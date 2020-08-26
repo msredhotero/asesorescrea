@@ -1137,6 +1137,9 @@ switch ($accion) {
    case 'modificarCotizacionesPorCampo':
       modificarCotizacionesPorCampo($serviciosReferencias);
    break;
+   case 'modificarCotizacionesPorCampoRechazoDefinitivo':
+      modificarCotizacionesPorCampoRechazoDefinitivo($serviciosReferencias);
+   break;
 
 }
 /* FinFinFin */
@@ -1191,6 +1194,90 @@ function modificarCotizacionesPorCampo($serviciosReferencias) {
    }
 
 
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function modificarCotizacionesPorCampoRechazoDefinitivo($serviciosReferencias) {
+   session_start();
+   $id = $_POST['id'];
+   $idestado = $_POST['idestado'];
+   $motivo = $_POST['motivo'];
+   $error = '';
+   if ($motivo == 'Precio') {
+      $nocompartioinformacion = $_POST['nocompartioinformacion'];
+      $primatotalinbursa = $_POST['primatotalinbursa'];
+      $primatotalcompetencia = $_POST['primatotalcompetencia'];
+      $aseguradora = $_POST['aseguradora'];
+
+      if (($primatotalinbursa == '') || ($primatotalcompetencia == '')) {
+         $error = 'Debe completar los campos Prima Total Inbursa y Prima Total Campotencia';
+      }
+   } else {
+      $nocompartioinformacion = '';
+      $primatotalinbursa = '';
+      $primatotalcompetencia = '';
+      $aseguradora = '';
+   }
+
+   if ($error == '') {
+      // trai los valores del estado a modificar
+      $resEstado = $serviciosReferencias->traerEstadocotizacionesPorId($idestado);
+
+      // verifico si me genera un cambio automatico y si finaliza
+      if ((mysql_result($resEstado,0,'generaestado') > 0) && (mysql_result($resEstado,0,'finaliza') == '1')) {
+         // obtengo la nueva etapa
+         $resEstadoNuevo = $serviciosReferencias->traerEstadocotizacionesPorId(mysql_result($resEstado,0,'generaestado'));
+
+         // modifico el estado de la cotizacion
+         $resModEstadoCot = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',mysql_result($resEstado,0,'generaestado'), $_SESSION['usua_sahilices']);
+
+         // modifico la etapa
+         $resModEstadoEtapa = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',mysql_result($resEstadoNuevo,0,'refetapacotizacion'), $_SESSION['usua_sahilices']);
+
+         $mensaje = 'SE MODIFICO CORRECTAMENTE';
+      } else {
+         if  (mysql_result($resEstado,0,'renueva') == '1') {
+            // modifico el estado de la cotizacion
+            $resModEstadoCot = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',$idestado, $_SESSION['usua_sahilices']);
+
+            // modifico la etapa
+            $resModEstadoEtapa = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',mysql_result($resEstado,0,'refetapacotizacion'), $_SESSION['usua_sahilices']);
+
+            $mensaje = 'SE MODIFICO CORRECTAMENTE';
+         } else {
+            // modifico la etapa
+            $resModEstadoEtapa = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',mysql_result($resEstado,0,'refetapacotizacion'), $_SESSION['usua_sahilices']);
+
+            // modifico el estado de la cotizacion
+            $resModEstadoCot = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',$idestado, $_SESSION['usua_sahilices']);
+
+
+            $mensaje = 'SE MODIFICO CORRECTAMENTE';
+         }
+
+      }
+
+      $res = $serviciosReferencias->insertarMotivorechazocotizaciones($id,$motivo,$nocompartioinformacion,$primatotalinbursa,$primatotalcompetencia,$aseguradora);
+
+
+      if ($resModEstadoEtapa) {
+         $resV['error'] = false;
+         $resV['mensaje'] = $mensaje;
+         $resV['tipo'] = 'success';
+      } else {
+         $resV['error'] = true;
+         $resV['mensaje'] = 'Se genero un error por favor vuelva a intentarlo';
+         $resV['tipo'] = 'error';
+      }
+
+   } else {
+      $resV['error'] = true;
+      $resV['mensaje'] = $error;
+      $resV['tipo'] = 'error';
+   }
 
 
    header('Content-type: application/json');

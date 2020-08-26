@@ -470,7 +470,17 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 <script>
 	$(document).ready(function(){
 
+		function parseDate(str) {
 
+			var mdy = str.split('-');
+			return new Date(mdy[0], mdy[1]-1, mdy[2]);
+		}
+
+		function datediff(first, second) {
+			// Take the difference between the dates and divide by milliseconds per day.
+			// Round to nearest whole number to deal with DST.
+			return Math.round((second-first)/(1000*60*60*24));
+		}
 
 		$('.btnNuevo').click(function() {
 			idTable =  $(this).attr("id");
@@ -506,10 +516,15 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 					"sortAscending":  ": activate to sort column ascending",
 					"sortDescending": ": activate to sort column descending"
 				}
-			}
+			},
+		   "rowCallback": function( row, data, index ) {
+				//alert(data[4].substring(0,10));
+			  if (datediff(parseDate(data[4].substring(0,10)), parseDate('<?php echo date('Y-m-d'); ?>') )  > 1) {
+				  $('td', row).css('background-color', '#F62121');
+				  $('td', row).css('color', 'white');
+			  }
+		   }
 		});
-
-
 
 		$("#sign_in").submit(function(e){
 			e.preventDefault();

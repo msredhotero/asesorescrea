@@ -9,6 +9,64 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+   /* PARA Motivorechazocotizaciones */
+
+   function insertarMotivorechazocotizaciones($refcotizaciones,$motivo,$nocompartioinformacion,$primatotalinbursa,$primatotalcompetencia,$aseguradora) {
+      $sql = "insert into tbmotivorechazocotizaciones(idmotivorechazocotizacion,refcotizaciones,motivo,nocompartioinformacion,primatotalinbursa,primatotalcompetencia,aseguradora)
+      values ('',".$refcotizaciones.",'".$motivo."','".$nocompartioinformacion."','".$primatotalinbursa."','".$primatotalcompetencia."','".$aseguradora."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarMotivorechazocotizaciones($id,$refcotizaciones,$motivo,$nocompartioinformacion,$primatotalinbursa,$primatotalcompetencia,$aseguradora) {
+      $sql = "update tbmotivorechazocotizaciones
+      set
+      refcotizaciones = ".$refcotizaciones.",motivo = '".$motivo."',nocompartioinformacion = '".$nocompartioinformacion."',primatotalinbursa = '".$primatotalinbursa."',primatotalcompetencia = '".$primatotalcompetencia."',aseguradora = '".$aseguradora."'
+      where idmotivorechazocotizacion =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarMotivorechazocotizaciones($id) {
+      $sql = "delete from tbmotivorechazocotizaciones where idmotivorechazocotizacion =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerMotivorechazocotizaciones() {
+      $sql = "select
+      m.idmotivorechazocotizacion,
+      m.refcotizaciones,
+      m.motivo,
+      m.nocompartioinformacion,
+      m.primatotalinbursa,
+      m.primatotalcompetencia,
+      m.aseguradora
+      from tbmotivorechazocotizaciones m
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerMotivorechazocotizacionesPorId($id) {
+      $sql = "select idmotivorechazocotizacion,refcotizaciones,motivo,nocompartioinformacion,primatotalinbursa,primatotalcompetencia,aseguradora from tbmotivorechazocotizaciones where idmotivorechazocotizacion =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerMotivorechazocotizacionesPorCotizacion($id) {
+      $sql = "select idmotivorechazocotizacion,refcotizaciones,motivo,nocompartioinformacion,primatotalinbursa,primatotalcompetencia,aseguradora from tbmotivorechazocotizaciones where refcotizaciones =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: tbmotivorechazocotizaciones*/
 
    /* PARA Productosweb */
 
@@ -973,7 +1031,7 @@ return $res;
 
                      <div class="form-group input-group">
                         <div class="form-line">
-                           <input type="text" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
+                           <input type="text" autocomplete="off" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
 
                         </div>
                      </div>
@@ -983,7 +1041,7 @@ return $res;
 
                      <div class="form-group input-group">
                         <div class="form-line">
-                           <input type="text" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
+                           <input type="text" autocomplete="off" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
 
                         </div>
                      </div>
@@ -1145,7 +1203,7 @@ return $res;
 
                         <div class="form-group input-group">
                            <div class="form-line">
-                              <input type="text" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.$cadValorRespuesta.'" >
+                              <input type="text" autocomplete="off" class="form-control" id="respuesta" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.$cadValorRespuesta.'" >
 
                            </div>
                         </div>
@@ -1155,7 +1213,7 @@ return $res;
 
                         <div class="form-group input-group">
                            <div class="form-line">
-                              <input type="text" class="form-control" id="respuesta" value="'.$cadValorRespuesta.'" name="respuesta'.$row['idpreguntacuestionario'].'" >
+                              <input type="text" autocomplete="off" class="form-control" id="respuesta" value="'.$cadValorRespuesta.'" name="respuesta'.$row['idpreguntacuestionario'].'" >
 
                            </div>
                         </div>
@@ -1346,7 +1404,7 @@ return $res;
 
                      <div class="form-group input-group">
                         <div class="form-line">
-                           <input type="text" class="form-control" id="respuesta'.$row['idpreguntacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
+                           <input type="text" autocomplete="off" class="form-control" id="respuesta'.$row['idpreguntacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
 
                         </div>
                      </div>
@@ -1356,7 +1414,7 @@ return $res;
 
                      <div class="form-group input-group">
                         <div class="form-line">
-                           <input type="text" class="form-control" id="respuesta'.$row['idpreguntacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
+                           <input type="text" autocomplete="off" class="form-control" id="respuesta'.$row['idpreguntacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.($row['respuestacargada'] == '0' ? '' : $row['respuestacargada']).'">
 
                         </div>
                      </div>
@@ -1522,7 +1580,7 @@ return $res;
 
                         <div class="form-group input-group">
                            <div class="form-line">
-                              <input type="text" class="form-control ts'.$row['campo'].'" id="respuesta'.$row['idpreguntacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.$cadValorRespuesta.'" >
+                              <input type="text" autocomplete="off" class="form-control ts'.$row['campo'].'" id="respuesta'.$row['idpreguntacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.$cadValorRespuesta.'" >
 
                            </div>
                         </div>
@@ -1532,7 +1590,7 @@ return $res;
 
                         <div class="form-group input-group">
                            <div class="form-line">
-                              <input type="text" class="form-control" id="respuesta'.$row['idpreguntacuestionario'].'" value="'.$cadValorRespuesta.'" name="respuesta'.$row['idpreguntacuestionario'].'" >
+                              <input type="text" autocomplete="off" class="form-control" id="respuesta'.$row['idpreguntacuestionario'].'" value="'.$cadValorRespuesta.'" name="respuesta'.$row['idpreguntacuestionario'].'" >
 
                            </div>
                         </div>
@@ -6558,6 +6616,7 @@ return $res;
 		concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
       c.fechamodi,
       est.estadocotizacion,
+      DATEDIFF(CURDATE(),c.fechacrea) as dias,
 		c.refclientes,
 		c.refproductos,
 		c.refasesores,

@@ -543,9 +543,16 @@ switch ($tabla) {
 
 		switch ($idestado) {
 			case 1:
-				$label = array('btnAbandonada','btnBasura','btnModificar');
-				$class = array('bg-amber','bg-red','bg-green');
-				$icon = array('alarm_off','delete','edit');
+				if ($_SESSION['idroll_sahilices'] == 7) {
+					$label = array('btnModificar');
+					$class = array('bg-green');
+					$icon = array('edit');
+				} else {
+					$label = array('btnAbandonada','btnBasura','btnModificar');
+					$class = array('bg-amber','bg-red','bg-green');
+					$icon = array('alarm_off','delete','edit');
+				}
+
 				$whereEstado = ' c.refestados in (1) ';
 				$termina = 5;
 			break;
