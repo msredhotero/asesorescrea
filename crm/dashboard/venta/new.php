@@ -73,6 +73,22 @@ if (isset($_GET['id'])) {
 	$refIdAsegurados = mysql_result($resultado,0,'refasegurados');
 	$tieneAsegurado = mysql_result($resultado,0,'tieneasegurado');
 
+	$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta(mysql_result($resCotizacionPrincipal,0,'refproductos'));
+
+	$tipoProducto = mysql_result($resProductoPrincipal,0,'reftipoproducto');
+
+	if (mysql_result($resProductoPrincipal,0,'beneficiario')) {
+		$llevaBeneficiario = 1;
+	} else {
+		$llevaBeneficiario = 0;
+	}
+
+	if (mysql_result($resProductoPrincipal,0,'asegurado')) {
+		$llevaAsegurado = 1;
+	} else {
+		$llevaAsegurado = 0;
+	}
+
 	$resCliente = $serviciosReferencias->traerClientesPorId($refCliente);
 	$cadRef2 = $serviciosFunciones->devolverSelectBox($resCliente,array(3,4,2),' ');
 
@@ -651,6 +667,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
                               </fieldset>
 
+										<?php if ($llevaAsegurado == 1) { ?>
 										<h3>ASEGURADO</h3>
                                  <fieldset>
 												<div class="row">
@@ -690,9 +707,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 												</div>
 
                               </fieldset>
-
-
-
+										<?php } ?>
 
 										<h3>Galeria Producto</h3>
                               <fieldset>
@@ -780,6 +795,10 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
                               <h3>Información del Negocio</h3>
                               <fieldset>
+											<?php
+												// si el tipo de producto es seguros lo dejo entrar
+												if ($tipoProducto == 3) {
+											?>
 											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
 												<div class="form-group form-float">
 													<label class="form-label" style="margin-top:20px;">Existe Prima Objetivo</label>
@@ -873,6 +892,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 												<input style="width:200px;" type="hidden" class="form-control" id="fecharenovacion" name="fecharenovacion" />
 											</div>
 
+											<?php } // fin del tipo de producto ?>
+
 											<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContobservaciones" style="display:block">
 												<label class="form-label">Observaciones </label>
 												<div class="form-group input-group">
@@ -958,7 +979,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 
                               </fieldset>
-
+										<?php if ($llevaBeneficiario == 1) { ?>
 										<h3>BENEFICIARIO</h3>
                                  <fieldset>
 												<div class="row">
@@ -980,7 +1001,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 												</div>
 
                               </fieldset>
-
+										<?php } ?>
 
                            </form>
 

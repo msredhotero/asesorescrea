@@ -42,6 +42,8 @@ if (isset($_GET['id'])) {
 
 	$rIdProducto = mysql_result($resCotizacionPrincipal,0,'refproductos');
 
+	$tipoProducto = mysql_result($resProductoPrincipal,0,'reftipoproducto');
+
 	if (mysql_result($resProductoPrincipal,0,'beneficiario')) {
 		$llevaBeneficiario = 1;
 	} else {
@@ -732,8 +734,6 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 									<?php } ?>
 
 
-
-
 										<h3>Galeria Producto</h3>
                               <fieldset>
 											<?php if ($documentacionNombre != '') { ?>
@@ -820,6 +820,10 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
                               <h3>Información del Negocio</h3>
                               <fieldset>
+											<?php
+												// si el tipo de producto es seguros lo dejo entrar
+												if ($tipoProducto == 3) {
+											?>
 											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
 												<div class="form-group form-float">
 													<label class="form-label" style="margin-top:20px;">Existe Prima Objetivo</label>
@@ -912,6 +916,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 												<input style="width:200px;" type="hidden" class="form-control" id="fecharenovacion" name="fecharenovacion" />
 											</div>
+										<?php } // fin del tipo de producto ?>
 
 											<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContobservaciones" style="display:block">
 												<label class="form-label">Observaciones </label>
@@ -2342,6 +2347,12 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	            setButtonWavesEffect(event);
 
 					<?php if (!(isset($_GET['id']))) { ?>
+
+						if (currentIndex == 0) {
+							$('.contSubirArchivos1').hide();
+							$('.contSubirArchivos2').hide();
+						}
+						
 						if (currentIndex == 1) {
 							validarCuestionario($('#refproductos').val());
 							//guardarCotizacion(1);
