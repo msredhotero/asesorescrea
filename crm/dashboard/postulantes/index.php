@@ -555,6 +555,23 @@ $cadRefFiltro = $cadRef1;
 		</form>
 
 
+	<div class="modal fade" id="lgmDirectorio" tabindex="-1" role="dialog">
+		 <div class="modal-dialog modal-lg" role="document">
+			  <div class="modal-content">
+					<div class="modal-header bg-blue">
+						 <h4 class="modal-title" id="lblModalDirectorio"></h4>
+					</div>
+					<div class="modal-body">
+						<div class="row contDirectorio">
+						</div>
+					</div>
+					<div class="modal-footer">
+						 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+					</div>
+			  </div>
+		 </div>
+	</div>
+
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
@@ -581,6 +598,54 @@ $cadRefFiltro = $cadRef1;
 
 <script>
 	$(document).ready(function(){
+
+
+
+
+		function traerInformeDeDocumentaciones(id) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'traerInformeDeDocumentaciones', id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('#lblModalDirectorio').html();
+					$('.contDirectorio').html();
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						$('#lgmDirectorio').modal();
+						$('#lblModalDirectorio').html(data.titulo);
+						$('.contDirectorio').html(data.contenido);
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data,
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+
+		}
 
 		$('.contHistorico').hide();
 
@@ -1009,6 +1074,24 @@ $cadRefFiltro = $cadRef1;
 				select.append( '<option value="'+d+'">'+d+'</option>' )
 			} );
 		} );
+
+		$('#example tbody').on('dblclick', 'tr', function () {
+			var data = table.row( this ).data();
+			<?php if ($_SESSION['idroll_sahilices'] == 1 || $_SESSION['idroll_sahilices'] == 4 || $_SESSION['idroll_sahilices'] == 8 || $_SESSION['idroll_sahilices'] == 3) { ?>
+			var str = data[11];
+			<?php } else { ?>
+			var str = data[10];
+			<?php } ?>
+
+			var indexId = str.indexOf('id=');
+
+			var str2 = str.slice(indexId + 4, str.length);
+			var indexId2 = str2.indexOf('"');
+			var idTabla = str.slice(indexId + 4, indexId + 4 + indexId2);
+			alert(idTabla);
+			traerInformeDeDocumentaciones(idTabla);
+
+		});
 
 
 

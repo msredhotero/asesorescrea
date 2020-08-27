@@ -9,6 +9,47 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+   function traerInformeDeDocumentaciones($id) {
+      $resPostulante = $this->traerPostulantesPorId($id);
+
+      $nombrecompleto = mysql_result($resPostulante,0,'apellidopaterno').' '.mysql_result($resPostulante,0,'apellidomaterno').' '.mysql_result($resPostulante,0,'nombre');
+
+      $lblVeritas = 'Estado Veritas: ';
+      $lblSiap = 'Estado SIAP: ';
+      $lblDocumentaciones = 'Estado Documentaciones: ';
+      $lblContratos = 'Estado Contratos: ';
+
+      $sqlVeritas = "select
+               de.estadodocumentacion
+            from dbdocumentacionasesores da
+            inner join tbestadodocumentaciones de on de.idestadodocumentacion = da.refestadodocumentaciones
+            where da.refdocumentaciones = 1 and da.refpostulantes = ".$id;
+
+      $resVeritas = $this->query($sqlVeritas,0);
+
+      if (mysql_num_rows($resVeritas) > 0) {
+         $lblVeritas .= mysql_result($resVeritas,0,0);
+      } else {
+         $lblVeritas .= 'No cargado';
+      }
+
+      $sqlSiap = "select
+               de.estadodocumentacion
+            from dbdocumentacionasesores da
+            inner join tbestadodocumentaciones de on de.idestadodocumentacion = da.refestadodocumentaciones
+            where da.refdocumentaciones = 2 and da.refpostulantes = ".$id;
+
+      $resSiap = $this->query($sqlSiap,0);
+
+      if (mysql_num_rows($resSiap) > 0) {
+         $lblSiap .= mysql_result($resSiap,0,0);
+      } else {
+         $lblSiap .= 'No cargado';
+      }
+
+      return array('veritas'=>$lblVeritas, 'siap'=>$lblSiap, 'documentaciones'=>$lblDocumentaciones,'contratos'=>$lblContratos,'nombrecompleto'=>$nombrecompleto);
+   }
+
    /* PARA Motivorechazocotizaciones */
 
    function insertarMotivorechazocotizaciones($refcotizaciones,$motivo,$nocompartioinformacion,$primatotalinbursa,$primatotalcompetencia,$aseguradora) {

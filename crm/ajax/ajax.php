@@ -1140,9 +1140,29 @@ switch ($accion) {
    case 'modificarCotizacionesPorCampoRechazoDefinitivo':
       modificarCotizacionesPorCampoRechazoDefinitivo($serviciosReferencias);
    break;
+   case 'traerInformeDeDocumentaciones':
+      traerInformeDeDocumentaciones($serviciosReferencias);
+   break;
 
 }
 /* FinFinFin */
+
+function traerInformeDeDocumentaciones($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->traerInformeDeDocumentaciones($id);
+
+   $resV['titulo'] = $res['nombrecompleto'];
+   $contenido = '';
+   $contenido .= '<h4>'.$res['siap'].'</h4>';
+   $contenido .= '<h4>'.$res['veritas'].'</h4>';
+   $contenido .= '<h4>'.$res['documentaciones'].'</h4>';
+   $contenido .= '<h4>'.$res['contratos'].'</h4>';
+   $resV['contenido'] = $contenido;
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function modificarCotizacionesPorCampo($serviciosReferencias) {
    session_start();
@@ -1800,7 +1820,7 @@ function validarCuestionarioPersona($serviciosReferencias) {
             $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($_POST[$valor['respuesta']]);
             array_push($arRespuestas,
                   array('refpreguntascuestionario' => $valor['idpregunta'],
-                  'refrespuestascuestionario' => $valor['idrespuesta'],
+                  'refrespuestascuestionario' => $_POST[$valor['respuesta']],
                   'pregunta' => $pregunta,
                   'respuesta' => mysql_result($rRespuesta,0,'respuesta'),
                   'respuestavalor' => $_POST[$valor['respuesta']])
@@ -2656,7 +2676,7 @@ function validarCuestionario($serviciosReferencias) {
             $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($_POST[$valor['respuesta']]);
             array_push($arRespuestas,
                   array('refpreguntascuestionario' => $valor['idpregunta'],
-                  'refrespuestascuestionario' => $valor['idrespuesta'],
+                  'refrespuestascuestionario' => $_POST[$valor['respuesta']],
                   'pregunta' => $pregunta,
                   'respuesta' => mysql_result($rRespuesta,0,'respuesta'),
                   'respuestavalor' => $_POST[$valor['respuesta']])
