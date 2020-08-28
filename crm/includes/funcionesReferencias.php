@@ -1004,6 +1004,8 @@ return $res;
 
          $primero = 0;
 
+         // poner en local el utf8_encode
+
          while ($row = mysql_fetch_array($resultado)) {
             if ($this->getOption($preguntasSencibles[0],$row['idpreguntacuestionario'] ) == 0 ) {
 
@@ -1034,7 +1036,7 @@ return $res;
                if ($row['idtiporespuesta'] == 1) {
                   array_push($rules,
                         array('respuesta' => 'respuesta'.$row['idpreguntacuestionario'],
-                        'pregunta' => $row['pregunta'],
+                        'pregunta' => ($row['pregunta']),
                         'tipo'=>1,
                         'idpregunta' => $row['idpreguntacuestionario'],
                         'idrespuesta' => $row['idrespuestacuestionario'],
@@ -1046,7 +1048,11 @@ return $res;
                }
 
                if ($row['idtiporespuesta'] == 2) {
-                  array_push($rules,array('respuesta'=> 'respuesta'.$row['idpreguntacuestionario'],'pregunta' => $row['pregunta'],'tipo'=>2,'idpregunta'=>$row['idpreguntacuestionario'],'idrespuesta'=>$row['idrespuestacuestionario'],
+                  array_push($rules,array('respuesta'=> 'respuesta'.$row['idpreguntacuestionario'],
+                  'pregunta' => ($row['pregunta']),
+                  'tipo'=>2,
+                  'idpregunta'=>$row['idpreguntacuestionario'],
+                  'idrespuesta'=>$row['idrespuestacuestionario'],
                   'obligatoria' => $row['obligatoria'],
                   'depende' => $row['depende'],
                   'dependerespuesta' => $row['dependerespuesta'],
@@ -1054,7 +1060,11 @@ return $res;
                   'dependerespuestaaux' => $row['dependerespuestaaux'] ));
                }
                if ($row['idtiporespuesta'] == 3) {
-                  array_push($rules,array('respuesta'=> 'respuestamulti'.$row['idpreguntacuestionario'],'pregunta' => $row['pregunta'],'tipo'=>3,'idpregunta'=>$row['idpreguntacuestionario'],'idrespuesta'=>$row['idrespuestacuestionario'],
+                  array_push($rules,array('respuesta'=> 'respuestamulti'.$row['idpreguntacuestionario'],
+                  'pregunta' => ($row['pregunta']),
+                  'tipo'=>3,
+                  'idpregunta'=>$row['idpreguntacuestionario'],
+                  'idrespuesta'=>$row['idrespuestacuestionario'],
                   'obligatoria' => $row['obligatoria'],
                   'depende' => $row['depende'],
                   'dependerespuesta' => $row['dependerespuesta'],
@@ -1116,7 +1126,7 @@ return $res;
                   <div class="form-group input-group">
                      <div class="demo-radio-button">
                         <input type="radio" id="radio_'.$row['idpreguntacuestionario'].$iRadio.'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.$row['idrespuestacuestionario'].'" '.($row['respuestacargada'] == '1' ? 'checked' : '').' '.$collapse.'>
-                        <label for="radio_'.$row['idpreguntacuestionario'].$iRadio.'">'.$row['respuesta'].'</label>
+                        <label for="radio_'.$row['idpreguntacuestionario'].$iRadio.'">'.($row['respuesta']).'</label>
                      </div>
                   </div>
                </div>';
@@ -1134,7 +1144,7 @@ return $res;
                   <div class="form-group input-group">
                      <div class="demo-radio-button">
                         <input type="radio" id="radio_multi_'.$iCheck.'" name="respuestamulti'.$row['idpreguntacuestionario'].'" value="'.$row['idrespuestacuestionario'].'" '.($row['respuestacargada'] == '1' ? 'checked' : '').'>
-                        <label for="radio_multi_'.$iCheck.'">'.$row['respuesta'].'</label>
+                        <label for="radio_multi_'.$iCheck.'">'.($row['respuesta']).'</label>
                      </div>
                   </div>
                </div>';
@@ -1152,13 +1162,17 @@ return $res;
                <div class="form-group input-group">
                      <div class="demo-radio-button">
                         <input type="checkbox" class="filled-in respuestavarias'.$row['idpreguntacuestionario'].'" id="basic_checkbox_'.$row['idrespuestacuestionario'].'" name="respuestamultim'.$row['idrespuestacuestionario'].'" '.($row['respuestacargada'] == '1' ? 'checked' : '').'>
-                        <label for="basic_checkbox_'.$row['idrespuestacuestionario'].'">'.$row['respuesta'].'</label>
+                        <label for="basic_checkbox_'.$row['idrespuestacuestionario'].'">'.($row['respuesta']).'</label>
                      </div>
                   </div>
                </div>';
 
                if ($row['idtiporespuesta'] == 4) {
-                  array_push($rules,array('respuesta'=> 'respuestamultim'.$row['idrespuestacuestionario'],'pregunta' => $row['pregunta'],'tipo'=>4,'idpregunta'=>$row['idpreguntacuestionario'],'idrespuesta'=>$row['idrespuestacuestionario'],
+                  array_push($rules,array('respuesta'=> 'respuestamultim'.$row['idrespuestacuestionario'],
+                  'pregunta' => ($row['pregunta']),
+                  'tipo'=>4,
+                  'idpregunta'=>$row['idpreguntacuestionario'],
+                  'idrespuesta'=>$row['idrespuestacuestionario'],
                   'obligatoria' => $row['obligatoria'],
                   'depende' => $row['depende'],
                   'dependerespuesta' => $row['dependerespuesta'],
@@ -1181,7 +1195,10 @@ return $res;
    function CuestionarioAux($idcuestionario,$idcotizacion,$idcliente=0) {
       //die(var_dump($idcuestionario));
 
+
       $resultado = $this->traerPreguntasCuestionarioPorIdCompletoR($idcuestionario);
+
+
 
       $preguntasSencibles = $this->necesitoPreguntaSencible($idcliente,$idcuestionario);
 
@@ -2315,6 +2332,29 @@ return $res;
          from dbcuestionarios c
          inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario and pre.activo='1'
          inner join tbtiporespuesta tr ON tr.idtiporespuesta = pre.reftiporespuesta
+         where c.idcuestionario =".$id." and (pre.refpreguntassencibles is null or pre.refpreguntassencibles = 0) order by pre.orden ";
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function traerPreguntasCuestionarioPorIdCompletoRFijo($id,$idcotizacion) {
+   $sql = "select
+            c.idcuestionario,
+            c.cuestionario,
+            (case when c.activo = '1' then 'Si' else 'No' end) as activo,
+            pre.pregunta,
+            (case when pre.activo = '1' then 'Si' else 'No' end) as activopregunta,
+            tr.idtiporespuesta,
+            tr.tiporespuesta,
+            pre.idpreguntacuestionario,
+            coalesce( pre.depende,0) as dependeaux,
+            coalesce( pre.dependerespuesta ,0) as dependerespuestaaux,
+            pre.obligatoria
+         from dbcuestionarios c
+         inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario and pre.activo='1'
+         inner join tbtiporespuesta tr ON tr.idtiporespuesta = pre.reftiporespuesta
+         inner join dbcuestionariodetalle cd on cd.refpreguntascuestionario = pre.idpreguntacuestionario and cd.idreferencia = ".$idcotizacion."
          where c.idcuestionario =".$id." and (pre.refpreguntassencibles is null or pre.refpreguntassencibles = 0) order by pre.orden ";
    $res = $this->query($sql,0);
    return $res;

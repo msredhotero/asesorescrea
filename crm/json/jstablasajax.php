@@ -832,7 +832,7 @@ switch ($tabla) {
 		inner join dbusuarios usu ON usu.idusuario = p.refusuarios
 		inner join tbescolaridades esc ON esc.idescolaridad = p.refescolaridades
 		inner join tbestadocivil est ON est.idestadocivil = p.refestadocivil
-		inner join tbestadopostulantes ep ON ep.idestadopostulante = p.refestadopostulantes and ep.idestadopostulante not in (9,11)
+		inner join tbestadopostulantes ep ON ep.idestadopostulante = p.refestadopostulantes and ep.idestadopostulante not in (9,11,12,13)
 		left join dbasesores rr on rr.refusuarios = p.refusuarios ";
 		if ($_SESSION['idroll_sahilices'] == 9) {
 			$consulta .= 'left join dbreclutadorasores rrr on rrr.refpostulantes = p.idpostulante
@@ -990,7 +990,7 @@ switch ($tabla) {
 		inner join dbusuarios usu ON usu.idusuario = p.refusuarios
 		inner join tbescolaridades esc ON esc.idescolaridad = p.refescolaridades
 		inner join tbestadocivil est ON est.idestadocivil = p.refestadocivil
-		inner join tbestadopostulantes ep ON ep.idestadopostulante = p.refestadopostulantes and ep.idestadopostulante in (9,11)
+		inner join tbestadopostulantes ep ON ep.idestadopostulante = p.refestadopostulantes and ep.idestadopostulante in (9,11,12,13)
 		left join dbasesores rr on rr.refusuarios = p.refusuarios ";
 		if ($_SESSION['idroll_sahilices'] == 9) {
 			$consulta .= 'left join dbreclutadorasores rrr on rrr.refpostulantes = p.idpostulante

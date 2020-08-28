@@ -1972,8 +1972,11 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 
 
-
-						$('#wizard_with_validation .escondido').hide();
+						<?php if (isset($_GET['id'])) { ?>
+						$('#wizard_with_validation .contCuestionario .escondido').remove();
+						<?php } else { ?>
+						$('#wizard_with_validation .contCuestionario .escondido').hide();
+						<?php } ?>
 
 						$('#wizard_with_validation .aparecer').click(function() {
 							idTable =  $(this).attr("id");
@@ -2029,7 +2032,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 			});
 		}
 
-		cuestionario(<?php echo $rIdProducto; ?>,<?php echo $id; ?>);
+
 
 
 		function validarCuestionario(idproducto) {
@@ -2308,7 +2311,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 			}
 		});
 
-
+		$('.contSubirArchivos1').hide();
+		$('.contSubirArchivos2').hide();
 
 		function setButtonWavesEffect(event) {
 			$(event.currentTarget).find('[role="menu"] li a').removeClass('waves-effect');
@@ -2352,7 +2356,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 							$('.contSubirArchivos1').hide();
 							$('.contSubirArchivos2').hide();
 						}
-						
+
 						if (currentIndex == 1) {
 							validarCuestionario($('#refproductos').val());
 							//guardarCotizacion(1);
@@ -2435,7 +2439,6 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					<?php } ?>
 
 
-
 	        },
 	        onFinishing: function (event, currentIndex) {
 	            form.validate().settings.ignore = ':disabled';
@@ -2460,6 +2463,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 				//esconde2 = 1;
 			<?php } ?>
 
+		<?php } else { ?>
+			cuestionario(<?php echo $rIdProducto; ?>,<?php echo $id; ?>);
 		<?php } ?>
 
 

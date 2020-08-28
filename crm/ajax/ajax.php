@@ -2555,6 +2555,7 @@ function traerRespuestascuestionarioPorPregunta($serviciosReferencias, $servicio
    echo $varCad;
 }
 
+// valida primer cuestionario cuestionario1
 function validarCuestionario($serviciosReferencias) {
    $id = $_POST['refproductos'];
    $refclientes = $_POST['refclientes'];
@@ -2648,13 +2649,16 @@ function validarCuestionario($serviciosReferencias) {
             }
 
          } else {
-            array_push($arRespuestas,
-                  array('refpreguntascuestionario' => $valor['idpregunta'],
-                  'refrespuestascuestionario' => $valor['idrespuesta'],
-                  'pregunta' => $pregunta,
-                  'respuesta' => 'Lo que el ususario ingrese',
-                  'respuestavalor' => $_POST[$valor['respuesta']])
-               );
+            if ($_POST[$valor['respuesta']] != '') {
+               array_push($arRespuestas,
+                     array('refpreguntascuestionario' => $valor['idpregunta'],
+                     'refrespuestascuestionario' => $valor['idrespuesta'],
+                     'pregunta' => $pregunta,
+                     'respuesta' => 'Lo que el ususario ingrese',
+                     'respuestavalor' => $_POST[$valor['respuesta']])
+                  );
+            }
+
          }
       }
 
@@ -2915,16 +2919,23 @@ function cuestionario($serviciosReferencias) {
 
 
       $cad = '';
-
+      //poner en local utf8_decode
       foreach ($resAux as $valor) {
          $cad .= $valor['divRow'];
+
          $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
-            <h4>'.$valor['pregunta'].'</h4>
+            <h4>'.($valor['pregunta']).'</h4>
          </div>';
-         $cad .= $valor['respuestas'];
+         $cad .= ($valor['respuestas']);
+
+         /*$cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
+            <h4>Pregunta</h4>
+         </div>';
+         $cad .= 'Respuesta';*/
          $cad .= '</div>';
 
       }
+      //echo die(var_dump($res['rules']));
 
       $ar = array('cuestionario'=>$cad,'rules'=>$res['rules']);
    }
@@ -2932,7 +2943,7 @@ function cuestionario($serviciosReferencias) {
    $resV['datos'] = $ar;
 
    header('Content-type: application/json');
-   echo json_encode($resV);
+   echo json_encode( $resV);
 
 }
 

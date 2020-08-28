@@ -1949,7 +1949,11 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					if (data != '') {
 						$('.contCuestionario').html(data.datos.cuestionario);
 
-						$('#wizard_with_validation .escondido').hide();
+						<?php if (isset($_GET['id'])) { ?>
+						$('#wizard_with_validation .contCuestionario .escondido').remove();
+						<?php } else { ?>
+						$('#wizard_with_validation .contCuestionario .escondido').hide();
+						<?php } ?>
 
 						$('#wizard_with_validation .aparecer').click(function() {
 							idTable =  $(this).attr("id");
