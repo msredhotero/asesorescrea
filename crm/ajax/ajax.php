@@ -1143,9 +1143,30 @@ switch ($accion) {
    case 'traerInformeDeDocumentaciones':
       traerInformeDeDocumentaciones($serviciosReferencias);
    break;
+   case 'modificarEstadoDeRechazopostulantes':
+     modificarEstadoDeRechazopostulantes($serviciosReferencias);
+   break;
 
 }
 /* FinFinFin */
+
+function modificarEstadoDeRechazopostulantes($serviciosReferencias) {
+  $id = $_POST['id'];
+  $idestado = $_POST['idestado'];
+
+  $res = $serviciosReferencias->modificarPostulanteUnicaDocumentacion($id, 'refestadopostulantes', $idestado);
+
+  if ($res) {
+     $resV['error'] = false;
+
+  } else {
+     $resV['error'] = true;
+
+  }
+
+  header('Content-type: application/json');
+  echo json_encode($resV);
+}
 
 function traerInformeDeDocumentaciones($serviciosReferencias) {
    $id = $_POST['id'];
@@ -2923,9 +2944,16 @@ function cuestionario($serviciosReferencias) {
       foreach ($resAux as $valor) {
          $cad .= $valor['divRow'];
 
-         $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
-            <h4>'.($valor['pregunta']).'</h4>
-         </div>';
+         if ($valor['leyenda'] != '') {
+           $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
+              <h4><span>'.($valor['pregunta']).'</span> <i class="material-icons" style="color:grey;" data-toggle="tooltip" data-placement="top" title="'.($valor['leyenda']).'">help</i></h4>
+           </div>';
+         } else {
+           $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
+              <h4>'.($valor['pregunta']).'</h4>
+           </div>';
+         }
+
          $cad .= ($valor['respuestas']);
 
          /*$cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">

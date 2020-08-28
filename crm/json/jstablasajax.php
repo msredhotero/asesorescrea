@@ -1032,49 +1032,49 @@ switch ($tabla) {
 
 		switch ($_SESSION['idroll_sahilices']) {
 			case 1:
-				$label = array('btnVer','btnDocumentacion');
-				$class = array('bg-blue','bg-amber');
-				$icon = array('Ver','Documentaciones');
+				$label = array('btnVer','btnDocumentacion','btnEstado');
+				$class = array('bg-blue','bg-amber','bg-orange');
+				$icon = array('Ver','Documentaciones','Modificar Estado Rechazo');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 11;
 			break;
 			case 2:
-				$label = array('btnVer','btnDocumentacion');
-				$class = array('bg-blue','bg-amber');
-				$icon = array('Ver','Documentaciones');
+				$label = array('btnVer','btnDocumentacion','btnEstado');
+				$class = array('bg-blue','bg-amber','bg-orange');
+				$icon = array('Ver','Documentaciones','Modificar Estado Rechazo');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 10;
 			break;
 			case 3:
-				$label = array('btnVer','btnDocumentacion');
-				$class = array('bg-blue','bg-amber');
-				$icon = array('Ver','Documentaciones');
+				$label = array('btnVer','btnDocumentacion','btnEstado');
+				$class = array('bg-blue','bg-amber','bg-orange');
+				$icon = array('Ver','Documentaciones','Modificar Estado Rechazo');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 11;
 			break;
 			case 4:
-				$label = array('btnVer','btnDocumentacion');
-				$class = array('bg-blue','bg-amber');
-				$icon = array('Ver','Documentaciones');
+				$label = array('btnVer','btnDocumentacion','btnEstado');
+				$class = array('bg-blue','bg-amber','bg-orange');
+				$icon = array('Ver','Documentaciones','Modificar Estado Rechazo');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 11;
 			break;
 			case 5:
-				$label = array('btnVer','btnDocumentacion');
-				$class = array('bg-blue','bg-amber');
-				$icon = array('Ver','Documentaciones');
+				$label = array('btnVer','btnDocumentacion','btnEstado');
+				$class = array('bg-blue','bg-amber','bg-orange');
+				$icon = array('Ver','Documentaciones','Modificar Estado Rechazo');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 10;
 			break;
 			case 6:
-				$label = array('btnVer','btnDocumentacion');
-				$class = array('bg-blue','bg-amber');
-				$icon = array('Ver','Documentaciones');
+				$label = array('btnVer','btnDocumentacion','btnEstado');
+				$class = array('bg-blue','bg-amber','bg-orange');
+				$icon = array('Ver','Documentaciones','Modificar Estado Rechazo');
 				$indiceID = 0;
 				$empieza = 1;
 				$termina = 10;

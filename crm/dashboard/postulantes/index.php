@@ -572,6 +572,37 @@ $cadRefFiltro = $cadRef1;
 		 </div>
 	</div>
 
+	<div class="modal fade" id="lgmEstado" tabindex="-1" role="dialog">
+		 <div class="modal-dialog modal-lg" role="document">
+			  <div class="modal-content">
+					<div class="modal-header bg-orange">
+						 <h4 class="modal-title" id="lblModalEstado">MODIFICAR ESTADO POSTULANTE HISTORICO</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row contDirectorio">
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContrefusuarios" style="display:block">
+								<label for="refusuarios" class="control-label" style="text-align:left">Seleccione un Nuevo Estado  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group col-md-12">
+										<div class="form-line focused">
+										<select class="form-control" id="refestadonuevo" name="refestadonuevo" required="" aria-required="true">
+											<option value="9">Rechazado</option>
+											<option value="12">Rechazo SIAP</option>
+											<option value="13">Rechazo Veritas</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-warning waves-effect modificarEstadoRechazo" data-dismiss="modal">MODIFICAR</button>
+						 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+					</div>
+			  </div>
+		 </div>
+	</div>
+	<input type="hidden" name="refpostulantesestado" id="refpostulantesestado" />
+
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
@@ -599,7 +630,62 @@ $cadRefFiltro = $cadRef1;
 <script>
 	$(document).ready(function(){
 
+		$('.modificarEstadoRechazo').click(function() {
+			modificarEstadoDeRechazopostulantes();
+		});
 
+		function modificarEstadoDeRechazopostulantes() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificarEstadoDeRechazopostulantes',
+					id: $('#refpostulantesestado').val(),
+					idestado: $('#refestadonuevo').val()
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error) {
+						swal({
+								title: "Respuesta",
+								text: data,
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+					} else {
+						swal({
+								title: "Respuesta",
+								text: 'Se modifico correctamente el estado',
+								type: "success",
+								timer: 2000,
+								showConfirmButton: false
+						});
+						table2.ajax.reload();
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+
+		}
 
 
 		function traerInformeDeDocumentaciones(id) {
@@ -1088,11 +1174,10 @@ $cadRefFiltro = $cadRef1;
 			var str2 = str.slice(indexId + 4, str.length);
 			var indexId2 = str2.indexOf('"');
 			var idTabla = str.slice(indexId + 4, indexId + 4 + indexId2);
-			alert(idTabla);
+
 			traerInformeDeDocumentaciones(idTabla);
 
 		});
-
 
 
 		var table2 = $('#example2').DataTable({
@@ -1162,6 +1247,32 @@ $cadRefFiltro = $cadRef1;
 				select.append( '<option value="'+d+'">'+d+'</option>' )
 			} );
 		} );
+
+		$('#example2 tbody').on('click', '.btnEstado', function () {
+			idTable =  $(this).attr("id");
+			var rowT = $(this).closest('tr');
+
+			var data = table2.row(rowT).data();
+
+			var rowEstado = data[7];
+
+			$('#refpostulantesestado').val(idTable);
+
+			if (( rowEstado.trim() == 'Rechazado') || (rowEstado.trim() == 'Rechazo SIAP') || (rowEstado.trim() == 'Rechazo Veritas')) {
+				$('#lgmEstado').modal();
+			} else {
+				swal({
+						title: "Respuesta",
+						text: 'Solo se pueden modificar los estados de Rechazado, Rechazo SIAP y Rechazo Veritas del historial. Estado Actual:' + rowEstado,
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+				});
+			}
+
+
+
+		});//fin del boton eliminar
 
 
 

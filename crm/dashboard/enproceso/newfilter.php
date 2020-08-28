@@ -733,7 +733,12 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
                               </fieldset>
 									<?php } ?>
 
-
+									<!-- verifico que existan archivos para cargarle al producto -->
+									<?php
+									$cargados = 0;
+									$i = 0;
+									if ($iddocumentacion > 0) {
+									?>
 										<h3>Galeria Producto</h3>
                               <fieldset>
 											<?php if ($documentacionNombre != '') { ?>
@@ -743,8 +748,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 											<?php } ?>
 											<div class="col-xs-4">
 											<?php
-												$i = 0;
-												$cargados = 0;
+
 												while ($rowD = mysql_fetch_array($documentacionesrequeridas)) {
 													$i += 1;
 													if ($rowD['archivo'] != '') {
@@ -816,7 +820,9 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 												</div>
 
 											</div>
-                              </fieldset>
+                      </fieldset>
+										<?php } ?>
+											<!-- fin verifico que existan archivos para cargarle al producto -->
 
                               <h3>Información del Negocio</h3>
                               <fieldset>
@@ -1846,6 +1852,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 							$('#wizard_with_validation .contCuestionarioPersonasContratante #contPregunta'+idPregunta).show(400);
 						});
+
+						$('#wizard_with_validation [data-toggle="tooltip"]').tooltip();
 					} else {
 						swal({
 								title: "Respuesta",
@@ -1928,6 +1936,9 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 							$('#wizard_with_validation .contCuestionarioPersonas #contPregunta'+idPregunta).show(400);
 						});
+
+						$('#wizard_with_validation [data-toggle="tooltip"]').tooltip();
+
 					} else {
 						swal({
 								title: "Respuesta",
@@ -1988,25 +1999,27 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 							$('#wizard_with_validation #contPregunta'+idPregunta).show(400);
 
-
-
-							$('#wizard_with_validation .tsfechanacimiento').pickadate({
-					 			format: 'yyyy-mm-dd',
-					 			labelMonthNext: 'Siguiente mes',
-					 			labelMonthPrev: 'Previo mes',
-					 			labelMonthSelect: 'Selecciona el mes del año',
-					 			labelYearSelect: 'Selecciona el año',
-					 			selectMonths: true,
-					 			selectYears: 100,
-					 			today: 'Hoy',
-					 			clear: 'Borrar',
-					 			close: 'Cerrar',
-					 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-					 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-					 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-					 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-					 		});
 						});
+
+						$('#wizard_with_validation .tsfechanacimiento').pickadate({
+							format: 'yyyy-mm-dd',
+							labelMonthNext: 'Siguiente mes',
+							labelMonthPrev: 'Previo mes',
+							labelMonthSelect: 'Selecciona el mes del año',
+							labelYearSelect: 'Selecciona el año',
+							selectMonths: true,
+							selectYears: 100,
+							today: 'Hoy',
+							clear: 'Borrar',
+							close: 'Cerrar',
+							monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+							monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+							weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+							weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+						});
+
+						$('#wizard_with_validation [data-toggle="tooltip"]').tooltip();
+
 					} else {
 						swal({
 								title: "Respuesta",
@@ -2350,93 +2363,41 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	        onStepChanged: function (event, currentIndex, priorIndex) {
 	            setButtonWavesEffect(event);
 
-					<?php if (!(isset($_GET['id']))) { ?>
+							var $tab = $('#wizard_with_validation-h-' + currentIndex).html();
 
-						if (currentIndex == 0) {
-							$('.contSubirArchivos1').hide();
-							$('.contSubirArchivos2').hide();
-						}
-
-						if (currentIndex == 1) {
-							validarCuestionario($('#refproductos').val());
-							//guardarCotizacion(1);
-						}
-
-						if (currentIndex == 2) {
-							$('.contSubirArchivos2').hide();
-							$('.contSubirArchivos1').show();
-						}
-
-						if (currentIndex == 3) {
-
-							$('.contSubirArchivos1').hide();
-							$('.contSubirArchivos2').show();
-						}
-
-						if (currentIndex < 2) {
-							$('.contSubirArchivos1').hide();
-							$('.contSubirArchivos2').hide();
-						}
-
-
-					<?php } else { ?>
-
-
-							<?php if ($llevaAsegurado == 1) { ?>
-
-								if (currentIndex == 0) {
-									$('.contSubirArchivos1').hide();
+							if ($tab.trim() == 'Información del Negocio') {
+								$('.contSubirArchivos1').hide();
+								$('.contSubirArchivos2').show();
+							} else {
+								if ($tab.trim() == 'Galeria Producto') {
 									$('.contSubirArchivos2').hide();
-								}
-								if (currentIndex == 1) {
-									$('.contSubirArchivos1').hide();
-									$('.contSubirArchivos2').hide();
-								}
-								if (currentIndex == 2) {
-									validarCuestionarioContratante(<?php echo $rIdCliente; ?>,0 );
-
 									$('.contSubirArchivos1').show();
-									$('.contSubirArchivos2').hide();
-								}
-
-								if (currentIndex == 3) {
-
-									validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
-
-									$('.contSubirArchivos1').hide();
-									$('.contSubirArchivos2').show();
-								}
-
-								if (currentIndex > 3) {
+								} else {
 									$('.contSubirArchivos1').hide();
 									$('.contSubirArchivos2').hide();
 								}
+							}
 
-							<?php } else { ?>
-								if (currentIndex == 0) {
-									$('.contSubirArchivos1').hide();
-									$('.contSubirArchivos2').hide();
-								}
+							if ($tab.trim() == 'ASEGURADO') {
+								validarCuestionarioContratante(<?php echo $rIdCliente; ?>,0 );
+							}
 
-								if (currentIndex == 1) {
-									$('.contSubirArchivos1').show();
-									$('.contSubirArchivos2').hide();
-								}
-
-								if (currentIndex == 2) {
-									$('.contSubirArchivos1').hide();
-									$('.contSubirArchivos2').show();
-								}
-
-								if (currentIndex >= 2) {
-									$('.contSubirArchivos1').hide();
-									$('.contSubirArchivos2').hide();
-								}
-							<?php } ?>
+							if ($tab.trim() == 'BENEFICIARIO') {
+								validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
+							}
 
 
 
-					<?php } ?>
+						<?php if (!(isset($_GET['id']))) { ?>
+
+
+
+							if (currentIndex == 1) {
+								validarCuestionario($('#refproductos').val());
+								//guardarCotizacion(1);
+							}
+
+						<?php } ?>
 
 
 	        },

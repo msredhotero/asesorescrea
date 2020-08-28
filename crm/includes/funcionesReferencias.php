@@ -981,7 +981,7 @@ return $res;
    }
 
 
-
+   // cuestionario1
    function Cuestionario($idcuestionario,$idcotizacion,$idcliente=0) {
       //die(var_dump($idcuestionario));
 
@@ -1030,7 +1030,7 @@ return $res;
                }
 
                $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
-                  <h4>'.$row['pregunta'].'</h4>
+                  <h4>'.($row['pregunta']).'</h4>
                </div>';
 
                if ($row['idtiporespuesta'] == 1) {
@@ -1191,7 +1191,7 @@ return $res;
       return array('cuestionario'=>$cad,'rules'=>$rules);
    }
 
-
+   // cuestionario2
    function CuestionarioAux($idcuestionario,$idcotizacion,$idcliente=0) {
       //die(var_dump($idcuestionario));
 
@@ -1349,7 +1349,8 @@ return $res;
                'divRow' => '<div class="row '.$escondido.' clcontPregunta'.$row['dependerespuestaaux'].'" style="padding: 5px 20px;" id="contPregunta'.$row['idpreguntacuestionario'].'">',
                'pregunta' => $row['pregunta'],
                'idpregunta'=>$row['idpreguntacuestionario'],
-               'respuestas' => $cadInput
+               'respuestas' => $cadInput,
+               'leyenda' =>$row['leyenda']
             ));
 
 
@@ -2328,7 +2329,8 @@ return $res;
             pre.idpreguntacuestionario,
             coalesce( pre.depende,0) as dependeaux,
             coalesce( pre.dependerespuesta ,0) as dependerespuestaaux,
-            pre.obligatoria
+            pre.obligatoria,
+            pre.leyenda
          from dbcuestionarios c
          inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario and pre.activo='1'
          inner join tbtiporespuesta tr ON tr.idtiporespuesta = pre.reftiporespuesta
