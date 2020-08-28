@@ -709,6 +709,12 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
                               </fieldset>
 										<?php } ?>
 
+										<!-- verifico que existan archivos para cargarle al producto -->
+										<?php
+										$cargados = 0;
+										$i = 0;
+										if ($iddocumentacion > 0) {
+										?>
 										<h3>Galeria Producto</h3>
                               <fieldset>
 											<?php if ($documentacionNombre != '') { ?>
@@ -718,8 +724,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 											<?php } ?>
 											<div class="col-xs-4">
 											<?php
-												$i = 0;
-												$cargados = 0;
+
 												while ($rowD = mysql_fetch_array($documentacionesrequeridas)) {
 													$i += 1;
 													if ($rowD['archivo'] != '') {
@@ -791,7 +796,9 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 												</div>
 
 											</div>
-                              </fieldset>
+                      </fieldset>
+										<?php } ?>
+											<!-- fin verifico que existan archivos para cargarle al producto -->
 
                               <h3>Información del Negocio</h3>
                               <fieldset>
@@ -2323,59 +2330,37 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	        onStepChanged: function (event, currentIndex, priorIndex) {
 	            setButtonWavesEffect(event);
 
-					<?php if (!(isset($_GET['id']))) { ?>
-						if (currentIndex == 1) {
-							validarCuestionario($('#refproductos').val());
-							//guardarCotizacion(1);
-						}
+							var $tab = $('#wizard_with_validation-h-' + currentIndex).html();
 
-						if (currentIndex == 2) {
-							$('.contSubirArchivos2').hide();
-							$('.contSubirArchivos1').show();
-						}
-
-						if (currentIndex == 3) {
-
-							$('.contSubirArchivos1').hide();
-							$('.contSubirArchivos2').show();
-						}
-
-						if (currentIndex < 2) {
-							$('.contSubirArchivos1').hide();
-							$('.contSubirArchivos2').hide();
-						}
-
-
-					<?php } else { ?>
-
-
-
-							if (currentIndex == 2) {
-
-								validarCuestionarioContratante(<?php echo $rIdCliente; ?>,0 );
-
-							}
-
-							if (currentIndex == 3) {
-
-								validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
-
-								$('.contSubirArchivos1').show();
-								$('.contSubirArchivos2').hide();
-							}
-
-							if (currentIndex == 4) {
-
-
+							if ($tab.trim() == 'Información del Negocio') {
 								$('.contSubirArchivos1').hide();
 								$('.contSubirArchivos2').show();
+							} else {
+								if ($tab.trim() == 'Galeria Producto') {
+									$('.contSubirArchivos2').hide();
+									$('.contSubirArchivos1').show();
+								} else {
+									$('.contSubirArchivos1').hide();
+									$('.contSubirArchivos2').hide();
+								}
 							}
 
-							if (currentIndex < 3) {
-								$('.contSubirArchivos1').hide();
-								$('.contSubirArchivos2').hide();
+							if ($tab.trim() == 'ASEGURADO') {
+								validarCuestionarioContratante(<?php echo $rIdCliente; ?>,0 );
 							}
-					<?php } ?>
+
+							if ($tab.trim() == 'BENEFICIARIO') {
+								validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
+							}
+
+						<?php if (!(isset($_GET['id']))) { ?>
+
+							if (currentIndex == 1) {
+								validarCuestionario($('#refproductos').val());
+								//guardarCotizacion(1);
+							}
+
+						<?php } ?>
 
 
 

@@ -2386,11 +2386,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 								validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
 							}
 
-
-
 						<?php if (!(isset($_GET['id']))) { ?>
-
-
 
 							if (currentIndex == 1) {
 								validarCuestionario($('#refproductos').val());
@@ -2398,7 +2394,6 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 							}
 
 						<?php } ?>
-
 
 	        },
 	        onFinishing: function (event, currentIndex) {
