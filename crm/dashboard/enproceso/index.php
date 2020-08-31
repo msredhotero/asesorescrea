@@ -263,19 +263,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 												<span>NUEVO</span>
 											</button>
 
-											<button type="button" class="btn bg-blue waves-effect btnVigente">
-												<i class="material-icons">timeline</i>
-												<span>VIGENTE</span>
-											</button>
-											<button type="button" class="btn bg-green waves-effect btnCotizacion">
-												<i class="material-icons">history</i>
-												<span>EN COTIZACION</span>
-											</button>
-											<button type="button" class="btn bg-grey waves-effect btnHistorico">
-												<i class="material-icons">history</i>
-												<span>HISTORICO</span>
-											</button>
-
 										</div>
 									</div>
 								</div>

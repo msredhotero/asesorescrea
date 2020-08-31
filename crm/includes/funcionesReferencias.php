@@ -6677,7 +6677,7 @@ return $res;
 	}
 
 
-	function traerCotizacionesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$whereEstado,$filtroNuevo) {
+	function traerCotizacionesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$whereEstado,$filtroNuevo='') {
 		$where = '';
 
       $cadFiltroNuevo = '';
@@ -6749,7 +6749,7 @@ return $res;
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
 
-		die(var_dump($sql));
+		//die(var_dump($sql));
 
 		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
