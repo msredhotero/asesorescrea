@@ -70,6 +70,13 @@ if (isset($_GET['id'])) {
 	$refAsociados = mysql_result($resultado,0,'refasociados');
 	$refProductos = mysql_result($resultado,0,'refproductos');
 
+	$estadoCotizacionGral = mysql_result($resultado,0,'refestadocotizaciones');
+
+	if ($estadoCotizacionGral == 19) {
+		header('Location: comercio_fin.php?id='.$id);
+		
+	}
+
 	$refIdAsegurados = mysql_result($resultado,0,'refasegurados');
 	$tieneAsegurado = mysql_result($resultado,0,'tieneasegurado');
 
@@ -2366,7 +2373,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					existeprimaobjetivo: $('#existeprimaobjetivo').val(),
 					primaobjetivo: $('#primaobjetivo').val(),
 					id: <?php echo $id; ?>,
-					estadoactual: 12,
+					estadoactual: 19,
 					fechaemitido: '<?php echo date('Y-m-d'); ?>',
 					fechapropuesta: '<?php echo date('Y-m-d'); ?>',
 					foliotys: '',

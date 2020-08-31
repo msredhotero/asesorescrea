@@ -2111,9 +2111,13 @@ function insertarAsegurados($serviciosReferencias) {
    $telefonofijo = '';
    $telefonocelular = '';
 
+   $resCliente = $serviciosReferencias->traerClientesPorId($refclientes);
+
    $res = $serviciosReferencias->insertarAsegurados($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco,$fechanacimiento);
 
    if ((integer)$res > 0) {
+      $resM1 = $serviciosReferencias->modificarCampoParticularAsegurados($res,'email',mysql_result($resCliente,0,'email'));
+      $resM2 = $serviciosReferencias->modificarCampoParticularAsegurados($res,'telefonofijo',mysql_result($resCliente,0,'telefonofijo'));
       echo '';
    } else {
       echo 'Hubo un error al insertar datos ';
