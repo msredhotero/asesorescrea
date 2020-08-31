@@ -43,6 +43,21 @@ $rTipoPersona = mysql_result($rCliente,0,'reftipopersonas');
 if (isset($_GET['id'])) {
 	$resCotizacionPrincipal = $serviciosReferencias->traerCotizacionesPorIdCompleto($_GET['id']);
 
+	if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 19) {
+		$resVentas = $serviciosReferencias->traerVentasPorCotizacion($_GET['id']);
+
+		if (mysql_num_rows($resVentas) > 0) {
+			$resMetodoPago = $serviciosReferencias->traerPeriodicidadventasPorVenta(mysql_result($resVentas,0,0));
+			if (mysql_num_rows($resMetodoPago) > 0) {
+				return header('Location: ../venta/comercio_fin.php?id='.$_GET['id']);
+			} else {
+				return header('Location: ../venta/metodopago.php?id='.$_GET['id']);
+			}
+		} else {
+			return header('Location: ../venta/metodopago.php?id='.$_GET['id']);
+		}
+
+	}
 
 	if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') >= 2) {
 		header('Location: ../cotizacionesvigentes/resultado.php?id='.$_GET['id']);

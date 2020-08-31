@@ -6794,7 +6794,7 @@ return $res;
 		left join dbasociados aso ON aso.idasociado = c.refasociados
 		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
 		left join dbventas v on v.refcotizaciones = c.idcotizacion
-		where v.idventa is null and c.refestadocotizaciones in (1,2,3) and us.idusuario = ".$responsableComercial." ".$where."
+		where (v.idventa IS NULL or c.refestadocotizaciones IN (19)) and c.refestadocotizaciones in (1,19) and us.idusuario = ".$responsableComercial." ".$where."
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
 
@@ -14567,7 +14567,23 @@ return $res;
 
  /*****************************       fin         ************************************************/
 
+   function limpiar() {
+      $sql = "delete from dbcomercioinicio;
+            delete from dbcomerciofin;
+            delete from dbclientesasesores;
+            delete from dbclientescartera;
+            delete from dblead;
+            delete from dbasegurados;
 
+            delete from dbperiodicidadventaspagos;
+            delete from dbperiodicidadventasdetalle;
+            delete from dbperiodicidadventas;
+            delete from dbventas;
+            delete from dbcotizaciones;";
+      $res = $this->query($sql,0);
+
+      return $res;
+   }
 
 
    function query($sql,$accion) {
