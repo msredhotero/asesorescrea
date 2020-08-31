@@ -1841,6 +1841,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 						$('#wizard_with_validation .contCuestionarioPersonasContratante .escondido').hide();
 
+						$('#wizard_with_validation [data-toggle="tooltip"]').tooltip();
+
 						$('#wizard_with_validation .contCuestionarioPersonasContratante .aparecer').click(function() {
 							idTable =  $(this).attr("id");
 							idPregunta =  $('#'+idTable).data("pregunta");
@@ -1923,6 +1925,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 						$('#wizard_with_validation .contCuestionarioPersonas .escondido').hide();
 
+						$('#wizard_with_validation [data-toggle="tooltip"]').tooltip();
+
 						$('#wizard_with_validation .contCuestionarioPersonas .aparecer').click(function() {
 							idTable =  $(this).attr("id");
 							idPregunta =  $('#'+idTable).data("pregunta");
@@ -1981,6 +1985,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 						$('#wizard_with_validation .contCuestionario .escondido').hide();
 						<?php } ?>
 
+						$('#wizard_with_validation [data-toggle="tooltip"]').tooltip();
+
 						$('#wizard_with_validation .aparecer').click(function() {
 							idTable =  $(this).attr("id");
 							idPregunta =  $('#'+idTable).data("pregunta");
@@ -1991,22 +1997,24 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 							$('#wizard_with_validation #contPregunta'+idPregunta).show(400);
 
-							$('#wizard_with_validation .tsfechanacimiento').pickadate({
-					 			format: 'yyyy-mm-dd',
-					 			labelMonthNext: 'Siguiente mes',
-					 			labelMonthPrev: 'Previo mes',
-					 			labelMonthSelect: 'Selecciona el mes del año',
-					 			labelYearSelect: 'Selecciona el año',
-					 			selectMonths: true,
-					 			selectYears: 100,
-					 			today: 'Hoy',
-					 			clear: 'Borrar',
-					 			close: 'Cerrar',
-					 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-					 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-					 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-					 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-					 		});
+
+						});
+
+						$('#wizard_with_validation .tsfechanacimiento').pickadate({
+							format: 'yyyy-mm-dd',
+							labelMonthNext: 'Siguiente mes',
+							labelMonthPrev: 'Previo mes',
+							labelMonthSelect: 'Selecciona el mes del año',
+							labelYearSelect: 'Selecciona el año',
+							selectMonths: true,
+							selectYears: 100,
+							today: 'Hoy',
+							clear: 'Borrar',
+							close: 'Cerrar',
+							monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+							monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+							weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+							weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
 						});
 					} else {
 						swal({
