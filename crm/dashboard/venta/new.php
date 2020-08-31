@@ -1806,7 +1806,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 				//una vez finalizado correctamente
 				success: function(data){
 
-					if (data == false) {
+					if (data.error) {
 						swal({
 								title: "Respuesta",
 								text: 'Se genero un error al guardar el asegurado',

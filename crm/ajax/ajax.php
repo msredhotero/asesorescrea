@@ -1150,9 +1150,65 @@ switch ($accion) {
    case 'modificoAseguradoPorCotizacion':
       modificoAseguradoPorCotizacion($serviciosReferencias);
    break;
+   case 'guardarMetodoDePagoPorCotizacion':
+      guardarMetodoDePagoPorCotizacion($serviciosReferencias);
+   break;
 
 }
 /* FinFinFin */
+
+function guardarMetodoDePagoPorCotizacion($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $resCotizacion = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+
+   $idventa = $_POST['refventas'];
+   $metodopago = $_POST['metodopago'];
+
+   switch ($metodopago) {
+      case 1:
+         $reftipoperiodicidad = 1;
+         $reftipocobranza = 1;
+         $url = 'comercio_fin.php?id='.mysql_result($resCotizacion,0,0);
+      break;
+      case 2:
+         $reftipoperiodicidad = 1;
+         $reftipocobranza = 1;
+         $url = '../index.php';
+      break;
+      case 3:
+         $reftipoperiodicidad = 1;
+         $reftipocobranza = 1;
+         $url = '../index.php';
+      break;
+      case 4:
+         $reftipoperiodicidad = 4;
+         $reftipocobranza = 2;
+         $url = '../index.php';
+      break;
+   }
+
+   $resAux = $serviciosReferencias->traerPeriodicidadventasPorVenta($idventa);
+
+   if (mysql_num_rows($resAux) > 0) {
+      $res = mysql_result($resAux,0,0);
+   } else {
+      $res = $serviciosReferencias->insertarPeriodicidadventas($idventa,$reftipoperiodicidad,$reftipocobranza);
+   }
+
+
+
+   if ($res) {
+      $resV['error'] = false;
+      $resV['url'] = $url;
+   } else {
+      $resV['error'] = true;
+
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function modificoAseguradoPorCotizacion($serviciosReferencias) {
    $id = $_POST['id'];
