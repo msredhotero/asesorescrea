@@ -48,6 +48,9 @@ if (isset($_GET['id'])) {
 		header('Location: ../cotizacionesvigentes/resultado.php?id='.$_GET['id']);
 	} else {
 		$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta(mysql_result($resCotizacionPrincipal,0,'refproductos'));
+
+		$tipoProducto = mysql_result($resProductoPrincipal,0,'reftipoproducto');
+
 		if (mysql_result($resProductoPrincipal,0,'ventaenlinea') == '1') {
 			if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 5) {
 				header('Location: ../venta/comercio_fin.php?id='.$_GET['id']);
@@ -744,7 +747,12 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 
 
-
+									<!-- verifico que existan archivos para cargarle al producto -->
+									<?php
+									$cargados = 0;
+									$i = 0;
+									if ($iddocumentacion > 0) {
+									?>
 										<h3>Galeria Producto</h3>
                               <fieldset>
 											<?php if ($documentacionNombre != '') { ?>
@@ -754,8 +762,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 											<?php } ?>
 											<div class="col-xs-4">
 											<?php
-												$i = 0;
-												$cargados = 0;
+
 												while ($rowD = mysql_fetch_array($documentacionesrequeridas)) {
 													$i += 1;
 													if ($rowD['archivo'] != '') {
@@ -828,9 +835,14 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 											</div>
                               </fieldset>
+										<?php } ?>
 
                               <h3>Información del Negocio</h3>
                               <fieldset>
+											<?php
+												// si el tipo de producto es seguros lo dejo entrar
+												if ($tipoProducto == 3) {
+											?>
 											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
 												<div class="form-group form-float">
 													<label class="form-label" style="margin-top:20px;">Existe Prima Objetivo</label>
@@ -923,6 +935,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 												<input style="width:200px;" type="hidden" class="form-control" id="fecharenovacion" name="fecharenovacion" />
 											</div>
+
+											<?php } // fin del tipo de producto ?>
 
 											<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContobservaciones" style="display:block">
 												<label class="form-label">Observaciones </label>
@@ -2138,85 +2152,37 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	        onStepChanged: function (event, currentIndex, priorIndex) {
 	            setButtonWavesEffect(event);
 
-					<?php if (!(isset($_GET['id']))) { ?>
-						if (currentIndex == 1) {
-							validarCuestionario($('#refproductos').val());
-							//guardarCotizacion(1);
-						}
+					var $tab = $('#wizard_with_validation-h-' + currentIndex).html();
 
-						if (currentIndex == 1) {
+					if ($tab.trim() == 'Información del Negocio') {
+						$('.contSubirArchivos1').hide();
+						$('.contSubirArchivos2').show();
+					} else {
+						if ($tab.trim() == 'Galeria Producto') {
 							$('.contSubirArchivos2').hide();
 							$('.contSubirArchivos1').show();
-						}
-
-						if (currentIndex == 2) {
-
-							$('.contSubirArchivos1').hide();
-							$('.contSubirArchivos2').show();
-						}
-
-						if (currentIndex < 1) {
+						} else {
 							$('.contSubirArchivos1').hide();
 							$('.contSubirArchivos2').hide();
 						}
+					}
 
+					if ($tab.trim() == 'ASEGURADO') {
+						validarCuestionarioContratante(<?php echo $rIdCliente; ?>,0 );
+					}
 
-					<?php } else { ?>
+					if ($tab.trim() == 'BENEFICIARIO') {
+						validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
+					}
 
-							if (currentIndex == 1) {
-								$('.contSubirArchivos2').hide();
-								$('.contSubirArchivos1').show();
-							}
+				<?php if (!(isset($_GET['id']))) { ?>
 
-							<?php if ($llevaAsegurado == 1) { ?>
-							if (currentIndex == 2) {
+					if (currentIndex == 1) {
+						validarCuestionario($('#refproductos').val());
+						//guardarCotizacion(1);
+					}
 
-								if ($('#wizard_with_validation #tieneasegurado').val() == '1') {
-									validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
-								} else {
-									validarCuestionarioPersona(<?php echo $rIdCliente; ?>,0 );
-								}
-
-								$('.contSubirArchivos1').show();
-								$('.contSubirArchivos2').hide();
-
-							}
-
-
-							if (currentIndex == 3) {
-
-								$('.contSubirArchivos1').hide();
-								$('.contSubirArchivos2').show();
-							}
-
-							if (currentIndex < 2) {
-								$('.contSubirArchivos1').hide();
-								$('.contSubirArchivos2').hide();
-							}
-							<?php } else { ?>
-								if (currentIndex == 1) {
-
-									$('.contSubirArchivos1').show();
-									$('.contSubirArchivos2').hide();
-								}
-
-								if (currentIndex == 2) {
-
-									$('.contSubirArchivos1').hide();
-									$('.contSubirArchivos2').show();
-								}
-
-
-
-								if (currentIndex < 1) {
-									$('.contSubirArchivos1').hide();
-									$('.contSubirArchivos2').hide();
-								}
-							<?php } ?>
-					<?php } ?>
-
-
-
+				<?php } ?>
 	        },
 	        onFinishing: function (event, currentIndex) {
 	            form.validate().settings.ignore = ':disabled';

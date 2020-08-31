@@ -73,7 +73,7 @@ if (isset($_GET['id'])) {
 	$refIdAsegurados = mysql_result($resultado,0,'refasegurados');
 	$tieneAsegurado = mysql_result($resultado,0,'tieneasegurado');
 
-	$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta(mysql_result($resCotizacionPrincipal,0,'refproductos'));
+	$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta($refProductos);
 
 	$tipoProducto = mysql_result($resProductoPrincipal,0,'reftipoproducto');
 
@@ -386,6 +386,22 @@ if (isset($_GET['id'])) {
 
 	$id = 0;
 
+	$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta($rIdProducto);
+
+	$tipoProducto = mysql_result($resProductoPrincipal,0,'reftipoproducto');
+
+	if (mysql_result($resProductoPrincipal,0,'beneficiario')) {
+		$llevaBeneficiario = 1;
+	} else {
+		$llevaBeneficiario = 0;
+	}
+
+	if (mysql_result($resProductoPrincipal,0,'asegurado')) {
+		$llevaAsegurado = 1;
+	} else {
+		$llevaAsegurado = 0;
+	}
+
 	$refIdAsegurados = 0;
 	$tieneAsegurado = '';
 
@@ -433,6 +449,9 @@ if (isset($_GET['id'])) {
 
 
 	$idasesor = 25;
+
+	$iddocumentacion2 = 0;
+	$iddocumentacion = 0;
 
 
 }
@@ -624,7 +643,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 										<input type="hidden" name="reftipopersonasaux" id="reftipopersonasaux" value="<?php echo $rTipoPersona; ?>" />
 										<input type="hidden" name="idcotizacion" id="idcotizacion" value="<?php echo $id; ?>" />
 										<input type="hidden" name="actualizacliente" id="actualizacliente" value="0" />
-										<input type="hidden" name="lead" id="lead" value="0" />
+										<input type="hidden" name="lead" id="lead" value="-1" />
 
                               <h3>Producto</h3>
                                  <fieldset>
@@ -2371,7 +2390,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	            return form.valid();
 	        },
 	        onFinished: function (event, currentIndex) {
-	            modificarCotizacion(12);
+	            modificarCotizacion(1);
 	        }
 	    });
 

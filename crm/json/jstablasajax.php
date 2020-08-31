@@ -552,6 +552,7 @@ switch ($tabla) {
 					$class = array('bg-amber','bg-red','bg-green');
 					$icon = array('alarm_off','delete','edit');
 				}
+				$filtroNuevo = $_GET['filtroNuevo'];
 
 				$whereEstado = ' c.refestados in (1) ';
 				$termina = 5;
@@ -562,6 +563,8 @@ switch ($tabla) {
 				$icon = array('create','delete');
 				$whereEstado = ' c.refestados in (2) ';
 				$termina = 5;
+
+				$filtroNuevo = '';
 			break;
 			case 3:
 				$label = array('btnModificar');
@@ -569,6 +572,7 @@ switch ($tabla) {
 				$icon = array('create');
 				$whereEstado = ' c.refestados in (3) ';
 				$termina = 6;
+				$filtroNuevo = '';
 			break;
 			case 4:
 				$label = array();
@@ -576,6 +580,7 @@ switch ($tabla) {
 				$icon = array();
 				$whereEstado = ' c.refestados in (4) ';
 				$termina = 6;
+				$filtroNuevo = '';
 			break;
 			default:
 				$label = array();
@@ -583,12 +588,13 @@ switch ($tabla) {
 				$icon = array();
 				$whereEstado = ' c.refestados in (1) ';
 				$termina = 5;
+				$filtroNuevo = '';
 			break;
 		}
 
 		if ($_SESSION['idroll_sahilices'] == 7) {
 
-			$datos = $serviciosReferencias->traerCotizacionesajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices'],$whereEstado);
+			$datos = $serviciosReferencias->traerCotizacionesajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices'],$whereEstado,$filtroNuevo);
 
 			$resAjax = $datos[0];
 			$res = $datos[1];
@@ -598,7 +604,7 @@ switch ($tabla) {
 
 			$responsableComercial = $_GET['sSearch_0'];
 
-			$datos = $serviciosReferencias->traerCotizacionesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$whereEstado);
+			$datos = $serviciosReferencias->traerCotizacionesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$whereEstado,$filtroNuevo);
 
 			$resAjax = $datos[0];
 			$res = $datos[1];

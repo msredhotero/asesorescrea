@@ -163,6 +163,19 @@ $resTransaccion = $serviciosComercio->insertarComerciofin($EM_Response,$EM_Total
 if ($error == 0) {
 	// modifico el estado a aprobado
 	$resModificarEstado = $serviciosComercio->modificarComercioInicioEstado($token,2);
+
+	$resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($EM_OrderID,'refestados',4,$_SESSION['usua_sahilices']);
+
+	$resModificarPM = $serviciosReferencias->modificarCotizacionesPorCampo($EM_OrderID,'refestadocotizaciones',12,$_SESSION['usua_sahilices']);
+
+	// obstengo el lead que se genero en venta en linea
+	$resLead = $serviciosReferencias->traerLeadPorCotizacion($EM_OrderID);
+
+	// se viene de ahi lo marco como vendido el estado del mismo
+	if (mysql_num_rows($resLead)>0) {
+		$resModificarLead = $serviciosReferencias->modificarLeadCotizacion(mysql_result($resLead,0,0),$EM_OrderID,5);
+	}
+
 } else {
 	$resModificarEstado = $serviciosComercio->modificarComercioInicioEstado($token,$idestado);
 }

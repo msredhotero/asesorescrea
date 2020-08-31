@@ -263,7 +263,32 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 												<span>NUEVO</span>
 											</button>
 
+											<button type="button" class="btn bg-blue waves-effect btnVigente">
+												<i class="material-icons">timeline</i>
+												<span>VIGENTE</span>
+											</button>
+											<button type="button" class="btn bg-green waves-effect btnCotizacion">
+												<i class="material-icons">history</i>
+												<span>EN COTIZACION</span>
+											</button>
+											<button type="button" class="btn bg-grey waves-effect btnHistorico">
+												<i class="material-icons">history</i>
+												<span>HISTORICO</span>
+											</button>
+
 										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-lg-12 col-md-12">
+										<?php
+										$cadRefAsinados = '<option value="">-- Seleccionar --</option><option value="enlinea">Venta en Linea</option><option value="poragente">Por Agente</option><option value="poroficina">Por Oficina</option>';
+										?>
+										<?php echo $serviciosFunciones->addInput('3,3,3,6','select','asignados_filtro','asignados_filtro','', 'Filtros','',$cadRefAsinados); ?>
+									</div>
+									<div class="col-lg-12 col-md-12">
+										<button type="button" class="btn bg-red" id="filtrar">Filtrar</button>
 									</div>
 								</div>
 								<?php } ?>
@@ -494,6 +519,16 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			"bServerSide": true,
 			"order": [[ 5, "desc" ]],
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizaciones&estado=1",
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+				/* Add some extra data to the sender */
+				aoData.push( { "name": "start", "value": $('#fechadesde_filtro').val(), } );
+				aoData.push( { "name": "end", "value": $('#fechahasta_filtro').val(), } );
+				aoData.push( { "name": "filtroNuevo", "value": $('#asignados_filtro').val(), } );
+				$.getJSON( sSource, aoData, function (json) {
+				/* Do whatever additional processing you want on the callback, then tell DataTables */
+				fnCallback(json)
+				} );
+			},
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -525,6 +560,10 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			  }
 		   }
 		});
+
+		$('#filtrar').click( function() {
+			table.draw();
+		} );
 
 		$("#sign_in").submit(function(e){
 			e.preventDefault();

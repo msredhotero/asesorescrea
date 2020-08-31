@@ -2905,7 +2905,12 @@ function validarCuestionario($serviciosReferencias) {
          // cuando inserto una cotizacion nueva, veo si llega desde un lead y lo relaciono
          if ($lead > 0) {
             $resModificarLead = $serviciosReferencias->modificarLeadCotizacion($lead,$res,2);
+         } else {
+            if ($lead == -1) {
+               $resInsertarLead = $serviciosReferencias->insertarLeadCompleto($refclientes,$refproductos,$fechacrea,$fechamodi,'0','','','',1,'','',1,7,$res);
+            }
          }
+
 
 
          $resV['idcotizacion']= $res;
@@ -4856,7 +4861,7 @@ function modificarCotizaciones($serviciosReferencias) {
       // busco si existe un lead para updetear
       $resLead = $serviciosReferencias->traerLeadPorCotizacion($id);
       if (mysql_num_rows($resLead) > 0) {
-         $resModLead = $serviciosReferencias->modificarLeadCotizacion(mysql_result($resLead,0,0),$id,5);
+         //$resModLead = $serviciosReferencias->modificarLeadCotizacion(mysql_result($resLead,0,0),$id,5);
       }
    } else {
       $foliointerno = '';

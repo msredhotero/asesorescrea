@@ -820,7 +820,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 												</div>
 
 											</div>
-                      </fieldset>
+                      			</fieldset>
 										<?php } ?>
 											<!-- fin verifico que existan archivos para cargarle al producto -->
 

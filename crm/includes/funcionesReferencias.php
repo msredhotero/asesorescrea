@@ -173,6 +173,13 @@ class ServiciosReferencias {
       return $res;
    }
 
+   function insertarLeadCompleto($refclientes,$refproductos,$fechacrea,$fechamodi,$contactado,$usuariocontacto,$usuarioresponsable,$cita,$refestadolead,$fechacreacita,$observaciones,$refproductosweb,$reforigencomercio,$refcotizaciones) {
+      $sql = "insert into dblead(idlead,refclientes,refproductos,fechacrea,fechamodi,contactado,usuariocontacto,usuarioresponsable,cita,refestadolead,fechacreacita,observaciones,refproductosweb,reforigencomercio,refcotizaciones)
+      values ('',".$refclientes.",".$refproductos.",'".$fechacrea."','".$fechamodi."','".$contactado."','".$usuariocontacto."','".$usuarioresponsable."','".$cita."',".$refestadolead.",'".$fechacreacita."','".$observaciones."',".$refproductosweb.",".$reforigencomercio.",".$refcotizaciones.")";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
 
    function modificarLead($id,$refclientes,$refproductos,$fechamodi,$contactado,$usuariocontacto,$usuarioresponsable,$cita,$refestadolead,$fechacreacita,$observaciones,$refproductosweb) {
       $sql = "update dblead
@@ -6670,8 +6677,23 @@ return $res;
 	}
 
 
-	function traerCotizacionesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$whereEstado) {
+	function traerCotizacionesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$whereEstado,$filtroNuevo) {
 		$where = '';
+
+      $cadFiltroNuevo = '';
+
+      switch ($filtroNuevo) {
+         case 'enlinea':
+            $cadFiltroNuevo = " inner join dblead le on le.refcotizaciones = c.idcotizacion and le.reforigencomercio = 7 ";
+         break;
+         case 'poragente':
+            $cadFiltroNuevo = " inner join dbusuarios ua on ua.idusuario = c.refusuarios and ua.refroles = 7 ";
+         break;
+         case 'poroficina':
+            $cadFiltroNuevo = " inner join dbusuarios ua on ua.idusuario = c.refusuarios and ua.refroles in (1,2,3,4,6,8,11,13,14,15) ";
+         break;
+
+      }
 
 		$roles = '';
 
@@ -6718,6 +6740,7 @@ return $res;
 		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
 		inner join tbproductos pro ON pro.idproducto = c.refproductos
 		inner join dbasesores ase ON ase.idasesor = c.refasesores
+      ".$cadFiltroNuevo."
 		left join dbusuarios us ON us.idusuario = c.refusuarios
 		left join dbasociados aso ON aso.idasociado = c.refasociados
 		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
@@ -6726,7 +6749,7 @@ return $res;
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
 
-		//die(var_dump($sql));
+		die(var_dump($sql));
 
 		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
