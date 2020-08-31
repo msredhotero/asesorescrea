@@ -1147,8 +1147,36 @@ switch ($accion) {
      modificarEstadoDeRechazopostulantes($serviciosReferencias);
    break;
 
+   case 'modificoAseguradoPorCotizacion':
+      modificoAseguradoPorCotizacion($serviciosReferencias);
+   break;
+
 }
 /* FinFinFin */
+
+function modificoAseguradoPorCotizacion($serviciosReferencias) {
+   $id = $_POST['id'];
+   $tieneasegurado = $_POST['tieneasegurado'];
+   $refaseguradaaux = $_POST['refaseguradaaux'];
+
+
+   if ($tieneasegurado == 1) {
+      $resMCA = $serviciosReferencias->modificarCotizacionesAsegurado($id,'1',$refaseguradaaux);
+   } else {
+      $resMCA = $serviciosReferencias->modificarCotizacionesAsegurado($id,'0',0);
+   }
+
+   if ($resMCA) {
+      $resV['error'] = false;
+
+   } else {
+      $resV['error'] = true;
+
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function modificarEstadoDeRechazopostulantes($serviciosReferencias) {
   $id = $_POST['id'];
@@ -2000,7 +2028,10 @@ function validarCuestionarioPersona($serviciosReferencias) {
                $resMCA = $serviciosReferencias->modificarCotizacionesAsegurado($idcotizacion,'0',0);
             }
          } else {
-            $resMCA = $serviciosReferencias->modificarCotizacionesAsegurado($idcotizacion,'0',0);
+            if ($_POST['tieneasegurado'] != '') {
+               $resMCA = $serviciosReferencias->modificarCotizacionesAsegurado($idcotizacion,'0',0);
+            }
+
          }
 
 
@@ -2029,9 +2060,7 @@ function insertarAsegurados($serviciosReferencias) {
    $apellidopaterno = $_POST['apellidopaterno'];
    $apellidomaterno = $_POST['apellidomaterno'];
    $razonsocial = '';
-   $domicilio = $_POST['domicilio'];
-   $email = $_POST['email'];
-   $rfc = $_POST['rfc'];
+
    $ine = '';
    $curp = $_POST['curp'];
    $fechanacimiento = $_POST['fechanacimiento'];
@@ -2042,12 +2071,20 @@ function insertarAsegurados($serviciosReferencias) {
    $usuariocrea = $_SESSION['usua_sahilices'];
    $usuariomodi = $_SESSION['usua_sahilices'];
    $reftipopersonas = 1;
-   $telefonofijo = $_POST['telefonofijo'];
-   $telefonocelular = $_POST['telefonocelular'];
+
    $idclienteinbursa = '';
    $emisioncomprobantedomicilio = '';
    $emisionrfc = '';
    $vencimientoine = '';
+
+
+   $refclientes = $_POST['refclientes'];
+   $reftipoparentesco = $_POST['reftipoparentesco'];
+
+   /*
+   $domicilio = $_POST['domicilio'];
+   $email = $_POST['email'];
+   $rfc = $_POST['rfc'];
    $colonia = $_POST['colonia'];
    $municipio = $_POST['municipio'];
    $codigopostal = $_POST['codigopostal'];
@@ -2056,10 +2093,25 @@ function insertarAsegurados($serviciosReferencias) {
    $nrointerior = $_POST['nrointerior'];
    $estado = $_POST['estado'];
    $ciudad = '';
-   $refclientes = $_POST['refclientes'];
-   $reftipoparentesco = $_POST['reftipoparentesco'];
+   $telefonofijo = $_POST['telefonofijo'];
+   $telefonocelular = $_POST['telefonocelular'];
+   */
 
-   $res = $serviciosReferencias->insertarAsegurados($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco);
+   $domicilio = '';
+   $email = '';
+   $rfc = '';
+   $colonia = '';
+   $municipio = '';
+   $codigopostal = '';
+   $edificio = '';
+   $nroexterior = '';
+   $nrointerior = '';
+   $estado = '';
+   $ciudad = '';
+   $telefonofijo = '';
+   $telefonocelular = '';
+
+   $res = $serviciosReferencias->insertarAsegurados($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco,$fechanacimiento);
 
    if ((integer)$res > 0) {
       echo '';

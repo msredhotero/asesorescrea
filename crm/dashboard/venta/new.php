@@ -1168,25 +1168,6 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 							</div>
 							<div class="row" style="margin-top:15px;">
 
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="display:block">
-									<label class="form-label">Email </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="email" class="form-control" id="emailASG" name="email" />
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContrfc" style="display:block">
-									<label class="form-label">RFC </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="rfcASG" name="rfc" />
-										</div>
-									</div>
-								</div>
-
 
 								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcurp" style="display:block">
 									<label class="form-label">CURP </label>
@@ -1207,126 +1188,10 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 									</div>
 								</div>
 
-
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmConttelefonofijo" style="display:block">
-									<label class="form-label">Tel. Fijo </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="telefonofijoASG" name="telefonofijo" />
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmConttelefonocelular" style="display:block">
-									<label class="form-label">Tel. Celular </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="telefonocelularASG" name="telefonocelular" />
-										</div>
-									</div>
-								</div>
-
 							</div>
+
 							<div class="row" style="margin-top:15px;">
 
-
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContreftipoparentesco" style="display:block">
-									<label for="reftipoparentesco" class="control-label" style="text-align:left">La dirección es la misma que la del contratante?  <span style="color:red;">*</span> </label>
-									<div class="form-group input-group col-md-12">
-										<div class="form-line">
-											<select class="form-control" id="mismadireccionASG" name="mismadireccion"  required >
-												<option value="0">No</option>
-												<option value="1">Si</option>
-											</select>
-										</div>
-									</div>
-								</div>
-
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContdomicilio" style="display:block">
-									<label class="form-label">Calle </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="domicilioASG" name="domicilio" />
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContnroexterior" style="display:block">
-									<label class="form-label">Nro Exterior </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="nroexteriorASG" name="nroexterior" />
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContnrointerior" style="display:block">
-									<label class="form-label">Nro Interior </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="nrointeriorASG" name="nrointerior" />
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContedificio" style="display:block">
-									<label class="form-label">Edificio </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="edificioASG" name="edificio" />
-										</div>
-									</div>
-								</div>
-
-
-
-							</div>
-							<div class="row" style="margin-top:15px;">
-
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcodigopostal" style="display:block">
-									<label class="form-label">Cod. Postal </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="codigopostalASG" name="codigopostal" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ingresa el Cod. Postal para completar los otros campos de forma automatica"/>
-
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContestado" style="display:block">
-									<label class="form-label">Estado </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="estadoASG" name="estado" readonly />
-
-										</div>
-									</div>
-								</div>
-
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContmunicipio" style="display:block">
-									<label class="form-label">Municipio </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="municipioASG" name="municipio" readonly/>
-
-										</div>
-									</div>
-								</div>
-
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcolonia" style="display:block">
-									<label class="form-label">Colonia </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="coloniaASG" name="colonia" readonly/>
-
-										</div>
-									</div>
-								</div>
 
 								<input type="hidden" id="accion" name="accion" value="insertarAsegurados"/>
 								<input type="hidden" id="refclientesASG" name="refclientes" value="<?php echo $rIdCliente; ?>"/>
@@ -1401,24 +1266,6 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 								</div>
 
 
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="display:block">
-									<label class="form-label">Email </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="email" class="form-control" id="emailBNF" name="email" />
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContrfc" style="display:block">
-									<label class="form-label">RFC </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="rfcBNF" name="rfc" />
-										</div>
-									</div>
-								</div>
 
 
 								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcurp" style="display:block">
@@ -1441,118 +1288,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 								</div>
 
 
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmConttelefonofijo" style="display:block">
-									<label class="form-label">Tel. Fijo </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="telefonofijoBNF" name="telefonofijo" />
-										</div>
-									</div>
-								</div>
 
 
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmConttelefonocelular" style="display:block">
-									<label class="form-label">Tel. Celular </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="telefonocelularBNF" name="telefonocelular" />
-										</div>
-									</div>
-								</div>
-
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContreftipoparentesco" style="display:block">
-									<label for="reftipoparentesco" class="control-label" style="text-align:left">La dirección es la misma que la del contratante?  <span style="color:red;">*</span> </label>
-									<div class="form-group input-group col-md-12">
-										<div class="form-line">
-											<select class="form-control" id="mismadireccionBNF" name="mismadireccionBNF"  required >
-												<option value="0">No</option>
-												<option value="1">Si</option>
-											</select>
-										</div>
-									</div>
-								</div>
-
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContdomicilio" style="display:block">
-									<label class="form-label">Calle </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="domicilioBNF" name="domicilio" />
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContnroexterior" style="display:block">
-									<label class="form-label">Nro Exterior </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="nroexteriorBNF" name="nroexterior" />
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContnrointerior" style="display:block">
-									<label class="form-label">Nro Interior </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="nrointeriorBNF" name="nrointerior" />
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContedificio" style="display:block">
-									<label class="form-label">Edificio </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="edificioBNF" name="edificio" />
-										</div>
-									</div>
-								</div>
-
-
-
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcodigopostal" style="display:block">
-									<label class="form-label">Cod. Postal </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="codigopostalBNF" name="codigopostal" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ingresa el Cod. Postal para completar los otros campos de forma automatica"/>
-
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContestado" style="display:block">
-									<label class="form-label">Estado </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="estadoBNF" name="estado" readonly/>
-
-										</div>
-									</div>
-								</div>
-
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContmunicipio" style="display:block">
-									<label class="form-label">Municipio </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="municipioBNF" name="municipio" readonly/>
-
-										</div>
-									</div>
-								</div>
-
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcolonia" style="display:block">
-									<label class="form-label">Colonia </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="coloniaBNF" name="colonia" readonly/>
-
-										</div>
-									</div>
-								</div>
 
 								<input type="hidden" id="accion" name="accion" value="insertarAsegurados"/>
 								<input type="hidden" id="refclientesBNF" name="refclientes" value="<?php echo $rIdCliente; ?>"/>
@@ -2043,6 +1780,58 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 		cuestionario(<?php echo $rIdProducto; ?>,<?php echo $id; ?>);
 
+		function modificoAseguradoPorCotizacion() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificoAseguradoPorCotizacion',
+					id: <?php echo $id; ?>,
+					tieneasegurado: $('#wizard_with_validation #tieneasegurado').val(),
+					refaseguradaaux: $('#wizard_with_validation #refaseguradaaux').val()
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.contCuestionario').html('');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data == false) {
+						swal({
+								title: "Respuesta",
+								text: 'Se genero un error al guardar el asegurado',
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+					} else {
+						swal({
+								title: "Respuesta",
+								text: 'Se guardo correctamente el asegurado',
+								type: "success",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
 
 		function validarCuestionario(idproducto) {
 			var formData = new FormData($("#wizard_with_validation")[0]);
@@ -2159,7 +1948,6 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 						});
 
 						form.steps("previous");
-						alert('asd');
 
 					} else {
 
@@ -2344,6 +2132,13 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	            setButtonWavesEffect(event);
 	        },
 	        onStepChanging: function (event, currentIndex, newIndex) {
+
+					var $tab = $('#wizard_with_validation-h-' + currentIndex).html();
+
+					if ($tab.trim() == 'ASEGURADO') {
+						modificoAseguradoPorCotizacion();
+					}
+
 	            if (currentIndex > newIndex) { return true; }
 
 	            if (currentIndex < newIndex) {
@@ -2373,11 +2168,11 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 							}
 
 							if ($tab.trim() == 'ASEGURADO') {
-								validarCuestionarioContratante(<?php echo $rIdCliente; ?>,0 );
+								//validarCuestionarioContratante(<?php echo $rIdCliente; ?>,0 );
 							}
 
 							if ($tab.trim() == 'BENEFICIARIO') {
-								validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
+								//validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
 							}
 
 						<?php if (!(isset($_GET['id']))) { ?>
@@ -2773,7 +2568,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 			} else {
 				if ( $(this).val() > 0) {
-					cuestionarioPersonas(<?php echo $rIdProducto; ?>,<?php echo $id; ?>,0,$(this).val());
+					//cuestionarioPersonas(<?php echo $rIdProducto; ?>,<?php echo $id; ?>,0,$(this).val());
 				}
 
 			}
