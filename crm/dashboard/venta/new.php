@@ -74,7 +74,7 @@ if (isset($_GET['id'])) {
 
 	if ($estadoCotizacionGral == 19) {
 		header('Location: comercio_fin.php?id='.$id);
-		
+
 	}
 
 	$refIdAsegurados = mysql_result($resultado,0,'refasegurados');
@@ -2142,9 +2142,11 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 					var $tab = $('#wizard_with_validation-h-' + currentIndex).html();
 
+					<?php if ($tieneAsegurado != '') { ?>
 					if ($tab.trim() == 'ASEGURADO') {
 						modificoAseguradoPorCotizacion();
 					}
+					<?php } ?>
 
 	            if (currentIndex > newIndex) { return true; }
 
