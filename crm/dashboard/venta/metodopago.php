@@ -218,7 +218,10 @@ $cuestionario = $serviciosReferencias->traerCuestionariodetallePorTablaReferenci
 							<?php if ($lblCliente != $lblBeneficiario) { ?>
 								<h4>Beneficiario: <?php echo $lblBeneficiario; ?></h4>
 							<?php } ?>
-
+							<h5><a href="../../reportes/rptDomiciliacion.php?id=<?php echo $id; ?>" target="_blank">Domiciliacion</a></h5>
+							<h5><a href="../../reportes/rptSolicitudCargoAutomatico.php?id=<?php echo $id; ?>" target="_blank">Solicitud de Cargo Automatico</a></h5>
+							<h5><a href="../../reportes/rptF650.php?id=<?php echo $id; ?>" target="_blank">Formulario 650</a></h5>
+							<h5><a href="../../reportes/rptF20926.php?id=<?php echo $id; ?>" target="_blank">Formulario F 2092-6</a></h5>
 
 							<hr>
 							<div class="row" style="padding: 5px 20px;">
