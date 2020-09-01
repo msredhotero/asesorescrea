@@ -566,6 +566,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	<!-- Additional CSS Themes file - not required-->
 	<link rel="stylesheet" href="../../css/easy-autocomplete.themes.min.css">
 
+	<link rel="stylesheet" href="../../css/materialDateTimePicker.css">
+
 
 
 	<style>
@@ -669,6 +671,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 										<input type="hidden" id="reasegurodirecto" name="reasegurodirecto" value="0">
 										<input type="hidden" id="tiponegocio" name="tiponegocio" value="0">
 										<input type="hidden" id="fechavencimiento" name="fechavencimiento" value="0000-00-00">
+										<input type="hidden" id="fecharenovacion" name="fecharenovacion" value="0000-00-00">
+										<input type="hidden" id="presentacotizacion" name="presentacotizacion" value="0">
 										<input type="hidden" id="coberturaactual" name="coberturaactual" value="0">
 										<input type="hidden" id="observaciones" name="observaciones" value="Venta en linea">
 
@@ -1152,6 +1156,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 <script src="../../plugins/jquery-steps/jquery.steps.js"></script>
 
 <script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
+
+<script src="../../js/materialDateTimePicker.js"></script>
 
 <script src="../../plugins/dropzone/dropzone.js"></script>
 
@@ -2241,22 +2247,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 
 
-		$('#fechavencimiento').pickadate({
- 			format: 'yyyy-mm-dd',
- 			labelMonthNext: 'Siguiente mes',
- 			labelMonthPrev: 'Previo mes',
- 			labelMonthSelect: 'Selecciona el mes del año',
- 			labelYearSelect: 'Selecciona el año',
- 			selectMonths: true,
- 			selectYears: 100,
- 			today: 'Hoy',
- 			clear: 'Borrar',
- 			close: 'Cerrar',
- 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
- 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
- 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
- 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
- 		});
+
 
 
 		$('#primaobjetivo').number( true, 2 ,'.','');

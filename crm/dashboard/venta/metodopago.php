@@ -223,51 +223,6 @@ $cuestionario = $serviciosReferencias->traerCuestionariodetallePorTablaReferenci
 							<h5><a href="../../reportes/rptF650.php?id=<?php echo $id; ?>" target="_blank">Formulario 650</a></h5>
 							<h5><a href="../../reportes/rptF20926.php?id=<?php echo $id; ?>" target="_blank">Formulario F 2092-6</a></h5>
 
-							<hr>
-							<div class="row" style="padding: 5px 20px;">
-								<table class="display table table-border" style="border:1px solid #333;">
-									<thead class="bg bg-cyan">
-										<th colspan="2">CUESTIONARIO</th>
-									</thead>
-									<tbody>
-										<tr>
-											<th>Pregunta</th>
-											<th>Respuesta</th>
-										</tr>
-								<?php
-								$pregunta = '';
-								while ($rowC = mysql_fetch_array($cuestionario)) {
-									echo '<tr><td>';
-									if ($pregunta != $rowC['pregunta']) {
-										$pregunta = $rowC['pregunta'];
-										echo $pregunta.'</td>';
-									} else {
-										echo '</td>';
-									}
-								?>
-									<td><h5 style="color:green;">* <?php echo ($rowC['respuesta'] == 'Lo que el ususario ingrese' ? $rowC['respuestavalor'] : $rowC['respuesta']); ?></h5></td>
-								</tr>
-								<?php
-								}
-
-
-									$pregunta = '';
-									foreach ($resDatosSencibles[0] as $rowCC) {
-										echo '<tr><td>';
-										if ($pregunta != $rowCC['pregunta']) {
-											$pregunta = $rowCC['pregunta'];
-											echo $pregunta.'</td>';
-										} else {
-											echo '</td>';
-										}
-
-									?>
-									<td><h5 style="color:green;">* <?php echo $rowCC['valor']; ?></h5></td>
-									</tr>
-									<?php } ?>
-									</tbody>
-								</table>
-							</div>
 			            <hr>
 			            <p><small>Al seleccionar el Método de Pago "Pago Anual por Transferencia Electronica" o "Pago Anual en sucursal Inbursa", se le enviara los datos por correo electronico para realizarlo por ventanilla, ademas de una URL a su correo electronico para que pueda adjuntarnos su comprobante de pago y activar el servicio.</small></p>
 

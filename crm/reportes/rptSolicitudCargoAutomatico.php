@@ -160,11 +160,11 @@ $pdf->Write(0, substr("0143548963485632145223",0,20));
 
 //plaza
 $pdf->SetXY(114, $yConstCuadrado1 + ($yCuadrado1 * 10) + 5);
-$pdf->Write(0, substr("156",0,20));
+$pdf->Write(0, substr("156",0,20)); //no llevan informacion
 
 //sucursal
 $pdf->SetXY(170, $yConstCuadrado1 + ($yCuadrado1 * 10) + 5);
-$pdf->Write(0, substr("6547",0,20));
+$pdf->Write(0, substr("6547",0,20)); //no llevan informacion
 
 
 $pdf->AddPage();
@@ -261,11 +261,11 @@ $pdf->Write(0, substr("0143548963485632145223",0,20));
 
 //plaza
 $pdf->SetXY(114, $yConstCuadrado1 + ($yCuadrado1 * 10) + 5);
-$pdf->Write(0, substr("156",0,20));
+$pdf->Write(0, substr("",0,20)); //no llevan informacion
 
 //sucursal
 $pdf->SetXY(170, $yConstCuadrado1 + ($yCuadrado1 * 10) + 5);
-$pdf->Write(0, substr("6547",0,20));
+$pdf->Write(0, substr("",0,20)); //no llevan informacion
 
 $pdf->Output('SolicitudCargoAutomaticoAC.pdf', 'I');
 

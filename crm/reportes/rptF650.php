@@ -173,11 +173,11 @@ $pdf->Write(0, substr("X",0,1));
 
 //categoria
 $pdf->SetXY(73, $yConstCuadrado1 + ($yCuadrado1 * 6) - 5);
-$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,20));
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,20)); //no mostrar informacion
 
 //SUELDO MENSUAL
 $pdf->SetXY(132, $yConstCuadrado1 + ($yCuadrado1 * 6) - 5);
-$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,12));
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,12)); //no mostrar informacion
 
 //fecha ingreso al grupo dd
 $pdf->SetXY(165, $yConstCuadrado1 + ($yCuadrado1 * 6) - 5);
