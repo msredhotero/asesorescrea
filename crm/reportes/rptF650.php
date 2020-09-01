@@ -193,6 +193,14 @@ $pdf->Write(0, substr("2018",0,4));
 
 
 
+//peso
+$pdf->SetXY(25, $yConstCuadrado1 + ($yCuadrado1 * 10) - 7);
+$pdf->Write(0, substr("95",0,2));
+
+//altura
+$pdf->SetXY(45, $yConstCuadrado1 + ($yCuadrado1 * 10) - 7);
+$pdf->Write(0, substr("170",0,3));
+
 $pdf->Output('F650AC.pdf', 'I');
 //die(var_dump($ar));
 

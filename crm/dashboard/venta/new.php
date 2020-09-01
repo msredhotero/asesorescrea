@@ -1175,6 +1175,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 									<div class="form-group input-group col-md-12">
 										<div class="form-line">
 											<select class="form-control" id="reftipoparentescoASG" name="reftipoparentesco"  required >
+												<option value="">-- Seleccionar --</option>
 												<option value="1">Padres</option>
 												<option value="2">Conyuge</option>
 												<option value="3">Hijos</option>
@@ -1274,6 +1275,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 									<div class="form-group input-group col-md-12">
 										<div class="form-line">
 											<select class="form-control" id="reftipoparentescoBNF" name="reftipoparentesco"  required >
+												<option value="">-- Seleccionar --</option>
 												<option value="1">Padres</option>
 												<option value="2">Conyuge</option>
 												<option value="3">Hijos</option>
