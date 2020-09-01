@@ -19,7 +19,7 @@ $fecha = date('Y-m-d-H-i-s');
 
 require('fpdf.php');
 
-include('fpdi.php');
+//include('fpdi.php');
 
 //require 'PDFMerger.php';
 
@@ -37,7 +37,7 @@ $resCotizacion = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
 $pdf = new FPDF();
 
-$pdfi = new FPDI();
+//$pdfi = new FPDI();
 
 /* desarrollo   ****************************************/
 $directorio = $_SERVER['DOCUMENT_ROOT']."desarrollo/crm";
@@ -57,21 +57,24 @@ $directorio = $_SERVER['DOCUMENT_ROOT']."crm";
 #Establecemos el margen inferior:
 
 
-$pdf =& new FPDI();
+//$pdf =& new FPDI();
 // add a page
 $pdf->AddPage();
 // set the sourcefile
-$pdf->setSourceFile('F650.pdf');
+//$pdf->setSourceFile('F650a_compressed_resized.pdf');
 // import page 1
-$tplIdx = $pdf->importPage(2);
+//$tplIdx = $pdf->importPage(2);
 // use the imported page as the template
-$pdf->useTemplate($tplIdx, 0, 0);
+//$pdf->useTemplate($tplIdx, 0, 0);
 
 // now write some text above the imported page
-$pdf->SetFont('Arial');
-$pdf->SetTextColor(255,0,0);
-$pdf->SetXY(25, 25);
-$pdf->Write(0, "This is just a simple text");
+//$pdf->SetFont('Arial');
+//$pdf->SetTextColor(255,0,0);
+//$pdf->SetXY(25, 25);
+//$pdf->Write(0, "This is just a simple text");
+
+$pdf->Image('F650a.png' , 0 ,0, 210 , 0,'PNG');
+
 
 $pdf->Output('F650AC.pdf', 'I');
 //die(var_dump($ar));
