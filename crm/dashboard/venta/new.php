@@ -2028,10 +2028,6 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					}
 					<?php } ?>
 
-					if ($tab.trim() == 'CONTRATANTE') {
-						validarCuestionarioContratante(<?php echo $rIdCliente; ?>,0 );
-					}
-
 	            if (currentIndex > newIndex) { return true; }
 
 	            if (currentIndex < newIndex) {
