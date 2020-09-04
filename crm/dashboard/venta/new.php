@@ -1594,7 +1594,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					if (data != '') {
 						$('.contCuestionario').html(data.datos.cuestionario);
 
-						if ((data.datos.cuestionario.indexOf("Altura") > 0) || (data.datos.cuestionario.indexOf("Peso") > 0) || (data.datos.cuestionario.indexOf("Talla") > 0)) {
+						if ((data.datos.cuestionario.indexOf("Altura") > 0) || (data.datos.cuestionario.indexOf("Peso") > 0) || (data.datos.cuestionario.indexOf("Talla") > 0) || (data.datos.cuestionario.indexOf("Estatura") > 0)) {
 							$('.contRangers').show();
 						}
 
@@ -3013,6 +3013,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		            //val += '%';
 						$('#wizard_with_validation #respuestaAltura').val(val);
 						$('#wizard_with_validation #respuestaTalla').val(val);
+						$('#wizard_with_validation #respuestaEstatura').val(val);
 		        } else {
 					  $('#wizard_with_validation #respuestaPeso').val(val);
 				  }
