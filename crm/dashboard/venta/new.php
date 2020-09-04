@@ -2056,7 +2056,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 								}
 							}
 
-							if (currentIndex == 3) {
+							if (currentIndex == 2) {
 								validarCuestionarioContratante(<?php echo $rIdCliente; ?>,0 );
 							}
 
