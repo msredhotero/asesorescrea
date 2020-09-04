@@ -1865,8 +1865,14 @@ function validarCuestionarioPersona($serviciosReferencias) {
    if ($idcuestionario == null) {
       $ar = array('cuestionario'=>'','rules'=>'');
    } else {
-      $res = $serviciosReferencias->cuestionarioPersonas($idcuestionario,$idcotizacion,$refclientes,$refasegurados);
-      $resAux = $serviciosReferencias->CuestionarioAuxPersonas($idcuestionario,$idcotizacion,$refclientes,$refasegurados);
+      if ($actualizacliente == 1) {
+         $res = $serviciosReferencias->cuestionarioPersonas($idcuestionario,$idcotizacion,$refclientes,0);
+         $resAux = $serviciosReferencias->CuestionarioAuxPersonas($idcuestionario,$idcotizacion,$refclientes,0);
+      } else {
+         $res = $serviciosReferencias->cuestionarioPersonas($idcuestionario,$idcotizacion,0,$refasegurados);
+         $resAux = $serviciosReferencias->CuestionarioAuxPersonas($idcuestionario,$idcotizacion,0,$refasegurados);
+      }
+
 
       if ($refclientes == 0) {
          $preguntasSencibles = $serviciosReferencias->necesitoPreguntaSencibleAsegurado($refasegurados,$idcuestionario);
