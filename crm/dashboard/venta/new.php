@@ -3007,9 +3007,10 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		        if (tipo == 0) {
 
 		            //val += '%';
-						$('#wizard_with_validation #respuesta680').val(val);
+						$('#wizard_with_validation #respuestaAltura').val(val);
+						$('#wizard_with_validation #respuestaTalla').val(val);
 		        } else {
-					  $('#wizard_with_validation #respuesta681').val(val);
+					  $('#wizard_with_validation #respuestaPeso').val(val);
 				  }
 		        //$(slider).parent().find('span.js-nouislider-value').text(val);
 		    });

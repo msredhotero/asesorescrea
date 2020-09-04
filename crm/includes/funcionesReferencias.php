@@ -1268,7 +1268,7 @@ return $res;
 
                         <div class="form-group input-group">
                            <div class="form-line">
-                              <input type="text" autocomplete="off" class="form-control" id="respuesta'.$row['idpreguntacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.$cadValorRespuesta.'" >
+                              <input type="text" autocomplete="off" class="form-control" id="respuesta'.str_replace(' ','',$row['pregunta']).'" name="respuesta'.$row['idpreguntacuestionario'].'" required="" aria-required="true" aria-invalid="false" value="'.$cadValorRespuesta.'" >
 
                            </div>
                         </div>
@@ -1278,7 +1278,7 @@ return $res;
 
                         <div class="form-group input-group">
                            <div class="form-line">
-                              <input type="text" autocomplete="off" class="form-control" id="respuesta'.$row['idpreguntacuestionario'].'" value="'.$cadValorRespuesta.'" name="respuesta'.$row['idpreguntacuestionario'].'" >
+                              <input type="text" autocomplete="off" class="form-control" id="respuesta'.str_replace(' ','',$row['pregunta']).'" value="'.$cadValorRespuesta.'" name="respuesta'.$row['idpreguntacuestionario'].'" >
 
                            </div>
                         </div>
