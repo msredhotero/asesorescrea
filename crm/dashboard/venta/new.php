@@ -1402,7 +1402,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 			$('#wizard_with_validation .clcontPregunta'+idRespuesta).show(400);
 		});
 
-		cuestionarioPersonasContratante(<?php echo $rIdProducto; ?>,<?php echo $id; ?>);
+
 
 		function cuestionarioPersonasContratante(idproducto,idcotizacion) {
 			$.ajax({
@@ -1666,6 +1666,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		}
 
 		cuestionario(<?php echo $rIdProducto; ?>,<?php echo $id; ?>);
+
+		cuestionarioPersonasContratante(<?php echo $rIdProducto; ?>,<?php echo $id; ?>);
 
 		function modificoAseguradoPorCotizacion() {
 			$.ajax({
@@ -2090,7 +2092,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		var esconde2 = 0;
 
 		<?php if (isset($_GET['id'])) { ?>
-			
+
 
 			//form.steps("next");
 			<?php if (($i == $cargados) && (!(isset($_GET['iddocumentacion'])))) { ?>
