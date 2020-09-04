@@ -1848,10 +1848,6 @@ function validarCuestionarioPersona($serviciosReferencias) {
 
    $actualizacliente = $_POST['actualizacliente'];
 
-   if ($tieneasegurado == '1') {
-      $refclientes = 0;
-   }
-
    $resP = $serviciosReferencias->traerProductosPorId($id);
    $idcuestionario = mysql_result($resP,0,'refcuestionarios');
 
@@ -1866,8 +1862,8 @@ function validarCuestionarioPersona($serviciosReferencias) {
       $ar = array('cuestionario'=>'','rules'=>'');
    } else {
       if ($actualizacliente == 1) {
-         $res = $serviciosReferencias->cuestionarioPersonas($idcuestionario,$idcotizacion,$refclientes,0);
-         $resAux = $serviciosReferencias->CuestionarioAuxPersonas($idcuestionario,$idcotizacion,$refclientes,0);
+         $res = $serviciosReferencias->cuestionarioPersonas($idcuestionario,$idcotizacion,$_POST['refclientes'],0);
+         $resAux = $serviciosReferencias->CuestionarioAuxPersonas($idcuestionario,$idcotizacion,$_POST['refclientes'],0);
       } else {
          $res = $serviciosReferencias->cuestionarioPersonas($idcuestionario,$idcotizacion,0,$refasegurados);
          $resAux = $serviciosReferencias->CuestionarioAuxPersonas($idcuestionario,$idcotizacion,0,$refasegurados);
@@ -1877,7 +1873,7 @@ function validarCuestionarioPersona($serviciosReferencias) {
       if ($refclientes == 0) {
          $preguntasSencibles = $serviciosReferencias->necesitoPreguntaSencibleAsegurado($refasegurados,$idcuestionario);
       } else {
-         $preguntasSencibles = $serviciosReferencias->necesitoPreguntaSencible($refclientes,$idcuestionario);
+         $preguntasSencibles = $serviciosReferencias->necesitoPreguntaSencible($_POST['refclientes'],$idcuestionario);
       }
 
 
