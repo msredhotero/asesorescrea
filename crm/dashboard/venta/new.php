@@ -1443,6 +1443,9 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					$("#wizard_with_validation .tsmunicipio").prop('readonly',true);
 					$("#wizard_with_validation .tsestado").prop('readonly',true);
 					$("#wizard_with_validation .tscolonia").prop('readonly',true);
+					$("#wizard_with_validation .tsrfc").attr('maxlength','13');
+					$("#wizard_with_validation .tsrfc").attr('minlength','13');
+
 
 					$("#wizard_with_validation .tscodigopostal").easyAutocomplete(options);
 
