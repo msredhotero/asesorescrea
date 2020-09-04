@@ -2090,7 +2090,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		var esconde2 = 0;
 
 		<?php if (isset($_GET['id'])) { ?>
-			cuestionario($('#refproductos').val(),<?php echo $id; ?>);
+			
 
 			//form.steps("next");
 			<?php if (($i == $cargados) && (!(isset($_GET['iddocumentacion'])))) { ?>

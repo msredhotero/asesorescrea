@@ -1900,6 +1900,8 @@ function validarCuestionarioPersona($serviciosReferencias) {
       $ar = array('cuestionario'=>$cad,'rules'=>$res['rules']);
    }
 
+   //die(var_dump($cad));
+
    $resV['error'] = false;
 
    $bandera = 0;
