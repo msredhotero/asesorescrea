@@ -2984,10 +2984,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 			range: {
 				'min': [0],
 				'max': [230]
-			},
-			format: wNumb({
-         	decimals: 0
-         })
+			}
 		});
 
 		noUiSlider.create(sliderPeso, {
@@ -2997,10 +2994,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 			range: {
 				'min': [0],
 				'max': [260]
-			},
-			format: wNumb({
-         	decimals: 0
-         })
+			}
 		});
 
 		getNoUISliderValue(sliderAltura, 0);
@@ -3009,8 +3003,9 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		function getNoUISliderValue(slider, tipo) {
 		    slider.noUiSlider.on('update', function () {
 		        var val = slider.noUiSlider.get();
+				  val = parseInt(val);
 		        if (tipo == 0) {
-		            //val = parseInt(val);
+
 		            //val += '%';
 						$('#wizard_with_validation #respuesta680').val(val);
 		        } else {
