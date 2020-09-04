@@ -35,7 +35,10 @@ $rIdCliente = mysql_result($rCliente,0,0);
 
 $rTipoPersona = mysql_result($rCliente,0,'reftipopersonas');
 
-$rIdProducto = $_GET['producto'];
+if (isset($_GET['producto'])) {
+	$rIdProducto = $_GET['producto'];
+}
+
 
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
@@ -69,6 +72,8 @@ if (isset($_GET['id'])) {
 	$refAsesores = 25;
 	$refAsociados = mysql_result($resultado,0,'refasociados');
 	$refProductos = mysql_result($resultado,0,'refproductos');
+
+	$rIdProducto  = mysql_result($resultado,0,'refproductos');
 
 	$estadoCotizacionGral = mysql_result($resultado,0,'refestadocotizaciones');
 
