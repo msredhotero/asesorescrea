@@ -2056,8 +2056,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 								}
 							}
 
-							if ($tab.trim() == 'ASEGURADO') {
-								//validarCuestionarioContratante(<?php echo $rIdCliente; ?>,0 );
+							if (currentIndex == 3) {
+								validarCuestionarioContratante(<?php echo $rIdCliente; ?>,0 );
 							}
 
 							if ($tab.trim() == 'BENEFICIARIO') {
