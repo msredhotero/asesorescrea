@@ -227,177 +227,6 @@ if (mysql_num_rows($resAux)>0) {
 
 
 			            <hr>
-							<?php if ($existeMetodoPago == 0) { ?>
-							<form method="POST" id="formFin">
-
-								<div class="panel-group" id="accordion_17" role="tablist" aria-multiselectable="true">
-									<div class="panel panel-col-cyan panelMP panelMP1">
-										<div class="panel-heading" role="tab" id="headingOne_17">
-											<h4 class="panel-title">
-											<a role="button" data-toggle="collapse" data-parent="#accordion_17" href="#collapseOne_17" aria-expanded="true" aria-controls="collapseOne_17" class="">
-											<i class="material-icons">credit_card</i> Pago Anual en linea con Tarjeta de Crédito
-											</a>
-											</h4>
-										</div>
-										<div id="collapseOne_17" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne_17" aria-expanded="true" style="">
-											<div class="panel-body">
-												<p>Pago anual con tarjeta de credito, a traves de nuestro procesador de pagos. Se admiten tarjetas Visa y Mastercard.</p>
-												<p><small>1 pago de </small></p>
-												<h4>Monto a pagar: MXN <?php echo number_format($precio, 2, ',', '.'); ?></h4>
-												<div class="right">
-													<input name="metodopago" type="radio" value="1" class="with-gap radioMetodo" id="radio_1" require>
-	                                 	<label for="radio_1">Seleccionar</label>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="panel panel-col-cyan panelMP panelMP2">
-										<div class="panel-heading" role="tab" id="headingTwo_17">
-											<h4 class="panel-title">
-											<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion_17" href="#collapseTwo_17" aria-expanded="false" aria-controls="collapseTwo_17">
-											<i class="material-icons">credit_card</i> Pago Anual por Transferencia Electrónica
-											</a>
-											</h4>
-										</div>
-										<div id="collapseTwo_17" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo_17" aria-expanded="false">
-											<div class="panel-body">
-												<p>Se le enviara los datos por correo electronico para realizarlo por ventanilla, ademas de una URL a su correo electronico para que pueda adjuntarnos su comprobante de pago y activar el servicio.</p>
-												<p><small>1 pago de </small></p>
-												<h4>Monto a pagar: MXN <?php echo number_format($precio, 2, ',', '.'); ?></h4>
-												<div class="right">
-													<input name="metodopago" type="radio" value="2" class="with-gap radioMetodo" id="radio_2" require>
-	                                 	<label for="radio_2">Seleccionar</label>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="panel panel-col-cyan panelMP panelMP3">
-										<div class="panel-heading" role="tab" id="headingThree_17">
-											<h4 class="panel-title">
-											<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion_17" href="#collapseThree_17" aria-expanded="false" aria-controls="collapseThree_17">
-											<i class="material-icons">credit_card</i> Pago anual en sucursal Inbursa
-											</a>
-											</h4>
-										</div>
-										<div id="collapseThree_17" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree_17" aria-expanded="false">
-											<div class="panel-body">
-												<p>Se le enviara los datos por correo electronico para realizarlo por ventanilla, ademas de una URL a su correo electronico para que pueda adjuntarnos su comprobante de pago y activar el servicio.</p>
-												<p><small>1 pago de </small></p>
-												<h4>Monto a pagar: MXN <?php echo number_format($precio, 2, ',', '.'); ?></h4>
-												<div class="right">
-													<input name="metodopago" type="radio" value="3" class="with-gap radioMetodo" id="radio_3" require>
-	                                 	<label for="radio_3">Seleccionar</label>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="panel panel-col-cyan panelMP panelMP4">
-										<div class="panel-heading" role="tab" id="headingFour_17">
-											<h4 class="panel-title">
-											<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion_17" href="#collapseFour_17" aria-expanded="false" aria-controls="collapseFour_17">
-											<i class="material-icons">credit_card</i> Pago mensual a Tarjeta de Crédito
-											</a>
-											</h4>
-										</div>
-										<div id="collapseFour_17" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour_17" aria-expanded="false">
-											<div class="panel-body">
-												<p>Se le enviara los datos por correo electronico para realizarlo por ventanilla, ademas de una URL a su correo electronico para que pueda adjuntarnos su comprobante de pago y activar el servicio.</p>
-												<p><small>12 cuotas de </small></p>
-												<h4>Monto a pagar: MXN <?php echo number_format($lblPrecioAd, 2, ',', '.'); ?></h4>
-												<div class="right">
-													<input name="metodopago" type="radio" value="4" class="with-gap radioMetodo" id="radio_4" require>
-	                                 	<label for="radio_4">Seleccionar</label>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-
-								<div class="row">
-									<div class="col-xs-12">
-										<h4>¿Desea Domiciliar el pago?</h4>
-										<input name="domiciliar" type="radio" value="1" id="radio_5" require>
-										<label for="radio_5">Si</label>
-										<input name="domiciliar" type="radio" value="0" id="radio_6" require>
-										<label for="radio_6">No</label>
-									</div>
-								</div>
-
-								<div class="row">
-									<div class="panel-group" id="accordion_18" role="tablist" aria-multiselectable="true">
-									<div class="col-xs-6">
-										<div class="panel panel-col-pink panelD panelD1">
-											<div class="panel-heading" role="tab" id="headingFour_18">
-												<h4 class="panel-title">
-												<a role="button" data-parent="#accordion_18">
-												<i class="material-icons">credit_card</i> Tarjeta de Crédito
-												</a>
-												</h4>
-											</div>
-											<div id="collapseFour_18" class="panel" role="tabpanel" aria-labelledby="headingFour_18" aria-expanded="false">
-												<div class="panel-body">
-													<p>Se requeriran los datos del banco emisor de la tarjeta de crédito y el número que aparece en el tarjeta.</p>
-													<label for="banco1" class="label-form">Banco</label>
-													<input type="text" id="banco1" name="banco1" class="form-control"/>
-
-													<label for="cardnumber1" class="label-form">Número de tarjeta</label>
-													<div id="card-number-field1">
-														<input type="text" id="cardnumber1" name="cardnumber1" class="form-control"/>
-													</div>
-													<div class="right">
-														<input name="rdomiciliacion" type="radio" value="10" class="radio-col-pink" id="radio_7" require>
-		                                 	<label for="radio_7">Seleccionar</label>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="col-xs-6">
-										<div class="panel panel-col-pink panelD panelD2">
-											<div class="panel-heading" role="tab" id="headingFour_19">
-												<h4 class="panel-title">
-												<a role="button" data-parent="#accordion_18">
-												<i class="material-icons">credit_card</i> Cuenta de Deposito
-												</a>
-												</h4>
-											</div>
-											<div id="collapseFour_19" class="panel" role="tabpanel" aria-labelledby="headingFour_19" aria-expanded="false">
-												<div class="panel-body">
-													<p>Se requeriran los datos del banco emisor de la cuenta depósito y el número de cuenta o CLABE.</p>
-													<label for="banco2" class="label-form">Banco</label>
-													<input type="text" id="banco2" name="banco2" class="form-control"/>
-
-													<label for="cardnumber1" class="label-form">Número de cuenta o número de CLABE</label>
-													<div id="card-number-field2">
-														<input type="text" id="cardnumber2" name="cardnumber2" class="form-control"/>
-													</div>
-													<div class="right">
-														<input name="rdomiciliacion" type="radio" value="11" class="radio-col-pink" id="radio_8" require>
-		                                 	<label for="radio_8">Seleccionar</label>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-									</div>
-								</div>
-
-
-			               <input type="hidden" name="refventas" value="<?php echo $idventa; ?>">
-			               <input type="hidden" name="reftipoperiodicidad" value="1">
-
-								<div class="row">
-									<div class="col-xs-3"></div>
-				               <div class="col-xs-6">
-										<button type="button" class="btn btn-lg btn-block btn-success" id="btnConfirmar" style="font-size:1.2em;">
-											<i class="material-icons" style="font-size:1.2em;">save</i>
-											<span>GUARDAR Y CONTINUAR</span>
-										</button>
-									</div>
-									<div class="col-xs-3"></div>
-								</div>
-			            </form>
-						<?php } else { ?>
 							<h4>El metodo de pago ya fue cargado, continue con la seccion de Documentaciones por favor</h4>
 							<div class="list-group">
 								<a href="javascript:void(0);" class="list-group-item active">
@@ -422,10 +251,33 @@ if (mysql_num_rows($resAux)>0) {
 							?>
 								<a href="javascript:void(0);" class="list-group-item">Banco: <?php echo mysql_result($resAux,0,'tipoperiodicidad'); ?></a>
 								<a href="javascript:void(0);" class="list-group-item"><?php echo $lblTipoTarjeta; ?>: <?php echo $tarjeta; ?></a>
-								<a href="documentos.php?id=<?php echo $id; ?>" class="list-group-item bg-green">CONTINUAR CON LA DOCUMENTACION</a>
+
 							<?php } ?>
 							</div>
-						<?php } ?>
+
+							<div class="list-group">
+								<a href="javascript:void(0);" class="list-group-item active">
+								Documentos para Firmar
+								</a>
+								<a href="javascript:void(0);" class="list-group-item">F-650-8 AGOSTO 2018 Consentimiento Individual Seguro Grupo Vida</a>
+								<a href="javascript:void(0);" class="list-group-item">F-2092-6 Poliza Seguros GMM Individual</a>
+								<?php
+									if (mysql_result($resAux,0,'reftipocobranza') == 1) {
+								?>
+								<a href="javascript:void(0);" class="list-group-item">Solicitud de Cargo Automatico en Tarjeta de credito cuenta de deposito cuenta de cheques</a>
+								<?php } ?>
+							</div>
+
+							<div class="row">
+								<div class="col-xs-3"></div>
+								<div class="col-xs-6">
+									<button type="button" class="btn btn-lg btn-block btn-success" id="btnConfirmar2" style="font-size:1.2em;">
+										<i class="material-icons" style="font-size:1.2em;">save</i>
+										<span>GUARDAR Y CONTINUAR</span>
+									</button>
+								</div>
+								<div class="col-xs-3"></div>
+							</div>
 		          </div>
 		        </div>
 			  </div>
@@ -555,14 +407,12 @@ if (mysql_num_rows($resAux)>0) {
 			var bancoGeneral = '';
 			var tarjetaGeneral = '';
 			var domiciliado = 0;
-			var tipotarjeta = 0;
 			if ($('#radio_5').is(':checked')) {
 				domiciliado = 1;
 				if ($('#radio_7').is(':checked')) {
 					var isCardValid = $.payform.validateCardNumber($('#cardnumber1').val());
 					tarjetaGeneral = $('#cardnumber1').val();
 					bancoGeneral = $('#banco1').val();
-					tipotarjeta = 1;
 
 					if (bancoGeneral == '') {
 						errorGeneral = true;
@@ -579,8 +429,7 @@ if (mysql_num_rows($resAux)>0) {
 					if ($('#radio_8').is(':checked')) {
 						var isCardValid = $.payform.validateCardNumber($('#cardnumber2').val());
 						tarjetaGeneral = $('#cardnumber2').val();
-						bancoGeneral = $('#banco2').val();
-						tipotarjeta = 2;
+						bancoGenera2 = $('#banco2').val();
 
 						if (bancoGeneral == '') {
 							errorGeneral = true;
@@ -632,11 +481,10 @@ if (mysql_num_rows($resAux)>0) {
 								accion: 'guardarMetodoDePagoPorCotizacion',
 								id: <?php echo $id; ?>,
 								refventas: <?php echo $idventa; ?>,
-								metodopago: $('input:radio[name=metodopago]:checked').val(),
+								metodopago: $('#metodopago').val(),
 								banco: bancoGeneral,
 								afiliacion: tarjetaGeneral,
-								domiciliado: domiciliado,
-								tipotarjeta: tipotarjeta
+								domiciliado: domiciliado
 							},
 							//mientras enviamos el archivo
 							beforeSend: function(){

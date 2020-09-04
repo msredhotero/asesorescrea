@@ -1158,42 +1158,90 @@ switch ($accion) {
 /* FinFinFin */
 
 function guardarMetodoDePagoPorCotizacion($serviciosReferencias) {
+   session_start();
+
    $id = $_POST['id'];
 
    $resCotizacion = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
    $idventa = $_POST['refventas'];
    $metodopago = $_POST['metodopago'];
+   $banco = $_POST['banco'];
+   $afiliacionnumber = $_POST['afiliacion'];
+   $domiciliado = $_POST['domiciliado'];
+   $tipotarjeta = $_POST['tipotarjeta']; //1 = tarjeta de credito 2 = cuenta debito
+
+   //datos cotizacion ////////
+   $montototal = mysql_result($resCotizacion,0,'precio');
+   $primaneta = mysql_result($resCotizacion,0,'primaneta');
+   /////////////////////////////
+
+   if ($afiliacionnumber != '') {
+      $afiliacionnumber = $serviciosReferencias->encryptIt($afiliacionnumber);
+   }
+
+   $url = 'documentos.php?id='.mysql_result($resCotizacion,0,0);
 
    switch ($metodopago) {
       case 1:
          $reftipoperiodicidad = 1;
          $reftipocobranza = 1;
-         $url = 'comercio_fin.php?id='.mysql_result($resCotizacion,0,0);
+
       break;
       case 2:
          $reftipoperiodicidad = 1;
          $reftipocobranza = 1;
-         $url = '../index.php';
+
       break;
       case 3:
          $reftipoperiodicidad = 1;
          $reftipocobranza = 1;
-         $url = '../index.php';
+
       break;
       case 4:
          $reftipoperiodicidad = 4;
          $reftipocobranza = 2;
-         $url = '../index.php';
+
       break;
    }
 
    $resAux = $serviciosReferencias->traerPeriodicidadventasPorVenta($idventa);
 
+   // defino por el radio del html si lo domicilio o no
+   if ($domiciliado == 0) {
+      $banco = '';
+      $afiliacionnumber = '';
+      $tipotarjeta = 0;
+      $reftipocobranza = 2;
+   } else {
+      $reftipocobranza = 1;
+   }
+
    if (mysql_num_rows($resAux) > 0) {
       $res = mysql_result($resAux,0,0);
    } else {
-      $res = $serviciosReferencias->insertarPeriodicidadventas($idventa,$reftipoperiodicidad,$reftipocobranza);
+      $res = $serviciosReferencias->insertarPeriodicidadventas($idventa,$reftipoperiodicidad,$reftipocobranza,$banco,$afiliacionnumber,$tipotarjeta);
+   }
+
+   // ver la fecha de pago
+   $fechapago = date('Y-m-d');
+
+   $fecha = date('Y-m-d');
+   $nuevafecha = strtotime ( '+4 day' , strtotime ( $fecha ) ) ;
+   $nuevafecha = date ( 'Y-m-d' , $nuevafecha );
+   $fechavencimiento = $nuevafecha;
+   ///////////////////////
+
+   // si es 1 debo guardar la venta, la orden de pago y cuando termine de pagar por el carrito de compra la debo finalizar
+
+   //si es 2,3 debo generar la venta y la orden de pago con el cobro a una sola cuota. Ruth debera subir los recibos para que el cliente puedo descargarlos e ir a pagar
+
+   // si es 4 debo cargar la venta, la orden de pago y los 12 cobros. Debo generar el primer cobro y los demas los cargaria ruth con los vigencias que ella estipule
+   if ($reftipoperiodicidad == 1) {
+      $resPVD = $serviciosReferencias->insertarPeriodicidadventasdetalle($res,$montototal,$primaneta,0,0,$fechapago,$fechavencimiento,1,$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],$fecha,$fecha,'falta cargar');
+   } else {
+      $montototal = $montototal * 1.1;
+      $resPVD = $serviciosReferencias->insertarPeriodicidadventasdetalle($res,$montototal/12,$primaneta,0,0,$fechapago,$fechavencimiento,1,$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],$fecha,$fecha,'falta cargar');
    }
 
 
@@ -2167,17 +2215,26 @@ function insertarAsegurados($serviciosReferencias) {
    $telefonofijo = '';
    $telefonocelular = '';
 
+   $parentesco = $_POST['parentesco'];
+
    $resCliente = $serviciosReferencias->traerClientesPorId($refclientes);
 
-   $res = $serviciosReferencias->insertarAsegurados($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco,$fechanacimiento);
+   $res = $serviciosReferencias->insertarAsegurados($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco,$fechanacimiento,$parentesco);
 
    if ((integer)$res > 0) {
+      $resV['error'] = false;
+      $resV['id'] = $res;
       $resM1 = $serviciosReferencias->modificarCampoParticularAsegurados($res,'email',mysql_result($resCliente,0,'email'));
       $resM2 = $serviciosReferencias->modificarCampoParticularAsegurados($res,'telefonofijo',mysql_result($resCliente,0,'telefonofijo'));
       echo '';
    } else {
+      $resV['error'] = true;
+      $resV['id'] = 0;
       echo 'Hubo un error al insertar datos ';
    }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
 }
 
 function modificarAsegurados($serviciosReferencias) {
@@ -2216,7 +2273,9 @@ function modificarAsegurados($serviciosReferencias) {
    $refclientes = $_POST['refclientes'];
    $reftipoparentesco = $_POST['reftipoparentesco'];
 
-   $res = $serviciosReferencias->modificarAsegurados($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco);
+   $parentesco = $_POST['parentesco'];
+
+   $res = $serviciosReferencias->modificarAsegurados($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco,$parentesco);
 
    if ($res == true) {
       echo '';

@@ -981,6 +981,15 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 										</div>
 									</div>
 								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContparentescoASG" style="display:block">
+									<label class="form-label">Ingrese el Parentesco  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="parentescoASG" name="parentesco" />
+										</div>
+									</div>
+								</div>
 							</div>
 							<div class="row" style="margin-top:15px;">
 
@@ -1082,6 +1091,15 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 									</div>
 								</div>
 
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContparentescoBNF" style="display:block">
+									<label class="form-label">Ingrese el Parentesco  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="parentescoBNF" name="parentesco" />
+										</div>
+									</div>
+								</div>
+
 
 
 
@@ -1170,6 +1188,28 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 <script>
 	$(document).ready(function(){
 
+		$('.frmContparentescoASG').hide();
+		$('.frmContparentescoBNF').hide();
+
+		$('#reftipoparentescoASG').change(function() {
+			if ($(this).val() == 4) {
+				$('.frmContparentescoASG').show();
+				$("#parentescoASG").prop('required',true);
+			} else {
+				$('.frmContparentescoASG').hide();
+				$("#parentescoASG").prop('required',false);
+			}
+		});
+
+		$('#reftipoparentescoBNF').change(function() {
+			if ($(this).val() == 4) {
+				$('.frmContparentescoBNF').show();
+				$("#parentescoBNF").prop('required',true);
+			} else {
+				$('.frmContparentescoBNF').hide();
+				$("#parentescoBNF").prop('required',false);
+			}
+		});
 
 		var options = {
 
@@ -1954,7 +1994,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 					var $tab = $('#wizard_with_validation-h-' + currentIndex).html();
 
-					<?php if ($tieneAsegurado != '') { ?>
+					<?php if ($tieneAsegurado == '') { ?>
 					if ($tab.trim() == 'ASEGURADO') {
 						modificoAseguradoPorCotizacion();
 					}
@@ -2308,7 +2348,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		$('#wizard_with_validation #tieneasegurado').change(function() {
 			if ($(this).val() == '1') {
 				$('#wizard_with_validation .frmContaseguradoaux').show();
-				traerAseguradosPorCliente();
+				traerAseguradosPorCliente(0);
 				$('#wizard_with_validation .contCuestionarioPersonas').hide();
 			} else {
 				if ($('#wizard_with_validation #tieneasegurado option:selected').text() == 'Yo mismo') {
@@ -2323,11 +2363,11 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 			}
 		});
 
-		traerAseguradosPorCliente();
+		traerAseguradosPorCliente(0);
 
 		<?php } ?>
 
-		traerBeneficiariosPorCliente();
+		traerBeneficiariosPorCliente(0);
 
 
 		$('#activo').prop('checked',true);
@@ -2390,7 +2430,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		});
 
 
-		function traerAseguradosPorCliente() {
+		function traerAseguradosPorCliente(idasegurado) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
@@ -2404,6 +2444,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 				//una vez finalizado correctamente
 				success: function(data){
 					$('#refaseguradaaux').html(data.dato);
+
+					$('#refaseguradaaux').val(idasegurado);
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -2419,7 +2461,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 			});
 		}
 
-		function traerBeneficiariosPorCliente() {
+		function traerBeneficiariosPorCliente(idbeneficiario) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
@@ -2433,6 +2475,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 				//una vez finalizado correctamente
 				success: function(data){
 					$('#refbeneficiarioaux').html(data.dato);
+
+					$('#refbeneficiarioaux').val(idbeneficiario);
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -2626,17 +2670,18 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					processData: false,
 					//mientras enviamos el archivo
 					beforeSend: function(){
-
+						$('.frmContparentescoASG').hide();
 					},
 					//una vez finalizado correctamente
 					success: function(data){
 
-						if (data == '') {
+						if (data.error == false) {
 							swal("Ok!", 'Se guardo correctamente el asegurado', "success");
 
 							$('#lgmNuevoASG').modal('hide');
 
-							traerAseguradosPorCliente();
+							traerAseguradosPorCliente(data.id);
+
 						} else {
 							swal({
 									title: "Respuesta",
@@ -2679,17 +2724,18 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					processData: false,
 					//mientras enviamos el archivo
 					beforeSend: function(){
-
+						$('.frmContparentescoBNF').hide();
 					},
 					//una vez finalizado correctamente
 					success: function(data){
 
-						if (data == '') {
+						if (data.error == false) {
 							swal("Ok!", 'Se guardo correctamente el beneficiario', "success");
 
 							$('#lgmNuevoBNF').modal('hide');
 
-							traerBeneficiariosPorCliente();
+							traerBeneficiariosPorCliente(data.id);
+
 						} else {
 							swal({
 									title: "Respuesta",
