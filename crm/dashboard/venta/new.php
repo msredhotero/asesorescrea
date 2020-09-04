@@ -3008,7 +3008,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		    slider.noUiSlider.on('update', function () {
 		        var val = slider.noUiSlider.get();
 				  val = parseInt(val);
-		        if (tipo == 0) {
+		        if (tipo == 1) {
 
 		            //val += '%';
 						$('#wizard_with_validation #respuestaAltura').val(val);
