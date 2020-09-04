@@ -2982,9 +2982,12 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 			connect: 'lower',
 			step: 1,
 			range: {
-			'min': [0],
-			'max': [230]
-			}
+				'min': [0],
+				'max': [230]
+			},
+			format: wNumb({
+         	decimals: 0
+         })
 		});
 
 		noUiSlider.create(sliderPeso, {
@@ -2992,13 +2995,16 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 			connect: 'lower',
 			step: 1,
 			range: {
-			'min': [0],
-			'max': [260]
-			}
+				'min': [0],
+				'max': [260]
+			},
+			format: wNumb({
+         	decimals: 0
+         })
 		});
 
 		getNoUISliderValue(sliderAltura, 0);
-		getNoUISliderValue(sliderPeso, 0);
+		getNoUISliderValue(sliderPeso, 1);
 
 		function getNoUISliderValue(slider, tipo) {
 		    slider.noUiSlider.on('update', function () {
