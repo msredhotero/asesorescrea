@@ -693,11 +693,11 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 												<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
 													<div class="row contRangers">
 														<div class="col-md-6">
-															<label>Range para la altura</label>
+															<label>Deslice para cargar el Peso</label>
 															<div style="margin-top:10px;" id="nouislider_altura"></div>
 														</div>
 														<div class="col-md-6">
-															<label>Range para el peso</label>
+															<label>Deslice para cargar la Altura</label>
 															<div style="margin-top:10px;" id="nouislider_peso"></div>
 														</div>
 													</div>
