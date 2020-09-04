@@ -1418,6 +1418,50 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 				//una vez finalizado correctamente
 				success: function(data){
 
+					$('.contCuestionarioPersonasContratante').show();
+
+					$('.contCuestionarioPersonasContratante').html(data.datos.cuestionario);
+
+					$('#wizard_with_validation .tsfechanacimiento').pickadate({
+						format: 'yyyy-mm-dd',
+						labelMonthNext: 'Siguiente mes',
+						labelMonthPrev: 'Previo mes',
+						labelMonthSelect: 'Selecciona el mes del año',
+						labelYearSelect: 'Selecciona el año',
+						selectMonths: true,
+						selectYears: 100,
+						today: 'Hoy',
+						clear: 'Borrar',
+						close: 'Cerrar',
+						monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+						monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+						weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+						weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+					});
+
+
+					$("#wizard_with_validation .tsmunicipio").prop('readonly',true);
+					$("#wizard_with_validation .tsestado").prop('readonly',true);
+					$("#wizard_with_validation .tscolonia").prop('readonly',true);
+
+					$("#wizard_with_validation .tscodigopostal").easyAutocomplete(options);
+
+
+					$('#wizard_with_validation .contCuestionarioPersonasContratante .escondido').hide();
+
+					$('#wizard_with_validation [data-toggle="tooltip"]').tooltip();
+
+					$('#wizard_with_validation .contCuestionarioPersonasContratante .aparecer').click(function() {
+						idTable =  $(this).attr("id");
+						idPregunta =  $('#'+idTable).data("pregunta");
+						idRespuesta =  $('#'+idTable).data("respuesta");
+						idPreguntaId =  $('#'+idTable).data("idpregunta");
+
+						$('#wizard_with_validation .contCuestionarioPersonasContratante .escondido'+idPreguntaId).hide();
+
+						$('#wizard_with_validation .contCuestionarioPersonasContratante #contPregunta'+idPregunta).show(400);
+					});
+
 					if (data.error == false) {
 
 						<?php if (isset($_GET['id'])) { ?>
@@ -1430,49 +1474,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 						}
 						<?php } ?>
 
-						$('.contCuestionarioPersonasContratante').show();
 
-						$('.contCuestionarioPersonasContratante').html(data.datos.cuestionario);
-
-						$('#wizard_with_validation .tsfechanacimiento').pickadate({
-							format: 'yyyy-mm-dd',
-							labelMonthNext: 'Siguiente mes',
-							labelMonthPrev: 'Previo mes',
-							labelMonthSelect: 'Selecciona el mes del año',
-							labelYearSelect: 'Selecciona el año',
-							selectMonths: true,
-							selectYears: 100,
-							today: 'Hoy',
-							clear: 'Borrar',
-							close: 'Cerrar',
-							monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-							monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-							weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-							weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-						});
-
-
-						$("#wizard_with_validation .tsmunicipio").prop('readonly',true);
-						$("#wizard_with_validation .tsestado").prop('readonly',true);
-						$("#wizard_with_validation .tscolonia").prop('readonly',true);
-
-						$("#wizard_with_validation .tscodigopostal").easyAutocomplete(options);
-
-
-						$('#wizard_with_validation .contCuestionarioPersonasContratante .escondido').hide();
-
-						$('#wizard_with_validation [data-toggle="tooltip"]').tooltip();
-
-						$('#wizard_with_validation .contCuestionarioPersonasContratante .aparecer').click(function() {
-							idTable =  $(this).attr("id");
-							idPregunta =  $('#'+idTable).data("pregunta");
-							idRespuesta =  $('#'+idTable).data("respuesta");
-							idPreguntaId =  $('#'+idTable).data("idpregunta");
-
-							$('#wizard_with_validation .contCuestionarioPersonasContratante .escondido'+idPreguntaId).hide();
-
-							$('#wizard_with_validation .contCuestionarioPersonasContratante #contPregunta'+idPregunta).show(400);
-						});
 					} else {
 						swal({
 								title: "Respuesta",
