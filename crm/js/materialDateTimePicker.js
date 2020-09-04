@@ -1287,49 +1287,5 @@
         }
     };
 
-    if (angular && angular.module) {
-        (angular.module('ngDatetimepicker', ['ng'])).directive('ngDatetimepicker', [function () {
-            var container = function ($scope, elem) {
-                var $this = {
-                    component: $(elem).find('.datepicker').bootstrapMaterialDatePicker({
-                        format: 'dddd DD MMMM YYYY - HH:mm',
-                        cancelText: $scope.ngCancelLabel ?  $scope.ngCancelLabel: 'Cancel',
-                        clearText:  $scope.ngCleanLabel ?  $scope.ngCleanLabel: 'Clean',
-                        okText : $scope.ngOkLabel ?  $scope.ngOkLabel: 'OK',
-                        lang : $scope.ngLang ? $scope.ngLang : 'en'                         
-                    }).on('change', function(e, date) {
-                        $scope.$apply(function () {
-                            $scope.ngModel = date && date.toDate ? date.toDate() : undefined;
-                        });
-                    }),
-                    ngOpen: function() {
-                        setTimeout(function() {
-                            $(elem).find('.datepicker').trigger('click');
-                        }, 100);
-                    },
-                    setMinDate: function (date) {
-                        if (date && $(elem).find('.datepicker').bootstrapMaterialDatePicker) {
-                            $(elem).find('.datepicker').bootstrapMaterialDatePicker('setMinDate', date);
-                        }
-                    }
-                };
-                $scope.ngOpen = $this.ngOpen.bind($this);
-                $scope.$watch('ngMindate', $this.setMinDate);
-            };
-            return {
-                restrict: 'E',
-                scope: {
-                    ngModel: '=ngModel',
-                    ngOpen: '=ngOpen',
-                    ngMindate: '=ngMindate',
-                    ngCancelLabel: '@ngCancelLabel',
-                    ngCleanLabel: '@ngCleanLabel',
-                    ngOkLabel : '@ngOkLabel',
-                    ngLang: '@ngLang'
-                },
-                link: container,
-                template: '<input type="hidden" class="datepicker hide">'
-            };
-        }]);
-    }
+   
 })(window, document, jQuery, moment);

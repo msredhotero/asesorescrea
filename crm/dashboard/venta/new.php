@@ -568,7 +568,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 	<link rel="stylesheet" href="../../css/materialDateTimePicker.css">
 
-
+	<!-- noUISlider Css -->
+   <link href="../../plugins/nouislider/nouislider.min.css" rel="stylesheet" />
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
@@ -690,9 +691,20 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
                                        </div>
                                     </div>
 												<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
+													<div class="row contRangers">
+														<div class="col-md-6">
+															<label>Range para la altura</label>
+															<div style="margin-top:10px;" id="nouislider_altura"></div>
+														</div>
+														<div class="col-md-6">
+															<label>Range para el peso</label>
+															<div style="margin-top:10px;" id="nouislider_peso"></div>
+														</div>
+													</div>
 													<div class="contCuestionario">
 
 													</div>
+
 												</div>
 
                               </fieldset>
@@ -1181,12 +1193,19 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 <script src="../../js/pdfobject.min.js"></script>
 
+<!-- noUISlider Plugin Js -->
+<script src="../../plugins/nouislider/nouislider.js"></script>
+
 
 <!-- Chart Plugins Js -->
 
 
 <script>
 	$(document).ready(function(){
+
+
+
+
 
 		$('.frmContparentescoASG').hide();
 		$('.frmContparentescoBNF').hide();
@@ -2954,6 +2973,51 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		/////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+		<?php } ?>
+
+		var sliderAltura = document.getElementById('nouislider_altura');
+		var sliderPeso = document.getElementById('nouislider_peso');
+		noUiSlider.create(sliderAltura, {
+			start: [30],
+			connect: 'lower',
+			step: 1,
+			range: {
+			'min': [0],
+			'max': [230]
+			}
+		});
+
+		noUiSlider.create(sliderPeso, {
+			start: [30],
+			connect: 'lower',
+			step: 1,
+			range: {
+			'min': [0],
+			'max': [260]
+			}
+		});
+
+		getNoUISliderValue(sliderAltura, 0);
+		getNoUISliderValue(sliderPeso, 0);
+
+		function getNoUISliderValue(slider, tipo) {
+		    slider.noUiSlider.on('update', function () {
+		        var val = slider.noUiSlider.get();
+		        if (tipo == 0) {
+		            //val = parseInt(val);
+		            //val += '%';
+						$('#wizard_with_validation #respuesta680').val(val);
+		        } else {
+					  $('#wizard_with_validation #respuesta681').val(val);
+				  }
+		        //$(slider).parent().find('span.js-nouislider-value').text(val);
+		    });
+		}
+
+		<?php if ($rIdProducto == 46) { ?>
+			$('.contRangers').show();
+		<?php } else { ?>
+			$('.contRangers').hide();
 		<?php } ?>
 
 
