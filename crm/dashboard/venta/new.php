@@ -1594,6 +1594,10 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					if (data != '') {
 						$('.contCuestionario').html(data.datos.cuestionario);
 
+						if ((data.datos.cuestionario.indexOf("Altura") > 0) || (data.datos.cuestionario.indexOf("Peso") > 0) || (data.datos.cuestionario.indexOf("Talla") > 0)) {
+							$('.contRangers').show();
+						}
+
 						<?php if (isset($_GET['id'])) { ?>
 						$('#wizard_with_validation .contCuestionario .escondido').remove();
 						<?php } else { ?>
@@ -3016,11 +3020,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		    });
 		}
 
-		<?php if ($rIdProducto == 46) { ?>
-			$('.contRangers').show();
-		<?php } else { ?>
-			$('.contRangers').hide();
-		<?php } ?>
+		$('.contRangers').hide();
 
 
 	});
