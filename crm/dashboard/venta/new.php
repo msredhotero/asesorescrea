@@ -2034,7 +2034,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 						modificoAseguradoPorCotizacion();
 					}
 					<?php }  ?>
-					
+
 
 
 	            if (currentIndex > newIndex) { return true; }
@@ -2068,6 +2068,12 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 							if (currentIndex == 2) {
 								validarCuestionarioContratante(<?php echo $rIdCliente; ?>,0 );
 							}
+
+							<?php if ($tieneAsegurado != '') { ?>
+								if ($tab.trim() == 'ASEGURADO') {
+									seguirAdelante();
+								}
+							<?php } ?>
 
 							if ($tab.trim() == 'BENEFICIARIO') {
 								//validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
