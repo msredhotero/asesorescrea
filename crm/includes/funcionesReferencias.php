@@ -5817,7 +5817,7 @@ return $res;
 					        LEFT JOIN
 					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
 					where d.reftipodocumentaciones in (".$tipodocumentacion.") and refprocesocotizacion = 1
-
+                     and d.activo='1'
 					order by 1";
 		$res = $this->query($sql,0);
  		return $res;
