@@ -2033,9 +2033,9 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					if ($tab.trim() == 'ASEGURADO') {
 						modificoAseguradoPorCotizacion();
 					}
-					<?php } else { ?>
-						seguirAdelante();
-					<?php } ?>
+					<?php }  ?>
+					
+
 
 	            if (currentIndex > newIndex) { return true; }
 
