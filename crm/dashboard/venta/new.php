@@ -2034,7 +2034,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 						modificoAseguradoPorCotizacion();
 					}
 					<?php } else { ?>
-						form.steps("next");
+						seguirAdelante();
 					<?php } ?>
 
 	            if (currentIndex > newIndex) { return true; }
@@ -2094,6 +2094,10 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	            modificarCotizacion(1);
 	        }
 	    });
+
+		function seguirAdelante() {
+			form.steps("next");
+		}
 
 		var esconde1 = 0;
 		var esconde2 = 0;
