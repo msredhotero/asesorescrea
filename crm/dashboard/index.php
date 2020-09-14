@@ -146,6 +146,22 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 		$lblTelefonoCelular = mysql_result($resCliente,0,'telefonocelular');
 
+		if (mysql_result($resCliente,0,'fechanacimiento') == null || mysql_result($resCliente,0,'fechanacimiento') == '0000-00-00') {
+			$edad = 0;
+		} else {
+			$edad = $serviciosReferencias->calculaedad(mysql_result($resCliente,0,'fechanacimiento'));
+		}
+
+		//die(var_dump($edad));
+
+		if ($edad > 60) {
+			$mayoredad = 1;
+		} else {
+			$mayoredad = 0;
+		}
+
+
+
 		$idcliente = mysql_result($resCliente,0,0);
 
 		if ($lblTelefonoCelular == '') {
@@ -162,7 +178,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 		if (mysql_num_rows($existeCartera)>0) {
 			$resProductosVenta = $serviciosReferencias->traerProductosVentaEnLinea(46);
 		} else {
-			$resProductosVenta = $serviciosReferencias->traerProductosVentaEnLinea(46);
+			$resProductosVenta = $serviciosReferencias->traerProductosVentaEnLineaPorId(46);
 		}
 	}
 
@@ -434,7 +450,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
-	 
+
     <?php echo $baseHTML->cargarArchivosCSS('../'); ?>
 
 	 <!-- CSS file -->
@@ -559,6 +575,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 										<h3>Hola, <?php echo strtoupper($nombrecompleto); ?></h3>
 										<hr>
 
+										<?php if ($_SESSION['usuaid_sahilices'] == 201) { ?>
 										<div class="row">
 											<div class="col-xs-4">
 									         <div class="card">
@@ -566,8 +583,74 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 										            <h4 class="my-0 font-weight-normal">Comprar en Línea</h4>
 										         </div>
 									         	<div class="body table-responsive">
-													<?php while ($rowV = mysql_fetch_array($resProductosVenta)) { ?>
-										            <h1 class="card-title pricing-card-title">$<?php echo $rowV['precio']; ?> <small class="text-muted">/al año</small></h1>
+													<?php
+														$acumPrecio = 0;
+														while ($rowV = mysql_fetch_array($resProductosVenta)) {
+
+															$resProductosPaquete = $serviciosReferencias->traerPaquetedetallesPorPaquete($rowV['idproducto']);
+
+															$lblPrecio = '';
+
+															if (mysql_num_rows($resProductosPaquete) > 0) {
+
+																if ($edad == 0) {
+																	$lblPrecio = '$9<small class="text-muted">/por día</small>
+																	<p><small class="text-muted">* dependen la edad</small></p>';
+																} else {
+																	while ($rowP = mysql_fetch_array($resProductosPaquete)) {
+
+																		$existeCotizacionParaProducto = $serviciosReferencias->traerValoredadPorProductoEdad($rowP['refproductos'],$edad);
+
+																		if (mysql_num_rows($existeCotizacionParaProducto)>0) {
+																			//die(var_dump($rowP['refproductos']));
+																			$acumPrecio += mysql_result($existeCotizacionParaProducto,0,'valor');
+																		} else {
+																			$lblPrecio = '$9<small class="text-muted">/por día</small>
+																			<p><small class="text-muted">* dependen la edad</small></p>';
+																			break;
+																		}
+
+																		$lblPrecio = '$'.$acumPrecio.'<small class="text-muted">/por año</small>';
+																	}
+																}
+															} else {
+																if ($edad == 0) {
+																	$existeCotizacionParaProducto = $serviciosReferencias->traerValoredadPorProductoEdad($rowV['idproducto'],$edad);
+
+																	if (mysql_num_rows($existeCotizacionParaProducto)>0) {
+																		$precioReal = mysql_result($existeCotizacionParaProducto,0,'valor');
+
+																		$lblPrecio = '$'.$precioReal.'<small class="text-muted">/por año</small>';
+																	} else {
+																		$precioReal = $rowV['precio'] / 12;
+
+																		$lblPrecio = '$'.$precioReal.'<small class="text-muted">/por mes</small>
+																		<p><small class="text-muted">* dependen la edad</small></p>';
+																	}
+
+
+																} else {
+																	$existeCotizacionParaProducto = $serviciosReferencias->traerValoredadPorProductoEdad($rowV['idproducto'],$edad);
+
+																	if (mysql_num_rows($existeCotizacionParaProducto)>0) {
+																		$precioReal = mysql_result($existeCotizacionParaProducto,0,'valor');
+
+																		$lblPrecio = '$'.$precioReal.'<small class="text-muted">/por año</small>';
+																	} else {
+																		$precioReal = $rowV['precio'] / 12;
+
+																		$lblPrecio = '$'.$precioReal.'<small class="text-muted">/por mes</small>
+																		<p><small class="text-muted">* dependen la edad</small></p>';
+																	}
+																}
+															}
+
+
+
+
+
+													?>
+										            <h1 class="card-title pricing-card-title"><?php echo $lblPrecio; ?></h1>
 										            <h4><?php echo $rowV['producto']; ?></h4>
 										            <?php echo $rowV['detalle']; ?>
 										            <button type="button" class="btn btn-lg btn-block btn-success" onclick="window.location='venta/new.php?producto=<?php echo $rowV['idproducto']; ?>'">COMPRAR</button>
@@ -627,6 +710,8 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 										</div>
 										<hr>
+									<?php } ?>
+
 										<h4>Gracias por unirte a nuestra plataforma y confiar en nosostros.</h4>
 										<p>Puedes contactarnos en el Tel fijo: <b><span style="color:#5DC1FD;">55 51 35 02 59</span></b></p>
 										<p>Correo: <a href="mailto:ventas@asesorescrea.com" style="color:#5DC1FD !important;"><b>ventas@asesorescrea.com</b></a></p>

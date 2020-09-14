@@ -21,9 +21,9 @@ if (isset($_SESSION['usua_sahilices'])) {
   $error = false;
 
   $nombre           = $_POST['nombre'];
-  $apellidopaterno  = $_POST['apellidopaterno'];
-  $apellidomaterno  = $_POST['apellidomaterno'];
-  $email            = $_POST['correo-eletronico'];
+  $apellidopaterno  = $_POST['apellido-paterno'];
+  $apellidomaterno  = $_POST['apellido-materno'];
+  $email            = $_POST['correo-electronico'];
   $fechanacimiento  = $_POST['fecha-nacimiento'];
   $telefono         = $_POST['telefono'];
   $sexo             = $_POST['sexo'];

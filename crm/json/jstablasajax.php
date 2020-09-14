@@ -69,6 +69,23 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 }
 
 switch ($tabla) {
+	case 'valoredad':
+
+		$datos = $serviciosReferencias->traerValoredadjax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('search','delete');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 6;
+
+	break;
 	case 'leadshistoricos':
 
 		$idestado = $_GET['idestado'];

@@ -9,6 +9,237 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+
+/* PARA Paquetedetalles */
+
+   function insertarPaquetedetalles($refpaquetes,$refproductos,$secalcula,$unicomonto,$valor,$firmasimple,$firmafiel,$domiciliacion) {
+      $sql = "insert into dbpaquetedetalles(idpaquetedetalle,refpaquetes,refproductos,secalcula,unicomonto,valor,firmasimple,firmafiel,domiciliacion)
+      values ('',".$refpaquetes.",".$refproductos.",'".$secalcula."','".$unicomonto."',".$valor.",'".$firmasimple."','".$firmafiel."','".$domiciliacion."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarPaquetedetalles($id,$refpaquetes,$refproductos,$secalcula,$unicomonto,$valor,$firmasimple,$firmafiel,$domiciliacion) {
+      $sql = "update dbpaquetedetalles
+      set
+      refpaquetes = ".$refpaquetes.",refproductos = ".$refproductos.",secalcula = '".$secalcula."',unicomonto = '".$unicomonto."',valor = ".$valor.",firmasimple = '".$firmasimple."',firmafiel = '".$firmafiel."',domiciliacion = '".$domiciliacion."'
+      where idpaquetedetalle =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarPaquetedetalles($id) {
+      $sql = "delete from dbpaquetedetalles where idpaquetedetalle =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerPaquetedetalles() {
+      $sql = "select
+      p.idpaquetedetalle,
+      p.refpaquetes,
+      p.refproductos,
+      p.secalcula,
+      p.unicomonto,
+      p.valor,
+      p.firmasimple,
+      p.firmafiel,
+      p.domiciliacion
+      from dbpaquetedetalles p
+      inner join dbpaquetes paq ON paq.idpaquete = p.refpaquetes
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerPaquetedetallesPorId($id) {
+      $sql = "select idpaquetedetalle,refpaquetes,refproductos,secalcula,unicomonto,valor,firmasimple,firmafiel,domiciliacion from dbpaquetedetalles where idpaquetedetalle =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerPaquetedetallesPorPaquete($id) {
+      $sql = "select
+      pd.idpaquetedetalle,pd.refpaquetes,pd.refproductos,
+      pd.secalcula,pd.unicomonto,pd.valor,pd.firmasimple,
+      pd.firmafiel,pd.domiciliacion
+      from dbpaquetedetalles pd
+      inner join dbpaquetes p on p.idpaquete = pd.refpaquetes
+      where p.refproductos =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: dbpaquetedetalles*/
+
+
+   /* PARA Paquetes */
+
+   function insertarPaquetes($refproductos,$cantidad) {
+      $sql = "insert into dbpaquetes(idpaquete,refproductos,cantidad)
+      values ('',".$refproductos.",".$cantidad.")";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarPaquetes($id,$refproductos,$cantidad) {
+      $sql = "update dbpaquetes
+      set
+      refproductos = ".$refproductos.",cantidad = ".$cantidad."
+      where idpaquete =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarPaquetes($id) {
+      $sql = "delete from dbpaquetes where idpaquete =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerPaquetes() {
+      $sql = "select
+      p.idpaquete,
+      p.refproductos,
+      p.cantidad
+      from dbpaquetes p
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerPaquetesPorId($id) {
+      $sql = "select idpaquete,refproductos,cantidad from dbpaquetes where idpaquete =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: dbpaquetes*/
+
+   function calculaedad($fechanacimiento){
+      list($ano,$mes,$dia) = explode("-",$fechanacimiento);
+      $ano_diferencia  = date("Y") - $ano;
+      $mes_diferencia = date("m") - $mes;
+      $dia_diferencia   = date("d") - $dia;
+      if (($dia_diferencia < 0 || $mes_diferencia < 0) && ($ano != date("Y")))
+         $ano_diferencia--;
+      return $ano_diferencia;
+   }
+   /* PARA Valoredad */
+
+   function insertarValoredad($refproductos,$desde,$hasta,$valor,$vigdesde,$vighasta,$fechacrea) {
+      $sql = "insert into dbvaloredad(idvaloredad,refproductos,desde,hasta,valor,vigdesde,vighasta,fechacrea)
+      values ('',".$refproductos.",".$desde.",".$hasta.",".$valor.",'".$vigdesde."','".$vighasta."','".$fechacrea."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarValoredad($id,$refproductos,$desde,$hasta,$valor,$vigdesde,$vighasta) {
+      $sql = "update dbvaloredad
+      set
+      refproductos = ".$refproductos.",desde = ".$desde.",hasta = ".$hasta.",valor = ".$valor.",vigdesde = '".$vigdesde."',vighasta = '".$vighasta."'
+      where idvaloredad =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarValoredad($id) {
+      $sql = "delete from dbvaloredad where idvaloredad =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerValoredadjax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+      $where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where p.producto like '%".$busqueda."%' and desde like '%".$busqueda."%' and hasta like '%".$busqueda."%'";
+		}
+
+      $sql = "select
+      v.idvaloredad,
+      p.producto,
+      v.desde,
+      v.hasta,
+      v.vigdesde,
+      v.vighasta,
+      v.valor,
+      v.refproductos,
+      v.fechacrea
+      from dbvaloredad v
+      inner join tbproductos p on p.idproducto = v.refproductos
+       ".$where."
+      ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+      $res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+   }
+
+   function traerValoredad() {
+      $sql = "select
+      v.idvaloredad,
+      v.refproductos,
+      v.desde,
+      v.hasta,
+      v.valor,
+      v.vigdesde,
+      v.vighasta,
+      v.fechacrea
+      from dbvaloredad v
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerValoredadPorId($id) {
+      $sql = "select idvaloredad,refproductos,desde,hasta,valor,vigdesde,vighasta,fechacrea from dbvaloredad where idvaloredad =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerValoredadPorProducto($id) {
+      $sql = "select idvaloredad,refproductos,desde,hasta,valor,vigdesde,vighasta,fechacrea from dbvaloredad where refproductos =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerValoredadPorProductoEdad($idproducto, $edad) {
+      $sql = "select idvaloredad,refproductos,desde,hasta,valor,vigdesde,vighasta,fechacrea from dbvaloredad where refproductos =".$idproducto." and ".$edad." between desde and hasta";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function existeCotizacionValorEdad($idproducto) {
+      $sql = "select idvaloredad,refproductos,desde,hasta,valor,vigdesde,vighasta,fechacrea from dbvaloredad where refproductos =".$idproducto;
+      $res = $this->query($sql,0);
+      if (mysql_num_rows($res)>0) {
+         return 1;
+      }
+      return 0;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: dbvaloredad*/
+
    function traerInformeDeDocumentaciones($id) {
       $resPostulante = $this->traerPostulantesPorId($id);
 
@@ -12377,7 +12608,8 @@ return $res;
       numerocliente,refusuarios,
       fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa ,
       concat(apellidopaterno, ' ', apellidomaterno, ' ', nombre) as nombrecompleto,
-      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp
+      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,
+      fechanacimiento
       from dbclientes where refusuarios =".$id;
 		$res = $this->query($sql,0);
 		return $res;

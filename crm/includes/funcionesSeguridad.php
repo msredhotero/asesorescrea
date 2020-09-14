@@ -21,9 +21,19 @@ class ServiciosSeguridad {
 
 
 	function seguridadRuta($rol, $ruta) {
+
 		$rol = str_replace(' ','',$rol);
-		
-		$sql = "select idmenu,url,icono, nombre, permiso from predio_menu where permiso like '%".$rol."%' and url = '".$ruta."'";
+
+		if ($_SESSION['idroll_sahilices'] == 16) {
+			if ($_SESSION['usuaid_sahilices'] != 201) {
+				$sql = "select idmenu,url,icono, nombre, permiso from predio_menu where idmenu = 13";
+			} else {
+				$sql = "select idmenu,url,icono, nombre, permiso from predio_menu where permiso like '%".$rol."%' and url = '".$ruta."'";
+			}
+		} else {
+			$sql = "select idmenu,url,icono, nombre, permiso from predio_menu where permiso like '%".$rol."%' and url = '".$ruta."'";
+		}
+
 		$res = $this->query($sql,0);
 
 		if (mysql_num_rows($res)>0) {

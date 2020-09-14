@@ -1154,8 +1154,65 @@ switch ($accion) {
       guardarMetodoDePagoPorCotizacion($serviciosReferencias);
    break;
 
+   case 'insertarValoredad':
+      insertarValoredad($serviciosReferencias);
+   break;
+   case 'modificarValoredad':
+      modificarValoredad($serviciosReferencias);
+   break;
+   case 'eliminarValoredad':
+      eliminarValoredad($serviciosReferencias);
+   break;
+
 }
 /* FinFinFin */
+
+function insertarValoredad($serviciosReferencias) {
+   $refproductos = $_POST['refproductos'];
+   $desde = $_POST['desde'];
+   $hasta = $_POST['hasta'];
+   $valor = $_POST['valor'];
+   $vigdesde = $_POST['vigdesde'];
+   $vighasta = $_POST['vighasta'];
+   $fechacrea = date('Y-m-d H:i:s');
+
+   $res = $serviciosReferencias->insertarValoredad($refproductos,$desde,$hasta,$valor,$vigdesde,$vighasta,$fechacrea);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarValoredad($serviciosReferencias) {
+   $id = $_POST['id'];
+   $refproductos = $_POST['refproductos'];
+   $desde = $_POST['desde'];
+   $hasta = $_POST['hasta'];
+   $valor = $_POST['valor'];
+   $vigdesde = $_POST['vigdesde'];
+   $vighasta = $_POST['vighasta'];
+
+   $res = $serviciosReferencias->modificarValoredad($id,$refproductos,$desde,$hasta,$valor,$vigdesde,$vighasta,$fechacrea);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarValoredad($serviciosReferencias) {
+   $id = $_POST['id'];
+   $res = $serviciosReferencias->eliminarValoredad($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
 
 function guardarMetodoDePagoPorCotizacion($serviciosReferencias) {
    session_start();
@@ -6521,6 +6578,22 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+      case 'dbvaloredad':
+         $resultado = $serviciosReferencias->traerValoredadPorId($id);
+
+         $modificar = "modificarValoredad";
+         $idTabla = "idvaloredad";
+
+         $lblCambio	 	= array('refproductos','desde','hasta','vigdesde','vighasta');
+         $lblreemplazo	= array('Producto','Edad desde','Edad hasta','Vig. Desde','Vig. Hasta');
+
+         $res = $serviciosReferencias->traerProductos();
+         $cad = $serviciosFunciones->devolverSelectBoxActivo($res,array(1),'',mysql_result($resultado,0,'refproductos'));
+
+
+         $refdescripcion = array(0=>$cad);
+         $refCampo 	=  array('refproductos');
+      break;
       case 'dblead':
          $resultado = $serviciosReferencias->traerLeadPorId($id);
 

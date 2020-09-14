@@ -171,6 +171,7 @@ class BaseHTML extends ServiciosNotificaciones {
 
 
     function cargarNAV($breadCumbs, $notificaciones='', $tareas='', $altura = '', $lstTareas='') {
+      $lblVerTodas = '';
       if ($notificaciones == '') {
          $notificaciones = $this->cargarNotificaciones('',($altura == '..' ? '' : '../'));
 
@@ -180,7 +181,11 @@ class BaseHTML extends ServiciosNotificaciones {
             $cantidadNotificacionesNoLeidas = $this->traerNotificacionesNoLeidaPorUsuarios($_SESSION['usua_sahilices']);
          }
 
+         $lblVerTodas = 'btnVerNotificaciones';
+      }
 
+      if ($_SESSION['idroll_sahilices'] == 16) {
+         $lblVerTodas = '';
       }
         $cad = '<nav class="navbar">
                     <div class="container-fluid">
@@ -206,7 +211,7 @@ class BaseHTML extends ServiciosNotificaciones {
                                            '.$notificaciones.'
                                         </li>
                                         <li class="footer">
-                                            <a href="javascript:void(0);" class="btnVerNotificaciones">Ver Todas</a>
+                                            <a href="javascript:void(0);" class="'.$lblVerTodas.'">Ver Todas</a>
                                         </li>
                                     </ul>
                                 </li>
