@@ -1193,6 +1193,10 @@ function modPassword($serviciosReferencias) {
       $error = 'La contraseña nueva es obligatoria';
    }
 
+   if ($passn === $passa) {
+      $error = 'La contraseña nueva no puede ser igual a la actual';
+   }
+
    if(!preg_match('/^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,16}$/', $passn)) {
       $error = 'La contraseña debe tener al entre 8 y 16 caracteres, al menos un dígito, al menos una minúscula y al menos una mayúscula.';
    }
