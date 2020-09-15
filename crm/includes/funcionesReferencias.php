@@ -14392,6 +14392,12 @@ return $res;
    return $res;
    }
 
+   function modPassword($id, $pass) {
+      $sql = "update dbusuarios set password = '".$pass."' where idusuario = ".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
 	function traerUsuariosPorRol($idrol) {
 		$sql = "select u.idusuario,u.usuario, u.email , u.nombrecompleto
 				from dbusuarios u

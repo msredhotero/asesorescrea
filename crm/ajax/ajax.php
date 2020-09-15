@@ -1164,8 +1164,60 @@ switch ($accion) {
       eliminarValoredad($serviciosReferencias);
    break;
 
+   case 'modPassword':
+      modPassword($serviciosReferencias);
+   break;
+
 }
 /* FinFinFin */
+
+function modPassword($serviciosReferencias) {
+   session_start();
+
+   $passa = $_POST['passa'];
+   $passn = $_POST['passn'];
+   $passnn = $_POST['passnn'];
+
+   $resUsuario = $serviciosReferencias->traerUsuariosPorId($_SESSION['usuaid_sahilices']);
+
+   $error = '';
+   if (mysql_result($resUsuario,0,'password') !== $passa) {
+      $error = 'La contraseña actual es erronea';
+   }
+
+   if ($passn !== $passnn) {
+      $error = 'La contraseña nueva difiere de la confirmación de la contraseña';
+   }
+
+   if (($passn == '') || ($passnn == '')) {
+      $error = 'La contraseña nueva es obligatoria';
+   }
+
+   if(!preg_match('/^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,16}$/', $passn)) {
+      $error = 'La contraseña debe tener al entre 8 y 16 caracteres, al menos un dígito, al menos una minúscula y al menos una mayúscula.';
+   }
+
+   if ($error == '') {
+      $res = $serviciosReferencias->modPassword($_SESSION['usuaid_sahilices'],$passn);
+      if ($res) {
+         $resV['error'] = false;
+
+      } else {
+         $resV['error'] = true;
+         $resV['mensaje'] = 'Se genero un error al modificar los datos, vuelva a intentarlo';
+      }
+   } else {
+      $resV['error'] = true;
+      $resV['mensaje'] = $error;
+   }
+
+
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
 
 function insertarValoredad($serviciosReferencias) {
    $refproductos = $_POST['refproductos'];

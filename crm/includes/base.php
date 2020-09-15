@@ -245,6 +245,9 @@ class BaseHTML extends ServiciosNotificaciones {
     }
 
     function cargarSECTION($usuario, $email, $menu, $altura = '', $rightsidebar='') {
+      if ($_SESSION['idroll_sahilices'] == 16) {
+         $cadPerfil = '<li><a href="'.$altura.'dashboard/cuenta/index.php"><i class="material-icons">account_circle</i>Cuenta</a></li>';
+      }
         $cad = '<section>
                 <!-- Left Sidebar -->
                 <div id="marcos">
@@ -260,8 +263,9 @@ class BaseHTML extends ServiciosNotificaciones {
                             <div class="btn-group user-helper-dropdown">
                                 <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">keyboard_arrow_down</i>
                                 <ul class="dropdown-menu pull-right">
-
+                                    '.$cadPerfil.'
                                     <li><a href="'.$altura.'logout.php"><i class="material-icons">input</i>Salir</a></li>
+
                                 </ul>
                             </div>
                         </div>
