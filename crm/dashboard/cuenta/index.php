@@ -336,6 +336,9 @@ $resCliente = $serviciosReferencias->traerClientesPorUsuarioCompleto($_SESSION['
 						});
 					} else {
 						swal("Error!", data.mensaje, "warning");
+						$('#passa').val('');
+						$('#passn').val('');
+						$('#passnn').val('');
 
 					}
 				},
