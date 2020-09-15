@@ -222,6 +222,9 @@ $resCliente = $serviciosReferencias->traerClientesPorUsuarioCompleto($_SESSION['
 								<hr>
 								<div class="row" style="padding: 5px 20px;">
 									<h5>¿Desea modificar su contraseña?</h5>
+									<div class="alert alert-info">
+										<b>Importante</b> La contraseña debe tener al entre 8 y 16 caracteres, al menos un dígito, al menos una minúscula y al menos una mayúscula
+									</div>
 									<div class="col-xs-4">
 										<div class="form-group form-float">
 											<div class="form-line">
