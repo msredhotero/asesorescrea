@@ -20,7 +20,10 @@ class BaseHTML extends ServiciosNotificaciones {
                          4=>'<link href="'.$altura.'css/themes/all-themes.css" rel="stylesheet" />',
                          5=>'<link href="'.$altura.'plugins/sweetalert/sweetalert.css" rel="stylesheet" />',
                          6=>'<link href="'.$altura.'plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet" />',
-                         7=>'<link href="'.$altura.'css/ventanaModal.css" rel="stylesheet" />');
+                         7=>'<link href="'.$altura.'css/ventanaModal.css" rel="stylesheet" />',
+                         8=>'<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">',
+                         9=>'<link href="'.$altura.'css/estilos.css" rel="stylesheet">'
+                      );
 
         $cad = '';
 
@@ -245,6 +248,8 @@ class BaseHTML extends ServiciosNotificaciones {
     }
 
     function cargarSECTION($usuario, $email, $menu, $altura = '', $rightsidebar='') {
+      $cadPerfil = '';
+
       if ($_SESSION['idroll_sahilices'] == 16) {
          $cadPerfil = '<li><a href="'.$altura.'dashboard/cuenta/index.php"><i class="material-icons">account_circle</i>Cuenta</a></li>';
       }

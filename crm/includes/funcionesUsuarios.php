@@ -625,28 +625,45 @@ function registrarSocio($email, $password,$apellido, $nombre,$refcliente) {
 function registrarCliente($email,$apellido, $nombre,$refcliente,$refusuarios,$pass) {
 
 	$token = $this->GUID();
-	$cuerpo = '';
+
+   $cuerpo = '';
+
+   $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+   $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+   $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+   $cuerpo .= "
+   <style>
+   	body { font-family: 'Lato', sans-serif; }
+   	header { font-family: 'Prata', serif; }
+   </style>";
+
+
+   $cuerpo .= '<header><p style="font-family: '."'Prata'".', serif; font-size:2.4em;">¡Bienvenidx a Asesores CREA! </p></header>';
+
+   $cuerpo .= '<body><p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Hola, '.$nombre.'. Es un honor recibir su registro en nuestro sistema.</p>';
+
+   $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">A partir de ahora, te asesoramos de manera integral con las mejores condiciones del mercado. Para esto, solo debes acceder a nuestra plataforma CRM que fue diseñada específicamente para nuestros clientes y, de esta manera, disfrutar del mejor servicio en línea de Asesores CREA.</p></body>';
+
+   $cuerpo .= '<header><h3 style="font-family: '."'Prata'".', serif; font-size:1.8em;">Sigue los siguientes pasos:</h3></header>';
+
+
+   $cuerpo .= '<a href="https://asesorescrea.com/desarrollo/crm/" target="_blank"><img src="https://asesorescrea.com/desarrollo/crm/imagenes/pasos-plataforma-CRM.jpg" alt="ASESORESCREA" width="100%"></a>';
+
+   $cuerpo .= '<body><p style="font-family: '."'Lato'".', serif; font-size:1.7em;">A continuación, le enviamos sus datos de acceso a nuestra plataforma:</p>';
+
+   $cuerpo .= '<h3 style="font-family: '."'Lato'".', serif; font-size:1.6em;">Nombre de usuario: '.$email.'</h3>';
+   $cuerpo .= '<h3 style="font-family: '."'Lato'".', serif; font-size:1.6em;">Contraseña: '.$pass.'</h3>';
+
+   $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+   $cuerpo .= '</body>';
 
 	$fecha = date_create(date('Y').'-'.date('m').'-'.date('d'));
 	date_add($fecha, date_interval_create_from_date_string('30 days'));
 	$fechaprogramada =  date_format($fecha, 'Y-m-d');
-
-   $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/logo.png" alt="ASESORESCREA" width="190">';
-
-   $cuerpo .= '<h2>¡Bienvenido a Asesores CREA!</h2>';
-
-   $cuerpo .= '<p>Hola, '.$nombre.'</p>';
-
-   $cuerpo .= '<p>Accede a las características únicas del portal por medio de tu cuenta de <b>ASESORES CREA</b>. Tus datos de la cuenta son:</p>';
-
-   $cuerpo .= '<h5>Éste es tu nombre de usuario: '.$email.'</h5>';
-
-   $cuerpo .= '<h5>Contraseña: '.$pass.'</h5>';
-
-
-   $cuerpo .= '<p>Usa el siguente <a href="https://asesorescrea.com/desarrollo/crm/" target="_blank">enlace</a> para acceder.</p>';
-
-
 
 	//$res = $this->insertarActivacionusuarios($refusuarios,$token,'','');
 

@@ -1167,9 +1167,81 @@ switch ($accion) {
    case 'modPassword':
       modPassword($serviciosReferencias);
    break;
+   case 'modDomicilio':
+      modDomicilio($serviciosReferencias);
+   break;
 
 }
 /* FinFinFin */
+
+function modDomicilio($serviciosReferencias) {
+   session_start();
+
+   $domicilio = $_POST['domicilio'];
+   $nroexterior = $_POST['nroexterior'];
+   $nrointerior = $_POST['nrointerior'];
+   $edificio = $_POST['edificio'];
+   $estado = $_POST['estado'];
+   $ciudad = $_POST['ciudad'];
+   $delegacion = $_POST['delegacion'];
+   $colonia = $_POST['colonia'];
+   $codigopostal = $_POST['codigopostal'];
+
+   $resCliente = $serviciosReferencias->traerClientesPorUsuarioCompleto($_SESSION['usuaid_sahilices']);
+
+   $error = '';
+
+   if ($domicilio == '') {
+      $error = 'Por favor ingrese un domicilio
+      ';
+   }
+
+   if ($nroexterior == '') {
+      $error .= 'Por favor ingrese el Nro Exterior del domicilio
+      ';
+   }
+
+   if ($estado == '') {
+      $error .= 'Es necesario el Estado
+      ';
+   }
+
+   if ($delegacion == '') {
+      $error .= 'Es necesario la Delegación
+      ';
+   }
+
+   if ($colonia == '') {
+      $error .= 'Es necesario la Colonia
+      ';
+   }
+
+   if ($codigopostal == '') {
+      $error .= 'Es necesario el Codigo Postal ';
+   }
+
+   if ($ciudad == '') {
+      $error .= 'Es necesario la Ciudad
+      ';
+   }
+
+   if ($error == '') {
+      $res = $serviciosReferencias->modificarClientesDomicilio(mysql_result($resCliente,0,0),$domicilio,$nroexterior,$nrointerior,$edificio,$estado,$delegacion,$colonia,$codigopostal,$ciudad);
+      if ($res) {
+         $resV['error'] = false;
+
+      } else {
+         $resV['error'] = true;
+         $resV['mensaje'] = 'Se genero un error al modificar los datos, vuelva a intentarlo'.$res;
+      }
+   } else {
+      $resV['error'] = true;
+      $resV['mensaje'] = $error;
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function modPassword($serviciosReferencias) {
    session_start();

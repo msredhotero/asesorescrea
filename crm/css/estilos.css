@@ -1,0 +1,134 @@
+
+
+/* ------------------ LOGIN ------------------ */
+
+
+
+/* Tipografía oficial */
+body {
+    font-family: 'Prata', serif !important;
+}
+
+
+/* Estilo de la palabra "Login" */
+.login-page .login-box .msg {
+    color: #1c2a47 !important;
+    font-size: 35px !important;
+}
+
+
+/* Estilo del botón "He olvidado mi contraseña" */
+.login-page .login-box a {
+    color: #c6ac83 !important;
+}
+
+
+/* Color botón "Entrar" */
+.bg-blue {
+    background-color: #1c2a47 !important;
+}
+
+
+/* Estilo de los íconos */
+.input-group .input-group-addon .material-icons {
+    font-size: 28px !important;
+    color: #1c2a47 !important;
+}
+
+
+
+
+
+
+/* ------------------ DASHBOARD ------------------ */
+
+
+
+/* Tipografía oficial */
+body {
+    font-family: 'Prata', serif !important;
+}
+
+
+/* Color navbar */
+.theme-blue .navbar {
+    background-color: #1c2a47 !important;
+}
+
+
+/* Color íconos superiores derecha */
+.theme-blue .nav > li > a {
+    color: #c6ac83 !important;
+}
+
+
+/* Color barras superiores */
+.bg-blue {
+    background-color: #1c2a47 !important;
+}
+
+
+/* Color textos */
+.card .body {
+    color: #1c2a47 !important;
+}
+
+
+/* Color títulos H2 */
+.card .bg-blue h2 {
+    color: #c6ac83 !important;
+}
+
+
+/* Tipogafía oficial Sidebar */
+.sidebar {
+    font-family: 'Prata', serif !important;
+}
+
+
+/* Color textos Sidebar */
+.sidebar .menu .list a span {
+    color: #c6ac83 !important;
+}
+
+
+/* Color textos info Sidebar */
+.sidebar .user-info .info-container .name {
+    color: #1c2a47 !important;
+}
+
+
+/* Color textos info Sidebar */
+.sidebar .user-info .info-container .email {
+    color: #1c2a47 !important;
+}
+
+
+/* Color íconos Sidebar */
+.sidebar .user-info .info-container .user-helper-dropdown {
+    color: #1c2a47 !important;
+}
+
+
+/* Color menú Sidebar */
+.sidebar .menu .list .header {
+    background: #c6ac83 !important;
+}
+
+
+/* Borde Sidebar */
+.sidebar .user-info {
+    border-bottom: 0px !important;
+}
+
+
+/* Color íconos Sidebar */
+.sidebar .menu .list a {
+    color: #c6ac83 !important;
+}
+
+
+/* Color textos Sidebar */
+.sidebar .menu .list {
+    background-color: #1c2a47 !important;
+}

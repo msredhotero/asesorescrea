@@ -12444,6 +12444,19 @@ return $res;
 		return $res;
 	}
 
+   function modificarClientesDomicilio($id,$domicilio,$nroexterior,$nrointerior,$edificio,$estado,$delegacion,$colonia,$codigopostal,$ciudad) {
+		$sql = "update dbclientes
+		set
+		domicilio = '".$domicilio."' ,nroexterior = '".$nroexterior."'
+      ,nrointerior = '".$nrointerior."' , edificio = '".$edificio."',
+      estado = '".$estado."', municipio = '".$delegacion."', colonia = '".$colonia."',
+      codigopostal = '".$codigopostal."', ciudad = '".$ciudad."'
+      where idcliente =".$id;
+
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
    function modificarCampoParticularClientes($id,$campo,$valor) {
 		$sql = "update dbclientes
 		set

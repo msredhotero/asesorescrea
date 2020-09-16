@@ -39,7 +39,7 @@
 /*END Form Wizard*/
 
 .navbar {
-  font-family: "Roboto", sans-serif;
+  font-family: 'Prata', serif;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   -ms-border-radius: 0;
@@ -2406,7 +2406,7 @@ body {
   -o-transition: all 0.5s;
   -webkit-transition: all 0.5s;
   transition: all 0.5s;
-  font-family: 'Roboto', Arial, Tahoma, sans-serif; }
+  font-family: 'Prata', serif; }
 
 h1,
 h2,
@@ -6719,7 +6719,7 @@ fieldset[disabled] .form-control {
 
 /* Navbars ===================================== */
 .navbar {
-  font-family: "Roboto", sans-serif;
+  font-family: 'Prata', serif;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   -ms-border-radius: 0;
@@ -7553,7 +7553,7 @@ fieldset[disabled] .form-control {
   -o-transition: all 0.5s;
   -webkit-transition: all 0.5s;
   transition: all 0.5s;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Prata', serif;
   background: #fdfdfd;
   width: 265px;
   overflow: hidden;
@@ -7800,13 +7800,14 @@ fieldset[disabled] .form-control {
 
 /* Login Page ================================== */
 .login-page {
-  background: url(../imagenes/polygon-background10-preview.jpg) no-repeat center center fixed;
+  /*background: url(../imagenes/polygon-background10-preview.jpg) no-repeat center center fixed;*/
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
   padding-left: 0;
   max-width: 460px;
+  background-color: #1c2a47 !important;
   margin: 5% auto;
   overflow-x: hidden; }
 
