@@ -21,6 +21,43 @@ $serviciosHTML 			= new ServiciosHTML();
 $serviciosReferencias 	= new ServiciosReferencias();
 $baseHTML = new BaseHTML();
 
+$cuerpo = '';
+
+$cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.png" alt="ASESORESCREA" width="1255">';
+
+$cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+$cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+$cuerpo .= "
+<style>
+	body { font-family: 'Lato', sans-serif; }
+	header { font-family: 'Prata', serif; }
+</style>";
+
+
+$cuerpo .= '<header><h2>¡Bienvenidx a Asesores CREA! <h2></header>';
+
+$cuerpo .= '<body><p>Hola, (nombre del usuario). Es un honor recibir su registro en nuestro sistema.</p>';
+
+$cuerpo .= '<p>A partir de ahora, te asesoramos de manera integral con las mejores condiciones del mercado. Para esto, solo debes acceder a nuestra plataforma CRM que fue diseñada específicamente para nuestros clientes y, de esta manera, disfrutar del mejor servicio en línea de Asesores CREA.</p></body>';
+
+$cuerpo .= '<header><h5>Sigue los siguientes pasos:</h5></header>';
+
+$cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/pasos-plataforma-CRM.png" alt="ASESORESCREA" width="1119">';
+
+$cuerpo .= '<body><p>A continuación, le enviamos sus datos de acceso a nuestra plataforma:</p>';
+
+$cuerpo .= '<h5>Nombre de usuario: Marcos</h5>';
+$cuerpo .= '<h5>Contraseña: (contraseña)</h5>';
+
+$cuerpo .= '<p>Saludos cordiales,</p>';
+
+$cuerpo .= '</body>';
+
+
+$retorno = $serviciosUsuario->enviarEmail('msredhotero@gmail.com','Alta de Usuario',utf8_decode($cuerpo));
+
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
@@ -518,7 +555,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 						$(".frmAjaxModificar #numerocliente").prop('readonly',true);
 
-						
+
 
 						$('.frmAjaxModificar #emisioncomprobantedomicilio').pickadate({
 				 			format: 'yyyy-mm-dd',
