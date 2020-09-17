@@ -673,6 +673,7 @@ var elementorFrontendConfig = {"environmentMode":{"edit":false,"wpPreview":false
             //mientras enviamos el archivo
             beforeSend: function(){
                jQuery('#'+contenedor).html('');
+               jQuery('#codigopostal').val('');
             },
             //una vez finalizado correctamente
             success: function(data){
