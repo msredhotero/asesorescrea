@@ -259,14 +259,14 @@ class BaseHTML extends ServiciosNotificaciones {
                 <aside id="leftsidebar" class="sidebar">
                     <!-- User Info -->
                     <div class="user-info">
-                        <div class="image">
-                            <img src="'.$altura.'images/user.png" width="48" height="48" alt="User" />
+                        <div class="image" style="height:48px;">
+
                         </div>
                         <div class="info-container">
-                            <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.$usuario.'</div>
-                            <div class="email">'.$email.'</div>
+                            <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:white !important;">'.$usuario.'</div>
+                            <div class="email" style="color:white !important;">'.$email.'</div>
                             <div class="btn-group user-helper-dropdown">
-                                <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">keyboard_arrow_down</i>
+                                <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="color:white !important;">keyboard_arrow_down</i>
                                 <ul class="dropdown-menu pull-right">
                                     '.$cadPerfil.'
                                     <li><a href="'.$altura.'logout.php"><i class="material-icons">input</i>Salir</a></li>

@@ -2976,7 +2976,7 @@ section.content {
     .card .bg-black h2,
     .card .bg-black small,
     .card .bg-black .material-icons {
-      color: #fff !important; }
+      color: #fff; }
     .card .bg-red .badge,
     .card .bg-pink .badge,
     .card .bg-purple .badge,

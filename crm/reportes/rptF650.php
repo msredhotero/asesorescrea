@@ -217,6 +217,8 @@ $yConstCuadrado1 = 25.5;
 
 $pdf->Image('F650b.png' , 0 ,0, 210 , 0,'PNG');
 
+
+//////////////////////////////////////// beneficiario 1 //////////////////////////////////
 //beneficiario irrevocable
 $pdf->SetXY(8, $yConstCuadrado1  );
 $pdf->Write(0, substr("X",0,1));
@@ -229,10 +231,78 @@ $pdf->Write(0, substr("X",0,1));
 $pdf->SetXY(128, $yConstCuadrado1 );
 $pdf->Write(0, substr("X",0,1));
 
-//poliza
+//primer nombre
 $pdf->SetXY(8, $yConstCuadrado1 + $yCuadrado1);
 $pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,20));
 
+//segundo nombre
+$pdf->SetXY(110, $yConstCuadrado1 + $yCuadrado1);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,20));
+
+//apellido paterno
+$pdf->SetXY(8, $yConstCuadrado1 + ($yCuadrado1 * 2));
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,20));
+
+//apellido materno
+$pdf->SetXY(110, $yConstCuadrado1 + ($yCuadrado1 * 2));
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,20));
+
+//relacion parentesco
+$pdf->SetXY(8, $yConstCuadrado1 + ($yCuadrado1 * 3));
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,20));
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////// beneficiario 2 ///////////////////
+//beneficiario irrevocable
+$pdf->SetXY(8, $yConstCuadrado1  + ($yCuadrado1 * 4) + 4);
+$pdf->Write(0, substr("X",0,1));
+
+//beneficiario revocable
+$pdf->SetXY(57, $yConstCuadrado1  + ($yCuadrado1 * 4) + 4);
+$pdf->Write(0, substr("X",0,1));
+
+//porcentaje
+$pdf->SetXY(128, $yConstCuadrado1  + ($yCuadrado1 * 4) + 4);
+$pdf->Write(0, substr("X",0,1));
+
+//primer nombre
+$pdf->SetXY(8, $yConstCuadrado1 + ($yCuadrado1 * 5) + 4);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,20));
+
+//segundo nombre
+$pdf->SetXY(110, $yConstCuadrado1 + ($yCuadrado1 * 5) + 4);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,20));
+
+//apellido paterno
+$pdf->SetXY(8, $yConstCuadrado1 + ($yCuadrado1 * 6) + 4);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,20));
+
+//apellido materno
+$pdf->SetXY(110, $yConstCuadrado1 + ($yCuadrado1 * 6) + 4);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,20));
+
+//relacion parentesco
+$pdf->SetXY(8, $yConstCuadrado1 + ($yCuadrado1 * 7) + 4);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,20));
+
+
+//lugar
+$pdf->SetXY(8, $yConstCuadrado1 + ($yCuadrado1 * 14) + 4);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,20));
+
+
+//fecha ingreso al grupo dd
+$pdf->SetXY(165, $yConstCuadrado1 + ($yCuadrado1 * 14) + 4);
+$pdf->Write(0, substr("05",0,2));
+
+//fecha ingreso al grupo mm
+$pdf->SetXY(177, $yConstCuadrado1 + ($yCuadrado1 * 14) + 4);
+$pdf->Write(0, substr("12",0,2));
+
+//fecha ingreso al grupo yyyy
+$pdf->SetXY(189, $yConstCuadrado1 + ($yCuadrado1 * 14) + 4);
+$pdf->Write(0, substr("2018",0,4));
 
 /************************** fin ********************************************************/
 

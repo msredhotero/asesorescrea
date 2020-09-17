@@ -132,3 +132,11 @@ body {
 .sidebar .menu .list {
     background-color: #1c2a47 !important;
 }
+
+.navbar-brand {
+   color:#c6ac83 !important;
+}
+
+.card .header .bg-blue h2 {
+   color:#c6ac83 !important;
+}

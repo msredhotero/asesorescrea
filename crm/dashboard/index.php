@@ -503,6 +503,10 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 			}
 
 			.arriba { z-index:999999 !important; }
+
+			.header .bg-blue h2 {
+			   color:#c6ac83 !important;
+			}
     </style>
 
 </head>
@@ -555,7 +559,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="card ">
 							<div class="header bg-blue">
-								<h2 style="color:#fff">
+								<h2>
 									DASHBOARD
 								</h2>
 								<ul class="header-dropdown m-r--5">
@@ -730,7 +734,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display: none;">
 					<div class="card ">
 						<div class="header bg-light-blue">
-							<h2 style="color:#fff">
+							<h2>
 								INFORMACION UTIL
 							</h2>
 							<ul class="header-dropdown m-r--5">
@@ -761,7 +765,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display: none;">
 					<div class="card ">
 						<div class="header bg-pink">
-							<h2 style="color:#fff">
+							<h2>
 								ALERTAS
 							</h2>
 							<ul class="header-dropdown m-r--5">
@@ -793,7 +797,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 						<div class="card ">
 							<div class="header bg-blue">
-								<h2 style="color:#fff">
+								<h2>
 									ASIGNACION TOTAL DE OPORTUNIDADES INDICE DE ACEPTACION
 								</h2>
 								<ul class="header-dropdown m-r--5">
@@ -834,7 +838,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 						<div class="card ">
 							<div class="header bg-blue">
-								<h2 style="color:#fff">
+								<h2>
 									ASIGNACION TOTAL DE OPORTUNIDADES MENSUAL
 								</h2>
 								<ul class="header-dropdown m-r--5">
@@ -879,7 +883,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="card ">
 							<div class="header bg-blue">
-								<h2 style="color:#fff">
+								<h2>
 									ASIGNACION TOTAL DE OPORTUNIDADES COMPARATIVO
 								</h2>
 								<ul class="header-dropdown m-r--5">
@@ -923,7 +927,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="card ">
 							<div class="header bg-blue">
-								<h2 style="color:#fff">
+								<h2>
 									ASIGNACION TOTAL DE OPORTUNIDADES COMPARATIVO MENSUAL
 								</h2>
 								<ul class="header-dropdown m-r--5">
@@ -969,7 +973,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 						<div class="card ">
 							<div class="header bg-blue">
-								<h2 style="color:#fff">
+								<h2>
 									VENTAS POR MES
 								</h2>
 								<ul class="header-dropdown m-r--5">
@@ -991,7 +995,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 						<div class="card ">
 							<div class="header bg-blue">
-								<h2 style="color:#fff">
+								<h2>
 									HISTORICO VENTAS
 								</h2>
 								<ul class="header-dropdown m-r--5">
@@ -1032,7 +1036,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
-							<h2 style="color:#fff">
+							<h2>
 								BIENVENIDO
 							</h2>
 							<ul class="header-dropdown m-r--5">
