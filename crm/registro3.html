@@ -350,8 +350,37 @@ jQuery(document).ready(function(){
     <span class="wpcf7-form-control-wrap telefono"><input type="tel" name="telefono" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-tel wpcf7-validates-as-tel" aria-invalid="false" /></span> </label></p>
 <p><label> Sexo<br />
     <span class="wpcf7-form-control-wrap sexo"><select name="sexo" class="wpcf7-form-control wpcf7-select" aria-invalid="false"><option value="Femenino">Femenino</option><option value="Masculino">Masculino</option></select></span> </label></p>
+
+<p>
+   <label> Estado<br />
+      <span class="wpcf7-form-control-wrap estado">
+         <select name="estado" id="estado" class="wpcf7-form-control wpcf7-select" aria-invalid="false"></select>
+      </span>
+   </label>
+</p>
+
+<p>
+   <label> Delegación<br />
+      <span class="wpcf7-form-control-wrap delegacion">
+         <select name="delegacion" id="delegacion" class="wpcf7-form-control wpcf7-select" aria-invalid="false"></select>
+      </span>
+   </label>
+</p>
+
+<p>
+   <label> Colonia<br />
+      <span class="wpcf7-form-control-wrap colonia">
+         <select name="colonia" id="colonia" class="wpcf7-form-control wpcf7-select" aria-invalid="false"></select>
+      </span>
+   </label>
+</p>
+
 <p><label> Código postal<br />
-    <span class="wpcf7-form-control-wrap codigo-postal"><input type="text" name="codigo-postal" value="" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" /></span> </label></p>
+   <span class="wpcf7-form-control-wrap codigo-postal"><input readonly type="text" id="codigopostal" name="codigo-postal" value="" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" /></span> </label></p>
+
+<p><label> Ciudad<br />
+   <span class="wpcf7-form-control-wrap ciudad"><input type="text" name="ciudad" value="" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" /></span> </label></p>
+
 <p><input type="submit" value="Enviar" class="wpcf7-form-control wpcf7-submit" /></p>
 <div class="wpcf7-response-output wpcf7-display-none" aria-hidden="true"></div></form></div></div>
 				</div>
@@ -630,5 +659,68 @@ var elementorFrontendConfig = {"environmentMode":{"edit":false,"wpPreview":false
 <script type='text/javascript' src='https://asesorescrea.com/wp-content/plugins/gt3-themes-core/core/elementor/assets/js/core-frontend.js?ver=1.2.0.8'></script>
 <script type="text/javascript" id="gt3_custom_footer_js">jQuery(document).ready(function(){
 
-});</script></body>
+});</script>
+
+<script>
+	jQuery(document).ready(function(){
+      function llenarCombosGral(dato, filtro, contenedor) {
+         jQuery.ajax({
+            url: 'https://asesorescrea.com/desarrollo/crm/ajax/ajax.php',
+            type: 'POST',
+            // Form data
+            //datos del formulario
+            data: {accion: 'llenarCombosGral',dato: dato, filtro: JSON.stringify(filtro)},
+            //mientras enviamos el archivo
+            beforeSend: function(){
+               jQuery('#'+contenedor).html('');
+            },
+            //una vez finalizado correctamente
+            success: function(data){
+               if (dato == 'codigopostal') {
+                  jQuery('#'+contenedor).val(data);
+               } else {
+                  jQuery('#'+contenedor).html(data);
+               }
+
+            },
+            //si ha ocurrido un error
+            error: function(){
+               jQuery(".alert").html('<strong>Error!</strong> Actualice la pagina');
+               jQuery("#load").html('');
+            }
+         });
+
+      }
+
+      llenarCombosGral('estado', '', 'estado');
+
+      function loadMunicipios() {
+         var data = [{"estado": jQuery('#estado').val()}];
+         llenarCombosGral('municipio', data, 'delegacion');
+      }
+
+      function loadColonia() {
+         var data = [{"municipio":jQuery('#delegacion').val()}];
+         llenarCombosGral('colonia', data, 'colonia');
+      }
+
+      function loadPostal() {
+         var data = [{"municipio":jQuery('#delegacion').val(),"colonia":jQuery('#colonia').val()}];
+         llenarCombosGral('codigopostal', data, 'codigopostal');
+      }
+
+      jQuery('#estado').change(function() {
+         loadMunicipios();
+      });
+
+      jQuery('#delegacion').change(function() {
+         loadColonia();
+      });
+
+      jQuery('#colonia').change(function() {
+         loadPostal();
+      });
+   });
+</script>
+</body>
 </html>
