@@ -28,6 +28,10 @@ if (isset($_SESSION['usua_sahilices'])) {
   $telefono         = $_POST['telefono'];
   $sexo             = $_POST['sexo'];
   $codigopostal     = $_POST['codigo-postal'];
+  $estado           = $_POST['estado'];
+  $delegacion       = $_POST['delegacion'];
+  $colonia          = $_POST['colonia'];
+  $ciudad           = $_POST['ciudad'];
 
    if ($nombre == '' ) {
       array_push($arInput,array( 'lblerror' =>"* Debe completar el campo Nombre"));
@@ -80,7 +84,7 @@ if (isset($_SESSION['usua_sahilices'])) {
          $numerocliente = $serviciosReferencias->generaNroCliente();
 
 
-         $res = $serviciosReferencias->insertarClientes(1,$nombre,$apellidopaterno,$apellidomaterno,'','','',$telefono,$email,'','',$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,'','','',0,'','',$codigopostal,'','','','','','');
+         $res = $serviciosReferencias->insertarClientes(1,$nombre,$apellidopaterno,$apellidomaterno,'','','',$telefono,$email,'','',$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,'','','',0,$colonia,$delegacion,$codigopostal,'','','',$estado,'','');
 
          // empiezo la activacion del usuarios
          $resActivacion = $serviciosUsuario->registrarCliente($email, $apellidopaterno.' '.$apellidomaterno, $nombre, $res, $refusuarios,$pass);
