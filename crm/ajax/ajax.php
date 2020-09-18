@@ -2027,7 +2027,12 @@ function recuperar($serviciosUsuarios) {
 function validarCuestionarioPersona($serviciosReferencias) {
    $id = $_POST['refproductos'];
    $refclientes = $_POST['refclientes'];
-   $refasegurados = $_POST['refaseguradaaux'];
+   if (isset($_POST['refaseguradaaux'])) {
+      $refasegurados = $_POST['refaseguradaaux'];
+   } else {
+      $refasegurados = 0;
+   }
+
    $tieneasegurado = $_POST['tieneasegurado'];
    $idcotizacion = $_POST['idcotizacion'];
 

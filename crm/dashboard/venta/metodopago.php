@@ -62,6 +62,8 @@ if (mysql_num_rows($resVentas) > 0) {
 
 $idCliente = mysql_result($resCotizaciones,0,'refclientes');
 
+$resCliente = $serviciosReferencias->traerClientesPorIdCompleto($idCliente);
+
 $lblCliente = mysql_result($resCotizaciones,0,'clientesolo');
 
 $idProducto = mysql_result($resCotizaciones,0,'refproductos');
@@ -121,6 +123,70 @@ if (mysql_num_rows($resAux)>0) {
 	$existeMetodoPago = 0;
 }
 
+/**************** validacion precio
+* en base a la edad determino el precio del producto o si puede o no adquirirlo
+* $precio
+* $resAsegurado
+* $resCliente
+*/
+
+
+if (mysql_result($resCotizaciones,0,'tieneasegurado') == '1') {
+	// asegurada
+	$edad = $serviciosReferencias->calculaedad(mysql_result($resAsegurado,0,'fechanacimiento'));
+	$aplicaA = 'asegurado';
+
+} else {
+	// el contratante
+	$edad = $serviciosReferencias->calculaedad(mysql_result($resCliente,0,'fechanacimiento'));
+	$aplicaA = 'contratante';
+}
+
+$acumPrecio = 0;
+
+if ($edad >= 60) {
+	$nopuedeContinuar = 1;
+} else {
+	$nopuedeContinuar = 0;
+	// calculos
+	$resProductosPaquete = $serviciosReferencias->traerPaquetedetallesPorPaquete($idProducto);
+
+	// es un producto con paquete, son montos combinados
+	if (mysql_num_rows($resProductosPaquete)>0) {
+
+		// voy acumulando los valores
+		while ($rowP = mysql_fetch_array($resProductosPaquete)) {
+
+			$existeCotizacionParaProducto = $serviciosReferencias->traerValoredadPorProductoEdad($rowP['refproductos'],$edad);
+
+			if (mysql_num_rows($existeCotizacionParaProducto)>0) {
+				//die(var_dump($rowP['refproductos']));
+				$acumPrecio += mysql_result($existeCotizacionParaProducto,0,'valor');
+			} else {
+
+				$nopuedeContinuar = 1;
+				break;
+			}
+
+		}
+	} else {
+		// obtengo el valor en base a los valores cargados
+		$existeCotizacionParaProducto = $serviciosReferencias->traerValoredadPorProductoEdad($rowP['refproductos'],$edad);
+
+		if (mysql_num_rows($existeCotizacionParaProducto)>0) {
+			//die(var_dump($rowP['refproductos']));
+			$acumPrecio += mysql_result($existeCotizacionParaProducto,0,'valor');
+
+		} else {
+			$nopuedeContinuar = 1;
+		}
+
+	}
+}
+
+$precio = $acumPrecio;
+
+/********************** fin de las validaciones ********************************/
 ?>
 
 <!DOCTYPE html>
@@ -212,7 +278,12 @@ if (mysql_num_rows($resAux)>0) {
 		          <div class="header bg-blue">
 		            <h4 class="my-0 font-weight-normal">Resumen del Pedido: <?php echo mysql_result($resultado,0,'producto'); ?></h4>
 		          </div>
-		          <div class="body table-responsive">
+		         <div class="body table-responsive">
+
+						<?php // verifico las validaciones
+						if ($nopuedeContinuar == 0) {
+						?>
+
 							<div class="text-center">
 								<h1 class="display-4">¡Ya casi estás ahí! Completa tu Metodo de Pago</h1>
 							</div>
@@ -426,6 +497,20 @@ if (mysql_num_rows($resAux)>0) {
 							<?php } ?>
 							</div>
 						<?php } ?>
+
+					<?php
+						// sino valido salgo por aca
+						} else {
+					?>
+					<div class="text-center">
+						<h3 class="display-4">Lo sentimos para el producto solicitado no es alcanzable para la edad del <?php echo $aplicaA; ?> <?php echo $edad; ?> años</h3>
+						<h5>Por favor pongase en contacto con uno de nuestros representantes para solicitar asesoramiento, acerca del producto</h5>
+						<p>Puedes contactarnos en el Teléfono: <b><span style="color:#5DC1FD;">55 51 35 02 59</span></b></p>
+						<br>
+						<br>
+						<h4>Muchas Gracias!.</h4>
+					</div>
+					<?php } ?>
 		          </div>
 		        </div>
 			  </div>

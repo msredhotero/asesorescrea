@@ -12633,7 +12633,7 @@ return $res;
       (case when DATEDIFF(CURDATE(), coalesce( emisioncomprobantedomicilio,'1990-01-01')) > 90 then 'true' else 'false' end) as demisioncomprobantedomicilio,
       (case when DATEDIFF(CURDATE(),coalesce( emisionrfc,'1990-01-01')) > 90 then 'true' else 'false' end) as demisionrfc,
       (case when coalesce( vencimientoine,'1990-01-01') > CURDATE() then 'false' else 'true' end) as dvencimientoine,
-      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp
+      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp, fechanacimiento
       from dbclientes where idcliente =".$id;
 		$res = $this->query($sql,0);
 		return $res;
