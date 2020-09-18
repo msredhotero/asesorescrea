@@ -64,9 +64,10 @@ $resVar1 = $serviciosReferencias->traerPreguntascuestionarioPorId($id);
 $cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(3),'');
 
 $cadRef3 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+$cadRef4 = "<option value='1'>Si</option><option value='0' selected>No</option>";
 
-$refdescripcion = array(0=>$cadRef1,1=>$cadRef3);
-$refCampo 	=  array('refpreguntascuestionario','activo');
+$refdescripcion = array(0=>$cadRef1,1=>$cadRef3,2=>$cadRef4);
+$refCampo 	=  array('refpreguntascuestionario','activo','inhabilita');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////

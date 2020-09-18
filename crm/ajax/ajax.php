@@ -6816,8 +6816,14 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
             $cadRef3 = "<option value='1'>Si</option><option value='0' selected>No</option>";
          }
 
-         $refdescripcion = array(0=>$cadRef1,1=>$cadRef3);
-         $refCampo 	=  array('refpreguntascuestionario','activo');
+         if (mysql_result($resultado,0,'inhabilita') == '1') {
+            $cadRef4 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+         } else {
+            $cadRef4 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+         }
+
+         $refdescripcion = array(0=>$cadRef1,1=>$cadRef3,2=>$cadRef4);
+         $refCampo 	=  array('refpreguntascuestionario','activo','inhabilita');
       break;
       case 'dbpreguntascuestionario':
          $resultado = $serviciosReferencias->traerPreguntascuestionarioPorId($id);
