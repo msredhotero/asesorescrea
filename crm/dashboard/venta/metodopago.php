@@ -166,7 +166,12 @@ if ($edad >= 60) {
 
 			if (mysql_num_rows($existeCotizacionParaProducto)>0) {
 				//die(var_dump($rowP['refproductos']));
-				$acumPrecio += mysql_result($existeCotizacionParaProducto,0,'valor');
+				if ($rowP['unicomonto'] == '1') {
+					$acumPrecio += $rowP['valor'];
+				} else {
+					$acumPrecio += mysql_result($existeCotizacionParaProducto,0,'valor');
+				}
+
 			} else {
 
 				$nopuedeContinuar = 1;
