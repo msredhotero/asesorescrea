@@ -243,7 +243,14 @@ class BaseHTML extends ServiciosNotificaciones {
                             </ul>
                         </div>
                     </div>
-                </nav>';
+                </nav>
+
+                <div class="btn-whatsapp">
+               <a href="https://api.whatsapp.com/send?phone=525564528095&text=Hola!%20Quieres%20contactarte%20con%20nosotros!" target="_blank">
+               <img src="http://s2.accesoperu.com/logos/btn_whatsapp.png" alt="">
+               </a>
+               </div>
+    ';
         echo $cad;
     }
 
