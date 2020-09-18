@@ -181,7 +181,7 @@ if ($edad >= 60) {
 		}
 	} else {
 		// obtengo el valor en base a los valores cargados
-		$existeCotizacionParaProducto = $serviciosReferencias->traerValoredadPorProductoEdad($rowP['refproductos'],$edad);
+		$existeCotizacionParaProducto = $serviciosReferencias->traerValoredadPorProductoEdad($idProducto,$edad);
 
 		if (mysql_num_rows($existeCotizacionParaProducto)>0) {
 			//die(var_dump($rowP['refproductos']));
