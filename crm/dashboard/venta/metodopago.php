@@ -125,11 +125,16 @@ if (mysql_num_rows($resAux)>0) {
 
 /**************** validacion precio
 * en base a la edad determino el precio del producto o si puede o no adquirirlo
+* tambien si existe alguna pregunta que inhabilita
 * $precio
 * $resAsegurado
 * $resCliente
+* $id
 */
 
+$inhabilitadoPorRespuesta = 0;
+
+$aplicaA = '';
 
 if (mysql_result($resCotizaciones,0,'tieneasegurado') == '1') {
 	// asegurada
@@ -185,6 +190,13 @@ if ($edad >= 60) {
 }
 
 $precio = $acumPrecio;
+
+$resInhabilitaRespuesta = $serviciosReferencias->inhabilitaRespuestascuestionarioPorCotizacion($id);
+
+if (mysql_num_rows($resInhabilitaRespuesta)>0) {
+	$nopuedeContinuar = 1;
+	$inhabilitadoPorRespuesta = 1;
+}
 
 /********************** fin de las validaciones ********************************/
 ?>
@@ -503,7 +515,12 @@ $precio = $acumPrecio;
 						} else {
 					?>
 					<div class="text-center">
-						<h3 class="display-4">Lo sentimos para el producto solicitado no es alcanzable para la edad del <?php echo $aplicaA; ?> <?php echo $edad; ?> años</h3>
+						<?php if ($aplicaA != '') { ?>
+						<h3 class="display-4">Lo sentimos para el Producto solicitado no es alcanzable para la edad del <?php echo $aplicaA; ?> <?php echo $edad; ?> años</h3>
+						<?php } ?>
+						<?php if ($inhabilitadoPorRespuesta == 1) { ?>
+						<h3 class="display-4">Lo sentimos las preguntas que respondio en el cuestionario, no superan lo necesario para acceder al Producto.</h3>
+						<?php } ?>
 						<h5>Por favor pongase en contacto con uno de nuestros representantes para solicitar asesoramiento, acerca del producto</h5>
 						<p>Puedes contactarnos en el Teléfono: <b><span style="color:#5DC1FD;">55 51 35 02 59</span></b></p>
 						<br>
