@@ -1982,18 +1982,18 @@ return $res;
 
    /* PARA Respuestascuestionario */
 
-   function insertarRespuestascuestionario($respuesta,$refpreguntascuestionario,$orden,$activo,$leyenda,$refpreguntassencibles) {
-      $sql = "insert into dbrespuestascuestionario(idrespuestacuestionario,respuesta,refpreguntascuestionario,orden,activo,leyenda,refpreguntassencibles)
-      values ('','".$respuesta."',".$refpreguntascuestionario.",".$orden.",'".$activo."','".$leyenda."',".$refpreguntassencibles.")";
+   function insertarRespuestascuestionario($respuesta,$refpreguntascuestionario,$orden,$activo,$leyenda,$refpreguntassencibles,$inhabilita) {
+      $sql = "insert into dbrespuestascuestionario(idrespuestacuestionario,respuesta,refpreguntascuestionario,orden,activo,leyenda,refpreguntassencibles,inhabilita)
+      values ('','".$respuesta."',".$refpreguntascuestionario.",".$orden.",'".$activo."','".$leyenda."',".$refpreguntassencibles.",'".$inhabilita."')";
       $res = $this->query($sql,1);
       return $res;
    }
 
 
-   function modificarRespuestascuestionario($id,$respuesta,$refpreguntascuestionario,$orden,$activo,$leyenda) {
+   function modificarRespuestascuestionario($id,$respuesta,$refpreguntascuestionario,$orden,$activo,$leyenda,$inhabilita) {
       $sql = "update dbrespuestascuestionario
       set
-      respuesta = '".$respuesta."',refpreguntascuestionario = ".$refpreguntascuestionario.",orden = ".$orden.",activo = '".$activo."',leyenda = '".$leyenda."'
+      respuesta = '".$respuesta."',refpreguntascuestionario = ".$refpreguntascuestionario.",orden = ".$orden.",activo = '".$activo."',leyenda = '".$leyenda."',inhabilita = '".$inhabilita."'
       where idrespuestacuestionario =".$id;
       $res = $this->query($sql,0);
       return $res;
@@ -2093,7 +2093,8 @@ return $res;
       r.leyenda,
       r.refpreguntassencibles,
       pe.tabla,
-      pe.campo
+      pe.campo,
+      r.inhabilita
       from dbrespuestascuestionario r
       inner join dbpreguntascuestionario pre ON pre.idpreguntacuestionario = r.refpreguntascuestionario
       inner join dbcuestionarios cu ON cu.idcuestionario = pre.refcuestionarios
@@ -2107,7 +2108,20 @@ return $res;
 
 
    function traerRespuestascuestionarioPorId($id) {
-      $sql = "select idrespuestacuestionario,respuesta,refpreguntascuestionario,orden,activo,leyenda,refpreguntassencibles from dbrespuestascuestionario where idrespuestacuestionario =".$id;
+      $sql = "select idrespuestacuestionario,respuesta,refpreguntascuestionario,orden,activo,leyenda,refpreguntassencibles,inhabilita from dbrespuestascuestionario where idrespuestacuestionario =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function inhabilitaRespuestascuestionarioPorCotizacion($id) {
+      $sql = "select
+               rc.inhabilita
+            from dbcuestionarios c
+            inner join dbpreguntascuestionario pre ON pre.refcuestionarios = c.idcuestionario and pre.activo='1'
+            inner join tbtiporespuesta tr ON tr.idtiporespuesta = pre.reftiporespuesta
+            inner join dbrespuestascuestionario rc ON rc.refpreguntascuestionario = pre.idpreguntacuestionario and rc.activo='1'
+            inner join dbcuestionariodetalle cd on cd.refpreguntascuestionario = pre.idpreguntacuestionario and cd.refrespuestascuestionario = rc.idrespuestacuestionario and cd.idreferencia = ".$idcotizacion."
+            where rc.inhabilita = '1'";
       $res = $this->query($sql,0);
       return $res;
    }

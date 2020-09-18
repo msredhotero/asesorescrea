@@ -3398,8 +3398,9 @@ function insertarRespuestascuestionario($serviciosReferencias) {
    $orden = $_POST['orden'];
    $activo = $_POST['activo'];
    $leyenda = $_POST['leyenda'];
+   $inhabilita = $_POST['inhabilita'];
 
-   $res = $serviciosReferencias->insertarRespuestascuestionario($respuesta,$refpreguntascuestionario,$orden,$activo,$leyenda,0);
+   $res = $serviciosReferencias->insertarRespuestascuestionario($respuesta,$refpreguntascuestionario,$orden,$activo,$leyenda,0,$inhabilita);
 
    if ((integer)$res > 0) {
       echo '';
@@ -3415,8 +3416,9 @@ function modificarRespuestascuestionario($serviciosReferencias) {
    $orden = $_POST['orden'];
    $activo = $_POST['activo'];
    $leyenda = $_POST['leyenda'];
+   $inhabilita = $_POST['inhabilita'];
 
-   $res = $serviciosReferencias->modificarRespuestascuestionario($id,$respuesta,$refpreguntascuestionario,$orden,$activo,$leyenda);
+   $res = $serviciosReferencias->modificarRespuestascuestionario($id,$respuesta,$refpreguntascuestionario,$orden,$activo,$leyenda,$inhabilita);
 
    if ($res == true) {
       echo '';
