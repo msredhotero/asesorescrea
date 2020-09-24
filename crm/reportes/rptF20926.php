@@ -420,6 +420,8 @@ $pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,30));
 $pdf->SetXY(138, $yConstCuadrado1 + ($yCuadrado1 * 12) + 5);
 $pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,20));
 
+
+
 /////////////////////////////////////// pagina 3 ///////////////////////////////////
 $pdf->AddPage();
 
@@ -427,11 +429,131 @@ $pdf->SetFont('Arial','',8);
 $pdf->SetTextColor(0,0,0);
 
 $yCuadrado1 = 8;
-$yConstCuadrado1 = 25.5;
+$yConstCuadrado1 = 32.5;
 
 $pdf->Image('F20926-3.jpg' , 0 ,0, 210 , 0,'JPG');
 
 
+//desaempaña funcion publica en mexico (no)
+$pdf->SetXY(18, $yConstCuadrado1 + ($yCuadrado1 * 0) );
+$pdf->Write(0, substr("x",0,1));
+
+//desaempaña funcion publica en mexico (si)
+$pdf->SetXY(29.5, $yConstCuadrado1 + ($yCuadrado1 * 0) );
+$pdf->Write(0, substr("x",0,1));
+
+//cargo
+$pdf->SetXY(53, $yConstCuadrado1 + ($yCuadrado1 * 0) -0.5);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,17));
+
+//fecha en que dejo el cargo
+$pdf->SetXY(49, $yConstCuadrado1 + ($yCuadrado1 * 1) -4);
+$pdf->Write(0, substr("20/05/2020",0,10));
+
+
+//familiar funcion publica en mexico (no)
+$pdf->SetXY(105.5, $yConstCuadrado1 + ($yCuadrado1 * 0) );
+$pdf->Write(0, substr("x",0,1));
+
+//familiar funcion publica en mexico (si)
+$pdf->SetXY(125.5, $yConstCuadrado1 + ($yCuadrado1 * 0) );
+$pdf->Write(0, substr("x",0,1));
+
+//cargo
+$pdf->SetXY(155.5, $yConstCuadrado1 + ($yCuadrado1 * 0) -0.5);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,17));
+
+//fecha en que dejo el cargo
+$pdf->SetXY(130, $yConstCuadrado1 + ($yCuadrado1 * 1) -4);
+$pdf->Write(0, substr("20/05/2020",0,10));
+
+//parentesco
+$pdf->SetXY(170, $yConstCuadrado1 + ($yCuadrado1 * 1) -4);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,12));
+
+//sociedad mercantil
+$pdf->SetXY(44.3, $yConstCuadrado1 + ($yCuadrado1 * 3) -5.5);
+$pdf->Write(0, substr("x",0,1));
+
+//con fines de lucro
+$pdf->SetXY(44.3, $yConstCuadrado1 + ($yCuadrado1 * 3) + 2.2);
+$pdf->Write(0, substr("x",0,1));
+
+//donataria
+$pdf->SetXY(44.3, $yConstCuadrado1 + ($yCuadrado1 * 3) +6.5);
+$pdf->Write(0, substr("x",0,1));
+
+
+//banco mexico
+$pdf->SetXY(84, $yConstCuadrado1 + ($yCuadrado1 * 3) -5.5);
+$pdf->Write(0, substr("x",0,1));
+
+//banca desarrollo
+$pdf->SetXY(84, $yConstCuadrado1 + ($yCuadrado1 * 3) -5.5 + (4 * 1));
+$pdf->Write(0, substr("x",0,1));
+
+//banca multiple
+$pdf->SetXY(84, $yConstCuadrado1 + ($yCuadrado1 * 3) -5.5 + (4 * 2));
+$pdf->Write(0, substr("x",0,1));
+
+//financiera publica
+$pdf->SetXY(84, $yConstCuadrado1 + ($yCuadrado1 * 3) -5.5 + (4 * 3));
+$pdf->Write(0, substr("x",0,1));
+
+//financiera privada
+$pdf->SetXY(84, $yConstCuadrado1 + ($yCuadrado1 * 3) -5.5 + (4 * 4));
+$pdf->Write(0, substr("x",0,1));
+
+
+//gobierno federal
+$pdf->SetXY(136.5, $yConstCuadrado1 + ($yCuadrado1 * 3) -5.5);
+$pdf->Write(0, substr("x",0,1));
+
+//gobierno estatal
+$pdf->SetXY(136.5, $yConstCuadrado1 + ($yCuadrado1 * 3) -5.5 + (4 * 1));
+$pdf->Write(0, substr("x",0,1));
+
+//gobierno municipal
+$pdf->SetXY(136.5, $yConstCuadrado1 + ($yCuadrado1 * 3) -5.5 + (4 * 2));
+$pdf->Write(0, substr("x",0,1));
+
+//organismo desentralizado
+$pdf->SetXY(136.5, $yConstCuadrado1 + ($yCuadrado1 * 3) -5.5 + (4 * 3));
+$pdf->Write(0, substr("x",0,1));
+
+//participacion estatal
+$pdf->SetXY(136.5, $yConstCuadrado1 + ($yCuadrado1 * 3) -5.5 + (4 * 4));
+$pdf->Write(0, substr("x",0,1));
+
+
+//financieras
+$pdf->SetXY(184.5, $yConstCuadrado1 + ($yCuadrado1 * 3) -5.5 + (4 * 1));
+$pdf->Write(0, substr("x",0,1));
+
+//no financieras
+$pdf->SetXY(184.5, $yConstCuadrado1 + ($yCuadrado1 * 3) -5.5 + (4 * 3));
+$pdf->Write(0, substr("x",0,1));
+
+
+//info adic amigo, etc, funcion publica (no)
+$pdf->SetXY(19, $yConstCuadrado1 + ($yCuadrado1 * 6) + 2);
+$pdf->Write(0, substr("x",0,1));
+
+//info adic amigo, etc, funcion publica (no)
+$pdf->SetXY(35, $yConstCuadrado1 + ($yCuadrado1 * 6) + 2 );
+$pdf->Write(0, substr("x",0,1));
+
+//nombre completo de la persona
+$pdf->SetXY(48, $yConstCuadrado1 + ($yCuadrado1 * 6) + 4 );
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,45));
+
+//cargo
+$pdf->SetXY(17, $yConstCuadrado1 + ($yCuadrado1 * 8) - 3);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,45));
+
+//fecha en que dejo el cargo
+$pdf->SetXY(109, $yConstCuadrado1 + ($yCuadrado1 * 8) - 3);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,45));
 
 /////////////////////////////////////// pagina 4 ///////////////////////////////////
 $pdf->AddPage();
