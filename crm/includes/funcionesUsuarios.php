@@ -528,6 +528,35 @@ function insertarUsuario($usuario,$password,$refroles,$email,$nombrecompleto) {
 	}
 }
 
+function insertarUsuarioActivo($usuario,$password,$refroles,$email,$nombrecompleto,$activo) {
+	$sql = "INSERT INTO dbusuarios
+				(idusuario,
+				usuario,
+				password,
+				refroles,
+				email,
+				nombrecompleto,
+            activo)
+			VALUES
+				(null,
+				'".($usuario)."',
+				'".($password)."',
+				".$refroles.",
+				'".($email)."',
+				'".($nombrecompleto)."',
+            '".$activo."')";
+	if ($this->existeUsuario($email) == true) {
+		return "Ya existe el usuario";
+	}
+	$res = $this->query($sql,1);
+	if ($res == false) {
+		return 'Error al insertar datos';
+	} else {
+
+		return $res;
+	}
+}
+
 
 function modificarUsuario($id,$usuario,$password,$refroles,$email,$nombrecompleto,$activo) {
 	$sql = "UPDATE dbusuarios
@@ -641,7 +670,7 @@ function registrarCliente($email,$apellido, $nombre,$refcliente,$refusuarios,$pa
    </style>";
 
 
-   $cuerpo .= '<header><p style="font-family: '."'Prata'".', serif; font-size:2.4em;">¡Bienvenidx a Asesores CREA! </p></header>';
+   $cuerpo .= '<header><p style="font-family: '."'Prata'".', serif; font-size:2.4em;">¡Bienvenid@ a Asesores CREA! </p></header>';
 
    $cuerpo .= '<body><p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Hola, '.$nombre.'. Es un honor recibir su registro en nuestro sistema.</p>';
 
@@ -668,6 +697,49 @@ function registrarCliente($email,$apellido, $nombre,$refcliente,$refusuarios,$pa
 	//$res = $this->insertarActivacionusuarios($refusuarios,$token,'','');
 
 	$retorno = $this->enviarEmail($email,'Alta de Usuario',utf8_decode($cuerpo));
+
+	return $retorno;
+
+}
+
+
+function activarCliente($email, $nombre, $token) {
+
+	$token = $this->GUID();
+
+   $cuerpo = '';
+
+   $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+   $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+   $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+   $cuerpo .= "
+   <style>
+   	body { font-family: 'Lato', sans-serif; }
+   	header { font-family: 'Prata', serif; }
+   </style>";
+
+
+   $cuerpo .= '<header><p style="font-family: '."'Prata'".', serif; font-size:2.4em;">¡Bienvenid@ a Asesores CREA! </p></header>';
+
+   $cuerpo .= '<body><p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Hola, '.$nombre.'. Es un honor recibir su registro en nuestro sistema.</p>';
+
+   $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">A partir de ahora, te asesoramos de manera integral con las mejores condiciones del mercado. Para esto, te pedimos por favor que confirmes tu email haciendo click <b><a href="https://asesorescrea.com/desarrollo/crm/verificar.php?token='.$token.'">Aqui</a></b>.</p></body>';
+
+
+   $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+   $cuerpo .= '</body>';
+
+	$fecha = date_create(date('Y').'-'.date('m').'-'.date('d'));
+	date_add($fecha, date_interval_create_from_date_string('30 days'));
+	$fechaprogramada =  date_format($fecha, 'Y-m-d');
+
+	//$res = $this->insertarActivacionusuarios($refusuarios,$token,'','');
+
+	$retorno = $this->enviarEmail($email,'Validar Email',utf8_decode($cuerpo));
 
 	return $retorno;
 

@@ -69,6 +69,9 @@ switch ($accion) {
    case 'activarUsuarioPostulante':
       activarUsuarioPostulante($serviciosUsuarios, $serviciosReferencias);
    break;
+   case 'activarUsuarioCliente':
+      activarUsuarioCliente($serviciosUsuarios, $serviciosReferencias);
+   break;
 
 
    case 'frmAjaxModificar':
@@ -6648,6 +6651,85 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
       } else {
          echo 'Hubo un error al modificar datos';
       }
+   }
+
+
+   function activarUsuarioCliente($serviciosUsuarios, $serviciosReferencias) {
+      //usuario del form
+      $idusuario = $_POST['idusuario'];
+      $activacion = $_POST['activacion'];
+
+      // cliente del form
+      $idcliente = $_POST['idcliente'];
+      //token del form
+      $token = $_POST['token'];
+
+      $restoken = $serviciosUsuarios->traerActivacionusuariosPorToken($token);
+
+      // si el token existe
+      if (mysql_num_rows($restoken) > 0) {
+          // usuario del token
+          $idusuarioaux = mysql_result($restoken,0,'refusuarios');
+
+          $resClienteAux = $serviciosReferencias->traerClientesPorUsuarioCompleto($idusuarioaux);
+          // cliente del token del susuario
+          $idclienteaux = mysql_result($resClienteAux,0,0);
+
+          // si el cliente del token del susuario existe
+          if (mysql_num_rows($resClienteAux) > 0) {
+              //verifico que tanto el cliente y el usuario del form, sean iguales a los del token.
+              if (($idclienteaux == $idcliente) && ($idusuarioaux == $idusuario)) {
+
+
+                  if (mysql_num_rows($resClienteAux) > 0) {
+                     $nombre           = mysql_result($resClienteAux,0,'nombre');
+                     $apellidopaterno  = mysql_result($resClienteAux,0,'apellidopaterno');
+                     $apellidomaterno  = mysql_result($resClienteAux,0,'apellidomaterno');
+                     $email            = mysql_result($resClienteAux,0,'email');
+                  } else {
+                     $nombre           = '';
+                     $apellidopaterno  = '';
+                     $apellidomaterno  = '';
+                     $email            = '';
+                  }
+
+                  $password = $_POST['password'];
+
+                  //pongo al usuario $activo
+                  $resUsuario = $serviciosUsuarios->activarUsuario($idusuario,$password);
+
+                  // concreto la activacion
+                  $resConcretar = $serviciosUsuarios->eliminarActivacionusuarios($activacion);
+
+                  if ($resUsuario == '') {
+                     /* email base */
+                     $destinatario = 'msaupurein@asesorescrea.com';
+                     $asunto = 'Activacion de Usuario';
+                     $cuerpo = 'El usuario '.$nombre.' '.$apellidopaterno.' '.$apellidomaterno.' se dio de alta al sistema';
+
+                     //$resEmail = $serviciosUsuarios->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
+                     /* email envio un email para darle las indicaciones de como entrar */
+                     $resActivacion = $serviciosUsuarios->registrarCliente($email, $apellidopaterno.' '.$apellidomaterno, $nombre, $idcliente, $idusuario,$password);
+
+                     echo '';
+                  } else {
+                     echo 'Hubo un error al modificar datos';
+                  }
+              } else {
+                  echo 'Se genero un error con el token, por favor verifique los datos';
+              }
+
+
+          } else {
+              echo 'Se genero un error con el token, por favor verifique los datos';
+          }
+
+
+      } else {
+          echo 'Se genero un error con el token, por favor verifique los datos';
+      }
+
+
    }
 
 function generaCURP($serviciosReferencias, $serviciosUsuarios, $serviciosFunciones) {

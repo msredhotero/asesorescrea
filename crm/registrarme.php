@@ -29,8 +29,19 @@ if (isset($_SESSION['usua_sahilices'])) {
   $sexo             = $_POST['sexo'];
   $codigopostal     = $_POST['codigo-postal'];
   $estado           = $_POST['estado'];
-  $delegacion       = $_POST['delegacion'];
-  $colonia          = $_POST['colonia'];
+
+  if (isset($_POST['delegacion'])) {
+    $delegacion       = $_POST['delegacion'];
+  } else {
+    $delegacion       = '';
+  }
+
+  if (isset($_POST['colonia'])) {
+    $colonia       = $_POST['colonia'];
+  } else {
+    $colonia       = '';
+  }
+  
   $ciudad           = $_POST['ciudad'];
 
    if ($nombre == '' ) {
@@ -62,6 +73,7 @@ if (isset($_SESSION['usua_sahilices'])) {
 
 
   $pass       = $serviciosReferencias->GUID();
+  $tokenVerificacion = $serviciosReferencias->GUID();
 
   $existeEmail = $serviciosUsuario->existeUsuario($email);
 
@@ -73,9 +85,12 @@ if (isset($_SESSION['usua_sahilices'])) {
 
   if ($error === false) {
      // todo ok
-     $refusuarios = $serviciosUsuario->insertarUsuario($nombre,$pass,16,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
+     $refusuarios = $serviciosUsuario->insertarUsuarioActivo($nombre,$pass,16,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,0,$tokenVerificacion);
 
       if ((integer)$refusuarios > 0) {
+
+         $res = $serviciosUsuario->insertarActivacionusuarios($refusuarios,$tokenVerificacion,'','');
+
          $fechacrea = date('Y-m-d');
          $fechamodi = date('Y-m-d');
          $usuariocrea = 'Web';
@@ -87,7 +102,9 @@ if (isset($_SESSION['usua_sahilices'])) {
          $res = $serviciosReferencias->insertarClientes(1,$nombre,$apellidopaterno,$apellidomaterno,'','','',$telefono,$email,'','',$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,'','','',0,$colonia,$delegacion,$codigopostal,'','','',$estado,'','');
 
          // empiezo la activacion del usuarios
-         $resActivacion = $serviciosUsuario->registrarCliente($email, $apellidopaterno.' '.$apellidomaterno, $nombre, $res, $refusuarios,$pass);
+        // $resActivacion = $serviciosUsuario->registrarCliente($email, $apellidopaterno.' '.$apellidomaterno, $nombre, $res, $refusuarios,$pass);
+
+        $resActivacion = $serviciosUsuario->activarCliente($email, $nombre, $tokenVerificacion);
 
          if ($resActivacion) {
 

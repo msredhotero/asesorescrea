@@ -728,7 +728,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 									<?php }  else { ?>
 									<h3>Bienvenido al CRM de Asesores Crea</h3>
-									<a href="https://api.whatsapp.com/send?phone=525564528095&text=Hola!%20Quieres%20contactarte%20con%20nosotros!" >click</a>
+
 									<p>Aqui usted encontrara avisos importantes sobre su estado en el Proceso de Reclutamiento</p>
 									<?php } ?>
 								</form>
