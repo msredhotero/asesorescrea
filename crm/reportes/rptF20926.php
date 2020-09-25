@@ -438,6 +438,7 @@ $pdf->Image('F20926-3.jpg' , 0 ,0, 210 , 0,'JPG');
 $pdf->SetXY(18, $yConstCuadrado1 + ($yCuadrado1 * 0) );
 $pdf->Write(0, substr("x",0,1));
 
+/*
 //desaempaña funcion publica en mexico (si)
 $pdf->SetXY(29.5, $yConstCuadrado1 + ($yCuadrado1 * 0) );
 $pdf->Write(0, substr("x",0,1));
@@ -470,6 +471,7 @@ $pdf->Write(0, substr("20/05/2020",0,10));
 //parentesco
 $pdf->SetXY(170, $yConstCuadrado1 + ($yCuadrado1 * 1) -4);
 $pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,12));
+*/
 
 //sociedad mercantil
 $pdf->SetXY(44.3, $yConstCuadrado1 + ($yCuadrado1 * 3) -5.5);
@@ -539,7 +541,7 @@ $pdf->Write(0, substr("x",0,1));
 $pdf->SetXY(19, $yConstCuadrado1 + ($yCuadrado1 * 6) + 2);
 $pdf->Write(0, substr("x",0,1));
 
-//info adic amigo, etc, funcion publica (no)
+//info adic amigo, etc, funcion publica (si)
 $pdf->SetXY(35, $yConstCuadrado1 + ($yCuadrado1 * 6) + 2 );
 $pdf->Write(0, substr("x",0,1));
 
@@ -555,6 +557,111 @@ $pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,45));
 $pdf->SetXY(109, $yConstCuadrado1 + ($yCuadrado1 * 8) - 3);
 $pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,45));
 
+//cobro bancario (si)
+$pdf->SetXY(35, $yConstCuadrado1 + ($yCuadrado1 * 9) - 1 );
+$pdf->Write(0, substr("x",0,1));
+
+//cobro bancario (no)
+$pdf->SetXY(64, $yConstCuadrado1 + ($yCuadrado1 * 9) -1 );
+$pdf->Write(0, substr("x",0,1));
+
+//forma de pago (anual)
+$pdf->SetXY(109.5, $yConstCuadrado1 + ($yCuadrado1 * 9) -1 );
+$pdf->Write(0, substr("x",0,1));
+
+//forma de pago (semestral)
+$pdf->SetXY(129.5, $yConstCuadrado1 + ($yCuadrado1 * 9) -1 );
+$pdf->Write(0, substr("x",0,1));
+
+//forma de pago (trimestral)
+$pdf->SetXY(154, $yConstCuadrado1 + ($yCuadrado1 * 9) -1 );
+$pdf->Write(0, substr("x",0,1));
+
+//forma de pago (mensual)
+$pdf->SetXY(178, $yConstCuadrado1 + ($yCuadrado1 * 9) -1 );
+$pdf->Write(0, substr("x",0,1));
+
+//banco
+$pdf->SetXY(17, $yConstCuadrado1 + ($yCuadrado1 * 11) );
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,45));
+
+//nro tarjeta
+$pdf->SetXY(90, $yConstCuadrado1 + ($yCuadrado1 * 11) + 0.2);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,45));
+
+//fecha vencimiento
+$pdf->SetXY(165, $yConstCuadrado1 + ($yCuadrado1 * 11) );
+$pdf->Write(0, substr("20/05/2020",0,10));
+
+//cuenta cheques banco
+$pdf->SetXY(42, $yConstCuadrado1 + ($yCuadrado1 * 12) + 4);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,45));
+
+//nro cuenta cheques
+$pdf->SetXY(116, $yConstCuadrado1 + ($yCuadrado1 * 12) + 4);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,18));
+
+
+//con restriccion hospitalaria
+$pdf->SetXY(13, $yConstCuadrado1 + ($yCuadrado1 * 24) + 2 );
+$pdf->Write(0, substr("x",0,1));
+
+//sin restriccion hospitalaria
+$pdf->SetXY(13, $yConstCuadrado1 + ($yCuadrado1 * 24) + 7.2 );
+$pdf->Write(0, substr("x",0,1));
+
+//inburmedic
+$pdf->SetXY(13, $yConstCuadrado1 + ($yCuadrado1 * 24) + 12.3 );
+$pdf->Write(0, substr("x",0,1));
+
+//con restriccion hospitalaria
+$pdf->SetXY(51, $yConstCuadrado1 + ($yCuadrado1 * 24) + 1 );
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,12));
+
+//con restriccion hospitalaria
+$pdf->SetXY(51, $yConstCuadrado1 + ($yCuadrado1 * 24) + 9 );
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,12));
+
+//coseguro por enfermedad
+$pdf->SetXY(59, $yConstCuadrado1 + ($yCuadrado1 * 27)  );
+$pdf->Write(0, substr("100",0,3));
+
+//cobertura basica
+$pdf->SetXY(91, $yConstCuadrado1 + ($yCuadrado1 * 24) + 7.6 );
+$pdf->Write(0, substr("x",0,1));
+
+//con tabulador
+$pdf->SetXY(117, $yConstCuadrado1 + ($yCuadrado1 * 24) + 7.4 );
+$pdf->Write(0, substr("x",0,1));
+
+//honorarios con tabulador
+$pdf->SetXY(142, $yConstCuadrado1 + ($yCuadrado1 * 24) + 7.8 );
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,8));
+
+//sin tabulador
+$pdf->SetXY(117, $yConstCuadrado1 + ($yCuadrado1 * 24) + 12.5 );
+$pdf->Write(0, substr("x",0,1));
+
+//honorarios sin tabulador
+$pdf->SetXY(142, $yConstCuadrado1 + ($yCuadrado1 * 24) + 13.2 );
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,8));
+
+//amplio
+$pdf->SetXY(117, $yConstCuadrado1 + ($yCuadrado1 * 24) + 17.5 );
+$pdf->Write(0, substr("x",0,1));
+
+
+//con tabulador y ambulancia aerea
+$pdf->SetXY(169.5, $yConstCuadrado1 + ($yCuadrado1 * 24) + 7.7 );
+$pdf->Write(0, substr("x",0,1));
+
+//sin tabulador y ambulancia aerea
+$pdf->SetXY(169.5, $yConstCuadrado1 + ($yCuadrado1 * 24) + 13 );
+$pdf->Write(0, substr("x",0,1));
+
+
+
+
 /////////////////////////////////////// pagina 4 ///////////////////////////////////
 $pdf->AddPage();
 
@@ -566,7 +673,147 @@ $yConstCuadrado1 = 25.5;
 
 $pdf->Image('F20926-4.jpg' , 0 ,0, 210 , 0,'JPG');
 
+//emergencia internacional
+$pdf->SetXY(11.5, $yConstCuadrado1 + ($yCuadrado1 * 0) - 3.2 );
+$pdf->Write(0, substr("x",0,1));
 
+//cobertura internacional
+$pdf->SetXY(11.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 2 );
+$pdf->Write(0, substr("x",0,1));
+
+//emergencia catastroficas en el extranjero
+$pdf->SetXY(11.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 6.8 );
+$pdf->Write(0, substr("x",0,1));
+
+//maternidad
+$pdf->SetXY(11.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 11.6 );
+$pdf->Write(0, substr("x",0,1));
+
+//gastos funerarios
+$pdf->SetXY(11.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 17.4 );
+$pdf->Write(0, substr("x",0,1));
+
+//gastos funerarios suma asegurada
+$pdf->SetXY(55.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 17.5 );
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,10));
+
+//prevision familiar
+$pdf->SetXY(11.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 22.9 );
+$pdf->Write(0, substr("x",0,1));
+
+//enfermedades graves
+$pdf->SetXY(11.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 31.5 );
+$pdf->Write(0, substr("x",0,1));
+
+//enfermedades graves (sevi)
+$pdf->SetXY(55.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 32 );
+$pdf->Write(0, substr("300.000",0,10));
+
+//titular
+$pdf->SetXY(11.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 39.5 );
+$pdf->Write(0, substr("x",0,1));
+
+//titular conyuge
+$pdf->SetXY(11.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 44.5 );
+$pdf->Write(0, substr("x",0,1));
+
+//todos asegurados mayores a 19 años
+$pdf->SetXY(11.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 49.5 );
+$pdf->Write(0, substr("x",0,1));
+
+
+//muerte accidental
+$pdf->SetXY(85.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 9.6 );
+$pdf->Write(0, substr("x",0,1));
+
+//titular
+$pdf->SetXY(85.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 15 );
+$pdf->Write(0, substr("x",0,1));
+
+//titular y conyuge
+$pdf->SetXY(85.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 20 );
+$pdf->Write(0, substr("x",0,1));
+
+//todos los asegurados mayores a 12 años
+$pdf->SetXY(85.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 25.2 );
+$pdf->Write(0, substr("x",0,1));
+
+//muerte accidental y perdido de mienbros
+$pdf->SetXY(85.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 31.6 );
+$pdf->Write(0, substr("x",0,1));
+
+//titular
+$pdf->SetXY(85.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 36.8 );
+$pdf->Write(0, substr("x",0,1));
+
+//titular y conyuge
+$pdf->SetXY(85.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 42 );
+$pdf->Write(0, substr("x",0,1));
+
+//todos asegurados mayores a 12 años
+$pdf->SetXY(85.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 46.8 );
+$pdf->Write(0, substr("x",0,1));
+
+
+//emergencia internacional
+$pdf->SetXY(153.5, $yConstCuadrado1 + ($yCuadrado1 * 0) - 1.2 );
+$pdf->Write(0, substr("x",0,1));
+
+//emergencia internacional
+$pdf->SetXY(153.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 15.3 );
+$pdf->Write(0, substr("x",0,1));
+
+//emergencia internacional
+$pdf->SetXY(153.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 26 );
+$pdf->Write(0, substr("x",0,1));
+
+//emergencia internacional
+$pdf->SetXY(153.5, $yConstCuadrado1 + ($yCuadrado1 * 0) +42.5 );
+$pdf->Write(0, substr("x",0,1));
+
+//enfermedades graves
+$pdf->SetXY(11.6, $yConstCuadrado1 + ($yCuadrado1 * 8) + 3 );
+$pdf->Write(0, substr("x",0,1));
+
+//suma asegurada
+$pdf->SetXY(104, $yConstCuadrado1 + ($yCuadrado1 * 8) + 3 );
+$pdf->Write(0, substr("300.000",0,10));
+
+//star medica
+$pdf->SetXY(11.8, $yConstCuadrado1 + ($yCuadrado1 * 9) + 5.7 );
+$pdf->Write(0, substr("x",0,1));
+
+//1
+$pdf->SetXY(44, $yConstCuadrado1 + ($yCuadrado1 * 9) + 9 );
+$pdf->Write(0, substr("x",0,1));
+
+//2
+$pdf->SetXY(58.4, $yConstCuadrado1 + ($yCuadrado1 * 9) + 9 );
+$pdf->Write(0, substr("x",0,1));
+
+//3
+$pdf->SetXY(72.2, $yConstCuadrado1 + ($yCuadrado1 * 9) + 9 );
+$pdf->Write(0, substr("x",0,1));
+
+//4
+$pdf->SetXY(86, $yConstCuadrado1 + ($yCuadrado1 * 9) + 9 );
+$pdf->Write(0, substr("x",0,1));
+
+//5
+$pdf->SetXY(100, $yConstCuadrado1 + ($yCuadrado1 * 9) + 9 );
+$pdf->Write(0, substr("x",0,1));
+
+//6
+$pdf->SetXY(114.6, $yConstCuadrado1 + ($yCuadrado1 * 9) + 9 );
+$pdf->Write(0, substr("x",0,1));
+
+//gastos funerarios
+$pdf->SetXY(132.5, $yConstCuadrado1 + ($yCuadrado1 * 9) + 9.2 );
+$pdf->Write(0, substr("x",0,1));
+
+//enfermedades graves sevi
+$pdf->SetXY(132.5, $yConstCuadrado1 + ($yCuadrado1 * 9) + 14.2 );
+$pdf->Write(0, substr("x",0,1));
 
 /////////////////////////////////////// pagina 5 ///////////////////////////////////
 $pdf->AddPage();
