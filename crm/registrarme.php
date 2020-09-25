@@ -41,7 +41,7 @@ if (isset($_SESSION['usua_sahilices'])) {
   } else {
     $colonia       = '';
   }
-  
+
   $ciudad           = $_POST['ciudad'];
 
    if ($nombre == '' ) {
@@ -85,7 +85,7 @@ if (isset($_SESSION['usua_sahilices'])) {
 
   if ($error === false) {
      // todo ok
-     $refusuarios = $serviciosUsuario->insertarUsuarioActivo($nombre,$pass,16,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,0,$tokenVerificacion);
+     $refusuarios = $serviciosUsuario->insertarUsuarioActivo($nombre,$pass,16,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,'0',$tokenVerificacion);
 
       if ((integer)$refusuarios > 0) {
 
