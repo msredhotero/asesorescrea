@@ -705,7 +705,6 @@ function registrarCliente($email,$apellido, $nombre,$refcliente,$refusuarios,$pa
 
 function activarCliente($email, $nombre, $token) {
 
-	$token = $this->GUID();
 
    $cuerpo = '';
 
