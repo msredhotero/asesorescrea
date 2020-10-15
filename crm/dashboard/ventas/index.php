@@ -55,8 +55,8 @@ $modificar = "modificarVentas";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbventas";
 
-$lblCambio	 	= array('primaneta','primatotal','porcentajecomision','montocomision','fechavencimientopoliza','nropoliza');
-$lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','Fecha Vencimiento de la Poliza','Nro Poliza');
+$lblCambio	 	= array('primaneta','primatotal','porcentajecomision','montocomision','fechavencimientopoliza','nropoliza','refestadoventa');
+$lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','Fecha Vencimiento de la Poliza','Nro Poliza','Estado Venta');
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
@@ -171,6 +171,18 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 						<div class="body table-responsive">
 							<form class="form" id="formCountry">
 
+								<div class="row">
+									<div class="col-lg-12 col-md-12">
+										<div class="button-demo">
+											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
+												<i class="material-icons">add</i>
+												<span>NUEVO</span>
+											</button>
+
+										</div>
+									</div>
+								</div>
+
 								<div class="row" style="padding: 5px 20px;">
 
 									<table id="example" class="display table " style="width:100%">
@@ -215,6 +227,129 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 </section>
 
 
+<!-- NUEVO -->
+	<form class="formulario" role="form" id="sign_in">
+	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
+	       <div class="modal-dialog modal-lg" role="document">
+	           <div class="modal-content">
+	               <div class="modal-header">
+	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular); ?></h4>
+	               </div>
+	               <div class="modal-body">
+							<div class="row">
+	                  	<h4>Seleccione el origen de la Venta</h4>
+								<ul class="nav nav-tabs tab-nav-right" role="tablist">
+									<li role="presentation" class="activo"><a href="#tabventaonline" data-toggle="tab">VENTA ONLINE</a></li>
+									<li role="presentation"><a href="#tabcotizacionesagentes" data-toggle="tab">COTIZACIONES AGENTES</a></li>
+									<li role="presentation"><a href="#tabcotizacionesoficina" data-toggle="tab">COTIZACIONES OFICINA</a></li>
+									<li role="presentation"><a href="#tabrenovaciones" data-toggle="tab">RENOVACIONES</a></li>
+								</ul>
+
+								<div class="tab-content">
+									<div role="tabpanel" class="tab-pane fade in active" id="tabventaonline">
+										<div class="row contVentaOnline" style="padding: 5px 20px;">
+											<table id="example2" class="display table " style="width:100%">
+												<thead>
+													<tr>
+														<th>Cliente</th>
+														<th>Producto</th>
+														<th>Asesor</th>
+														<th>Asociado</th>
+														<th>Fecha</th>
+														<th>Estado</th>
+														<th>Acciones</th>
+													</tr>
+												</thead>
+												<tfoot>
+													<tr>
+														<th>Cliente</th>
+														<th>Producto</th>
+														<th>Asesor</th>
+														<th>Asociado</th>
+														<th>Fecha</th>
+														<th>Estado</th>
+														<th>Acciones</th>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+
+									<div role="tabpanel" class="tab-pane fade" id="tabcotizacionesagentes">
+										<div class="row contCotizacionesAgentes" style="padding: 5px 20px;">
+											<table id="example3" class="display table " style="width:100%">
+												<thead>
+													<tr>
+														<th>Cliente</th>
+														<th>Producto</th>
+														<th>Asesor</th>
+														<th>Asociado</th>
+														<th>Fecha</th>
+														<th>Estado</th>
+														<th>Acciones</th>
+													</tr>
+												</thead>
+												<tfoot>
+													<tr>
+														<th>Cliente</th>
+														<th>Producto</th>
+														<th>Asesor</th>
+														<th>Asociado</th>
+														<th>Fecha</th>
+														<th>Estado</th>
+														<th>Acciones</th>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+
+									<div role="tabpanel" class="tab-pane fade" id="tabcotizacionesoficina">
+										<div class="row contCotizacionesOficina" style="padding: 5px 20px;">
+											<table id="example4" class="display table " style="width:100%">
+												<thead>
+													<tr>
+														<th>Cliente</th>
+														<th>Producto</th>
+														<th>Asesor</th>
+														<th>Asociado</th>
+														<th>Fecha</th>
+														<th>Estado</th>
+														<th>Acciones</th>
+													</tr>
+												</thead>
+												<tfoot>
+													<tr>
+														<th>Cliente</th>
+														<th>Producto</th>
+														<th>Asesor</th>
+														<th>Asociado</th>
+														<th>Fecha</th>
+														<th>Estado</th>
+														<th>Acciones</th>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+
+									<div role="tabpanel" class="tab-pane fade" id="tabrenovaciones">
+
+									</div>
+
+								</div><!-- FIN DEL TABCONTONT -->
+
+							</div>
+	               </div>
+	               <div class="modal-footer">
+	                   <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
+	                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+	               </div>
+	           </div>
+	       </div>
+	   </div>
+		<input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
+	</form>
 
 	<!-- MODIFICAR -->
 		<form class="formulario frmModificar" role="form" id="sign_in">
@@ -357,6 +492,97 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 			}
 		});
 
+
+		var table = $('#example2').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"order": [[ 5, "desc" ]],
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizaciones&estado=5",
+			"language": {
+				"emptyTable":     "No hay datos cargados",
+				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "Mostrar _MENU_ filas",
+				"loadingRecords": "Cargando...",
+				"processing":     "Procesando...",
+				"search":         "Buscar:",
+				"zeroRecords":    "No se encontraron resultados",
+				"paginate": {
+					"first":      "Primero",
+					"last":       "Ultimo",
+					"next":       "Siguiente",
+					"previous":   "Anterior"
+				},
+				"aria": {
+					"sortAscending":  ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			}
+		});
+
+		var table = $('#example3').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"order": [[ 5, "desc" ]],
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizaciones&estado=6",
+			"language": {
+				"emptyTable":     "No hay datos cargados",
+				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "Mostrar _MENU_ filas",
+				"loadingRecords": "Cargando...",
+				"processing":     "Procesando...",
+				"search":         "Buscar:",
+				"zeroRecords":    "No se encontraron resultados",
+				"paginate": {
+					"first":      "Primero",
+					"last":       "Ultimo",
+					"next":       "Siguiente",
+					"previous":   "Anterior"
+				},
+				"aria": {
+					"sortAscending":  ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			}
+		});
+
+		var table = $('#example4').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"order": [[ 5, "desc" ]],
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizaciones&estado=7",
+			"language": {
+				"emptyTable":     "No hay datos cargados",
+				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "Mostrar _MENU_ filas",
+				"loadingRecords": "Cargando...",
+				"processing":     "Procesando...",
+				"search":         "Buscar:",
+				"zeroRecords":    "No se encontraron resultados",
+				"paginate": {
+					"first":      "Primero",
+					"last":       "Ultimo",
+					"next":       "Siguiente",
+					"previous":   "Anterior"
+				},
+				"aria": {
+					"sortAscending":  ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			}
+		});
+
 		$("#sign_in").submit(function(e){
 			e.preventDefault();
 		});
@@ -364,6 +590,24 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 		$("#example").on("click",'.btnVer', function(){
 			idTable =  $(this).attr("id");
 			$(location).attr('href','ver.php?id=' + idTable);
+
+		});//fin del boton modificar
+
+		$("#example2").on("click",'.btnCrear', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','new.php?id=' + idTable + '&origen=1');
+
+		});//fin del boton modificar
+
+		$("#example3").on("click",'.btnCrear', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','new.php?id=' + idTable + '&origen=2');
+
+		});//fin del boton modificar
+
+		$("#example4").on("click",'.btnCrear', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','new.php?id=' + idTable + '&origen=3');
 
 		});//fin del boton modificar
 

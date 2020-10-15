@@ -38,6 +38,13 @@ if ($result == false) {
 
    echo '<p>Documento Hashado: '.$documento.'</p>';
 
+   // Nos aseguramos de que la cadena que contiene el XML esté en UTF-8
+	$textoXML = mb_convert_encoding($result, "UTF-8");
+
+   $gestor = fopen("firma.xml", 'w');
+	fwrite($gestor, $textoXML);
+	fclose($gestor);
+
    echo '<h4>Se proceso</h4>';
 }
 

@@ -330,6 +330,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 <script>
 	$(document).ready(function(){
+
+
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,

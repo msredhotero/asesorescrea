@@ -116,6 +116,7 @@ $resultado = $serviciosComercio->traerComercioinicioPorOrderId($EM_OrderID);
 if (mysql_num_rows($resultado)>0) {
 	$token = mysql_result($resultado,0,'token');
 	$idestado = mysql_result($resultado,0,'refestadotransaccion');
+	$reforigencomercio = mysql_result($resultado,0,'reforigencomercio');
 } else {
 	header('Location: error.php');
 	$idestado = 1;
@@ -135,13 +136,13 @@ $instanciaDelError = 0;
 switch ($EM_Response) {
    case 'Incorrect Information is provided.':
       $error = 1;
-      $lblError = 'La informacion que proporciono de la tarjeta es incorrecta, vuelva a intentarlo';
+      $lblError = 'La informacion que proporciono de la tarjeta es incorrecta';
       $instanciaDelError = 1;
 		$idestado = 3;
    break;
    case 'denied':
       $error = 1;
-      $lblError = 'Su tarjeta fue rechazada, intente con otra tarjeta';
+      $lblError = 'Su tarjeta fue rechazada';
       $instanciaDelError = 2;
 		$idestado = 4;
    break;
@@ -160,24 +161,68 @@ switch ($EM_Response) {
 $resTransaccion = $serviciosComercio->insertarComerciofin($EM_Response,$EM_Total,$EM_OrderID,$EM_Merchant,$EM_Store,$EM_Term,$EM_RefNum,$EM_Auth,$EM_Digest,$token);
 
 
+/********** dato de la cotizacion ******************************************/
+$resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($EM_OrderID);
+$precioTotal = mysql_result($resCotizaciones,0,'primatotal');
+$lblCliente = mysql_result($resCotizaciones,0,'clientesolo');
+/******* fin  **************************************************************/
+
+
 if ($error == 0) {
 	// modifico el estado a aprobado
 	$resModificarEstado = $serviciosComercio->modificarComercioInicioEstado($token,2);
 
-	$resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($EM_OrderID,'refestados',4,$_SESSION['usua_sahilices']);
+	$nroComprobante = $serviciosComercio->generaNroRecibo();
 
-	$resModificarPM = $serviciosReferencias->modificarCotizacionesPorCampo($EM_OrderID,'refestadocotizaciones',12,$_SESSION['usua_sahilices']);
+	$resNroRecibo = $serviciosComercio->modificarComercioInicioNroRecibo($token,$nroComprobante);
 
-	// obstengo el lead que se genero en venta en linea
-	$resLead = $serviciosReferencias->traerLeadPorCotizacion($EM_OrderID);
+	// verifico el origen de la transaccion para saber que tabla modificar
+	if ($reforigencomercio == 7) {
 
-	// se viene de ahi lo marco como vendido el estado del mismo
-	if (mysql_num_rows($resLead)>0) {
-		$resModificarLead = $serviciosReferencias->modificarLeadCotizacion(mysql_result($resLead,0,0),$EM_OrderID,5);
+		$resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($EM_OrderID,'refestados',1,$_SESSION['usua_sahilices']);
+
+		$resModificarPM = $serviciosReferencias->modificarCotizacionesPorCampo($EM_OrderID,'refestadocotizaciones',20,$_SESSION['usua_sahilices']);
+
+		// obstengo el lead que se genero en venta en linea
+		$resLead = $serviciosReferencias->traerLeadPorCotizacion($EM_OrderID);
+
+		// se viene de ahi lo marco como vendido el estado del mismo
+		if (mysql_num_rows($resLead)>0) {
+			$resModificarLead = $serviciosReferencias->modificarLeadCotizacion(mysql_result($resLead,0,0),$EM_OrderID,5);
+		}
+
+
+
+		///////////////// creo el pago para luego conciliarlo /////////////////////////////////
+		$destino = 'Pago Online Venta Producto en Linea';
+		$refcuentasbancarias = 0;
+		$conciliado = '0';
+		$fechacrea = date('Y-m-d H:i:s');
+		$usuariocrea = $_SESSION['usua_sahilices'];
+		$archivos = 'ReciboPago.pdf';
+		$type = 'pdf';
+		$refestado = 1;
+		$resPago = $serviciosReferencias->insertarPagos(12,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,5,'Foncerrada Y Javelly',$lblCliente,$nroComprobante);
+
+		///////////////// fin del pago /////////////////////////////////
+
 	}
+
 
 } else {
 	$resModificarEstado = $serviciosComercio->modificarComercioInicioEstado($token,$idestado);
+
+	///////////////// creo el pago para luego conciliarlo /////////////////////////////////
+	$destino = 'Pago Online Venta Producto en Linea';
+	$refcuentasbancarias = 0;
+	$conciliado = '0';
+	$fechacrea = date('Y-m-d H:i:s');
+	$usuariocrea = $_SESSION['usua_sahilices'];
+	$archivos = '';
+	$type = '';
+	$resPago = $serviciosReferencias->insertarPagos(12,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,2,'Foncerrada Y Javelly',$lblCliente,'');
+
+	///////////////// fin del pago /////////////////////////////////
 }
 
 
@@ -270,19 +315,36 @@ if ($error == 0) {
 				<div class="col-xs-12">
 		        <div class="card">
 		          <div class="header bg-<?php echo ($error == 0 ? 'green' : 'red'); ?>">
-		            <h4 class="my-0 font-weight-normal">Estado de la transaccion <?php echo ($error == 0 ? 'Correcto' : 'Invalida'); ?></h4>
+		            <h4 class="my-0 font-weight-normal">Estado de la transaccion <?php echo ($error == 0 ? 'Aprobada' : 'Invalida'); ?></h4>
 		          </div>
 		          <div class="body table-responsive">
-							<div class="text-center">
+
 							<?php if ($error == 0) { ?>
-								<h1 class="display-4">Ya procesamos tu pago Correctamente</h1>
-								<p class="lead">Desde Asesores CREA nos estaremos comunicando con usted para concluir el servicio.</p>
+								<div class="text-center">
+									<h2 class="display-4">Hemos procesamos tu pago Correctamente.</h2>
+									<h5>¡Muchas Gracias! por completar el proceso de suscripción, en breve te enviaremos tu póliza, a partir de ese momento estarás protegido</h5>
+								</div>
+
+								<div class="list-group">
+									<a href="javascript:void(0);" class="list-group-item active"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+								PASOS PARA OBTENER TU POLIZA
+								</font></font></a>
+									<a href="javascript:void(0);" class="list-group-item"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">CARGA TU IDENTIFICACIÓN OFICIAL VIGENTE</font></font></a>
+									<a href="javascript:void(0);" class="list-group-item"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">FIRMAR TU SOLICITUD DE FORMA DIGITAL</font></font></a>
+									<a href="javascript:void(0);" class="list-group-item"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">TE ENVIAREMOS LA POLIZA Y TENDRAS CUBERTURA INMEDIATA</font></font></a>
+								</div>
+
+							<div class="text-center">
+								<div class="list-group">
+									<a href="archivos.php?id=<?php echo $EM_OrderID; ?>" class="list-group-item bg-green">CONTINUAR</a>
+								</div>
 							<?php } else { ?>
+							<div class="text-center">
 								<h1 class="display-4"><?php echo $lblError; ?></h1>
 								<p class="lead">Desde Asesores CREA nos estaremos comunicando con usted para ayudarlo.</p>
 
 								<?php if ($instanciaDelError != 3) { ?>
-								<h5>Vuelve a intentar la transaccion</h5>
+
 									<form action="8407825_asesorescrea.php" method="post" id="formFin">
 					               <input type="hidden" name="total" value="<?php echo $EM_Total; ?>">
 					               <input type="hidden" name="currency" value="<?php echo '484'; ?>">
@@ -295,14 +357,20 @@ if ($error == 0) {
 					               <input type="hidden" name="return_target" value="">
 					               <input type="hidden" name="urlBack" value="../pay/comercio_con.php">
 										<div class="row">
-										<div class="col-xs-3"></div>
-					               <div class="col-xs-6">
+										<div class="col-xs-1"></div>
+					               <div class="col-xs-5">
 											<button type="submit" class="btn btn-lg btn-block btn-success" id="btnConfirmar" style="font-size:1.5em;">
-												<i class="material-icons" style="font-size:1.5em;">verified_user</i>
-												<span>Adquirir AHORA</span>
+												<i class="material-icons" style="font-size:1.5em;">credit_card</i>
+												<span>Intenter Nuevamente</span>
 											</button>
 										</div>
-										<div class="col-xs-3"></div>
+										<div class="col-xs-5">
+											<button type="button" class="btn btn-lg btn-block btn-primary" id="btnCambiar" style="font-size:1.5em;">
+												<i class="material-icons" style="font-size:1.5em;">cached</i>
+												<span>Cambiar Metodo de Pago</span>
+											</button>
+										</div>
+										<div class="col-xs-1"></div>
 										</div>
 					            </form>
 								<?php } ?>
@@ -368,34 +436,6 @@ if ($error == 0) {
 		});
 
 
-		var table = $('#example').DataTable({
-			"bProcessing": true,
-			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=especialidades",
-			"language": {
-				"emptyTable":     "No hay datos cargados",
-				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
-				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
-				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
-				"infoPostFix":    "",
-				"thousands":      ",",
-				"lengthMenu":     "Mostrar _MENU_ filas",
-				"loadingRecords": "Cargando...",
-				"processing":     "Procesando...",
-				"search":         "Buscar:",
-				"zeroRecords":    "No se encontraron resultados",
-				"paginate": {
-					"first":      "Primero",
-					"last":       "Ultimo",
-					"next":       "Siguiente",
-					"previous":   "Anterior"
-				},
-				"aria": {
-					"sortAscending":  ": activate to sort column ascending",
-					"sortDescending": ": activate to sort column descending"
-				}
-			}
-		});
 
 		$("#sign_in").submit(function(e){
 			e.preventDefault();
@@ -421,122 +461,39 @@ if ($error == 0) {
 		});//fin del boton modificar
 
 
-		$('.frmNuevo').submit(function(e){
+		$('#btnCambiar').click(function(e){
 
-			e.preventDefault();
-			if ($('#sign_in')[0].checkValidity()) {
-				//información del formulario
-				var formData = new FormData($(".formulario")[0]);
-				var message = "";
-				//hacemos la petición ajax
-				$.ajax({
-					url: '../../ajax/ajax.php',
-					type: 'POST',
-					// Form data
-					//datos del formulario
-					data: formData,
-					//necesario para subir archivos via ajax
-					cache: false,
-					contentType: false,
-					processData: false,
-					//mientras enviamos el archivo
-					beforeSend: function(){
-
-					},
-					//una vez finalizado correctamente
-					success: function(data){
-
-						if (data == '') {
-							swal({
-									title: "Respuesta",
-									text: "Registro Creado con exito!!",
-									type: "success",
-									timer: 1500,
-									showConfirmButton: false
-							});
-
-							$('#lgmNuevo').modal('hide');
-							$('#unidadnegocio').val('');
-							table.ajax.reload();
-						} else {
-							swal({
-									title: "Respuesta",
-									text: data,
-									type: "error",
-									timer: 2500,
-									showConfirmButton: false
-							});
+			$.ajax({
+				data:  {
+					id: <?php echo $EM_OrderID; ?>,
+					accion: 'cambiarMetodoDePago'
+				},
+				url:   '../../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+					$("#btnConfirmar").hide();
+					$("#btnCambiar").hide();
+				},
+				success:  function (response) {
 
 
-						}
-					},
-					//si ha ocurrido un error
-					error: function(){
-						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-						$("#load").html('');
+					if (response.error) {
+
+						$("#btnConfirmar").show();
+						$("#btnCambiar").show();
+					} else {
+
+						$(location).attr('href',response.url);
 					}
-				});
-			}
+
+
+
+				}
+			});
 		});
 
 
-		$('.frmModificar').submit(function(e){
 
-			e.preventDefault();
-			if ($('.frmModificar')[0].checkValidity()) {
-
-				//información del formulario
-				var formData = new FormData($(".formulario")[1]);
-				var message = "";
-				//hacemos la petición ajax
-				$.ajax({
-					url: '../../ajax/ajax.php',
-					type: 'POST',
-					// Form data
-					//datos del formulario
-					data: formData,
-					//necesario para subir archivos via ajax
-					cache: false,
-					contentType: false,
-					processData: false,
-					//mientras enviamos el archivo
-					beforeSend: function(){
-
-					},
-					//una vez finalizado correctamente
-					success: function(data){
-
-						if (data == '') {
-							swal({
-									title: "Respuesta",
-									text: "Registro Modificado con exito!!",
-									type: "success",
-									timer: 1500,
-									showConfirmButton: false
-							});
-
-							$('#lgmModificar').modal('hide');
-							table.ajax.reload();
-						} else {
-							swal({
-									title: "Respuesta",
-									text: data,
-									type: "error",
-									timer: 2500,
-									showConfirmButton: false
-							});
-
-
-						}
-					},
-					//si ha ocurrido un error
-					error: function(){
-						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-						$("#load").html('');
-					}
-				});
-			}
-		});
 	});
 </script>
 

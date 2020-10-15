@@ -497,6 +497,19 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 										Estado: <b><?php echo $estadoDocumentacion; ?></b>
 									</h4>
 								</div>
+								<div class="col-xs-6 col-md-6" style="display:block">
+									<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
+									<div class="input-group col-md-12">
+										<select class="form-control show-tick" id="refestados" name="refestados">
+											<?php echo $cadRefEstados; ?>
+										</select>
+									</div>
+									<?php
+									if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11)) {
+									?>
+									<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
+								<?php } ?>
+								</div>
 
 							</div>
 					</div>
@@ -790,7 +803,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumen
 
 		Dropzone.options.frmFileUpload = {
 			maxFilesize: 30,
-			acceptedFiles: ".jpg,.jpeg,.pdf",
+			acceptedFiles: ".jpg,.jpeg,.pdf,.png",
 			accept: function(file, done) {
 				done();
 			},

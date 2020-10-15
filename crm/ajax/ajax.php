@@ -921,8 +921,14 @@ switch ($accion) {
    case 'modificarEstadoDocumentacionVentas':
       modificarEstadoDocumentacionVentas($serviciosReferencias);
    break;
+   case 'modificarEstadoDocumentacionPagos':
+      modificarEstadoDocumentacionPagos($serviciosReferencias);
+   break;
    case 'traerDocumentacionPorVentaDocumentacion':
       traerDocumentacionPorVentaDocumentacion($serviciosReferencias);
+   break;
+   case 'traerDocumentacionPorPagoDocumentacion':
+      traerDocumentacionPorPagoDocumentacion($serviciosReferencias);
    break;
    case 'eliminarDocumentacionVenta':
       eliminarDocumentacionVenta($serviciosReferencias);
@@ -1173,9 +1179,580 @@ switch ($accion) {
    case 'modDomicilio':
       modDomicilio($serviciosReferencias);
    break;
+   case 'ineCargadoCotizacion':
+      ineCargadoCotizacion($serviciosReferencias);
+   break;
+   case 'insertarTokens':
+      insertarTokens($serviciosReferencias);
+   break;
+   case 'reenviarTokens':
+      reenviarTokens($serviciosReferencias);
+   break;
+   case 'insertarFirmarcontratos':
+      insertarFirmarcontratos($serviciosReferencias);
+   break;
+   case 'traerDocumentacionPorFamiliarDocumentacion':
+      traerDocumentacionPorFamiliarDocumentacion($serviciosReferencias);
+   break;
+   case 'modificarFamiliarUnicaDocumentacion':
+      modificarFamiliarUnicaDocumentacion($serviciosReferencias);
+   break;
+   case 'modificarEstadoDocumentacionFamiliares':
+      modificarEstadoDocumentacionFamiliares($serviciosReferencias);
+   break;
+   case 'eliminarDocumentacionFamiliar':
+      eliminarDocumentacionFamiliar($serviciosReferencias);
+   break;
+
+   case 'insertarCuentasbancarias':
+      insertarCuentasbancarias($serviciosReferencias);
+   break;
+   case 'modificarCuentasbancarias':
+      modificarCuentasbancarias($serviciosReferencias);
+   break;
+   case 'eliminarCuentasbancarias':
+      eliminarCuentasbancarias($serviciosReferencias);
+   break;
+   case 'traerPagosPorId':
+      traerPagosPorId($serviciosReferencias);
+   break;
+   case 'modificarPagos':
+      modificarPagos($serviciosReferencias);
+   break;
+   case 'insertarVentas':
+      insertarVentas($serviciosReferencias);
+   break;
+   case 'cambiarMetodoDePago':
+      cambiarMetodoDePago($serviciosReferencias);
+   break;
+   case 'verificarFirmasPendientes':
+      verificarFirmasPendientes($serviciosReferencias);
+   break;
 
 }
 /* FinFinFin */
+
+function verificarFirmasPendientes($serviciosReferencias) {
+   session_start();
+
+   $id = $_POST['id'];
+
+   $resNIP = $serviciosReferencias->traerTokensPorCotizacionVigente($id);
+
+   $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+
+   $idCliente = mysql_result($resCotizaciones,0,'refclientes');
+
+   $resCliente = $serviciosReferencias->traerClientesPorId($idCliente);
+
+   $email = mysql_result($resCliente,0,'email');
+
+   $nombrecompleto = mysql_result($resCliente,0,'apellidopaterno').' '.mysql_result($resCliente,0,'apellidomaterno').' '.mysql_result($resCliente,0,'nombre');
+
+   if (mysql_num_rows($resNIP) > 0) {
+
+      $ch = curl_init();
+   	$url = 'https://qafirma.signaturainnovacionesjuridicas.com/api/documentos/pendientes?CURPoRFC=TOMG730101MDFLZM00';
+   	curl_setopt($ch, CURLOPT_URL, $url);
+   	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+   	//set the content type to application/json
+   	curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+
+   	//return response instead of outputting
+   	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+   	//execute the POST request
+   	$result = curl_exec($ch);
+   	curl_close($ch);
+
+   	$arFirmaFiel = json_decode($result, true);
+
+      if (isset($arFirmaFiel)) {
+         if ($arFirmaFiel['urlXmlSinFirmar'] == '') {
+            $refestadofirma = 1;
+         } else {
+            $refestadofirma = 2;
+
+            $resV['error'] = true;
+            $resV['mensaje'] = 'Tiene Pendientes archivos para firmar';
+
+         }
+      } else {
+         $refestadofirma = 2;
+
+         $resV['error'] = true;
+         $resV['mensaje'] = 'Se genero un inconveniente con la firma, por favor vuelva a intentarlo en unos minutos '.$arFirmaFiel['urlXmlSinFirmar'];
+      }
+
+
+
+
+      if ($refestadofirma == 1) {
+         $usuario = $nombrecompleto;
+         $fechacrea = date('Y-m-d H:i:s');
+         $fechamodi = date('Y-m-d H:i:s');
+         $vigdesde = date('Y-m-d H:i:s');
+         $vighasta = date('Y-m-d H:i:s');
+
+         $folio = 'TOMG730101MDFLZM00';
+         $nip = 'https://qafirma.signaturainnovacionesjuridicas.com/firmar/TOMG730101MDFLZM00';
+         $sha256 = 'firmae';
+         $xml = 'nada';
+
+         $res = $serviciosReferencias->insertarFirmarcontratos($id,$folio,$nip,$usuario,$sha256,$refestadofirma,$fechacrea,$fechamodi,$vigdesde,$vighasta,$xml);
+
+         if ((integer)$res > 0) {
+            $resV['error'] = false;
+
+            $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',12,$_SESSION['usua_sahilices']);
+
+            $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',4,$_SESSION['usua_sahilices']);
+         } else {
+            $resV['error'] = true;
+            $resV['mensaje'] = 'Se genero un error al modificar los datos, vuelva a intentarlo '.$res;
+         }
+      }
+
+
+   } else {
+      $resV['error'] = true;
+      $resV['mensaje'] = 'No se pudo firmar el documento, el NIP esta vencido, necesita volver a crear uno';
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
+
+function cambiarMetodoDePago($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarMetodopagoPorCotizacion($id);
+
+   if ($res) {
+      $resV['error'] = false;
+      $resV['url'] = 'metodopago.php?id='.$id;
+   } else {
+      $resV['error'] = true;
+      $resV['mensaje'] = 'No se pudo cambiar el metodo de pago, intente nuevamente';
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function insertarVentas($serviciosReferencias) {
+   session_start();
+
+   $refcotizaciones = $_POST['refcotizaciones'];
+   $refestadoventa = $_POST['refestadoventa'];
+   $primaneta = ($_POST['primaneta'] == '' ? 0 : $_POST['primaneta']);
+   $primatotal = ($_POST['primatotal'] == '' ? 0 : $_POST['primatotal']);
+   $fechavencimientopoliza = $_POST['fechavencimientopoliza'];
+   $nropoliza = $_POST['nropoliza'];
+   $fechacrea = date('Y-m-d H:i:s');
+   $fechamodi = date('Y-m-d H:i:s');
+   $usuariocrea = $_SESSION['usua_sahilices'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+   $foliotys = $_POST['foliotys'];
+   $foliointerno = $serviciosReferencias->generaFolioInterno();
+
+   $origen = $_POST['reforigen'];
+
+   $res = $serviciosReferencias->insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno);
+
+   if ((integer)$res > 0) {
+      if ($origen == 1) {
+         $resMetodoPago = $serviciosReferencias->traerMetodopagoPorCotizacion($refcotizaciones);
+
+         if (mysql_num_rows($resMetodoPago) > 0) {
+            $resMP = $serviciosReferencias->insertarPeriodicidadventasPorMetodoPago($res,mysql_result($resMetodoPago,0,0));
+         }
+      }
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarPagos($serviciosReferencias) {
+   session_start();
+
+   $id = $_POST['id'];
+   $reftabla = $_POST['reftabla'];
+   $idreferencia = $_POST['idreferencia'];
+   $monto = $_POST['monto'];
+   $token = $_POST['token'];
+   $destino = $_POST['destino'];
+   $refcuentasbancarias = $_POST['refcuentasbancarias'];
+   $conciliado = $_POST['conciliado'];
+   $archivos = $_POST['archivos'];
+   $type = $_POST['type'];
+   $fechacrea = $_POST['fechacrea'];
+   $usuariocrea = $_POST['usuariocrea'];
+   $refestado = $_POST['refestado'];
+   $razonsocial = $_POST['razonsocial'];
+   $contratante = $_POST['contratante'];
+   $nrorecibo = $_POST['nrorecibo'];
+
+   $res = $serviciosReferencias->modificarPagos($id,$reftabla,$idreferencia,$monto,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,$refestado,$razonsocial,$contratante,$nrorecibo);
+   if ($res == true) {
+      if ($refestado == 5) {
+         $resModCotizacion = $serviciosReferencias->modificarCotizacionesPorCampo($idreferencia,'refestadocotizaciones',20, $_SESSION['usua_sahilices']);
+      }
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function traerPagosPorId($serviciosReferencias) {
+   $id = $_POST['idpago'];
+   $res = $serviciosReferencias->traerPagosPorId($id);
+
+   if (mysql_num_rows($res) > 0) {
+      $resV['error'] = false;
+
+      $idcotizacion = mysql_result($res,0,'idreferencia');
+
+      $imagen = '../../imagenes/sin_img.jpg';
+
+      if (mysql_result($res,0,'archivos') == '') {
+         $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+      } else {
+         $resV['datos'] = array('imagen' => '../../archivos/comprobantespago/'.$idcotizacion.'/'.mysql_result($res,0,'archivos'), 'type' => mysql_result($res,0,'type'));
+      }
+
+
+   } else {
+      $imagen = '../../imagenes/sin_img.jpg';
+
+      $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+      $resV['error'] = true;
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function insertarCuentasbancarias($serviciosReferencias) {
+   $razonsocial = $_POST['razonsocial'];
+   $apoderado = $_POST['apoderado'];
+   $clabeinterbancaria = $_POST['clabeinterbancaria'];
+   $refbancos = $_POST['refbancos'];
+
+   $res = $serviciosReferencias->insertarCuentasbancarias($razonsocial,$apoderado,$clabeinterbancaria,$refbancos);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarCuentasbancarias($serviciosReferencias) {
+   $id = $_POST['id'];
+   $razonsocial = $_POST['razonsocial'];
+   $apoderado = $_POST['apoderado'];
+   $clabeinterbancaria = $_POST['clabeinterbancaria'];
+   $refbancos = $_POST['refbancos'];
+
+   $res = $serviciosReferencias->modificarCuentasbancarias($id,$razonsocial,$apoderado,$clabeinterbancaria,$refbancos);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarCuentasbancarias($serviciosReferencias) {
+   $id = $_POST['id'];
+   $res = $serviciosReferencias->eliminarCuentasbancarias($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
+function insertarFirmarcontratos($serviciosReferencias) {
+   session_start();
+   $refcotizaciones = $_POST['refcotizaciones'];
+   $nip = $_POST['nip'];
+
+   $resNIP = $serviciosReferencias->traerTokensPorCotizacionVigente($refcotizaciones);
+
+
+
+   if (mysql_num_rows($resNIP) > 0) {
+
+      if ($nip !== mysql_result($resNIP,0,'token')) {
+         $resV['error'] = true;
+         $resV['mensaje'] = 'El NIP no coincide con el que le enviamos por email, verifiquelo';
+      } else {
+         $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($refcotizaciones);
+
+         $idCliente = mysql_result($resCotizaciones,0,'refclientes');
+
+         $resCliente = $serviciosReferencias->traerClientesPorId($idCliente);
+
+         $email = mysql_result($resCliente,0,'email');
+
+         $nombrecompleto = mysql_result($resCliente,0,'apellidopaterno').' '.mysql_result($resCliente,0,'apellidomaterno').' '.mysql_result($resCliente,0,'nombre');
+
+         $folio = mysql_result($resCliente,0,'curp');
+
+         $nip = mysql_result($resNIP,0,'token');
+
+         /***** api para la firma *****/
+         $url = 'https://qafirma.signaturainnovacionesjuridicas.com/api/firmasimple/crear';
+         $archivo = '../reportes/F20926AC.pdf';
+         $sha256 = hash_file('sha256', $archivo);
+
+         $ch = curl_init();
+
+         curl_setopt($ch, CURLOPT_URL, $url);
+         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+         $data = array(
+            'folio' => $folio,
+            'pin' => $nip,
+            'usuario' => $nombrecompleto,
+            'sha256' => $sha256,
+         );
+         //attach encoded JSON string to the POST fields
+         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+         //set the content type to application/json
+         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+         //return response instead of outputting
+         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+         //execute the POST request
+         $result = curl_exec($ch);
+
+         if ($result == false) {
+            $refestadofirma = 2;
+         } else {
+
+            if (!file_exists('../archivos/firmas/cotizaciones/'.$refcotizaciones.'/')) {
+      			mkdir('../archivos/firmas/cotizaciones/'.$refcotizaciones.'/', 0777);
+      		}
+
+            if (!file_exists('../archivos/firmas/cotizaciones/'.$refcotizaciones.'/'.$sha256.'/')) {
+      			mkdir('../archivos/firmas/cotizaciones/'.$refcotizaciones.'/'.$sha256.'/', 0777);
+      		}
+
+            $result = trim($result,'"');
+
+            //echo '<p>Resultado: '.$result.'</p>';
+
+            //echo '<p>Documento Hashado: '.$documento.'</p>';
+
+            $textoXML = mb_convert_encoding($result, "UTF-8");
+
+            $xml = $textoXML;
+
+            $gestor = fopen('../archivos/firmas/cotizaciones/'.$refcotizaciones.'/'.$sha256.'/firma.xml', 'w');
+         	fwrite($gestor, $textoXML);
+         	fclose($gestor);
+
+            $refestadofirma = 1;
+         }
+
+         curl_close($ch);
+
+         /***** fin api **************/
+
+         $usuario = $nombrecompleto;
+         $fechacrea = date('Y-m-d H:i:s');
+         $fechamodi = date('Y-m-d H:i:s');
+         $vigdesde = date('Y-m-d H:i:s');
+         $vighasta = date('Y-m-d H:i:s');
+
+         $res = $serviciosReferencias->insertarFirmarcontratos($refcotizaciones,$folio,$nip,$usuario,$sha256,$refestadofirma,$fechacrea,$fechamodi,$vigdesde,$vighasta,$xml);
+
+         if ($refestadofirma == 1) {
+            if ((integer)$res > 0) {
+               $resV['error'] = false;
+
+               $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($refcotizaciones,'refestadocotizaciones',12,$_SESSION['usua_sahilices']);
+
+               $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($refcotizaciones,'refestados',4,$_SESSION['usua_sahilices']);
+            } else {
+               $resV['error'] = true;
+               $resV['mensaje'] = 'Se genero un error al modificar los datos, vuelva a intentarlo '.$res;
+            }
+         } else {
+            $resV['error'] = true;
+            $resV['mensaje'] = 'Se genero un inconveniente con la firma, por favor vuelva a intentarlo en unos minutos';
+         }
+      }
+
+
+   } else {
+      $resV['error'] = true;
+      $resV['mensaje'] = 'No se pudo firmar el documento, el NIP esta vencido, necesita volver a crear uno';
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+
+}
+
+function reenviarTokens($serviciosReferencias) {
+
+   $refcotizaciones = $_POST['refcotizaciones'];
+   $reftipo = 1;
+   $token = $serviciosReferencias->GUID();
+
+   $fechacreac = date('Y-m-d H:i:s');
+   $nuevafecha = strtotime ( '+15 hour' , strtotime ( $fechacreac ) ) ;
+
+   $refestadotoken = 1;
+   $vigenciafin = $nuevafecha;
+
+   $resMod = $serviciosReferencias->modificarTokensTodosInhabilitar($refcotizaciones);
+
+   $res = $serviciosReferencias->insertarTokens($refcotizaciones,$reftipo,$token,$fechacreac,$refestadotoken,$vigenciafin);
+
+   if ((integer)$res > 0) {
+
+      $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($refcotizaciones);
+
+      $idCliente = mysql_result($resCotizaciones,0,'refclientes');
+
+      $resCliente = $serviciosReferencias->traerClientesPorId($idCliente);
+
+      $email = mysql_result($resCliente,0,'email');
+
+      $cuerpo = '';
+
+      $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+      $cuerpo .= "
+      <style>
+      	body { font-family: 'Lato', sans-serif; }
+      	header { font-family: 'Prata', serif; }
+      </style>";
+
+
+
+      $cuerpo .= '<body>';
+
+      $cuerpo .= '<h3><small><p>Este es el nuevo NIP generado para firmar de forma digital, por favor ingrese al siguiente <a href="https://asesorescrea.com/desarrollo/crm/dashboard/venta/documentos.php?id='.$refcotizaciones.'" target="_blank"> enlace </a> para finalizar el proceso de venta. </small></h3><p>';
+
+		$cuerpo .= "<center>NIP:<b>".$token."</b></center><p> ";
+
+		$cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
+
+      $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+      $cuerpo .= '</body>';
+
+   	$fecha = date_create(date('Y').'-'.date('m').'-'.date('d'));
+   	date_add($fecha, date_interval_create_from_date_string('30 days'));
+   	$fechaprogramada =  date_format($fecha, 'Y-m-d');
+
+   	//$res = $this->insertarActivacionusuarios($refusuarios,$token,'','');
+
+   	$retorno = $serviciosReferencias->enviarEmail($email,'NIP para firma',utf8_decode($cuerpo));
+
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function insertarTokens($serviciosReferencias) {
+
+   $refcotizaciones = $_POST['refcotizaciones'];
+   $reftipo = 1;
+   $token = $serviciosReferencias->generarNIP();
+
+   $fechacreac = date('Y-m-d H:i:s');
+   $nuevafecha = strtotime ( '+15 hour' , strtotime ( $fechacreac ) ) ;
+
+   $refestadotoken = 1;
+   $vigenciafin = $nuevafecha;
+
+   $res = $serviciosReferencias->insertarTokens($refcotizaciones,$reftipo,$token,$fechacreac,$refestadotoken,$vigenciafin);
+
+   if ((integer)$res > 0) {
+
+      $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($refcotizaciones);
+
+      $idCliente = mysql_result($resCotizaciones,0,'refclientes');
+
+      $resCliente = $serviciosReferencias->traerClientesPorId($idCliente);
+
+      $email = mysql_result($resCliente,0,'email');
+
+      $cuerpo = '';
+
+      $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+      $cuerpo .= "
+      <style>
+      	body { font-family: 'Lato', sans-serif; }
+      	header { font-family: 'Prata', serif; }
+      </style>";
+
+
+
+      $cuerpo .= '<body>';
+
+      $cuerpo .= '<h3><small><p>Este es el nuevo NIP generado para firmar de forma digital, por favor ingrese al siguiente <a href="https://asesorescrea.com/desarrollo/crm/dashboard/venta/documentos.php?id='.$refcotizaciones.'" target="_blank"> enlace </a> para finalizar el proceso de venta. </small></h3><p>';
+
+		$cuerpo .= "<center>NIP:<b>".$token."</b></center><p> ";
+
+		$cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
+
+      $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+      $cuerpo .= '</body>';
+
+   	$fecha = date_create(date('Y').'-'.date('m').'-'.date('d'));
+   	date_add($fecha, date_interval_create_from_date_string('30 days'));
+   	$fechaprogramada =  date_format($fecha, 'Y-m-d');
+
+   	//$res = $this->insertarActivacionusuarios($refusuarios,$token,'','');
+
+   	$retorno = $serviciosReferencias->enviarEmail($email,'NIP para firma',utf8_decode($cuerpo));
+
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function ineCargadoCotizacion($serviciosReferencias) {
+   session_start();
+   $id = $_POST['id'];
+
+   $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',21,$_SESSION['usua_sahilices']);
+
+   if ($resEstado) {
+      $resV['error'] = false;
+
+   } else {
+      $resV['error'] = true;
+      $resV['mensaje'] = 'Se genero un error al modificar los datos, vuelva a intentarlo';
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function modDomicilio($serviciosReferencias) {
    session_start();
@@ -1352,15 +1929,15 @@ function guardarMetodoDePagoPorCotizacion($serviciosReferencias) {
 
    $resCotizacion = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
-   $idventa = $_POST['refventas'];
    $metodopago = $_POST['metodopago'];
    $banco = $_POST['banco'];
    $afiliacionnumber = $_POST['afiliacion'];
    $domiciliado = $_POST['domiciliado'];
    $tipotarjeta = $_POST['tipotarjeta']; //1 = tarjeta de credito 2 = cuenta debito
+   $precio = $_POST['precio'];
 
    //datos cotizacion ////////
-   $montototal = mysql_result($resCotizacion,0,'precio');
+   $montototal = $precio;
    $primaneta = mysql_result($resCotizacion,0,'primaneta');
    /////////////////////////////
 
@@ -1368,32 +1945,45 @@ function guardarMetodoDePagoPorCotizacion($serviciosReferencias) {
       $afiliacionnumber = $serviciosReferencias->encryptIt($afiliacionnumber);
    }
 
-   $url = 'documentos.php?id='.mysql_result($resCotizacion,0,0);
+   $url = 'documentos.php?id='.$id;
+
+   $nuevoEstadocotizacion = 0;
 
    switch ($metodopago) {
       case 1:
          $reftipoperiodicidad = 1;
          $reftipocobranza = 1;
+         $url = 'comercio_fin.php?id='.$id;
+         $nuevoEstadocotizacion = 19;
 
       break;
       case 2:
          $reftipoperiodicidad = 1;
          $reftipocobranza = 1;
+         $nuevoEstadocotizacion = 22;
+         $url = 'comprobantepago.php?id='.$id;
 
       break;
       case 3:
          $reftipoperiodicidad = 1;
          $reftipocobranza = 1;
+         $url = 'descuentopornomina.php?id='.$id;
+         $nuevoEstadocotizacion = 23;
 
       break;
       case 4:
          $reftipoperiodicidad = 4;
          $reftipocobranza = 2;
+         $nuevoEstadocotizacion = 20;
+         $url = 'archivos.php?id='.$id;
+         $montototal = $montototal * 1.2;
 
       break;
    }
 
-   $resAux = $serviciosReferencias->traerPeriodicidadventasPorVenta($idventa);
+   $resAux = $serviciosReferencias->traerMetodopagoPorCotizacion($id);
+
+
 
    // defino por el radio del html si lo domicilio o no
    if ($domiciliado == 0) {
@@ -1406,37 +1996,21 @@ function guardarMetodoDePagoPorCotizacion($serviciosReferencias) {
    }
 
    if (mysql_num_rows($resAux) > 0) {
-      $res = mysql_result($resAux,0,0);
+
    } else {
-      $res = $serviciosReferencias->insertarPeriodicidadventas($idventa,$reftipoperiodicidad,$reftipocobranza,$banco,$afiliacionnumber,$tipotarjeta);
+      $resMetodoPago = $serviciosReferencias->insertarMetodopago($id,$reftipoperiodicidad,$reftipocobranza,$banco,$afiliacionnumber,$tipotarjeta);
    }
 
-   // ver la fecha de pago
-   $fechapago = date('Y-m-d');
+   $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',$nuevoEstadocotizacion,$_SESSION['usua_sahilices']);
 
-   $fecha = date('Y-m-d');
-   $nuevafecha = strtotime ( '+4 day' , strtotime ( $fecha ) ) ;
-   $nuevafecha = date ( 'Y-m-d' , $nuevafecha );
-   $fechavencimiento = $nuevafecha;
-   ///////////////////////
+   $resPrimaNeta = $serviciosReferencias->modificarCotizacionesPorCampo($id,'primaneta',$precio,$_SESSION['usua_sahilices']);
 
-   // si es 1 debo guardar la venta, la orden de pago y cuando termine de pagar por el carrito de compra la debo finalizar
+   $resPrimaTotal = $serviciosReferencias->modificarCotizacionesPorCampo($id,'primatotal',$precio,$_SESSION['usua_sahilices']);
 
-   //si es 2,3 debo generar la venta y la orden de pago con el cobro a una sola cuota. Ruth debera subir los recibos para que el cliente puedo descargarlos e ir a pagar
-
-   // si es 4 debo cargar la venta, la orden de pago y los 12 cobros. Debo generar el primer cobro y los demas los cargaria ruth con los vigencias que ella estipule
-   if ($reftipoperiodicidad == 1) {
-      $resPVD = $serviciosReferencias->insertarPeriodicidadventasdetalle($res,$montototal,$primaneta,0,0,$fechapago,$fechavencimiento,1,$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],$fecha,$fecha,'falta cargar');
-   } else {
-      $montototal = $montototal * 1.1;
-      $resPVD = $serviciosReferencias->insertarPeriodicidadventasdetalle($res,$montototal/12,$primaneta,0,0,$fechapago,$fechavencimiento,1,$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],$fecha,$fecha,'falta cargar');
-   }
-
-
-
-   if ($res) {
+   if ($resEstado) {
       $resV['error'] = false;
       $resV['url'] = $url;
+
    } else {
       $resV['error'] = true;
 
@@ -2510,7 +3084,7 @@ function traerBeneficiariosPorCliente($serviciosReferencias, $serviciosFunciones
 
    if ((integer)$res > 0) {
       $resV['error'] = false;
-      $resV['dato'] = "<option value='0'>El contratante</option>".$serviciosFunciones->devolverSelectBox($res,array(3,4,2),' ')."<option value=''>Nuevo</option>";
+      $resV['dato'] = $serviciosFunciones->devolverSelectBox($res,array(3,4,2),' ')."<option value=''>Nuevo</option>";
    } else {
       $resV['error'] = true;
       $resV['dato'] = "<option value=''>-- Seleccionar --</option><option value=''>Nuevo</option>";
@@ -2765,6 +3339,102 @@ function traerComercioinicio($serviciosReferencias) {
    }
 
    $resV['datos'] = $ar;
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
+
+function traerDocumentacionPorFamiliarDocumentacion($serviciosReferencias) {
+
+   $idasociado = $_POST['idfamiliar'];
+   $iddocumentacion = $_POST['iddocumentacion'];
+
+   $resV['datos'] = '';
+   $resV['error'] = false;
+
+   $resFoto = $serviciosReferencias->traerDocumentacionPorFamiliarDocumentacion($idasociado,$iddocumentacion);
+
+   $imagen = '';
+
+   if (mysql_num_rows($resFoto) > 0) {
+      /* produccion
+      $imagen = 'https://www.saupureinconsulting.com.ar/aifzn/'.mysql_result($resFoto,0,'archivo').'/'.mysql_result($resFoto,0,'imagen');
+      */
+
+      //desarrollo
+
+      if (mysql_result($resFoto,0,'type') == '') {
+         $imagen = '../../imagenes/sin_img.jpg';
+
+         $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+         $resV['error'] = true;
+      } else {
+         $imagen = '../../archivos/familiares/'.$idasociado.'/'.mysql_result($resFoto,0,'carpeta').'/'.mysql_result($resFoto,0,'archivo');
+
+         $resV['datos'] = array('imagen' => $imagen, 'type' => mysql_result($resFoto,0,'type'));
+
+         $resV['error'] = false;
+      }
+
+
+
+   } else {
+      $imagen = '../../imagenes/sin_img.jpg';
+
+
+      $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+      $resV['error'] = true;
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
+function modificarEstadoDocumentacionFamiliares($serviciosReferencias) {
+   session_start();
+
+   $iddocumentacionasociado = $_POST['iddocumentacionfamiliar'];
+   $idestado = $_POST['idestado'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+
+   if ($iddocumentacionasociado == 0) {
+      $resV['leyenda'] = 'Todavia no cargo el archivo, no podra modificar el estado de la documentación';
+      $resV['error'] = true;
+   } else {
+      $res = $serviciosReferencias->modificarEstadoDocumentacionFamiliares($iddocumentacionasociado,$idestado,$usuariomodi);
+
+      if ($res == true) {
+         $resV['leyenda'] = '';
+         $resV['error'] = false;
+      } else {
+         $resV['leyenda'] = 'Hubo un error al modificar datos';
+         $resV['error'] = true;
+      }
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function modificarFamiliarUnicaDocumentacion($serviciosReferencias) {
+   $idpostulante = $_POST['idasociado'];
+   $campo = $_POST['campo'];
+   $valor = $_POST['valor'];
+
+   $res = $serviciosReferencias->modificarFamiliarUnicaDocumentacion($idpostulante, $campo, $valor);
+
+   if ($res == true) {
+      $resV['leyenda'] = '';
+      $resV['error'] = false;
+   } else {
+      $resV['leyenda'] = 'Hubo un error al modificar datos';
+      $resV['error'] = true;
+   }
+
    header('Content-type: application/json');
    echo json_encode($resV);
 }
@@ -3707,8 +4377,9 @@ function insertarProductos($serviciosReferencias) {
    $cotizaenlinea = $_POST['cotizaenlinea'];
    $beneficiario = $_POST['beneficiario'];
    $asegurado = $_POST['asegurado'];
+   $reftipofirma = $_POST['reftipofirma'];
 
-   $res = $serviciosReferencias->insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas,$precio,$detalle,$ventaenlinea,$cotizaenlinea,$beneficiario,$asegurado);
+   $res = $serviciosReferencias->insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas,$precio,$detalle,$ventaenlinea,$cotizaenlinea,$beneficiario,$asegurado,$reftipofirma);
 
    if ((integer)$res > 0) {
       echo '';
@@ -3741,8 +4412,9 @@ function modificarProductos($serviciosReferencias) {
    $cotizaenlinea = $_POST['cotizaenlinea'];
    $beneficiario = $_POST['beneficiario'];
    $asegurado = $_POST['asegurado'];
+   $reftipofirma = $_POST['reftipofirma'];
 
-   $res = $serviciosReferencias->modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas,$precio,$detalle,$ventaenlinea,$cotizaenlinea,$beneficiario,$asegurado);
+   $res = $serviciosReferencias->modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas,$precio,$detalle,$ventaenlinea,$cotizaenlinea,$beneficiario,$asegurado,$reftipofirma);
 
    if ($res == true) {
       echo '';
@@ -3844,6 +4516,54 @@ function traerDocumentacionPorVentaDocumentacion($serviciosReferencias) {
 }
 
 
+function traerDocumentacionPorPagoDocumentacion($serviciosReferencias) {
+
+   $idventa = $_POST['idventa'];
+   $iddocumentacion = $_POST['iddocumentacion'];
+
+   $resV['datos'] = '';
+   $resV['error'] = false;
+
+   $resFoto = $serviciosReferencias->traerDocumentacionPorPagoDocumentacion($idventa,$iddocumentacion);
+
+   $imagen = '';
+
+   if (mysql_num_rows($resFoto) > 0) {
+      /* produccion
+      $imagen = 'https://www.saupureinconsulting.com.ar/aifzn/'.mysql_result($resFoto,0,'archivo').'/'.mysql_result($resFoto,0,'imagen');
+      */
+
+      //desarrollo
+
+      if (mysql_result($resFoto,0,'type') == '') {
+         $imagen = '../../imagenes/sin_img.jpg';
+
+         $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+         $resV['error'] = true;
+      } else {
+         $imagen = '../../archivos/pagos/'.$idventa.'/'.mysql_result($resFoto,0,'carpeta').'/'.mysql_result($resFoto,0,'archivo');
+
+         $resV['datos'] = array('imagen' => $imagen, 'type' => mysql_result($resFoto,0,'type'));
+
+         $resV['error'] = false;
+      }
+
+
+
+   } else {
+      $imagen = '../../imagenes/sin_img.jpg';
+
+
+      $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+      $resV['error'] = true;
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
 function modificarEstadoDocumentacionVentas($serviciosReferencias) {
    session_start();
 
@@ -3856,6 +4576,34 @@ function modificarEstadoDocumentacionVentas($serviciosReferencias) {
       $resV['error'] = true;
    } else {
       $res = $serviciosReferencias->modificarEstadoDocumentacionVentas($iddocumentacionventa,$idestado,$usuariomodi);
+
+      if ($res == true) {
+         $resV['leyenda'] = '';
+         $resV['error'] = false;
+      } else {
+         $resV['leyenda'] = 'Hubo un error al modificar datos';
+         $resV['error'] = true;
+      }
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
+function modificarEstadoDocumentacionPagos($serviciosReferencias) {
+   session_start();
+
+   $iddocumentacionventa = $_POST['iddocumentacionventa'];
+   $idestado = $_POST['idestado'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+
+   if ($iddocumentacionventa == 0) {
+      $resV['leyenda'] = 'Todavia no cargo el archivo, no podra modificar el estado de la documentación';
+      $resV['error'] = true;
+   } else {
+      $res = $serviciosReferencias->modificarEstadoDocumentacionPagos($iddocumentacionventa,$idestado,$usuariomodi);
 
       if ($res == true) {
          $resV['leyenda'] = '';
@@ -5457,6 +6205,16 @@ function eliminarDocumentacionAsociado($serviciosReferencias) {
    echo json_encode($res);
 }
 
+function eliminarDocumentacionFamiliar($serviciosReferencias) {
+   $idasociado = $_POST['idasociado'];
+   $iddocumentacion = $_POST['iddocumentacion'];
+
+   $res = $serviciosReferencias->eliminarDocumentacionFamiliar($idasociado, $iddocumentacion);
+
+   header('Content-type: application/json');
+   echo json_encode($res);
+}
+
 function insertarAsociados($serviciosReferencias,$serviciosUsuarios) {
 
    $apellidopaterno = $_POST['apellidopaterno'];
@@ -6795,6 +7553,38 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+      case 'dbpagos':
+         $resultado = $serviciosReferencias->traerPagosPorId( $id);
+
+         $modificar = "modificarPagos";
+         $idTabla = "idpago";
+
+         $lblCambio	 	= array('refestado','razonsocial','nrorecibo');
+         $lblreemplazo	= array('Estado','Razon Social','Nro Recibo');
+
+         $res = $serviciosReferencias->traerEstadodocumentaciones();
+         $cad = $serviciosFunciones->devolverSelectBoxActivo($res,array(1),'',mysql_result($resultado,0,'refestado'));
+
+
+         $refdescripcion = array(0=>$cad);
+         $refCampo 	=  array('refestado');
+      break;
+      case 'tbcuentasbancarias':
+         $resultado = $serviciosReferencias->traerCuentasbancariasPorId($id);
+
+         $modificar = "modificarCuentasbancarias";
+         $idTabla = "idcuentabancaria";
+
+         $lblCambio	 	= array('razonsocial','clabeinterbancaria','refbancos');
+         $lblreemplazo	= array('Razon Social','Clabe Interbancaria','Banco');
+
+         $res = $serviciosReferencias->traerBancos();
+         $cad = $serviciosFunciones->devolverSelectBoxActivo($res,array(1),'',mysql_result($resultado,0,'refbancos'));
+
+
+         $refdescripcion = array(0=>$cad);
+         $refCampo 	=  array('refbancos');
+      break;
       case 'dbvaloredad':
          $resultado = $serviciosReferencias->traerValoredadPorId($id);
 
@@ -6975,8 +7765,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $modificar = "modificarProductos";
          $idTabla = "idproducto";
 
-         $lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado','refcuestionarios','puntosporventarenovado','puntosporpesopagadorenovado','reftipopersonas','ventaenlinea','cotizaenlinea','beneficiario','asegurado');
-         $lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado','Cuestionario','Punto x Venta Renovacion','Puntos x Peso Pagado Renovacion','Tipo Personas','Es de venta en linea','Es para cotizar','Podría tener beneficiario ','Podría tener asegurado distinto al contratante');
+         $lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado','refcuestionarios','puntosporventarenovado','puntosporpesopagadorenovado','reftipopersonas','ventaenlinea','cotizaenlinea','beneficiario','asegurado','reftipofirma');
+         $lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado','Cuestionario','Punto x Venta Renovacion','Puntos x Peso Pagado Renovacion','Tipo Personas','Es de venta en linea','Es para cotizar','Podría tener beneficiario ','Podría tener asegurado distinto al contratante','Firmas');
 
          $resVar1 = $serviciosReferencias->traerTipoproductorama();
          $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(2),'',mysql_result($resultado,0,'reftipoproductorama'));
@@ -7027,8 +7817,11 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
             $cadRef9999 = "<option value='1'>Si</option><option value='0' selected>No</option>";
          }
 
-         $refdescripcion = array(0=>$cadRef1,1=>$cadRef4,2=>$cadRef2,3=>$cadRef3,4=>$cadRef5,5=>$cadRef8,6=>$cadRef9,7=>$cadRef99,8=>$cadRef999,9=>$cadRef9999);
-         $refCampo 	=  array('reftipoproductorama','reftipodocumentaciones','activo','prima','refcuestionarios','reftipopersonas','ventaenlinea','cotizaenlinea','beneficiario','asegurado');
+         $resVar10 = $serviciosReferencias->traerTipofirma();
+         $cadRef10 = $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',mysql_result($resultado,0,'reftipofirma'));
+
+         $refdescripcion = array(0=>$cadRef1,1=>$cadRef4,2=>$cadRef2,3=>$cadRef3,4=>$cadRef5,5=>$cadRef8,6=>$cadRef9,7=>$cadRef99,8=>$cadRef999,9=>$cadRef9999,10=>$cadRef10);
+         $refCampo 	=  array('reftipoproductorama','reftipodocumentaciones','activo','prima','refcuestionarios','reftipopersonas','ventaenlinea','cotizaenlinea','beneficiario','asegurado','reftipofirma');
       break;
 
       case 'dbdocumentaciones':

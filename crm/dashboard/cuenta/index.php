@@ -33,6 +33,10 @@ $serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cuenta/')
 
 $fecha = date('Y-m-d');
 
+if ($_SESSION['idroll_sahilices'] != 16) {
+	header('Location: ../index.php');
+}
+
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
 $resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cuenta",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 

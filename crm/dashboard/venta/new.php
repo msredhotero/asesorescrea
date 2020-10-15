@@ -93,6 +93,36 @@ if (isset($_GET['id'])) {
 
 	}
 
+	if (($estadoCotizacionGral == 20)) {
+		$resVentas = $serviciosReferencias->traerVentasPorCotizacion($id);
+
+		if (mysql_num_rows($resVentas) > 0) {
+			$resMetodoPago = $serviciosReferencias->traerPeriodicidadventasPorVenta(mysql_result($resVentas,0,0));
+			if (mysql_num_rows($resMetodoPago) > 0) {
+				header('Location: comercio_fin.php?id='.$id);
+			} else {
+				header('Location: archivos.php?id='.$id);
+			}
+		} else {
+			header('Location: archivos.php?id='.$id);
+		}
+	}
+
+	if (($estadoCotizacionGral == 21) || ($estadoCotizacionGral == 22)) {
+		$resVentas = $serviciosReferencias->traerVentasPorCotizacion($id);
+
+		if (mysql_num_rows($resVentas) > 0) {
+			$resMetodoPago = $serviciosReferencias->traerPeriodicidadventasPorVenta(mysql_result($resVentas,0,0));
+			if (mysql_num_rows($resMetodoPago) > 0) {
+				header('Location: comercio_fin.php?id='.$id);
+			} else {
+				header('Location: documentos.php?id='.$id);
+			}
+		} else {
+			header('Location: documentos.php?id='.$id);
+		}
+	}
+
 	$refIdAsegurados = mysql_result($resultado,0,'refasegurados');
 	$tieneAsegurado = mysql_result($resultado,0,'tieneasegurado');
 
@@ -880,7 +910,6 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		                                       <div class="form-line">
 
 									   						<select style="margin-top:10px;" class="form-control" id="refbeneficiarioaux" name="refbeneficiarioaux" required>
-																	<option value='0'>El contratante</option>
 																	<option value='0'>Nuevo</option>
 																</select>
 
@@ -1015,7 +1044,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 									<label class="form-label">CURP <span style="color:red;">*</span>  </label>
 									<div class="form-group input-group">
 										<div class="form-line">
-											<input type="text" class="form-control" id="curpASG" name="curp" maxlength="18" />
+											<input type="text" class="form-control" id="curpASG" name="curp" maxlength="18" required />
 										</div>
 									</div>
 								</div>
@@ -1025,7 +1054,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 									<label class="form-label">Fecha De Nacimiento <span style="color:red;">*</span>  </label>
 									<div class="form-group input-group">
 										<div class="form-line">
-											<input type="text" class="form-control" id="fechanacimientoASG" name="fechanacimiento" />
+											<input type="text" class="form-control" id="fechanacimientoASG" name="fechanacimiento" required/>
 										</div>
 									</div>
 								</div>
@@ -1121,7 +1150,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 
 								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcurp" style="display:block">
-									<label class="form-label">CURP  <span style="color:red;">*</span> </label>
+									<label class="form-label">CURP </label>
 									<div class="form-group input-group">
 										<div class="form-line">
 											<input type="text" class="form-control" id="curpBNF" name="curp" maxlength="18" />
@@ -1134,7 +1163,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 									<label class="form-label">Fecha De Nacimiento  <span style="color:red;">*</span> </label>
 									<div class="form-group input-group">
 										<div class="form-line">
-											<input type="text" class="form-control" id="fechanacimientoBNF" name="fechanacimiento" />
+											<input type="text" class="form-control" id="fechanacimientoBNF" name="fechanacimiento" required/>
 										</div>
 									</div>
 								</div>

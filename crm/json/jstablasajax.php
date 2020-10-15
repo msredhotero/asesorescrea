@@ -69,6 +69,57 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 }
 
 switch ($tabla) {
+	case 'listadopagos':
+		$datos = $serviciosReferencias->traerPagosCotizacionajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array('btnModificar');
+		$class = array('bg-orange');
+		$icon = array('edit');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 11;
+	break;
+	case 'cuentasbancarias':
+
+
+		$datos = $serviciosReferencias->traerCuentasbancariasajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('edit','delete');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 4;
+
+	break;
+	case 'familiares':
+
+		$idcliente = $_GET['idcliente'];
+		$datos = $serviciosReferencias->traerAseguradosClientesajax($length, $start, $busqueda,$colSort,$colSortDir, $idcliente);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array('btnModificar','btnDocumentos');
+		$class = array('bg-amber','bg-green');
+		$icon = array('search','photo');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 9;
+
+	break;
 	case 'valoredad':
 
 		$datos = $serviciosReferencias->traerValoredadjax($length, $start, $busqueda,$colSort,$colSortDir);
@@ -386,9 +437,9 @@ switch ($tabla) {
 		$res = $datos[1];
 
 
-		$label = array('btnPagar','btnRecibo');
-		$class = array('bg-green','bg-orange');
-		$icon = array('add_shopping_cart','unarchive');
+		$label = array('btnPagar','btnRecibo','btnPagos');
+		$class = array('bg-green','bg-orange','bg-blue');
+		$icon = array('add_shopping_cart','unarchive','shopping_cart');
 
 
 		$indiceID = 0;
@@ -599,6 +650,30 @@ switch ($tabla) {
 				$termina = 6;
 				$filtroNuevo = '';
 			break;
+			case 5:
+				$label = array('btnCrear');
+				$class = array('bg-green');
+				$icon = array('check_circle');
+				$whereEstado = ' c.refestados in (4) ';
+				$termina = 6;
+				$filtroNuevo = 'enlinea';
+			break;
+			case 6:
+				$label = array('btnCrear');
+				$class = array('bg-green');
+				$icon = array('check_circle');
+				$whereEstado = ' c.refestados in (4) ';
+				$termina = 6;
+				$filtroNuevo = 'poragente';
+			break;
+			case 7:
+				$label = array('btnCrear');
+				$class = array('bg-green');
+				$icon = array('check_circle');
+				$whereEstado = ' c.refestados in (4) ';
+				$termina = 6;
+				$filtroNuevo = 'poroficina';
+			break;
 			default:
 				$label = array();
 				$class = array();
@@ -802,9 +877,9 @@ switch ($tabla) {
 		$resAjax = $datos[0];
 		$res = $datos[1];
 
-		$label = array('btnModificar','btnEliminar','btnDocumentacion');
-		$class = array('bg-amber','bg-red','bg-blue');
-		$icon = array('Modificar','Eliminar','Documentaciones');
+		$label = array('btnModificar','btnEliminar','btnDocumentacion','btnFamiliares');
+		$class = array('bg-amber','bg-red','bg-blue','bg-cyan');
+		$icon = array('Modificar','Eliminar','Documentaciones','Familiares');
 		$indiceID = 0;
 		$empieza = 1;
 		$termina = 9;
@@ -1489,7 +1564,7 @@ $id = 0;
 		//$id = $row[$indiceID];
 		// forma local utf8_decode
 		for ($i=$empieza;$i<=$termina;$i++) {
-			array_push($arAux, ($row[$i]));
+			array_push($arAux, utf8_decode($row[$i]));
 		}
 
 		if (($tabla == 'postulantes') || ($tabla == 'ventas') || ($tabla == 'postulanteshistorico') || ($tabla == 'asesores') || ($tabla == 'asociadostemporales') || ($tabla == 'asociados') || ($tabla == 'clientes') || ($tabla == 'cuestionario') || ($tabla == 'preguntascuestionario') || ($tabla == 'respuestascuestionario')) {

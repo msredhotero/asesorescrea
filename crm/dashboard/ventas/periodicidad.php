@@ -71,8 +71,8 @@ if (mysql_num_rows($resPeriodicidad) > 0) {
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbperiodicidadventas";
 
-$lblCambio	 	= array('refventas','reftipoperiodicidad','reftipocobranza');
-$lblreemplazo	= array('Venta','Periodicidad','Tipo de Cobranza');
+$lblCambio	 	= array('refventas','reftipoperiodicidad','reftipocobranza','afiliacionnumber','tipotarjeta');
+$lblreemplazo	= array('Venta','Periodicidad','Tipo de Cobranza','Afiliacion','Tipo Tarjeta');
 
 $resVar = $serviciosReferencias->traerCotizacionesPorIdCompletoV(mysql_result($resultado,0,'refcotizaciones'));
 $cadRef = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(1,2,3),' ',mysql_result($resultado,0,'refcotizaciones'));
@@ -87,9 +87,23 @@ $resVar3 = $serviciosReferencias->traerTipocobranza();
 if ($existe == 1) {
 	$cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(1),'',mysql_result($resPeriodicidad,0,'reftipoperiodicidad'));
 	$cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resVar3,array(1),'',mysql_result($resPeriodicidad,0,'reftipocobranza'));
+
+	$banco = mysql_result($resPeriodicidad,0,'banco');
+	$afiliacionnumber = $serviciosReferencias->hiddenString($serviciosReferencias->decryptIt(mysql_result($resPeriodicidad,0,'afiliacionnumber')),0,4);
+	$tipotarjeta = mysql_result($resPeriodicidad,0,'tipotarjeta');
+	if ($tipotarjeta == '1') {
+		$tipotarjeta = 'Tarjeta de Credito';
+	} else {
+		$tipotarjeta = 'Tarjeta de Debito';
+	}
+
 } else {
 	$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),'');
 	$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
+
+	$banco = '';
+	$afiliacionnumber = '';
+	$tipotarjeta = '';
 }
 
 $refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3);
@@ -301,6 +315,10 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 <script>
 	$(document).ready(function(){
+
+		$('#banco').val('<?php echo $banco; ?>');
+		$('#afiliacionnumber').val('<?php //echo $afiliacionnumber; ?>');
+		$('#tipotarjeta').val('<?php echo $tipotarjeta; ?>');
 
 		$('.btnArchivos').click(function() {
 			url = "subirdocumentacioni.php?id=<?php echo $idcotizacion; ?>&documentacion=35";

@@ -134,6 +134,18 @@ class serviciosComercio
 
    /* PARA Comercioinicio */
 
+   function generaNroRecibo() {
+		$sql = "select max(idcomercioinicio) from dbcomercioinicio";
+		$res = $this->query($sql,0);
+
+		if (mysql_num_rows($res) > 0) {
+			$idcliente = mysql_result($res,0,0);
+			return 'REC'.substr('0000000000'.$idcliente,-7);
+		}
+
+		return 'REC0000000001';
+	}
+
    function insertarComercioinicio($token,$comtotal,$comcurrency,$comaddres,$comorderid,$commerchant,$comstore,$comterm,$comdigest,$urlback,$reforigencomercio,$refestadotransaccion,$refafiliados,$fechacrea,$usuariocrea,$vigencia,$observaciones,$usuariomodi) {
       $sql = "insert into dbcomercioinicio(idcomercioinicio,token,comtotal,comcurrency,comaddres,comorderid,commerchant,comstore,comterm,comdigest,urlback,reforigencomercio,refestadotransaccion,refafiliados,fechacrea,usuariocrea,vigencia,observaciones,fechamodi,usuariomodi)
       values ('','".$token."',".$comtotal.",'".$comcurrency."','".$comaddres."',".$comorderid.",'".$commerchant."','".$comstore."','".$comterm."','".$comdigest."','".$urlback."',".$reforigencomercio.",".$refestadotransaccion.",".$refafiliados.",'".$fechacrea."','".$usuariocrea."',adddate(current_date(),1),'".$observaciones."','".date('Y-m-d H:i:s')."','".$usuariomodi."')";
@@ -152,6 +164,12 @@ class serviciosComercio
 
    function modificarComercioInicioEstado($token,$idestado) {
       $sql = "update dbcomercioinicio set refestadotransaccion = ".$idestado.",fechamodi = '".date('Y-m-d H:i:s')."' where token = '".$token."'";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function modificarComercioInicioNroRecibo($token, $nrocomprobante) {
+      $sql = "update dbcomercioinicio set nrocomprobante = '".$nrocomprobante."' where token = '".$token."'";
       $res = $this->query($sql,0);
       return $res;
    }
@@ -212,20 +230,20 @@ class serviciosComercio
 
 
    function traerComercioinicioPorId($id) {
-      $sql = "select idcomercioinicio,token,comtotal,comcurrency,comaddres,comorderid,commerchant,comstore,comterm,comdigest,urlback,reforigencomercio,refestadotransaccion,refafiliados,fechacrea,usuariocrea,vigencia,observaciones,fechamodi,usuariomodi from dbcomercioinicio where idcomercioinicio =".$id;
+      $sql = "select idcomercioinicio,token,comtotal,comcurrency,comaddres,comorderid,commerchant,comstore,comterm,comdigest,urlback,reforigencomercio,refestadotransaccion,refafiliados,fechacrea,usuariocrea,vigencia,observaciones,fechamodi,usuariomodi,nrocomprobante from dbcomercioinicio where idcomercioinicio =".$id;
       $res = $this->query($sql,0);
       return $res;
    }
 
    function traerComercioinicioPorToken($token) {
-      $sql = "select idcomercioinicio,token,comtotal,comcurrency,comaddres,comorderid,commerchant,comstore,comterm,comdigest,urlback,reforigencomercio,refestadotransaccion,refafiliados,fechacrea,usuariocrea,vigencia,observaciones,fechamodi,usuariomodi from dbcomercioinicio where token ='".$token."'";
+      $sql = "select idcomercioinicio,token,comtotal,comcurrency,comaddres,comorderid,commerchant,comstore,comterm,comdigest,urlback,reforigencomercio,refestadotransaccion,refafiliados,fechacrea,usuariocrea,vigencia,observaciones,fechamodi,usuariomodi,nrocomprobante from dbcomercioinicio where token ='".$token."'";
       $res = $this->query($sql,0);
       return $res;
    }
 
 
    function traerComercioinicioPorOrderId($orderid) {
-      $sql = "select idcomercioinicio,token,comtotal,comcurrency,comaddres,comorderid,commerchant,comstore,comterm,comdigest,urlback,reforigencomercio,refestadotransaccion,refafiliados,fechacrea,usuariocrea,vigencia,observaciones,fechamodi,usuariomodi from dbcomercioinicio where comorderid = '".$orderid."'";
+      $sql = "select idcomercioinicio,token,comtotal,comcurrency,comaddres,comorderid,commerchant,comstore,comterm,comdigest,urlback,reforigencomercio,refestadotransaccion,refafiliados,fechacrea,usuariocrea,vigencia,observaciones,fechamodi,usuariomodi,nrocomprobante from dbcomercioinicio where comorderid = '".$orderid."'";
       $res = $this->query($sql,0);
       return $res;
    }

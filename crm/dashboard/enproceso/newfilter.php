@@ -36,6 +36,10 @@ $fecha = date('Y-m-d');
 if (isset($_GET['id'])) {
 	$resCotizacionPrincipal = $serviciosReferencias->traerCotizacionesPorIdCompleto($_GET['id']);
 
+	if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 21) {
+		return header('Location: documentos.php?id='.$_GET['id']);
+	}
+
 	$rIdCliente = mysql_result($resCotizacionPrincipal,0,'refclientes');
 
 	$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta(mysql_result($resCotizacionPrincipal,0,'refproductos'));

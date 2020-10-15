@@ -98,7 +98,7 @@ if (!(isset($resDatosSencibles))) {
 }
 
 if (mysql_num_rows($resCotizaciones)>0) {
-	$precio = mysql_result($resCotizaciones,0,'precio');
+	$precio = mysql_result($resCotizaciones,0,'primatotal');
 	$lblPrecio = str_replace('.','',$precio);
 } else {
 	header('Location: index.php');
@@ -122,7 +122,8 @@ $comterm = '123';
 //url para devolver la pagina en la transaccion
 $urlback = 'comercio_con.php';
 //origen de donde salen los datos
-$reforigencomercio = 2;
+// en este casa sera "7 - Producto Venta en Linea CRM"
+$reforigencomercio = 7;
 
 // inicio el estado de la transaccion
 $refestadotransaccion = 1;
@@ -161,8 +162,6 @@ if (mysql_num_rows($existeComercio) > 0) {
 
 
 $resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
-
-$cuestionario = $serviciosReferencias->traerCuestionariodetallePorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id);
 
 
 ?>
@@ -258,62 +257,15 @@ $cuestionario = $serviciosReferencias->traerCuestionariodetallePorTablaReferenci
 		          </div>
 		          <div class="body table-responsive">
 							<div class="text-center">
-								<h1 class="display-4">¡Ya casi estás ahí! Completa tu pedido</h1>
-								<p class="lead">Alguna leyenda escrita para que el que va a pagar entiende porque esta en este lugar.</p>
+								<h1 class="display-4">CONFIRMA TU PEDIDO</h1>
+								<p class="lead">Al hacer click el boton "Adquirir Ahora" te llevara al procesador de pago para cargarlos los datos de tu tarjeta y completar tu compra.</p>
 							</div>
 
-							<h1 class="text-center">MX$<?php echo $precio; ?></h1>
-							<?php echo $detalleProducto; ?>
+							<h1 class="text-center">MX$<?php echo number_format($precio,2,'.',','); ?></h1>
+							<?php //echo $detalleProducto; ?>
 							<hr>
-							<h4>Asegurado: <?php echo $lblAsegurado; ?></h4>
-							<h4>Beneficiario: <?php echo $lblBeneficiario; ?></h4>
-							<hr>
-							<div class="row" style="padding: 5px 20px;">
-								<table class="display table table-border" style="border:1px solid #333;">
-									<thead class="bg bg-cyan">
-										<th colspan="2">CUESTIONARIO</th>
-									</thead>
-									<tbody>
-										<tr>
-											<th>Pregunta</th>
-											<th>Respuesta</th>
-										</tr>
-								<?php
-								$pregunta = '';
-								while ($rowC = mysql_fetch_array($cuestionario)) {
-									echo '<tr><td>';
-									if ($pregunta != $rowC['pregunta']) {
-										$pregunta = $rowC['pregunta'];
-										echo $pregunta.'</td>';
-									} else {
-										echo '</td>';
-									}
-								?>
-									<td><h5 style="color:green;">* <?php echo ($rowC['respuesta'] == 'Lo que el ususario ingrese' ? $rowC['respuestavalor'] : $rowC['respuesta']); ?></h5></td>
-								</tr>
-								<?php
-								}
 
-
-									$pregunta = '';
-									foreach ($resDatosSencibles[0] as $rowCC) {
-										echo '<tr><td>';
-										if ($pregunta != $rowCC['pregunta']) {
-											$pregunta = $rowCC['pregunta'];
-											echo $pregunta.'</td>';
-										} else {
-											echo '</td>';
-										}
-
-									?>
-									<td><h5 style="color:green;">* <?php echo $rowCC['valor']; ?></h5></td>
-									</tr>
-									<?php } ?>
-									</tbody>
-								</table>
-							</div>
-			            <hr>
-			            <p><small>Al realizar la compra, aceptas nuestros Terminos de uso. Procesaremos sus datos personales para el cumplimiento de su pedido y otros fines según nuestra Política de privacidad. Al concretar tu compra estarás aceptando nuestros Términos de servicio y Política de privacidad.</small></p>
+			            <p><small>Al concretar tu compra estarás aceptando nuestros Términos de servicio y Política de privacidad.</small></p>
 			            <ul class="list-inline">
 			               <li class="list-inline-item"><img src="../../imagenes/visa.png" width="90" height="63"></li>
 			               <li class="list-inline-item"><img src="../../imagenes/mastercard.png" width="90" height="63"></li>

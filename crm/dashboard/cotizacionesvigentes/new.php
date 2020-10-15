@@ -43,24 +43,60 @@ $rTipoPersona = mysql_result($rCliente,0,'reftipopersonas');
 if (isset($_GET['id'])) {
 	$resCotizacionPrincipal = $serviciosReferencias->traerCotizacionesPorIdCompleto($_GET['id']);
 
+
 	if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 19) {
-		$resVentas = $serviciosReferencias->traerVentasPorCotizacion($_GET['id']);
+		$resVentas = $serviciosReferencias->traerMetodopagoPorCotizacion($_GET['id']);
 
 		if (mysql_num_rows($resVentas) > 0) {
-			$resMetodoPago = $serviciosReferencias->traerPeriodicidadventasPorVenta(mysql_result($resVentas,0,0));
-			if (mysql_num_rows($resMetodoPago) > 0) {
-				return header('Location: ../venta/comercio_fin.php?id='.$_GET['id']);
-			} else {
-				return header('Location: ../venta/metodopago.php?id='.$_GET['id']);
-			}
+			return header('Location: ../venta/comercio_fin.php?id='.$_GET['id']);
 		} else {
 			return header('Location: ../venta/metodopago.php?id='.$_GET['id']);
 		}
 
 	}
 
+	if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 20) {
+		$resVentas = $serviciosReferencias->traerMetodopagoPorCotizacion($_GET['id']);
+
+		if (mysql_num_rows($resVentas) > 0) {
+			return header('Location: ../venta/archivos.php?id='.$_GET['id']);
+		} else {
+			return header('Location: ../venta/metodopago.php?id='.$_GET['id']);
+		}
+	}
+
+	if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 22) {
+		$resVentas = $serviciosReferencias->traerMetodopagoPorCotizacion($_GET['id']);
+
+		if (mysql_num_rows($resVentas) > 0) {
+			return header('Location: ../venta/comprobantepago.php?id='.$_GET['id']);
+		} else {
+			return header('Location: ../venta/metodopago.php?id='.$_GET['id']);
+		}
+	}
+
+	if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 23) {
+		$resVentas = $serviciosReferencias->traerMetodopagoPorCotizacion($_GET['id']);
+
+		if (mysql_num_rows($resVentas) > 0) {
+			return header('Location: ../venta/descuentopornomina.php?id='.$_GET['id']);
+		} else {
+			return header('Location: ../venta/metodopago.php?id='.$_GET['id']);
+		}
+	}
+
+	if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 21) {
+		$resVentas = $serviciosReferencias->traerMetodopagoPorCotizacion($_GET['id']);
+
+		if (mysql_num_rows($resVentas) > 0) {
+			return header('Location: ../venta/documentos.php?id='.$_GET['id']);
+		} else {
+			return header('Location: ../venta/metodopago.php?id='.$_GET['id']);
+		}
+	}
+
 	if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') >= 2) {
-		header('Location: ../cotizacionesvigentes/resultado.php?id='.$_GET['id']);
+		return header('Location: ../cotizacionesvigentes/resultado.php?id='.$_GET['id']);
 	} else {
 		$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta(mysql_result($resCotizacionPrincipal,0,'refproductos'));
 
@@ -68,17 +104,17 @@ if (isset($_GET['id'])) {
 
 		if (mysql_result($resProductoPrincipal,0,'ventaenlinea') == '1') {
 			if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 5) {
-				header('Location: ../venta/comercio_fin.php?id='.$_GET['id']);
+				return header('Location: ../venta/comercio_fin.php?id='.$_GET['id']);
 			} else {
 
-				header('Location: ../venta/new.php?id='.$_GET['id'].'&producto='.mysql_result($resCotizacionPrincipal,0,'refproductos'));
+				return header('Location: ../venta/new.php?id='.$_GET['id'].'&producto='.mysql_result($resCotizacionPrincipal,0,'refproductos'));
 
 			}
 
 			//die(var_dump('Location: ../venta/new.php?id='.$_GET['id'].'&producto='.mysql_result($resCotizacionPrincipal,0,'refproductos')));
 		} else {
 			if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 2) {
-				header('Location: ver.php?id='.$_GET['id']);
+				return header('Location: ver.php?id='.$_GET['id']);
 			}
 		}
 		$rIdProducto = mysql_result($resCotizacionPrincipal,0,'refproductos');
@@ -117,7 +153,7 @@ if (isset($_GET['id'])) {
 
 
 	} else {
-		header('Location: ../index.php');
+		return header('Location: ../index.php');
 	}
 
 }

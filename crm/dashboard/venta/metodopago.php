@@ -48,6 +48,7 @@ if (!(isset($_GET['id']))) {
 
 $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
+/*
 $resVentas = $serviciosReferencias->traerVentasPorCotizacion($id);
 
 if (mysql_num_rows($resVentas) > 0) {
@@ -59,6 +60,7 @@ if (mysql_num_rows($resVentas) > 0) {
 
 	$idventa = $resIV;
 }
+*/
 
 $idCliente = mysql_result($resCotizaciones,0,'refclientes');
 
@@ -74,33 +76,6 @@ $idcuestionario = mysql_result($resProducto,0,'refcuestionarios');
 
 $detalleProducto = mysql_result($resProducto,0,'detalle');
 
-if (mysql_result($resCotizaciones,0,'tieneasegurado') == '1') {
-	$resDatosSencibles = $serviciosReferencias->necesitoPreguntaSencibleAsegurado(mysql_result($resCotizaciones,0,'refasegurados'),$idcuestionario);
-	//asegurado
-	$resAsegurado = $serviciosReferencias->traerAseguradosPorId(mysql_result($resCotizaciones,0,'refasegurados'));
-	// asegurado nombre completo
-	$lblAsegurado = mysql_result($resAsegurado,0,'apellidopaterno').' '.mysql_result($resAsegurado,0,'apellidomaterno').' '.mysql_result($resAsegurado,0,'nombre');
-} else {
-	$lblAsegurado = mysql_result($resCotizaciones,0,'clientesolo');
-}
-
-if (mysql_result($resCotizaciones,0,'tieneasegurado') == '0') {
-	$resDatosSencibles = $serviciosReferencias->necesitoPreguntaSencible($idCliente,$idcuestionario);
-}
-
-
-if (mysql_result($resCotizaciones,0,'refbeneficiarios') > 0) {
-	// beneficiario
-	$resBeneficiario = $serviciosReferencias->traerAseguradosPorId(mysql_result($resCotizaciones,0,'refbeneficiarios'));
-	// beneficiario nombre completo
-	$lblBeneficiario = mysql_result($resBeneficiario,0,'apellidopaterno').' '.mysql_result($resBeneficiario,0,'apellidomaterno').' '.mysql_result($resBeneficiario,0,'nombre');
-} else {
-	$lblBeneficiario = mysql_result($resCotizaciones,0,'clientesolo');
-}
-
-if (!(isset($resDatosSencibles))) {
-	$resDatosSencibles = $serviciosReferencias->necesitoPreguntaSencibleAsegurado(0,$idcuestionario);
-}
 
 if (mysql_num_rows($resCotizaciones)>0) {
 	$precio = mysql_result($resCotizaciones,0,'precio');
@@ -113,9 +88,8 @@ if (mysql_num_rows($resCotizaciones)>0) {
 
 $resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
-$cuestionario = $serviciosReferencias->traerCuestionariodetallePorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id);
 
-$resAux = $serviciosReferencias->traerPeriodicidadventasPorVenta($idventa);
+$resAux = $serviciosReferencias->traerMetodopagoPorCotizacionCompleto($id);
 
 if (mysql_num_rows($resAux)>0) {
 	$existeMetodoPago = 1;
@@ -137,6 +111,7 @@ $inhabilitadoPorRespuesta = 0;
 $aplicaA = '';
 
 if (mysql_result($resCotizaciones,0,'tieneasegurado') == '1') {
+	$resAsegurado = $serviciosReferencias->traerAseguradosPorId(mysql_result($resCotizaciones,0,'refasegurados'));
 	// asegurada
 	$edad = $serviciosReferencias->calculaedad(mysql_result($resAsegurado,0,'fechanacimiento'));
 	$aplicaA = 'asegurado';
@@ -202,6 +177,10 @@ if (mysql_num_rows($resInhabilitaRespuesta)>0) {
 	$nopuedeContinuar = 1;
 	$inhabilitadoPorRespuesta = 1;
 }
+
+$resBancos = $serviciosReferencias->traerBancos();
+$cadBancos = "<option value=''>-- Seleccionar --</option>";
+$cadBancos .= $serviciosFunciones->devolverSelectBoxText($resBancos,array(1),'');
 
 /********************** fin de las validaciones ********************************/
 ?>
@@ -302,16 +281,12 @@ if (mysql_num_rows($resInhabilitaRespuesta)>0) {
 						?>
 
 							<div class="text-center">
-								<h1 class="display-4">¡Ya casi estás ahí! Completa tu Metodo de Pago</h1>
+								<h1 class="display-4">¡Elige tu metodo de pago!</h1>
+								<h4>Elige tu metodo de pago</h4>
 							</div>
-							<?php echo $detalleProducto; ?>
-							<hr>
-							<?php if ($lblCliente != $lblAsegurado) { ?>
-								<h4>Asegurado: <?php echo $lblAsegurado; ?></h4>
-							<?php } ?>
-							<?php if ($lblCliente != $lblBeneficiario) { ?>
-								<h4>Beneficiario: <?php echo $lblBeneficiario; ?></h4>
-							<?php } ?>
+							<?php //echo $detalleProducto; ?>
+
+
 
 
 			            <hr>
@@ -349,7 +324,8 @@ if (mysql_num_rows($resInhabilitaRespuesta)>0) {
 										</div>
 										<div id="collapseTwo_17" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo_17" aria-expanded="false">
 											<div class="panel-body">
-												<p>Se le enviara los datos por correo electronico para realizarlo por ventanilla, ademas de una URL a su correo electronico para que pueda adjuntarnos su comprobante de pago y activar el servicio.</p>
+												<p>Debe adjuntarnos su comprobante de pago y activar el servicio.</p>
+												<p>Clabe Interbancaria para transferencias: 036180500079200351</p>
 												<p><small>1 pago de </small></p>
 												<h4>Monto a pagar: MXN <?php echo number_format($precio, 2, ',', '.'); ?></h4>
 												<div class="right">
@@ -359,26 +335,7 @@ if (mysql_num_rows($resInhabilitaRespuesta)>0) {
 											</div>
 										</div>
 									</div>
-									<div class="panel panel-col-cyan panelMP panelMP3">
-										<div class="panel-heading" role="tab" id="headingThree_17">
-											<h4 class="panel-title">
-											<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion_17" href="#collapseThree_17" aria-expanded="false" aria-controls="collapseThree_17">
-											<i class="material-icons">credit_card</i> Pago anual en sucursal Inbursa
-											</a>
-											</h4>
-										</div>
-										<div id="collapseThree_17" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree_17" aria-expanded="false">
-											<div class="panel-body">
-												<p>Se le enviara los datos por correo electronico para realizarlo por ventanilla, ademas de una URL a su correo electronico para que pueda adjuntarnos su comprobante de pago y activar el servicio.</p>
-												<p><small>1 pago de </small></p>
-												<h4>Monto a pagar: MXN <?php echo number_format($precio, 2, ',', '.'); ?></h4>
-												<div class="right">
-													<input name="metodopago" type="radio" value="3" class="with-gap radioMetodo" id="radio_3" require>
-	                                 	<label for="radio_3">Seleccionar</label>
-												</div>
-											</div>
-										</div>
-									</div>
+
 									<div class="panel panel-col-cyan panelMP panelMP4">
 										<div class="panel-heading" role="tab" id="headingFour_17">
 											<h4 class="panel-title">
@@ -389,8 +346,8 @@ if (mysql_num_rows($resInhabilitaRespuesta)>0) {
 										</div>
 										<div id="collapseFour_17" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour_17" aria-expanded="false">
 											<div class="panel-body">
-												<p>Se le enviara los datos por correo electronico para realizarlo por ventanilla, ademas de una URL a su correo electronico para que pueda adjuntarnos su comprobante de pago y activar el servicio.</p>
-												<p><small>12 cuotas de </small></p>
+												<p>Se le domiciliara el pago mensual del servicio.</p>
+												<h5>12 cuotas de <?php echo number_format($lblPrecioAd / 12, 2, ',', '.'); ?></h5>
 												<h4>Monto a pagar: MXN <?php echo number_format($lblPrecioAd, 2, ',', '.'); ?></h4>
 												<div class="right">
 													<input name="metodopago" type="radio" value="4" class="with-gap radioMetodo" id="radio_4" require>
@@ -399,10 +356,31 @@ if (mysql_num_rows($resInhabilitaRespuesta)>0) {
 											</div>
 										</div>
 									</div>
+
+									<div class="panel panel-col-cyan panelMP panelMP3">
+										<div class="panel-heading" role="tab" id="headingThree_17">
+											<h4 class="panel-title">
+											<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion_17" href="#collapseThree_17" aria-expanded="false" aria-controls="collapseThree_17">
+											<i class="material-icons">credit_card</i> Pago Anual - Descuento por Nomina
+											</a>
+											</h4>
+										</div>
+										<div id="collapseThree_17" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree_17" aria-expanded="false">
+											<div class="panel-body">
+												<p>El cobro sera procesado por Financiera CREA.</p>
+
+												<h4>Monto a pagar: MXN <?php echo number_format($precio, 2, ',', '.'); ?></h4>
+												<div class="right">
+													<input name="metodopago" type="radio" value="3" class="with-gap radioMetodo" id="radio_3" require>
+	                                 	<label for="radio_3">Seleccionar</label>
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
 
 								<div class="row">
-									<div class="col-xs-12">
+									<div class="col-xs-12 hidden">
 										<h4>¿Desea Domiciliar el pago?</h4>
 										<input name="domiciliar" type="radio" value="1" id="radio_5" require>
 										<label for="radio_5">Si</label>
@@ -426,7 +404,10 @@ if (mysql_num_rows($resInhabilitaRespuesta)>0) {
 												<div class="panel-body">
 													<p>Se requeriran los datos del banco emisor de la tarjeta de crédito y el número que aparece en el tarjeta.</p>
 													<label for="banco1" class="label-form">Banco</label>
-													<input type="text" id="banco1" name="banco1" class="form-control"/>
+													<select name="banco1" id="banco1" class="form-control">
+														<?php echo $cadBancos; ?>
+													</select>
+
 
 													<label for="cardnumber1" class="label-form">Número de tarjeta</label>
 													<div id="card-number-field1">
@@ -453,7 +434,10 @@ if (mysql_num_rows($resInhabilitaRespuesta)>0) {
 												<div class="panel-body">
 													<p>Se requeriran los datos del banco emisor de la cuenta depósito y el número de cuenta o CLABE.</p>
 													<label for="banco2" class="label-form">Banco</label>
-													<input type="text" id="banco2" name="banco2" class="form-control"/>
+													<select name="banco2" id="banco2" class="form-control">
+														<?php echo $cadBancos; ?>
+													</select>
+
 
 													<label for="cardnumber1" class="label-form">Número de cuenta o número de CLABE</label>
 													<div id="card-number-field2">
@@ -471,7 +455,7 @@ if (mysql_num_rows($resInhabilitaRespuesta)>0) {
 								</div>
 
 
-			               <input type="hidden" name="refventas" value="<?php echo $idventa; ?>">
+			               <input type="hidden" name="refcotizaciones" value="<?php echo $id; ?>">
 			               <input type="hidden" name="reftipoperiodicidad" value="1">
 
 								<div class="row">
@@ -510,7 +494,19 @@ if (mysql_num_rows($resInhabilitaRespuesta)>0) {
 							?>
 								<a href="javascript:void(0);" class="list-group-item">Banco: <?php echo mysql_result($resAux,0,'tipoperiodicidad'); ?></a>
 								<a href="javascript:void(0);" class="list-group-item"><?php echo $lblTipoTarjeta; ?>: <?php echo $tarjeta; ?></a>
+
+							<?php } ?>
+							<?php if (mysql_result($resultado,0,'refestadocotizaciones') == 19) { ?>
+								<a href="comercio_fin.php?id=<?php echo $id; ?>" class="list-group-item bg-green">CONTINUAR CON EL PAGO ONLINE</a>
+							<?php } ?>
+							<?php if (mysql_result($resultado,0,'refestadocotizaciones') == 20) { ?>
+								<a href="archivos.php?id=<?php echo $id; ?>" class="list-group-item bg-green">CONTINUAR CON LOS ARCHIVOS NECESARIOS</a>
+							<?php } ?>
+							<?php if (mysql_result($resultado,0,'refestadocotizaciones') == 21) { ?>
 								<a href="documentos.php?id=<?php echo $id; ?>" class="list-group-item bg-green">CONTINUAR CON LA DOCUMENTACION</a>
+							<?php } ?>
+							<?php if (mysql_result($resultado,0,'refestadocotizaciones') == 22) { ?>
+								<a href="archivos.php?id=<?php echo $id; ?>" class="list-group-item bg-green">CONTINUAR CON LA DOCUMENTACION</a>
 							<?php } ?>
 							</div>
 						<?php } ?>
@@ -601,6 +597,8 @@ if (mysql_num_rows($resInhabilitaRespuesta)>0) {
 
 		});
 
+		$('#radio_5').prop('disabled',true);
+
 		$('.with-gap').click(function() {
 
 			$('.panelMP').removeClass('panel-col-green');
@@ -612,6 +610,26 @@ if (mysql_num_rows($resInhabilitaRespuesta)>0) {
 				$('.panelMP' + $(this).val()).addClass('panel-col-green');
 			}
 
+			if (($(this).val() == 1) || ($(this).val() == 2) || ($(this).val() == 3)) {
+				$('#radio_6').prop('disabled',false);
+				$('#radio_6').click();
+				$('#radio_5').prop('disabled',true);
+
+				borrarDomiciliacion();
+			}
+
+			if ($(this).val() == 4) {
+				$('#radio_5').prop('disabled',false);
+				$('#radio_5').click();
+				$('#radio_6').prop('disabled',true);
+
+				borrarDomiciliacion();
+
+				$('#accordion_18').show();
+
+
+			}
+
 		});
 
 		$('#radio_5').click(function() {
@@ -620,19 +638,23 @@ if (mysql_num_rows($resInhabilitaRespuesta)>0) {
 			}
 		});
 
+		function borrarDomiciliacion() {
+			$('#accordion_18').hide();
+			$('#banco1').val('');
+			$('#banco2').val('');
+			$('#cardnumber1').val('');
+			$('#cardnumber2').val('');
+			$('.panelD2').css("opacity", 1);
+			$('.panelD1').css("opacity", 1);
+			$('#radio_7').prop('checked', false);
+			$('#radio_8').prop('checked', false);
+			cardNumberField1.removeClass('has-error');
+			cardNumberField2.removeClass('has-error');
+		}
+
 		$('#radio_6').click(function() {
 			if ($(this).is(':checked')) {
-				$('#accordion_18').hide();
-				$('#banco1').val('');
-				$('#banco2').val('');
-				$('#cardnumber1').val('');
-				$('#cardnumber2').val('');
-				$('.panelD2').css("opacity", 1);
-				$('.panelD1').css("opacity", 1);
-				$('#radio_7').prop('checked', false);
-				$('#radio_8').prop('checked', false);
-				cardNumberField1.removeClass('has-error');
-				cardNumberField2.removeClass('has-error');
+				borrarDomiciliacion();
 			}
 		});
 
@@ -738,10 +760,10 @@ if (mysql_num_rows($resInhabilitaRespuesta)>0) {
 							data: {
 								accion: 'guardarMetodoDePagoPorCotizacion',
 								id: <?php echo $id; ?>,
-								refventas: <?php echo $idventa; ?>,
 								metodopago: $('input:radio[name=metodopago]:checked').val(),
 								banco: bancoGeneral,
 								afiliacion: tarjetaGeneral,
+								precio: <?php echo $precio; ?>,
 								domiciliado: domiciliado,
 								tipotarjeta: tipotarjeta
 							},

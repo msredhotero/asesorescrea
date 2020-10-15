@@ -465,6 +465,14 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			$(location).attr('href',url);
 		});//fin del boton eliminar
 
+		$("#example").on("click",'.btnFamiliares', function(){
+			idTable =  $(this).attr("id");
+			url = "familiares.php?id=" + idTable ;
+			$(location).attr('href',url);
+		});//fin del boton eliminar
+
+
+
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,

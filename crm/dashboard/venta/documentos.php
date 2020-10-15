@@ -9,6 +9,7 @@ if (!isset($_SESSION['usua_sahilices']))
 } else {
 
 
+
 	include ('../../includes/funciones.php');
 	include ('../../includes/funcionesUsuarios.php');
 	include ('../../includes/funcionesHTML.php');
@@ -48,17 +49,7 @@ if (!(isset($_GET['id']))) {
 
 $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
-$resVentas = $serviciosReferencias->traerVentasPorCotizacion($id);
-
-if (mysql_num_rows($resVentas) > 0) {
-	$idventa = mysql_result($resVentas,0,0);
-} else {
-	$foliointerno = $serviciosReferencias->generaFolioInterno();
-	$foliotys = '';
-	$resIV = $serviciosReferencias->insertarVentas($id,1,0,0,'','',date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],$foliotys,$foliointerno);
-
-	$idventa = $resIV;
-}
+$resMetodoPago = $serviciosReferencias->traerMetodopagoPorCotizacionCompleto($id);
 
 $idCliente = mysql_result($resCotizaciones,0,'refclientes');
 
@@ -72,12 +63,49 @@ $idcuestionario = mysql_result($resProducto,0,'refcuestionarios');
 
 $detalleProducto = mysql_result($resProducto,0,'detalle');
 
+$tipoFirma = mysql_result($resProducto,0,'reftipofirma');
+
+$cargados = 0;
+$necesariasParaAprobar = 0;
+
+$arDocumentacionRechazadas = array();
+
 if (mysql_result($resCotizaciones,0,'tieneasegurado') == '1') {
 	$resDatosSencibles = $serviciosReferencias->necesitoPreguntaSencibleAsegurado(mysql_result($resCotizaciones,0,'refasegurados'),$idcuestionario);
 	//asegurado
 	$resAsegurado = $serviciosReferencias->traerAseguradosPorId(mysql_result($resCotizaciones,0,'refasegurados'));
-	// asegurado nombre completo
-	$lblAsegurado = mysql_result($resAsegurado,0,'apellidopaterno').' '.mysql_result($resAsegurado,0,'apellidomaterno').' '.mysql_result($resAsegurado,0,'nombre');
+
+
+	if (mysql_num_rows($resAsegurado)>0) {
+		$lblAsegurado = mysql_result($resAsegurado,0,'apellidopaterno').' '.mysql_result($resAsegurado,0,'apellidomaterno').' '.mysql_result($resAsegurado,0,'nombre');
+
+		$idAsegurado = mysql_result($resAsegurado,0,0);
+
+		$documentacionesrequeridasAsegurado = $serviciosReferencias->traerDocumentacionPorFamiliarDocumentacionCompletaIn(mysql_result($resAsegurado,0,0),'3,4');
+
+		while ($rowD = mysql_fetch_array($documentacionesrequeridasAsegurado)) {
+			//if (($rowD['archivo'] != '') && ($rowD['idestadodocumentacion'] == 5)) {
+			if (($rowD['archivo'] != '')) {
+				$cargados += 1;
+			}
+
+			if (($rowD['idestadodocumentacion'] == 2) || ($rowD['idestadodocumentacion'] == 3) || ($rowD['idestadodocumentacion'] == 4)) {
+				array_push($arDocumentacionRechazadas,array(
+					'iddocumentacion' =>$rowD['iddocumentacion'],
+					'quien' => 'Asegurado',
+					'documentacion' => $rowD['documentacion'],
+					'estado'=>$rowD['estadodocumentacion']
+					)
+				);
+			}
+
+			$necesariasParaAprobar += 1;
+			//$necesariasParaAprobar += 0;
+		}
+
+
+	}
+
 } else {
 	$lblAsegurado = mysql_result($resCotizaciones,0,'clientesolo');
 }
@@ -101,9 +129,9 @@ if (!(isset($resDatosSencibles))) {
 }
 
 if (mysql_num_rows($resCotizaciones)>0) {
-	$precio = mysql_result($resCotizaciones,0,'precio');
+	$precio = mysql_result($resCotizaciones,0,'primatotal');
 	$lblPrecio = str_replace('.','',$precio);
-	$lblPrecioAd = str_replace('.','',$precio * 1.1);
+	$lblPrecioAd = str_replace('.','',$precio * 1.2);
 } else {
 	header('Location: index.php');
 }
@@ -113,12 +141,229 @@ $resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
 $cuestionario = $serviciosReferencias->traerCuestionariodetallePorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id);
 
-$resAux = $serviciosReferencias->traerPeriodicidadventasPorVenta($idventa);
 
-if (mysql_num_rows($resAux)>0) {
+if (mysql_num_rows($resMetodoPago)>0) {
 	$existeMetodoPago = 1;
+
+	// creo el archivo grande
+	// pregunto rpimero si existe.
+	$pathSolcitud  = '../../archivos/solicitudes/cotizaciones/'.$id;
+
+	if (!file_exists($pathSolcitud)) {
+		mkdir($pathSolcitud, 0777);
+	}
+
+	$filesSolicitud = array_diff(scandir($pathSolcitud), array('.', '..'));
+	if (count($filesSolicitud) < 1) {
+		//die(var_dump(__DIR__));
+		require ('../../reportes/rptFTodos.php');
+	}
 } else {
 	$existeMetodoPago = 0;
+}
+
+$documentacionesrequeridas = $serviciosReferencias->traerDocumentacionPorClienteDocumentacionCompletaIn($idCliente,'3,4');
+
+
+while ($rowD = mysql_fetch_array($documentacionesrequeridas)) {
+	//if (($rowD['archivo'] != '') && ($rowD['idestadodocumentacion'] == 5)) {
+	if (($rowD['archivo'] != '')) {
+		$cargados += 1;
+	}
+
+	if (($rowD['idestadodocumentacion'] == 2) || ($rowD['idestadodocumentacion'] == 3) || ($rowD['idestadodocumentacion'] == 4)) {
+		array_push($arDocumentacionRechazadas,array(
+			'iddocumentacion' =>$rowD['iddocumentacion'],
+			'quien' => 'Contratante',
+			'documentacion' => $rowD['documentacion'],
+			'estado'=>$rowD['estadodocumentacion']
+			)
+		);
+	}
+
+	$necesariasParaAprobar += 1;
+}
+
+$refEstadoCotizacion = mysql_result($resultado,0,'refestadocotizaciones');
+
+
+//////////////////// verifico en el proceso si firma con fiel, simple o autografa ////////////////
+
+$solicitudParaFirmar = '../../archivos/solicitudes/cotizaciones/'.$id.'/FSOLICITUDAC.pdf';
+if ($tipoFirma == 2) {
+	$resNIP = $serviciosReferencias->traerTokensPorCotizacionVigente($id);
+
+	if (mysql_num_rows($resNIP) > 0) {
+		$existeNIP = 1;
+		$nip = mysql_result($resNIP,0,'token');
+	} else {
+
+		$reftipo = 1;
+	   $token = $serviciosReferencias->generarNIP();
+
+	   $fechacreac = date('Y-m-d H:i:s');
+	   $nuevafecha = strtotime ( '+15 hour' , strtotime ( $fechacreac ) ) ;
+
+	   $refestadotoken = 1;
+	   $vigenciafin = $nuevafecha;
+
+	   $res = $serviciosReferencias->insertarTokens($id,$reftipo,$token,$fechacreac,$refestadotoken,$vigenciafin);
+
+	   if ((integer)$res > 0) {
+
+	      $resCliente = $serviciosReferencias->traerClientesPorId($idCliente);
+
+	      $email = mysql_result($resCliente,0,'email');
+
+	      $cuerpo = '';
+
+	      $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+	      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+	      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+	      $cuerpo .= "
+	      <style>
+	      	body { font-family: 'Lato', sans-serif; }
+	      	header { font-family: 'Prata', serif; }
+	      </style>";
+
+
+
+	      $cuerpo .= '<body>';
+
+	      $cuerpo .= '<h3><small><p>Este es el nuevo NIP generado para firmar de forma digital, por favor ingrese al siguiente <a href="https://asesorescrea.com/desarrollo/crm/dashboard/venta/documentos.php?id='.$refcotizaciones.'" target="_blank"> enlace </a> para finalizar el proceso de venta. </small></h3><p>';
+
+			$cuerpo .= "<center>NIP:<b>".$token."</b></center><p> ";
+
+			$cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
+
+	      $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+	      $cuerpo .= '</body>';
+
+	   	$fecha = date_create(date('Y').'-'.date('m').'-'.date('d'));
+	   	date_add($fecha, date_interval_create_from_date_string('30 days'));
+	   	$fechaprogramada =  date_format($fecha, 'Y-m-d');
+
+	   	//$res = $this->insertarActivacionusuarios($refusuarios,$token,'','');
+
+	   	$retorno = $serviciosReferencias->enviarEmail($email,'NIP para firma',utf8_decode($cuerpo));
+
+	      echo '';
+
+			$existeNIP = 1;
+	   } else {
+			$existeNIP = 0;
+		}
+
+	}
+
+} else {
+	if ($tipoFirma == 3) {
+
+
+
+
+		$resNIP = $serviciosReferencias->traerTokensPorCotizacionVigente($id);
+
+		if (mysql_num_rows($resNIP) > 0) {
+			$existeNIP = 1;
+			$nip = mysql_result($resNIP,0,'token');
+
+
+		} else {
+			///////////// firma fiel, creo los documentos a firmar //////////////////
+			// convierto el documento a base64
+
+			//die(var_dump($solicitudParaFirmar));
+
+			$arFile = file_get_contents($solicitudParaFirmar);
+			//$b64Doc = chunk_split(base64_encode($arFile));
+			$b64Doc = base64_encode($arFile);
+
+			//die(var_dump($b64Doc));
+
+			$ch = curl_init();
+			$url = 'https://qafirma.signaturainnovacionesjuridicas.com/api/documentos/crear/';
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+			$data = array(
+			   'b64documento'=> $b64Doc,
+				'firmantes'=> array(array('curp'=> 'TOMG730101MDFLZM00')),
+				'nombreDocumento' => 'FSOLICITUDAC.pdf'
+			);
+
+			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+			//set the content type to application/json
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+
+			//return response instead of outputting
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+			//execute the POST request
+			$result = curl_exec($ch);
+			curl_close($ch);
+
+			$arEFirma = json_decode($result, true);
+
+			//die(var_dump($arEFirma));
+
+			if (isset($arEFirma)) {
+				$nuevoToken = $arEFirma['urls']['url'][0];
+			} else {
+				$nuevoToken = '';
+			}
+
+			////////////////////////// fin de la firma fiel //////////////////////////
+
+			$reftipo = 2;
+			// aca va la url que me genero para firmar
+		   $token = $nuevoToken;
+
+		   $fechacreac = date('Y-m-d H:i:s');
+		   $nuevafecha = strtotime ( '+48 hour' , strtotime ( $fechacreac ) ) ;
+
+		   $refestadotoken = 1;
+		   $vigenciafin = $nuevafecha;
+
+			if ($token != '') {
+				$res = $serviciosReferencias->insertarTokens($id,$reftipo,$token,$fechacreac,$refestadotoken,$vigenciafin);
+
+				if ((integer)$res > 0) {
+					$existeNIP = 1;
+				} else {
+					$existeNIP = 0;
+				}
+			} else {
+				$existeNIP = 2;
+			}
+
+
+		}
+
+
+	} else {
+
+	}
+}
+
+
+$puedeContinuar = 0;
+
+$resFirma = $serviciosReferencias->traerFirmarcontratosPorCotizacion($id);
+if (mysql_num_rows($resFirma) > 0) {
+	$existeFirma = 1;
+	$refestadofirma = mysql_result($resFirma,0,'refestadofirma');
+	if ($refestadofirma == 1) {
+		$puedeContinuar = 1;
+	} else {
+		$puedeContinuar = 0;
+	}
+} else {
+	$existeFirma = 0;
 }
 
 ?>
@@ -156,6 +401,19 @@ if (mysql_num_rows($resAux)>0) {
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
+		.pdfobject-container { height: 60rem; border: 1rem solid rgba(0,0,0,.1); }
+		.numero {
+			font-size:2.6em;
+			height:80px;
+			text-align:center;
+			font-family: arial;
+		}
+
+		@media (min-width: 1200px) {
+		   .modal-xlg {
+		      width: 90%;
+		   }
+		}
 	</style>
 
 
@@ -213,71 +471,204 @@ if (mysql_num_rows($resAux)>0) {
 		            <h4 class="my-0 font-weight-normal">Resumen del Pedido: <?php echo mysql_result($resultado,0,'producto'); ?></h4>
 		          </div>
 		          <div class="body table-responsive">
-							<div class="text-center">
-								<h1 class="display-4">¡Ya casi estás ahí! Completa tu Metodo de Pago</h1>
+
+						<?php if ($cargados != $necesariasParaAprobar) { ?>
+							<?php if (count($arDocumentacionRechazadas) > 0) { ?>
+								<div>
+									<div class="alert bg-orange">
+										<i class="material-icons">report_problem</i> <b>Alguno de de los documentos fue rechazado, vuela a subir los siguientes archivos.</b>
+									</div>
+									<ul class="list-group">
+										<?php foreach ($arDocumentacionRechazadas as $item) { ?>
+										<li class="list-group-item"><?php echo $item['documentacion']; ?> <span class="badge bg-red"><?php echo $item['estado']; ?></span></li>
+										<?php } ?>
+										<li class="list-group-item"><a href="archivos.php?id=<?php echo $id; ?>">SUBIR ARCHIVOS</a></li>
+									</ul>
+								</div>
+							<?php } else { ?>
+							<div>
+								<div class="alert bg-orange">
+									<i class="material-icons">report_problem</i> <b>Sus documentos no fueron verificados aun, se te enviara un email para poder continuar con el proceso.</b>
+								</div>
 							</div>
-							<?php echo $detalleProducto; ?>
-							<hr>
-							<?php if ($lblCliente != $lblAsegurado) { ?>
-								<h4>Asegurado: <?php echo $lblAsegurado; ?></h4>
 							<?php } ?>
-							<?php if ($lblCliente != $lblBeneficiario) { ?>
-								<h4>Beneficiario: <?php echo $lblBeneficiario; ?></h4>
-							<?php } ?>
+						<?php } else { ?>
+							<?php if ($puedeContinuar == 1) { ?>
+								<div class="text-center">
+									<h1 class="display-4"> ¡Muchas Gracias!</h1>
+									<h3 class="display-4">En breve estaremos enviando tu póliza, a partir de ese momento estarás protegido .</h3>
+								</div>
+
+								<div class="row">
+									<div class="col-xs-3"></div>
+									<div class="col-xs-6">
+										<button type="button" class="btn btn-lg btn-block btn-success" style="font-size:1.2em;">
+											<i class="material-icons" style="font-size:1.2em;">done</i>
+											<span>PROCESO FINALIZADO CORRECTAMENTE</span>
+										</button>
+
+
+									</div>
+									<div class="col-xs-3"></div>
+								</div>
+
+							<?php } else { ?>
+
+
+							<div class="text-center">
+								<h1 class="display-4">¡Firma de manera digital los documentos! </h1>
+							</div>
+
 
 
 			            <hr>
-							<h4>El metodo de pago ya fue cargado, continue con la seccion de Documentaciones por favor</h4>
-							<div class="list-group">
-								<a href="javascript:void(0);" class="list-group-item active">
-								Método de Pago
-								</a>
-								<a href="javascript:void(0);" class="list-group-item">Tipo Cobranza: <?php echo mysql_result($resAux,0,'tipocobranza'); ?></a>
-								<a href="javascript:void(0);" class="list-group-item">Tipo Pago: <?php echo mysql_result($resAux,0,'tipoperiodicidad'); ?></a>
-							<?php
-								if (mysql_result($resAux,0,'reftipocobranza') == 1) {
-									if (mysql_result($resAux,0,'tipotarjeta') == 1) {
-										$lblTipoTarjeta = 'Tarjeta de Crédito';
-									} else {
-										$lblTipoTarjeta = 'Cuenta de Deposito';
-									}
-									if (mysql_result($resAux,0,'afiliacionnumber') != '') {
-										$tarjeta = $serviciosReferencias->decryptIt(mysql_result($resAux,0,'afiliacionnumber'));
-										$tarjeta = $serviciosReferencias->hiddenString($tarjeta,0,4);
-									} else {
-										$tarjeta = 'Aun no fue cargada';
-									}
 
-							?>
-								<a href="javascript:void(0);" class="list-group-item">Banco: <?php echo mysql_result($resAux,0,'tipoperiodicidad'); ?></a>
-								<a href="javascript:void(0);" class="list-group-item"><?php echo $lblTipoTarjeta; ?>: <?php echo $tarjeta; ?></a>
 
-							<?php } ?>
-							</div>
 
 							<div class="list-group">
 								<a href="javascript:void(0);" class="list-group-item active">
 								Documentos para Firmar
 								</a>
-								<a href="javascript:void(0);" class="list-group-item">F-650-8 AGOSTO 2018 Consentimiento Individual Seguro Grupo Vida</a>
-								<a href="javascript:void(0);" class="list-group-item">F-2092-6 Poliza Seguros GMM Individual</a>
+								<a href="javascript:void(0);" class="list-group-item">VRIM PLATINO MÉDICA</a>
+								<a href="javascript:void(0);" class="list-group-item">F-2092-6 SOLICITUD DE PÓLIZA DE SEGURO DE GASTOS MÉDICOS MAYORES INDIVIDUAL Y SEVI SOLO PARA RESIDENTES EN MÉXICO</a>
+								<a href="javascript:void(0);" class="list-group-item">INE</a>
 								<?php
-									if (mysql_result($resAux,0,'reftipocobranza') == 1) {
+									if (mysql_result($resMetodoPago,0,'reftipocobranza') == 1) {
 								?>
 								<a href="javascript:void(0);" class="list-group-item">Solicitud de Cargo Automatico en Tarjeta de credito cuenta de deposito cuenta de cheques</a>
 								<?php } ?>
+								<a href="javascript:void(0);" class="list-group-item"><div id="example1"></div></a>
 							</div>
 
+						<?php if ($tipoFirma == 3) { ?>
+						<?php if ($existeNIP == 2) { ?>
+								<div class="row">
+									<div class="col-xs-3"></div>
+									<div class="col-xs-6">
+										<h5>Por favor reinicie la pagina</h5>
+									</div>
+									<div class="col-xs-3"></div>
+								</div>
+								<div class="row">
+									<div class="col-xs-3"></div>
+									<div class="col-xs-6">
+										<button type="button" class="btn btn-lg btn-block btn-success" id="btnReiniciar" style="font-size:1.2em;">
+											<i class="material-icons" style="font-size:1.2em;">save</i>
+											<span>REINICIAR</span>
+										</button>
+									</div>
+									<div class="col-xs-3"></div>
+								</div>
+						<?php } else { ?>
+							<?php if ($existeNIP == 1) { ?>
 							<div class="row">
 								<div class="col-xs-3"></div>
 								<div class="col-xs-6">
-									<button type="button" class="btn btn-lg btn-block btn-success" id="btnConfirmar2" style="font-size:1.2em;">
+									<h5>Una vez firmados por favor actualice la pagina</h5>
+								</div>
+								<div class="col-xs-3"></div>
+							</div>
+							<div class="row">
+								<div class="col-xs-3"></div>
+								<div class="col-xs-6">
+									<button type="button" class="btn btn-lg btn-block btn-success" id="btnConfirmarFE" style="font-size:1.2em;">
 										<i class="material-icons" style="font-size:1.2em;">save</i>
-										<span>GUARDAR Y CONTINUAR</span>
+										<span>FIRMAR</span>
 									</button>
 								</div>
 								<div class="col-xs-3"></div>
 							</div>
+							<?php } else { ?>
+								<div class="row">
+									<div class="col-xs-3"></div>
+									<div class="col-xs-6">
+										<button type="button" class="btn btn-lg btn-block btn-success" id="btnConfirmarFEV" style="font-size:1.2em;">
+											<i class="material-icons" style="font-size:1.2em;">save</i>
+											<span>VERIFICAR</span>
+										</button>
+									</div>
+									<div class="col-xs-3"></div>
+								</div>
+							<?php } ?>
+						<?php } ?>
+						<?php } ?>
+						<?php if ($tipoFirma == 2) { ?>
+							<?php if ($existeNIP == 1) { ?>
+
+									<div class="row">
+										<div class="col-xs-12 text-center">
+											<h4>INGRESE EL NIP</h4>
+										</div>
+										<div class="col-xs-2">
+											<div class="form-group">
+												<div class="form-line">
+													<input type="text" class="form-control numero" id="numero1" name="numero1" MAXLENGTH="1"/>
+												</div>
+											</div>
+										</div>
+										<div class="col-xs-2">
+											<div class="form-group">
+												<div class="form-line">
+													<input type="text" class="form-control numero" id="numero2" name="numero2" MAXLENGTH="1"/>
+												</div>
+											</div>
+										</div>
+										<div class="col-xs-2">
+											<div class="form-group">
+												<div class="form-line">
+													<input type="text" class="form-control numero" id="numero3" name="numero3" MAXLENGTH="1"/>
+												</div>
+											</div>
+										</div>
+										<div class="col-xs-2">
+											<div class="form-group">
+												<div class="form-line">
+													<input type="text" class="form-control numero" id="numero4" name="numero4" MAXLENGTH="1"/>
+												</div>
+											</div>
+										</div>
+										<div class="col-xs-2">
+											<div class="form-group">
+												<div class="form-line">
+													<input type="text" class="form-control numero" id="numero5" name="numero5" MAXLENGTH="1"/>
+												</div>
+											</div>
+										</div>
+										<div class="col-xs-2">
+											<div class="form-group">
+												<div class="form-line">
+													<input type="text" class="form-control numero" id="numero6" name="numero6" MAXLENGTH="1"/>
+												</div>
+											</div>
+										</div>
+
+									</div>
+									<div class="row">
+										<div class="col-xs-3"></div>
+										<div class="col-xs-6">
+											<button type="button" class="btn btn-lg btn-block btn-success" id="btnConfirmarF" style="font-size:1.2em;">
+												<i class="material-icons" style="font-size:1.2em;">save</i>
+												<span>FIRMAR</span>
+											</button>
+										</div>
+										<div class="col-xs-3"></div>
+									</div>
+							<?php } else { ?>
+								<div class="row">
+									<div class="col-xs-3"></div>
+									<div class="col-xs-6">
+										<button type="button" class="btn btn-lg btn-block btn-success" id="btnGenerarNIP" style="font-size:1.2em;">
+											<i class="material-icons" style="font-size:1.2em;">save</i>
+											<span>GENERAR NIP</span>
+										</button>
+									</div>
+									<div class="col-xs-3"></div>
+								</div>
+							<?php } ?>
+						<?php } ?>
+
+							<?php } ?>
+						<?php } ?>
 		          </div>
 		        </div>
 			  </div>
@@ -290,6 +681,8 @@ if (mysql_num_rows($resAux)>0) {
 	</div>
 
 </section>
+
+
 
 
 
@@ -309,237 +702,240 @@ if (mysql_num_rows($resAux)>0) {
 <script src="../../plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
 
 <script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
-<script src="https://asesorescrea.com/desarrollo/crm/dashboard/ecommerce/assets/js/jquery.payform.min.js"></script>
+
+<script src="../../js/pdfobject.min.js"></script>
 
 
 <script>
 	$(document).ready(function(){
 
-		$('#accordion_18').hide();
-		var cardNumberField1 = $('#card-number-field1');
-		var cardNumberField2 = $('#card-number-field2');
-
-		$('#cardnumber1').payform('formatCardNumber');
-		$('#cardnumber2').payform('formatCardNumber');
-
-		$('#cardnumber1').keyup(function() {
-
-
-			if ($.payform.validateCardNumber($('#cardnumber1').val()) == false) {
-				cardNumberField1.addClass('has-error');
-			} else {
-				cardNumberField1.removeClass('has-error');
-				cardNumberField1.addClass('has-success');
-			}
-
+		$('#btnConfirmarFE').click(function() {
+			window.open("https://qafirma.signaturainnovacionesjuridicas.com/firmar/TOMG730101MDFLZM00" ,'_blank');
 		});
 
-		$('#cardnumber2').keyup(function() {
+		<?php if ($tipoFirma == 3) { ?>
+		<?php if ($puedeContinuar == 0) { ?>
+			verificarFirmasPendientes();
+		<?php } ?>
+		<?php } ?>
 
-
-			if ($.payform.validateCardNumber($('#cardnumber2').val()) == false) {
-				cardNumberField2.addClass('has-error');
-			} else {
-				cardNumberField2.removeClass('has-error');
-				cardNumberField2.addClass('has-success');
-			}
-
+		$('#btnConfirmarFEV').click(function() {
+			verificarFirmasPendientes();
 		});
 
-		$('.with-gap').click(function() {
-
-			$('.panelMP').removeClass('panel-col-green');
-			$('.panelMP').removeClass('panel-col-cyan');
-			$('.panelMP').addClass('panel-col-cyan');
-
-			if ($(this).is(':checked')) {
-				$('.panelMP' + $(this).val()).removeClass('panel-col-cyan');
-				$('.panelMP' + $(this).val()).addClass('panel-col-green');
-			}
-
+		$('#btnReiniciar').click(function() {
+			location.reload();
 		});
 
-		$('#radio_5').click(function() {
-			if ($(this).is(':checked')) {
-				$('#accordion_18').show();
-			}
-		});
+		function verificarFirmasPendientes() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'verificarFirmasPendientes',
+					id: <?php echo $id; ?>
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
 
-		$('#radio_6').click(function() {
-			if ($(this).is(':checked')) {
-				$('#accordion_18').hide();
-				$('#banco1').val('');
-				$('#banco2').val('');
-				$('#cardnumber1').val('');
-				$('#cardnumber2').val('');
-				$('.panelD2').css("opacity", 1);
-				$('.panelD1').css("opacity", 1);
-				$('#radio_7').prop('checked', false);
-				$('#radio_8').prop('checked', false);
-				cardNumberField1.removeClass('has-error');
-				cardNumberField2.removeClass('has-error');
-			}
-		});
+				},
+				//una vez finalizado correctamente
+				success: function(data){
 
-		$('#radio_7').click(function() {
-			if ($(this).is(':checked')) {
-				$('.panelD1').css("opacity", 1);
-				$('.panelD2').css("opacity", 0.2);
-			}
-		});
-
-		$('#radio_8').click(function() {
-			if ($(this).is(':checked')) {
-				$('.panelD2').css("opacity", 1);
-				$('.panelD1').css("opacity", 0.2);
-			}
-		});
-
-		var btnConfirmar = $('#btnConfirmar');
-
-		btnConfirmar.click(function(e) {
-			guardarMetodoDePagoPorCotizacion();
-
-		});
-
-		function guardarMetodoDePagoPorCotizacion() {
-			var errorGeneral = false;
-			var bancoGeneral = '';
-			var tarjetaGeneral = '';
-			var domiciliado = 0;
-			if ($('#radio_5').is(':checked')) {
-				domiciliado = 1;
-				if ($('#radio_7').is(':checked')) {
-					var isCardValid = $.payform.validateCardNumber($('#cardnumber1').val());
-					tarjetaGeneral = $('#cardnumber1').val();
-					bancoGeneral = $('#banco1').val();
-
-					if (bancoGeneral == '') {
-						errorGeneral = true;
+					if (data.error) {
 						swal({
-							 title: "Error!!",
-							 text: "Debe completar el Banco emisor",
-							 type: "error",
-							 timer: 2000,
-							 showConfirmButton: false
-						});
-					}
-
-				} else {
-					if ($('#radio_8').is(':checked')) {
-						var isCardValid = $.payform.validateCardNumber($('#cardnumber2').val());
-						tarjetaGeneral = $('#cardnumber2').val();
-						bancoGenera2 = $('#banco2').val();
-
-						if (bancoGeneral == '') {
-							errorGeneral = true;
-							swal({
-								 title: "Error!!",
-								 text: "Debe completar el Banco emisor",
-								 type: "error",
-								 timer: 2000,
-								 showConfirmButton: false
-							});
-						}
-					} else {
-						errorGeneral = true;
-						swal({
-							 title: "Error!!",
-							 text: "Debe seleccionar si la dopmiciliacion es mediante la tarjeta de crédito o Cuenta de Deposito",
-							 type: "error",
-							 timer: 2000,
-							 showConfirmButton: false
+								title: "Respuesta",
+								text: data.mensaje,
+								type: "error",
+								timer: 1800,
+								showConfirmButton: false
 						});
 
 
-					}
-				}
-
-
-			} else {
-				domiciliado = 0;
-				isCardValid = true;
-			}
-
-			if (errorGeneral == false) {
-				if (!isCardValid) {
-					swal({
-						 title: "Error!!",
-						 text: "Número de tarjeta invalido",
-						 type: "error",
-						 timer: 2000,
-						 showConfirmButton: false
-					});
-				} else {
-					if ($('.radioMetodo').is(':checked')) {
-						$.ajax({
-							url: '../../ajax/ajax.php',
-							type: 'POST',
-							// Form data
-							//datos del formulario
-							data: {
-								accion: 'guardarMetodoDePagoPorCotizacion',
-								id: <?php echo $id; ?>,
-								refventas: <?php echo $idventa; ?>,
-								metodopago: $('#metodopago').val(),
-								banco: bancoGeneral,
-								afiliacion: tarjetaGeneral,
-								domiciliado: domiciliado
-							},
-							//mientras enviamos el archivo
-							beforeSend: function(){
-
-							},
-							//una vez finalizado correctamente
-							success: function(data){
-
-								if (data.error) {
-									swal({
-											title: "Respuesta",
-											text: 'Se genero un error al guardar el metodo de pago',
-											type: "error",
-											timer: 1000,
-											showConfirmButton: false
-									});
-
-
-								} else {
-									swal({
-											title: "Respuesta",
-											text: 'Se guardo correctamente el metodo de pago',
-											type: "success",
-											timer: 2000,
-											showConfirmButton: false
-									});
-
-									$(location).attr('href', data.url);
-
-								}
-							},
-							//si ha ocurrido un error
-							error: function(){
-								swal({
-										title: "Respuesta",
-										text: 'Actualice la pagina',
-										type: "error",
-										timer: 2000,
-										showConfirmButton: false
-								});
-
-							}
-						});
 					} else {
 						swal({
 								title: "Respuesta",
-								text: 'Debe seleccionar un metodo de pago',
+								text: 'Ya firmo sus documentos correctamente',
+								type: "success",
+								timer: 2000,
+								showConfirmButton: false
+						});
+						location.reload();
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
+		$('#btnGenerarNIP').click(function() {
+			insertarTokens();
+		});
+
+		PDFObject.embed('<?php echo $solicitudParaFirmar; ?>', "#example1");
+
+		$('.numero').keypress(function() {
+			idnumber =  $(this).attr("id");
+
+			switch (idnumber) {
+				case 'numero1':
+					$('#numero2').focus();
+				break;
+				case 'numero2':
+					$('#numero3').focus();
+				break;
+				case 'numero3':
+					$('#numero4').focus();
+				break;
+				case 'numero4':
+					$('#numero5').focus();
+				break;
+				case 'numero5':
+					$('#numero6').focus();
+				break;
+			}
+		});
+
+		function insertarTokens() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'insertarTokens',
+					refcotizaciones: <?php echo $id; ?>
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('#btnGenerarNIP').hide();
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error) {
+						swal({
+								title: "Respuesta",
+								text: 'Se genero un error al guardar el paso',
+								type: "error",
+								timer: 1000,
+								showConfirmButton: false
+						});
+
+
+					} else {
+						swal({
+								title: "Respuesta",
+								text: 'Se genero correctamente el token y se envio al cliente',
+								type: "success",
+								timer: 2000,
+								showConfirmButton: false
+						});
+						location.reload();
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
+		$('#btnConfirmarF').click(function() {
+			//insertarFirmarcontratos();
+			$('#lgmFirmar').modal();
+		});
+
+		$('#btnConfirmarF').click(function() {
+			if (($('#numero1').val() != '') && ($('#numero2').val() != '') && ($('#numero3').val() != '') && ($('#numero4').val() != '') && ($('#numero5').val() != '') && ($('#numero6').val() != '')) {
+				insertarFirmarcontratos();
+			} else {
+				swal({
+						title: "Respuesta",
+						text: 'Debe completar los 6 digitos',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+				});
+			}
+
+		});
+
+		function insertarFirmarcontratos() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'insertarFirmarcontratos',
+					nip: $('#numero1').val() + $('#numero2').val() + $('#numero3').val() + $('#numero4').val() + $('#numero5').val() + $('#numero6').val(),
+					refcotizaciones: <?php echo $id; ?>
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('#btnConfirmarF').hide();
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error) {
+						swal({
+								title: "Respuesta",
+								text: data.mensaje,
 								type: "error",
 								timer: 2000,
 								showConfirmButton: false
 						});
-					}
-				}
-			}
 
+						$('#btnConfirmarF').show();
+
+
+					} else {
+						swal({
+								title: "Respuesta",
+								text: 'Se firmo correctamente LA SOLICIUTD!',
+								type: "success",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+						setTimeout(function(){ location.reload(); }, 3000);
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
 		}
 
 

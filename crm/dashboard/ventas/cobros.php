@@ -451,6 +451,12 @@ $formulario22 = $serviciosFunciones->camposTablaModificar($id, $idTabla22,$modif
 			$(location).attr('href',url);
 		});
 
+		$("#example").on("click",'.btnPagos', function(){
+			idTable =  $(this).attr("id");
+			url = "subirdocumentacionip.php?id=" + idTable;
+			$(location).attr('href',url);
+		});
+
 
 
 

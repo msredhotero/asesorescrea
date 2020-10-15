@@ -779,7 +779,7 @@ $pdf->Write(0, substr("x",0,1));
 $pdf->SetXY(104, $yConstCuadrado1 + ($yCuadrado1 * 8) + 3 );
 $pdf->Write(0, substr("300.000",0,10));
 
-//star medica
+//inburmedic star medica
 $pdf->SetXY(11.8, $yConstCuadrado1 + ($yCuadrado1 * 9) + 5.7 );
 $pdf->Write(0, substr("x",0,1));
 
@@ -815,18 +815,355 @@ $pdf->Write(0, substr("x",0,1));
 $pdf->SetXY(132.5, $yConstCuadrado1 + ($yCuadrado1 * 9) + 14.2 );
 $pdf->Write(0, substr("x",0,1));
 
+//atension por accidente cubierto fuera de la red star medica
+$pdf->SetXY(132.5, $yConstCuadrado1 + ($yCuadrado1 * 9) + 19.2 );
+$pdf->Write(0, substr("x",0,1));
+
+
+//christus murgerza
+$pdf->SetXY(11.8, $yConstCuadrado1 + ($yCuadrado1 * 12) + 5  );
+$pdf->Write(0, substr("x",0,1));
+
+//a
+$pdf->SetXY(53.5, $yConstCuadrado1 + ($yCuadrado1 * 12) + 8.5  );
+$pdf->Write(0, substr("x",0,1));
+
+//b
+$pdf->SetXY(80.6, $yConstCuadrado1 + ($yCuadrado1 * 12) + 8.5  );
+$pdf->Write(0, substr("x",0,1));
+
+//c
+$pdf->SetXY(109.2, $yConstCuadrado1 + ($yCuadrado1 * 12) + 8.5  );
+$pdf->Write(0, substr("x",0,1));
+
+//gastos financieros
+$pdf->SetXY(132.6, $yConstCuadrado1 + ($yCuadrado1 * 12) + 10  );
+$pdf->Write(0, substr("x",0,1));
+
+//enfermedades graves (SEVI)
+$pdf->SetXY(132.6, $yConstCuadrado1 + ($yCuadrado1 * 12) + 16  );
+$pdf->Write(0, substr("x",0,1));
+
+//reconocimiento de antigueadad fecha
+$pdf->SetXY(70, $yConstCuadrado1 + ($yCuadrado1 * 15) + 5 );
+$pdf->Write(0, substr("20/05/2020",0,10));
+
+//tarifa por zona
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 15) + 5 );
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,25));
+
+//cuenta integral
+$pdf->SetXY(74, $yConstCuadrado1 + ($yCuadrado1 * 16) + 3.5 );
+$pdf->Write(0, substr("x",0,1));
+
+//cuenta ct / efe / tarjeta de credito
+$pdf->SetXY(110, $yConstCuadrado1 + ($yCuadrado1 * 16) + 3.5 );
+$pdf->Write(0, substr("x",0,1));
+
+
+
+//domicilio
+$pdf->SetXY(13, $yConstCuadrado1 + ($yCuadrado1 * 21) + 4);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,30));
+
+//edificio
+$pdf->SetXY(136, $yConstCuadrado1 + ($yCuadrado1 * 21) + 4);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,5));
+
+//nro ext
+$pdf->SetXY(156, $yConstCuadrado1 + ($yCuadrado1 * 21) + 4);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,5));
+
+//nro int
+$pdf->SetXY(169, $yConstCuadrado1 + ($yCuadrado1 * 21) + 4);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,5));
+
+//cod postal
+$pdf->SetXY(183, $yConstCuadrado1 + ($yCuadrado1 * 21) + 4);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,5));
+
+//colonia
+$pdf->SetXY(13, $yConstCuadrado1 + ($yCuadrado1 * 22) + 3);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,30));
+
+//delegacion
+$pdf->SetXY(106, $yConstCuadrado1 + ($yCuadrado1 * 22) + 3);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,30));
+
+
+//ciudad
+$pdf->SetXY(13, $yConstCuadrado1 + ($yCuadrado1 * 23) + 2.5);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,30));
+
+//estado
+$pdf->SetXY(106, $yConstCuadrado1 + ($yCuadrado1 * 23) + 2.5);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,30));
+
+
+//apellido paterno
+$pdf->SetXY(13, $yConstCuadrado1 + ($yCuadrado1 * 24) + 3.5);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,40));
+
+//apellido materno
+$pdf->SetXY(106, $yConstCuadrado1 + ($yCuadrado1 * 24) + 3.5);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,40));
+
+//primer nombre
+$pdf->SetXY(13, $yConstCuadrado1 + ($yCuadrado1 * 25) + 3);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,40));
+
+//segundo nombre
+$pdf->SetXY(106, $yConstCuadrado1 + ($yCuadrado1 * 25) + 3);
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,40));
+
+//porcentaje (simpre 100%)
+$pdf->SetXY(26, $yConstCuadrado1 + ($yCuadrado1 * 26) );
+$pdf->Write(0, substr("100",0,3));
+
+//rebocable
+$pdf->SetXY(75, $yConstCuadrado1 + ($yCuadrado1 * 26) -1 );
+$pdf->Write(0, substr("x",0,1));
+
+//irrebocable (nunca se eligira)
+//$pdf->SetXY(26, $yConstCuadrado1 + ($yCuadrado1 * 26) );
+//$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,3));
+
+//genero (masculino)
+$pdf->SetXY(16, $yConstCuadrado1 + ($yCuadrado1 * 27) );
+$pdf->Write(0, substr("x",0,1));
+
+//genero (femenino)
+$pdf->SetXY(25.5, $yConstCuadrado1 + ($yCuadrado1 * 27) );
+$pdf->Write(0, substr("x",0,1));
+
+//fecha nacimiento
+$pdf->SetXY(40, $yConstCuadrado1 + ($yCuadrado1 * 27) + 0.5 );
+$pdf->Write(0, substr("20/05/2020",0,10));
+
+//parentesco
+$pdf->SetXY(65, $yConstCuadrado1 + ($yCuadrado1 * 27) + 0.5 );
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,25));
+
+//nacionalidad
+$pdf->SetXY(115, $yConstCuadrado1 + ($yCuadrado1 * 27) + 0.5);
+$pdf->Write(0, substr("MEXICANA",0,25));
+
+//pais de nacimiento
+$pdf->SetXY(165, $yConstCuadrado1 + ($yCuadrado1 * 27) + 0.5 );
+$pdf->Write(0, substr("MEXICO",0,25));
+
 /////////////////////////////////////// pagina 5 ///////////////////////////////////
 $pdf->AddPage();
 
 $pdf->SetFont('Arial','',8);
 $pdf->SetTextColor(0,0,0);
 
-$yCuadrado1 = 8;
-$yConstCuadrado1 = 25.5;
+$yCuadrado1 = 3.8;
+$yConstCuadrado1 = 51.7;
 
 $pdf->Image('F20926-5.jpg' , 0 ,0, 210 , 0,'JPG');
 
+//padece alguna enfermedad (si)
+$pdf->SetXY(140, $yConstCuadrado1 );
+$pdf->Write(0, substr("x",0,1));
 
+//padece alguna enfermedad (no)
+$pdf->SetXY(145, $yConstCuadrado1 );
+$pdf->Write(0, substr("x",0,1));
+
+//esta sujeto a tratamiento medico (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 1));
+$pdf->Write(0, substr("x",0,1));
+
+//esta sujeto a tratamiento medico (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 1));
+$pdf->Write(0, substr("x",0,1));
+
+//tiene pruebas de laboratorio pendientes (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 2));
+$pdf->Write(0, substr("x",0,1));
+
+//tiene pruebas de laboratorio pendientes (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 2));
+$pdf->Write(0, substr("x",0,1));
+
+//le practicaron o tiene pendiente cirugia (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 3) + 0.8);
+$pdf->Write(0, substr("x",0,1));
+
+//le practicaron o tiene pendiente cirugia (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 3) + 0.8);
+$pdf->Write(0, substr("x",0,1));
+
+//ha estado bajo tratamiento por alguna adicion (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 4) + 0.8);
+$pdf->Write(0, substr("x",0,1));
+
+//ha estado bajo tratamiento por alguna adicion (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 4) + 0.8);
+$pdf->Write(0, substr("x",0,1));
+
+/********************************************************/
+//tumores o neoplacias (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 9) );
+$pdf->Write(0, substr("x",0,1));
+
+//tumores o neoplacias (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 9) );
+$pdf->Write(0, substr("x",0,1));
+
+
+//del sistema circulatorio (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 10) + 1.5);
+$pdf->Write(0, substr("x",0,1));
+
+//del sistema circulatorio (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 10) + 1.5);
+$pdf->Write(0, substr("x",0,1));
+
+
+//del sistema endocrino (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 11) + 3.5);
+$pdf->Write(0, substr("x",0,1));
+
+//del sistema endocrino (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 11) + 3.5);
+$pdf->Write(0, substr("x",0,1));
+
+
+//congenitas y/o marformaciones de nacimiento (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 12) + 4.5);
+$pdf->Write(0, substr("x",0,1));
+
+//congenitas y/o marformaciones de nacimiento (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 12) + 4.5);
+$pdf->Write(0, substr("x",0,1));
+
+
+//del sistema hematopoyetico e inmune (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 13) + 5);
+$pdf->Write(0, substr("x",0,1));
+
+//del sistema hematopoyetico e inmune (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 13) + 5);
+$pdf->Write(0, substr("x",0,1));
+
+
+//infeccionsas (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 14) + 5.6);
+$pdf->Write(0, substr("x",0,1));
+
+//infeccionsas (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 14) + 5.6);
+$pdf->Write(0, substr("x",0,1));
+
+
+//del sistema nervioso (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 15) + 5.6);
+$pdf->Write(0, substr("x",0,1));
+
+//del sistema nervioso (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 15) + 5.6);
+$pdf->Write(0, substr("x",0,1));
+
+
+//del sistema respiratorio (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 17) + 5.5);
+$pdf->Write(0, substr("x",0,1));
+
+//del sistema respiratorio (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 17) + 5.5);
+$pdf->Write(0, substr("x",0,1));
+
+
+//del sistema digestivo (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 18) + 7.5);
+$pdf->Write(0, substr("x",0,1));
+
+//del sistema digestivo (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 18) + 7.5);
+$pdf->Write(0, substr("x",0,1));
+
+
+//hernias (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 19) + 8.2 );
+$pdf->Write(0, substr("x",0,1));
+
+//hernias (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 19)+ 8.2 );
+$pdf->Write(0, substr("x",0,1));
+
+
+//del sistema genitourinario (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 20) + 8.7);
+$pdf->Write(0, substr("x",0,1));
+
+//del sistema genitourinario (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 20) + 8.7 );
+$pdf->Write(0, substr("x",0,1));
+
+
+//del sistema osteomuscular (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 21) + 8.9 );
+$pdf->Write(0, substr("x",0,1));
+
+//del sistema osteomuscular (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 21) + 8.9 );
+$pdf->Write(0, substr("x",0,1));
+
+
+//del ojo (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 22) + 8.7 );
+$pdf->Write(0, substr("x",0,1));
+
+//del ojo (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 22) + 8.7 );
+$pdf->Write(0, substr("x",0,1));
+
+
+//del oido (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 23) + 9.8 );
+$pdf->Write(0, substr("x",0,1));
+
+//del oido (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 23) + 9.8 );
+$pdf->Write(0, substr("x",0,1));
+
+
+//ha sufrido algun accidente que ameritara tratamiento intrahospitalario (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 24) + 9.7 );
+$pdf->Write(0, substr("x",0,1));
+
+//ha sufrido algun accidente que ameritara tratamiento intrahospitalario (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 24) + 9.7 );
+$pdf->Write(0, substr("x",0,1));
+
+
+//practica algun deporte peligroso (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 25) + 10.4 );
+$pdf->Write(0, substr("x",0,1));
+
+//practica algun deporte peligroso (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 25) + 10.4 );
+$pdf->Write(0, substr("x",0,1));
+
+
+//utiliza algun tipo de protesis o ha perdido algun mienbro (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 26) + 11.6 );
+$pdf->Write(0, substr("x",0,1));
+
+//utiliza algun tipo de protesis o ha perdido algun mienbro (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 26) + 11.6 );
+$pdf->Write(0, substr("x",0,1));
+
+
+//otras enfermedades diferentes a las señaladas anteriormente (si)
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 27) + 11.6 );
+$pdf->Write(0, substr("x",0,1));
+
+//otras enfermedades diferentes a las señaladas anteriormente (no)
+$pdf->SetXY(145, $yConstCuadrado1 + ($yCuadrado1 * 27) + 11.6 );
+$pdf->Write(0, substr("x",0,1));
 
 
 /////////////////////////////////////// pagina 6 ///////////////////////////////////
@@ -836,11 +1173,75 @@ $pdf->SetFont('Arial','',8);
 $pdf->SetTextColor(0,0,0);
 
 $yCuadrado1 = 8;
-$yConstCuadrado1 = 25.5;
+$yConstCuadrado1 = 126;
 
 $pdf->Image('F20926-6.jpg' , 0 ,0, 210 , 0,'JPG');
 
+//peso
+$pdf->SetXY(27, $yConstCuadrado1 + ($yCuadrado1 * 0) );
+$pdf->Write(0, substr("999",0,3));
 
+//altura
+$pdf->SetXY(39, $yConstCuadrado1 + ($yCuadrado1 * 0) );
+$pdf->Write(0, substr("999",0,3));
+
+//fuma (si)
+$pdf->SetXY(52, $yConstCuadrado1 + ($yCuadrado1 * 0) - 0.7 );
+$pdf->Write(0, substr("x",0,1));
+
+//fuma (no)
+$pdf->SetXY(60, $yConstCuadrado1 + ($yCuadrado1 * 0) - 0.7);
+$pdf->Write(0, substr("x",0,1));
+
+//desde que año
+$pdf->SetXY(69, $yConstCuadrado1 + ($yCuadrado1 * 0) + 0.2 );
+$pdf->Write(0, substr("9999",0,4));
+
+//cantidad
+$pdf->SetXY(89, $yConstCuadrado1 + ($yCuadrado1 * 0) + 0.8 );
+$pdf->Write(0, substr("999",0,3));
+
+//dia
+$pdf->SetXY(100, $yConstCuadrado1 + ($yCuadrado1 * 0) + 0.8 );
+$pdf->Write(0, substr("x",0,1));
+
+//mes
+$pdf->SetXY(106.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 0.8 );
+$pdf->Write(0, substr("x",0,1));
+
+//anio
+$pdf->SetXY(112, $yConstCuadrado1 + ($yCuadrado1 * 0) + 0.8 );
+$pdf->Write(0, substr("x",0,1));
+
+
+//toma alcohol (si)
+$pdf->SetXY(125, $yConstCuadrado1 + ($yCuadrado1 * 0) - 0.7 );
+$pdf->Write(0, substr("x",0,1));
+
+//toma alcohol (no)
+$pdf->SetXY(131.5, $yConstCuadrado1 + ($yCuadrado1 * 0) - 0.7);
+$pdf->Write(0, substr("x",0,1));
+
+//desde que año
+$pdf->SetXY(140, $yConstCuadrado1 + ($yCuadrado1 * 0) );
+$pdf->Write(0, substr("9999",0,4));
+
+
+//cantidad
+$pdf->SetXY(163, $yConstCuadrado1 + ($yCuadrado1 * 0) + 0.4 );
+$pdf->Write(0, substr("999",0,3));
+
+//dia
+$pdf->SetXY(175.5, $yConstCuadrado1 + ($yCuadrado1 * 0) + 0.8 );
+$pdf->Write(0, substr("x",0,1));
+
+//mes
+$pdf->SetXY(182, $yConstCuadrado1 + ($yCuadrado1 * 0) + 0.8 );
+$pdf->Write(0, substr("x",0,1));
+
+//anio
+$pdf->SetXY(187.6, $yConstCuadrado1 + ($yCuadrado1 * 0) + 0.8 );
+$pdf->Write(0, substr("x",0,1));
 
 /////////////////////////////////////// pagina 7 ///////////////////////////////////
 $pdf->AddPage();
@@ -849,18 +1250,54 @@ $pdf->SetFont('Arial','',8);
 $pdf->SetTextColor(0,0,0);
 
 $yCuadrado1 = 8;
-$yConstCuadrado1 = 25.5;
+$yConstCuadrado1 = 112;
 
 $pdf->Image('F20926-7.jpg' , 0 ,0, 210 , 0,'JPG');
 
+//lugar y fecha de solicitud
+$pdf->SetXY(43, $yConstCuadrado1 + ($yCuadrado1 * 0) );
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,60));
 
+//fecha
+$pdf->SetXY(165, $yConstCuadrado1 + ($yCuadrado1 * 0) );
+$pdf->Write(0, substr("20/05/2020",0,10));
 
+//observaciones 1
+$pdf->SetXY(12, $yConstCuadrado1 + ($yCuadrado1 * 5) + 6 );
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,60));
+
+//observaciones 2
+$pdf->SetXY(12, $yConstCuadrado1 + ($yCuadrado1 * 6) + 4 );
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,60));
+
+//se realizo la visita al cliente (si)
+$pdf->SetXY(59.4, $yConstCuadrado1 + ($yCuadrado1 * 7) + 2.2 );
+$pdf->Write(0, substr("x",0,1));
+
+//se realizo la visita al cliente (no)
+$pdf->SetXY(69, $yConstCuadrado1 + ($yCuadrado1 * 7)+ 2.2 );
+$pdf->Write(0, substr("x",0,1));
+
+//resultado de la visita
+$pdf->SetXY(110, $yConstCuadrado1 + ($yCuadrado1 * 7)+ 2.8 );
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,40));
+
+//clave del agente
+$pdf->SetXY(12, $yConstCuadrado1 + ($yCuadrado1 * 10) - 2.5 );
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,12));
+
+//nombre
+$pdf->SetXY(50, $yConstCuadrado1 + ($yCuadrado1 * 10) - 2.5 );
+$pdf->Write(0, substr("SAUPUREIN SAFAR MARCOS DANIEL",0,12));
+
+// % comision cedida
+$pdf->SetXY(150, $yConstCuadrado1 + ($yCuadrado1 * 10) - 2.5 );
+$pdf->Write(0, substr("100",0,3));
 
 
 /************************** fin ********************************************************/
 
-
-$pdf->Output('F20926AC.pdf', 'I');
+$pdf->Output( 'F20926AC.pdf', 'I');
 
 
 ?>

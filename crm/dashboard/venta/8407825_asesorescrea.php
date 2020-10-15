@@ -66,7 +66,7 @@ $comaddress = '';
                     </div>
                     <div class="form-group" id="card-number-field">
                         <label for="cardNumber">Numero de Tarjeta</label>
-                        <input type="text" class="form-control" id="cardNumber" name="cc_number">
+                        <input type="text" class="form-control" id="cardNumber" name="cc_number" MAXLENGTH="19">
                     </div>
                     <div class="form-group" id="expiration-date">
                         <label>Fecha de Vencimiento</label>
@@ -102,10 +102,7 @@ $comaddress = '';
                            <!-- Modificacion: Marca de inicio C-04-2761-10 Acriter NAC -->
                        </select>
                     </div>
-                    <div class="form-group" id="credit_cards">
-                        <img src="assets/images/visa.jpg" id="visa">
-                        <img src="assets/images/mastercard.jpg" id="mastercard">
-                    </div>
+
                     <div class="form-group" id="pay-now">
                         <button type="submit" class="btn btn-default" id="confirm-purchase">Pagar</button>
                     </div>
@@ -130,7 +127,7 @@ $comaddress = '';
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.2/sweetalert.min.js" integrity="sha512-bQTg0yQoJONPPP2GJpVEWYayw5y7LmCrN+VMCr3l3jl1mn8a2yjYLDBkvt4TkQCJjLaI3kprfiJ2ivEUOw63ow==" crossorigin="anonymous"></script>
    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-   <script src="https://asesorescrea.com/desarrollo/crm/dashboard/ecommerce/assets/js/jquery.payform.min.js"></script>
+
    <script>
    $(function() {
 
@@ -143,43 +140,12 @@ $comaddress = '';
        var visa = $("#visa");
 
 
-       cardNumber.payform('formatCardNumber');
-       CVV.payform('formatCardCVC');
-
-       cardNumber.keyup(function() {
-
-           //carnet.removeClass('transparent');
-           visa.removeClass('transparent');
-           mastercard.removeClass('transparent');
-
-           if ($.payform.validateCardNumber(cardNumber.val()) == false) {
-               cardNumberField.addClass('has-error');
-           } else {
-               cardNumberField.removeClass('has-error');
-               cardNumberField.addClass('has-success');
-           }
-
-           if ($.payform.parseCardType(cardNumber.val()) == 'visa') {
-               mastercard.addClass('transparent');
-               $('#tipotarjeta').val('Visa');
-               //amex.addClass('transparent');
-           } else if ($.payform.parseCardType(cardNumber.val()) == 'mastercard') {
-               //amex.addClass('transparent');
-               visa.addClass('transparent');
-               $('#tipotarjeta').val('Mastercard');
-           }
-
-
-       });
 
 
 
        confirmButton.click(function(e) {
 
            e.preventDefault();
-
-           var isCardValid = $.payform.validateCardNumber(cardNumber.val());
-           var isCvvValid = $.payform.validateCardCVC(CVV.val());
 
            if(owner.val().length < 5){
               swal({
@@ -189,7 +155,7 @@ $comaddress = '';
                   timer: 2000,
                   showConfirmButton: false
               });
-           } else if (!isCardValid) {
+           } else if (cardNumber.val().length < 14) {
               swal({
                   title: "Error!!",
                   text: "Número de tarjeta invalido",
@@ -197,7 +163,7 @@ $comaddress = '';
                   timer: 2000,
                   showConfirmButton: false
               });
-           } else if (!isCvvValid) {
+           } else if (CVV.val().length < 3) {
               swal({
                   title: "Error!!",
                   text: "Complete el CVV",
