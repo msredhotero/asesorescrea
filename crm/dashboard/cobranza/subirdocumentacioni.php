@@ -232,7 +232,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo('insertarPeriodicida
 
 
 if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
-	$recibo = "<div class='alert alert-info'><p>Descargue el Comprobante de Pago!, haciendo click <a style='color:black;' href='"."../../archivos/cobros/".mysql_result($resDocumentacionReciboExistente,0,'refventas').'/'.mysql_result($resDocumentacionReciboExistente,0,'carpeta').'/'.mysql_result($resDocumentacionReciboExistente,0,'archivo')."' target='_blank'>AQUI</a></div>";
+	$recibo = "<div class='alert bg-pink'><p>Descargue el Comprobante de Pago!, haciendo click <a style='color:black;' href='"."../../archivos/cobros/".mysql_result($resDocumentacionReciboExistente,0,'refventas').'/'.mysql_result($resDocumentacionReciboExistente,0,'carpeta').'/'.mysql_result($resDocumentacionReciboExistente,0,'archivo')."' target='_blank'>AQUI</a></div>";
 } else {
 	$recibo = "<div class='alert alert-warning'><p><b>Importante! </b> Todavia no se cargo el Comprobante de Pago</div>";
 }
