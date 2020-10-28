@@ -1,12 +1,9 @@
 <?php
 
 
-session_start();
 
-if (!isset($_SESSION['usua_sahilices']))
-{
-	header('Location: ../../error.php');
-} else {
+
+
 
 
 	include ('../../includes/funciones.php');
@@ -26,13 +23,13 @@ if (!isset($_SESSION['usua_sahilices']))
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../venta/');
+
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Venta",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -165,6 +162,20 @@ $resTransaccion = $serviciosComercio->insertarComerciofin($EM_Response,$EM_Total
 $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($EM_OrderID);
 $precioTotal = mysql_result($resCotizaciones,0,'primatotal');
 $lblCliente = mysql_result($resCotizaciones,0,'clientesolo');
+
+$idusuariocliente  = mysql_result($resCotizaciones,0,'idusuariocliente');
+
+$resUsuario = $serviciosUsuario->traerUsuarioId($idusuariocliente);
+
+$resLogin = $serviciosUsuario->login(mysql_result($resUsuario,0,'email'),mysql_result($resUsuario,0,'password'));
+
+if (!isset($_SESSION['usua_sahilices']))
+{
+	header('Location: ../../error.php');
+} else {
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../venta/');
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Venta",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+
 /******* fin  **************************************************************/
 
 
