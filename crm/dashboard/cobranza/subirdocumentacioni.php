@@ -51,6 +51,8 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 $idventa = mysql_result($resultado,0,'refventas');
 
+$nrorecibo = mysql_result($resultado,0,'nrorecibo');
+
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
@@ -70,6 +72,8 @@ $modificar = "modificarCotizaciones";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 
 $resVenta = $serviciosReferencias->traerVentasPorIdCompleto($idventa);
+
+$nropoliza = mysql_result($resVenta,0,'nropoliza');
 
 $resCliente = $serviciosReferencias->traerClientesPorId(mysql_result($resVenta,0,'refclientes'));
 
@@ -183,17 +187,17 @@ switch ($_SESSION['idroll_sahilices']) {
 	case 16:
 		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '39');
 		$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '39');
-		$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, 38);
+		$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, 39);
 	break;
 	case 17:
 		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '40,41');
 		$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '40,41');
-		$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, 38);
+		$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, 39);
 	break;
 	default:
 		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '38,39,40,41');
 		$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '38,39,40,41');
-		$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, 38);
+		$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, 39);
 	break;
 }
 
@@ -228,9 +232,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo('insertarPeriodicida
 
 
 if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
-	$recibo = "<div class='alert alert-info'><p>Descargue su Recibo!, haciendo click <a href='"."../../archivos/cobros/".mysql_result($resDocumentacionReciboExistente,0,'refventas').'/'.mysql_result($resDocumentacionReciboExistente,0,'carpeta').'/'.mysql_result($resDocumentacionReciboExistente,0,'archivo')."' target='_blank'>AQUI</a></div>";
+	$recibo = "<div class='alert alert-info'><p>Descargue el Comprobante de Pago!, haciendo click <a style='color:black;' href='"."../../archivos/cobros/".mysql_result($resDocumentacionReciboExistente,0,'refventas').'/'.mysql_result($resDocumentacionReciboExistente,0,'carpeta').'/'.mysql_result($resDocumentacionReciboExistente,0,'archivo')."' target='_blank'>AQUI</a></div>";
 } else {
-	$recibo = "<div class='alert alert-warning'><p><b>Importante! </b> Todavia no se cargo el Recibo para pagar</div>";
+	$recibo = "<div class='alert alert-warning'><p><b>Importante! </b> Todavia no se cargo el Comprobante de Pago</div>";
 }
 
 ?>
@@ -373,12 +377,12 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 			<div class="row">
 				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
 					<div class="alert alert-info">
-						<p><?php echo '<b>Cliente: </b>'.$cliente; ?></p>
+						<p><?php echo '<b>Nro de Poliza: </b>'.$nropoliza; ?></p>
 					</div>
 				</div>
 				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
 					<div class="alert alert-success">
-						<p><?php echo '<b>Producto: </b>'.$producto; ?></p>
+						<p><?php echo '<b>Nro Recibo: </b>'.$nrorecibo; ?></p>
 					</div>
 				</div>
 				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
