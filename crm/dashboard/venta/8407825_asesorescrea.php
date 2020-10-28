@@ -55,22 +55,24 @@ $comaddress = '';
             <div class="heading">
                 <h1>Confirme el Pago</h1>
             </div>
+            <div class="row" align="center">
+               <img class="imagenCard" src="../../imagenes/numbercard_1.png" width="300" />
+            </div>
             <div class="payment">
-                    <div class="form-group owner">
-                        <label for="owner">Nombre que aparece en la Tarjeta</label>
-                        <input type="text" class="form-control" id="owner" name="cc_name" MAXLENGTH="30">
-                    </div>
-                    <div class="form-group CVV">
-                        <label for="cvv">CVV</label>
-                        <input type="text" class="form-control" id="cvv" name="cc_cvv2" MAXLENGTH="3">
-                    </div>
-                    <div class="form-group" id="card-number-field">
-                        <label for="cardNumber">Numero de Tarjeta</label>
-                        <input type="text" class="form-control" id="cardNumber" name="cc_number" MAXLENGTH="19">
-                    </div>
+
+                  <div class="form-group owner">
+                     <label for="owner">Nombre que aparece en la Tarjeta</label>
+                     <input type="text" class="form-control" id="owner" name="cc_name" MAXLENGTH="30">
+                  </div>
+                  <div class="form-group" id="card-number-field">
+                     <label for="cardNumber">Número de Tarjeta</label>
+                     <input type="text" class="form-control" id="cardNumber" name="cc_number" MAXLENGTH="19">
+                  </div>
+
+
                     <div class="form-group" id="expiration-date">
                         <label>Fecha de Vencimiento</label>
-                        <select name="_cc_expmonth">
+                        <select name="_cc_expmonth" class="mesCard">
                             <option value="01">Enero</option>
                             <option value="02">Febrero</option>
                             <option value="03">Marzo</option>
@@ -84,7 +86,7 @@ $comaddress = '';
                             <option value="11">Noviembre</option>
                             <option value="12">Diciembre</option>
                         </select>
-                        <select name="_cc_expyear">
+                        <select name="_cc_expyear" class="anioCard">
                             <option value="20"> 2020</option>
                             <option value="21"> 2021</option>
                             <option value="22"> 2022</option>
@@ -101,6 +103,11 @@ $comaddress = '';
                            <option VALUE="Mastercard">MasterCard</option>
                            <!-- Modificacion: Marca de inicio C-04-2761-10 Acriter NAC -->
                        </select>
+                    </div>
+
+                    <div class="form-group CVV">
+                       <label for="cvv">CVC</label>
+                       <input type="text" class="form-control" id="cvv" name="cc_cvv2" MAXLENGTH="3">
                     </div>
 
                     <div class="form-group" id="pay-now">
@@ -130,7 +137,8 @@ $comaddress = '';
 
    <script>
    $(function() {
-
+      var mesCard = $('.mesCard');
+      var anioCard = $('.anioCard');
        var owner = $('#owner');
        var cardNumber = $('#cardNumber');
        var cardNumberField = $('#card-number-field');
@@ -138,6 +146,47 @@ $comaddress = '';
        var mastercard = $("#mastercard");
        var confirmButton = $('#confirm-purchase');
        var visa = $("#visa");
+
+       owner.focus();
+
+      owner.focusin(function() {
+         $('.imagenCard').attr('src', '../../imagenes/namecard.png');
+      });
+
+      cardNumber.focusin(function() {
+         $('.imagenCard').attr('src', '../../imagenes/numbercard_1.png');
+      });
+
+      mesCard.focusin(function() {
+         $('.imagenCard').attr('src', '../../imagenes/validthrucard.png');
+      });
+      anioCard.focusin(function() {
+         $('.imagenCard').attr('src', '../../imagenes/validthrucard.png');
+      });
+
+      CVV.focusin(function() {
+         $('.imagenCard').attr('src', '../../imagenes/cvccard2.png');
+      });
+
+
+      owner.focusout(function() {
+         $('.imagenCard').attr('src', '../../imagenes/cardonly.png');
+      });
+
+      cardNumber.focusout(function() {
+         $('.imagenCard').attr('src', '../../imagenes/cardonly.png');
+      });
+
+      mesCard.focusout(function() {
+         $('.imagenCard').attr('src', '../../imagenes/cardonly.png');
+      });
+      anioCard.focusout(function() {
+         $('.imagenCard').attr('src', '../../imagenes/cardonly.png');
+      });
+
+      CVV.focusout(function() {
+         $('.imagenCard').attr('src', '../../imagenes/cardonly.png');
+      });
 
 
 

@@ -76,11 +76,13 @@ $idcuestionario = mysql_result($resProducto,0,'refcuestionarios');
 
 $detalleProducto = mysql_result($resProducto,0,'detalle');
 
+$esDomiciliado = mysql_result($resProducto,0,'esdomiciliado');
+
 
 if (mysql_num_rows($resCotizaciones)>0) {
-	$precio = mysql_result($resCotizaciones,0,'precio');
-	$lblPrecio = str_replace('.','',$precio);
-	$lblPrecioAd = str_replace('.','',$precio * 1.1);
+	//$precio = mysql_result($resCotizaciones,0,'precio');
+	//$lblPrecio = str_replace('.','',$precio);
+
 } else {
 	header('Location: index.php');
 }
@@ -170,6 +172,8 @@ if ($edad >= 60) {
 }
 
 $precio = $acumPrecio;
+
+$lblPrecioAd = str_replace('.','',$precio * 1.2);
 
 $resInhabilitaRespuesta = $serviciosReferencias->inhabilitaRespuestascuestionarioPorCotizacion($id);
 
@@ -336,6 +340,7 @@ $cadBancos .= $serviciosFunciones->devolverSelectBoxText($resBancos,array(1),'')
 										</div>
 									</div>
 
+									<?php if ($esDomiciliado == '1') { ?>
 									<div class="panel panel-col-cyan panelMP panelMP4">
 										<div class="panel-heading" role="tab" id="headingFour_17">
 											<h4 class="panel-title">
@@ -356,6 +361,7 @@ $cadBancos .= $serviciosFunciones->devolverSelectBoxText($resBancos,array(1),'')
 											</div>
 										</div>
 									</div>
+									<?php } ?>
 
 									<div class="panel panel-col-cyan panelMP panelMP3">
 										<div class="panel-heading" role="tab" id="headingThree_17">

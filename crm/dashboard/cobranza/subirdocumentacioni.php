@@ -51,7 +51,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 $idventa = mysql_result($resultado,0,'refventas');
 
-$iddocumentacion = 38;
+
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
 $singular = "Recibos";
@@ -86,6 +86,21 @@ if (!file_exists($path)) {
 	mkdir($path, 0777);
 }
 
+if (isset($_GET['iddocumentacion'])) {
+	$iddocumentacion = $_GET['iddocumentacion'];
+} else {
+	switch ($_SESSION['idroll_sahilices']) {
+		case 16:
+			$iddocumentacion = 39;
+		break;
+		case 17:
+			$iddocumentacion = 40;
+		break;
+		default:
+			$iddocumentacion = 38;
+		break;
+	}
+}
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
@@ -167,12 +182,18 @@ switch ($iddocumentacion) {
 switch ($_SESSION['idroll_sahilices']) {
 	case 16:
 		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '39');
+		$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '39');
+		$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, 38);
 	break;
 	case 17:
 		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '40,41');
+		$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '40,41');
+		$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, 38);
 	break;
 	default:
 		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '38,39,40,41');
+		$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '38,39,40,41');
+		$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, 38);
 	break;
 }
 
@@ -204,7 +225,7 @@ $refCampo 	=  array('refperiodicidadventasdetalle');
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo('insertarPeriodicidadventaspagos' ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, 38);
+
 
 if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 	$recibo = "<div class='alert alert-info'><p>Descargue su Recibo!, haciendo click <a href='"."../../archivos/cobros/".mysql_result($resDocumentacionReciboExistente,0,'refventas').'/'.mysql_result($resDocumentacionReciboExistente,0,'carpeta').'/'.mysql_result($resDocumentacionReciboExistente,0,'archivo')."' target='_blank'>AQUI</a></div>";
@@ -325,7 +346,7 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 <!-- #Top Bar -->
 <?php echo $baseHTML->cargarSECTION($_SESSION['usua_sahilices'], $_SESSION['nombre_sahilices'], $resMenu,'../../'); ?>
 
-<section class="content" style="margin-top:-75px;">
+<section class="content" style="margin-top:-115px;">
 
 	<div class="container-fluid">
 		<div class="row clearfix subirImagen">
@@ -336,7 +357,7 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 
 				?>
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-						<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
+						<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion<?php echo $row['iddocumentacion']; ?>" id="<?php echo $row['iddocumentacion']; ?>">
 							<div class="icon">
 								<i class="material-icons">unarchive</i>
 							</div>
@@ -350,105 +371,23 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 			</div>
 
 			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="card ">
-						<div class="header bg-blue">
-							<h2>
-								DOCUMENTACION - <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?>
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-									<ul class="dropdown-menu pull-right">
-
-									</ul>
-								</li>
-							</ul>
-						</div>
-						<div class="body table-responsive">
-							<div class="alert alert-info">
-								<p><?php echo '<b>Cliente: </b>'.$cliente; ?></p>
-							</div>
-							<div class="alert alert-success">
-								<p><?php echo '<b>Producto: </b>'.$producto; ?></p>
-							</div>
-							<?php echo $recibo; ?>
-							<form class="formulario frmNuevo" role="form" id="sign_in">
-								<div class="row">
-		                  	<?php echo $frmUnidadNegocios; ?>
-								</div>
-								<div class="modal-footer">
-			                  <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
-									<button type="button" class="btn bg-defualt waves-effect btnVolver">
-			 							VOLVER
-		 							</button>
-			               </div>
-							</form>
-
-
-
-						</div>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
+					<div class="alert alert-info">
+						<p><?php echo '<b>Cliente: </b>'.$cliente; ?></p>
 					</div>
 				</div>
-			</div> <!-- fin del card -->
-
-			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="card">
-						<div class="header bg-blue">
-							<h2>
-								ARCHIVO CARGADO
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div class="body">
-							<div class="row">
-								<button type="button" class="btn bg-red waves-effect btnEliminar">
-									<i class="material-icons">remove</i>
-									<span>ELIMINAR</span>
-								</button>
-							</div>
-							<div class="row">
-								<a href="javascript:void(0);" class="thumbnail timagen1">
-									<img class="img-responsive">
-								</a>
-								<div id="example1"></div>
-							</div>
-							<div class="row">
-								<div class="alert bg-<?php echo $color; ?>">
-									<h4>
-										Estado: <b><?php echo $estadoDocumentacion; ?></b>
-									</h4>
-								</div>
-								<div class="col-xs-6 col-md-6" style="display:block">
-									<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
-									<div class="input-group col-md-12">
-										<select class="form-control show-tick" id="refestados" name="refestados">
-											<?php echo $cadRefEstados; ?>
-										</select>
-									</div>
-									<?php
-									if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11)) {
-									?>
-									<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
-								<?php } ?>
-								</div>
-
-							</div>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
+					<div class="alert alert-success">
+						<p><?php echo '<b>Producto: </b>'.$producto; ?></p>
 					</div>
+				</div>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
+					<?php echo $recibo; ?>
 				</div>
 			</div>
 
 			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card">
 						<div class="header bg-blue">
 							<h2>
@@ -478,7 +417,74 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 						</div>
 					</div>
 				</div>
-			</div>
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+					<div class="card ">
+						<div class="header bg-blue">
+							<h2>
+								<?php echo mysql_result($resDocumentacion,0,'documentacion'); ?>
+							</h2>
+						</div>
+						<div class="body table-responsive">
+
+
+							<div class="row">
+								<button type="button" class="btn bg-red waves-effect btnEliminar">
+									<i class="material-icons">remove</i>
+									<span>ELIMINAR</span>
+								</button>
+							</div>
+							<div class="row">
+								<a href="javascript:void(0);" class="thumbnail timagen1">
+									<img class="img-responsive">
+								</a>
+								<div id="example1"></div>
+							</div>
+							<div class="row">
+								<div class="alert bg-<?php echo $color; ?>">
+									<h4>
+										Estado: <b><?php echo $estadoDocumentacion; ?></b>
+									</h4>
+								</div>
+								<?php
+								if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11)) {
+								?>
+								<div class="col-xs-6 col-md-6" style="display:block">
+									<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
+									<div class="input-group col-md-12">
+										<select class="form-control show-tick" id="refestados" name="refestados">
+											<?php echo $cadRefEstados; ?>
+										</select>
+									</div>
+
+									<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
+
+								</div>
+								<?php } ?>
+
+							</div>
+							<!--
+							<form class="formulario frmNuevo" role="form" id="sign_in">
+								<div class="row">
+		                  	<?php //echo $frmUnidadNegocios; ?>
+								</div>
+								<div class="modal-footer">
+			                  <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
+									<button type="button" class="btn bg-defualt waves-effect btnVolver">
+			 							VOLVER
+		 							</button>
+			               </div>
+							</form>-->
+
+
+
+						</div>
+					</div>
+				</div>
+			</div> <!-- fin del card -->
+
+
+
+
 		</div>
 	</div>
 </section>
@@ -608,11 +614,13 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 			});
 		}
 
-		$('.btnDocumentacion').click(function() {
+		<?php while ($rowD = mysql_fetch_array($resDocumentacionesAux)) { ?>
+		$('.btnDocumentacion<?php echo $rowD['iddocumentacion']; ?>').click(function() {
 			idTable =  $(this).attr("id");
-			url = "subirdocumentacioni.php?id=<?php echo $id; ?>" ;
+			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&iddocumentacion=<?php echo $rowD['iddocumentacion']; ?>" ;
 			$(location).attr('href',url);
 		});
+		<?php } ?>
 
 
 		$('.btnVolver').click(function() {
@@ -709,7 +717,7 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 
 		Dropzone.options.frmFileUpload = {
 			maxFilesize: 30,
-			acceptedFiles: ".jpg,.jpeg,.pdf",
+			acceptedFiles: ".pdf,.xml",
 			accept: function(file, done) {
 				done();
 			},
@@ -723,7 +731,7 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 
 					swal("Correcto!", resp.replace("1", ""), "success");
 
-					//location.reload();
+					location.reload();
 				});
 
 				this.on('error', function( file, resp ){

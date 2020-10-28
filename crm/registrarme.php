@@ -42,6 +42,12 @@ if (isset($_SESSION['usua_sahilices'])) {
     $colonia       = '';
   }
 
+   if (isset($_POST['estadocivil'])) {
+      $refestadocivil   = $_POST['estadocivil'];
+   } else {
+      $refestadocivil   = 7;
+   }
+
   $ciudad           = $_POST['ciudad'];
 
    if ($nombre == '' ) {
@@ -99,7 +105,7 @@ if (isset($_SESSION['usua_sahilices'])) {
          $numerocliente = $serviciosReferencias->generaNroCliente();
 
 
-         $res = $serviciosReferencias->insertarClientes(1,$nombre,$apellidopaterno,$apellidomaterno,'','','',$telefono,$email,'','',$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,'','','',0,$colonia,$delegacion,$codigopostal,'','','',$estado,'','');
+         $res = $serviciosReferencias->insertarClientes(1,$nombre,$apellidopaterno,$apellidomaterno,'','','',$telefono,$email,'','',$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,'','','',0,$colonia,$delegacion,$codigopostal,'','','',$estado,'','',$sexo,$refestadocivil);
 
          // empiezo la activacion del usuarios
         // $resActivacion = $serviciosUsuario->registrarCliente($email, $apellidopaterno.' '.$apellidomaterno, $nombre, $res, $refusuarios,$pass);

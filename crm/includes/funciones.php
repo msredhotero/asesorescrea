@@ -1190,6 +1190,23 @@ class Servicios {
 	function camposTablaModificar($id,$lblid,$accion,$tabla,$lblcambio,$lblreemplazo,$refdescripcion,$refCampo) {
 
 		switch ($tabla) {
+			case 'dbsolicitudesrespuestas':
+				$sqlMod = "select
+								idsolicituderespuesta,
+								refsolicitudpdf,
+								pagina,
+								sector,
+								x,
+								y,
+								nombre,
+								`default`,
+								pregunta,
+								reftabla,
+								camporeferencia,
+								(case when fijo = 1 then 'Si' else 'No' end) as fijo
+									from ".$tabla." where ".$lblid." = ".$id;
+				$resMod = $this->query($sqlMod,0);
+			break;
 			case 'dbconstancias':
 				$sqlMod = "select
 									idconstancia,
@@ -1203,7 +1220,7 @@ class Servicios {
 									importe
 									from ".$tabla." where ".$lblid." = ".$id;
 				$resMod = $this->query($sqlMod,0);
-				break;
+			break;
 			case 'dbperfilasesores':
 				$sqlMod = "select idperfilasesor,reftabla,idreferencia,imagenperfil,imagenfirma,urllinkedin,urlfacebook,urlinstagram,(case when visible = '1' then 'Si' else 'No' end) as visible,token,
 				urloficial,

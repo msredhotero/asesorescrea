@@ -100,6 +100,7 @@ $refCampo 	=  array();
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
+		.pdfobject-container { height: 30rem; border: 1rem solid rgba(0,0,0,.1); }
 	</style>
 
 
@@ -295,6 +296,30 @@ $refCampo 	=  array();
 		</form>
 
 
+		<!-- COMPROBANTE DE PAGO -->
+
+	   <div class="modal fade" id="lgmArchivo" tabindex="-1" role="dialog">
+	       <div class="modal-dialog modal-lg" role="document">
+	           <div class="modal-content">
+	               <div class="modal-header">
+	                   <h4 class="modal-title" id="largeModalLabel">COMPROBANTE DE PAGO</h4>
+	               </div>
+	               <div class="modal-body">
+							<a href="javascript:void(0);" class="thumbnail timagen1">
+								<img class="img-responsive">
+							</a>
+							<div id="example1"></div>
+	               </div>
+	               <div class="modal-footer">
+
+	                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+	               </div>
+	           </div>
+	       </div>
+	   </div>
+
+
+
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
@@ -310,6 +335,8 @@ $refCampo 	=  array();
 <script src="../../plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
 
 <script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
+
+<script src="../../js/pdfobject.min.js"></script>
 
 
 <script>
@@ -472,6 +499,65 @@ $refCampo 	=  array();
 			idTable =  $(this).attr("id");
 			frmAjaxModificar(idTable);
 			$('#lgmModificar').modal();
+		});//fin del boton modificar
+
+		$("#example").on("click",'.btnRecibos', function(){
+			idTable =  $(this).attr("id");
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'mostrarComprobanteDePago', id: idTable},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error) {
+						swal({
+								title: "Respuesta",
+								text: 'No se pudo recuperar el comprobante de pago',
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+
+					} else {
+						if (data.url.indexOf("pdf") > -1) {
+							PDFObject.embed(data.url, "#example1");
+							$('#example1').show();
+							$(".timagen1").hide();
+
+							$('#lgmArchivo').modal();
+
+						} else {
+							window.open(data.url, '_blank');
+
+							$(".timagen1").show();
+							$('#example1').hide();
+						}
+
+
+
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
 		});//fin del boton modificar
 
 

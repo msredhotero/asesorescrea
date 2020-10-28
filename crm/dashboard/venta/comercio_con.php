@@ -42,7 +42,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 
 
-/*
+
 $EM_Response= $_POST["EM_Response"];
 $EM_Total= $_POST["EM_Total"];
 $EM_OrderID= $_POST["EM_OrderID"];
@@ -52,11 +52,11 @@ $EM_Term= $_POST["EM_Term"];
 $EM_RefNum= $_POST["EM_RefNum"];
 $EM_Auth= $_POST["EM_Auth"];
 $EM_Digest= $_POST["EM_Digest"];
-*/
 
 
 
 
+/*
 switch (trim(str_replace(' ','',$_POST['cc_number']))) {
 	case '5062541600005232':
 		$EM_Response= 'approved';
@@ -106,7 +106,7 @@ $EM_Store= $_POST["store"];
 $EM_Term= $_POST["term"];
 
 $EM_Digest= $_POST["digest"];
-
+*/
 
 //$newdigest  = sha1($_POST["EM_Total"].$_POST["EM_OrderID"].$_POST["EM_Merchant"].$_POST["EM_Store"].$_POST["EM_Term"].$_POST["EM_RefNum"]+"-"+$_POST["EM_Auth"]);
 $newdigest  = sha1($_POST["total"].$_POST["order_id"].$_POST["merchant"].$_POST["store"].$_POST["term"].$EM_RefNum+"-"+$EM_Auth);
@@ -202,7 +202,7 @@ if ($error == 0) {
 		$archivos = 'ReciboPago.pdf';
 		$type = 'pdf';
 		$refestado = 1;
-		$resPago = $serviciosReferencias->insertarPagos(12,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,5,'Foncerrada Y Javelly',$lblCliente,$nroComprobante);
+		$resPago = $serviciosReferencias->insertarPagos(12,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,5,'Inbursa',$lblCliente,$nroComprobante,'0');
 
 		///////////////// fin del pago /////////////////////////////////
 
@@ -220,7 +220,7 @@ if ($error == 0) {
 	$usuariocrea = $_SESSION['usua_sahilices'];
 	$archivos = '';
 	$type = '';
-	$resPago = $serviciosReferencias->insertarPagos(12,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,2,'Foncerrada Y Javelly',$lblCliente,'');
+	$resPago = $serviciosReferencias->insertarPagos(12,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,2,'Inbursa',$lblCliente,'','0');
 
 	///////////////// fin del pago /////////////////////////////////
 }

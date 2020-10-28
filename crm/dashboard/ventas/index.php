@@ -493,7 +493,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 		});
 
 
-		var table = $('#example2').DataTable({
+		var table2 = $('#example2').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
 			"order": [[ 5, "desc" ]],
@@ -523,7 +523,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 			}
 		});
 
-		var table = $('#example3').DataTable({
+		var table3 = $('#example3').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
 			"order": [[ 5, "desc" ]],
@@ -553,7 +553,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 			}
 		});
 
-		var table = $('#example4').DataTable({
+		var table4 = $('#example4').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
 			"order": [[ 5, "desc" ]],
@@ -741,7 +741,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 			if ($('.frmModificar')[0].checkValidity()) {
 
 				//información del formulario
-				var formData = new FormData($(".formulario")[0]);
+				var formData = new FormData($(".formulario")[1]);
 				var message = "";
 				//hacemos la petición ajax
 				$.ajax({

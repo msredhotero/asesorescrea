@@ -75,6 +75,10 @@
 		// produccion
 		// $nuevo_noentrar = 'https://www.saupureinconsulting.com.ar/aifzn/data/'.$_SESSION['idclub_aif'].'/'.'index.php';
 
+		if (!file_exists('../../archivos/cobros/'.$id.'/')) {
+			mkdir('../../archivos/cobros/'.$id.'/', 0777);
+		}
+
 		if (!file_exists($dir_destino)) {
 			mkdir($dir_destino, 0777);
 		}

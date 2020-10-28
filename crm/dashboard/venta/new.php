@@ -560,6 +560,9 @@ $frmUnidadNegociosASG 	= $serviciosFunciones->camposTablaViejo($insertarASG ,$ta
 $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuestionarioObligatorias(mysql_result($resProducto,0,'refcuestionarios'));
 
 
+$resEstadoCivil = $serviciosReferencias->traerEstadocivilPorIn('1,2');
+$cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,array(1),'');
+
 ?>
 
 <!DOCTYPE html>
@@ -1059,6 +1062,31 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 									</div>
 								</div>
 
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContgenero" style="display:block">
+									<label class="form-label">Genero <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<select class="form-control" id="generoASG" name="genero"  required >
+												<option value="">-- Seleccionar --</option>
+												<option value="Femenino">Femenino</option>
+												<option value="Masculino">Masculino</option>
+											</select>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrefestadocivil" style="display:block">
+									<label class="form-label">Estado Civil <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<select class="form-control" id="refestadocivilASG" name="refestadocivil"  required >
+												<option value="">-- Seleccionar --</option>
+												<?php echo $cadRefEstadoCivil; ?>
+											</select>
+										</div>
+									</div>
+								</div>
+
 							</div>
 
 							<div class="row" style="margin-top:15px;">
@@ -1164,6 +1192,31 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 									<div class="form-group input-group">
 										<div class="form-line">
 											<input type="text" class="form-control" id="fechanacimientoBNF" name="fechanacimiento" required/>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContgenero" style="display:block">
+									<label class="form-label">Genero <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<select class="form-control" id="generoBNF" name="genero"  required >
+												<option value="">-- Seleccionar --</option>
+												<option value="Femenino">Femenino</option>
+												<option value="Masculino">Masculino</option>
+											</select>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrefestadocivil" style="display:block">
+									<label class="form-label">Estado Civil <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<select class="form-control" id="refestadocivilBNF" name="refestadocivil"  required >
+												<option value="">-- Seleccionar --</option>
+												<?php echo $cadRefEstadoCivil; ?>
+											</select>
 										</div>
 									</div>
 								</div>
@@ -1641,6 +1694,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 						$('#wizard_with_validation .contCuestionario .escondido').remove();
 						<?php } else { ?>
 						$('#wizard_with_validation .contCuestionario .escondido').hide();
+						$('#wizard_with_validation .contCuestionario .escondido').find('input').prop('disabled', true);
 						<?php } ?>
 
 						$('#wizard_with_validation [data-toggle="tooltip"]').tooltip();
@@ -1652,8 +1706,11 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 							idPreguntaId =  $('#'+idTable).data("idpregunta");
 
 							$('#wizard_with_validation .escondido'+idPreguntaId).hide();
+							$('#wizard_with_validation .escondido'+idPreguntaId).find('input').prop('disabled', true);
 
 							$('#wizard_with_validation #contPregunta'+idPregunta).show(400);
+							$('#wizard_with_validation #contPregunta'+idPregunta).find('input').prop('disabled', false);
+							$('#wizard_with_validation #rulesPregunta'+idPregunta).find('input').prop('disabled', false);
 
 
 						});

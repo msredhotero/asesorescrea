@@ -55,8 +55,8 @@ $modificar = "modificarProductos";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "tbproductos";
 
-$lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado','refcuestionarios','puntosporventarenovado','puntosporpesopagadorenovado','reftipopersonas','ventaenlinea','cotizaenlinea','beneficiario','asegurado','reftipofirma');
-$lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado','Cuestionario','Punto x Venta Renovacion','Puntos x Peso Pagado Renovacion','Tipo Personas','Es de venta en linea','Es para cotizar','Podría tener beneficiario ','Podría tener asegurado distinto al contratante','Firmas');
+$lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado','refcuestionarios','puntosporventarenovado','puntosporpesopagadorenovado','reftipopersonas','ventaenlinea','cotizaenlinea','beneficiario','asegurado','reftipofirma','reftipoemision','esdomiciliado','consolicitud');
+$lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado','Cuestionario','Punto x Venta Renovacion','Puntos x Peso Pagado Renovacion','Tipo Personas','Es de venta en linea','Es para cotizar','Podría tener beneficiario ','Podría tener asegurado distinto al contratante','Firmas','Tipo de Emision','Es Domiciliado','Necesita Firmar Solicitud');
 
 $resVar1 = $serviciosReferencias->traerTipoproductorama();
 $cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(2),'');
@@ -78,8 +78,11 @@ $cadRef9 = "<option value='1' selected>Si</option><option value='0'>No</option>"
 $resVar10 = $serviciosReferencias->traerTipofirma();
 $cadRef10 = $serviciosFunciones->devolverSelectBox($resVar10,array(1),'');
 
-$refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef3,4=>$cadRef4,5=>$cadRef8,6=>$cadRef9,7=>$cadRef9,8=>$cadRef9,9=>$cadRef9,10=>$cadRef10);
-$refCampo 	=  array('reftipoproductorama','reftipodocumentaciones','activo','prima','refcuestionarios','reftipopersonas','ventaenlinea','cotizaenlinea','beneficiario','asegurado','reftipofirma');
+$resVar11 = $serviciosReferencias->traerTipoemision();
+$cadRef11 = $serviciosFunciones->devolverSelectBox($resVar11,array(1),'');
+
+$refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef3,4=>$cadRef4,5=>$cadRef8,6=>$cadRef9,7=>$cadRef9,8=>$cadRef9,9=>$cadRef9,10=>$cadRef10,11=>$cadRef11,12=>$cadRef9,13=>$cadRef9);
+$refCampo 	=  array('reftipoproductorama','reftipodocumentaciones','activo','prima','refcuestionarios','reftipopersonas','ventaenlinea','cotizaenlinea','beneficiario','asegurado','reftipofirma','reftipoemision','esdomiciliado','consolicitud');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////

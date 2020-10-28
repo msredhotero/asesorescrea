@@ -245,7 +245,7 @@ $tabla 			= "dbperiodicidadventaspagos";
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=cobranza",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=cobranzainbursa",
 			"order": [[ 2, "asc" ]],
 			"language": {
 				"emptyTable":     "No hay datos cargados",

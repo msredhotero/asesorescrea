@@ -248,6 +248,12 @@ class serviciosComercio
       return $res;
    }
 
+   function traerComercioinicioPorOrderIdAceptadas($orderid) {
+      $sql = "select idcomercioinicio,token,comtotal,comcurrency,comaddres,comorderid,commerchant,comstore,comterm,comdigest,urlback,reforigencomercio,refestadotransaccion,refafiliados,fechacrea,usuariocrea,vigencia,observaciones,fechamodi,usuariomodi,nrocomprobante from dbcomercioinicio where refestadotransaccion = 2 and comorderid = '".$orderid."'";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
 
    /* Fin */
    /* /* Fin de la Tabla: dbcomercioinicio*/

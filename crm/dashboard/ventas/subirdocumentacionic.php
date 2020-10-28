@@ -661,7 +661,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumenta
 
 					swal("Correcto!", resp.replace("1", ""), "success");
 
-					//location.reload();
+					location.reload();
 				});
 
 				this.on('error', function( file, resp ){

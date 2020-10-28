@@ -104,8 +104,9 @@ if (mysql_num_rows($resCotizaciones)>0) {
 	header('Location: index.php');
 }
 
-// total del valor a pagar
-$comtotal = $lblPrecio;
+// total del valor a pagar //// por ahora un peso (1)
+//$comtotal = $lblPrecio;
+$comtotal = 100;
 //moneda
 $comcurrency = '484';
 //direccion
@@ -271,7 +272,8 @@ $resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 			               <li class="list-inline-item"><img src="../../imagenes/mastercard.png" width="90" height="63"></li>
 
 			            </ul>
-			            <form action="8407825_asesorescrea.php" method="post" id="formFin">
+			            <!--<form action="8407825_asesorescrea.php" method="post" id="formFin">-->
+							<form action="https://www.procom.prosa.com.mx/eMerch2/8407825_SegInbursa.jsp" method="post" id="formFin">
 			               <input type="hidden" name="total" value="<?php echo $comtotal; ?>">
 			               <input type="hidden" name="currency" value="<?php echo $comcurrency; ?>">
 			               <input type="hidden" name="address" value="<?php echo $comaddress; ?>">
@@ -281,7 +283,7 @@ $resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 			               <input type="hidden" name="term" value="<?php echo $comterm; ?>">
 			               <input type="hidden" name="digest" value="<?php echo $comdigest; ?>">
 			               <input type="hidden" name="return_target" value="">
-			               <input type="hidden" name="urlBack" value="../pay/comercio_con.php">
+			               <input type="hidden" name="urlBack" value="https://asesorescrea.com/desarrollo/crm/dashboard/venta/comercio_con.php">
 								<div class="row">
 								<div class="col-xs-3"></div>
 			               <div class="col-xs-6">

@@ -69,15 +69,30 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 }
 
 switch ($tabla) {
+	case 'mapeo':
+		$datos = $serviciosReferencias->traerSolicitudesrespuestasajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-orange','bg-red');
+		$icon = array('edit','delete');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 10;
+	break;
 	case 'listadopagos':
 		$datos = $serviciosReferencias->traerPagosCotizacionajax($length, $start, $busqueda,$colSort,$colSortDir);
 
 		$resAjax = $datos[0];
 		$res = $datos[1];
 
-		$label = array('btnModificar');
-		$class = array('bg-orange');
-		$icon = array('edit');
+		$label = array('btnModificar','btnRecibos');
+		$class = array('bg-orange','bg-deep-purple');
+		$icon = array('edit','assignment_returned');
 
 
 		$indiceID = 0;
@@ -354,9 +369,9 @@ switch ($tabla) {
 		$res = $datos[1];
 
 
-		$label = array('btnModificar','btnEliminar','btnEliminarDefinitivo','btnPreguntas','btnVer');
-		$class = array('bg-amber','bg-red','','','');
-		$icon = array('Modificar','Eliminar','Eliminar Def.','Preguntas','Pre-visualizacion');
+		$label = array('btnModificar','btnEliminar','btnEliminarDefinitivo','btnPreguntas','btnVer','btnList');
+		$class = array('bg-amber','bg-red','','','','');
+		$icon = array('Modificar','Eliminar','Eliminar Def.','Preguntas','Pre-visualizacion','Lista de Respuesta');
 
 
 		$indiceID = 0;
@@ -409,6 +424,26 @@ switch ($tabla) {
 	case 'cobranza':
 
 		$datos = $serviciosReferencias->traerCobranzaajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		//die(var_dump($datos));
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+
+		$label = array('btnPagar','btnRecibo');
+		$class = array('bg-green','bg-orange');
+		$icon = array('add_shopping_cart','unarchive');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 8;
+	break;
+
+	case 'cobranzainbursa':
+
+		$datos = $serviciosReferencias->traerCobranzaInbursaajax($length, $start, $busqueda,$colSort,$colSortDir);
 
 		//die(var_dump($datos));
 
@@ -1564,7 +1599,7 @@ $id = 0;
 		//$id = $row[$indiceID];
 		// forma local utf8_decode
 		for ($i=$empieza;$i<=$termina;$i++) {
-			array_push($arAux, utf8_decode($row[$i]));
+			array_push($arAux, ($row[$i]));
 		}
 
 		if (($tabla == 'postulantes') || ($tabla == 'ventas') || ($tabla == 'postulanteshistorico') || ($tabla == 'asesores') || ($tabla == 'asociadostemporales') || ($tabla == 'asociados') || ($tabla == 'clientes') || ($tabla == 'cuestionario') || ($tabla == 'preguntascuestionario') || ($tabla == 'respuestascuestionario')) {

@@ -39,6 +39,12 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
+$id = $_GET['id'];
+
+$resultado = $serviciosReferencias->traerCuestionariosPorIdCompletoSolicitudIncompleto($id);
+$resultadoAux = $serviciosReferencias->traerCuestionariosPorIdCompletoSolicitudCompleto($id);
+
+
 $singular = "Cuestionario";
 
 $plural = "Cuestionarios";
@@ -64,6 +70,13 @@ $refdescripcion = array(0=>$cadRef);
 $refCampo 	=  array('activo');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+
+$resList = $serviciosReferencias->traerSolicitudesrespuestasInCompleto();
+$cadRefL = $serviciosFunciones->devolverSelectBox($resList,array(1),'');
+
+$resListAux = $serviciosReferencias->traerSolicitudesrespuestasCompleto();
+$cadRefLAux = $serviciosFunciones->devolverSelectBox($resListAux,array(1),'');
+
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 ?>
@@ -92,6 +105,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 	<!-- Dropzone Css -->
 	<link href="../../plugins/dropzone/dropzone.css" rel="stylesheet">
+
+	<link rel="stylesheet" type="text/css" href="../../css/classic.css"/>
+	<link rel="stylesheet" type="text/css" href="../../css/classic.date.css"/>
 
 
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
@@ -158,7 +174,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								<?php echo strtoupper($plural); ?>
+								<a href='index.php' style='color:white;'><?php echo strtoupper($plural); ?></a>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -173,14 +189,18 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						</div>
 						<div class="body table-responsive">
 							<form class="form" id="formCountry">
-
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
-											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
-												<i class="material-icons">add</i>
-												<span>NUEVO</span>
+
+											<button type="button" class="btn bg-blue waves-effect btnVigente">
+												<i class="material-icons">timeline</i>
+												<span>Incompletos</span>
 											</button>
+											<button type="button" class="btn bg-grey waves-effect btnHistorico">
+												<i class="material-icons">history</i>
+												<span>Cargados</span>
+
 
 										</div>
 									</div>
@@ -188,22 +208,100 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 								<div class="row" style="padding: 5px 20px;">
 
-									<table id="example" class="display table " style="width:100%">
+									<table id="example1" class="display table listFaltan" style="width:100%">
 										<thead>
-											<tr>
-												<th>Cuestionario</th>
-												<th>Activo</th>
-												<th>Acciones</th>
-											</tr>
+											<th>Valor de la Solicitud a asignar</th>
+											<th>Pregunta</th>
+											<th>Respuesta</th>
+											<th>Accion</th>
 										</thead>
-										<tfoot>
+										<tbody>
+											<?php
+											$pregunta = '';
+											$iRadio = 0;
+											$cantRadio = 0;
+											$iCheck = 0;
+											$iCheckM = 0;
+											$collapse = '';
+											$collapseAux = '';
+											$collapsePregunta = '';
+
+											$primero = 0;
+
+											while ($row = mysql_fetch_array($resultado)) {
+												if ($row['refpreguntassencibles'] < 1) {
+
+											?>
 											<tr>
-												<th>Cuestionario</th>
-												<th>Activo</th>
-												<th>Acciones</th>
+												<td>
+													<select id="mapeo<?php echo $row['idrespuestacuestionario']; ?>" name="mapeo<?php echo $row['idrespuestacuestionario']; ?>" class="form-control">
+														<?php echo $cadRefL; ?>
+													</select>
+												</td>
+												<td><?php echo $row['pregunta']; ?></td>
+												<td><?php echo $row['respuesta']; ?></td>
+												<td>
+													<button type="button" class="btn bg-green waves-effect btnGuardar" id="<?php echo $row['idrespuestacuestionario']; ?>">
+														<i class="material-icons">save</i>
+														<span>GUARDAR</span>
+													</button>
+												</td>
 											</tr>
-										</tfoot>
+											<?php
+												}
+											}
+											?>
+										</tbody>
 									</table>
+
+									<table id="example2" class="display table listCompleto" style="width:100%">
+										<thead>
+											<th>Valor de la Solicitud a asignar</th>
+											<th>Pregunta</th>
+											<th>Respuesta</th>
+											<th>Accion</th>
+										</thead>
+										<tbody>
+											<?php
+											$pregunta = '';
+											$iRadio = 0;
+											$cantRadio = 0;
+											$iCheck = 0;
+											$iCheckM = 0;
+											$collapse = '';
+											$collapseAux = '';
+											$collapsePregunta = '';
+
+											$primero = 0;
+
+											while ($row = mysql_fetch_array($resultadoAux)) {
+												if ($row['refpreguntassencibles'] < 1) {
+
+											?>
+											<tr>
+												<td>
+													<select id="mapeoa<?php echo $row['idrespuestacuestionario']; ?>" name="mapeoa<?php echo $row['idrespuestacuestionario']; ?>" class="form-control">
+														<?php echo $cadRefLAux; ?>
+													</select>
+												</td>
+												<td><?php echo $row['pregunta']; ?></td>
+												<td><?php echo $row['respuesta']; ?></td>
+												<td>
+													<button type="button" class="btn bg-green waves-effect btnGuardarA" id="<?php echo $row['idrespuestacuestionario']; ?>">
+														<i class="material-icons">save</i>
+														<span>GUARDAR</span>
+													</button>
+												</td>
+											</tr>
+											<?php
+												}
+											}
+											?>
+										</tbody>
+									</table>
+
+
+
 								</div>
 							</form>
 							</div>
@@ -327,23 +425,58 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 <script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
 
+<script src="../../js/picker.js"></script>
+<script src="../../js/picker.date.js"></script>
+
 
 <script>
 	$(document).ready(function(){
 
+		$('.listCompleto').hide();
+
+		$('.btnVigente').click(function() {
+			$('.listCompleto').hide();
+			$('.listFaltan').show();
+		});
+
+		$('.btnHistorico').click(function() {
+			$('.listCompleto').show();
+			$('.listFaltan').hide();
+		});
+
+		$('.tsfechanacimiento').pickadate({
+ 			format: 'yyyy-mm-dd',
+ 			labelMonthNext: 'Siguiente mes',
+ 			labelMonthPrev: 'Previo mes',
+ 			labelMonthSelect: 'Selecciona el mes del año',
+ 			labelYearSelect: 'Selecciona el año',
+ 			selectMonths: true,
+ 			selectYears: 5,
+ 			today: 'Hoy',
+ 			clear: 'Borrar',
+ 			close: 'Cerrar',
+ 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+ 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+ 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+ 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+ 		});
+
+		$('.escondido').hide();
+
+		$('.aparecer').click(function() {
+			idTable =  $(this).attr("id");
+			idPregunta =  $('#'+idTable).data("pregunta");
+			idRespuesta =  $('#'+idTable).data("respuesta");
+			idPreguntaId =  $('#'+idTable).data("idpregunta");
+
+			$('.escondido'+idPreguntaId).hide();
+
+			$('.clcontPregunta'+idRespuesta).show(400);
+		});
+
 		$("#example").on("click",'.btnPreguntas', function(){
 			idTable =  $(this).attr("id");
 			$(location).attr('href','preguntas.php?id=' + idTable);
-		});//fin del boton modificar
-
-		$("#example").on("click",'.btnVer', function(){
-			idTable =  $(this).attr("id");
-			$(location).attr('href','ver.php?id=' + idTable);
-		});//fin del boton modificar
-
-		$("#example").on("click",'.btnList', function(){
-			idTable =  $(this).attr("id");
-			$(location).attr('href','list.php?id=' + idTable);
 		});//fin del boton modificar
 
 
@@ -393,6 +526,48 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		$("#sign_in").submit(function(e){
 			e.preventDefault();
 		});
+
+		$('.btnGuardar').click(function() {
+			idTable =  $(this).attr("id");
+			idsolicitud =  $('#mapeo'+idTable).val();
+
+			modificarRespuestascuestionarioSolicitud(idTable, idsolicitud);
+		});
+
+		function modificarRespuestascuestionarioSolicitud(id, idsolicitud) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificarRespuestascuestionarioSolicitud',
+					idsolicitud: idsolicitud,
+					id: id
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data == '') {
+						swal("Ok!", 'Se guardo correctamente', "success");
+						location.reload();
+					} else {
+						swal("Error!", data, "warning");
+
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
 
 
 		function frmAjaxModificar(id) {

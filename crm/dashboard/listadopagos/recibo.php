@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cuestionario/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../listadopagos/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cuestionarios",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Listado de Pagos",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -39,31 +39,50 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Cuestionario";
+$id = $_GET['id'];
 
-$plural = "Cuestionarios";
+$resultado = $serviciosReferencias->traerPagosPorId($id);
 
-$eliminar = "eliminarCuestionarios";
+$singular = "Pagos";
 
-$insertar = "insertarCuestionarios";
+$plural = "Pagos";
 
-$modificar = "modificarCuestionarios";
+$eliminar = "eliminarPagos";
+
+$insertar = "insertarPagos";
+
+$modificar = "modificarPagos";
+
+if (mysql_result($resultado,0,'archivos') == '') {
+	$existe = 0;
+} else {
+	$existe = 1;
+
+	if (mysql_result($resultado,0,'refcuentasbancarias') == 0) {
+
+		$urlArchivo = '../../reportes/rptFacturaPagoOnline.php?token='.mysql_result($resultado,0,'token');
+
+
+	}
+	if (mysql_result($resultado,0,'refcuentasbancarias') == 1) {
+		$urlArchivo = '../../archivos/comprobantespago/'.mysql_result($resultado,0,'idreferencia').'/'.mysql_result($resultado,0,'archivos');
+	}
+}
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbcuestionarios";
+$tabla 			= "dbpagos";
 
-$lblCambio	 	= array('activo');
-$lblreemplazo	= array('Activo');
+$lblCambio	 	= array();
+$lblreemplazo	= array();
 
-$cadRef = "<option value='1' selected>Si</option><option value='0'>No</option>";
 
-$refdescripcion = array(0=>$cadRef);
-$refCampo 	=  array('activo');
+$refdescripcion = array();
+$refCampo 	=  array();
 
-$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 ?>
@@ -158,7 +177,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								<?php echo strtoupper($plural); ?>
+								RECIBO DE PAGO DEL CLIENTE
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -174,36 +193,16 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						<div class="body table-responsive">
 							<form class="form" id="formCountry">
 
-								<div class="row">
-									<div class="col-lg-12 col-md-12">
-										<div class="button-demo">
-											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
-												<i class="material-icons">add</i>
-												<span>NUEVO</span>
-											</button>
-
-										</div>
-									</div>
-								</div>
-
 								<div class="row" style="padding: 5px 20px;">
 
-									<table id="example" class="display table " style="width:100%">
-										<thead>
-											<tr>
-												<th>Cuestionario</th>
-												<th>Activo</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tfoot>
-											<tr>
-												<th>Cuestionario</th>
-												<th>Activo</th>
-												<th>Acciones</th>
-											</tr>
-										</tfoot>
-									</table>
+									<?PHP IF ($existe == 0) { ?>
+										<h4>El comprobante no pudo ser recuperado</h4>
+
+									<?php } else { ?>
+										<div class="alert bg-orange">
+											<p>Comprobante de pago cargado por el cliente: <b><a style="color:white;" target="_blank" href="<?php echo $urlArchivo; ?>">Descargar</a></b></p>
+										</div>
+									<?php } ?>
 								</div>
 							</form>
 							</div>
@@ -274,7 +273,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		               </div>
 		               <div class="modal-body">
 										 <p>¿Esta seguro que desea eliminar el registro?</p>
-										 <small>* El registro quedara inactivo.</small>
+										 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
 		               </div>
 		               <div class="modal-footer">
 		                   <button type="button" class="btn btn-danger waves-effect eliminar">ELIMINAR</button>
@@ -285,29 +284,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		   </div>
 			<input type="hidden" id="accion" name="accion" value="<?php echo $eliminar; ?>"/>
 			<input type="hidden" name="ideliminar" id="ideliminar" value="0">
-		</form>
-
-	<!-- ELIMINAR -->
-		<form class="formulario" role="form" id="sign_in">
-		   <div class="modal fade" id="lgmEliminarDef" tabindex="-1" role="dialog">
-		       <div class="modal-dialog modal-lg" role="document">
-		           <div class="modal-content">
-		               <div class="modal-header">
-		                   <h4 class="modal-title" id="largeModalLabel">ELIMINAR <?php echo strtoupper($singular); ?></h4>
-		               </div>
-		               <div class="modal-body">
-										 <p>¿Esta seguro que desea eliminar el registro?</p>
-										 <small>* El registro se eliminara permanentemente si no existe concurrencia en algun otro registro relacionado.</small>
-		               </div>
-		               <div class="modal-footer">
-		                   <button type="button" class="btn btn-danger waves-effect eliminard">ELIMINAR</button>
-		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
-		               </div>
-		           </div>
-		       </div>
-		   </div>
-			<input type="hidden" id="accion" name="accion" value="<?php echo $eliminar; ?>Definitivo"/>
-			<input type="hidden" name="ideliminard" id="ideliminard" value="0">
 		</form>
 
 
@@ -331,21 +307,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 <script>
 	$(document).ready(function(){
 
-		$("#example").on("click",'.btnPreguntas', function(){
-			idTable =  $(this).attr("id");
-			$(location).attr('href','preguntas.php?id=' + idTable);
-		});//fin del boton modificar
-
-		$("#example").on("click",'.btnVer', function(){
-			idTable =  $(this).attr("id");
-			$(location).attr('href','ver.php?id=' + idTable);
-		});//fin del boton modificar
-
-		$("#example").on("click",'.btnList', function(){
-			idTable =  $(this).attr("id");
-			$(location).attr('href','list.php?id=' + idTable);
-		});//fin del boton modificar
-
 
 		$('.maximizar').click(function() {
 			if ($('.icomarcos').text() == 'web') {
@@ -364,7 +325,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=cuestionario",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=listadopagos",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -427,66 +388,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		}
 
 
-		function frmAjaxEliminarDef(id) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {accion: '<?php echo $eliminar; ?>Definitivo', id: id},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data == '') {
-						swal({
-								title: "Respuesta",
-								text: "Registro Eliminado con exito!!",
-								type: "success",
-								timer: 1500,
-								showConfirmButton: false
-						});
-						$('#lgmEliminarDef').modal('toggle');
-						table.ajax.reload();
-					} else {
-						swal({
-								title: "Respuesta",
-								text: data,
-								type: "error",
-								timer: 2000,
-								showConfirmButton: false
-						});
-
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					swal({
-							title: "Respuesta",
-							text: 'Actualice la pagina',
-							type: "error",
-							timer: 2000,
-							showConfirmButton: false
-					});
-
-				}
-			});
-		}
-
-		$("#example").on("click",'.btnEliminarDefinitivo', function(){
-			idTable =  $(this).attr("id");
-			$('#ideliminard').val(idTable);
-			$('#lgmEliminarDef').modal();
-		});//fin del boton eliminar
-
-		$('.eliminard').click(function() {
-			frmAjaxEliminarDef($('#ideliminard').val());
-		});
-
-
 		function frmAjaxEliminar(id) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
@@ -534,6 +435,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 				}
 			});
+
 		}
 
 		$("#example").on("click",'.btnEliminar', function(){

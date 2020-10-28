@@ -119,7 +119,7 @@ if (mysql_num_rows($resComercio)>0) {
 		mkdir('../archivos/pagosonline/'.$idCotizacion.'/', 0777);
 	}
 
-	$pdf->Output( '../archivos/pagosonline/'.$idCotizacion.'/ReciboPago.pdf', 'I');
+	$pdf->Output( '../archivos/pagosonline/'.$idCotizacion.'/ReciboPago.pdf', 'F');
 
 } else {
 	return false;

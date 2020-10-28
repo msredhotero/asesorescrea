@@ -14,12 +14,14 @@ include ('../../includes/funcionesUsuarios.php');
 include ('../../includes/funcionesHTML.php');
 include ('../../includes/funcionesReferencias.php');
 include ('../../includes/base.php');
+include ('../../includes/funcionesComercio.php');
 
 $serviciosFunciones 	= new Servicios();
 $serviciosUsuario 		= new ServiciosUsuarios();
 $serviciosHTML 			= new ServiciosHTML();
 $serviciosReferencias 	= new ServiciosReferencias();
 $baseHTML = new BaseHTML();
+$serviciosComercio      = new serviciosComercio();
 
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
@@ -58,7 +60,7 @@ $eliminar = "eliminarCotizaciones";
 
 $insertar = "insertarCotizaciones";
 
-$modificar = "modificarCotizaciones";
+$modificar = "modificarPeriodicidadventaspagos";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
@@ -75,6 +77,27 @@ $resProducto = $serviciosReferencias->traerProductosPorId(mysql_result($resVenta
 
 $producto = mysql_result($resProducto,0,'producto');
 
+$idCotizacion = mysql_result($resVenta,0,'refcotizaciones');
+
+$resPagoCotizacion = $serviciosReferencias->traerPagosPorCotizacion($idCotizacion);
+$urlArchivo = '';
+if (mysql_num_rows($resPagoCotizacion) > 0) {
+	if (mysql_result($resPagoCotizacion,0,'refcuentasbancarias') == 0) {
+		$resComercio = $serviciosComercio->traerComercioinicioPorOrderId($idCotizacion);
+		if (mysql_num_rows($resComercio)>0) {
+			$urlArchivo = '../../reportes/rptFacturaPagoOnline.php?token='.mysql_result($resComercio,0,'token');
+		} else {
+			$urlArchivo = '';
+		}
+
+	}
+	if (mysql_result($resPagoCotizacion,0,'refcuentasbancarias') == 1) {
+		$urlArchivo = '../../archivos/comprobantespago/'.$idCotizacion.'/'.mysql_result($resPagoCotizacion,0,'archivos');
+	}
+} else {
+
+}
+
 
 $path  = '../../archivos/pagos/'.$id;
 
@@ -85,7 +108,7 @@ if (!file_exists($path)) {
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorPagoDocumentacion($id, $iddocumentacion);
+$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, $iddocumentacion);
 
 $resDocumentacion = $serviciosReferencias->traerDocumentacionesPorId($iddocumentacion);
 
@@ -94,7 +117,7 @@ $resEstados = $serviciosReferencias->traerEstadodocumentaciones();
 if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 	$cadRefEstados = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'));
 
-	$iddocumentacionasociado = mysql_result($resDocumentacionAsesor,0,'iddocumentacionpago');
+	$iddocumentacionasociado = mysql_result($resDocumentacionAsesor,0,'iddocumentacionventa');
 
 	$estadoDocumentacion = mysql_result($resDocumentacionAsesor,0,'estadodocumentacion');
 
@@ -162,13 +185,13 @@ switch ($iddocumentacion) {
 
 switch ($_SESSION['idroll_sahilices']) {
 	case 16:
-		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPagoDocumentacionCompleta($id, '39');
+		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '39');
 	break;
 	case 17:
-		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPagoDocumentacionCompleta($id, '40,41');
+		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '40,41');
 	break;
 	default:
-		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPagoDocumentacionCompleta($id, '39');
+		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '39');
 	break;
 }
 
@@ -186,18 +209,25 @@ if (mysql_num_rows($resResultado)>0) {
 	$resVar	= $serviciosReferencias->traerPeriodicidadventasPorIdCompleto($id);
 	$cadRef = $serviciosFunciones->devolverSelectBox($resVar,array(1,2),' ');
 
+	$refdescripcion = array(0=>$cadRef);
+	$refCampo 	=  array('refperiodicidadventasdetalle');
+
+	$frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar(mysql_result($resResultado,0,0), 'idperiodicidadventapago','modificarPeriodicidadventaspagos',$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+
 
 } else {
 	//insertar
 	$resVar	= $serviciosReferencias->traerPeriodicidadventasdetallePorIdCompleto($id);
 	$cadRef = $serviciosFunciones->devolverSelectBox($resVar,array(1,2),' ');
 
+	$refdescripcion = array(0=>$cadRef);
+	$refCampo 	=  array('refperiodicidadventasdetalle');
+
+	$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo('insertarPeriodicidadventaspagos' ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+
 }
 
-$refdescripcion = array(0=>$cadRef);
-$refCampo 	=  array('refperiodicidadventasdetalle');
 
-$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo('insertarPeriodicidadventaspagos' ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 $resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorPagoDocumentacion($id, 39);
@@ -366,17 +396,27 @@ $recibo = '';
 							<div class="alert alert-success">
 								<p><?php echo '<b>Producto: </b>'.$producto; ?></p>
 							</div>
+							<?php if ($urlArchivo != '') { ?>
+								<div class="alert bg-orange">
+									<p>Comprobante de pago cargado por el cliente: <b><a style="color:white;" target="_blank" href="<?php echo $urlArchivo; ?>">Descargar</a></b></p>
+								</div>
+							<?php } ?>
 							<?php echo $recibo; ?>
 							<form class="formulario frmNuevo" role="form" id="sign_in">
 								<div class="row">
 		                  	<?php echo $frmUnidadNegocios; ?>
 								</div>
+
 								<div class="modal-footer">
 			                  <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
+									<button type="button" class="btn bg-orange waves-effect btnAvisar">
+			 							AVISAR PAGO A INBURSA
+		 							</button>
 									<button type="button" class="btn bg-defualt waves-effect btnVolver">
 			 							VOLVER
 		 							</button>
 			               </div>
+
 							</form>
 
 
@@ -387,19 +427,36 @@ $recibo = '';
 			</div> <!-- fin del card -->
 
 			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+					<div class="card">
+						<div class="header bg-blue">
+							<h2>
+								<?php echo mysql_result($resDocumentacion,0,'documentacion'); ?>
+							</h2>
+						</div>
+						<div class="body">
+							<form action="subirc.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+								<div class="dz-message">
+									<div class="drag-icon-cph">
+										<i class="material-icons">touch_app</i>
+									</div>
+									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+								</div>
+								<div class="fallback">
+									<input name="file" type="file" id="archivos" />
+									<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
+									<input type="hidden" id="iddocumentacion" name="iddocumentacion" value="39" />
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card">
 						<div class="header bg-blue">
 							<h2>
 								ARCHIVO CARGADO
 							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-								</li>
-							</ul>
 						</div>
 						<div class="body">
 							<div class="row">
@@ -435,41 +492,11 @@ $recibo = '';
 								</div>
 
 							</div>
+						</div>
 					</div>
 				</div>
-			</div>
 
-			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="card">
-						<div class="header bg-blue">
-							<h2>
-								CARGA/MODIFIQUE LA DOCUMENTACIÓN <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?> AQUI
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div class="body">
-							<form action="subirrecibos.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
-								<div class="dz-message">
-									<div class="drag-icon-cph">
-										<i class="material-icons">touch_app</i>
-									</div>
-									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
-								</div>
-								<div class="fallback">
-									<input name="file" type="file" id="archivos" />
-									<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
+
 			</div>
 		</div>
 	</div>
@@ -530,7 +557,47 @@ $recibo = '';
 
 	$(document).ready(function(){
 
+		$('.btnAvisar').click(function() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'avisarInbursa',
+					idventa: <?php echo $id; ?>
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.btnContinuar').hide();
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error == false) {
+						swal("Ok!", 'Se genero la alerta correctamente', "success");
+
+					} else {
+						swal("Error!", data.leyenda, "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		});
+
 		$('#fechapago').val('<?php echo date('Y-m-d'); ?>');
+
+		$('.frmContfechacrea').hide();
+		$('.frmContfechamodi').hide();
+		$('.frmContusuariocrea').hide();
+		$('.frmContusuariomodi').hide();
+
 		<?php if ($_SESSION['idroll_sahilices'] == 16) { ?>
 			$('.frmContrefperiodicidadventasdetalle').hide();
 			$('.frmContnrofactura').hide();
@@ -608,7 +675,7 @@ $recibo = '';
 
 
 		$('.btnVolver').click(function() {
-			url = "index.php";
+			url = "cobros.php?id=" + <?php echo $idventa; ?>;
 			$(location).attr('href',url);
 		});
 
@@ -657,7 +724,7 @@ $recibo = '';
 			$.ajax({
 				data:  {idventa: <?php echo $id; ?>,
 						iddocumentacion: <?php echo $iddocumentacion; ?>,
-						accion: 'traerDocumentacionPorPagoDocumentacion'},
+						accion: 'traerDocumentacionPorVentaDocumentacion'},
 				url:   '../../ajax/ajax.php',
 				type:  'post',
 				beforeSend: function () {
@@ -715,7 +782,7 @@ $recibo = '';
 
 					swal("Correcto!", resp.replace("1", ""), "success");
 
-					//location.reload();
+					location.reload();
 				});
 
 				this.on('error', function( file, resp ){
@@ -731,7 +798,7 @@ $recibo = '';
 				 idasociado: <?php echo $id; ?>,
 				 iddocumentacion: <?php echo $iddocumentacion; ?>
 			},
-			url: 'subirrecibos.php'
+			url: 'subirc.php'
 		});
 
 
