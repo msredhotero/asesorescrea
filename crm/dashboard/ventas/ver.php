@@ -32,7 +32,7 @@ $arRoles = array(1,4,11,7,10);
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Ventas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Polizas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -41,9 +41,9 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Venta";
+$singular = "Poliza";
 
-$plural = "Ventas";
+$plural = "Polizas";
 
 $eliminar = "eliminarVentas";
 
@@ -80,6 +80,8 @@ $refCampo 	=  array('refcotizaciones','refestadoventa');
 $formulario = $serviciosFunciones->camposTablaModificar($id, $idTabla,$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
+
+$resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 
 ?>
 
@@ -209,12 +211,18 @@ $formulario = $serviciosFunciones->camposTablaModificar($id, $idTabla,$modificar
 
 										<button type="button" class="btn bg-green waves-effect btnArchivos">
 											<i class="material-icons">unarchive</i>
-											<span>SUBIR ARCHIVOS</span>
+											<span>SUBIR POLIZA</span>
 										</button>
 										<button type="button" class="btn bg-orange waves-effect btnPagos">
 											<i class="material-icons">update</i>
 											<span>PERIODICIDAD DE PAGOS</span>
 										</button>
+										<?php if (mysql_num_rows($resPeriodicidad)>0) { ?>
+											<button type="button" class="btn bg-grey waves-effect btnRecibos">
+												<i class="material-icons">format_list_numbered</i>
+												<span>COBROS - RECIBOS</span>
+											</button>
+										<?php } ?>
 										<?php } ?>
 									</div>
 								</div>
@@ -288,7 +296,7 @@ $formulario = $serviciosFunciones->camposTablaModificar($id, $idTabla,$modificar
 
 
 		$('.btnArchivos').click(function() {
-			url = "subirdocumentacioni.php?id=<?php echo $idcotizacion; ?>&documentacion=35";
+			url = "subirdocumentacion.php?id=<?php echo $idcotizacion; ?>&documentacion=35";
 			$(location).attr('href',url);
 		});
 
@@ -296,6 +304,13 @@ $formulario = $serviciosFunciones->camposTablaModificar($id, $idTabla,$modificar
 			url = "periodicidad.php?id=<?php echo $id; ?>";
 			$(location).attr('href',url);
 		});
+
+		$('.btnRecibos').click(function() {
+			url = "cobros.php?id=<?php echo $id; ?>";
+			$(location).attr('href',url);
+		});
+
+
 
 
 

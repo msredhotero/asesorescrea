@@ -189,6 +189,8 @@ $refEstadoCotizacion = mysql_result($resultado,0,'refestadocotizaciones');
 
 //////////////////// verifico en el proceso si firma con fiel, simple o autografa ////////////////
 
+$generoFirmaAlFinal = 0;
+
 $solicitudParaFirmar = '../../archivos/solicitudes/cotizaciones/'.$id.'/FSOLICITUDAC.pdf';
 if ($tipoFirma == 2) {
 	$resNIP = $serviciosReferencias->traerTokensPorCotizacionVigente($id);
@@ -233,7 +235,7 @@ if ($tipoFirma == 2) {
 
 	      $cuerpo .= '<body>';
 
-	      $cuerpo .= '<h3><small><p>Este es el nuevo NIP generado para firmar de forma digital, por favor ingrese al siguiente <a href="https://asesorescrea.com/desarrollo/crm/dashboard/venta/documentos.php?id='.$refcotizaciones.'" target="_blank"> enlace </a> para finalizar el proceso de venta. </small></h3><p>';
+	      $cuerpo .= '<h3><small><p>Este es el nuevo NIP generado para firmar de forma digital, por favor ingrese al siguiente <a href="https://asesorescrea.com/desarrollo/crm/dashboard/venta/documentos.php?id='.$id.'" target="_blank"> enlace </a> para finalizar el proceso de venta. </small></h3><p>';
 
 			$cuerpo .= "<center>NIP:<b>".$token."</b></center><p> ";
 
@@ -278,6 +280,8 @@ if ($tipoFirma == 2) {
 			// convierto el documento a base64
 
 			//die(var_dump($solicitudParaFirmar));
+
+			$generoFirmaAlFinal = 1;
 
 			$arFile = file_get_contents($solicitudParaFirmar);
 			//$b64Doc = chunk_split(base64_encode($arFile));
@@ -401,7 +405,12 @@ if (mysql_num_rows($resFirma) > 0) {
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
-		.pdfobject-container { height: 60rem; border: 1rem solid rgba(0,0,0,.1); }
+		.pdfobject-container {
+		   max-width: 100%;
+			height: 600px;
+			border: 10px solid rgba(0,0,0,.2);
+			margin: 0;
+		}
 		.numero {
 			font-size:2.6em;
 			height:80px;
@@ -602,42 +611,42 @@ if (mysql_num_rows($resFirma) > 0) {
 										<div class="col-xs-2">
 											<div class="form-group">
 												<div class="form-line">
-													<input type="text" class="form-control numero" id="numero1" name="numero1" MAXLENGTH="1"/>
+													<input type="text" class="form-control numero" placeholder="0" id="numero1" name="numero1" MAXLENGTH="1"/>
 												</div>
 											</div>
 										</div>
 										<div class="col-xs-2">
 											<div class="form-group">
 												<div class="form-line">
-													<input type="text" class="form-control numero" id="numero2" name="numero2" MAXLENGTH="1"/>
+													<input type="text" class="form-control numero" placeholder="0" id="numero2" name="numero2" MAXLENGTH="1"/>
 												</div>
 											</div>
 										</div>
 										<div class="col-xs-2">
 											<div class="form-group">
 												<div class="form-line">
-													<input type="text" class="form-control numero" id="numero3" name="numero3" MAXLENGTH="1"/>
+													<input type="text" class="form-control numero" placeholder="0" id="numero3" name="numero3" MAXLENGTH="1"/>
 												</div>
 											</div>
 										</div>
 										<div class="col-xs-2">
 											<div class="form-group">
 												<div class="form-line">
-													<input type="text" class="form-control numero" id="numero4" name="numero4" MAXLENGTH="1"/>
+													<input type="text" class="form-control numero" placeholder="0" id="numero4" name="numero4" MAXLENGTH="1"/>
 												</div>
 											</div>
 										</div>
 										<div class="col-xs-2">
 											<div class="form-group">
 												<div class="form-line">
-													<input type="text" class="form-control numero" id="numero5" name="numero5" MAXLENGTH="1"/>
+													<input type="text" class="form-control numero" placeholder="0" id="numero5" name="numero5" MAXLENGTH="1"/>
 												</div>
 											</div>
 										</div>
 										<div class="col-xs-2">
 											<div class="form-group">
 												<div class="form-line">
-													<input type="text" class="form-control numero" id="numero6" name="numero6" MAXLENGTH="1"/>
+													<input type="text" class="form-control numero" placeholder="0" id="numero6" name="numero6" MAXLENGTH="1"/>
 												</div>
 											</div>
 										</div>
@@ -683,9 +692,26 @@ if (mysql_num_rows($resFirma) > 0) {
 </section>
 
 
-
-
-
+<?php if (($puedeContinuar == 0) && ($tipoFirma == 2) && ($existeNIP == 1)) { ?>
+<div class="modal fade" id="lgmNotificacion" tabindex="-1" role="dialog">
+	 <div class="modal-dialog modal-lg" role="document">
+		  <div class="modal-content">
+				<div class="modal-header bg-blue">
+					 <h4 class="modal-title" id="largeModalLabel">INFORMACIÓN IMPORTANTE</h4>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<h4>Te enviamos un correo electrónico con tu NIP para firmar digitalmente
+					</div>
+				</div>
+				<div class="modal-footer">
+					 
+					 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+				</div>
+		  </div>
+	 </div>
+</div>
+<?php } ?>
 
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
@@ -705,9 +731,15 @@ if (mysql_num_rows($resFirma) > 0) {
 
 <script src="../../js/pdfobject.min.js"></script>
 
+<script src="../../js/jquery.blockUI.js"></script>
+
 
 <script>
 	$(document).ready(function(){
+
+		<?php if (($puedeContinuar == 0) && ($tipoFirma == 2) && ($existeNIP == 1)) { ?>
+			$('#lgmNotificacion').modal();
+		<?php } ?>
 
 		$('#btnConfirmarFE').click(function() {
 			window.open("https://qafirma.signaturainnovacionesjuridicas.com/firmar/TOMG730101MDFLZM00" ,'_blank');
@@ -728,6 +760,8 @@ if (mysql_num_rows($resFirma) > 0) {
 		});
 
 		function verificarFirmasPendientes() {
+			$.blockUI({ message: '<h4>Estamos procesando la solicitud...</h4>' });
+
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
@@ -753,6 +787,8 @@ if (mysql_num_rows($resFirma) > 0) {
 								showConfirmButton: false
 						});
 
+						setTimeout($.unblockUI, 2000);
+
 
 					} else {
 						swal({
@@ -762,7 +798,13 @@ if (mysql_num_rows($resFirma) > 0) {
 								timer: 2000,
 								showConfirmButton: false
 						});
-						location.reload();
+
+						setTimeout(function() {
+							$.unblockUI({
+								onUnblock: function(){ location.reload(); }
+							});
+						}, 2000);
+
 
 					}
 				},
@@ -882,6 +924,8 @@ if (mysql_num_rows($resFirma) > 0) {
 		});
 
 		function insertarFirmarcontratos() {
+			$.blockUI({ message: '<h4>Estamos procesando la solicitud, por favor no cierres el navegador...</h4>' });
+
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
@@ -910,6 +954,8 @@ if (mysql_num_rows($resFirma) > 0) {
 
 						$('#btnConfirmarF').show();
 
+						setTimeout($.unblockUI, 2000);
+
 
 					} else {
 						swal({
@@ -920,7 +966,13 @@ if (mysql_num_rows($resFirma) > 0) {
 								showConfirmButton: false
 						});
 
-						setTimeout(function(){ location.reload(); }, 3000);
+						setTimeout(function() {
+							$.unblockUI({
+								onUnblock: function(){ location.reload(); }
+							});
+						}, 2000);
+
+
 
 					}
 				},
@@ -936,21 +988,10 @@ if (mysql_num_rows($resFirma) > 0) {
 
 				}
 			});
+
+
 		}
 
-
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '315px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
-
-		});
 
 
 		$("#sign_in").submit(function(e){
@@ -970,5 +1011,15 @@ if (mysql_num_rows($resFirma) > 0) {
 
 
 </body>
-<?php } ?>
+
 </html>
+
+<?php
+
+if ($generoFirmaAlFinal == 1) {
+
+}
+
+?>
+
+<?php } ?>

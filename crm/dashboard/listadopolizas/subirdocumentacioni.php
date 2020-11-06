@@ -26,12 +26,16 @@ $serviciosComercio      = new serviciosComercio();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../ventas/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../listadopolizas/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
-$id = $_GET['id'];
+if ($_SESSION['idroll_sahilices'] == 10) {
+	$idusuario = $_SESSION['usuaid_sahilices'];
+} else {
+	$id = $_GET['id'];
+}
 
 $resultado 		= 	$serviciosReferencias->traerPeriodicidadventasdetallePorIdCompleto($id);
 
@@ -49,7 +53,13 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 $idventa = mysql_result($resultado,0,'refventas');
 
-$iddocumentacion = 39;
+$nrorecibo = mysql_result($resultado,0,'nrorecibo');
+
+$estadoRecibo = mysql_result($resultado,0,'estadopago');
+
+$monto = mysql_result($resultado,0,'montototal');
+
+
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
 $singular = "Recibos";
@@ -60,7 +70,7 @@ $eliminar = "eliminarCotizaciones";
 
 $insertar = "insertarCotizaciones";
 
-$modificar = "modificarPeriodicidadventaspagos";
+$modificar = "modificarCotizaciones";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
@@ -69,18 +79,27 @@ $modificar = "modificarPeriodicidadventaspagos";
 
 $resVenta = $serviciosReferencias->traerVentasPorIdCompleto($idventa);
 
+$nropoliza = mysql_result($resVenta,0,'nropoliza');
+
 $resCliente = $serviciosReferencias->traerClientesPorId(mysql_result($resVenta,0,'refclientes'));
 
+$idcliente = mysql_result($resVenta,0,'refclientes');
+
 $cliente = mysql_result($resCliente,0,'nombre').' '.mysql_result($resCliente,0,'apellidopaterno').' '.mysql_result($resCliente,0,'apellidomaterno');
+
+$emailCliente = mysql_result($resCliente,0,'email');
 
 $resProducto = $serviciosReferencias->traerProductosPorId(mysql_result($resVenta,0,'refproductos'));
 
 $producto = mysql_result($resProducto,0,'producto');
 
+
+
 $idCotizacion = mysql_result($resVenta,0,'refcotizaciones');
 
 $resPagoCotizacion = $serviciosReferencias->traerPagosPorCotizacion($idCotizacion);
 $urlArchivo = '';
+$selectPago = '';
 if (mysql_num_rows($resPagoCotizacion) > 0) {
 	if (mysql_result($resPagoCotizacion,0,'refcuentasbancarias') == 0) {
 		$resComercio = $serviciosComercio->traerComercioinicioPorOrderId($idCotizacion);
@@ -90,25 +109,65 @@ if (mysql_num_rows($resPagoCotizacion) > 0) {
 			$urlArchivo = '';
 		}
 
+
+
 	}
 	if (mysql_result($resPagoCotizacion,0,'refcuentasbancarias') == 1) {
 		$urlArchivo = '../../archivos/comprobantespago/'.$idCotizacion.'/'.mysql_result($resPagoCotizacion,0,'archivos');
-	}
-} else {
 
+
+	}
+
+	$datosDelPago = mysql_result($resPagoCotizacion,0,'destino').' - Monto: '.mysql_result($resPagoCotizacion,0,'monto');
+	$idDelPago = mysql_result($resPagoCotizacion,0,0);
+
+	$selectPago = '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContrefdatopago" style="display:block">
+									<label for="avisoinbursa" class="control-label" style="text-align:left">Aplicar Comprobante de Pago </label>
+									<div class="form-group input-group col-md-12">
+									<div class="form-line"><select class="form-control" name="refdatopago" id="refdatopago"><option value="'.mysql_result($resPagoCotizacion,0,'idpago').'">'.$datosDelPago.'</option></select></div></div></div>';
+} else {
+	$selectPago = "<input type='hidden' name='refdatopago' id='refdatopago' value='0'>";
 }
 
 
-$path  = '../../archivos/pagos/'.$id;
+$pathPagos  = '../../archivos/pagos/'.$id;
+
+if (!file_exists($pathPagos)) {
+	mkdir($pathPagos, 0777);
+}
+
+
+$path  = '../../archivos/cobros/'.$id;
 
 if (!file_exists($path)) {
 	mkdir($path, 0777);
 }
 
+if (isset($_GET['iddocumentacion'])) {
+	$iddocumentacion = $_GET['iddocumentacion'];
+} else {
+	switch ($_SESSION['idroll_sahilices']) {
+		case 16:
+			$iddocumentacion = 39;
+		break;
+		case 17:
+			$iddocumentacion = 40;
+		break;
+		default:
+			$iddocumentacion = 38;
+		break;
+	}
+}
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, $iddocumentacion);
+
+if (($iddocumentacion == 35) || ($iddocumentacion == 147) || ($iddocumentacion == 148)) {
+	$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($idventa, $iddocumentacion);
+} else {
+	$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionDetalle($id, $iddocumentacion);
+}
+
 
 $resDocumentacion = $serviciosReferencias->traerDocumentacionesPorId($iddocumentacion);
 
@@ -185,15 +244,34 @@ switch ($iddocumentacion) {
 
 switch ($_SESSION['idroll_sahilices']) {
 	case 16:
-		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '39');
+
+		$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionDetalle($id, 39);
+
+		if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
+			$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '39,40');
+			$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '39,40');
+		} else {
+			$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '39,40');
+			$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '39,40');
+		}
+		$puedeBorrar = 0;
 	break;
 	case 17:
-		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '40,41');
+		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '40,41');
+		$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '40,41');
+		$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionDetalle($id, 39);
+		$puedeBorrar = 0;
 	break;
 	default:
-		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, '39');
+
+		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '38,39,40,41');
+		$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '38,39,40,41');
+
+		$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionDetalle($id, 39);
+		$puedeBorrar = 1;
 	break;
 }
+
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
@@ -201,15 +279,23 @@ $resResultado = $serviciosReferencias->traerPeriodicidadventaspagosPorCobro($id)
 
 $tabla 			= "dbperiodicidadventaspagos";
 
-$lblCambio	 	= array('refperiodicidadventasdetalle','nrorecibo','fechapago','nrofactura','avisoinbursa');
-$lblreemplazo	= array('Venta','Nro de Operacion','Fecha Pago','Nro Factura','Notifacacion a Inbursa');
+$lblCambio	 	= array('refperiodicidadventasdetalle','nrorecibo','fechapago','nrofactura','avisoinbursa','fechapagoreal');
+$lblreemplazo	= array('Venta','Nro de Operacion','Fecha Pago','Nro Factura','Notifacacion a Inbursa','Fecha Pago Real');
 
 if (mysql_num_rows($resResultado)>0) {
+
+	$idPagoDelRecibo = mysql_result($resResultado,0,0);
 	//modificar
 	$resVar	= $serviciosReferencias->traerPeriodicidadventasPorIdCompleto($id);
 	$cadRef = $serviciosFunciones->devolverSelectBox($resVar,array(1,2),' ');
 
-	$cadRef2 = "<option value='0'>No</option><option value='1'>Si</option>";
+	if (mysql_result($resResultado,0,'avisoinbursa') == '1') {
+		$cadRef2 = "<option value='0'>No</option><option value='1' selected>Si</option>";
+	} else {
+		$cadRef2 = "<option value='0' selected>No</option><option value='1'>Si</option>";
+	}
+
+
 
 	$refdescripcion = array(0=>$cadRef,1=>$cadRef2);
 	$refCampo 	=  array('refperiodicidadventasdetalle','avisoinbursa');
@@ -221,12 +307,15 @@ if (mysql_num_rows($resResultado)>0) {
 
 
 } else {
+	$idPagoDelRecibo = 0;
 	//insertar
 	$resVar	= $serviciosReferencias->traerPeriodicidadventasdetallePorIdCompleto($id);
 	$cadRef = $serviciosFunciones->devolverSelectBox($resVar,array(1,2),' ');
 
-	$refdescripcion = array(0=>$cadRef);
-	$refCampo 	=  array('refperiodicidadventasdetalle');
+	$cadRef2 = "<option value='0'>No</option><option value='1'>Si</option>";
+
+	$refdescripcion = array(0=>$cadRef,1=>$cadRef2);
+	$refCampo 	=  array('refperiodicidadventasdetalle','avisoinbursa');
 
 	$apareceaviso = 1;
 
@@ -237,9 +326,19 @@ if (mysql_num_rows($resResultado)>0) {
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorPagoDocumentacion($id, 39);
 
-$recibo = '';
+
+if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
+	$archivos = "../../archivos/cobros/".mysql_result($resDocumentacionReciboExistente,0,'refperiodicidadventas').'/'.mysql_result($resDocumentacionReciboExistente,0,'carpeta').'/'.mysql_result($resDocumentacionReciboExistente,0,'archivo');
+
+	$recibo = "<div class='alert bg-pink'><p>Descargue el Comprobante de Pago!, haciendo click <a style='color:black;' href='"."../../archivos/cobros/".mysql_result($resDocumentacionReciboExistente,0,'refperiodicidadventas').'/'.mysql_result($resDocumentacionReciboExistente,0,'carpeta').'/'.mysql_result($resDocumentacionReciboExistente,0,'archivo')."' target='_blank'>AQUI</a></div>";
+
+	$lblEstadoComprobante = "(".mysql_result($resDocumentacionReciboExistente,0,'estadodocumentacion').')';
+} else {
+	$recibo = "<div class='alert alert-warning'><p><b>Importante! </b> Todavia no se cargo el Comprobante de Pago</div>";
+	$archivos = '';
+	$lblEstadoComprobante = "(FALTA CARGAR)";
+}
 
 ?>
 
@@ -286,7 +385,12 @@ $recibo = '';
 		.alert > i{ vertical-align: middle !important; }
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		#codigopostal { width: 400px; }
-		.pdfobject-container { height: 30rem; border: 1rem solid rgba(0,0,0,.1); }
+		.pdfobject-container {
+		   max-width: 100%;
+			height: 400px;
+			border: 10px solid rgba(0,0,0,.2);
+			margin: 0;
+		}
 
 		  .thumbnail2 {
 		    display: block;
@@ -354,65 +458,104 @@ $recibo = '';
 <!-- #Top Bar -->
 <?php echo $baseHTML->cargarSECTION($_SESSION['usua_sahilices'], $_SESSION['nombre_sahilices'], $resMenu,'../../'); ?>
 
-<section class="content" style="margin-top:-75px;">
+<section class="content" style="margin-top:-115px;">
 
 	<div class="container-fluid">
 		<div class="row clearfix subirImagen">
 
+
+
+			<div class="row">
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+					<ul class="list-group">
+						<li class="list-group-item active">INFORMACION DEL PAGO</li>
+						<li class="list-group-item"><?php echo 'No de Poliza: <b>'.strtoupper( $nropoliza).'</b>'; ?></li>
+						<li class="list-group-item"><?php echo 'No de Recibo: <b>'.strtoupper($nrorecibo).'</b>'; ?></li>
+						<li class="list-group-item"><?php echo 'Estado: <b>'.strtoupper($estadoRecibo).'</b>'; ?></li>
+						<li class="list-group-item"><?php echo 'Monto: <b>$ '.number_format($monto,2,'.',',').'</b>'; ?></li>
+						<li class="list-group-item" style="height:140px;"></li>
+
+					</ul>
+
+				</div>
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+					<ul class="list-group">
+						<li class="list-group-item active">COMPROBANTE DE PAGO <?php echo $lblEstadoComprobante; ?></li>
+						<li><div id="example2"></div></li>
+					</ul>
+				</div>
+
+			</div>
+
 			<div class="row">
 				<?php
+				$i = 0;
+				$completos = 0;
 				while ($row = mysql_fetch_array($resDocumentaciones)) {
-
+					$i += 1;
+					if ($row['idestadodocumentacion'] == 5) {
+						$completos += 1;
+					}
 				?>
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-						<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
+						<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion<?php echo $row['iddocumentacion']; ?>" id="<?php echo $row['iddocumentacion']; ?>">
 							<div class="icon">
 								<i class="material-icons">unarchive</i>
 							</div>
 							<div class="content">
-								<div class="text"><?php echo $row['documentacion']; ?></div>
+								<div class="text"><?php echo $row['documentacion']; ?> (seleccionar)</div>
 								<div class="number"><?php echo $row['estadodocumentacion']; ?></div>
 							</div>
 						</div>
 					</div>
 				<?php }  ?>
+
+			</div>
+			<div class="row">
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="margin-bottom:15px;">
+				<?php if (($i == $completos) && ($_SESSION['idroll_sahilices'] == 17)) { ?>
+					<button type="button" class="btn bg-orange enviarFactura" style="margin-left:0px;">ENVIAR FACTURA AL CLIENTE</button>
+				<?php } ?>
+				</div>
 			</div>
 
+			<?php if (($iddocumentacion == 39) && ($_SESSION['idroll_sahilices'] != 16)) { ?>
 			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="card ">
-						<div class="header bg-blue">
-							<h2>
-								DOCUMENTACION - <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?>
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-									<ul class="dropdown-menu pull-right">
 
-									</ul>
-								</li>
-							</ul>
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<div class="card">
+						<div class="header bg-blue">
+
 						</div>
 						<div class="body table-responsive">
+							<div class="col-xs-3">
+								<div class="alert alert-info">
+									<p><?php echo '<b>Cliente: </b>'.$cliente; ?></p>
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="alert alert-success">
+									<p><?php echo '<b>No Recibo: </b>'.$nrorecibo; ?></p>
+								</div>
+							</div>
+							<div class="col-xs-3">
+								<div class="alert alert-success">
+									<p><?php echo '<b>Poliza: </b>'.$nropoliza; ?></p>
+								</div>
+							</div>
 
-							<div class="alert alert-info">
-								<p><?php echo '<b>Cliente: </b>'.$cliente; ?></p>
-							</div>
-							<div class="alert alert-success">
-								<p><?php echo '<b>Producto: </b>'.$producto; ?></p>
-							</div>
 							<?php if ($urlArchivo != '') { ?>
+							<div class="col-xs-3">
 								<div class="alert bg-orange">
 									<p>Comprobante de pago cargado por el cliente: <b><a style="color:white;" target="_blank" href="<?php echo $urlArchivo; ?>">Descargar</a></b></p>
 								</div>
+							</div>
 							<?php } ?>
-							<?php echo $recibo; ?>
+
 							<form class="formulario frmNuevo" role="form" id="sign_in">
 								<div class="row">
 		                  	<?php echo $frmUnidadNegocios; ?>
+									<?php echo $selectPago; ?>
 								</div>
 
 								<div class="modal-footer">
@@ -426,24 +569,106 @@ $recibo = '';
 			               </div>
 
 							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		<?php } ?>
 
+		<?php if ($_SESSION['idroll_sahilices'] == 16) { ?>
+			<div class="row">
+
+				<?php
+				$mitad = 0;
+				if (((mysql_num_rows($resDocumentacionReciboExistente)>0) && ($iddocumentacion == 39) && ((mysql_result($resDocumentacionReciboExistente,0,'refestadodocumentaciones') != 5))) || ((mysql_num_rows($resDocumentacionReciboExistente)<=0) && ($iddocumentacion == 39))) {
+					$mitad = 1;
+				?>
+					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+						<div class="card">
+							<div class="header bg-blue">
+								<h2>
+									<?php echo mysql_result($resDocumentacion,0,'documentacion'); ?> (Cargue Aqui)
+								</h2>
+								<ul class="header-dropdown m-r--5">
+									<li class="dropdown">
+										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+											<i class="material-icons">more_vert</i>
+										</a>
+									</li>
+								</ul>
+							</div>
+							<div class="body">
+								<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+									<div class="dz-message">
+										<div class="drag-icon-cph">
+											<i class="material-icons">touch_app</i>
+										</div>
+										<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+									</div>
+									<div class="fallback">
+										<input name="file" type="file" id="archivos" />
+										<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				<?php }  ?>
+
+				<?php if ($mitad == 1) { ?>
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<?php } else { ?>
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<?php } ?>
+
+					<div class="card ">
+						<div class="header bg-blue">
+							<h2>
+								AQUI TIENE SU FACTURA PARA DESCARGAR
+							</h2>
+						</div>
+						<div class="body table-responsive">
+
+							<?php if ($puedeBorrar == 1) { ?>
+							<div class="row">
+								<button type="button" class="btn bg-red waves-effect btnEliminar">
+									<i class="material-icons">remove</i>
+									<span>ELIMINAR</span>
+								</button>
+							</div>
+						<?php } ?>
+							<div class="row">
+								<a href="javascript:void(0);" class="thumbnail timagen1">
+									<img class="img-responsive">
+								</a>
+								<div id="example1"></div>
+							</div>
 
 
 						</div>
 					</div>
 				</div>
+
 			</div> <!-- fin del card -->
 
+		<?php } else { ?>
 			<div class="row">
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card">
 						<div class="header bg-blue">
 							<h2>
-								<?php echo mysql_result($resDocumentacion,0,'documentacion'); ?>
+								<?php echo mysql_result($resDocumentacion,0,'documentacion'); ?> (Cargue Aqui)
 							</h2>
+							<ul class="header-dropdown m-r--5">
+								<li class="dropdown">
+									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+										<i class="material-icons">more_vert</i>
+									</a>
+								</li>
+							</ul>
 						</div>
 						<div class="body">
-							<form action="subirc.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+							<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
 								<div class="dz-message">
 									<div class="drag-icon-cph">
 										<i class="material-icons">touch_app</i>
@@ -453,26 +678,28 @@ $recibo = '';
 								<div class="fallback">
 									<input name="file" type="file" id="archivos" />
 									<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
-									<input type="hidden" id="iddocumentacion" name="iddocumentacion" value="39" />
 								</div>
 							</form>
 						</div>
 					</div>
 				</div>
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-					<div class="card">
+					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								ARCHIVO CARGADO
+								<?php echo mysql_result($resDocumentacion,0,'documentacion'); ?>
 							</h2>
 						</div>
-						<div class="body">
+						<div class="body table-responsive">
+
+							<?php if ($puedeBorrar == 1) { ?>
 							<div class="row">
 								<button type="button" class="btn bg-red waves-effect btnEliminar">
 									<i class="material-icons">remove</i>
 									<span>ELIMINAR</span>
 								</button>
 							</div>
+						<?php } ?>
 							<div class="row">
 								<a href="javascript:void(0);" class="thumbnail timagen1">
 									<img class="img-responsive">
@@ -485,6 +712,9 @@ $recibo = '';
 										Estado: <b><?php echo $estadoDocumentacion; ?></b>
 									</h4>
 								</div>
+								<?php
+								if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11)) {
+								?>
 								<div class="col-xs-6 col-md-6" style="display:block">
 									<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
 									<div class="input-group col-md-12">
@@ -492,20 +722,24 @@ $recibo = '';
 											<?php echo $cadRefEstados; ?>
 										</select>
 									</div>
-									<?php
-									if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11)) {
-									?>
+
 									<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
-								<?php } ?>
+
 								</div>
+								<?php } ?>
 
 							</div>
+
 						</div>
 					</div>
 				</div>
+			</div> <!-- fin del card -->
+		<?php } ?>
 
 
-			</div>
+
+
+
 		</div>
 	</div>
 </section>
@@ -558,6 +792,12 @@ $recibo = '';
 
 <script src="../../js/pdfobject.min.js"></script>
 
+<!-- Moment Plugin Js -->
+    <script src="../../plugins/momentjs/moment.js"></script>
+	 <script src="../../js/moment-with-locales.js"></script>
+
+<script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
+
 <!-- JQuery Steps Plugin Js -->
 <script src="../../plugins/jquery-steps/jquery.steps.js"></script>
 
@@ -565,8 +805,9 @@ $recibo = '';
 
 	$(document).ready(function(){
 
+		<?php if ($apareceaviso == 1) { ?>
 		$('#avisoinbursa').prop('disabled',true);
-
+		<?php } ?>
 		$('.btnAvisar').click(function() {
 			$.ajax({
 				url: '../../ajax/ajax.php',
@@ -636,6 +877,91 @@ $recibo = '';
 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
 		});
 
+		$('#fechapagoreal').bootstrapMaterialDatePicker({
+			format: 'YYYY-MM-DD HH:mm',
+			lang : 'es',
+			clearButton: true,
+			weekStart: 1,
+			time: true,
+			minDate : new Date()
+		});
+
+		<?php if ($_SESSION['idroll_sahilices'] != 16) { ?>
+
+		$('.enviarFactura').click(function() {
+			enviarFacturaAlCliente();
+		});
+
+		function enviarFacturaAlCliente() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'enviarFacturaAlCliente',
+					email: '<?php echo $emailCliente; ?>',
+					idcliente: <?php echo $idcliente; ?>,
+					nropoliza: '<?php echo $nropoliza; ?>',
+					url: "cobranza/subirdocumentacioni.php?id=<?php echo $id; ?>&iddocumentacion=40",
+					idpago: <?php echo $idPagoDelRecibo; ?>
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.enviarFactura').hide();
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error == false) {
+						swal("Ok!", 'Se envio la información correctamente al cliente', "success");
+						$('.enviarFactura').show();
+
+					} else {
+						swal("Error!", data.leyenda, "warning");
+
+						$('.enviarFactura').show();
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
+
+		<?php } ?>
+
+		$('#fechapago').val('<?php echo date('Y-m-d'); ?>');
+		<?php if ($_SESSION['idroll_sahilices'] == 16) { ?>
+			$('.frmContrefperiodicidadventasdetalle').hide();
+			$('.frmContnrofactura').hide();
+
+		<?php } ?>
+
+		$('#fechacrea').val('<?php echo date('Y-m-d'); ?>');
+		$('#fechamodi').val('<?php echo date('Y-m-d'); ?>');
+		$('#usuariocrea').val('<?php echo 'marcos'; ?>');
+		$('#usuariomodi').val('<?php echo 'marcos'; ?>');
+
+		$('#fechapago').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		});
+
 
 		$('.btnModificar').click(function() {
 			modificarVentaUnicaDocumentacion($('#<?php echo $campo; ?>').val());
@@ -677,31 +1003,33 @@ $recibo = '';
 			});
 		}
 
-		$('.btnDocumentacion').click(function() {
+		<?php while ($rowD = mysql_fetch_array($resDocumentacionesAux)) { ?>
+		$('.btnDocumentacion<?php echo $rowD['iddocumentacion']; ?>').click(function() {
 			idTable =  $(this).attr("id");
-			url = "subirdocumentacionip.php?id=<?php echo $id; ?>" ;
+			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&iddocumentacion=<?php echo $rowD['iddocumentacion']; ?>" ;
 			$(location).attr('href',url);
 		});
+		<?php } ?>
 
 
 		$('.btnVolver').click(function() {
-			url = "cobros.php?id=" + <?php echo $idventa; ?>;
+			url = "index.php";
 			$(location).attr('href',url);
 		});
 
 
 		$('.guardarEstado').click(function() {
-			modificarEstadoDocumentacionPagos($('#refestados').val());
+			modificarEstadoDocumentacionVentas($('#refestados').val());
 		});
 
-		function modificarEstadoDocumentacionPagos(idestado) {
+		function modificarEstadoDocumentacionVentas(idestado) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
 				data: {
-					accion: 'modificarEstadoDocumentacionPagos',
+					accion: 'modificarEstadoDocumentacionVentas',
 					iddocumentacionventa: <?php echo $iddocumentacionasociado; ?>,
 					idestado: idestado
 				},
@@ -729,6 +1057,8 @@ $recibo = '';
 				}
 			});
 		}
+
+		PDFObject.embed('<?php echo $archivos; ?>', "#example2");
 
 		function traerImagen(contenedorpdf, contenedor) {
 			$.ajax({
@@ -778,7 +1108,7 @@ $recibo = '';
 
 		Dropzone.options.frmFileUpload = {
 			maxFilesize: 30,
-			acceptedFiles: ".jpg,.jpeg,.pdf",
+			acceptedFiles: ".pdf,.xml",
 			accept: function(file, done) {
 				done();
 			},
@@ -808,7 +1138,7 @@ $recibo = '';
 				 idasociado: <?php echo $id; ?>,
 				 iddocumentacion: <?php echo $iddocumentacion; ?>
 			},
-			url: 'subirc.php'
+			url: 'subir.php'
 		});
 
 

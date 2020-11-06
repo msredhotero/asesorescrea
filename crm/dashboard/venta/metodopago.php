@@ -175,6 +175,8 @@ $precio = $acumPrecio;
 
 $lblPrecioAd = str_replace('.','',$precio * 1.2);
 
+$lblPrecioFC = str_replace('.','', $precio * 1.115 ) ;
+
 $resInhabilitaRespuesta = $serviciosReferencias->inhabilitaRespuestascuestionarioPorCotizacion($id);
 
 if (mysql_num_rows($resInhabilitaRespuesta)>0) {
@@ -375,7 +377,7 @@ $cadBancos .= $serviciosFunciones->devolverSelectBoxText($resBancos,array(1),'')
 											<div class="panel-body">
 												<p>El cobro sera procesado por Financiera CREA.</p>
 
-												<h4>Monto a pagar: MXN <?php echo number_format($precio, 2, ',', '.'); ?></h4>
+												<h5>12 cuotas de MX $<?php echo number_format( ceil(($precio * 1.115 / 16)) , 2, ',', '.'); ?></h5>
 												<div class="right">
 													<input name="metodopago" type="radio" value="3" class="with-gap radioMetodo" id="radio_3" require>
 	                                 	<label for="radio_3">Seleccionar</label>

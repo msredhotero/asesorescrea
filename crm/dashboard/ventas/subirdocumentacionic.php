@@ -24,7 +24,7 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cobranza/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../ventas/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
@@ -39,7 +39,7 @@ $resultado 		= 	$serviciosReferencias->traerPeriodicidadventasdetallePorIdComple
 
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cobranza",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Polizas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -89,7 +89,7 @@ if (!file_exists($path)) {
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, $iddocumentacion);
+$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionDetalle($id, $iddocumentacion);
 
 $resDocumentacion = $serviciosReferencias->traerDocumentacionesPorId($iddocumentacion);
 
@@ -164,7 +164,7 @@ switch ($iddocumentacion) {
 	break;
 }
 
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($id, $iddocumentacion);
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, $iddocumentacion);
 
 ?>
 
@@ -304,69 +304,11 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumenta
 			</div>
 
 			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="card ">
-						<div class="header bg-blue">
-							<h2>
-								DOCUMENTACION - <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?>
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-									<ul class="dropdown-menu pull-right">
-
-									</ul>
-								</li>
-							</ul>
-						</div>
-						<div class="body table-responsive">
-							<div class="alert alert-info">
-								<p><?php echo '<b>Cliente: </b>'.$cliente; ?></p>
-							</div>
-							<div class="alert alert-success">
-								<p><?php echo '<b>Producto: </b>'.$producto; ?></p>
-							</div>
-							<button type="button" class="btn bg-green waves-effect btnVolver">
-								<i class="material-icons">undo</i>
-								<span>VOLVER</span>
-							</button>
-							<form class="form" id="formCountry">
-
-								<div class="row" style="padding: 5px 20px;">
-
-									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
-										<label class="form-label"><?php echo $leyenda; ?></label>
-										<div class="form-group input-group">
-											<div class="form-line">
-												<?php echo $input; ?>
-
-											</div>
-										</div>
-									</div>
-									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
-										<label class="form-label"> </label>
-										<div class="form-group input-group">
-											<div class="form-line">
-												<?php echo $boton; ?>
-
-											</div>
-										</div>
-									</div>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div> <!-- fin del card -->
-
-			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card">
 						<div class="header bg-blue">
 							<h2>
-								ARCHIVO CARGADO
+								<?php echo mysql_result($resDocumentacion,0,'documentacion'); ?> (Cargue Aqui)
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -377,12 +319,43 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumenta
 							</ul>
 						</div>
 						<div class="body">
+							<button type="button" class="btn bg-blue waves-effect btnVolver" style="margin-bottom:15px;">
+								VOLVER
+							</button>
+
+
+							<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+								<div class="dz-message">
+									<div class="drag-icon-cph">
+										<i class="material-icons">touch_app</i>
+									</div>
+									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+								</div>
+								<div class="fallback">
+									<input name="file" type="file" id="archivos" />
+									<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $idventa; ?>" />
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+					<div class="card ">
+						<div class="header bg-blue">
+							<h2>
+								<?php echo mysql_result($resDocumentacion,0,'documentacion'); ?>
+							</h2>
+						</div>
+						<div class="body table-responsive">
+
+
 							<div class="row">
 								<button type="button" class="btn bg-red waves-effect btnEliminar">
 									<i class="material-icons">remove</i>
 									<span>ELIMINAR</span>
 								</button>
 							</div>
+
 							<div class="row">
 								<a href="javascript:void(0);" class="thumbnail timagen1">
 									<img class="img-responsive">
@@ -395,6 +368,9 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumenta
 										Estado: <b><?php echo $estadoDocumentacion; ?></b>
 									</h4>
 								</div>
+								<?php
+								if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11)) {
+								?>
 								<div class="col-xs-6 col-md-6" style="display:block">
 									<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
 									<div class="input-group col-md-12">
@@ -402,50 +378,35 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumenta
 											<?php echo $cadRefEstados; ?>
 										</select>
 									</div>
-									<?php
-									if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11)) {
-									?>
+
 									<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
-								<?php } ?>
+
 								</div>
+								<?php } ?>
 
 							</div>
-					</div>
-				</div>
-			</div>
+							<!--
+							<form class="formulario frmNuevo" role="form" id="sign_in">
+								<div class="row">
+		                  	<?php //echo $frmUnidadNegocios; ?>
+								</div>
+								<div class="modal-footer">
+			                  <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
+									<button type="button" class="btn bg-defualt waves-effect btnVolver">
+			 							VOLVER
+		 							</button>
+			               </div>
+							</form>-->
 
-			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="card">
-						<div class="header bg-blue">
-							<h2>
-								CARGA/MODIFIQUE LA DOCUMENTACIÓN <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?> AQUI
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div class="body">
-							<form action="subirc.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
-								<div class="dz-message">
-									<div class="drag-icon-cph">
-										<i class="material-icons">touch_app</i>
-									</div>
-									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
-								</div>
-								<div class="fallback">
-									<input name="file" type="file" id="archivos" />
-									<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
-								</div>
-							</form>
+
+
 						</div>
 					</div>
 				</div>
-			</div>
+			</div> <!-- fin del card -->
+
+
+
 		</div>
 	</div>
 </section>

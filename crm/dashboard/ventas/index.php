@@ -30,7 +30,7 @@ $serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../ventas/')
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Ventas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Polizas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -39,9 +39,9 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Venta";
+$singular = "Poliza";
 
-$plural = "Ventas";
+$plural = "Polizas";
 
 $eliminar = "eliminarVentas";
 
@@ -240,8 +240,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 	                  	<h4>Seleccione el origen de la Venta</h4>
 								<ul class="nav nav-tabs tab-nav-right" role="tablist">
 									<li role="presentation" class="activo"><a href="#tabventaonline" data-toggle="tab">VENTA ONLINE</a></li>
-									<li role="presentation"><a href="#tabcotizacionesagentes" data-toggle="tab">COTIZACIONES AGENTES</a></li>
-									<li role="presentation"><a href="#tabcotizacionesoficina" data-toggle="tab">COTIZACIONES OFICINA</a></li>
+									<li role="presentation"><a href="#tabcotizacionesagentes" data-toggle="tab">COTIZACIONES</a></li>
 									<li role="presentation"><a href="#tabrenovaciones" data-toggle="tab">RENOVACIONES</a></li>
 								</ul>
 
@@ -257,6 +256,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 														<th>Asociado</th>
 														<th>Fecha</th>
 														<th>Estado</th>
+														<th>Folio</th>
 														<th>Acciones</th>
 													</tr>
 												</thead>
@@ -268,6 +268,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 														<th>Asociado</th>
 														<th>Fecha</th>
 														<th>Estado</th>
+														<th>Folio</th>
 														<th>Acciones</th>
 													</tr>
 												</tfoot>
@@ -286,6 +287,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 														<th>Asociado</th>
 														<th>Fecha</th>
 														<th>Estado</th>
+														<th>Folio</th>
 														<th>Acciones</th>
 													</tr>
 												</thead>
@@ -297,6 +299,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 														<th>Asociado</th>
 														<th>Fecha</th>
 														<th>Estado</th>
+														<th>Folio</th>
 														<th>Acciones</th>
 													</tr>
 												</tfoot>
@@ -304,34 +307,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 										</div>
 									</div>
 
-									<div role="tabpanel" class="tab-pane fade" id="tabcotizacionesoficina">
-										<div class="row contCotizacionesOficina" style="padding: 5px 20px;">
-											<table id="example4" class="display table " style="width:100%">
-												<thead>
-													<tr>
-														<th>Cliente</th>
-														<th>Producto</th>
-														<th>Asesor</th>
-														<th>Asociado</th>
-														<th>Fecha</th>
-														<th>Estado</th>
-														<th>Acciones</th>
-													</tr>
-												</thead>
-												<tfoot>
-													<tr>
-														<th>Cliente</th>
-														<th>Producto</th>
-														<th>Asesor</th>
-														<th>Asociado</th>
-														<th>Fecha</th>
-														<th>Estado</th>
-														<th>Acciones</th>
-													</tr>
-												</tfoot>
-											</table>
-										</div>
-									</div>
+
 
 									<div role="tabpanel" class="tab-pane fade" id="tabrenovaciones">
 

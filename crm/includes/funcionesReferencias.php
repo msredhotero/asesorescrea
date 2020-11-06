@@ -375,6 +375,14 @@ class ServiciosReferencias {
    return $res;
    }
 
+   function aplicarPago($id,$aplicar) {
+   $sql = "update dbpagos
+   set
+   conciliado = '".$aplicar."' where idpago =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
 
    function eliminarPagos($id) {
    $sql = "delete from dbpagos where idpago =".$id;
@@ -410,7 +418,7 @@ class ServiciosReferencias {
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and tt.especifico like '%".$busqueda."%') and p.monto like '%".$busqueda."%' and p.destino like '%".$busqueda."%' and (case when p.conciliado = '1' then 'Si' else 'No' end) like '%".$busqueda."%' and e.estadodocumentacion like '%".$busqueda."%'";
+			$where = " and (tt.especifico like '%".$busqueda."%' or p.monto like '%".$busqueda."%' or p.destino like '%".$busqueda."%' or (case when p.conciliado = '1' then 'Si' else 'No' end) like '%".$busqueda."%' or e.estadodocumentacion like '%".$busqueda."%' or v.folio like '%".$busqueda."%')";
 		}
 
       $sql = "select
@@ -442,6 +450,8 @@ class ServiciosReferencias {
 		where p.reftabla = 12 ".$where."
       ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
+
+      //die(var_dump($sql));
 
       $res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
@@ -3820,18 +3830,24 @@ return $res;
 
 	/* PARA Periodicidadventaspagos */
 
-   function insertarPeriodicidadventaspagos($refperiodicidadventasdetalle,$monto,$nrorecibo,$fechapago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi,$nrofactura) {
-      $sql = "insert into dbperiodicidadventaspagos(idperiodicidadventapago,refperiodicidadventasdetalle,monto,nrorecibo,fechapago,usuariocrea,usuariomodi,fechacrea,fechamodi,nrofactura)
-      values ('',".$refperiodicidadventasdetalle.",".$monto.",'".$nrorecibo."','".$fechapago."','".$usuariocrea."','".$usuariomodi."','".$fechacrea."','".$fechamodi."','".$nrofactura."')";
+   function insertarPeriodicidadventaspagos($refperiodicidadventasdetalle,$monto,$nrorecibo,$fechapago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi,$nrofactura,$fechapagoreal) {
+      if ($fechapagoreal == '') {
+         $sql = "insert into dbperiodicidadventaspagos(idperiodicidadventapago,refperiodicidadventasdetalle,monto,nrorecibo,fechapago,usuariocrea,usuariomodi,fechacrea,fechamodi,nrofactura,fechapagoreal)
+         values ('',".$refperiodicidadventasdetalle.",".$monto.",'".$nrorecibo."','".$fechapago."','".$usuariocrea."','".$usuariomodi."','".$fechacrea."','".$fechamodi."','".$nrofactura."',NULL)";
+      } else {
+         $sql = "insert into dbperiodicidadventaspagos(idperiodicidadventapago,refperiodicidadventasdetalle,monto,nrorecibo,fechapago,usuariocrea,usuariomodi,fechacrea,fechamodi,nrofactura,fechapagoreal)
+         values ('',".$refperiodicidadventasdetalle.",".$monto.",'".$nrorecibo."','".$fechapago."','".$usuariocrea."','".$usuariomodi."','".$fechacrea."','".$fechamodi."','".$nrofactura."','".$fechapagoreal."')";
+      }
+
       $res = $this->query($sql,1);
       return $res;
    }
 
 
-   function modificarPeriodicidadventaspagos($id,$refperiodicidadventasdetalle,$monto,$nrorecibo,$fechapago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi,$nrofactura) {
+   function modificarPeriodicidadventaspagos($id,$refperiodicidadventasdetalle,$monto,$nrorecibo,$fechapago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi,$nrofactura,$avisoinbursa,$fechapagoreal) {
       $sql = "update dbperiodicidadventaspagos
       set
-      refperiodicidadventasdetalle = ".$refperiodicidadventasdetalle.",monto = ".$monto.",nrorecibo = '".$nrorecibo."',fechapago = '".$fechapago."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."',fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',nrofactura = '".$nrofactura."'
+      refperiodicidadventasdetalle = ".$refperiodicidadventasdetalle.",monto = ".$monto.",nrorecibo = '".$nrorecibo."',fechapago = '".$fechapago."',usuariocrea = '".$usuariocrea."',usuariomodi = '".$usuariomodi."',fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',nrofactura = '".$nrofactura."',avisoinbursa = '".$avisoinbursa."',fechapagoreal = '".$fechapagoreal."'
       where idperiodicidadventapago =".$id;
       $res = $this->query($sql,0);
       return $res;
@@ -3841,6 +3857,14 @@ return $res;
    $sql = "update dbperiodicidadventaspagos
    set
    avisoinbursa = '".$avisoinbursa."' where refperiodicidadventasdetalle =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+   function marcarFechaPagoRealInbursa($id) {
+   $sql = "update dbperiodicidadventaspagos
+   set
+   fechapagoreal = now() where refperiodicidadventasdetalle =".$id;
    $res = $this->query($sql,0);
    return $res;
    }
@@ -3885,7 +3909,9 @@ return $res;
 		p.usuariomodi,
 		p.fechacrea,
 		p.fechamodi,
-      p.nrofactura
+      p.nrofactura,
+      p.avisoinbursa,
+      p.fechapagoreal
 		from dbperiodicidadventaspagos p
 		inner join dbperiodicidadventasdetalle per ON per.idperiodicidadventadetalle = p.refperiodicidadventasdetalle
 		inner join dbperiodicidadventas pe ON pe.idperiodicidadventa = per.refperiodicidadventas
@@ -3902,7 +3928,7 @@ return $res;
 
 
 	function traerPeriodicidadventaspagosPorId($id) {
-		$sql = "select idperiodicidadventapago,refperiodicidadventasdetalle,monto,nrorecibo,fechapago,usuariocrea,usuariomodi,fechacrea,fechamodi,nrofactura from dbperiodicidadventaspagos where idperiodicidadventapago =".$id;
+		$sql = "select idperiodicidadventapago,refperiodicidadventasdetalle,monto,nrorecibo,fechapago,usuariocrea,usuariomodi,fechacrea,fechamodi,nrofactura,avisoinbursa,fechapagoreal from dbperiodicidadventaspagos where idperiodicidadventapago =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -3925,7 +3951,7 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and ".$roles." (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or p.nrorecibo like '%".$busqueda."%')";
+			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or p.nrorecibo like '%".$busqueda."%')";
 		}
 
 
@@ -3974,21 +4000,14 @@ return $res;
 		return $res;
 	}
 
-
-   function traerCobranzaInbursaajax($length, $start, $busqueda,$colSort,$colSortDir) {
+   function traerCobranzaVentaajax($length, $start, $busqueda,$colSort,$colSortDir,$idventa) {
 		$where = '';
 
       $cadCliente = '';
 
-      if ($_SESSION['idroll_sahilices'] == 16) {
-   		$resCliente = $this->traerClientesPorUsuarioCompleto($_SESSION['usuaid_sahilices']);
-
-   		$cadCliente = ' and cli.idcliente = '.mysql_result($resCliente,0,'idcliente').' ';
-   	}
-
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and ".$roles." (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or p.nrorecibo like '%".$busqueda."%')";
+			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or p.nrorecibo like '%".$busqueda."%')";
 		}
 
 
@@ -4018,6 +4037,399 @@ return $res;
 						p.refperiodicidadventas
 		from dbperiodicidadventasdetalle p
 		inner join dbperiodicidadventas per ON per.idperiodicidadventa = p.refperiodicidadventas
+		inner join dbventas ve ON ve.idventa = per.refventas
+        inner join dbcotizaciones co on co.idcotizacion = ve.refcotizaciones
+        inner join dbclientes cli on cli.idcliente = co.refclientes
+        inner join dbasesores ase on ase.idasesor = co.refasesores
+        inner join tbestadoasesor ea on ea.idestadoasesor = ase.refestadoasesor
+		inner join tbtipoperiodicidad tp ON tp.idtipoperiodicidad = per.reftipoperiodicidad
+		inner join tbtipocobranza ti ON ti.idtipocobranza = per.reftipocobranza
+		inner join tbestadopago est ON est.idestadopago = p.refestadopago
+
+        where p.refestadopago in (1,3) and ve.idventa = ".$idventa." ".$cadCliente.$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+
+   function traerCobranzaPorEstadosajax($length, $start, $busqueda,$colSort,$colSortDir,$idestado) {
+		$where = '';
+
+      $cadCliente = '';
+
+      $cadValidar = '';
+      if ($idestado == 999) {
+         $cadValidar = " inner join dbdocumentacionventas dv on dv.refperiodicidadventas = p.idperiodicidadventadetalle and dv.refdocumentaciones = 39 and dv.refestadodocumentaciones <> 5 ";
+         $idestado = '1,3';
+      }
+
+      if ($_SESSION['idroll_sahilices'] == 16) {
+   		$resCliente = $this->traerClientesPorUsuarioCompleto($_SESSION['usuaid_sahilices']);
+
+   		$cadCliente = ' and cli.idcliente = '.mysql_result($resCliente,0,'idcliente').' ';
+   	}
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or p.nrorecibo like '%".$busqueda."%' or est.estadopago like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+						p.idperiodicidadventadetalle,
+						concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+						ve.nropoliza,
+						p.fechapago,
+						cli.numerocliente,
+						cli.idclienteinbursa,
+						p.nrorecibo,
+						est.estadopago,
+						p.montototal,
+						p.primaneta,
+						p.porcentajecomision,
+						p.montocomision,
+						p.fechapago,
+						p.fechavencimiento,
+						est.estadopago,
+						p.nrorecibo,
+						ea.estadoasesor,
+						p.refestadopago,
+						p.usuariocrea,
+						p.usuariomodi,
+						p.fechacrea,
+						p.fechamodi,
+						p.refperiodicidadventas
+		from dbperiodicidadventasdetalle p
+		inner join dbperiodicidadventas per ON per.idperiodicidadventa = p.refperiodicidadventas
+		inner join dbventas ve ON ve.idventa = per.refventas
+      inner join dbcotizaciones co on co.idcotizacion = ve.refcotizaciones
+      inner join dbclientes cli on cli.idcliente = co.refclientes
+      inner join dbasesores ase on ase.idasesor = co.refasesores
+      inner join tbestadoasesor ea on ea.idestadoasesor = ase.refestadoasesor
+		inner join tbtipoperiodicidad tp ON tp.idtipoperiodicidad = per.reftipoperiodicidad
+		inner join tbtipocobranza ti ON ti.idtipocobranza = per.reftipocobranza
+		inner join tbestadopago est ON est.idestadopago = p.refestadopago
+      ".$cadValidar."
+        where p.refestadopago in (".$idestado.") ".$cadCliente.$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+   // todo lo aplicado
+   function traerFacturacionajax($length, $start, $busqueda,$colSort,$colSortDir) {
+		$where = '';
+
+      $cadCliente = '';
+
+      $cadValidar = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or p.nrorecibo like '%".$busqueda."%' or est.estadopago like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+						p.idperiodicidadventadetalle,
+						concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+						ve.nropoliza,
+						p.fechapago,
+						cli.numerocliente,
+						cli.idclienteinbursa,
+						p.nrorecibo,
+						p.montototal,
+                  pp.fechapagoreal,
+						p.primaneta,
+						p.porcentajecomision,
+						p.montocomision,
+						p.fechapago,
+                  est.estadopago,
+						p.fechavencimiento,
+						p.nrorecibo,
+						ea.estadoasesor,
+                  est.estadopago,
+						p.refestadopago,
+						p.usuariocrea,
+						p.usuariomodi,
+						p.fechacrea,
+						p.fechamodi,
+						p.refperiodicidadventas
+		from dbperiodicidadventasdetalle p
+		inner join dbperiodicidadventas per ON per.idperiodicidadventa = p.refperiodicidadventas
+		inner join dbventas ve ON ve.idventa = per.refventas
+      inner join dbcotizaciones co on co.idcotizacion = ve.refcotizaciones
+      inner join dbclientes cli on cli.idcliente = co.refclientes
+      inner join dbasesores ase on ase.idasesor = co.refasesores
+      inner join tbestadoasesor ea on ea.idestadoasesor = ase.refestadoasesor
+		inner join tbtipoperiodicidad tp ON tp.idtipoperiodicidad = per.reftipoperiodicidad
+		inner join tbtipocobranza ti ON ti.idtipocobranza = per.reftipocobranza
+		inner join tbestadopago est ON est.idestadopago = p.refestadopago
+      inner join dbperiodicidadventaspagos pp ON pp.refperiodicidadventasdetalle = p.idperiodicidadventadetalle
+        where p.refestadopago in (5) ".$cadCliente.$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+
+   // todo lo aplicado
+   function traerFacturacionRecibosajax($length, $start, $busqueda,$colSort,$colSortDir) {
+		$where = '';
+
+      $cadCliente = '';
+
+      $cadValidar = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or p.nrorecibo like '%".$busqueda."%' or est.estadopago like '%".$busqueda."%')";
+		}
+
+
+		$sql = "
+                select
+            		p.idperiodicidadventadetalle,
+            		concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+            		ve.nropoliza,
+            		p.fechapago,
+            		cli.numerocliente,
+            		cli.idclienteinbursa,
+            		p.nrorecibo,
+            		p.montototal,
+            		pp.fechapagoreal,
+            		p.primaneta,
+            		p.porcentajecomision,
+            		p.montocomision,
+            		p.fechapago,
+            		est.estadopago,
+            		p.fechavencimiento,
+            		p.nrorecibo,
+            		ea.estadoasesor,
+            		est.estadopago,
+            		p.refestadopago,
+            		p.usuariocrea,
+            		p.usuariomodi,
+            		p.fechacrea,
+            		p.fechamodi,
+            		p.refperiodicidadventas
+            	from dbperiodicidadventasdetalle p
+            		inner join dbperiodicidadventas per ON per.idperiodicidadventa = p.refperiodicidadventas
+            		inner join dbventas ve ON ve.idventa = per.refventas
+            		inner join dbcotizaciones co on co.idcotizacion = ve.refcotizaciones
+            		inner join dbclientes cli on cli.idcliente = co.refclientes
+            		inner join dbasesores ase on ase.idasesor = co.refasesores
+            		inner join tbestadoasesor ea on ea.idestadoasesor = ase.refestadoasesor
+            		inner join tbtipoperiodicidad tp ON tp.idtipoperiodicidad = per.reftipoperiodicidad
+            		inner join tbtipocobranza ti ON ti.idtipocobranza = per.reftipocobranza
+            		inner join tbestadopago est ON est.idestadopago = p.refestadopago
+            		inner join dbperiodicidadventaspagos pp ON pp.refperiodicidadventasdetalle = p.idperiodicidadventadetalle
+
+        where p.refestadopago in (5) ".$cadCliente.$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+   // todo lo aplicado
+   function traerFacturacionGlobalesajax($length, $start, $busqueda,$colSort,$colSortDir) {
+		$where = '';
+
+      $cadCliente = '';
+
+      $cadValidar = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or doc.documentacion like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+               dvv.iddocumentacionventa,
+               concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+               doc.documentacion,
+               ve.nropoliza,
+               cli.numerocliente,
+               cli.idclienteinbursa,
+               ve.fechavencimientopoliza
+
+         from dbventas ve
+         inner join dbcotizaciones co on co.idcotizacion = ve.refcotizaciones
+         inner join dbclientes cli on cli.idcliente = co.refclientes
+         inner join dbasesores ase on ase.idasesor = co.refasesores
+         inner join tbestadoasesor ea on ea.idestadoasesor = ase.refestadoasesor
+         inner join dbdocumentacionventas dvv on dvv.refventas = ve.idventa
+         inner join dbdocumentaciones doc on doc.iddocumentacion = dvv.refdocumentaciones and doc.iddocumentacion in (147,148)
+
+        where 1=1 ".$cadCliente.$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+
+   // todo lo aplicado
+   function traerFacturacionClienteRecibosajax($length, $start, $busqueda,$colSort,$colSortDir,$idcliente) {
+		$where = '';
+
+      $cadCliente = '';
+
+      $cadValidar = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or p.nrorecibo like '%".$busqueda."%' or est.estadopago like '%".$busqueda."%')";
+		}
+
+
+		$sql = "
+                select
+            		p.idperiodicidadventadetalle,
+            		concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+            		ve.nropoliza,
+            		p.fechapago,
+            		cli.numerocliente,
+            		cli.idclienteinbursa,
+            		p.nrorecibo,
+            		p.montototal,
+            		pp.fechapagoreal,
+            		p.primaneta,
+            		p.porcentajecomision,
+            		p.montocomision,
+            		p.fechapago,
+            		est.estadopago,
+            		p.fechavencimiento,
+            		p.nrorecibo,
+            		ea.estadoasesor,
+            		est.estadopago,
+            		p.refestadopago,
+            		p.usuariocrea,
+            		p.usuariomodi,
+            		p.fechacrea,
+            		p.fechamodi,
+            		p.refperiodicidadventas
+            	from dbperiodicidadventasdetalle p
+            		inner join dbperiodicidadventas per ON per.idperiodicidadventa = p.refperiodicidadventas
+            		inner join dbventas ve ON ve.idventa = per.refventas
+            		inner join dbcotizaciones co on co.idcotizacion = ve.refcotizaciones
+            		inner join dbclientes cli on cli.idcliente = co.refclientes
+            		inner join dbasesores ase on ase.idasesor = co.refasesores
+            		inner join tbestadoasesor ea on ea.idestadoasesor = ase.refestadoasesor
+            		inner join tbtipoperiodicidad tp ON tp.idtipoperiodicidad = per.reftipoperiodicidad
+            		inner join tbtipocobranza ti ON ti.idtipocobranza = per.reftipocobranza
+            		inner join tbestadopago est ON est.idestadopago = p.refestadopago
+            		inner join dbperiodicidadventaspagos pp ON pp.refperiodicidadventasdetalle = p.idperiodicidadventadetalle
+
+        where cli.refusuarios = ".$idcliente." and p.refestadopago in (5) ".$cadCliente.$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+   // todo lo aplicado
+   function traerFacturacionClienteGlobalesajax($length, $start, $busqueda,$colSort,$colSortDir,$idcliente) {
+		$where = '';
+
+      $cadCliente = '';
+
+      $cadValidar = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or doc.documentacion like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+               dvv.iddocumentacionventa,
+               concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+               doc.documentacion,
+               ve.nropoliza,
+               cli.numerocliente,
+               cli.idclienteinbursa,
+               ve.fechavencimientopoliza
+
+         from dbventas ve
+         inner join dbcotizaciones co on co.idcotizacion = ve.refcotizaciones
+         inner join dbclientes cli on cli.idcliente = co.refclientes
+         inner join dbasesores ase on ase.idasesor = co.refasesores
+         inner join tbestadoasesor ea on ea.idestadoasesor = ase.refestadoasesor
+         inner join dbdocumentacionventas dvv on dvv.refventas = ve.idventa
+         inner join dbdocumentaciones doc on doc.iddocumentacion = dvv.refdocumentaciones and doc.iddocumentacion in (147,148)
+
+        where cli.refusuarios = ".$idcliente." ".$cadCliente.$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+
+   function traerCobranzaInbursaajax($length, $start, $busqueda,$colSort,$colSortDir) {
+		$where = '';
+
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or p.nrorecibo like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+						p.idperiodicidadventadetalle,
+						concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+						ve.nropoliza,
+						p.fechapago,
+						cli.numerocliente,
+						cli.idclienteinbursa,
+						p.nrorecibo,
+						(case when DATEDIFF(CURDATE(),p.fechamodi) >= 2 then 'Proceso de Aplicacion' else est.estadopago end) as estadopago,
+						p.montototal,
+						p.primaneta,
+						p.porcentajecomision,
+						p.montocomision,
+						p.fechapago,
+						p.fechavencimiento,
+						est.estadopago,
+						p.nrorecibo,
+						ea.estadoasesor,
+						p.refestadopago,
+						p.usuariocrea,
+						p.usuariomodi,
+						p.fechacrea,
+						p.fechamodi,
+						p.refperiodicidadventas
+		from dbperiodicidadventasdetalle p
+		inner join dbperiodicidadventas per ON per.idperiodicidadventa = p.refperiodicidadventas
       inner join dbperiodicidadventaspagos pg on pg.refperiodicidadventasdetalle = p.idperiodicidadventadetalle and pg.avisoinbursa = '1'
 		inner join dbventas ve ON ve.idventa = per.refventas
       inner join dbcotizaciones co on co.idcotizacion = ve.refcotizaciones
@@ -4028,7 +4440,7 @@ return $res;
 		inner join tbtipocobranza ti ON ti.idtipocobranza = per.reftipocobranza
 		inner join tbestadopago est ON est.idestadopago = p.refestadopago
 
-        where p.refestadopago in (2) ".$cadCliente.$where."
+        where p.refestadopago in (2) ".$where."
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
 
@@ -4037,6 +4449,8 @@ return $res;
 		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
 	}
+
+
 
 
    /* PARA Documentacionpagos */
@@ -4238,11 +4652,12 @@ return $res;
 					    coalesce( ed.estadodocumentacion, 'Falta') as estadodocumentacion,
 						 ed.color,
 					    ed.idestadodocumentacion
+
 					FROM
 					    dbdocumentaciones d
 					        LEFT JOIN
 					    dbdocumentacionventas da ON d.iddocumentacion = da.refdocumentaciones
-					        AND da.refventas = ".$idventa."
+					        AND da.refventas = ".$idventa." and da.refperiodicidadventas = 0
 					        LEFT JOIN
 					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
 					where d.iddocumentacion in (".$iddocumentacion.")
@@ -4252,18 +4667,44 @@ return $res;
  		return $res;
 	}
 
-	function insertarDocumentacionventas($refventas,$refdocumentaciones,$archivo,$type,$refestadodocumentaciones,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
-		$sql = "insert into dbdocumentacionventas(iddocumentacionventa,refventas,refdocumentaciones,archivo,type,refestadodocumentaciones,fechacrea,fechamodi,usuariocrea,usuariomodi)
-		values ('',".$refventas.",".$refdocumentaciones.",'".$archivo."','".$type."',".$refestadodocumentaciones.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."')";
+   function traerDocumentacionPorVentaDocumentacionCompletaDetalle($idventa,$iddocumentacion) {
+		$sql = "SELECT
+					    d.iddocumentacion,
+					    d.documentacion,
+					    d.obligatoria,
+					    da.iddocumentacionventa,
+					    da.archivo,
+					    da.type,
+					    coalesce( ed.estadodocumentacion, 'Falta') as estadodocumentacion,
+						 ed.color,
+					    ed.idestadodocumentacion
+
+					FROM
+					    dbdocumentaciones d
+					        LEFT JOIN
+					    dbdocumentacionventas da ON d.iddocumentacion = da.refdocumentaciones
+					        AND da.refperiodicidadventas = ".$idventa."
+					        LEFT JOIN
+					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
+					where d.iddocumentacion in (".$iddocumentacion.")
+
+					order by 1";
+		$res = $this->query($sql,0);
+ 		return $res;
+	}
+
+	function insertarDocumentacionventas($refventas,$refdocumentaciones,$archivo,$type,$refestadodocumentaciones,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refperiodicidadventas) {
+		$sql = "insert into dbdocumentacionventas(iddocumentacionventa,refventas,refdocumentaciones,archivo,type,refestadodocumentaciones,fechacrea,fechamodi,usuariocrea,usuariomodi,refperiodicidadventas)
+		values ('',".$refventas.",".$refdocumentaciones.",'".$archivo."','".$type."',".$refestadodocumentaciones.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."',".$refperiodicidadventas.")";
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarDocumentacionventas($id,$refventas,$refdocumentaciones,$archivo,$type,$refestadodocumentaciones,$fechamodi,$usuariomodi) {
+	function modificarDocumentacionventas($id,$refventas,$refdocumentaciones,$archivo,$type,$refestadodocumentaciones,$fechamodi,$usuariomodi,$refperiodicidadventas) {
 		$sql = "update dbdocumentacionventas
 		set
-		refventas = ".$refventas.",refdocumentaciones = ".$refdocumentaciones.",archivo = '".$archivo."',type = '".$type."',refestadodocumentaciones = ".$refestadodocumentaciones.",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."'
+		refventas = ".$refventas.",refdocumentaciones = ".$refdocumentaciones.",archivo = '".$archivo."',type = '".$type."',refestadodocumentaciones = ".$refestadodocumentaciones.",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',refperiodicidadventas = ".$refperiodicidadventas."
 		where iddocumentacionventa =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -4300,8 +4741,20 @@ return $res;
 		return $res;
 	}
 
+   function eliminarDocumentacionventasPorVentaDocumentacionDetalle($idventa,$iddocumentacion) {
+		$sql = "delete from dbdocumentacionventas where refperiodicidadventas =".$idventa." and refdocumentaciones = ".$iddocumentacion;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 	function eliminarDocumentacionventasPorVentasDocumentacionEspecifico($idventa,$iddocumentacion, $archivo) {
 		$sql = "delete from dbdocumentacionventas where refventas =".$idventa =" and refdocumentaciones = ".$iddocumentacion." and archivo like '%".$archivo."%'";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function eliminarDocumentacionventasPorVentasDocumentacionEspecificoDetalle($idventa,$iddocumentacion, $archivo) {
+		$sql = "delete from dbdocumentacionventas where refperiodicidadventas =".$idventa =" and refdocumentaciones = ".$iddocumentacion." and archivo like '%".$archivo."%'";
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -4312,6 +4765,51 @@ return $res;
 		/*** fin auditoria ***/
 
 		$resFoto = $this->traerDocumentacionPorVentaDocumentacion($idventa,$iddocumentacion);
+
+		$resDocumentacion = $this->traerDocumentacionesPorId($iddocumentacion);
+
+		$imagen = '';
+
+      if (mysql_num_rows($resFoto) > 0) {
+         /* produccion
+         $imagen = 'https://www.saupureinconsulting.com.ar/aifzn/'.mysql_result($resFoto,0,'archivo').'/'.mysql_result($resFoto,0,'imagen');
+         */
+
+         //desarrollo
+
+         if (mysql_result($resFoto,0,'type') == '') {
+
+            $resV['error'] = true;
+				$resV['leyenda'] = 'Archivo perdido';
+         } else {
+				$archivos = '../archivos/ventas/'.$idventa.'/'.mysql_result($resDocumentacion,0,'carpeta').'/';
+
+            $resBorrar = $this->borrarDirecctorio($archivos);
+
+				$resUpdate = $this->eliminarDocumentacionventas(mysql_result($resFoto,0,'iddocumentacionventa'));
+
+            $resV['error'] = false;
+				$resV['leyenda'] = 'Archivo eliminado correctamente';
+         }
+
+
+
+      } else {
+         $resV['error'] = true;
+			$resV['leyenda'] = 'Archivo no encontrado';
+      }
+
+		return $resV;
+
+	}
+
+
+   function eliminarDocumentacionVentaDetalle($idventa,$iddocumentacion) {
+		/*** auditoria ****/
+
+		/*** fin auditoria ***/
+
+		$resFoto = $this->traerDocumentacionPorVentaDocumentacionDetalle($idventa,$iddocumentacion);
 
 		$resDocumentacion = $this->traerDocumentacionesPorId($iddocumentacion);
 
@@ -4388,7 +4886,20 @@ return $res;
 		from dbdocumentacionventas da
 		inner join dbdocumentaciones d on d.iddocumentacion = da.refdocumentaciones
 		inner join tbestadodocumentaciones e on e.idestadodocumentacion = da.refestadodocumentaciones
-		where da.refventas =".$id." and da.refdocumentaciones = ".$iddocumentacion;
+		where da.refventas =".$id." and da.refperiodicidadventas=0 and da.refdocumentaciones = ".$iddocumentacion;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function traerDocumentacionPorVentaDocumentacionDetalle($id, $iddocumentacion) {
+		$sql = "select
+		da.iddocumentacionventa,da.refventas,da.refdocumentaciones,
+		da.archivo,da.type,da.refestadodocumentaciones,da.fechacrea,da.fechamodi,
+		da.usuariocrea,da.usuariomodi , e.estadodocumentacion, e.color, d.carpeta, da.refperiodicidadventas
+		from dbdocumentacionventas da
+		inner join dbdocumentaciones d on d.iddocumentacion = da.refdocumentaciones
+		inner join tbestadodocumentaciones e on e.idestadodocumentacion = da.refestadodocumentaciones
+		where da.refperiodicidadventas =".$id." and da.refdocumentaciones = ".$iddocumentacion;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -4473,6 +4984,14 @@ return $res;
 		set
 		refperiodicidadventas = ".$refperiodicidadventas.",montototal = ".$montototal.",primaneta = ".$primaneta.",porcentajecomision = ".$porcentajecomision.",montocomision = ".$montocomision.",fechapago = '".$fechapago."',fechavencimiento = '".$fechavencimiento."',refestadopago = ".$refestadopago.",usuariomodi = '".$usuariomodi."',fechamodi = '".$fechamodi."',nrorecibo = '".$nrorecibo."'
 		where idperiodicidadventadetalle =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function modificarPeriodicidadventasdetalleEstado($id,$refestadopago,$usuariomodi,$fechamodi) {
+		$sql = "update dbperiodicidadventasdetalle
+		set
+		refestadopago = ".$refestadopago.",usuariomodi = '".$usuariomodi."',fechamodi = '".$fechamodi."' where idperiodicidadventadetalle =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -4572,13 +5091,15 @@ return $res;
 		pvd.refestadopago,
 		pvd.usuariocrea,pvd.usuariomodi,pvd.fechacrea,pvd.fechamodi,
 		pv.refventas,
-		pvd.nrorecibo
+		pvd.nrorecibo,
+      v.nropoliza,tp.estadopago
 		from dbperiodicidadventasdetalle pvd
 		inner join dbperiodicidadventas pv ON pv.idperiodicidadventa = pvd.refperiodicidadventas
          inner join dbventas v on v.idventa = pv.refventas
 			inner join dbcotizaciones co on co.idcotizacion = v.refcotizaciones
 			inner join dbclientes cli ON cli.idcliente = co.refclientes
 			inner join tbproductos pro ON pro.idproducto = co.refproductos
+      inner join tbestadopago tp ON tp.idestadopago = pvd.refestadopago
 		where pvd.idperiodicidadventadetalle =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -4984,7 +5505,7 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " where ".$roles." (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or pro.producto like '%".$busqueda."%' or concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%')";
+			$where = " where ".$roles." (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or pro.producto like '%".$busqueda."%' or concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%' or v.nropoliza like '%".$busqueda."%')";
 		} else {
 			if ($responsableComercial != '') {
 	         $where = " where ase.refusuarios = ".$responsableComercial." ";
@@ -5111,11 +5632,95 @@ return $res;
 		v.foliotys,v.foliointerno,
 		c.refclientes,
 		c.refproductos,
-      p.producto
+      p.producto,
+      cli.refusuarios,
+      ase.refusuarios as refusuariosasesor,
+      cli.email, ase.email as emialasesor
 		from dbventas v
 		inner join dbcotizaciones c ON c.idcotizacion = v.refcotizaciones
+      inner join dbclientes cli ON cli.idcliente = c.refclientes
+      inner join dbasesores ase on ase.idasesor = c.refasesores
       inner join tbproductos p on p.idproducto = c.refproductos
 		where v.idventa =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+   function traerVentasPorUsuarioCompleto($idusuario) {
+		$sql = "select
+		v.idventa,v.refcotizaciones,v.refestadoventa,v.primaneta,
+		v.primatotal,v.fechacrea,v.fechamodi,v.usuariocrea,
+		v.usuariomodi,v.nropoliza,v.fechavencimientopoliza,
+		v.foliotys,v.foliointerno,
+		c.refclientes,
+		c.refproductos,
+      p.producto,
+      tc.tipocobranza,
+      (case when c.tieneasegurado = '1' then concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) else  concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) end) as asegurado,
+      (case when v.fechavencimientopoliza > now() then 'green' else 'red' end) as color,
+      pv.idperiodicidadventa
+		from dbventas v
+      inner join dbperiodicidadventas pv on pv.refventas = v.idventa
+      inner join tbtipocobranza tc on tc.idtipocobranza = pv.reftipocobranza
+		inner join dbcotizaciones c ON c.idcotizacion = v.refcotizaciones
+      inner join dbclientes cli ON cli.idcliente = c.refclientes
+      inner join tbproductos p on p.idproducto = c.refproductos
+      left join dbasegurados ase ON ase.idasegurado = c.refasegurados
+      left join dbasegurados ben ON ase.idasegurado = c.refbeneficiarios
+      inner join dbdocumentacionventas dv on dv.refventas = v.idventa and dv.refdocumentaciones = 35
+      inner join dbperiodicidadventasdetalle pvd on pvd.refperiodicidadventas = pv.idperiodicidadventa
+		where c.refusuarios =".$idusuario."
+      group by v.idventa,v.refcotizaciones,v.refestadoventa,v.primaneta,
+		v.primatotal,v.fechacrea,v.fechamodi,v.usuariocrea,
+		v.usuariomodi,v.nropoliza,v.fechavencimientopoliza,
+		v.foliotys,v.foliointerno,
+		c.refclientes,
+		c.refproductos,
+      p.producto,
+      tc.tipocobranza,
+      c.tieneasegurado,ase.apellidopaterno, ase.apellidomaterno, ase.nombre,cli.apellidopaterno, cli.apellidomaterno, cli.nombre,
+      v.fechavencimientopoliza,pv.idperiodicidadventa
+      order by v.fechavencimientopoliza desc";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function traerVentasPorUsuarioVentaCompleto($idusuario,$idventa) {
+		$sql = "select
+		v.idventa,v.refcotizaciones,v.refestadoventa,v.primaneta,
+		v.primatotal,v.fechacrea,v.fechamodi,v.usuariocrea,
+		v.usuariomodi,v.nropoliza,v.fechavencimientopoliza,
+		v.foliotys,v.foliointerno,
+		c.refclientes,
+		c.refproductos,
+      p.producto,
+      tc.tipocobranza,
+      (case when c.tieneasegurado = '1' then concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) else  concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) end) as asegurado,
+      (case when v.fechavencimientopoliza > now() then 'green' else 'red' end) as color,
+      pv.idperiodicidadventa
+		from dbventas v
+      inner join dbperiodicidadventas pv on pv.refventas = v.idventa
+      inner join tbtipocobranza tc on tc.idtipocobranza = pv.reftipocobranza
+		inner join dbcotizaciones c ON c.idcotizacion = v.refcotizaciones
+      inner join dbclientes cli ON cli.idcliente = c.refclientes
+      inner join tbproductos p on p.idproducto = c.refproductos
+      left join dbasegurados ase ON ase.idasegurado = c.refasegurados
+      left join dbasegurados ben ON ase.idasegurado = c.refbeneficiarios
+      inner join dbdocumentacionventas dv on dv.refventas = v.idventa and dv.refdocumentaciones = 35
+      inner join dbperiodicidadventasdetalle pvd on pvd.refperiodicidadventas = pv.idperiodicidadventa
+		where c.refusuarios =".$idusuario."
+      group by v.idventa,v.refcotizaciones,v.refestadoventa,v.primaneta,
+		v.primatotal,v.fechacrea,v.fechamodi,v.usuariocrea,
+		v.usuariomodi,v.nropoliza,v.fechavencimientopoliza,
+		v.foliotys,v.foliointerno,
+		c.refclientes,
+		c.refproductos,
+      p.producto,
+      tc.tipocobranza,
+      c.tieneasegurado,ase.apellidopaterno, ase.apellidomaterno, ase.nombre,cli.apellidopaterno, cli.apellidomaterno, cli.nombre,
+      v.fechavencimientopoliza,pv.idperiodicidadventa
+      order by v.fechavencimientopoliza desc";
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -8743,7 +9348,7 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and ".$roles." (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or pro.producto like '%".$busqueda."%' or concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%')";
+			$where = " and ".$roles." (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or pro.producto like '%".$busqueda."%' or concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%' or c.folio like '%".$busqueda."%')";
 		} else {
 			if ($responsableComercial != '') {
 	         $where = " where ase.refusuarios = ".$responsableComercial." ";
@@ -8759,6 +9364,7 @@ return $res;
 		concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
       c.fechamodi,
       est.estadocotizacion,
+      c.folio,
       DATEDIFF(CURDATE(),c.fechacrea) as dias,
 		c.refclientes,
 		c.refproductos,
@@ -8799,7 +9405,7 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or pro.producto like '%".$busqueda."%' or concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%')";
+			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or pro.producto like '%".$busqueda."%' or concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%' or c.folio like '%".$busqueda."%')";
 		}
 
 
@@ -8808,6 +9414,7 @@ return $res;
 		pro.producto,
       c.fechacrea,
 		est.estadocotizacion,
+      c.folio,
 		c.refclientes,
 		c.refproductos,
 		c.refasesores,
@@ -8832,7 +9439,7 @@ return $res;
 		left join dbasociados aso ON aso.idasociado = c.refasociados
 		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
 		left join dbventas v on v.refcotizaciones = c.idcotizacion
-		where (v.idventa IS NULL or c.refestadocotizaciones IN (19,20,21,22,23)) and c.refestadocotizaciones in (1,19,20,21,22,23) and us.idusuario = ".$responsableComercial." ".$where."
+		where ((v.idventa IS NULL or c.refestadocotizaciones IN (19,20,21,22,23)) and c.refestadocotizaciones in (1,19,20,21,22,23) and us.idusuario = ".$responsableComercial.") ".$where."
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
 
@@ -16647,6 +17254,7 @@ return $res;
             delete from dbclientescartera;
             delete from dblead;
             delete from dbasegurados;
+            delete from dbdocumentacionventas;
 
             delete from dbperiodicidadventaspagos;
             delete from dbperiodicidadventasdetalle;
@@ -16658,7 +17266,8 @@ return $res;
             delete from dbfirmarcontratos;
             delete from dbventas;
             delete from dbcotizaciones;
-            delete from dbdocumentacionclientes;";
+            delete from dbdocumentacionclientes;
+            ";
       $res = $this->query($sql,0);
 
       return $res;

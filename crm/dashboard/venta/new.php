@@ -901,7 +901,11 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 											<!-- fin verifico que existan archivos para cargarle al producto -->
 
 
-										<?php if ($llevaBeneficiario == 1) { ?>
+										<?php
+										// seteo el beneficiario en cero
+										$llevaBeneficiario = 0;
+										if ($llevaBeneficiario == 1) {
+											?>
 										<h3>BENEFICIARIO</h3>
                                  <fieldset>
 												<div class="row">

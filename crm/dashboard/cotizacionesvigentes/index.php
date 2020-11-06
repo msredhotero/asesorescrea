@@ -250,6 +250,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 												<th>Producto</th>
 												<th>Fecha Solicitud</th>
 												<th>Estado</th>
+												<th>Folio</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -258,6 +259,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 												<th>Producto</th>
 												<th>Fecha Solicitud</th>
 												<th>Estado</th>
+												<th>Folio</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>

@@ -272,8 +272,8 @@ $resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 			               <li class="list-inline-item"><img src="../../imagenes/mastercard.png" width="90" height="63"></li>
 
 			            </ul>
-			            <!--<form action="8407825_asesorescrea.php" method="post" id="formFin">-->
-							<form action="https://www.procom.prosa.com.mx/eMerch2/8407825_SegInbursa.jsp" method="post" id="formFin">
+			            <form action="8407825_asesorescrea.php" method="post" id="formFin">
+							<!--<form action="https://www.procom.prosa.com.mx/eMerch2/8407825_SegInbursa.jsp" method="post" id="formFin">-->
 			               <input type="hidden" name="total" value="<?php echo $comtotal; ?>">
 			               <input type="hidden" name="currency" value="<?php echo $comcurrency; ?>">
 			               <input type="hidden" name="address" value="<?php echo $comaddress; ?>">

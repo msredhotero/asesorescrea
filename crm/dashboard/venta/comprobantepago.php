@@ -132,7 +132,7 @@ if (mysql_num_rows($resPagos) > 0) {
 	$archivos = '';
 	$type = '';
 
-	$resPagos = $serviciosReferencias->insertarPagos(12,$id,$precio,$serviciosReferencias->GUID(),'Pago por transferencia bancaria',$refcuentasbancarias,$conciliado,$archivos,$type,date('Y-m-d H:i:s'),$_SESSION['nombre_sahilices'],1,'Foncerrada Y Javelly',$lblCliente,'');
+	$resPagos = $serviciosReferencias->insertarPagos(12,$id,$precio,$serviciosReferencias->GUID(),'Pago por transferencia bancaria',$refcuentasbancarias,$conciliado,$archivos,$type,date('Y-m-d H:i:s'),$_SESSION['nombre_sahilices'],1,'Foncerrada Y Javelly',$lblCliente,'','0');
 
 	$resPagos = $serviciosReferencias->traerPagosPorTablaReferencia(12, 'dbcotizaciones', 'idcotizacion', $id);
 
@@ -203,7 +203,13 @@ if ($refEstadoCotizacion == 22) {
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
-		.pdfobject-container { height: 30rem; border: 1rem solid rgba(0,0,0,.1); }
+
+		.pdfobject-container {
+		   max-width: 100%;
+			height: 400px;
+			border: 10px solid rgba(0,0,0,.2);
+			margin: 0;
+		}
 	</style>
 
 
@@ -399,13 +405,19 @@ if ($refEstadoCotizacion == 22) {
 
 <script src="../../js/pdfobject.min.js"></script>
 
-<script src="https://asesorescrea.com/desarrollo/crm/dashboard/ecommerce/assets/js/jquery.payform.min.js"></script>
-
-
 <script>
 	$(document).ready(function(){
 
-		function traerImagen(contenedorpdf, contenedor) {
+		var options = {
+		    height: "400px",
+		    page: '1',
+		    pdfOpenParams: {
+		        view: 'FitV',
+		        pagemode: 'thumbs',
+		        search: 'lorem ipsum'
+		    }
+		};
+		function traerImagen(contenedorpdf, contenedor, options) {
 			$.ajax({
 				data:  {idpago: <?php echo $idpago; ?>,
 						accion: 'traerPagosPorId'},
@@ -415,11 +427,13 @@ if ($refEstadoCotizacion == 22) {
 					$("." + contenedor + " img").attr("src",'');
 				},
 				success:  function (response) {
-					var cadena = response.datos.type.toLowerCase();
+
 
 					if (response.datos.type != '') {
+						var cadena = response.datos.type.toLowerCase();
+
 						if (cadena.indexOf("pdf") > -1) {
-							PDFObject.embed(response.datos.imagen, "#"+contenedorpdf);
+							PDFObject.embed(response.datos.imagen, "#example1",options);
 							$('#'+contenedorpdf).show();
 							$("."+contenedor).hide();
 
@@ -495,18 +509,6 @@ if ($refEstadoCotizacion == 22) {
 
 
 
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '315px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
-
-		});
 
 
 		$("#sign_in").submit(function(e){

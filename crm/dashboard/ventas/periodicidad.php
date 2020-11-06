@@ -32,7 +32,7 @@ $arRoles = array(1,4,11,7,10);
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Ventas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Polizas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -94,7 +94,11 @@ if ($existe == 1) {
 	if ($tipotarjeta == '1') {
 		$tipotarjeta = 'Tarjeta de Credito';
 	} else {
-		$tipotarjeta = 'Tarjeta de Debito';
+		if ($tipotarjeta == '2') {
+			$tipotarjeta = 'Tarjeta de Debito';
+		} else {
+			$tipotarjeta = '';
+		}
 	}
 
 } else {

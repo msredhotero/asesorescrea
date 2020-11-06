@@ -1260,9 +1260,169 @@ switch ($accion) {
    case 'mostrarComprobanteDePago':
       mostrarComprobanteDePago($serviciosReferencias);
    break;
+   case 'enviarFacturaAlCliente':
+      enviarFacturaAlCliente($serviciosReferencias);
+   break;
+   case 'modificarPeriodicidadventasdetalleEstado':
+      modificarPeriodicidadventasdetalleEstado($serviciosReferencias);
+   break;
+
+   case 'avisarClientePoliza':
+      avisarClientePoliza($serviciosReferencias, $serviciosUsuarios);
+   break;
+   case 'concluirProceso':
+      concluirProceso($serviciosReferencias);
+   break;
 
 }
 /* FinFinFin */
+
+function concluirProceso($serviciosReferencias) {
+   session_start();
+   $id = $_POST['idrecibo'];
+
+   $res = $serviciosReferencias->modificarPeriodicidadventasdetalleEstado($id,5,$_SESSION['usua_sahilices'],date('Y-m-d H:i:s'));
+
+   $resV['error'] = false;
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function avisarClientePoliza($serviciosReferencias, $serviciosUsuarios) {
+   $id  = $_POST['idventa'];
+
+   $resultado 		= 	$serviciosReferencias->traerVentasPorIdCompleto($id);
+
+   $nropoliza = mysql_result($resultado,0,'nropoliza');
+
+   $refusuarios = mysql_result($resultado,0,'refusuarios');
+
+   $email = mysql_result($resultado,0,'email');
+
+   $url = "listadopolizas/poliza.php?id=".$id;
+   $token = $serviciosReferencias->GUID();
+   $resAutoLogin = $serviciosReferencias->insertarAutologin($refusuarios,$token,$url,'0');
+
+
+   $cuerpo = '';
+
+   $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+   $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+   $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+   $cuerpo .= "
+   <style>
+   	body { font-family: 'Lato', sans-serif; }
+   	header { font-family: 'Prata', serif; }
+   </style>";
+
+   $cuerpo .= '<body>';
+
+   $cuerpo .= '<h3><small><p>Ya cargamos tu poliza a la plataforma, tú poliza es: <b>'.$nropoliza.'</b></small></h3><p>';
+
+   $cuerpo .= '<h4>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</h4>';
+
+	$cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
+
+   $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+   $cuerpo .= '</body>';
+
+   // por ahora corregir email
+   //$email = 'msredhotero@gmail.com';
+
+   $retorno = $serviciosReferencias->enviarEmail($email,'Ya cargamos tú poliza: '.$nropoliza,utf8_decode($cuerpo));
+
+
+   $resV['error'] = false;
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+
+}
+
+function modificarPeriodicidadventasdetalleEstado($serviciosReferencias) {
+   session_start();
+
+   $id = $_POST['id'];
+   $refestadopago = $_POST['refestadopago'];
+
+   $res = $serviciosReferencias->modificarPeriodicidadventasdetalleEstado($id,$refestadopago,$_SESSION['usua_sahilices'],date('Y-m-d H:m:s'));
+
+   if ($res) {
+      $resV['error'] = false;
+   } else {
+      $resV['error'] = true;
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
+
+function enviarFacturaAlCliente($serviciosReferencias) {
+   $email = $_POST['email'];
+   $url = $_POST['url'];
+   $idcliente = $_POST['idcliente'];
+   $nropoliza = $_POST['nropoliza'];
+   $idpago = $_POST['idpago'];
+
+   $resFechaReal = $serviciosReferencias->marcarFechaPagoRealInbursa($idpago);
+
+   $resCliente = $serviciosReferencias->traerClientesPorId($idcliente);
+
+   $refusuarios = mysql_result($resCliente,0,'refusuarios');
+
+   $token = $serviciosReferencias->GUID();
+   $resAutoLogin = $serviciosReferencias->insertarAutologin($refusuarios,$token,$url,'0');
+
+   $cuerpo = '';
+
+   $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+   $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+   $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+   $cuerpo .= "
+   <style>
+   	body { font-family: 'Lato', sans-serif; }
+   	header { font-family: 'Prata', serif; }
+   </style>";
+
+   $cuerpo .= '<body>';
+
+   $cuerpo .= '<h3><small><p>Aqui tienes tu Factura Digital de la poliza '.$nropoliza.'</small></h3><p>';
+
+   $cuerpo .= '<h4>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</h4>';
+
+	$cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
+
+   $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+   $cuerpo .= '</body>';
+
+
+
+   $retorno = $serviciosReferencias->enviarEmail($email,'Factura Poliza Nro: '.$nropoliza,utf8_decode($cuerpo));
+
+   if ((integer)$resAutoLogin > 0) {
+      $resV['error'] = false;
+   } else {
+      $resV['error'] = true;
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function mostrarComprobanteDePago($serviciosReferencias) {
    $id = $_POST['id'];
@@ -1384,6 +1544,10 @@ function avisarInbursa($serviciosReferencias, $serviciosUsuarios) {
 
    $resultado 		= 	$serviciosReferencias->traerPeriodicidadventasdetallePorIdCompleto($id);
 
+   $nropoliza = mysql_result($resultado,0,'nropoliza');
+
+   $nrorecibo = mysql_result($resultado,0,'nrorecibo');
+
    $url = "cobranza/subirdocumentacioni.php?id=".$id;
    $token = $serviciosReferencias->GUID();
    $resAutoLogin = $serviciosReferencias->insertarAutologin(56,$token,$url,'0');
@@ -1391,6 +1555,39 @@ function avisarInbursa($serviciosReferencias, $serviciosUsuarios) {
    $resAvisar = $serviciosReferencias->avisarVentaPago($id,'1');
 
    $resmodificar = $serviciosReferencias->modificarVentaUnicaDocumentacion($id,'refestadopago',2);
+
+   $resmodificar = $serviciosReferencias->modificarVentaUnicaDocumentacion($id,'fechamodi',date('Y-m-d H:m:s'));
+
+   $cuerpo = '';
+
+   $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+   $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+   $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+   $cuerpo .= "
+   <style>
+   	body { font-family: 'Lato', sans-serif; }
+   	header { font-family: 'Prata', serif; }
+   </style>";
+
+   $cuerpo .= '<body>';
+
+   $cuerpo .= '<h3><small><p>Se genero un pago del recibo: <b>'.$nrorecibo.'</b> cuya poliza es: <b>'.$nropoliza.'</b></small></h3><p>';
+
+   $cuerpo .= '<h4>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</h4>';
+
+	$cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
+
+   $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+   $cuerpo .= '</body>';
+
+   // por ahora corregir email
+   $email = 'msredhotero@gmail.com';
+
+   $retorno = $serviciosReferencias->enviarEmail($email,'Se genero un pago, poliza: '.$nropoliza,utf8_decode($cuerpo));
 
 
    $resV['error'] = false;
@@ -1412,8 +1609,16 @@ function avisarInbursa($serviciosReferencias, $serviciosUsuarios) {
       $fechacrea = $_POST['fechacrea'];
       $fechamodi = $_POST['fechamodi'];
       $nrofactura = $_POST['nrofactura'];
+      $fechapagoreal = $_POST['fechapagoreal'];
 
-      $res = $serviciosReferencias->insertarPeriodicidadventaspagos($refperiodicidadventasdetalle,$monto,$nrorecibo,$fechapago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi,$nrofactura);
+      if (isset($_POST['refdatopago'])) {
+         $idcomprobantedepago = $_POST['refdatopago'];
+         if ($idcomprobantedepago != 0) {
+            $resAplicar = $serviciosReferencias->aplicarPago($idcomprobantedepago,'1');
+         }
+      }
+
+      $res = $serviciosReferencias->insertarPeriodicidadventaspagos($refperiodicidadventasdetalle,$monto,$nrorecibo,$fechapago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi,$nrofactura,$fechapagoreal);
 
       if ((integer)$res > 0) {
          echo '';
@@ -1437,7 +1642,18 @@ function avisarInbursa($serviciosReferencias, $serviciosUsuarios) {
       $fechamodi = $_POST['fechamodi'];
       $nrofactura = $_POST['nrofactura'];
 
-      $res = $serviciosReferencias->modificarPeriodicidadventaspagos($id,$refperiodicidadventasdetalle,$monto,$nrorecibo,$fechapago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi,$nrofactura);
+      $avisoinbursa = $_POST['avisoinbursa'];
+
+      $fechapagoreal = $_POST['fechapagoreal'];
+
+      if (isset($_POST['refdatopago'])) {
+         $idcomprobantedepago = $_POST['refdatopago'];
+         if ($idcomprobantedepago != 0) {
+            $resAplicar = $serviciosReferencias->aplicarPago($idcomprobantedepago,'1');
+         }
+      }
+
+      $res = $serviciosReferencias->modificarPeriodicidadventaspagos($id,$refperiodicidadventasdetalle,$monto,$nrorecibo,$fechapago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi,$nrofactura,$avisoinbursa,$fechapagoreal);
 
       if ($res == true) {
          echo '';
@@ -1622,7 +1838,7 @@ function modificarPagos($serviciosReferencias) {
    $contratante = $_POST['contratante'];
    $nrorecibo = $_POST['nrorecibo'];
 
-   $res = $serviciosReferencias->modificarPagos($id,$reftabla,$idreferencia,$monto,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,$refestado,$razonsocial,$contratante,$nrorecibo);
+   $res = $serviciosReferencias->modificarPagos($id,$reftabla,$idreferencia,$monto,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,$refestado,$razonsocial,$contratante,$nrorecibo,'0');
    if ($res == true) {
       if ($refestado == 5) {
          $resModCotizacion = $serviciosReferencias->modificarCotizacionesPorCampo($idreferencia,'refestadocotizaciones',20, $_SESSION['usua_sahilices']);
@@ -1855,6 +2071,10 @@ function reenviarTokens($serviciosReferencias) {
 
       $email = mysql_result($resCliente,0,'email');
 
+      $idusuario = mysql_result($resCliente,0,'refusuarios');
+
+      $url = "https://asesorescrea.com/desarrollo/crm/dashboard/venta/documentos.php?id=".$refcotizaciones;
+
       $cuerpo = '';
 
       $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
@@ -1869,11 +2089,14 @@ function reenviarTokens($serviciosReferencias) {
       	header { font-family: 'Prata', serif; }
       </style>";
 
-
+      $tokenL = $serviciosReferencias->GUID();
+      $resAutoLogin = $serviciosReferencias->insertarAutologin($idusuario,$tokenL,$url,'0');
 
       $cuerpo .= '<body>';
 
-      $cuerpo .= '<h3><small><p>Este es el nuevo NIP generado para firmar de forma digital, por favor ingrese al siguiente <a href="https://asesorescrea.com/desarrollo/crm/dashboard/venta/documentos.php?id='.$refcotizaciones.'" target="_blank"> enlace </a> para finalizar el proceso de venta. </small></h3><p>';
+      $cuerpo .= '<h3><small><p>Este es el nuevo NIP generado para firmar de forma digital</small></h3><p>';
+
+      $cuerpo .= '<h4>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</h4>';
 
 		$cuerpo .= "<center>NIP:<b>".$token."</b></center><p> ";
 
@@ -4740,7 +4963,14 @@ function traerDocumentacionPorVentaDocumentacion($serviciosReferencias) {
    $resV['datos'] = '';
    $resV['error'] = false;
 
-   $resFoto = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($idventa,$iddocumentacion);
+   if (($iddocumentacion == 35) || ($iddocumentacion == 147) || ($iddocumentacion == 148)) {
+      $resFoto = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($idventa,$iddocumentacion);
+      $carpetaDetalle = 'ventas';
+   } else {
+      $resFoto = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionDetalle($idventa,$iddocumentacion);
+      $carpetaDetalle = 'cobros';
+   }
+
 
    $imagen = '';
 
@@ -4757,7 +4987,7 @@ function traerDocumentacionPorVentaDocumentacion($serviciosReferencias) {
          $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
          $resV['error'] = true;
       } else {
-         $imagen = '../../archivos/cobros/'.$idventa.'/'.mysql_result($resFoto,0,'carpeta').'/'.mysql_result($resFoto,0,'archivo');
+         $imagen = '../../archivos/'.$carpetaDetalle.'/'.$idventa.'/'.mysql_result($resFoto,0,'carpeta').'/'.mysql_result($resFoto,0,'archivo');
 
          $resV['datos'] = array('imagen' => $imagen, 'type' => mysql_result($resFoto,0,'type'));
 
@@ -4943,7 +5173,55 @@ function modificarPeriodicidadventasdetalle($serviciosReferencias) {
 
    $res = $serviciosReferencias->modificarPeriodicidadventasdetalle($id,$refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariomodi,$fechamodi,$nrorecibo);
 
+
+
    if ($res == true) {
+
+      if ($refestadopago == 6) {
+         ///aca
+
+         $url = "cobranza/subirdocumentacioni.php?id=".$id;
+         $token = $serviciosReferencias->GUID();
+         $resAutoLogin = $serviciosReferencias->insertarAutologin(56,$token,$url,'0');
+
+         $resultado 		= 	$serviciosReferencias->traerPeriodicidadventasdetallePorIdCompleto($id);
+
+         $nropoliza = mysql_result($resultado,0,'nropoliza');
+
+         $nrorecibo = mysql_result($resultado,0,'nrorecibo');
+
+         $cuerpo = '';
+
+         $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+         $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+         $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+         $cuerpo .= "
+         <style>
+         	body { font-family: 'Lato', sans-serif; }
+         	header { font-family: 'Prata', serif; }
+         </style>";
+
+         $cuerpo .= '<body>';
+
+         $cuerpo .= '<h3><small><p>Un pago del recibo: <b>'.$nrorecibo.'</b> cuya poliza es: <b>'.$nropoliza.'</b> fue devuelto</small></h3><p>';
+
+         $cuerpo .= '<h4>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</h4>';
+
+      	$cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
+
+         $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+         $cuerpo .= '</body>';
+
+         // por ahora corregir email
+         $email = 'msredhotero@gmail.com';
+
+         $retorno = $serviciosReferencias->enviarEmail($email,'Se genero un pago, poliza: '.$nropoliza,utf8_decode($cuerpo));
+
+      }
       echo '';
    } else {
       echo 'Hubo un error al modificar datos';
@@ -7817,6 +8095,27 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+      case 'dbperiodicidadventasdetalle':
+         $resultado = $serviciosReferencias->traerPeriodicidadventasdetallePorId( $id);
+
+         $modificar = "modificarPeriodicidadventasdetalle";
+         $idTabla = "idperiodicidadventadetalle";
+
+
+         $lblCambio	 	= array('refperiodicidadventas','montototal','primaneta','porcentajecomision','montocomision','fechapago','fechavencimiento','refestadopago','nrorecibo');
+         $lblreemplazo	= array('Venta','Monto Total','Prima Neta','% Comision','Monto Comision','Fecha Pago','Fecha Vencimiento','Estado Pago','Nro Recibo');
+
+         $resVar = $serviciosReferencias->traerPeriodicidadventasPorIdCompleto(mysql_result($resultado,0,'refperiodicidadventas'));
+         $cadRef = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(1,2,3),' ',mysql_result($resultado,0,'refperiodicidadventas'));
+
+
+         $resVar2 = $serviciosReferencias->traerEstadopago();
+         $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(1),'',mysql_result($resultado,0,'refestadopago'));
+
+
+         $refdescripcion = array(0=>$cadRef,1=>$cadRef2);
+         $refCampo 	=  array('refperiodicidadventas','refestadopago');
+      break;
       case 'dbsolicitudesrespuestas':
          $resultado = $serviciosReferencias->traerSolicitudesrespuestasPorId( $id);
 
@@ -7867,7 +8166,7 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $idTabla = "idpago";
 
          $lblCambio	 	= array('refestado','razonsocial','nrorecibo');
-         $lblreemplazo	= array('Estado','Razon Social','Nro Recibo');
+         $lblreemplazo	= array('Estado','Razon Social','Folio de pago Asesores Crea');
 
          $res = $serviciosReferencias->traerEstadodocumentaciones();
          $cad = $serviciosFunciones->devolverSelectBoxActivo($res,array(1),'',mysql_result($resultado,0,'refestado'));

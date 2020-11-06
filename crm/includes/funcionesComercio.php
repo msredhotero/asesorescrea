@@ -140,10 +140,10 @@ class serviciosComercio
 
 		if (mysql_num_rows($res) > 0) {
 			$idcliente = mysql_result($res,0,0);
-			return 'REC'.substr('0000000000'.$idcliente,-7);
+			return 'COM'.substr('0000000000'.$idcliente,-7);
 		}
 
-		return 'REC0000000001';
+		return 'COM0000000001';
 	}
 
    function insertarComercioinicio($token,$comtotal,$comcurrency,$comaddres,$comorderid,$commerchant,$comstore,$comterm,$comdigest,$urlback,$reforigencomercio,$refestadotransaccion,$refafiliados,$fechacrea,$usuariocrea,$vigencia,$observaciones,$usuariomodi) {

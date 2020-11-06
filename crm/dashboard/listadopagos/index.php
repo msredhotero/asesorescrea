@@ -100,7 +100,12 @@ $refCampo 	=  array();
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
-		.pdfobject-container { height: 30rem; border: 1rem solid rgba(0,0,0,.1); }
+		.pdfobject-container {
+		   max-width: 100%;
+			height: 400px;
+			border: 10px solid rgba(0,0,0,.2);
+			margin: 0;
+		}
 	</style>
 
 
@@ -152,8 +157,6 @@ $refCampo 	=  array();
 		<div class="row clearfix">
 
 			<div class="row">
-
-
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
@@ -185,10 +188,10 @@ $refCampo 	=  array();
 												<th>Monto</th>
 												<th>Tipo Transc.</th>
 												<th>Razon Social</th>
-												<th>Nro Cuenta</th>
+												<th>No Cuenta</th>
 												<th>Fecha Pago</th>
 												<th>Contratante</th>
-												<th>Nro Recibo</th>
+												<th>No Operacion</th>
 												<th>Folio</th>
 												<th>Aplicado</th>
 												<th>Estado</th>
@@ -201,10 +204,10 @@ $refCampo 	=  array();
 												<th>Monto</th>
 												<th>Tipo Transc.</th>
 												<th>Razon Social</th>
-												<th>Nro Cuenta</th>
+												<th>No Cuenta</th>
 												<th>Fecha Pago</th>
 												<th>Contratante</th>
-												<th>Nro Recibo</th>
+												<th>No Operacion</th>
 												<th>Folio</th>
 												<th>Aplicado</th>
 												<th>Estado</th>
@@ -343,19 +346,6 @@ $refCampo 	=  array();
 	$(document).ready(function(){
 
 
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '315px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
-
-		});
-
 
 		var table = $('#example').DataTable({
 			"bProcessing": true,
@@ -407,6 +397,8 @@ $refCampo 	=  array();
 
 					if (data != '') {
 						$('.frmAjaxModificar').html(data);
+
+						$('.frmContavisoinbursa').hide();
 
 						$('.frmContreftabla').hide();
 						$('.frmContidreferencia').hide();

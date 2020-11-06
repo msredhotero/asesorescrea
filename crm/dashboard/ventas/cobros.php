@@ -32,7 +32,7 @@ $arRoles = array(1,4,11,7,10);
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Ventas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Polizas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -57,6 +57,8 @@ $id = $_GET['id'];
 $resultado = $serviciosReferencias->traerVentasPorId($id);
 
 $idcotizacion = mysql_result($resultado,0,'refcotizaciones');
+
+$nropoliza = mysql_result($resultado,0,'nropoliza');
 
 $resCotizacion = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcotizacion);
 
@@ -224,59 +226,11 @@ $formulario22 = $serviciosFunciones->camposTablaModificar($id, $idTabla22,$modif
 			<div class="row">
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
-						<div class="header bg-green">
-							<h2>
-								DATOS DE LA VENTA
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-									<ul class="dropdown-menu pull-right">
-
-									</ul>
-								</li>
-							</ul>
-						</div>
-						<div class="body table-responsive">
-
-								<div class="row" style="padding: 5px 20px;">
-									<h4><?php echo $ventaCompleto; ?></h4>
-									<hr>
-									<?php echo $formulario22; ?>
-
-								</div>
-								<div class="row">
-									<div class="button-demo">
-										<button type="button" class="btn btn-primary waves-effect btnVolver">
-											<i class="material-icons">arrow_back</i>
-											<span>VOLVER</span>
-										</button>
-									</div>
-								</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								<?php echo strtoupper($plural); ?>
+								<?php echo strtoupper($plural); ?> - No POLIZA: <?php echo strtoupper($nropoliza); ?>
 							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-									<ul class="dropdown-menu pull-right">
 
-									</ul>
-								</li>
-							</ul>
 						</div>
 						<div class="body table-responsive">
 							<form class="form" id="formCountry">
@@ -294,6 +248,11 @@ $formulario22 = $serviciosFunciones->camposTablaModificar($id, $idTabla22,$modif
 												<i class="material-icons">build</i>
 												<span>FALTAN CARGAR <?php echo $stockMeses; ?></span>
 											</button>
+											<button type="button" class="btn btn-primary waves-effect btnVolver">
+												<i class="material-icons">arrow_back</i>
+												<span>VOLVER</span>
+											</button>
+
 
 										</div>
 									</div>
@@ -503,20 +462,6 @@ $formulario22 = $serviciosFunciones->camposTablaModificar($id, $idTabla22,$modif
 
 		$('.frmContrefcotizaciones').hide();
 		$('.frmContrefperiodicidadventas').hide();
-
-
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '315px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
-
-		});
 
 
 		var table = $('#example').DataTable({

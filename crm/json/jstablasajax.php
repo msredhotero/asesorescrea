@@ -84,6 +84,75 @@ switch ($tabla) {
 		$empieza = 1;
 		$termina = 10;
 	break;
+
+	case 'listadofacturacionglobales':
+		$datos = $serviciosReferencias->traerFacturacionGlobalesajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array('btnDocumentos');
+		$class = array('bg-deep-purple');
+		$icon = array('assignment_returned');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 6;
+	break;
+	case 'listadofacturacionrecibos':
+		$datos = $serviciosReferencias->traerFacturacionRecibosajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array('btnModificar','btnRecibos');
+		$class = array('bg-orange','bg-deep-purple');
+		$icon = array('edit','assignment_returned');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 8;
+	break;
+
+	case 'listadofacturacionglobalescliente':
+		$datos = $serviciosReferencias->traerFacturacionClienteGlobalesajax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array('btnDocumentos');
+		$class = array('bg-deep-purple');
+		$icon = array('assignment_returned');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 6;
+	break;
+	case 'listadofacturacionreciboscliente':
+		$datos = $serviciosReferencias->traerFacturacionClienteRecibosajax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		if ($_SESSION['idroll_sahilices'] == 16) {
+			$label = array('btnRecibos');
+			$class = array('bg-deep-purple');
+			$icon = array('assignment_returned');
+		} else {
+			$label = array('btnModificar','btnRecibos');
+			$class = array('bg-orange','bg-deep-purple');
+			$icon = array('edit','assignment_returned');
+		}
+
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 8;
+	break;
 	case 'listadopagos':
 		$datos = $serviciosReferencias->traerPagosCotizacionajax($length, $start, $busqueda,$colSort,$colSortDir);
 
@@ -238,7 +307,7 @@ switch ($tabla) {
 
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 3;
+		$termina = 4;
 
 	break;
 	case 'mejorarcondiciones':
@@ -431,9 +500,71 @@ switch ($tabla) {
 		$res = $datos[1];
 
 
-		$label = array('btnPagar','btnRecibo');
-		$class = array('bg-green','bg-orange');
-		$icon = array('add_shopping_cart','unarchive');
+		if ($_SESSION['idroll_sahilices'] == 16) {
+			$label = array('btnRecibo');
+			$class = array('bg-blue');
+			$icon = array('unarchive');
+		} else {
+			$label = array('btnModificar','btnRecibo');
+			$class = array('btn-warning','bg-blue');
+			$icon = array('edit','unarchive');
+		}
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 8;
+	break;
+
+	case 'cobranzaventa':
+
+		$refventa = $_GET['refventa'];
+
+		$datos = $serviciosReferencias->traerCobranzaVentaajax($length, $start, $busqueda,$colSort,$colSortDir,$refventa);
+
+		//die(var_dump($datos));
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+
+		if ($_SESSION['idroll_sahilices'] == 16) {
+			$label = array('btnRecibo');
+			$class = array('bg-blue');
+			$icon = array('unarchive');
+		} else {
+			$label = array('btnModificar','btnRecibo');
+			$class = array('btn-warning','bg-blue');
+			$icon = array('edit','unarchive');
+		}
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 8;
+	break;
+
+	case 'cobranzaestados':
+
+		$estados = $_GET['estados'];
+
+		$datos = $serviciosReferencias->traerCobranzaPorEstadosajax($length, $start, $busqueda,$colSort,$colSortDir,$estados);
+
+		//die(var_dump($datos));
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		if ($_SESSION['idroll_sahilices'] == 16) {
+			$label = array('btnRecibo');
+			$class = array('bg-blue');
+			$icon = array('unarchive');
+		} else {
+			$label = array('btnModificar','btnRecibo');
+			$class = array('btn-warning','bg-blue');
+			$icon = array('edit','unarchive');
+		}
+
 
 
 		$indiceID = 0;
@@ -451,9 +582,9 @@ switch ($tabla) {
 		$res = $datos[1];
 
 
-		$label = array('btnPagar','btnRecibo');
-		$class = array('bg-green','bg-orange');
-		$icon = array('add_shopping_cart','unarchive');
+		$label = array('btnRecibo');
+		$class = array('bg-orange');
+		$icon = array('unarchive');
 
 
 		$indiceID = 0;
@@ -472,9 +603,9 @@ switch ($tabla) {
 		$res = $datos[1];
 
 
-		$label = array('btnPagar','btnRecibo','btnPagos');
-		$class = array('bg-green','bg-orange','bg-blue');
-		$icon = array('add_shopping_cart','unarchive','shopping_cart');
+		$label = array('btnRecibo');
+		$class = array('bg-orange');
+		$icon = array('unarchive');
 
 
 		$indiceID = 0;
@@ -658,14 +789,14 @@ switch ($tabla) {
 				$filtroNuevo = $_GET['filtroNuevo'];
 
 				$whereEstado = ' c.refestados in (1) ';
-				$termina = 5;
+				$termina = 6;
 			break;
 			case 2:
 				$label = array('btnModificar','btnEliminar');
 				$class = array('bg-amber','bg-red');
 				$icon = array('create','delete');
 				$whereEstado = ' c.refestados in (2) ';
-				$termina = 5;
+				$termina = 6;
 
 				$filtroNuevo = '';
 			break;
@@ -674,7 +805,7 @@ switch ($tabla) {
 				$class = array('bg-amber');
 				$icon = array('create');
 				$whereEstado = ' c.refestados in (3) ';
-				$termina = 6;
+				$termina = 7;
 				$filtroNuevo = '';
 			break;
 			case 4:
@@ -682,7 +813,7 @@ switch ($tabla) {
 				$class = array();
 				$icon = array();
 				$whereEstado = ' c.refestados in (4) ';
-				$termina = 6;
+				$termina = 7;
 				$filtroNuevo = '';
 			break;
 			case 5:
@@ -690,7 +821,7 @@ switch ($tabla) {
 				$class = array('bg-green');
 				$icon = array('check_circle');
 				$whereEstado = ' c.refestados in (4) ';
-				$termina = 6;
+				$termina = 7;
 				$filtroNuevo = 'enlinea';
 			break;
 			case 6:
@@ -698,7 +829,7 @@ switch ($tabla) {
 				$class = array('bg-green');
 				$icon = array('check_circle');
 				$whereEstado = ' c.refestados in (4) ';
-				$termina = 6;
+				$termina = 7;
 				$filtroNuevo = 'poragente';
 			break;
 			case 7:
@@ -706,7 +837,7 @@ switch ($tabla) {
 				$class = array('bg-green');
 				$icon = array('check_circle');
 				$whereEstado = ' c.refestados in (4) ';
-				$termina = 6;
+				$termina = 7;
 				$filtroNuevo = 'poroficina';
 			break;
 			default:
@@ -714,7 +845,7 @@ switch ($tabla) {
 				$class = array();
 				$icon = array();
 				$whereEstado = ' c.refestados in (1) ';
-				$termina = 5;
+				$termina = 6;
 				$filtroNuevo = '';
 			break;
 		}

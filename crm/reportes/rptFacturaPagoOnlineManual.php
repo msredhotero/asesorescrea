@@ -2,7 +2,7 @@
 
 
 date_default_timezone_set('America/Mexico_City');
-
+/*
 include ('../includes/funcionesUsuarios.php');
 include ('../includes/funciones.php');
 include ('../includes/funcionesHTML.php');
@@ -17,13 +17,13 @@ $serviciosReferencias 			= new ServiciosReferencias();
 $serviciosComercio      = new serviciosComercio();
 
 $fecha = date('Y-m-d-H-i-s');
-
+*/
 
 require('fpdf.php');
 
 
 
-$token         =  $_GET['token'];
+//$token         =  $_GET['token'];
 
 $resComercio = $serviciosComercio->traerComercioinicioPorToken($token);
 
@@ -110,16 +110,16 @@ if (mysql_num_rows($resComercio)>0) {
 
 
 
-	$pdf->Image('../imagenes/AClogo.png' , 160 ,5, 40 , 0,'PNG');
+	$pdf->Image(__DIR__.'/'.'../imagenes/AClogo.png' , 160 ,5, 40 , 0,'PNG');
 
 
 	/************************** fin ********************************************************/
 
-	if (!file_exists('../archivos/pagosonline/'.$idCotizacion.'/')) {
-		mkdir('../archivos/pagosonline/'.$idCotizacion.'/', 0777);
+	if (!file_exists(__DIR__.'/'.'../archivos/pagosonline/'.$idCotizacion.'/')) {
+		mkdir(__DIR__.'/'.'../archivos/pagosonline/'.$idCotizacion.'/', 0777);
 	}
 
-	$pdf->Output( '../archivos/pagosonline/'.$idCotizacion.'/ReciboPago.pdf', 'F');
+	$pdf->Output( __DIR__.'/'.'../archivos/pagosonline/'.$idCotizacion.'/ReciboPago.pdf', 'F');
 
 } else {
 	return false;

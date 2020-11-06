@@ -24,7 +24,7 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../enproceso/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../ventas/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
@@ -32,14 +32,16 @@ $fecha = date('Y-m-d');
 if ($_SESSION['idroll_sahilices'] == 10) {
 	$idusuario = $_SESSION['usuaid_sahilices'];
 	$resultado 		= 	$serviciosReferencias->traerCotizacionesPorUsuario($idusuario);
+	$resultadoV		=  $serviciosReferencias->traerVentasPorCotizacion(mysql_result($resultado,0,'idcotizacion'));
 } else {
 	$id = $_GET['id'];
 	$resultado 		= 	$serviciosReferencias->traerCotizacionesPorId($id);
+	$resultadoV		=  $serviciosReferencias->traerVentasPorCotizacion(mysql_result($resultado,0,'idcotizacion'));
 }
 
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"En Proceso",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Polizas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -50,6 +52,8 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 
 $id = mysql_result($resultado,0,'idcotizacion');
+
+$idventa = mysql_result($resultadoV,0,'idventa');
 
 $iddocumentacion = $_GET['documentacion'];
 
@@ -83,7 +87,7 @@ if (!file_exists($path)) {
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacion($id, $iddocumentacion);
+$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($idventa, $iddocumentacion);
 
 $resDocumentacion = $serviciosReferencias->traerDocumentacionesPorId($iddocumentacion);
 
@@ -92,7 +96,7 @@ $resEstados = $serviciosReferencias->traerEstadodocumentaciones();
 if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 	$cadRefEstados = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'));
 
-	$iddocumentacionasociado = mysql_result($resDocumentacionAsesor,0,'iddocumentacioncotizacion');
+	$iddocumentacionasociado = mysql_result($resDocumentacionAsesor,0,'iddocumentacionventa');
 
 	$estadoDocumentacion = mysql_result($resDocumentacionAsesor,0,'estadodocumentacion');
 
@@ -116,8 +120,6 @@ if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 			$span = 'text-success glyphicon glyphicon-remove-sign';
 		break;
 	}
-
-	$idestadodocumentacion = mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones');
 } else {
 	$cadRefEstados = $serviciosFunciones->devolverSelectBox($resEstados,array(1),'');
 
@@ -128,21 +130,19 @@ if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 	$color = 'blue';
 
 	$span = 'text-info glyphicon glyphicon-plus-sign';
-
-	$idestadodocumentacion = 1;
 }
 
 switch ($iddocumentacion) {
 	case 35:
 		// code...
-		$dato = mysql_result($resultado,0,'nropoliza');
+		$dato = mysql_result($resultadoV,0,'nropoliza');
 
 		$input = '<input type="text" name="nropoliza" maxlength="13" id="nropoliza" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
 		$leyenda = 'Cargue el Nro de Poliza';
 		$campo = 'nropoliza';
 	break;
-	case 36:
+	case 38:
 		// code...
 		$dato = mysql_result($resultado,0,'nrorecibo');
 
@@ -162,7 +162,7 @@ switch ($iddocumentacion) {
 	break;
 }
 
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,mysql_result($resDocumentacion,0,'reftipodocumentaciones'));
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($idventa,'35,147,148');
 
 ?>
 
@@ -228,7 +228,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 			background-color: #1b2646;
 		}
 
-		.btnDocumentacion {
+		.btnDocumentacion, .btnCursor {
 			cursor: pointer;
 		}
 
@@ -284,11 +284,16 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 
 			<div class="row">
 				<?php
+				$i = 0;
+				$completas = 0;
 				while ($row = mysql_fetch_array($resDocumentaciones)) {
-
+					$i += 1;
+					if ($row['idestadodocumentacion'] == 5) {
+						$completas += 1;
+					}
 				?>
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-						<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
+						<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion btnCursor" id="<?php echo $row['iddocumentacion']; ?>">
 							<div class="icon">
 								<i class="material-icons">face</i>
 							</div>
@@ -299,66 +304,27 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 						</div>
 					</div>
 				<?php }  ?>
+				<?php if ($i == $completas) { ?>
+					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+						<div class="info-box-3 bg-orange hover-zoom-effect btnAvisarCliente btnCursor">
+							<div class="icon">
+								<i class="material-icons">send</i>
+							</div>
+							<div class="content">
+								<div class="text">Avisar al cliente</div>
+								<div class="number">ENVIAR</div>
+							</div>
+						</div>
+					</div>
+				<?php } ?>
 			</div>
 
 			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="card ">
-						<div class="header bg-blue">
-							<h2>
-								DOCUMENTACION - <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?>
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-									<ul class="dropdown-menu pull-right">
-
-									</ul>
-								</li>
-							</ul>
-						</div>
-						<div class="body table-responsive">
-							<button type="button" class="btn bg-green waves-effect btnVolver">
-								<i class="material-icons">undo</i>
-								<span>VOLVER</span>
-							</button>
-							<form class="form" id="formCountry">
-
-								<div class="row" style="padding: 5px 20px;">
-
-									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
-										<label class="form-label"><?php echo $leyenda; ?></label>
-										<div class="form-group input-group">
-											<div class="form-line">
-												<?php echo $input; ?>
-
-											</div>
-										</div>
-									</div>
-									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
-										<label class="form-label"> </label>
-										<div class="form-group input-group">
-											<div class="form-line">
-												<?php echo $boton; ?>
-
-											</div>
-										</div>
-									</div>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div> <!-- fin del card -->
-
-			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card">
 						<div class="header bg-blue">
 							<h2>
-								ARCHIVO CARGADO
+								<?php echo mysql_result($resDocumentacion,0,'documentacion'); ?> (Cargue Aqui)
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -369,12 +335,43 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 							</ul>
 						</div>
 						<div class="body">
+							<button type="button" class="btn bg-blue waves-effect btnVolver" style="margin-bottom:15px;">
+								VOLVER
+							</button>
+
+
+							<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+								<div class="dz-message">
+									<div class="drag-icon-cph">
+										<i class="material-icons">touch_app</i>
+									</div>
+									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+								</div>
+								<div class="fallback">
+									<input name="file" type="file" id="archivos" />
+									<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $idventa; ?>" />
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+					<div class="card ">
+						<div class="header bg-blue">
+							<h2>
+								<?php echo mysql_result($resDocumentacion,0,'documentacion'); ?>
+							</h2>
+						</div>
+						<div class="body table-responsive">
+
+
 							<div class="row">
 								<button type="button" class="btn bg-red waves-effect btnEliminar">
 									<i class="material-icons">remove</i>
 									<span>ELIMINAR</span>
 								</button>
 							</div>
+
 							<div class="row">
 								<a href="javascript:void(0);" class="thumbnail timagen1">
 									<img class="img-responsive">
@@ -387,6 +384,9 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 										Estado: <b><?php echo $estadoDocumentacion; ?></b>
 									</h4>
 								</div>
+								<?php
+								if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11)) {
+								?>
 								<div class="col-xs-6 col-md-6" style="display:block">
 									<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
 									<div class="input-group col-md-12">
@@ -394,51 +394,33 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 											<?php echo $cadRefEstados; ?>
 										</select>
 									</div>
-									<?php
-									if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11)) {
-									?>
+
 									<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
-								<?php } ?>
+
 								</div>
+								<?php } ?>
 
 							</div>
+							<!--
+							<form class="formulario frmNuevo" role="form" id="sign_in">
+								<div class="row">
+		                  	<?php //echo $frmUnidadNegocios; ?>
+								</div>
+								<div class="modal-footer">
+			                  <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
+									<button type="button" class="btn bg-defualt waves-effect btnVolver">
+			 							VOLVER
+		 							</button>
+			               </div>
+							</form>-->
+
+
+
 						</div>
 					</div>
 				</div>
-			<?php if ($idestadodocumentacion != 5) { ?>
-			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="card">
-						<div class="header bg-blue">
-							<h2>
-								CARGA/MODIFIQUE LA DOCUMENTACIÓN <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?> AQUI
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div class="body">
-							<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
-								<div class="dz-message">
-									<div class="drag-icon-cph">
-										<i class="material-icons">touch_app</i>
-									</div>
-									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
-								</div>
-								<div class="fallback">
-									<input name="file" type="file" id="archivos" />
-									<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-			<?php } ?>
+			</div> <!-- fin del card -->
+
 		</div>
 	</div>
 </section>
@@ -498,37 +480,65 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 
 	$(document).ready(function(){
 
-		$('.btnDocumentacion').click(function() {
-			idTable =  $(this).attr("id");
-			url = "subirdocumentacionip.php?id=<?php echo $id; ?>&documentacion=" + idTable;
-			$(location).attr('href',url);
-		});
-
-		$('.btnModificar').click(function() {
-			modificarCotizacionUnicaDocumentacion($('#<?php echo $campo; ?>').val());
-		});
-
-		<?php if (mysql_result($resultado,0,'refestadocotizaciones') == 1) { ?>
-		$('.btnVolver').click(function() {
-			url = "new.php?id=" + <?php echo $id; ?>;
-			$(location).attr('href',url);
-		});
-		<?php } else { ?>
-		$('.btnVolver').click(function() {
-			url = "modificar.php?id=" + <?php echo $id; ?>;
-			$(location).attr('href',url);
-		});
-		<?php } ?>
-
-		function modificarCotizacionUnicaDocumentacion(valor) {
+		$('.btnAvisarCliente').click(function() {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
 				data: {
-					accion: 'modificarCotizacionUnicaDocumentacion',
-					idcotizacion: <?php echo $id; ?>,
+					accion: 'avisarClientePoliza',
+					idventa: <?php echo $idventa; ?>
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error == false) {
+						swal("Ok!", 'Se envio correctamente el aviso al cliente', "success");
+
+					} else {
+						swal("Error!", data.leyenda, "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		});
+
+		$('.btnDocumentacion').click(function() {
+			idTable =  $(this).attr("id");
+			url = "subirdocumentacion.php?id=<?php echo $id; ?>&documentacion=" + idTable;
+			$(location).attr('href',url);
+		});
+
+
+		$('.btnVolver').click(function() {
+			url = "ver.php?id=" + <?php echo mysql_result($resultadoV,0,0); ?>;
+			$(location).attr('href',url);
+		});
+
+		$('.btnModificar').click(function() {
+			modificarVentaUnicaDocumentacion($('#<?php echo $campo; ?>').val());
+		});
+
+		function modificarVentaUnicaDocumentacion(valor) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificarVentaUnicaDocumentacion',
+					idventa: <?php echo $idventa; ?>,
 					campo: '<?php echo $campo; ?>',
 					valor: valor
 				},
@@ -557,18 +567,18 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 		}
 
 		$('.guardarEstado').click(function() {
-			modificarEstadoDocumentacionCotizaciones($('#refestados').val());
+			modificarEstadoDocumentacionVentas($('#refestados').val());
 		});
 
-		function modificarEstadoDocumentacionCotizaciones(idestado) {
+		function modificarEstadoDocumentacionVentas(idestado) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
 				data: {
-					accion: 'modificarEstadoDocumentacionCotizaciones',
-					iddocumentacioncotizacion: <?php echo $iddocumentacionasociado; ?>,
+					accion: 'modificarEstadoDocumentacionVentas',
+					iddocumentacionventa: <?php echo $iddocumentacionasociado; ?>,
 					idestado: idestado
 				},
 				//mientras enviamos el archivo
@@ -581,7 +591,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 					if (data.error == false) {
 						swal("Ok!", 'Se modifico correctamente el estado de la documentación <?php echo $campo; ?>', "success");
 						$('.guardarEstado').show();
-						//location.reload();
+						location.reload();
 					} else {
 						swal("Error!", data.leyenda, "warning");
 
@@ -598,9 +608,9 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 
 		function traerImagen(contenedorpdf, contenedor) {
 			$.ajax({
-				data:  {idcotizacion: <?php echo $id; ?>,
+				data:  {idventa: <?php echo $idventa; ?>,
 						iddocumentacion: <?php echo $iddocumentacion; ?>,
-						accion: 'traerDocumentacionPorCotizacionDocumentacion'},
+						accion: 'traerDocumentacionPorVentaDocumentacion'},
 				url:   '../../ajax/ajax.php',
 				type:  'post',
 				beforeSend: function () {
@@ -644,13 +654,13 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 
 		Dropzone.options.frmFileUpload = {
 			maxFilesize: 30,
-			acceptedFiles: ".jpg,.jpeg,.pdf",
+			acceptedFiles: ".jpg,.jpeg,.pdf,.xml",
 			accept: function(file, done) {
 				done();
 			},
 			init: function() {
 				this.on("sending", function(file, xhr, formData){
-					formData.append("idasociado", '<?php echo $id; ?>');
+					formData.append("idasociado", '<?php echo $idventa; ?>');
 					formData.append("iddocumentacion", '<?php echo $iddocumentacion; ?>');
 				});
 				this.on('success', function( file, resp ){
@@ -659,9 +669,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 					swal("Correcto!", resp.replace("1", ""), "success");
 					$('.btnGuardar').show();
 					$('.infoPlanilla').hide();
-					$('#<?php echo $iddocumentacion; ?>').addClass('bg-blue');
-					$('#<?php echo $iddocumentacion; ?> .number').html('Cargada');
-					//location.reload();
+					location.reload();
 				});
 
 				this.on('error', function( file, resp ){
@@ -671,15 +679,14 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 		};
 
 
-		<?php if (($idestadodocumentacion != 5)) { ?>
+
 		var myDropzone = new Dropzone("#archivos", {
 			params: {
-				 idasociado: <?php echo $id; ?>,
+				 idasociado: <?php echo $idventa; ?>,
 				 iddocumentacion: <?php echo $iddocumentacion; ?>
 			},
 			url: 'subir.php'
 		});
-		<?php } ?>
 
 
 
@@ -715,8 +722,6 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 					if (data.error == false) {
 						swal("Ok!", data.leyenda , "success");
 						traerImagen('example1','timagen1');
-
-						//location.reload();
 
 					} else {
 						swal("Error!", data.leyenda, "warning");
