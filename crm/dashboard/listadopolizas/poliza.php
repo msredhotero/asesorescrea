@@ -187,18 +187,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 							<i class="material-icons">arrow_back</i>
 							<span>VOLVER</span>
 						</button>
-					<?php if ($archivosXML != '') { ?>
-						<a href="<?php echo ($archivosXML == '' ? 'javascript:void(0)' : $archivosXML); ?>" <?php echo ($archivosXML == '' ? '' : 'target="_blank"'); ?>><button type="button" class="btn bg-orange waves-effect btnXML" style="margin-bottom:15px;">
-							<i class="material-icons">cloud_download</i>
-							<span>XML GLOBAL</span>
-						</button></a>
-					<?php } ?>
-					<?php if ($archivosPDF != '') { ?>
-						<a href="<?php echo ($archivosPDF == '' ? 'javascript:void(0)' : $archivosPDF); ?>" <?php echo ($archivosPDF == '' ? '' : 'target="_blank"'); ?>><button type="button" class="btn bg-deep-orange waves-effect btnPDF" style="margin-bottom:15px;">
-							<i class="material-icons">arrow_back</i>
-							<span>PDF GLOBAL</span>
-						</button></a>
-					<?php } ?>
+
 						<div id="example2"></div>
 					</div>
 				</div>
