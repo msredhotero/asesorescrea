@@ -15,7 +15,7 @@ $sql = '';
 
 $archivo = $_FILES['name'];
 
-array_map('unlink', glob("../../archivos/excel/*.*"));
+//array_map('unlink', glob("../../archivos/excel/*.*"));
 
 $templocation = $archivo['tmp_name'];
 
@@ -51,10 +51,12 @@ if(isset($_FILES["name"])){
 					 $resUsuario = $serviciosUsuario->traerUsuario($x_usuario);
 
 					 if (mysql_num_rows($resUsuario) > 0) {
-						$resOportunidad = $serviciosReferencias->insertarOportunidades($x_despacho,$x_apellidopaterno,$x_apellidomaterno,$x_nombre,$x_telefonomovil,$x_telefonotrabajo,$x_email,mysql_result($resUsuario,0,0),6,1, '',0,'',1,2);
-						die(var_dump($resOportunidad));
+						$resOportunidad = $serviciosReferencias->insertarOportunidades($x_despacho,$x_apellidopaterno,$x_apellidomaterno,$x_nombre,$x_telefonomovil,$x_telefonotrabajo,$x_email,mysql_result($resUsuario,0,0),6,1,0,'',1,2);
+
 						if ((integer)$resOportunidad>0) {
 							$i += 1;
+						} else {
+							$error += 1;
 						}
 
 
@@ -69,10 +71,14 @@ if(isset($_FILES["name"])){
 
 	}
 }
+
+//die(var_dump($resOportunidad));
+
 //die(var_dump($sql));
 echo "<script>
-alert('Correcto $i, Error $resOportunidad !!!');
+alert('Correcto $i, Error $error !!!');
 window.location = './index.php';
 </script>
 ";
+
 ?>
