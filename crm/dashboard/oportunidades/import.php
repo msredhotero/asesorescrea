@@ -51,8 +51,9 @@ if(isset($_FILES["name"])){
 					 $resUsuario = $serviciosUsuario->traerUsuario($x_usuario);
 
 					 if (mysql_num_rows($resUsuario) > 0) {
-						$resOportunidad = $serviciosReferencias->insertarOportunidades($x_despacho,$x_apellidopaterno,$x_apellidomaterno,$x_nombre,$x_telefonomovil,$x_telefonotrabajo,$x_email,mysql_result($resUsuario,0,0),31,1,date('Y-m-d H:m:s'),0,'',1,1);
+						$resOportunidad = $serviciosReferencias->insertarOportunidades($x_despacho,$x_apellidopaterno,$x_apellidomaterno,$x_nombre,$x_telefonomovil,$x_telefonotrabajo,$x_email,mysql_result($resUsuario,0,0),6,1,date('Y-m-d H:m:s'),0,'',1,1);
 
+						
 
 						$i += 1;
 					} else {
