@@ -31,12 +31,13 @@ $fecha = date('Y-m-d');
 
 if ($_SESSION['idroll_sahilices'] == 10) {
 	$idusuario = $_SESSION['usuaid_sahilices'];
+	// ver despues poque ahora va por venta
 	$resultado 		= 	$serviciosReferencias->traerCotizacionesPorUsuario($idusuario);
 	$resultadoV		=  $serviciosReferencias->traerVentasPorCotizacion(mysql_result($resultado,0,'idcotizacion'));
 } else {
 	$id = $_GET['id'];
-	$resultado 		= 	$serviciosReferencias->traerCotizacionesPorId($id);
-	$resultadoV		=  $serviciosReferencias->traerVentasPorCotizacion(mysql_result($resultado,0,'idcotizacion'));
+	$resultadoV		=  $serviciosReferencias->traerVentasPorIdCompleto($id);
+
 }
 
 
@@ -50,10 +51,7 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 
-
-$id = mysql_result($resultado,0,'idcotizacion');
-
-$idventa = mysql_result($resultadoV,0,'idventa');
+$idventa = $id;
 
 $iddocumentacion = $_GET['documentacion'];
 
@@ -73,16 +71,9 @@ $modificar = "modificarCotizaciones";
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 
-$resCliente = $serviciosReferencias->traerClientesPorId(mysql_result($resultado,0,'refclientes'));
+$resCliente = $serviciosReferencias->traerClientesPorId(mysql_result($resultadoV,0,'refclientes'));
 
 $cliente = mysql_result($resCliente,0,'nombre').' '.mysql_result($resCliente,0,'apellidopaterno').' '.mysql_result($resCliente,0,'apellidomaterno');
-
-
-$path  = '../../archivos/cotizaciones/'.$id;
-
-if (!file_exists($path)) {
-	mkdir($path, 0777);
-}
 
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -144,7 +135,7 @@ switch ($iddocumentacion) {
 	break;
 	case 38:
 		// code...
-		$dato = mysql_result($resultado,0,'nrorecibo');
+		$dato = mysql_result($resultadoV,0,'nrorecibo');
 
 		$input = '<input type="text" name="nrorecibo" maxlength="20" id="nrorecibo" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';

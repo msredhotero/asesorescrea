@@ -54,7 +54,7 @@ $modificar = "modificarPeriodicidadventasdetalle";
 
 $tabla 			= "dbperiodicidadventaspagos";
 
-if ($_SESSION['idroll_sahilices'] == 17) {
+if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 18)) {
 	$jstabla = 'cobranzainbursa';
 } else {
 	$jstabla = 'cobranzaestados';
@@ -179,7 +179,7 @@ if ($_SESSION['idroll_sahilices'] == 17) {
 												<span>PENDIENTES DE PAGO</span>
 											</button>
 										<?php } else {  ?>
-											<?php if ($_SESSION['idroll_sahilices'] == 17) { ?>
+											<?php if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 18)) { ?>
 											<button type="button" class="btn bg-green waves-effect btnHistorico">
 												<i class="material-icons">history</i>
 												<span>PROCESO DE APLICACION</span>
@@ -205,7 +205,7 @@ if ($_SESSION['idroll_sahilices'] == 17) {
 												<span>DEVOLUCIONES</span>
 											</button>
 
-											<button type="button" class="btn bg-yellow waves-effect btnValidar">
+											<button type="button" class="btn bg-orange waves-effect btnValidar">
 												<i class="material-icons">format_shapes</i>
 												<span>PENDIENTES DE VALIDAR</span>
 											</button>
@@ -219,7 +219,7 @@ if ($_SESSION['idroll_sahilices'] == 17) {
 
 
 
-								<?php if ($_SESSION['idroll_sahilices'] != 17) { ?>
+								<?php if (($_SESSION['idroll_sahilices'] != 17) || ($_SESSION['idroll_sahilices'] != 18)) { ?>
 								<div class="row contActuales" style="padding: 5px 20px;">
 									<table id="example" class="display table " style="width:100%">
 										<thead>
@@ -444,7 +444,7 @@ if ($_SESSION['idroll_sahilices'] == 17) {
 			});
 		});
 
-		<?php if ($_SESSION['idroll_sahilices'] == 17) { ?>
+		<?php if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 18)) { ?>
 			$('.contDevueltos').hide();
 			$('.contActuales').hide();
 
@@ -518,7 +518,7 @@ if ($_SESSION['idroll_sahilices'] == 17) {
 		var table2 = $('#example2').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=<?php echo $jstabla; ?>&estados=2",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=<?php echo $jstabla; ?>&estados=2,7",
 			"order": [[ 2, "asc" ]],
 			"language": {
 				"emptyTable":     "No hay datos cargados",
@@ -621,6 +621,14 @@ if ($_SESSION['idroll_sahilices'] == 17) {
 			url = "subirdocumentacioni.php?id=" + idTable;
 			$(location).attr('href',url);
 		});
+
+		$("#example").on("click",'.btnPagar', function(){
+			idTable =  $(this).attr("id");
+			url = "metodopago.php?id=" + idTable;
+			$(location).attr('href',url);
+		});
+
+
 
 		$("#example2").on("click",'.btnRecibo', function(){
 			idTable =  $(this).attr("id");

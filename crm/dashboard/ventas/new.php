@@ -41,9 +41,9 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Venta";
+$singular = "POLIZA";
 
-$plural = "Ventas";
+$plural = "POLIZA";
 
 $eliminar = "eliminarVentas";
 
@@ -61,21 +61,82 @@ $resVenta = $serviciosReferencias->traerVentasPorCotizacion($id);
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbventas";
 
-$lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','refestadoventa');
-$lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Estado Venta');
+$lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','refestadoventa','refproductosaux','vigenciadesde');
+$lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Estado Poliza','Producto Especifico','Vigencia Desde');
 
 
 $resVar = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 $cadRef = $serviciosFunciones->devolverSelectBox($resVar,array(1,2,3),' ');
 
-$resVar1 = $serviciosReferencias->traerEstadoventaPorId(1);
+$resVar1 = $serviciosReferencias->traerEstadoventaPorId(6);
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar1,array(1),' ');
 
 
 $refdescripcion = array(0=>$cadRef,1=>$cadRef2);
 $refCampo 	=  array('refcotizaciones','refestadoventa');
 
-$formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+$idproducto = mysql_result($resVar,0,'refproductos');
+
+$resCliente = $serviciosReferencias->traerClientesPorId( mysql_result($resVar,0,'refclientes'));
+
+if (mysql_result($resCliente,0,'fechanacimiento') == '' || mysql_result($resCliente,0,'fechanacimiento') == '0000-00-00') {
+	$edad = 0;
+} else {
+	$edad = $serviciosReferencias->calculaedad(mysql_result($resCliente,0,'fechanacimiento'));
+}
+
+
+$resProducto = $serviciosReferencias->traerProductosPorId($idproducto);
+
+$resPaquete = $serviciosReferencias->traerPaquetedetallesPorPaquete($idproducto);
+
+$formularioAr = array();
+
+if (mysql_num_rows($resPaquete) > 0) {
+	while ($rowP = mysql_fetch_array($resPaquete)) {
+
+		$existeCotizacionParaProducto = $serviciosReferencias->traerValoredadPorProductoEdad($rowP['refproductos'],$edad);
+
+		if ($rowP['unicomonto'] == '1') {
+			$acumPrecio = $rowP['valor'];
+		} else {
+			$acumPrecio = mysql_result($existeCotizacionParaProducto,0,'valor');
+		}
+
+		$resVar3 = $serviciosReferencias->traerProductosPorId($rowP['refproductos']);
+		$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),' ');
+
+		$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3);
+		$refCampo 	=  array('refcotizaciones','refestadoventa','refproductosaux');
+
+		$formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+
+		array_push($formularioAr, array('formulario' => $formulario, 'producto'=> $rowP['producto'], 'idproducto' => $rowP['refproductos'], 'monto' => $acumPrecio ));
+	}
+
+
+} else {
+
+	$existeCotizacionParaProducto = $serviciosReferencias->traerValoredadPorProductoEdad($idproducto,$edad);
+
+	if (mysql_num_rows($existeCotizacionParaProducto)>0) {
+		$acumPrecio = mysql_result($existeCotizacionParaProducto,0,'valor');
+
+	} else {
+		$acumPrecio = mysql_result($resProducto,0,'precio');
+
+	}
+
+	$cadRef3 = "<option value='0'>Mismo de la cotización</option>";
+	$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3);
+	$refCampo 	=  array('refcotizaciones','refestadoventa','refproductosaux');
+
+	$formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+
+	array_push($formularioAr, array('formulario' => $formulario, 'producto'=> mysql_result($resProducto,0,'producto'), 'idproducto' => 0, 'monto' => $acumPrecio));
+}
+
+//$formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
@@ -167,14 +228,18 @@ $formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio
 	<div class="container-fluid">
 		<div class="row clearfix">
 
+			<?php
+				$formParticular = 'formAlta';
+				$cantForm = 0;
+				foreach ($formularioAr as $frm) {
+					$formParticular = 'formAlta';
+			?>
 			<div class="row">
-
-
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								<?php echo strtoupper($plural); ?>
+								POLIZA - <?php echo $frm['producto']; ?> - Precio: MX $ <?php echo $frm['monto']; ?>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -188,9 +253,32 @@ $formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio
 							</ul>
 						</div>
 						<div class="body table-responsive">
-							<form class="formulario frmNuevo" role="form" id="sign_in">
+							<?php
+								$resVenta = $serviciosReferencias->traerVentasPorCotizacionPaquetes($id,$frm['idproducto']);
+								if (mysql_num_rows($resVenta) > 0) {
+
+							?>
+
+							<div class="row">
+								<div class="button-demo">
+									<button type="button" class="btn btn-black waves-effect btnVolver">
+										<i class="material-icons">arrow_back</i>
+										<span>VOLVER</span>
+									</button>
+
+									<button type="button" class="btn bg-red waves-effect">
+										<i class="material-icons">save</i>
+										<span>YA SE CARGO ESTA POLIZA</span>
+									</button>
+								</div>
+							</div>
+							<?php } else {
+								$formParticular = $formParticular.$cantForm;
+
+								?>
+							<form class="formulario frmNuevo<?php echo $cantForm; ?> <?php echo $formParticular; ?>" role="form" id="sign_in">
 								<div class="row">
-									<?php echo $formulario; ?>
+									<?php echo $frm['formulario']; ?>
 									<input type="hidden" id="reforigen" name="reforigen" value="<?php echo $origen; ?>"/>"
 								</div>
 								<div class="row">
@@ -199,30 +287,31 @@ $formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio
 											<i class="material-icons">arrow_back</i>
 											<span>VOLVER</span>
 										</button>
-										<?php if (mysql_num_rows($resVenta) > 0) { ?>
-											<button type="button" class="btn bg-red waves-effect">
-												<i class="material-icons">save</i>
-												<span>YA SE CARGO ESTA VENTA</span>
-											</button>
-										<?php } else { ?>
-											<?php if (array_search($_SESSION['idroll_sahilices'], $arRoles) >= 0) { ?>
-												<button type="submit" class="btn bg-light-blue waves-effect btnNuevo">
-													<i class="material-icons">save</i>
-													<span>GUARDAR</span>
-												</button>
 
-											<?php } ?>
+
+										<?php if (array_search($_SESSION['idroll_sahilices'], $arRoles) >= 0) { ?>
+											<button type="submit" class="btn bg-light-blue waves-effect btnNuevo">
+												<i class="material-icons">save</i>
+												<span>GUARDAR</span>
+											</button>
+
 										<?php } ?>
+
 
 									</div>
 								</div>
 
 							</form>
+							<?php
+								$cantForm += 1;
+								}
+							?>
 
 						</div>
 					</div>
 				</div>
 			</div>
+			<?php } ?>
 		</div>
 	</div>
 </section>
@@ -284,6 +373,8 @@ $formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio
 		});
 
 		$('.frmContfoliointerno').hide();
+		$('.frmContrefmotivorechazopoliza').hide();
+
 
 		$('.btnArchivos').click(function() {
 			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=35";
@@ -297,43 +388,8 @@ $formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio
 
 
 
-		$('.btnCalcularM').click(function() {
-			calcularBonoMonto();
-		});
-
-		$('.btnCalcularP').click(function() {
-			calcularBonoPorcentaje();
-		});
-
-		function calcularBonoPorcentaje() {
-			if (($('#montocomision').val() > 0) && $('#primaneta').val() > 0) {
-				$('#porcentajecomision').val( parseFloat(parseFloat($('#montocomision').val()) * 100 / parseFloat($('#primaneta').val())) );
-			} else {
-				$('#porcentajecomision').val( 0);
-			}
-		}
-
-		function calcularBonoMonto() {
-			if (($('#porcentajecomision').val() > 0) && $('#primaneta').val() > 0) {
-				$('#montocomision').val( parseFloat(parseFloat($('#porcentajecomision').val()) / 100 * parseFloat($('#primaneta').val())) );
-			} else {
-				$('#montocomision').val( 0);
-			}
-		}
 
 
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '315px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
-
-		});
 
 
 		var table = $('#example').DataTable({
@@ -369,12 +425,27 @@ $formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio
 			e.preventDefault();
 		});
 
-		$('#primaneta').number( true, 2 ,'.','');
-		$('#primatotal').number( true, 2,'.','' );
-		$('#montocomision').number( true, 2,'.','' );
-		$('#porcentajecomision').number( true, 2,'.','' );
 
-		$('#fechavencimientopoliza').pickadate({
+
+		$('.datepicker').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		});
+
+
+		$('#vigenciadesde').pickadate({
 			format: 'yyyy-mm-dd',
 			labelMonthNext: 'Siguiente mes',
 			labelMonthPrev: 'Previo mes',
@@ -494,13 +565,53 @@ $formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio
 		});//fin del boton modificar
 
 
+		<?php
+			$cantForm = 0;
+			$formParticular = 'formAlta';
+			foreach ($formularioAr as $frm) {
+				$formParticular = 'formAlta';
+				$formParticular = $formParticular.$cantForm;
+		?>
+		<?php
+			$resVenta = $serviciosReferencias->traerVentasPorCotizacionPaquetes($id,$frm['idproducto']);
+			if (mysql_num_rows($resVenta) <= 0) {
+		?>
 
-		$('.frmNuevo').submit(function(e){
+		$('.<?php echo $formParticular; ?> #primaneta').number( true, 2 ,'.','');
+		$('.<?php echo $formParticular; ?> #primatotal').number( true, 2,'.','' );
+		$('.<?php echo $formParticular; ?> #montocomision').number( true, 2,'.','' );
+		$('.<?php echo $formParticular; ?> #porcentajecomision').number( true, 2,'.','' );
+
+		$('.<?php echo $formParticular; ?> .btnCalcularM').click(function() {
+			calcularBonoMonto();
+		});
+
+		$('.<?php echo $formParticular; ?> .btnCalcularP').click(function() {
+			calcularBonoPorcentaje();
+		});
+
+		function calcularBonoPorcentaje() {
+			if (($('.<?php echo $formParticular; ?> #montocomision').val() > 0) && $('.<?php echo $formParticular; ?> #primaneta').val() > 0) {
+				$('.<?php echo $formParticular; ?> #porcentajecomision').val( parseFloat(parseFloat($('.<?php echo $formParticular; ?> #montocomision').val()) * 100 / parseFloat($('.<?php echo $formParticular; ?> #primaneta').val())) );
+			} else {
+				$('.<?php echo $formParticular; ?> #porcentajecomision').val( 0);
+			}
+		}
+
+		function calcularBonoMonto() {
+			if (($('.<?php echo $formParticular; ?> #porcentajecomision').val() > 0) && $('.<?php echo $formParticular; ?> #primaneta').val() > 0) {
+				$('.<?php echo $formParticular; ?> #montocomision').val( parseFloat(parseFloat($('.<?php echo $formParticular; ?> #porcentajecomision').val()) / 100 * parseFloat($('.<?php echo $formParticular; ?> #primaneta').val())) );
+			} else {
+				$('.<?php echo $formParticular; ?> #montocomision').val( 0);
+			}
+		}
+
+		$('.frmNuevo<?php echo $cantForm; ?>').submit(function(e){
 
 			e.preventDefault();
-			if ($('#sign_in')[0].checkValidity()) {
+			if ($('.frmNuevo<?php echo $cantForm; ?>')[0].checkValidity()) {
 				//información del formulario
-				var formData = new FormData($(".formulario")[0]);
+				var formData = new FormData($(".formulario")[<?php echo $cantForm; ?>]);
 				var message = "";
 				//hacemos la petición ajax
 				$.ajax({
@@ -531,7 +642,7 @@ $formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio
 
 							$('#lgmNuevo').modal('hide');
 							$('#unidadnegocio').val('');
-							table.ajax.reload();
+							location.reload();
 						} else {
 							swal({
 									title: "Respuesta",
@@ -552,6 +663,11 @@ $formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio
 				});
 			}
 		});
+		<?php
+			$cantForm += 1;
+			}
+		?>
+		<?php } ?>
 
 		$('.frmModificar').submit(function(e){
 

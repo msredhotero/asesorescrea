@@ -59,6 +59,8 @@ $estadoRecibo = mysql_result($resultado,0,'estadopago');
 
 $monto = mysql_result($resultado,0,'montototal');
 
+$idestadopago = mysql_result($resultado,0,'refestadopago');
+
 
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
@@ -93,20 +95,95 @@ $resProducto = $serviciosReferencias->traerProductosPorId(mysql_result($resVenta
 
 $producto = mysql_result($resProducto,0,'producto');
 
+$idproductoventa = mysql_result($resVenta,0,'refproductosaux');
+
+
+
+$resProductoAux = $serviciosReferencias->traerProductosPorIdCompleta($idproductoventa);
+
+$puedeCargarDocumentaciones = 0;
+$puedeConcluir = 0;
+// $pertenceaVRIM identifica tres factores importantes, (2)si es un producto de vrim de un paquete, carga inbursa y finaliza vrim, (1) si es un producto vrim individual, carga vrim y no inbursa, (0) sino es un producto vrim, carga y finaliza inbursa.
+if (mysql_result($resVenta,0,'refproductosaux') == 0) {
+	if (mysql_result($resProducto,0,'reftipoproductorama') == 12) {
+		$pertenceaVRIM = 2;
+	} else {
+		$pertenceaVRIM = 0;
+	}
+} else {
+	if (mysql_result($resProductoAux,0,'reftipoproductorama') == 12) {
+		$pertenceaVRIM = 1;
+	} else {
+		$pertenceaVRIM = 0;
+	}
+}
+
+if ($_SESSION['idroll_sahilices'] == 17) {
+	switch ($pertenceaVRIM) {
+		case 0:
+			$idestadonuevo = 5;
+			$puedeCargarDocumentaciones = 1;
+			$puedeConcluir = 1;
+		break;
+		case 1:
+			$idestadonuevo = 2;
+			$puedeCargarDocumentaciones = 0;
+			$puedeConcluir = 0;
+		break;
+		case 2:
+			$idestadonuevo = 2;
+			$puedeCargarDocumentaciones = 0;
+			$puedeConcluir = 0;
+		break;
+	}
+}
+
+
+if ($_SESSION['idroll_sahilices'] == 18) {
+	switch ($pertenceaVRIM) {
+		case 0:
+			$idestadonuevo = 2;
+			$puedeCargarDocumentaciones = 0;
+			$puedeConcluir = 0;
+		break;
+		case 1:
+			$idestadonuevo = 2;
+			$puedeCargarDocumentaciones = 0;
+			$puedeConcluir = 0;
+		break;
+		case 2:
+			$idestadonuevo = 2;
+			$puedeCargarDocumentaciones = 0;
+			$puedeConcluir = 0;
+		break;
+	}
+}
+
+if ( ($idestadopago == 5)) {
+	$puedeConcluir = 0;
+}
+
+if ($_SESSION['idroll_sahilices'] == 16) {
+	$idestadonuevo = $idestadopago;
+	$puedeCargarDocumentaciones = 0;
+	$puedeConcluir = 0;
+}
+
 
 
 $idCotizacion = mysql_result($resVenta,0,'refcotizaciones');
 
-$resPagoCotizacion = $serviciosReferencias->traerPagosPorCotizacion($idCotizacion);
-$urlArchivo = '';
-$selectPago = '';
-if (mysql_num_rows($resPagoCotizacion) > 0) {
-	if (mysql_result($resPagoCotizacion,0,'refcuentasbancarias') == 0) {
-		$resComercio = $serviciosComercio->traerComercioinicioPorOrderId($idCotizacion);
+//die(var_dump($idCotizacion));
+
+$resPagoRecibos = $serviciosReferencias->traerPagosPorRecibo($id);
+
+if (mysql_num_rows($resPagoRecibos) > 0) {
+	if (mysql_result($resultado,0,'refformapago') == 1) {
+		$resComercio = $serviciosComercio->traerComercioinicioPorOrderId($id);
 		if (mysql_num_rows($resComercio)>0) {
-			$urlArchivo = '../../reportes/rptFacturaPagoOnline.php?token='.mysql_result($resComercio,0,'token');
+			$urlArchivo = '../../reportes/rptFacturaPagoRecibosOnline.php?token='.mysql_result($resComercio,0,'token');
 			$token = mysql_result($resComercio,0,'token');
-			require ('../../reportes/rptFacturaPagoOnlineManual.php');
+			require ('../../reportes/rptFacturaPagoReciboOnlineManual.php');
 		} else {
 			$urlArchivo = '';
 		}
@@ -114,22 +191,58 @@ if (mysql_num_rows($resPagoCotizacion) > 0) {
 
 
 	}
-	if (mysql_result($resPagoCotizacion,0,'refcuentasbancarias') == 1) {
-		$urlArchivo = '../../archivos/comprobantespago/'.$idCotizacion.'/'.mysql_result($resPagoCotizacion,0,'archivos');
+	if (mysql_result($resultado,0,'refformapago') == 2) {
+		$urlArchivo = '../../archivos/comprobantespagorecibos/'.$id.'/'.mysql_result($resPagoRecibos,0,'archivos');
 
 
 	}
 
-	$datosDelPago = mysql_result($resPagoCotizacion,0,'destino').' - Monto: '.mysql_result($resPagoCotizacion,0,'monto');
-	$idDelPago = mysql_result($resPagoCotizacion,0,0);
+	$datosDelPago = mysql_result($resPagoRecibos,0,'destino').' - Monto: '.mysql_result($resPagoRecibos,0,'monto');
+	$idDelPago = mysql_result($resPagoRecibos,0,0);
 
 	$selectPago = '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContrefdatopago" style="display:block">
 									<label for="avisoinbursa" class="control-label" style="text-align:left">Aplicar Comprobante de Pago </label>
 									<div class="form-group input-group col-md-12">
-									<div class="form-line"><select class="form-control" name="refdatopago" id="refdatopago"><option value="'.mysql_result($resPagoCotizacion,0,'idpago').'">'.$datosDelPago.'</option></select></div></div></div>';
+									<div class="form-line"><select class="form-control" name="refdatopago" id="refdatopago"><option value="'.mysql_result($resPagoRecibos,0,'idpago').'">'.$datosDelPago.'</option></select></div></div></div>';
 } else {
-	$selectPago = "<input type='hidden' name='refdatopago' id='refdatopago' value='0'>";
+
+	$resPagoCotizacion = $serviciosReferencias->traerPagosPorCotizacion($idCotizacion);
+	$urlArchivo = '';
+	$selectPago = '';
+	if (mysql_num_rows($resPagoCotizacion) > 0) {
+		if (mysql_result($resPagoCotizacion,0,'refcuentasbancarias') == 0) {
+			$resComercio = $serviciosComercio->traerComercioinicioPorOrderId($idCotizacion);
+			if (mysql_num_rows($resComercio)>0) {
+				$urlArchivo = '../../reportes/rptFacturaPagoOnline.php?token='.mysql_result($resComercio,0,'token');
+				$token = mysql_result($resComercio,0,'token');
+				require ('../../reportes/rptFacturaPagoOnlineManual.php');
+			} else {
+				$urlArchivo = '';
+			}
+
+
+
+		}
+		if (mysql_result($resPagoCotizacion,0,'refcuentasbancarias') == 1) {
+			$urlArchivo = '../../archivos/comprobantespago/'.$idCotizacion.'/'.mysql_result($resPagoCotizacion,0,'archivos');
+
+
+		}
+
+		$datosDelPago = mysql_result($resPagoCotizacion,0,'destino').' - Monto: '.mysql_result($resPagoCotizacion,0,'monto');
+		$idDelPago = mysql_result($resPagoCotizacion,0,0);
+
+		$selectPago = '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContrefdatopago" style="display:block">
+										<label for="avisoinbursa" class="control-label" style="text-align:left">Aplicar Comprobante de Pago </label>
+										<div class="form-group input-group col-md-12">
+										<div class="form-line"><select class="form-control" name="refdatopago" id="refdatopago"><option value="'.mysql_result($resPagoCotizacion,0,'idpago').'">'.$datosDelPago.'</option></select></div></div></div>';
+	} else {
+		$selectPago = "<input type='hidden' name='refdatopago' id='refdatopago' value='0'>";
+	}
 }
+
+
+
 
 
 $pathPagos  = '../../archivos/pagos/'.$id;
@@ -153,6 +266,9 @@ if (isset($_GET['iddocumentacion'])) {
 			$iddocumentacion = 39;
 		break;
 		case 17:
+			$iddocumentacion = 40;
+		break;
+		case 18:
 			$iddocumentacion = 40;
 		break;
 		default:
@@ -264,6 +380,12 @@ switch ($_SESSION['idroll_sahilices']) {
 		$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionDetalle($id, 39);
 		$puedeBorrar = 0;
 	break;
+	case 18:
+		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '40,41');
+		$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '40,41');
+		$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionDetalle($id, 39);
+		$puedeBorrar = 0;
+	break;
 	default:
 
 		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '38,39,40,41');
@@ -279,51 +401,39 @@ switch ($_SESSION['idroll_sahilices']) {
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $resResultado = $serviciosReferencias->traerPeriodicidadventaspagosPorCobro($id);
 
+$resResultadoAux = $serviciosReferencias->traerPeriodicidadventaspagosPorCobro($id);
+
+$insertar = "insertarPeriodicidadventaspagos";
+
+$modificar = "modificarPeriodicidadventaspagos";
+
 $tabla 			= "dbperiodicidadventaspagos";
 
 $lblCambio	 	= array('refperiodicidadventasdetalle','nrorecibo','fechapago','nrofactura','avisoinbursa','fechapagoreal');
 $lblreemplazo	= array('Venta','Folio de Pago Asesores Crea','Fecha Pago','Nro Factura','Notifacacion a Inbursa','Fecha Pago Real');
 
-if (mysql_num_rows($resResultado)>0) {
+//insertar
+$resVar	= $serviciosReferencias->traerPeriodicidadventasdetallePorIdCompleto($id);
+$cadRef = $serviciosFunciones->devolverSelectBox($resVar,array(1,2),' ');
 
-	$idPagoDelRecibo = mysql_result($resResultado,0,0);
-	//modificar
-	$resVar	= $serviciosReferencias->traerPeriodicidadventasPorIdCompleto($id);
-	$cadRef = $serviciosFunciones->devolverSelectBox($resVar,array(1,2),' ');
+$cadRef2 = "<option value='0'>No</option><option value='1'>Si</option>";
 
-	if (mysql_result($resResultado,0,'avisoinbursa') == '1') {
-		$cadRef2 = "<option value='0'>No</option><option value='1' selected>Si</option>";
-	} else {
-		$cadRef2 = "<option value='0' selected>No</option><option value='1'>Si</option>";
-	}
+$refdescripcion = array(0=>$cadRef,1=>$cadRef2);
+$refCampo 	=  array('refperiodicidadventasdetalle','avisoinbursa');
 
+$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo('insertarPeriodicidadventaspagos' ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
+$montoPagado = 0;
 
-	$refdescripcion = array(0=>$cadRef,1=>$cadRef2);
-	$refCampo 	=  array('refperiodicidadventasdetalle','avisoinbursa');
+$apareceaviso = 1;
+$idPagoDelRecibo = 0;
 
+while ($rowPP = mysql_fetch_array($resResultado)) {
+	$montoPagado += $rowPP['monto'];
 	$apareceaviso = 0;
-
-
-	$frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar(mysql_result($resResultado,0,0), 'idperiodicidadventapago','modificarPeriodicidadventaspagos',$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
-
-
-} else {
-	$idPagoDelRecibo = 0;
-	//insertar
-	$resVar	= $serviciosReferencias->traerPeriodicidadventasdetallePorIdCompleto($id);
-	$cadRef = $serviciosFunciones->devolverSelectBox($resVar,array(1,2),' ');
-
-	$cadRef2 = "<option value='0'>No</option><option value='1'>Si</option>";
-
-	$refdescripcion = array(0=>$cadRef,1=>$cadRef2);
-	$refCampo 	=  array('refperiodicidadventasdetalle','avisoinbursa');
-
-	$apareceaviso = 1;
-
-	$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo('insertarPeriodicidadventaspagos' ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
-
 }
+
+
 
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -341,6 +451,47 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 	$archivos = '';
 	$lblEstadoComprobante = "(FALTA CARGAR)";
 }
+
+
+/**** para discriminar los productos *****///
+//die(var_dump($idCotizacion));
+$idCotizacion = mysql_result($resVenta,0,'refcotizaciones');
+$resCotizacion = $serviciosReferencias->traerCotizacionesPorIdCompleto($idCotizacion);
+
+$resPaquete = $serviciosReferencias->traerPaquetedetallesPorPaquete(mysql_result($resCotizacion,0,'refproductos'));
+
+$formularioAr = array();
+
+$lblProducto = '';
+
+$pertenceaVRIM = 0;
+
+//die(var_dump($idCotizacion));
+if (mysql_num_rows($resPaquete) > 0) {
+	$lblProducto = '<li class="list-group-item">'.mysql_result($resCotizacion,0,'producto').' $ '.mysql_result($resCotizacion,0,'primatotal').'</li>';
+
+	if ($_SESSION['idroll_sahilices'] != 16) {
+		$resPV = $serviciosReferencias->traerVentasPorCotizacionPaquetesUnico($idCotizacion);
+
+		while ($rowPV = mysql_fetch_array($resPV)) {
+			if ($idproductoventa == $rowPV['idproducto']) {
+				$lblProducto .= ' <li class="list-group-item"><b>'.$rowPV['producto'].' $ '.$rowPV['primatotal'].' (Aplicar)<b/></li>';
+			} else {
+				$lblProducto .= ' <li class="list-group-item"> '.$rowPV['producto'].' $ '.$rowPV['primatotal'].'</li>';
+			}
+
+		}
+	}
+} else {
+
+	$lblProducto = '<li class="list-group-item">'.mysql_result($resCotizacion,0,'producto').' $ '.mysql_result($resCotizacion,0,'primatotal').'</li>';
+}
+
+
+// cuando es un paquete, inbursa carga factura y envia a vrim para concluir el proceso.
+
+
+////*** fin discriminar los productos *****///
 
 ?>
 
@@ -387,12 +538,7 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 		.alert > i{ vertical-align: middle !important; }
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		#codigopostal { width: 400px; }
-		.pdfobject-container {
-		   max-width: 100%;
-			height: 350px;
-			border: 10px solid rgba(0,0,0,.2);
-			margin: 0;
-		}
+		.pdfobject-container { height: 40rem; border: 1rem solid rgba(0,0,0,.1); }
 
 		  .thumbnail2 {
 		    display: block;
@@ -479,7 +625,9 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 						<li class="list-group-item"><?php echo 'No de Recibo: <b>'.strtoupper($nrorecibo).'</b>'; ?></li>
 						<li class="list-group-item"><?php echo 'Estado: <b>'.strtoupper($estadoRecibo).'</b>'; ?></li>
 						<li class="list-group-item"><?php echo 'Monto: <b>$ '.number_format($monto,2,'.',',').'</b>'; ?></li>
-						<li class="list-group-item" style="height:140px;"></li>
+						<?php echo $lblProducto; ?>
+
+						<li class="list-group-item" style="height:24px;"></li>
 
 					</ul>
 
@@ -516,18 +664,8 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 					</div>
 				<?php }  ?>
 
-				<?php if (($i == $completos) && ($_SESSION['idroll_sahilices'] == 17)) { ?>
-				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-					<div class="info-box-3 bg-orange btnCursor hover-zoom-effect enviarFactura">
-						<div class="icon">
-							<i class="material-icons">send</i>
-						</div>
-						<div class="content">
-							<div class="text">ENVIAR FACTURA AL CLIENTE</div>
-							<div class="number">ENVIAR</div>
-						</div>
-					</div>
-				</div>
+				<?php if (($i == $completos) && ($puedeConcluir == 1) && (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 18))) { ?>
+
 				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 					<div class="info-box-3 bg-blue hover-zoom-effect btnCursor concluirProceso">
 						<div class="icon">
@@ -553,41 +691,111 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 
 						</div>
 						<div class="body table-responsive">
-							<div class="col-xs-3">
-								<div class="alert alert-info">
-									<p><?php echo '<b>Cliente: </b>'.$cliente; ?></p>
+							<div class="row">
+								<div class="col-xs-3">
+									<div class="alert alert-info">
+										<p><?php echo '<b>Cliente: </b>'.$cliente; ?></p>
+									</div>
 								</div>
-							</div>
-							<div class="col-xs-3">
-								<div class="alert alert-success">
-									<p><?php echo '<b>No Recibo: </b>'.$nrorecibo; ?></p>
+								<div class="col-xs-3">
+									<div class="alert alert-success">
+										<p><?php echo '<b>No Recibo: </b>'.$nrorecibo; ?></p>
+									</div>
 								</div>
-							</div>
-							<div class="col-xs-3">
-								<div class="alert alert-success">
-									<p><?php echo '<b>Poliza: </b>'.$nropoliza; ?></p>
+								<div class="col-xs-3">
+									<div class="alert alert-success">
+										<p><?php echo '<b>Poliza: </b>'.$nropoliza; ?></p>
+									</div>
 								</div>
-							</div>
 
-							<?php if ($urlArchivo != '') { ?>
-							<div class="col-xs-3">
-								<div class="alert bg-orange">
-									<p>Comprobante de pago cargado por el cliente: <b><a style="color:white;" target="_blank" href="<?php echo $urlArchivo; ?>">Descargar</a></b></p>
+							<?php if ($apareceaviso == 1) { ?>
+								<div class="col-xs-3">
+									<div class="alert bg-blue">
+										<p><?php echo '<b>Monto: </b>'.$monto; ?></p>
+									</div>
 								</div>
-							</div>
+							<?php } else { ?>
+								<?php if ($monto < $montoPagado) { ?>
+									<div class="col-xs-3">
+										<div class="alert bg-red">
+											<p><?php echo '<b>Monto: </b>'.$monto; ?> ** Se pago demás <?php echo '<b>'.($montoPagado - $monto)."</b>"; ?></p>
+										</div>
+									</div>
+								<?php } else { ?>
+									<?php if ($monto > $montoPagado) { ?>
+										<div class="col-xs-3">
+											<div class="alert bg-red">
+												<p><?php echo '<b>Monto: </b>'.$monto; ?> ** Se pago de menos <?php echo '<b>'.($monto - $montoPagado)."</b>"; ?></p>
+											</div>
+										</div>
+									<?php } else { ?>
+										<div class="col-xs-3">
+											<div class="alert bg-blue">
+												<p><?php echo '<b>Monto: </b>'.$monto; ?></p>
+											</div>
+										</div>
+									<?php }} ?>
 							<?php } ?>
 
-							<form class="formulario frmNuevo" role="form" id="sign_in">
+								<?php if ($urlArchivo != '') { ?>
+								<div class="col-xs-3">
+									<div class="alert bg-orange">
+										<p>Comprobante de pago cargado por el cliente: <b><a style="color:white;" target="_blank" href="<?php echo $urlArchivo; ?>">Descargar</a></b></p>
+									</div>
+								</div>
+								<?php } ?>
+							</div>
+
+							<form class="forrmm" role="form" id="sign_in">
 								<div class="row">
-		                  	<?php echo $frmUnidadNegocios; ?>
-									<?php echo $selectPago; ?>
+									<?php if ($monto > $montoPagado) { ?>
+										<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
+											<i class="material-icons">add</i>
+											<span>CARGAR PAGO</span>
+										</button>
+									<?php } ?>
+								</div>
+								<div class="row">
+									<table id="example" class="display table  dataTable" style="width: 100%;" role="grid" aria-describedby="example_info">
+										<thead>
+											<th>Monto</th>
+											<th>Folio De Pago Asesores Crea</th>
+											<th>Fecha Pago</th>
+											<th>Notifacacion a Inbursa</th>
+											<th>Acciones</th>
+										</thead>
+										<tbody>
+									<?php
+
+									while ($rowPagos = mysql_fetch_array($resResultadoAux)) {
+									?>
+									<tr>
+										<td><?php echo $rowPagos['monto']; ?></td>
+										<td><?php echo $rowPagos['nrorecibo']; ?></td>
+										<td><?php echo $rowPagos['fechapago']; ?></td>
+										<td><?php echo ($rowPagos['avisoinbursa'] == '0' ? 'No' : 'Si'); ?></td>
+										<td>
+											<button type="button" class="btn bg-orange waves-effect btnModificar" id="<?php echo $rowPagos['idperiodicidadventapago']; ?>">
+					 							MODIFICAR
+				 							</button>
+
+										</td>
+									</tr>
+									<?php
+
+
+
+									}
+									?>
+										</tbody>
+									</table>
 								</div>
 
 								<div class="modal-footer">
-			                  <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
-									<button type="button" class="btn bg-orange waves-effect btnAvisar">
-			 							AVISAR PAGO A INBURSA
-		 							</button>
+
+									<button type="button" class="btn bg-amber waves-effect btnAvisar" id="<?php echo $id; ?>">
+										AVISAR PAGO A INBURSA
+									</button>
 									<button type="button" class="btn bg-defualt waves-effect btnVolver">
 			 							VOLVER
 		 							</button>
@@ -649,7 +857,7 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								AQUI TIENE SU FACTURA PARA DESCARGAR
+								AQUI TIENE SU <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?> PARA DESCARGAR
 							</h2>
 						</div>
 						<div class="body table-responsive">
@@ -678,6 +886,7 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 
 		<?php } else { ?>
 			<div class="row">
+			<?php if ($puedeCargarDocumentaciones == 1) { ?>
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card">
 						<div class="header bg-blue">
@@ -708,6 +917,7 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 						</div>
 					</div>
 				</div>
+			<?php } ?>
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
@@ -769,6 +979,55 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 	</div>
 </section>
 
+
+
+<!-- NUEVO -->
+	<form class="formulario frmNuevo" role="form" id="sign_in">
+	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
+	       <div class="modal-dialog modal-lg" role="document">
+	           <div class="modal-content">
+	               <div class="modal-header">
+	                   <h4 class="modal-title" id="largeModalLabel">CARGAR PAGO</h4>
+	               </div>
+	               <div class="modal-body">
+							<div class="row">
+								<?php echo $frmUnidadNegocios; ?>
+								<?php echo $selectPago; ?>
+							</div>
+
+	               </div>
+	               <div class="modal-footer">
+	                   <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
+	                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+	               </div>
+	           </div>
+	       </div>
+	   </div>
+		<input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
+	</form>
+
+	<!-- MODIFICAR -->
+		<form class="formulario frmModificar" role="form" id="sign_in">
+		   <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
+		       <div class="modal-dialog modal-lg" role="document">
+		           <div class="modal-content">
+		               <div class="modal-header">
+		                   <h4 class="modal-title" id="largeModalLabel">MODIFICAR PAGO</h4>
+		               </div>
+		               <div class="modal-body">
+								<div class="row frmAjaxModificar">
+
+								</div>
+		               </div>
+		               <div class="modal-footer">
+		                   <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
+		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+		               </div>
+		           </div>
+		       </div>
+		   </div>
+			<input type="hidden" id="accion" name="accion" value="<?php echo $modificar; ?>"/>
+		</form>
 
 <!-- ELIMINAR -->
 	<form class="formulario" role="form" id="sign_in">
@@ -915,7 +1174,7 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 
 		<?php if ($_SESSION['idroll_sahilices'] != 16) { ?>
 
-
+		<?php if (($puedeConcluir == 1)) { ?>
 		$('.concluirProceso').click(function() {
 			concluirProceso();
 		});
@@ -928,20 +1187,25 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 				//datos del formulario
 				data: {
 					accion: 'concluirProceso',
-					idrecibo: <?php echo $id; ?>
+					idrecibo: <?php echo $id; ?>,
+					idestado: <?php echo $idestadonuevo; ?>
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
-
+					$('.concluirProceso').hide();
 				},
 				//una vez finalizado correctamente
 				success: function(data){
 
 					if (data.error == false) {
 						swal("Ok!", 'Ya concluimos el proceso correctamente', "success");
+						<?php if (($idestadonuevo == 5)) { ?>
+						enviarFacturaAlCliente();
+						<?php } ?>
 
 					} else {
 						swal("Error!", data.leyenda, "warning");
+						$('.concluirProceso').show();
 
 
 					}
@@ -954,9 +1218,9 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 			});
 		}
 
-		$('.enviarFactura').click(function() {
-			enviarFacturaAlCliente();
-		});
+		<?php } ?>
+
+
 
 		function enviarFacturaAlCliente() {
 			$.ajax({
@@ -970,7 +1234,7 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 					idcliente: <?php echo $idcliente; ?>,
 					nropoliza: '<?php echo $nropoliza; ?>',
 					url: "cobranza/subirdocumentacioni.php?id=<?php echo $id; ?>&iddocumentacion=40",
-					idpago: <?php echo $idPagoDelRecibo; ?>
+					idpago: <?php echo $id; ?>
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
@@ -1198,7 +1462,7 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 		};
 
 
-
+		<?php if ($puedeCargarDocumentaciones == 1) { ?>
 		var myDropzone = new Dropzone("#archivos", {
 			params: {
 				 idasociado: <?php echo $id; ?>,
@@ -1206,6 +1470,8 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 			},
 			url: 'subir.php'
 		});
+
+		<?php } ?>
 
 
 
@@ -1263,18 +1529,45 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 		});
 
 
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '265px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
+		$("#example").on("click",'.btnModificar', function(){
+			idTable =  $(this).attr("id");
+			frmAjaxModificar(idTable);
+			$('#lgmModificar').modal();
+		});//fin del boton modificar
 
-		});
+
+		function frmAjaxModificar(id) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'frmAjaxModificar',tabla: '<?php echo $tabla; ?>', id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.frmAjaxModificar').html('');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data != '') {
+						$('.frmAjaxModificar').html(data);
+					} else {
+						swal("Error!", data, "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+
+		}
+
+
 
 		$('.frmNuevo').submit(function(e){
 
@@ -1305,8 +1598,9 @@ if (mysql_num_rows($resDocumentacionReciboExistente)>0) {
 							swal("Ok!", 'Se guardo correctamente los datos del pago', "success");
 
 							$('#lgmNuevo').modal('hide');
+							location.reload();
 
-							table.ajax.reload();
+
 						} else {
 							swal({
 									title: "Respuesta",

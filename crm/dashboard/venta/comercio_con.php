@@ -1,11 +1,6 @@
 <?php
 
 
-
-
-
-
-
 	include ('../../includes/funciones.php');
 	include ('../../includes/funcionesUsuarios.php');
 	include ('../../includes/funcionesHTML.php');
@@ -52,7 +47,7 @@ $EM_Digest= $_POST["EM_Digest"];
 
 */
 
-
+$redireccionar = array('error'=> 0, 'url' => '');
 
 switch (trim(str_replace(' ','',$_POST['cc_number']))) {
 	case '5062541600005232':
@@ -108,19 +103,26 @@ $EM_Digest= $_POST["digest"];
 //$newdigest  = sha1($_POST["EM_Total"].$_POST["EM_OrderID"].$_POST["EM_Merchant"].$_POST["EM_Store"].$_POST["EM_Term"].$_POST["EM_RefNum"]+"-"+$_POST["EM_Auth"]);
 $newdigest  = sha1($_POST["total"].$_POST["order_id"].$_POST["merchant"].$_POST["store"].$_POST["term"].$EM_RefNum+"-"+$EM_Auth);
 
+//die(var_dump($EM_OrderID));
+
 $resultado = $serviciosComercio->traerComercioinicioPorOrderId($EM_OrderID);
 
 if (mysql_num_rows($resultado)>0) {
 	$token = mysql_result($resultado,0,'token');
 	$idestado = mysql_result($resultado,0,'refestadotransaccion');
 	$reforigencomercio = mysql_result($resultado,0,'reforigencomercio');
+	$idcotizacion = mysql_result($resultado,0,'idreferencia');
 } else {
-	header('Location: error.php');
+	$redireccionar['error'] = 1;
+	$redireccionar['url'] = 'error.php';
+	//header('Location: error.php');
 	$idestado = 1;
 }
 
 if ($idestado == 2) {
-	header('Location: ../facturacion/index.php');
+	$redireccionar['error'] = 1;
+	$redireccionar['url'] = '../facturacion/index.php';
+	//header('Location: ../facturacion/index.php');
 }
 
 
@@ -159,7 +161,8 @@ $resTransaccion = $serviciosComercio->insertarComerciofin($EM_Response,$EM_Total
 
 
 /********** dato de la cotizacion ******************************************/
-$resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($EM_OrderID);
+
+$resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcotizacion);
 $precioTotal = mysql_result($resCotizaciones,0,'primatotal');
 $lblCliente = mysql_result($resCotizaciones,0,'clientesolo');
 
@@ -167,42 +170,69 @@ $idusuariocliente  = mysql_result($resCotizaciones,0,'idusuariocliente');
 
 $resUsuario = $serviciosUsuario->traerUsuarioId($idusuariocliente);
 
-$resLogin = $serviciosUsuario->login(mysql_result($resUsuario,0,'email'),mysql_result($resUsuario,0,'password'));
+// solo para
+if (!isset($_SESSION['usua_sahilices']))
+{
+	$resLogin = $serviciosUsuario->login(mysql_result($resUsuario,0,'email'),mysql_result($resUsuario,0,'password'));
+}
+
 
 if (!isset($_SESSION['usua_sahilices']))
 {
-	header('Location: ../../error.php');
+	//header('Location: ../../error.php');
+	$redireccionar['error'] = 1;
+	$redireccionar['url'] = '../../error.php';
 } else {
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../venta/');
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Venta",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
-/******* fin  **************************************************************/
+	$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../venta/');
+	$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Venta",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+
+	/******* fin  **************************************************************/
 
 
-if ($error == 0) {
-	// modifico el estado a aprobado
-	$resModificarEstado = $serviciosComercio->modificarComercioInicioEstado($token,2);
+	if ($error == 0) {
+		// modifico el estado a aprobado
+		$resModificarEstado = $serviciosComercio->modificarComercioInicioEstado($token,2);
 
-	$nroComprobante = $serviciosComercio->generaNroRecibo();
+		$nroComprobante = $serviciosComercio->generaNroRecibo();
 
-	$resNroRecibo = $serviciosComercio->modificarComercioInicioNroRecibo($token,$nroComprobante);
+		$resNroRecibo = $serviciosComercio->modificarComercioInicioNroRecibo($token,$nroComprobante);
 
-	// verifico el origen de la transaccion para saber que tabla modificar
-	if ($reforigencomercio == 7) {
+		// verifico el origen de la transaccion para saber que tabla modificar
+		if ($reforigencomercio == 7) {
 
-		$resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($EM_OrderID,'refestados',1,$_SESSION['usua_sahilices']);
+			$resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestados',1,$_SESSION['usua_sahilices']);
 
-		$resModificarPM = $serviciosReferencias->modificarCotizacionesPorCampo($EM_OrderID,'refestadocotizaciones',20,$_SESSION['usua_sahilices']);
+			$resModificarPM = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestadocotizaciones',20,$_SESSION['usua_sahilices']);
 
-		// obstengo el lead que se genero en venta en linea
-		$resLead = $serviciosReferencias->traerLeadPorCotizacion($EM_OrderID);
+			// obstengo el lead que se genero en venta en linea
+			$resLead = $serviciosReferencias->traerLeadPorCotizacion($idcotizacion);
 
-		// se viene de ahi lo marco como vendido el estado del mismo
-		if (mysql_num_rows($resLead)>0) {
-			$resModificarLead = $serviciosReferencias->modificarLeadCotizacion(mysql_result($resLead,0,0),$EM_OrderID,5);
+			// se viene de ahi lo marco como vendido el estado del mismo
+			if (mysql_num_rows($resLead)>0) {
+				$resModificarLead = $serviciosReferencias->modificarLeadCotizacion(mysql_result($resLead,0,0),$idcotizacion,5);
+			}
+
+
+
+			///////////////// creo el pago para luego conciliarlo /////////////////////////////////
+			$destino = 'Pago Online Venta Producto en Linea';
+			$refcuentasbancarias = 0;
+			$conciliado = '0';
+			$fechacrea = date('Y-m-d H:i:s');
+			$usuariocrea = $_SESSION['usua_sahilices'];
+			$archivos = 'ReciboPago.pdf';
+			$type = 'pdf';
+			$refestado = 1;
+			$resPago = $serviciosReferencias->insertarPagos(12,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,5,'Inbursa',$lblCliente,$nroComprobante,'0');
+
+			///////////////// fin del pago /////////////////////////////////
+
 		}
 
 
+	} else {
+		$resModificarEstado = $serviciosComercio->modificarComercioInicioEstado($token,$idestado);
 
 		///////////////// creo el pago para luego conciliarlo /////////////////////////////////
 		$destino = 'Pago Online Venta Producto en Linea';
@@ -210,31 +240,15 @@ if ($error == 0) {
 		$conciliado = '0';
 		$fechacrea = date('Y-m-d H:i:s');
 		$usuariocrea = $_SESSION['usua_sahilices'];
-		$archivos = 'ReciboPago.pdf';
-		$type = 'pdf';
-		$refestado = 1;
-		$resPago = $serviciosReferencias->insertarPagos(12,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,5,'Inbursa',$lblCliente,$nroComprobante,'0');
+		$archivos = '';
+		$type = '';
+		$resPago = $serviciosReferencias->insertarPagos(12,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,2,'Inbursa',$lblCliente,'','0');
 
 		///////////////// fin del pago /////////////////////////////////
-
 	}
 
 
-} else {
-	$resModificarEstado = $serviciosComercio->modificarComercioInicioEstado($token,$idestado);
-
-	///////////////// creo el pago para luego conciliarlo /////////////////////////////////
-	$destino = 'Pago Online Venta Producto en Linea';
-	$refcuentasbancarias = 0;
-	$conciliado = '0';
-	$fechacrea = date('Y-m-d H:i:s');
-	$usuariocrea = $_SESSION['usua_sahilices'];
-	$archivos = '';
-	$type = '';
-	$resPago = $serviciosReferencias->insertarPagos(12,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,2,'Inbursa',$lblCliente,'','0');
-
-	///////////////// fin del pago /////////////////////////////////
-}
+	//die(var_dump($redireccionar));
 
 
 ?>
@@ -347,7 +361,7 @@ if ($error == 0) {
 
 							<div class="text-center">
 								<div class="list-group">
-									<a href="archivos.php?id=<?php echo $EM_OrderID; ?>" class="list-group-item bg-green">CONTINUAR</a>
+									<a href="archivos.php?id=<?php echo $idcotizacion; ?>" class="list-group-item bg-green">CONTINUAR</a>
 								</div>
 							<?php } else { ?>
 							<div class="text-center">
@@ -433,19 +447,6 @@ if ($error == 0) {
 		});
 
 
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '315px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
-
-		});
-
 
 
 		$("#sign_in").submit(function(e){
@@ -476,7 +477,7 @@ if ($error == 0) {
 
 			$.ajax({
 				data:  {
-					id: <?php echo $EM_OrderID; ?>,
+					id: <?php echo $idcotizacion; ?>,
 					accion: 'cambiarMetodoDePago'
 				},
 				url:   '../../ajax/ajax.php',

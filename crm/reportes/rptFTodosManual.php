@@ -44,7 +44,7 @@ $pdf->SetTextColor(0,0,0);
 $yCuadrado1 = 7.7;
 $yConstCuadrado1 = 58;
 
-$pdf->Image('F20926-1.jpg' , 0 ,0, 210 , 0,'JPG');
+$pdf->Image('F20926_0001.png' , 0 ,0, 210 , 0,'PNG');
 
 //EMISOR
 $pdf->SetXY(124, 25);
@@ -280,7 +280,7 @@ $pdf->SetTextColor(0,0,0);
 $yCuadrado1 = 8;
 $yConstCuadrado1 = 148.5;
 
-$pdf->Image('F20926-2.jpg' , 0 ,0, 210 , 0,'JPG');
+$pdf->Image('F20926_0002.png' , 0 ,0, 210 , 0,'PNG');
 
 //tipo de persona fisica
 $pdf->SetXY(19, $yConstCuadrado1 + ($yCuadrado1 * 0) );
@@ -439,7 +439,7 @@ $pdf->SetTextColor(0,0,0);
 $yCuadrado1 = 8;
 $yConstCuadrado1 = 32.5;
 
-$pdf->Image('F20926-3.jpg' , 0 ,0, 210 , 0,'JPG');
+$pdf->Image('F20926_0003.png' , 0 ,0, 210 , 0,'PNG');
 
 
 //desaempaña funcion publica en mexico (no)
@@ -682,7 +682,7 @@ $pdf->SetTextColor(0,0,0);
 $yCuadrado1 = 8;
 $yConstCuadrado1 = 25.5;
 
-$pdf->Image('F20926-4.jpg' , 0 ,0, 210 , 0,'JPG');
+$pdf->Image('F20926_0004.png' , 0 ,0, 210 , 0,'PNG');
 
 //emergencia internacional
 $pdf->SetXY(11.5, $yConstCuadrado1 + ($yCuadrado1 * 0) - 3.2 );
@@ -972,7 +972,7 @@ $pdf->SetTextColor(0,0,0);
 $yCuadrado1 = 3.8;
 $yConstCuadrado1 = 51.7;
 
-$pdf->Image('F20926-5.jpg' , 0 ,0, 210 , 0,'JPG');
+$pdf->Image('F20926_0005.png' , 0 ,0, 210 , 0,'PNG');
 
 //padece alguna enfermedad (si)
 $pdf->SetXY(140, $yConstCuadrado1 );
@@ -1193,7 +1193,7 @@ $pdf->SetTextColor(0,0,0);
 $yCuadrado1 = 8;
 $yConstCuadrado1 = 126;
 
-$pdf->Image('F20926-6.jpg' , 0 ,0, 210 , 0,'JPG');
+$pdf->Image('F20926_0006.png' , 0 ,0, 210 , 0,'PNG');
 
 //peso
 $pdf->SetXY(27, $yConstCuadrado1 + ($yCuadrado1 * 0) );
@@ -1274,7 +1274,7 @@ $pdf->SetTextColor(0,0,0);
 $yCuadrado1 = 8;
 $yConstCuadrado1 = 112;
 
-$pdf->Image('F20926-7.jpg' , 0 ,0, 210 , 0,'JPG');
+$pdf->Image('F20926_0007.png' , 0 ,0, 210 , 0,'PNG');
 
 //lugar y fecha de solicitud
 $pdf->SetXY(43, $yConstCuadrado1 + ($yCuadrado1 * 0) );

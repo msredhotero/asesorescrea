@@ -178,14 +178,27 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 												<i class="material-icons">add</i>
 												<span>NUEVO</span>
 											</button>
+											<button type="button" class="btn bg-light-blue waves-effect btnIniciada">
+												<i class="material-icons">alarm</i>
+												<span>INICIADA</span>
+											</button>
+											<button type="button" class="btn bg-blue waves-effect btnVigente">
+												<i class="material-icons">timeline</i>
+												<span>VIGENTE</span>
+											</button>
+											<button type="button" class="btn bg-grey waves-effect btnHistorico">
+												<i class="material-icons">history</i>
+												<span>HISTORICO</span>
+											</button>
 
 										</div>
 									</div>
 								</div>
 
-								<div class="row" style="padding: 5px 20px;">
 
-									<table id="example" class="display table " style="width:100%">
+								<div class="row contIniciada" style="padding: 5px 20px;">
+									<h4>POLIZAS INICIADAS</h4>
+									<table id="example5" class="display table " style="width:100%">
 										<thead>
 											<tr>
 												<th>Cliente</th>
@@ -197,6 +210,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 												<th>Folio TYS</th>
 												<th>Fecha Venc.</th>
 												<th>Nro Poliza</th>
+												<th>Dias Gestión</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -211,6 +225,81 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 												<th>Folio TYS</th>
 												<th>Fecha Venc.</th>
 												<th>Nro Poliza</th>
+												<th>Dias Gestión</th>
+												<th>Acciones</th>
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+
+								<div class="row contActuales" style="padding: 5px 20px;">
+									<h4>POLIZAS ACTIVAS</h4>
+									<table id="example" class="display table " style="width:100%">
+										<thead>
+											<tr>
+												<th>Cliente</th>
+												<th>Producto</th>
+												<th>Asesor</th>
+												<th>Asociado</th>
+												<th>P. Neta</th>
+												<th>P. Total</th>
+												<th>Folio TYS</th>
+												<th>Fecha Venc.</th>
+												<th>Nro Poliza</th>
+												<th>Periodicidad Pago</th>
+												<th>Metodo de Pago</th>
+												<th>Acciones</th>
+											</tr>
+										</thead>
+										<tfoot>
+											<tr>
+												<th>Cliente</th>
+												<th>Producto</th>
+												<th>Asesor</th>
+												<th>Asociado</th>
+												<th>P. Neta</th>
+												<th>P. Total</th>
+												<th>Folio TYS</th>
+												<th>Fecha Venc.</th>
+												<th>Nro Poliza</th>
+												<th>Periodicidad Pago</th>
+												<th>Metodo de Pago</th>
+												<th>Acciones</th>
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+
+								<div class="row contHistorico" style="padding: 5px 20px;">
+									<h4>HISTORICO POLIZAS</h4>
+									<table id="example6" class="display table " style="width:100%">
+										<thead>
+											<tr>
+												<th>Cliente</th>
+												<th>Producto</th>
+												<th>Asesor</th>
+												<th>Asociado</th>
+												<th>P. Neta</th>
+												<th>P. Total</th>
+												<th>Folio TYS</th>
+												<th>Fecha Venc.</th>
+												<th>Nro Poliza</th>
+												<th>Estado</th>
+												<th>Acciones</th>
+											</tr>
+										</thead>
+										<tfoot>
+											<tr>
+												<th>Cliente</th>
+												<th>Producto</th>
+												<th>Asesor</th>
+												<th>Asociado</th>
+												<th>P. Neta</th>
+												<th>P. Total</th>
+												<th>Folio TYS</th>
+												<th>Fecha Venc.</th>
+												<th>Nro Poliza</th>
+												<th>Estado</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -241,7 +330,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 								<ul class="nav nav-tabs tab-nav-right" role="tablist">
 									<li role="presentation" class="activo"><a href="#tabventaonline" data-toggle="tab">VENTA ONLINE</a></li>
 									<li role="presentation"><a href="#tabcotizacionesagentes" data-toggle="tab">COTIZACIONES</a></li>
-									<li role="presentation"><a href="#tabrenovaciones" data-toggle="tab">RENOVACIONES</a></li>
+
 								</ul>
 
 								<div class="tab-content">
@@ -398,7 +487,28 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 <script>
 	$(document).ready(function(){
 
+		$('.frmContrefmotivorechazopoliza').hide();
 
+		$('.contHistorico').hide();
+		$('.contIniciada').hide();
+
+		$('.btnIniciada').click(function() {
+			$('.contHistorico').hide();
+			$('.contIniciada').show();
+			$('.contActuales').hide();
+		});
+
+		$('.btnHistorico').click(function() {
+			$('.contHistorico').show();
+			$('.contIniciada').hide();
+			$('.contActuales').hide();
+		});
+
+		$('.btnVigente').click(function() {
+			$('.contHistorico').hide();
+			$('.contIniciada').hide();
+			$('.contActuales').show();
+		});
 
 		$('.btnCalcularM').click(function() {
 			calcularBonoMonto();
@@ -425,24 +535,69 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 		}
 
 
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '315px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
-
-		});
-
 
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=ventas",
+			"language": {
+				"emptyTable":     "No hay datos cargados",
+				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "Mostrar _MENU_ filas",
+				"loadingRecords": "Cargando...",
+				"processing":     "Procesando...",
+				"search":         "Buscar:",
+				"zeroRecords":    "No se encontraron resultados",
+				"paginate": {
+					"first":      "Primero",
+					"last":       "Ultimo",
+					"next":       "Siguiente",
+					"previous":   "Anterior"
+				},
+				"aria": {
+					"sortAscending":  ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			}
+		});
+
+		var table5 = $('#example5').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=ventasiniciadas",
+			"language": {
+				"emptyTable":     "No hay datos cargados",
+				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "Mostrar _MENU_ filas",
+				"loadingRecords": "Cargando...",
+				"processing":     "Procesando...",
+				"search":         "Buscar:",
+				"zeroRecords":    "No se encontraron resultados",
+				"paginate": {
+					"first":      "Primero",
+					"last":       "Ultimo",
+					"next":       "Siguiente",
+					"previous":   "Anterior"
+				},
+				"aria": {
+					"sortAscending":  ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			}
+		});
+
+		var table6 = $('#example6').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=ventashistorico",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -569,6 +724,26 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 
 		});//fin del boton modificar
 
+		$("#example").on("click",'.btnEndoso', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','endosos.php?id=' + idTable);
+
+		});//fin del boton endoso
+
+		$("#example5").on("click",'.btnVer', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','ver.php?id=' + idTable);
+
+		});//fin del boton modificar
+
+		$("#example5").on("click",'.btnEndoso', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','endosos.php?id=' + idTable);
+
+		});//fin del boton endoso
+
+
+
 		$("#example2").on("click",'.btnCrear', function(){
 			idTable =  $(this).attr("id");
 			$(location).attr('href','new.php?id=' + idTable + '&origen=1');
@@ -608,8 +783,29 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 						$('#primatotal').number( true, 2,'.','' );
 						$('#montocomision').number( true, 2,'.','' );
 						$('#porcentajecomision').number( true, 2,'.','' );
+						$('.frmContrefmotivorechazopoliza').hide();
+
+						$('.frmContrefventas').hide();
+						$('#version').prop('readonly',true);
 
 						$('#fechavencimientopoliza').pickadate({
+							format: 'yyyy-mm-dd',
+							labelMonthNext: 'Siguiente mes',
+							labelMonthPrev: 'Previo mes',
+							labelMonthSelect: 'Selecciona el mes del año',
+							labelYearSelect: 'Selecciona el año',
+							selectMonths: true,
+							selectYears: 100,
+							today: 'Hoy',
+							clear: 'Borrar',
+							close: 'Cerrar',
+							monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+							monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+							weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+							weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+					   });
+
+						$('#vigenciadesde').pickadate({
 							format: 'yyyy-mm-dd',
 							labelMonthNext: 'Siguiente mes',
 							labelMonthPrev: 'Previo mes',
@@ -691,11 +887,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 
 		}
 
-		$("#example").on("click",'.btnEliminar', function(){
-			idTable =  $(this).attr("id");
-			$('#ideliminar').val(idTable);
-			$('#lgmEliminar').modal();
-		});//fin del boton eliminar
+
 
 		$('.eliminar').click(function() {
 			frmAjaxEliminar($('#ideliminar').val());
@@ -706,6 +898,24 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 			frmAjaxModificar(idTable);
 			$('#lgmModificar').modal();
 		});//fin del boton modificar
+
+		$("#example").on("click",'.btnEliminar', function(){
+			idTable =  $(this).attr("id");
+			$('#ideliminar').val(idTable);
+			$('#lgmEliminar').modal();
+		});//fin del boton eliminar
+
+		$("#example5").on("click",'.btnModificar', function(){
+			idTable =  $(this).attr("id");
+			frmAjaxModificar(idTable);
+			$('#lgmModificar').modal();
+		});//fin del boton modificar
+
+		$("#example5").on("click",'.btnEliminar', function(){
+			idTable =  $(this).attr("id");
+			$('#ideliminar').val(idTable);
+			$('#lgmEliminar').modal();
+		});//fin del boton eliminar
 
 
 

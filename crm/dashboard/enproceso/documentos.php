@@ -55,7 +55,7 @@ if (mysql_num_rows($resVentas) > 0) {
 } else {
 	$foliointerno = $serviciosReferencias->generaFolioInterno();
 	$foliotys = '';
-	$resIV = $serviciosReferencias->insertarVentas($id,1,0,0,'','',date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],$foliotys,$foliointerno);
+	$resIV = $serviciosReferencias->insertarVentas($id,1,0,0,'','',date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],$foliotys,$foliointerno,0);
 
 	$idventa = $resIV;
 }

@@ -42,6 +42,8 @@ if (!isset($_SESSION['usua_sahilices']))
 	$iddocumentacion = $_POST['iddocumentacion'];
 
 	$carpetaOpcion = '';
+	$refperiodicidadventas = 0;
+	$refventas = 0;
 
 	switch ($iddocumentacion) {
 		case 35:
@@ -63,6 +65,9 @@ if (!isset($_SESSION['usua_sahilices']))
 			$resultado 		= 	$serviciosReferencias->traerPeriodicidadventasdetallePorId($id);
 			$resImagen = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionDetalle($id,$iddocumentacion);
 			$carpetaOpcion = 'cobros';
+			$refperiodicidadventas = mysql_result($resultado,0,'refperiodicidadventas');
+			$resPV = $serviciosReferencias->traerPeriodicidadventasPorId($refperiodicidadventas);
+			$refventas = mysql_result($resPV,0,'refventas');
 		break;
 	}
 
@@ -135,6 +140,13 @@ if (!isset($_SESSION['usua_sahilices']))
 			$resEliminar = $serviciosReferencias->eliminarDocumentacionventasPorVentaDocumentacionDetalle($id,$iddocumentacion);
 
 			$resInsertar = $serviciosReferencias->insertarDocumentacionventas(0,$iddocumentacion,$newname,$type,$refestadodocumentacion,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],$id);
+
+			$verificar = $serviciosReferencias->verificaPolizaDatosCargados($refventas);
+
+			if ($verificar['primerrecibo'] == 1 && $verificar['cantidadrecibos']<2) {
+				// paso al estadi 1
+				$resModEstado = $serviciosReferencias->modificarVentasUnicaDocumentacion($refventas, 'refestadoventa', 1);
+			}
 		}
 
 

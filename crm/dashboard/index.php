@@ -164,6 +164,10 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 		$idcliente = mysql_result($resCliente,0,0);
 
+		/////***** para el arlert de los 5 dias de la renovacion *****/////////
+		$resAlerta = $serviciosReferencias->alertaRenovacionPolizaCliente($idcliente);
+		/////***** fin alerta *****////////////
+
 		if ($lblTelefonoCelular == '') {
 			$existeCelular = 0;
 		} else {

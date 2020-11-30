@@ -66,7 +66,18 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 
 $resPeriodicidadVenta = $serviciosReferencias->traerPeriodicidadventasdetallePorVenta($id);
 
-$stockMeses = mysql_result($resPeriodicidad,0,'meses') - mysql_num_rows($resPeriodicidadVenta);
+$cantidadRecivos = mysql_num_rows($resPeriodicidadVenta);
+
+$resPeriodicidadVentaAux = $serviciosReferencias->traerPeriodicidadventasdetallePorVentaPagados($id,mysql_result($resultado,0,'refventas'));
+
+$cantidadRecivosAux = mysql_num_rows($resPeriodicidadVentaAux);
+
+if (mysql_result($resultado,0,'refventas') == 0) {
+	$stockMeses = mysql_result($resPeriodicidad,0,'meses') - $cantidadRecivos;
+} else {
+	$stockMeses = mysql_result($resPeriodicidad,0,'meses') - $cantidadRecivosAux - $cantidadRecivos;
+}
+
 
 if (mysql_num_rows($resPeriodicidadVenta) > 0) {
 	$resFechas = $serviciosReferencias->traerUltimoMes($id);
@@ -238,12 +249,12 @@ $formulario22 = $serviciosFunciones->camposTablaModificar($id, $idTabla22,$modif
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
-											<?php if ($stockMeses > 0) { ?>
+										<?php //if ($stockMeses > 0) { ?>
 											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
 												<i class="material-icons">add</i>
 												<span>NUEVO</span>
 											</button>
-										<?php } ?>
+										<?php //} ?>
 											<button type="button" class="btn bg-deep-orange waves-effect">
 												<i class="material-icons">build</i>
 												<span>FALTAN CARGAR <?php echo $stockMeses; ?></span>
@@ -416,7 +427,9 @@ $formulario22 = $serviciosFunciones->camposTablaModificar($id, $idTabla22,$modif
 			$(location).attr('href',url);
 		});
 
-
+		$('.frmContfechapagoreal').hide();
+		$('.frmContrefformapago').hide();
+		$('#refformapago').val(0);
 
 
 		$('.frmAjaxNuevo #fechacrea').val('2020-01-01');
@@ -467,6 +480,7 @@ $formulario22 = $serviciosFunciones->camposTablaModificar($id, $idTabla22,$modif
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
+			"order": [[ 5, "asc" ]],
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=cobros&id=<?php echo $id; ?>",
 			"language": {
 				"emptyTable":     "No hay datos cargados",

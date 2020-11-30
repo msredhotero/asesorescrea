@@ -56,8 +56,6 @@ $id = $_GET['id'];
 
 $resultado = $serviciosReferencias->traerVentasPorId($id);
 
-$idcotizacion = mysql_result($resultado,0,'refcotizaciones');
-
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbventas";
 
@@ -293,10 +291,12 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 			$(location).attr('href',url);
 		});
 
-
+		$('.frmContrefventas').hide();
+		$('.frmContrefproductosaux').hide();
+		$('.frmContrefmotivorechazopoliza').hide();
 
 		$('.btnArchivos').click(function() {
-			url = "subirdocumentacion.php?id=<?php echo $idcotizacion; ?>&documentacion=35";
+			url = "subirdocumentacion.php?id=<?php echo $id; ?>&documentacion=35";
 			$(location).attr('href',url);
 		});
 

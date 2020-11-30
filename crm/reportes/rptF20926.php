@@ -42,7 +42,7 @@ $pdf->SetTextColor(0,0,0);
 $yCuadrado1 = 7.7;
 $yConstCuadrado1 = 58;
 
-$pdf->Image('F20926-1.jpg' , 0 ,0, 210 , 0,'JPG');
+$pdf->Image('F20926_0001.png' , 0 ,0, 210 , 0,'PNG');
 
 //SECCION datos generales del solicitante titular
 //EMISOR
@@ -333,7 +333,7 @@ $pdf->SetTextColor(0,0,0);
 $yCuadrado1 = 8;
 $yConstCuadrado1 = 148.5;
 
-$pdf->Image('F20926-2.jpg' , 0 ,0, 210 , 0,'JPG');
+$pdf->Image('F20926_0002.png' , 0 ,0, 210 , 0,'PNG');
 
 //SECCION datos generales del contratante
 //tipo de persona fisica
@@ -527,7 +527,7 @@ $pdf->SetTextColor(0,0,0);
 $yCuadrado1 = 8;
 $yConstCuadrado1 = 32.5;
 
-$pdf->Image('F20926-3.jpg' , 0 ,0, 210 , 0,'JPG');
+$pdf->Image('F20926_0003.png' , 0 ,0, 210 , 0,'PNG');
 
 // va FIJO
 //desaempaña funcion publica en mexico (no)
@@ -810,7 +810,7 @@ $pdf->SetTextColor(0,0,0);
 $yCuadrado1 = 8;
 $yConstCuadrado1 = 25.5;
 
-$pdf->Image('F20926-4.jpg' , 0 ,0, 210 , 0,'JPG');
+$pdf->Image('F20926_0004.png' , 0 ,0, 210 , 0,'PNG');
 
 
 //SECCION tipo de seguro a contratar
@@ -1133,7 +1133,7 @@ $pdf->SetTextColor(0,0,0);
 $yCuadrado1 = 3.8;
 $yConstCuadrado1 = 51.7;
 
-$pdf->Image('F20926-5.jpg' , 0 ,0, 210 , 0,'JPG');
+$pdf->Image('F20926_0005.png' , 0 ,0, 210 , 0,'PNG');
 
 //SECCION cuestionario
 
@@ -1395,7 +1395,7 @@ $pdf->SetTextColor(0,0,0);
 $yCuadrado1 = 8;
 $yConstCuadrado1 = 126;
 
-$pdf->Image('F20926-6.jpg' , 0 ,0, 210 , 0,'JPG');
+$pdf->Image('F20926_0006.png' , 0 ,0, 210 , 0,'PNG');
 
 //SECCION habitos generales
 //peso
@@ -1489,7 +1489,7 @@ $pdf->SetTextColor(0,0,0);
 $yCuadrado1 = 8;
 $yConstCuadrado1 = 112;
 
-$pdf->Image('F20926-7.jpg' , 0 ,0, 210 , 0,'JPG');
+$pdf->Image('F20926_0007.png' , 0 ,0, 210 , 0,'PNG');
 
 //SECCION declaracion contratante y solicitante
 

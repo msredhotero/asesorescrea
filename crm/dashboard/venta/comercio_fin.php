@@ -47,7 +47,9 @@ if (!(isset($_GET['id']))) {
 		$resCI = $serviciosComercio->traerComercioinicioPorToken($_GET['token']);
 
 		if (mysql_num_rows($resCI) > 0) {
-			$id = mysql_result($resCI,0,'comorderid');
+			$idorder = mysql_result($resCI,0,'comorderid');
+
+			$idcotizacion = mysql_result($resCI,0,'idreferencia');
 		} else {
 			header('Location: index.php');
 		}
@@ -55,9 +57,22 @@ if (!(isset($_GET['id']))) {
 	}
 } else {
 	$id = $_GET['id'];
+
+	$resCI = $serviciosComercio->traerComercioinicioPorReferencia(12, 'dbcotizaciones', 'idcotizacion', $id);
+
+	if (mysql_num_rows($resCI) > 0) {
+		$idorder = mysql_result($resCI,0,'comorderid');
+
+	} else {
+		$idorder = 0;
+
+	}
+	$idcotizacion = $id;
 }
 
-$resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+//die(var_dump($idcotizacion));
+
+$resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcotizacion);
 
 $idCliente = mysql_result($resCotizaciones,0,'refclientes');
 
@@ -112,7 +127,7 @@ $comcurrency = '484';
 //direccion
 $comaddress = '';
 //el id de la cotizacion
-$comorder_id = $id;
+$comorder_id = $idorder;
 //numero proporcionado por el banco
 $commerchant = '8407825';
 //siempre va lo mismo
@@ -156,13 +171,15 @@ if (mysql_num_rows($existeComercio) > 0) {
 		header('Location: error.php');
 	}
 } else {
-	$idComercio = $serviciosComercio->insertarComercioinicio($serviciosReferencias->GUID(),$comtotal,$comcurrency,'',$comorder_id,$commerchant,$comstore,$comterm,$comdigest,$urlback,$reforigencomercio,$refestadotransaccion,$refafiliados,$fechacrea,$usuariocrea,$vigencia,$observaciones,$usuariocrea);
+	$idComercio = $serviciosComercio->insertarComercioinicio($serviciosReferencias->GUID(),$comtotal,$comcurrency,'',$comorder_id,$commerchant,$comstore,$comterm,$comdigest,$urlback,$reforigencomercio,$refestadotransaccion,$refafiliados,$fechacrea,$usuariocrea,$vigencia,$observaciones,$usuariocrea,12,$id);
+
+	$resModOrder = $serviciosComercio->modificarComercioInicioOrderID($idComercio);
+
+	$comorder_id = $idComercio;
 }
 
 
-
-
-$resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+$resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcotizacion);
 
 
 ?>

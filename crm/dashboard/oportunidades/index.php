@@ -579,7 +579,6 @@ $cadRefAsinados = "<option value='0'>No</option><option value='1'>Si</option>"
 	$(document).ready(function(){
 
 
-
 		$('.frmContrefmotivorechazos').hide();
 
 		$('#fechadesde_filtro').pickadate({

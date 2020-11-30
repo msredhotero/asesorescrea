@@ -499,9 +499,12 @@ class Servicios {
 		$label  = '';
 
 		switch ($tabla) {
+			case 'dbventas':
+				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi","reftipoingreso","refusuarios","refclientes",'comision','version','refventas');
+			break;
 			case 'dbsolicitudes':
 				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi","reftipoingreso","refusuarios","refclientes",'comision');
-				break;
+			break;
 			case 'dbpostulantes':
 				$ocultar = array("fechacrea","fechamodi","usuariocrea","usuariomodi","rfc","curp","ine",'refasesores','urlprueba','refsucursalesinbursa','ultimoestado','comision','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta','telefonofijo');
 				break;
@@ -1399,21 +1402,35 @@ class Servicios {
 
 				if ($row[3] != 'PRI') {
 					if (strpos($row[1],"decimal") !== false) {
-						$form	=	$form.'
 
-						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($row[0]).'" style="display:'.$lblOculta.'">
-							<label for="'.$label.'" class="control-label" style="text-align:left">'.ucwords($label).' '.$lblObligatorioAsterisco.'</label>
-							<div class="form-group input-group">
-                        <span class="input-group-addon">$</span>
-                        <div class="form-line">
-                           <input type="text" class="form-control" id="'.strtolower($row[0]).'" name="'.strtolower($row[0]).'" value="'.mysql_result($resMod,0,$row[0]).'" '.$lblObligatorio.'>
-                        </div>
-                        <span class="input-group-addon">.00</span>
-                     </div>
+						if ($row[0] == 'version') {
+							$form	=	$form.'
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($row[0]).'" style="display:'.$lblOculta.'">
+								<label for="'.$label.'" class="control-label" style="text-align:left">'.ucwords($label).' '.$lblObligatorioAsterisco.'</label>
+								<div class="form-group input-group">
 
-						</div>
+	                        <div class="form-line">
+	                           <input type="text" class="form-control" id="'.strtolower($row[0]).'" name="'.strtolower($row[0]).'" value="'.mysql_result($resMod,0,$row[0]).'" '.$lblObligatorio.'>
+	                        </div>
 
-						';
+	                     </div>
+							</div>
+							';
+						} else {
+							$form	=	$form.'
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmCont'.strtolower($row[0]).'" style="display:'.$lblOculta.'">
+								<label for="'.$label.'" class="control-label" style="text-align:left">'.ucwords($label).' '.$lblObligatorioAsterisco.'</label>
+								<div class="form-group input-group">
+	                        <span class="input-group-addon">$</span>
+	                        <div class="form-line">
+	                           <input type="text" class="form-control" id="'.strtolower($row[0]).'" name="'.strtolower($row[0]).'" value="'.mysql_result($resMod,0,$row[0]).'" '.$lblObligatorio.'>
+	                        </div>
+	                        <span class="input-group-addon">.00</span>
+	                     </div>
+							</div>
+							';
+						}
+
 					} else {
 						if ( in_array($row[0],$refCampo) ) {
 

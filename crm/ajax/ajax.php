@@ -1273,15 +1273,301 @@ switch ($accion) {
    case 'concluirProceso':
       concluirProceso($serviciosReferencias);
    break;
+   case 'generarEndoso':
+      generarEndoso($serviciosReferencias);
+   break;
+   case 'generarRenovacion':
+      generarRenovacion($serviciosReferencias);
+   break;
+   case 'verificaPolizaDatosCargados':
+      verificaPolizaDatosCargados($serviciosReferencias);
+   break;
+   case 'enviarRenovacionCliente':
+      enviarRenovacionCliente($serviciosReferencias);
+   break;
 
+   case 'guardarMetodoDePagoPorRecibo':
+      guardarMetodoDePagoPorRecibo($serviciosReferencias);
+   break;
+
+   case 'cambiarMetodoDePagoRecibos':
+      cambiarMetodoDePagoRecibos($serviciosReferencias);
+   break;
+
+   case 'insertarSiniestros':
+   insertarSiniestros($serviciosReferencias);
+   break;
+   case 'modificarSiniestros':
+   modificarSiniestros($serviciosReferencias);
+   break;
+   case 'eliminarSiniestros':
+   eliminarSiniestros($serviciosReferencias);
+   break;
 }
 /* FinFinFin */
+
+function insertarSiniestros($serviciosReferencias) {
+   $refventas = $_POST['refventas'];
+   $refestadosiniestro = $_POST['refestadosiniestro'];
+   $monto = $_POST['monto'];
+   $fechasiniestro = $_POST['fechasiniestro'];
+   $fechaaplicacion = $_POST['fechaaplicacion'];
+   $res = $serviciosReferencias->insertarSiniestros($refventas,$refestadosiniestro,$monto,$fechasiniestro,$fechaaplicacion);
+   if ((integer)$res > 0) {
+   echo '';
+   } else {
+   echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarSiniestros($serviciosReferencias) {
+   $id = $_POST['id'];
+   $refventas = $_POST['refventas'];
+   $refestadosiniestro = $_POST['refestadosiniestro'];
+   $monto = $_POST['monto'];
+   $fechasiniestro = $_POST['fechasiniestro'];
+   $fechaaplicacion = $_POST['fechaaplicacion'];
+   $res = $serviciosReferencias->modificarSiniestros($id,$refventas,$refestadosiniestro,$monto,$fechasiniestro,$fechaaplicacion);
+   if ($res == true) {
+   echo '';
+   } else {
+   echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarSiniestros($serviciosReferencias) {
+   $id = $_POST['id'];
+   $res = $serviciosReferencias->eliminarSiniestros($id);
+   if ($res == true) {
+   echo '';
+   } else {
+   echo 'Hubo un error al eliminar datos';
+   }
+}
+
+function cambiarMetodoDePagoRecibos($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->guardarMetodoDePagoPorRecibo($id,0);
+
+   if ($res) {
+      $resV['error'] = false;
+      $resV['url'] = 'metodopago.php?id='.$id;
+   } else {
+      $resV['error'] = true;
+      $resV['mensaje'] = 'No se pudo cambiar el metodo de pago, intente nuevamente';
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
+function guardarMetodoDePagoPorRecibo($serviciosReferencias) {
+   session_start();
+
+   $id = $_POST['id'];
+   $metodopago = $_POST['metodopago'];
+
+   $resRecibo = $serviciosReferencias->guardarMetodoDePagoPorRecibo($id,$metodopago);
+
+   $url = '';
+   switch ($metodopago) {
+      case 1:
+         $url = 'comercio_fin.php?id='.$id;
+      break;
+      case 2:
+         $url = 'subirdocumentacioni.php?id='.$id.'&iddocumentacion=39';
+      break;
+   }
+
+   if ($resRecibo) {
+      $resV['error'] = false;
+      $resV['url'] = $url;
+
+   } else {
+      $resV['error'] = true;
+
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function enviarRenovacionCliente($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->traerVentasPorIdCompleto($id);
+
+
+   $url = 'listadopolizas/poliza.php?id='.$id;
+
+   $nropoliza = mysql_result($res,0,'nropoliza');
+
+   $email = mysql_result($res,0,'email');
+
+   $refusuarios = mysql_result($res,0,'refusuarios');
+
+   $token = $serviciosReferencias->GUID();
+   $resAutoLogin = $serviciosReferencias->insertarAutologin($refusuarios,$token,$url,'0');
+
+   $cuerpo = '';
+
+   $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+   $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+   $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+   $cuerpo .= "
+   <style>
+   	body { font-family: 'Lato', sans-serif; }
+   	header { font-family: 'Prata', serif; }
+   </style>";
+
+   $cuerpo .= '<body>';
+
+   $cuerpo .= '<h3><small><p>Aqui tienes tu Poliza Renovada '.$nropoliza.'</small></h3><p>';
+
+   $cuerpo .= '<h4>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</h4>';
+
+	$cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
+
+   $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+   $cuerpo .= '</body>';
+
+
+
+   $retorno = $serviciosReferencias->enviarEmail($email,utf8_decode('Renovación de Poliza Nro: ').$nropoliza,utf8_decode($cuerpo));
+
+   if ((integer)$resAutoLogin > 0) {
+      $resV['error'] = false;
+   } else {
+      $resV['error'] = true;
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function verificaPolizaDatosCargados($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->verificaPolizaDatosCargados($id);
+
+   $resV['verificador'] = $res;
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function generarRenovacion($serviciosReferencias) {
+   session_start();
+
+   $refcotizaciones = $_POST['refcotizaciones'];
+   $refestadoventa = 6; // fijo porque recien empieza
+   $primaneta = ($_POST['primaneta'] == '' ? 0 : $_POST['primaneta']);
+   $primatotal = ($_POST['primatotal'] == '' ? 0 : $_POST['primatotal']);
+   $fechavencimientopoliza = $_POST['fechavencimientopoliza'];
+   $nropoliza = $_POST['nropoliza'];
+   $fechacrea = date('Y-m-d H:i:s');
+   $fechamodi = date('Y-m-d H:i:s');
+   $usuariocrea = $_SESSION['usua_sahilices'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+   $foliotys = $_POST['foliotys'];
+   $foliointerno = $serviciosReferencias->generaFolioInterno();
+
+   if (isset($_POST['refproductosaux'])) {
+      $refproductosaux = $_POST['refproductosaux'];
+   } else {
+      $refproductosaux = 0;
+   }
+
+   $refventas = 0;
+
+   $refventaviejo = $_POST['refventaviejo'];
+
+   $version = $serviciosReferencias->generarVersion($refventas);
+
+   $observaciones = $_POST['observaciones'];
+   $vigenciadesde = $_POST['vigenciadesde'];
+
+   $res = $serviciosReferencias->insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$refventas,$version,$observaciones,$vigenciadesde);
+
+
+   if ((integer)$res > 0) {
+      $resRenovacion = $serviciosReferencias->insertarRenovaciones($refventaviejo,$res,date('Y-m-d H:i:s'));
+      $resP = $serviciosReferencias->insertarPeriodicidadventasPorVenta($res,$refventaviejo);
+      $resV['error'] = false;
+   } else {
+      $resV['error'] = true;
+      $resV['mensaje'] = 'Se genero un problema el crear el endoso, verifique';
+
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
+
+function generarEndoso($serviciosReferencias) {
+   session_start();
+   $id = $_POST['id'];
+
+   $resVenta = $serviciosReferencias->traerVentasPorId($id);
+   $versionvieja = mysql_result($resVenta,0,'version');
+
+   $refcotizaciones = $_POST['refcotizaciones'];
+   $refestadoventa = $_POST['refestadoventa'];
+   $primaneta = ($_POST['primaneta'] == '' ? 0 : $_POST['primaneta']);
+   $primatotal = ($_POST['primatotal'] == '' ? 0 : $_POST['primatotal']);
+   $fechavencimientopoliza = $_POST['fechavencimientopoliza'];
+   $nropoliza = $_POST['nropoliza'];
+   $fechacrea = date('Y-m-d H:i:s');
+   $fechamodi = date('Y-m-d H:i:s');
+   $usuariocrea = $_SESSION['usua_sahilices'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+   $foliotys = $_POST['foliotys'];
+   $foliointerno = $serviciosReferencias->generaFolioInterno();
+
+
+   if (isset($_POST['refproductosaux'])) {
+      $refproductosaux = $_POST['refproductosaux'];
+   } else {
+      $refproductosaux = 0;
+   }
+
+   $refventas = $id;
+
+   $version = $_POST['versionnueva'];
+
+   $observaciones = $_POST['observaciones'];
+   $vigenciadesde = $_POST['vigenciadesde'];
+
+   $res = $serviciosReferencias->generarEndoso($id,$version,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$versionvieja,$observaciones,$vigenciadesde);
+
+   if ((integer)$res > 0) {
+      $resV['error'] = false;
+   } else {
+      $resV['error'] = true;
+      $resV['mensaje'] = 'Se genero un problema el crear el endoso, verifique';
+
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function concluirProceso($serviciosReferencias) {
    session_start();
    $id = $_POST['idrecibo'];
+   $idestado = $_POST['idestado'];
 
-   $res = $serviciosReferencias->modificarPeriodicidadventasdetalleEstado($id,5,$_SESSION['usua_sahilices'],date('Y-m-d H:i:s'));
+   $res = $serviciosReferencias->modificarPeriodicidadventasdetalleEstado($id,$idestado,$_SESSION['usua_sahilices'],date('Y-m-d H:i:s'));
 
    $resV['error'] = false;
 
@@ -1600,6 +1886,8 @@ function avisarInbursa($serviciosReferencias, $serviciosUsuarios) {
 }
 
    function insertarPeriodicidadventaspagos($serviciosReferencias) {
+      session_start();
+
       $refperiodicidadventasdetalle = $_POST['refperiodicidadventasdetalle'];
       $monto = $_POST['monto'];
       $nrorecibo = $_POST['nrorecibo'];
@@ -1609,21 +1897,64 @@ function avisarInbursa($serviciosReferencias, $serviciosUsuarios) {
       $fechacrea = $_POST['fechacrea'];
       $fechamodi = $_POST['fechamodi'];
       $nrofactura = $_POST['nrofactura'];
-      $fechapagoreal = $_POST['fechapagoreal'];
 
-      if (isset($_POST['refdatopago'])) {
-         $idcomprobantedepago = $_POST['refdatopago'];
-         if ($idcomprobantedepago != 0) {
-            $resAplicar = $serviciosReferencias->aplicarPago($idcomprobantedepago,'1');
-         }
-      }
 
-      $res = $serviciosReferencias->insertarPeriodicidadventaspagos($refperiodicidadventasdetalle,$monto,$nrorecibo,$fechapago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi,$nrofactura,$fechapagoreal);
+
+
+      $res = $serviciosReferencias->insertarPeriodicidadventaspagos($refperiodicidadventasdetalle,$monto,$nrorecibo,$fechapago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi,$nrofactura);
 
       if ((integer)$res > 0) {
          echo '';
 
-         $resmodificar = $serviciosReferencias->modificarVentaUnicaDocumentacion($res,'refestadopago',2);
+         if (isset($_POST['refdatopago'])) {
+            $idcomprobantedepago = $_POST['refdatopago'];
+            if ($idcomprobantedepago != 0) {
+               $resPago = $serviciosReferencias->traerPagosPorId($idcomprobantedepago);
+
+               if (!file_exists('../archivos/cobros/'.$refperiodicidadventasdetalle.'/')) {
+         			mkdir('../archivos/cobros/'.$refperiodicidadventasdetalle.'/', 0777);
+         		}
+
+               if (!file_exists('../archivos/cobros/'.$refperiodicidadventasdetalle.'/'.'facturacliente/')) {
+         			mkdir('../archivos/cobros/'.$refperiodicidadventasdetalle.'/'.'facturacliente/', 0777);
+         		}
+
+               if (mysql_result($resPago,0,'reftabla') == 15) {
+                  if (mysql_result($resPago,0,'archivos') == 'ReciboPago.pdf') {
+                     $resCopy = copy('../archivos/pagosonlinerecibos/'.mysql_result($resPago,0,'idreferencia').'/'.mysql_result($resPago,0,'archivos'), '../archivos/cobros/'.$refperiodicidadventasdetalle.'/'.'facturacliente/'.mysql_result($resPago,0,'archivos'));
+                  } else {
+                     $resCopy = copy('../archivos/comprobantespagorecibos/'.mysql_result($resPago,0,'idreferencia').'/'.mysql_result($resPago,0,'archivos'), '../archivos/cobros/'.$refperiodicidadventasdetalle.'/'.'facturacliente/'.mysql_result($resPago,0,'archivos'));
+                  }
+               } else {
+                  if (mysql_result($resPago,0,'archivos') == 'ReciboPago.pdf') {
+                     $resCopy = copy('../archivos/pagosonline/'.mysql_result($resPago,0,'idreferencia').'/'.mysql_result($resPago,0,'archivos'), '../archivos/cobros/'.$refperiodicidadventasdetalle.'/'.'facturacliente/'.mysql_result($resPago,0,'archivos'));
+                  } else {
+                     $resCopy = copy('../archivos/comprobantespago/'.mysql_result($resPago,0,'idreferencia').'/'.mysql_result($resPago,0,'archivos'), '../archivos/cobros/'.$refperiodicidadventasdetalle.'/'.'facturacliente/'.mysql_result($resPago,0,'archivos'));
+                  }
+               }
+
+
+               if ($resCopy) {
+                  $resEliminar = $serviciosReferencias->eliminarDocumentacionventasPorVentaDocumentacionDetalle($refperiodicidadventasdetalle,39);
+
+                  $resInsertar = $serviciosReferencias->insertarDocumentacionventas(0,39,mysql_result($resPago,0,'archivos'),mysql_result($resPago,0,'type'),5,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],$refperiodicidadventasdetalle);
+               }
+
+               $resAplicar = $serviciosReferencias->aplicarPago($idcomprobantedepago,'1');
+            }
+         }
+
+         $resPV = $serviciosReferencias->traerPeriodicidadventasdetallePorIdCompleto($refperiodicidadventasdetalle);
+
+         $montoCargado = mysql_result($resPV,0,'montototal');
+
+         if ($monto < $montoCargado) {
+            $resmodificar = $serviciosReferencias->modificarVentaUnicaDocumentacion($refperiodicidadventasdetalle,'refestadopago',7);
+         } else {
+            $resmodificar = $serviciosReferencias->modificarVentaUnicaDocumentacion($refperiodicidadventasdetalle,'refestadopago',2);
+         }
+
+
       } else {
          echo 'Hubo un error al insertar datos';
       }
@@ -1644,7 +1975,6 @@ function avisarInbursa($serviciosReferencias, $serviciosUsuarios) {
 
       $avisoinbursa = $_POST['avisoinbursa'];
 
-      $fechapagoreal = $_POST['fechapagoreal'];
 
       if (isset($_POST['refdatopago'])) {
          $idcomprobantedepago = $_POST['refdatopago'];
@@ -1653,10 +1983,22 @@ function avisarInbursa($serviciosReferencias, $serviciosUsuarios) {
          }
       }
 
-      $res = $serviciosReferencias->modificarPeriodicidadventaspagos($id,$refperiodicidadventasdetalle,$monto,$nrorecibo,$fechapago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi,$nrofactura,$avisoinbursa,$fechapagoreal);
+      $res = $serviciosReferencias->modificarPeriodicidadventaspagos($id,$refperiodicidadventasdetalle,$monto,$nrorecibo,$fechapago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi,$nrofactura,$avisoinbursa);
 
       if ($res == true) {
+
+         $resPV = $serviciosReferencias->traerPeriodicidadventasdetallePorIdCompleto($refperiodicidadventasdetalle);
+
+         $montoCargado = mysql_result($resPV,0,'montototal');
+
+         if ($monto < $montoCargado) {
+            $resmodificar = $serviciosReferencias->modificarVentaUnicaDocumentacion($refperiodicidadventasdetalle,'refestadopago',7);
+         } else {
+            $resmodificar = $serviciosReferencias->modificarVentaUnicaDocumentacion($refperiodicidadventasdetalle,'refestadopago',2);
+         }
+
          echo '';
+
       } else {
          echo 'Hubo un error al modificar datos';
       }
@@ -1802,7 +2144,39 @@ function insertarVentas($serviciosReferencias) {
 
    $origen = $_POST['reforigen'];
 
-   $res = $serviciosReferencias->insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno);
+   if (isset($_POST['refproductosaux'])) {
+      $refproductosaux = $_POST['refproductosaux'];
+   } else {
+      $refproductosaux = 0;
+   }
+
+   if (isset($_POST['refventas'])) {
+      $refventas = ($_POST['refventas'] == '' ? 0 : $_POST['refventas']);
+   } else {
+      $refventas = 0;
+   }
+
+   $version = $serviciosReferencias->generarVersion($refventas);
+
+   $observaciones = $_POST['observaciones'];
+   $vigenciadesde = $_POST['vigenciadesde'];
+
+   $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($refcotizaciones);
+
+   /*
+   $idproducto = mysql_result($resCotizaciones,0,'refproductos');
+   $resProducto = $serviciosReferencias->traerProductosPorId($idproducto);
+
+   $resPaquete = $serviciosReferencias->traerPaquetedetallesPorPaquete($idproducto);
+
+   if (mysql_num_rows($resPaquete) > 0) {
+
+   }
+   */
+
+
+
+   $res = $serviciosReferencias->insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux, $refventas,$version, $observaciones,$vigenciadesde);
 
    if ((integer)$res > 0) {
       if ($origen == 1) {
@@ -5143,7 +5517,9 @@ function insertarPeriodicidadventasdetalle($serviciosReferencias) {
 
    $nrorecibo = $_POST['nrorecibo'];
 
-   $res = $serviciosReferencias->insertarPeriodicidadventasdetalle($refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi,$nrorecibo);
+   $fechapagoreal = $_POST['fechapagoreal'];
+
+   $res = $serviciosReferencias->insertarPeriodicidadventasdetalle($refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi,$nrorecibo,$fechapagoreal);
 
    if ((integer)$res > 0) {
       echo '';
@@ -5171,7 +5547,9 @@ function modificarPeriodicidadventasdetalle($serviciosReferencias) {
 
    $fechamodi = date('Y-m-d H:i:s');
 
-   $res = $serviciosReferencias->modificarPeriodicidadventasdetalle($id,$refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariomodi,$fechamodi,$nrorecibo);
+   $fechapagoreal = $_POST['fechapagoreal'];
+
+   $res = $serviciosReferencias->modificarPeriodicidadventasdetalle($id,$refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariomodi,$fechamodi,$nrorecibo,$fechapagoreal);
 
 
 
@@ -5246,7 +5624,11 @@ function insertarPeriodicidadventas($serviciosReferencias) {
    $reftipoperiodicidad = $_POST['reftipoperiodicidad'];
    $reftipocobranza = $_POST['reftipocobranza'];
 
-   $res = $serviciosReferencias->insertarPeriodicidadventas($refventas,$reftipoperiodicidad,$reftipocobranza);
+   $banco = $_POST['banco'];
+   $afiliacionnumber = $_POST['afiliacionnumber'];
+   $tipotarjeta = $_POST['tipotarjeta'];
+
+   $res = $serviciosReferencias->insertarPeriodicidadventas($refventas,$reftipoperiodicidad,$reftipocobranza,$banco,$afiliacionnumber,$tipotarjeta);
 
    if ((integer)$res > 0) {
       echo '';
@@ -5285,8 +5667,18 @@ function modificarVentas($serviciosReferencias) {
       $error .= '- La prima total o la neta no pueden ser igual a cero ';
    }
 
+   // agregado el 13/11/2020 para los endosos y renovaciones, y los paquetes con mas de un producto
+   $refproductosaux  = ($_POST['refproductosaux'] == '' ? 0 : $_POST['refproductosaux']);
+   $refventas        = ($_POST['refventas'] == '' ? 0 : $_POST['refventas']);
+   $version          = $_POST['version'];
+
+   $refmotivorechazopoliza = ($_POST['refmotivorechazopoliza'] == '' ? 0 : $_POST['refmotivorechazopoliza']);
+   $observaciones = $_POST['observaciones'];
+
+   $vigenciadesde = $_POST['vigenciadesde'];
+
    if ($error == '') {
-      $res = $serviciosReferencias->modificarVentas($id,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechamodi,$usuariomodi,$foliotys,$foliointerno);
+      $res = $serviciosReferencias->modificarVentas($id,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechamodi,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$refventas,$version,$refmotivorechazopoliza,$observaciones,$vigenciadesde);
 
       if ($res == true) {
          echo '';
@@ -5301,8 +5693,11 @@ function modificarVentas($serviciosReferencias) {
 
 function eliminarVentas($serviciosReferencias) {
    $id = $_POST['id'];
+   $observaciones = $_POST['observaciones'];
+   $estadoventa = $_POST['estadoventa'];
+   $motivorechazo = $_POST['motivorechazo'];
 
-   $res = $serviciosReferencias->eliminarVentas($id);
+   $res = $serviciosReferencias->cancelarVentas($id,$estadoventa,$observaciones,$motivorechazo);
 
    if ($res == true) {
       echo '';
@@ -6498,13 +6893,14 @@ function modificarCotizaciones($serviciosReferencias) {
    $existeprimaobjetivo = $_POST['existeprimaobjetivo'];
    $primaobjetivo = ($_POST['primaobjetivo'] == '' ? 0 : $_POST['primaobjetivo']);
 
+
    if ($refestadocotizaciones == 12) {
 
       // modifico la cotizacion a la ultima etapa
       $resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',4,$usuariomodi);
 
       $foliointerno = $serviciosReferencias->generaFolioInterno();
-      $resIV = $serviciosReferencias->insertarVentas($id,1,0,0,'','',date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$usuariomodi,$usuariomodi,$foliotys,$foliointerno);
+      $resIV = $serviciosReferencias->insertarVentas($id,1,0,0,'','',date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$usuariomodi,$usuariomodi,$foliotys,$foliointerno,0,'',date('Y-m-d'));
 
 
       // generada la venta lo guardo en la cartera del cliente
@@ -8095,6 +8491,26 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+      case 'dbsiniestros':
+         $resultado = $serviciosReferencias->traerSiniestrosPorId( $id);
+
+         $modificar = "modificarSiniestros";
+         $idTabla = "idsiniestro";
+
+
+         $lblCambio	 	= array('refventas','refestadosiniestro','fechasiniestro','fechaaplicacion');
+         $lblreemplazo	= array('Poliza','Estado','Fecha del Siniestro','Fecha de Aplicacion o solucion');
+
+         $resVar1 = $serviciosReferencias->traerVentasActivos();
+         $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1,2,9),' - ',mysql_result($resultado,0,'refventas'));
+
+         $resVar2 = $serviciosReferencias->traerEstadoSiniestro();
+         $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(1),'',mysql_result($resultado,0,'refestadosiniestro'));
+
+
+         $refdescripcion = array(0=>$cadRef1,1=>$cadRef2);
+         $refCampo 	=  array('refventas','refestadosiniestro');
+      break;
       case 'dbperiodicidadventasdetalle':
          $resultado = $serviciosReferencias->traerPeriodicidadventasdetallePorId( $id);
 
@@ -8478,8 +8894,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
       case 'dbventas':
          $resultado = $serviciosReferencias->traerVentasPorId($id);
 
-         $lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza');
-         $lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza');
+         $lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','refproductosaux','vigenciadesde');
+         $lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Producto Especifico','Vigencia Desde');
 
          $modificar = "modificarVentas";
          $idTabla = "idventa";
@@ -8487,11 +8903,19 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $resVar = $serviciosReferencias->traerCotizacionesPorIdCompleto(mysql_result($resultado,0,'refcotizaciones'));
          $cadRef = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(1,2,3),' ',mysql_result($resultado,0,'refcotizaciones'));
 
-         $cadRef2 = "<option value='1' selected>cargado</option>";
+         $resVar2 = $serviciosReferencias->traerEstadoventa();
+         $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(1),' ',mysql_result($resultado,0,'refestadoventa'));
+
+         if (mysql_result($resultado,0,'refproductosaux')>0) {
+            $resVar3 = $serviciosReferencias->traerProductosPorId(mysql_result($resultado,0,'refproductosaux'));
+            $cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resVar3,array(1),' ',mysql_result($resultado,0,'refproductosaux'));
+         } else {
+            $cadRef3 = "<option value='0'>Mismo de la cotización</option>";
+         }
 
 
-         $refdescripcion = array(0=>$cadRef,1=>$cadRef2);
-         $refCampo 	=  array('refcotizaciones','refestadoventa');
+         $refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3);
+      	$refCampo 	=  array('refcotizaciones','refestadoventa','refproductosaux');
       break;
       case 'dbconstancias':
          $resultado = $serviciosReferencias->traerConstanciasPorId($id);

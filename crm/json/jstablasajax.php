@@ -69,6 +69,23 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 }
 
 switch ($tabla) {
+	case 'siniestros':
+
+		$estados = $_GET['estados'];
+		$datos = $serviciosReferencias->traerSiniestrosajax($length, $start, $busqueda,$colSort,$colSortDir,$estados);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-orange','bg-red');
+		$icon = array('edit','delete');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 5;
+	break;
 	case 'mapeo':
 		$datos = $serviciosReferencias->traerSolicitudesrespuestasajax($length, $start, $busqueda,$colSort,$colSortDir);
 
@@ -501,9 +518,9 @@ switch ($tabla) {
 
 
 		if ($_SESSION['idroll_sahilices'] == 16) {
-			$label = array('btnRecibo');
-			$class = array('bg-blue');
-			$icon = array('unarchive');
+			$label = array('btnRecibo','btnPagar');
+			$class = array('bg-blue','bg-green');
+			$icon = array('unarchive','attach_money');
 		} else {
 			$label = array('btnModificar','btnRecibo');
 			$class = array('btn-warning','bg-blue');
@@ -575,6 +592,28 @@ switch ($tabla) {
 	case 'cobranzainbursa':
 
 		$datos = $serviciosReferencias->traerCobranzaInbursaajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		//die(var_dump($datos));
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+
+		$label = array('btnRecibo');
+		$class = array('bg-orange');
+		$icon = array('unarchive');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 8;
+	break;
+
+	case 'cobranzavrim':
+
+		$estados = $_GET['estados'];
+
+		$datos = $serviciosReferencias->traerCobranzaVRIMajax($length, $start, $busqueda,$colSort,$colSortDir,$estados);
 
 		//die(var_dump($datos));
 
@@ -759,9 +798,206 @@ switch ($tabla) {
 			$resAjax = $datos[0];
 			$res = $datos[1];
 
-			$label = array('btnModificar','btnVer','btnEliminar');
-			$class = array('bg-amber','bg-green','bg-red');
-			$icon = array('Modificar','Ver','Eliminar');
+			$label = array('btnModificar','btnVer','btnEliminar','btnEndoso');
+			$class = array('bg-amber','bg-green','bg-red','bg-lime');
+			$icon = array('Modificar','Ver','Eliminar','Endoso');
+
+		}
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 11;
+
+	break;
+
+	case 'ventasrecibos':
+		if ($_SESSION['idroll_sahilices'] == 7) {
+
+			$datos = $serviciosReferencias->traerVentasajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
+			$label = array('btnModificar','btnEliminar');
+			$class = array('bg-amber','bg-red');
+			$icon = array('create','delete');
+		} else {
+
+			$responsableComercial = $_GET['sSearch_0'];
+
+			$datos = $serviciosReferencias->traerVentasRecibosajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
+			$label = array('btnRecibos');
+			$class = array('bg-blue');
+			$icon = array('unarchive');
+
+		}
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 10;
+
+	break;
+
+	case 'ventasiniciadas':
+
+		if ($_SESSION['idroll_sahilices'] == 7) {
+
+			$datos = $serviciosReferencias->traerVentasajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
+			$label = array('btnModificar','btnEliminar');
+			$class = array('bg-amber','bg-red');
+			$icon = array('create','delete');
+		} else {
+
+			$responsableComercial = $_GET['sSearch_0'];
+
+			$datos = $serviciosReferencias->traerVentasIniciadasajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
+			$label = array('btnModificar','btnVer','btnEliminar','btnEndoso');
+			$class = array('bg-amber','bg-green','bg-red','bg-lime');
+			$icon = array('Modificar','Ver','Eliminar','Endoso');
+
+		}
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 10;
+
+	break;
+
+	case 'ventashistorico':
+
+		if ($_SESSION['idroll_sahilices'] == 7) {
+
+			$datos = $serviciosReferencias->traerVentasajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
+			$label = array('btnModificar','btnEliminar');
+			$class = array('bg-amber','bg-red');
+			$icon = array('create','delete');
+		} else {
+
+			$responsableComercial = $_GET['sSearch_0'];
+
+			$datos = $serviciosReferencias->traerVentasHistoricoajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
+			$label = array('btnVer');
+			$class = array('bg-green');
+			$icon = array('search');
+
+		}
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 10;
+
+	break;
+
+	case 'renovaciones':
+
+		if ($_SESSION['idroll_sahilices'] == 16) {
+
+			$datos = $serviciosReferencias->traerVentasRenovacionesajax($length, $start, $busqueda,$colSort,$colSortDir,'',$_SESSION['usuaid_sahilices']);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
+			$label = array('btnPoliza');
+			$class = array('bg-light-blue');
+			$icon = array('print');
+		} else {
+
+			$responsableComercial = $_GET['sSearch_0'];
+
+			$datos = $serviciosReferencias->traerVentasRenovacionesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,'');
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
+			$label = array('btnModificar','btnVer','btnEnviar','btnEliminar');
+			$class = array('bg-amber','bg-green','bg-yellow','bg-red');
+			$icon = array('create','search','send','delete');
+
+		}
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 9;
+
+	break;
+
+	case 'renovacionespendientes':
+
+		if ($_SESSION['idroll_sahilices'] == 7) {
+
+			$datos = $serviciosReferencias->traerVentasajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
+			$label = array('btnModificar','btnEliminar');
+			$class = array('bg-amber','bg-red');
+			$icon = array('create','delete');
+		} else {
+
+			$responsableComercial = $_GET['sSearch_0'];
+
+			$datos = $serviciosReferencias->traerVentasRenovacionesPendientesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
+			$label = array('btnRenovaciones');
+			$class = array('bg-orange');
+			$icon = array('build');
+
+		}
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 9;
+
+	break;
+
+	case 'renovacioneshistorico':
+
+		if ($_SESSION['idroll_sahilices'] == 7) {
+
+			$datos = $serviciosReferencias->traerVentasajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
+			$label = array('btnModificar','btnEliminar');
+			$class = array('bg-amber','bg-red');
+			$icon = array('create','delete');
+		} else {
+
+			$responsableComercial = $_GET['sSearch_0'];
+
+			$datos = $serviciosReferencias->traerVentasRenovacionesHistoricoajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
+			$label = array('btnVer');
+			$class = array('bg-green');
+			$icon = array('search');
 
 		}
 
@@ -1733,7 +1969,7 @@ $id = 0;
 			array_push($arAux, ($row[$i]));
 		}
 
-		if (($tabla == 'postulantes') || ($tabla == 'ventas') || ($tabla == 'postulanteshistorico') || ($tabla == 'asesores') || ($tabla == 'asociadostemporales') || ($tabla == 'asociados') || ($tabla == 'clientes') || ($tabla == 'cuestionario') || ($tabla == 'preguntascuestionario') || ($tabla == 'respuestascuestionario')) {
+		if (($tabla == 'postulantes') || ($tabla == 'ventas') || ($tabla == 'ventasiniciadas') || ($tabla == 'postulanteshistorico') || ($tabla == 'asesores') || ($tabla == 'asociadostemporales') || ($tabla == 'asociados') || ($tabla == 'clientes') || ($tabla == 'cuestionario') || ($tabla == 'preguntascuestionario') || ($tabla == 'respuestascuestionario')) {
 			array_push($arAux, armarAccionesDropDown($row[0],$label,$class,$icon));
 		} else {
 			array_push($arAux, armarAcciones($row[0],$label,$class,$icon));
