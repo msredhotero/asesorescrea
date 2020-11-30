@@ -282,7 +282,7 @@ $precio = $acumPrecio;
 								<a href="comercio_fin.php?id=<?php echo $id; ?>" class="list-group-item bg-green">CONTINUAR CON EL PAGO ONLINE</a>
 							<?php } ?>
 							<?php if (mysql_result($resCotizaciones,0,'refformapago') == 2) { ?>
-								<a href="subirdocumentacioni.php?id=<?php echo $id; ?>" class="list-group-item bg-green">SUBIR COMPROBANTE DE PAGO</a>
+								<a href="subirdocumentacioni.php?id=<?php echo $id; ?>&iddocumentacion=39" class="list-group-item bg-green">SUBIR COMPROBANTE DE PAGO</a>
 							<?php } ?>
 
 							</div>
