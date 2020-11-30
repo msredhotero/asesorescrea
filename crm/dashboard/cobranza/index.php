@@ -198,7 +198,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 											</button>
 											<button type="button" class="btn bg-green waves-effect btnHistorico">
 												<i class="material-icons">history</i>
-												<span>PAGADOS</span>
+												<span>PROCESO DE APLICACION</span>
 											</button>
 											<button type="button" class="btn bg-red waves-effect btnDevueltos">
 												<i class="material-icons">assignment_late</i>
