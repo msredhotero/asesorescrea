@@ -169,6 +169,12 @@ if ($_SESSION['idroll_sahilices'] == 16) {
 	$puedeConcluir = 0;
 }
 
+if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11)) {
+	$idestadonuevo = $idestadopago;
+	$puedeCargarDocumentaciones = 1;
+	$puedeConcluir = 1;
+}
+
 
 
 $idCotizacion = mysql_result($resVenta,0,'refcotizaciones');
