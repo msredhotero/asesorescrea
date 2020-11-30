@@ -374,6 +374,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 
 		$('.frmContfoliointerno').hide();
 		$('.frmContrefmotivorechazopoliza').hide();
+		
 
 
 		$('.btnArchivos').click(function() {
