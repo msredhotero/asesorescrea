@@ -8491,6 +8491,32 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+      case 'dbperiodicidadventaspagos':
+         $resultado = $serviciosReferencias->traerPeriodicidadventaspagosPorId( $id);
+
+         $modificar = "modificarPeriodicidadventaspagos";
+         $idTabla = "idperiodicidadventapago";
+
+
+         $lblCambio	 	= array('refperiodicidadventasdetalle','nrorecibo','fechapago','nrofactura','avisoinbursa','fechapagoreal');
+         $lblreemplazo	= array('Poliza','Folio de Pago Asesores Crea','Fecha Pago','Nro Factura','Notifacacion a Inbursa','Fecha Pago Real');
+
+
+
+         //insertar
+         $resVar	= $serviciosReferencias->traerPeriodicidadventasdetallePorIdCompleto(mysql_result($resultado,0,'refperiodicidadventasdetalle'));
+         $cadRef = $serviciosFunciones->devolverSelectBox($resVar,array(1,2),' ');
+
+         if (mysql_result($resultado,0,'avisoinbursa') == '1') {
+            $cadRef2 = "<option value='0'>No</option><option value='1' selected>Si</option>";
+         } else {
+            $cadRef2 = "<option value='0' selected>No</option><option value='1'>Si</option>";
+         }
+
+
+         $refdescripcion = array(0=>$cadRef,1=>$cadRef2);
+         $refCampo 	=  array('refperiodicidadventasdetalle','avisoinbursa');
+      break;
       case 'dbsiniestros':
          $resultado = $serviciosReferencias->traerSiniestrosPorId( $id);
 
