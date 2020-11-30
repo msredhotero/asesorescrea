@@ -410,7 +410,7 @@ $modificar = "modificarPeriodicidadventaspagos";
 $tabla 			= "dbperiodicidadventaspagos";
 
 $lblCambio	 	= array('refperiodicidadventasdetalle','nrorecibo','fechapago','nrofactura','avisoinbursa','fechapagoreal');
-$lblreemplazo	= array('Venta','Folio de Pago Asesores Crea','Fecha Pago','Nro Factura','Notifacacion a Inbursa','Fecha Pago Real');
+$lblreemplazo	= array('Poliza','Folio de Pago Asesores Crea','Fecha Pago','Nro Factura','Notifacacion a Inbursa','Fecha Pago Real');
 
 //insertar
 $resVar	= $serviciosReferencias->traerPeriodicidadventasdetallePorIdCompleto($id);
@@ -775,7 +775,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 										<td><?php echo $rowPagos['fechapago']; ?></td>
 										<td><?php echo ($rowPagos['avisoinbursa'] == '0' ? 'No' : 'Si'); ?></td>
 										<td>
-											<button type="button" class="btn bg-orange waves-effect btnModificar" id="<?php echo $rowPagos['idperiodicidadventapago']; ?>">
+											<button type="button" class="btn bg-orange waves-effect btnModificarPago" id="<?php echo $rowPagos['idperiodicidadventapago']; ?>">
 					 							MODIFICAR
 				 							</button>
 
@@ -1026,7 +1026,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 		           </div>
 		       </div>
 		   </div>
-			<input type="hidden" id="accion" name="accion" value="<?php echo $modificar; ?>"/>
+			<input type="hidden" id="accion" name="accion" value="modificarPeriodicidadventaspagos"/>
 		</form>
 
 <!-- ELIMINAR -->
@@ -1529,7 +1529,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 		});
 
 
-		$("#example").on("click",'.btnModificar', function(){
+		$("#example").on("click",'.btnModificarPago', function(){
 			idTable =  $(this).attr("id");
 			frmAjaxModificar(idTable);
 			$('#lgmModificar').modal();
@@ -1552,6 +1552,30 @@ if (mysql_num_rows($resPaquete) > 0) {
 
 					if (data != '') {
 						$('.frmAjaxModificar').html(data);
+						$('.frmAjaxModificar .frmContnrofactura').hide();
+						$('.frmAjaxModificar .frmContusuariocrea').hide();
+						$('.frmAjaxModificar .frmContusuariomodi').hide();
+						$('.frmAjaxModificar .frmContfechacrea').hide();
+						$('.frmAjaxModificar .frmContfechamodi').hide();
+						$('.frmAjaxModificar .frmContfechamodi').hide();
+						$('.frmAjaxModificar .frmContavisoinbursa').hide();
+
+						$('.frmAjaxModificar #fechapago').pickadate({
+							format: 'yyyy-mm-dd',
+							labelMonthNext: 'Siguiente mes',
+							labelMonthPrev: 'Previo mes',
+							labelMonthSelect: 'Selecciona el mes del año',
+							labelYearSelect: 'Selecciona el año',
+							selectMonths: true,
+							selectYears: 100,
+							today: 'Hoy',
+							clear: 'Borrar',
+							close: 'Cerrar',
+							monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+							monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+							weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+							weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+						});
 					} else {
 						swal("Error!", data, "warning");
 
@@ -1601,6 +1625,65 @@ if (mysql_num_rows($resPaquete) > 0) {
 							location.reload();
 
 
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
+
+
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
+					}
+				});
+			}
+		});
+
+
+		$('.frmModificar').submit(function(e){
+
+			e.preventDefault();
+			if ($('.frmModificar')[0].checkValidity()) {
+
+				//información del formulario
+				var formData = new FormData($(".formulario")[1]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
+
+					},
+					//una vez finalizado correctamente
+					success: function(data){
+
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Modificado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
+
+							$('#lgmModificar').modal('hide');
+							location.reload();
 						} else {
 							swal({
 									title: "Respuesta",
