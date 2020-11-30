@@ -10915,9 +10915,10 @@ return $res;
    		c.idcotizacion,
    		concat( pro.producto) as producto,
    		concat('Cliente: ', cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
-         concat( cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as clientesolo,
+
    		concat('Asesor: ', ase.apellidopaterno, ' ', ase.nombre) as asesor,
          concat('Asociado: ', aso.apellidopaterno, ' ', aso.nombre) as asociado,
+         concat( cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as clientesolo,
    		c.refclientes,c.refproductos,c.refasesores,c.refasociados,
    		c.refestadocotizaciones,c.observaciones,
    		c.fechacrea,c.fechamodi,c.usuariocrea,c.usuariomodi,c.refusuarios,c.fechaemitido,c.fechavencimiento,
