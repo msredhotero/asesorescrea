@@ -111,7 +111,7 @@ if (mysql_num_rows($resultado)>0) {
 	$token = mysql_result($resultado,0,'token');
 	$idestado = mysql_result($resultado,0,'refestadotransaccion');
 	$reforigencomercio = mysql_result($resultado,0,'reforigencomercio');
-	$idcotizacion = $EM_OrderID;
+	$idcotizacion = mysql_result($resultado,0,'idreferencia');
 } else {
 	header('Location: error.php');
 	$idestado = 1;
@@ -168,13 +168,17 @@ $idusuariocliente  = mysql_result($resCotizaciones,0,'refusuarios');
 
 $resUsuario = $serviciosUsuario->traerUsuarioId($idusuariocliente);
 
+// solo para
+if (!isset($_SESSION['usua_sahilices']))
+{
+	$resLogin = $serviciosUsuario->login(mysql_result($resUsuario,0,'email'),mysql_result($resUsuario,0,'password'));
+}
 
-$resLogin = $serviciosUsuario->login(mysql_result($resUsuario,0,'email'),mysql_result($resUsuario,0,'password'));
 
 if (!isset($_SESSION['usua_sahilices']))
 {
 	header('Location: ../../error.php');
-	die(var_dump(2));
+	
 } else {
 $serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cobranza/');
 $resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cobranza",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);

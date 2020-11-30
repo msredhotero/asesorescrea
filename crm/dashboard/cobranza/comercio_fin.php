@@ -63,9 +63,12 @@ if (!(isset($_GET['id']))) {
 
 	if (mysql_num_rows($resCI) > 0) {
 		$idorder = mysql_result($resCI,0,'comorderid');
+
 	} else {
-		$idorder = $id;
+		$idorder = 0;
+
 	}
+	$idcotizacion = $id;
 }
 
 $resCotizaciones = $serviciosReferencias->traerPeriodicidadventasdetallePorIdCompleto($id);
@@ -148,6 +151,8 @@ if (mysql_num_rows($existeComercio) > 0) {
 	$idComercio = $serviciosComercio->insertarComercioinicio($serviciosReferencias->GUID(),$comtotal,$comcurrency,'',$comorder_id,$commerchant,$comstore,$comterm,$comdigest,$urlback,$reforigencomercio,$refestadotransaccion,$refafiliados,$fechacrea,$usuariocrea,$vigencia,$observaciones,$usuariocrea,15,$id);
 
 	$resModOrder = $serviciosComercio->modificarComercioInicioOrderID($idComercio);
+
+	$comorder_id = $idComercio;
 }
 
 
