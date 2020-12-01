@@ -286,6 +286,10 @@ if (!isset($_SESSION['usua_sahilices']))
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
+
+		.progress {
+			background-color: #1b2646;
+		}
 	</style>
 
 
@@ -346,18 +350,30 @@ if (!isset($_SESSION['usua_sahilices']))
 
 							<?php if ($error == 0) { ?>
 								<div class="text-center">
-									<h2 class="display-4">Hemos procesamos tu pago Correctamente.</h2>
-									<h5>¡Muchas Gracias! por completar el proceso de suscripción, en breve te enviaremos tu póliza, a partir de ese momento estarás protegido</h5>
+									<h3 class="display-4">REALIZA LOS SIGUIENTES PASO PARA OBTENER TU POLIZA.</h3>
 								</div>
 
-								<div class="list-group">
-									<a href="javascript:void(0);" class="list-group-item active"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
-								PASOS PARA OBTENER TU POLIZA
-								</font></font></a>
-									<a href="javascript:void(0);" class="list-group-item"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">CARGA TU IDENTIFICACIÓN OFICIAL VIGENTE</font></font></a>
-									<a href="javascript:void(0);" class="list-group-item"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">FIRMAR TU SOLICITUD DE FORMA DIGITAL</font></font></a>
-									<a href="javascript:void(0);" class="list-group-item"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">TE ENVIAREMOS LA POLIZA Y TENDRAS CUBERTURA INMEDIATA</font></font></a>
+								<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
+									<div class="col-xs-6 bs-wizard-step disabled">
+										<div class="text-center bs-wizard-stepnum">Paso 1</div>
+										<div class="progress">
+											<div class="progress-bar"></div>
+										</div>
+										<a href="siap.php?id=13" class="bs-wizard-dot"></a>
+										<div class="bs-wizard-info text-center">CARGA TUS DOCUMENTOS</div>
+									</div>
+									<div class="col-xs-6 bs-wizard-step disabled">
+										<div class="text-center bs-wizard-stepnum">Paso 2</div>
+										<div class="progress">
+											<div class="progress-bar"></div>
+										</div>
+										<a href="javascript:void(0)" class="bs-wizard-dot"></a>
+										<div class="bs-wizard-info text-center">FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
+									</div>
+
+
 								</div>
+								
 
 							<div class="text-center">
 								<div class="list-group">

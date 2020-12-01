@@ -481,6 +481,8 @@ if (mysql_num_rows($resFirma) > 0) {
 		          </div>
 		          <div class="body table-responsive">
 
+
+
 						<?php if ($cargados != $necesariasParaAprobar) { ?>
 							<?php if (count($arDocumentacionRechazadas) > 0) { ?>
 								<div>
@@ -503,6 +505,26 @@ if (mysql_num_rows($resFirma) > 0) {
 							<?php } ?>
 						<?php } else { ?>
 							<?php if ($puedeContinuar == 1) { ?>
+
+								<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
+								   <div class="col-xs-6 bs-wizard-step complete">
+										<div class="text-center bs-wizard-stepnum">Paso 1</div>
+										<div class="progress">
+											<div class="progress-bar"></div>
+										</div>
+										<a href="siap.php?id=13" class="bs-wizard-dot"></a>
+										<div class="bs-wizard-info text-center">CARGA TUS DOCUMENTOS</div>
+								   </div>
+								   <div class="col-xs-6 bs-wizard-step complete">
+										<div class="text-center bs-wizard-stepnum">Paso 2</div>
+										<div class="progress">
+											<div class="progress-bar"></div>
+										</div>
+										<a href="javascript:void(0)" class="bs-wizard-dot"></a>
+										<div class="bs-wizard-info text-center">FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
+								   </div>
+							   </div>
+
 								<div class="text-center">
 									<h1 class="display-4"> ¡Muchas Gracias!</h1>
 									<h3 class="display-4">En breve estaremos enviando tu póliza, a partir de ese momento estarás protegido .</h3>
@@ -527,6 +549,25 @@ if (mysql_num_rows($resFirma) > 0) {
 							<div class="text-center">
 								<h1 class="display-4">¡Firma de manera digital los documentos! </h1>
 							</div>
+
+							<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
+							   <div class="col-xs-6 bs-wizard-step complete">
+									<div class="text-center bs-wizard-stepnum">Paso 1</div>
+									<div class="progress">
+										<div class="progress-bar"></div>
+									</div>
+									<a href="siap.php?id=13" class="bs-wizard-dot"></a>
+									<div class="bs-wizard-info text-center">CARGA TUS DOCUMENTOS</div>
+							   </div>
+							   <div class="col-xs-6 bs-wizard-step active">
+									<div class="text-center bs-wizard-stepnum">Paso 2</div>
+									<div class="progress">
+										<div class="progress-bar"></div>
+									</div>
+									<a href="javascript:void(0)" class="bs-wizard-dot"></a>
+									<div class="bs-wizard-info text-center">FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
+							   </div>
+						   </div>
 
 
 
@@ -705,7 +746,7 @@ if (mysql_num_rows($resFirma) > 0) {
 					</div>
 				</div>
 				<div class="modal-footer">
-					 
+
 					 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
 				</div>
 		  </div>
