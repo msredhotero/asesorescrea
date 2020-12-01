@@ -310,7 +310,7 @@ $cadBancos .= $serviciosFunciones->devolverSelectBoxText($resBancos,array(1),'')
 										</div>
 										<div id="collapseOne_17" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne_17" aria-expanded="true" style="">
 											<div class="panel-body">
-												<p>Pago anual con tarjeta de credito, a traves de nuestro procesador de pagos. Se admiten tarjetas Visa y Mastercard.</p>
+												<p>Pago anual con tarjeta de crédito o débito, a traves de nuestro procesador de pagos. Se admiten tarjetas Visa y Mastercard.</p>
 												<p><small>1 pago de </small></p>
 												<h4>Monto a pagar: MXN <?php echo number_format($precio, 2, ',', '.'); ?></h4>
 												<div class="right">
@@ -347,7 +347,7 @@ $cadBancos .= $serviciosFunciones->devolverSelectBoxText($resBancos,array(1),'')
 										<div class="panel-heading" role="tab" id="headingFour_17">
 											<h4 class="panel-title">
 											<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion_17" href="#collapseFour_17" aria-expanded="false" aria-controls="collapseFour_17">
-											<i class="material-icons">credit_card</i> Pago mensual a Tarjeta de Crédito
+											<i class="material-icons">credit_card</i> Pago domiciliado mensual a tu tarjeta crédito o débito
 											</a>
 											</h4>
 										</div>
