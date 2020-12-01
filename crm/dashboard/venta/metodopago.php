@@ -173,7 +173,7 @@ if ($edad >= 60) {
 
 $precio = $acumPrecio;
 
-$lblPrecioAd = $precio * 1.2;
+$lblPrecioAd = $precio * 1.07;
 
 $lblPrecioFC = str_replace('.','', $precio * 1.115 ) ;
 
