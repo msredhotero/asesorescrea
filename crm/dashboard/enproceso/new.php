@@ -2932,6 +2932,50 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 		}
 		*/
 
+		var sliderAltura = document.getElementById('nouislider_altura');
+		var sliderPeso = document.getElementById('nouislider_peso');
+		noUiSlider.create(sliderAltura, {
+			start: [30],
+			connect: 'lower',
+			step: 1,
+			range: {
+				'min': [0],
+				'max': [230]
+			}
+		});
+
+		noUiSlider.create(sliderPeso, {
+			start: [30],
+			connect: 'lower',
+			step: 1,
+			range: {
+				'min': [0],
+				'max': [260]
+			}
+		});
+
+		getNoUISliderValue(sliderAltura, 0);
+		getNoUISliderValue(sliderPeso, 1);
+
+		function getNoUISliderValue(slider, tipo) {
+		    slider.noUiSlider.on('update', function () {
+		        var val = slider.noUiSlider.get();
+				  val = parseInt(val);
+		        if (tipo == 1) {
+
+		            //val += '%';
+						$('#wizard_with_validation #respuestaAltura').val(val);
+						$('#wizard_with_validation #respuestaTalla').val(val);
+						$('#wizard_with_validation #respuestaEstatura').val(val);
+		        } else {
+					  $('#wizard_with_validation #respuestaPeso').val(val);
+				  }
+		        //$(slider).parent().find('span.js-nouislider-value').text(val);
+		    });
+		}
+
+		$('.contRangers').hide();
+
 	});
 </script>
 
