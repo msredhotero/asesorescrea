@@ -1238,6 +1238,13 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 <script>
 	$(document).ready(function(){
 
+		$(".frmNuevo2 #rfc").attr('maxlength','13');
+		$(".frmNuevo2 #rfc").attr('minlength','13');
+		$(".frmNuevo2 #curp").attr('maxlength','18');
+		$(".frmNuevo2 #curp").attr('minlength','18');
+		$(".frmNuevo2 #ine").attr('maxlength','10');
+		$(".frmNuevo2 #ine").attr('minlength','10');
+
 		var options = {
 
 			url: "../../json/jsbuscarpostal.php",
