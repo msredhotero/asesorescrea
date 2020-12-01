@@ -173,7 +173,7 @@ if ($edad >= 60) {
 
 $precio = $acumPrecio;
 
-$lblPrecioAd = str_replace('.','',$precio * 1.2);
+$lblPrecioAd = $precio * 1.2;
 
 $lblPrecioFC = str_replace('.','', $precio * 1.115 ) ;
 
@@ -302,6 +302,30 @@ $esFinancieraCrea = 0;
 							<form method="POST" id="formFin">
 
 								<div class="panel-group" id="accordion_17" role="tablist" aria-multiselectable="true">
+
+									<?php if ($esFinancieraCrea == '1') { ?>
+									<div class="panel panel-col-cyan panelMP panelMP3">
+										<div class="panel-heading" role="tab" id="headingThree_17">
+											<h4 class="panel-title">
+											<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion_17" href="#collapseThree_17" aria-expanded="false" aria-controls="collapseThree_17">
+											<i class="material-icons">credit_card</i> Pago Anual - Descuento por Nomina
+											</a>
+											</h4>
+										</div>
+										<div id="collapseThree_17" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree_17" aria-expanded="false">
+											<div class="panel-body">
+												<p>El cobro sera procesado por Financiera CREA.</p>
+
+												<h5>16 cuotas de MX $<?php echo number_format( ceil(($precio * 1.115 / 16)) , 2, ',', '.'); ?></h5>
+												<div class="right">
+													<input name="metodopago" type="radio" value="3" class="with-gap radioMetodo" id="radio_3" require>
+	                                 	<label for="radio_3">Seleccionar</label>
+												</div>
+											</div>
+										</div>
+									</div>
+									<?php } ?>
+
 									<div class="panel panel-col-cyan panelMP panelMP1">
 										<div class="panel-heading" role="tab" id="headingOne_17">
 											<h4 class="panel-title">
@@ -357,7 +381,7 @@ $esFinancieraCrea = 0;
 											<div class="panel-body">
 												<p>Se le domiciliara el pago mensual del servicio.</p>
 												<h5>12 cuotas de <?php echo number_format($lblPrecioAd / 12, 2, ',', '.'); ?></h5>
-												<h4>Monto a pagar: MXN <?php echo number_format($lblPrecioAd, 2, ',', '.'); ?></h4>
+
 												<div class="right">
 													<input name="metodopago" type="radio" value="4" class="with-gap radioMetodo" id="radio_4" require>
 	                                 	<label for="radio_4">Seleccionar</label>
@@ -367,28 +391,7 @@ $esFinancieraCrea = 0;
 									</div>
 									<?php } ?>
 
-									<?php if ($esFinancieraCrea == '1') { ?>
-									<div class="panel panel-col-cyan panelMP panelMP3">
-										<div class="panel-heading" role="tab" id="headingThree_17">
-											<h4 class="panel-title">
-											<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion_17" href="#collapseThree_17" aria-expanded="false" aria-controls="collapseThree_17">
-											<i class="material-icons">credit_card</i> Pago Anual - Descuento por Nomina
-											</a>
-											</h4>
-										</div>
-										<div id="collapseThree_17" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree_17" aria-expanded="false">
-											<div class="panel-body">
-												<p>El cobro sera procesado por Financiera CREA.</p>
 
-												<h5>16 cuotas de MX $<?php echo number_format( ceil(($precio * 1.115 / 16)) , 2, ',', '.'); ?></h5>
-												<div class="right">
-													<input name="metodopago" type="radio" value="3" class="with-gap radioMetodo" id="radio_3" require>
-	                                 	<label for="radio_3">Seleccionar</label>
-												</div>
-											</div>
-										</div>
-									</div>
-									<?php } ?>
 
 								</div>
 
