@@ -4510,11 +4510,17 @@ return $res;
 		$where = '';
 
       $cadCliente = '';
+      $cadAsesor = '';
 
       if ($_SESSION['idroll_sahilices'] == 16) {
    		$resCliente = $this->traerClientesPorUsuarioCompleto($_SESSION['usuaid_sahilices']);
 
    		$cadCliente = ' and cli.idcliente = '.mysql_result($resCliente,0,'idcliente').' ';
+   	}
+
+      if ($_SESSION['idroll_sahilices'] == 7) {
+
+   		$cadAsesor = ' and ase.refusuarios = '.$_SESSION['usuaid_sahilices'].' ';
    	}
 
 		$busqueda = str_replace("'","",$busqueda);
@@ -4558,7 +4564,7 @@ return $res;
 		inner join tbtipocobranza ti ON ti.idtipocobranza = per.reftipocobranza
 		inner join tbestadopago est ON est.idestadopago = p.refestadopago
 
-        where p.refestadopago in (1,3) ".$cadCliente.$where."
+        where p.refestadopago in (1,3) ".$cadCliente.$cadAsesor.$where."
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
 

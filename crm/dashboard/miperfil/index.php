@@ -71,7 +71,7 @@ if (mysql_num_rows($resultado) > 0) {
 
 if (mysql_num_rows($resultado)<= 0) {
 	echo "<script>
-	alert('Asesor cargado directamente son expediente !!!');
+	alert('Asesor cargado directamente sin expediente !!!');
 	window.location = '../index.php';
 	</script>
 	";
