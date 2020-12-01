@@ -189,6 +189,8 @@ $cadBancos = "<option value=''>-- Seleccionar --</option>";
 $cadBancos .= $serviciosFunciones->devolverSelectBoxText($resBancos,array(1),'');
 
 /********************** fin de las validaciones ********************************/
+
+$esFinancieraCrea = 0;
 ?>
 
 <!DOCTYPE html>
@@ -304,7 +306,7 @@ $cadBancos .= $serviciosFunciones->devolverSelectBoxText($resBancos,array(1),'')
 										<div class="panel-heading" role="tab" id="headingOne_17">
 											<h4 class="panel-title">
 											<a role="button" data-toggle="collapse" data-parent="#accordion_17" href="#collapseOne_17" aria-expanded="true" aria-controls="collapseOne_17" class="">
-											<i class="material-icons">credit_card</i> Pago Anual en linea con Tarjeta de Crédito
+											<i class="material-icons">credit_card</i> Pago Anual en linea con Tarjeta de Crédito o Débito
 											</a>
 											</h4>
 										</div>
@@ -365,6 +367,7 @@ $cadBancos .= $serviciosFunciones->devolverSelectBoxText($resBancos,array(1),'')
 									</div>
 									<?php } ?>
 
+									<?php if ($esFinancieraCrea == '1') { ?>
 									<div class="panel panel-col-cyan panelMP panelMP3">
 										<div class="panel-heading" role="tab" id="headingThree_17">
 											<h4 class="panel-title">
@@ -385,6 +388,8 @@ $cadBancos .= $serviciosFunciones->devolverSelectBoxText($resBancos,array(1),'')
 											</div>
 										</div>
 									</div>
+									<?php } ?>
+
 								</div>
 
 								<div class="row">
