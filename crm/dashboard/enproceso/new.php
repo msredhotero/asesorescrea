@@ -455,8 +455,8 @@ $cadRef102 = "<option value='1'>Femenino</option><option value='2'>Masculino</op
 $refdescripcion = array(0=>$cadRef82,1=>$cadRef92,2=>$cadRef102);
 $refCampo 	=  array('reftipopersonas','refestadocivil','genero');
 
-$refdescripcion2 = array(0=>$cadRef82);
-$refCampo2 	=  array('reftipopersonas');
+$refdescripcion2 = array(0=>$cadRef82,1=>$cadRef92,2=>$cadRef102);
+$refCampo2 	=  array('reftipopersonas','refestadocivil','genero');
 
 $frmUnidadNegocios2 	= $serviciosFunciones->camposTablaViejo('insertarClientes' ,$tabla2,$lblCambio2,$lblreemplazo2,$refdescripcion2,$refCampo2);
 
