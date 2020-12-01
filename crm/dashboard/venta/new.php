@@ -627,6 +627,14 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 		   }
 		}
 
+		#respuestaPeso, #respuestaTalla {
+			font-size: 20px;
+		}
+
+		.frmContpregunta {
+			text-decoration: none;
+		}
+
 	</style>
 
 
