@@ -447,7 +447,7 @@ $lblreemplazo2	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apell
 $resVar82 = $serviciosReferencias->traerTipopersonas();
 $cadRef82 = $serviciosFunciones->devolverSelectBox($resVar82,array(1),'');
 
-$resVar92 = $serviciosReferencias->traerEstadoCivil();
+$resVar92 = $serviciosReferencias->traerEstadocivilPorIn('1,2');
 $cadRef92 = $serviciosFunciones->devolverSelectBox($resVar92,array(1),'');
 
 $cadRef102 = "<option value='1'>Femenino</option><option value='2'>Masculino</option>";
