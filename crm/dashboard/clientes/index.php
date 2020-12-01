@@ -56,15 +56,20 @@ $modificar = "modificarClientes";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbclientes";
 
-$lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','emisioncomprobantedomicilio','emisionrfc','vencimientoine','idclienteinbursa','nroexterior','nrointerior','codigopostal','ine','rfc','curp');
-$lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social','Fecha Emision Compr. Domicilio','Fecha Emision RFC','Vencimiento INE','ID Cliente Inbursa','Nro Exterior','Nro Interior','Cod. Postal','INE','RFC','CURP');
+$lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','emisioncomprobantedomicilio','emisionrfc','vencimientoine','idclienteinbursa','nroexterior','nrointerior','codigopostal','ine','rfc','curp','refestadocivil');
+$lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social','Fecha Emision Compr. Domicilio','Fecha Emision RFC','Vencimiento INE','ID Cliente Inbursa','Nro Exterior','Nro Interior','Cod. Postal','INE','RFC','CURP','Estado Civil');
 
 
 $resVar8 = $serviciosReferencias->traerTipopersonas();
 $cadRef8 = $serviciosFunciones->devolverSelectBox($resVar8,array(1),'');
 
-$refdescripcion = array(0=>$cadRef8);
-$refCampo 	=  array('reftipopersonas');
+$resVar9 = $serviciosReferencias->traerEstadoCivil();
+$cadRef9 = $serviciosFunciones->devolverSelectBox($resVar9,array(1),'');
+
+$cadRef10 = "<option value='1'>Femenino</option><option value='2'>Masculino</option>";
+
+$refdescripcion = array(0=>$cadRef8,1=>$cadRef9,2=>$cadRef10);
+$refCampo 	=  array('reftipopersonas','refestadocivil','genero');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////

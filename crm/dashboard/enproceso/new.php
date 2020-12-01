@@ -440,12 +440,20 @@ $lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','E
 
 $tabla2 			= "dbclientes";
 
-$lblCambio2	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','idclienteinbursa','nroexterior','nrointerior','codigopostal','ine','rfc','curp');
-$lblreemplazo2	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social','ID Cliente Inbursa','Nro Exterior','Nro Interior','Cod. Postal','INE','RFC','CURP');
+$lblCambio2	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','idclienteinbursa','nroexterior','nrointerior','codigopostal','ine','rfc','curp','refestadocivil');
+$lblreemplazo2	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social','ID Cliente Inbursa','Nro Exterior','Nro Interior','Cod. Postal','INE','RFC','CURP','Estado Civil');
 
 
 $resVar82 = $serviciosReferencias->traerTipopersonas();
 $cadRef82 = $serviciosFunciones->devolverSelectBox($resVar82,array(1),'');
+
+$resVar92 = $serviciosReferencias->traerEstadoCivil();
+$cadRef92 = $serviciosFunciones->devolverSelectBox($resVar92,array(1),'');
+
+$cadRef102 = "<option value='1'>Femenino</option><option value='2'>Masculino</option>";
+
+$refdescripcion = array(0=>$cadRef82,1=>$cadRef92,2=>$cadRef102);
+$refCampo 	=  array('reftipopersonas','refestadocivil','genero');
 
 $refdescripcion2 = array(0=>$cadRef82);
 $refCampo2 	=  array('reftipopersonas');
