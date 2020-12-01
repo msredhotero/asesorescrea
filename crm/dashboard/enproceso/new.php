@@ -515,6 +515,11 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	<!-- Additional CSS Themes file - not required-->
 	<link rel="stylesheet" href="../../css/easy-autocomplete.themes.min.css">
 
+	<link rel="stylesheet" href="../../css/materialDateTimePicker.css">
+
+	<!-- noUISlider Css -->
+   <link href="../../plugins/nouislider/nouislider.min.css" rel="stylesheet" />
+
 
 
 	<style>
@@ -727,10 +732,21 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
                                        </div>
                                     </div>
-												<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
+												<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContcuestionarioCompleto" style="display:block">
+													<div class="row contRangers">
+														<div class="col-md-6">
+															<label>Deslice para cargar el Peso</label>
+															<div style="margin-top:10px;" id="nouislider_altura"></div>
+														</div>
+														<div class="col-md-6">
+															<label>Deslice para cargar la Altura</label>
+															<div style="margin-top:10px;" id="nouislider_peso"></div>
+														</div>
+													</div>
 													<div class="contCuestionario">
 
 													</div>
+
 												</div>
 
                               </fieldset>
@@ -1401,18 +1417,51 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 					if (data != '') {
 						$('.contCuestionario').html(data.datos.cuestionario);
 
+						if ((data.datos.cuestionario.indexOf("Altura") > 0) || (data.datos.cuestionario.indexOf("Peso") > 0) || (data.datos.cuestionario.indexOf("Talla") > 0) || (data.datos.cuestionario.indexOf("Estatura") > 0)) {
+							$('.contRangers').show();
+						}
 
-						$('#wizard_with_validation .escondido').hide();
+
+						<?php if (isset($_GET['id'])) { ?>
+						$('#wizard_with_validation .contCuestionario .escondido').remove();
+						<?php } else { ?>
+						$('#wizard_with_validation .contCuestionario .escondido').hide();
+						$('#wizard_with_validation .contCuestionario .escondido').find('input').prop('disabled', true);
+						<?php } ?>
+
+						$('#wizard_with_validation [data-toggle="tooltip"]').tooltip();
 
 						$('#wizard_with_validation .aparecer').click(function() {
 							idTable =  $(this).attr("id");
-							idPregunta =  $('#wizard_with_validation #'+idTable).data("pregunta");
-							idRespuesta =  $('#wizard_with_validation #'+idTable).data("respuesta");
-							idPreguntaId =  $('#wizard_with_validation #'+idTable).data("idpregunta");
+							idPregunta =  $('#'+idTable).data("pregunta");
+							idRespuesta =  $('#'+idTable).data("respuesta");
+							idPreguntaId =  $('#'+idTable).data("idpregunta");
 
 							$('#wizard_with_validation .escondido'+idPreguntaId).hide();
+							$('#wizard_with_validation .escondido'+idPreguntaId).find('input').prop('disabled', true);
 
-							$('#wizard_with_validation .clcontPregunta'+idRespuesta).show(400);
+							$('#wizard_with_validation #contPregunta'+idPregunta).show(400);
+							$('#wizard_with_validation #contPregunta'+idPregunta).find('input').prop('disabled', false);
+							$('#wizard_with_validation #rulesPregunta'+idPregunta).find('input').prop('disabled', false);
+
+
+						});
+
+						$('#wizard_with_validation .tsfechanacimiento').pickadate({
+							format: 'yyyy-mm-dd',
+							labelMonthNext: 'Siguiente mes',
+							labelMonthPrev: 'Previo mes',
+							labelMonthSelect: 'Selecciona el mes del año',
+							labelYearSelect: 'Selecciona el año',
+							selectMonths: true,
+							selectYears: 100,
+							today: 'Hoy',
+							clear: 'Borrar',
+							close: 'Cerrar',
+							monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+							monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+							weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+							weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
 						});
 					} else {
 						swal({
