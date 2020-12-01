@@ -8783,7 +8783,7 @@ return $res;
 		c.telefonofijo,
 		c.telefonocelular,
 		c.refasesores,
-		concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) as nombrecompleto,genero,refestadocivil
+		concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) as nombrecompleto,c.genero,c.refestadocivil
 		from dbclientesasesores c
 		inner join dbclientes cl ON cl.idcliente = c.refclientes
 		inner join dbasesores ase on ase.refusuarios = c.refasesores
@@ -8794,14 +8794,14 @@ return $res;
 
    function traerClientesasesoresPorAsesorTipoPersona($refasesor,$tipopersona) {
 		$sql = "select
-		c.idclienteasesor,
-      concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) as nombrecompleto
+		cl.idcliente,
+      concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) as nombrecompleto,
       c.razonsocial,
 		c.refclientes
 		from dbclientesasesores c
 		inner join dbclientes cl ON cl.idcliente = c.refclientes
-		inner join dbasesores ase on ase.refusuarios = c.refasesores
-		where ase.refusuarios = ".$refasesor." and c.reftipopersonas =".$tipopersona;
+		inner join dbasesores ase on ase.idasesor = c.refasesores
+		where ase.idasesor = ".$refasesor." and c.reftipopersonas =".$tipopersona;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -8827,11 +8827,11 @@ return $res;
       cl.idcliente
 		from dbclientesasesores c
 		inner join dbclientes cl ON cl.idcliente = c.refclientes
-		inner join dbasesores ase on ase.refusuarios = c.refasesores";
+		inner join dbasesores ase on ase.idasesor = c.refasesores";
       if ($tipopersona == 1) {
-         $sql .= " where ase.refusuarios = ".$refasesor." and concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) like '%".$busqueda."%' and c.reftipopersonas = ".$tipopersona." order by concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre)";
+         $sql .= " where ase.idasesor = ".$refasesor." and concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) like '%".$busqueda."%' and c.reftipopersonas = ".$tipopersona." order by concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre)";
       } else {
-         $sql .= " where ase.refusuarios = ".$refasesor." and c.razonsocial like '%".$busqueda."%' and c.reftipopersonas = ".$tipopersona." order by c.razonsocial";
+         $sql .= " where ase.idasesor = ".$refasesor." and c.razonsocial like '%".$busqueda."%' and c.reftipopersonas = ".$tipopersona." order by c.razonsocial";
       }
 
 		$res = $this->query($sql,0);

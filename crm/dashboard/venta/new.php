@@ -715,7 +715,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 										<input type="hidden" id="coberturaactual" name="coberturaactual" value="0">
 										<input type="hidden" id="observaciones" name="observaciones" value="Venta en linea">
 
-                              <h3>Producto</h3>
+                              <h3>CUESTIONARIO DEL PRODUCTO</h3>
                                  <fieldset>
 
 												<div class="form-group form-float">
@@ -748,7 +748,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
                               </fieldset>
 
 
-										<h3>CONTRATANTE</h3>
+										<h3>INFORMACION DEL CONTRATANTE</h3>
                                  <fieldset>
 												<div class="row">
 													<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
@@ -768,7 +768,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
                               </fieldset>
 
 										<?php if ($llevaAsegurado == 1) { ?>
-										<h3>ASEGURADO</h3>
+										<h3>INFORMACION DEL ASEGURADO</h3>
                                  <fieldset>
 												<div class="row">
 													<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
@@ -2160,7 +2160,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 							}
 
 							<?php if ($tieneAsegurado != '') { ?>
-								if ($tab.trim() == 'ASEGURADO') {
+								if ($tab.trim() == 'INFORMACION DEL ASEGURADO') {
 									seguirAdelante();
 								}
 							<?php } ?>
@@ -2224,7 +2224,10 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 	        rules: {
 	            'confirm': {
 	                equalTo: '#password'
-	            }
+	            },
+					'refclientes': {
+						required: true
+					}
 	        }
 	    });
 

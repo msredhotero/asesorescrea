@@ -66,7 +66,7 @@ $cadRef8 = $serviciosFunciones->devolverSelectBox($resVar8,array(1),'');
 $resVar9 = $serviciosReferencias->traerEstadoCivil();
 $cadRef9 = $serviciosFunciones->devolverSelectBox($resVar9,array(1),'');
 
-$cadRef10 = "<option value='1'>Femenino</option><option value='2'>Masculino</option>";
+$cadRef10 = "<option value='Femenino'>Femenino</option><option value='Masculino'>Masculino</option>";
 
 $refdescripcion = array(0=>$cadRef8,1=>$cadRef9,2=>$cadRef10);
 $refCampo 	=  array('reftipopersonas','refestadocivil','genero');

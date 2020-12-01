@@ -30,77 +30,6 @@ $serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../enproceso
 $fecha = date('Y-m-d');
 
 
-//die(var_dump($_SESSION['usuaid_sahilices']));
-
-
-if (isset($_GET['id'])) {
-	$resCotizacionPrincipal = $serviciosReferencias->traerCotizacionesPorIdCompleto($_GET['id']);
-
-	if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 21) {
-		return header('Location: documentos.php?id='.$_GET['id']);
-	}
-
-	$rIdCliente = mysql_result($resCotizacionPrincipal,0,'refclientes');
-
-	$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta(mysql_result($resCotizacionPrincipal,0,'refproductos'));
-
-	$rIdProducto = mysql_result($resCotizacionPrincipal,0,'refproductos');
-
-	$tipoProducto = mysql_result($resProductoPrincipal,0,'reftipoproducto');
-
-	if (mysql_result($resProductoPrincipal,0,'beneficiario')) {
-		$llevaBeneficiario = 1;
-	} else {
-		$llevaBeneficiario = 0;
-	}
-
-	if (mysql_result($resProductoPrincipal,0,'asegurado')) {
-		$llevaAsegurado = 1;
-	} else {
-		$llevaAsegurado = 0;
-	}
-} else {
-	if (isset($_GET['idproducto'])) {
-		$rIdProducto = $_GET['idproducto'];
-
-		$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta($rIdProducto);
-
-		if (mysql_result($resProductoPrincipal,0,'beneficiario')) {
-			$llevaBeneficiario = 1;
-		} else {
-			$llevaBeneficiario = 0;
-		}
-
-		if (mysql_result($resProductoPrincipal,0,'asegurado')) {
-			$llevaAsegurado = 1;
-		} else {
-			$llevaAsegurado = 0;
-		}
-
-		if (isset($_GET['idcliente'])) {
-			$rIdCliente = $_GET['idcliente'];
-		} else {
-			header('Location: ../index.php');
-		}
-
-
-	} else {
-		header('Location: ../index.php');
-	}
-
-}
-
-$rCliente = $serviciosReferencias->traerClientesPorId($rIdCliente);
-
-$rTipoPersona = mysql_result($rCliente,0,'reftipopersonas');
-
-if (isset($_GET['lead'])) {
-	$lead = $_GET['lead'];
-} else {
-	$lead = 0;
-}
-
-
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
 $resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"En Proceso",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
@@ -130,12 +59,83 @@ if (isset($_GET['id'])) {
 	$resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
 	$refCliente = mysql_result($resultado,0,'refclientes');
-	$refAsesores = 25;
+	$rIdCliente = mysql_result($resultado,0,'refclientes');
+	$refAsesores = mysql_result($resultado,0,'refasesores');
 	$refAsociados = mysql_result($resultado,0,'refasociados');
 	$refProductos = mysql_result($resultado,0,'refproductos');
 
+	$rCliente = $serviciosReferencias->traerClientesPorId($rIdCliente);
+
+	$rTipoPersona = mysql_result($rCliente,0,'reftipopersonas');
+
+	$rIdProducto  = mysql_result($resultado,0,'refproductos');
+
+	$estadoCotizacionGral = mysql_result($resultado,0,'refestadocotizaciones');
+
+	if ($estadoCotizacionGral == 19) {
+		$resVentas = $serviciosReferencias->traerVentasPorCotizacion($id);
+
+		if (mysql_num_rows($resVentas) > 0) {
+			$resMetodoPago = $serviciosReferencias->traerPeriodicidadventasPorVenta(mysql_result($resVentas,0,0));
+			if (mysql_num_rows($resMetodoPago) > 0) {
+				header('Location: comercio_fin.php?id='.$id);
+			} else {
+				header('Location: metodopago.php?id='.$id);
+			}
+		} else {
+			header('Location: metodopago.php?id='.$id);
+		}
+
+	}
+
+	if (($estadoCotizacionGral == 20)) {
+		$resVentas = $serviciosReferencias->traerVentasPorCotizacion($id);
+
+		if (mysql_num_rows($resVentas) > 0) {
+			$resMetodoPago = $serviciosReferencias->traerPeriodicidadventasPorVenta(mysql_result($resVentas,0,0));
+			if (mysql_num_rows($resMetodoPago) > 0) {
+				header('Location: comercio_fin.php?id='.$id);
+			} else {
+				header('Location: archivos.php?id='.$id);
+			}
+		} else {
+			header('Location: archivos.php?id='.$id);
+		}
+	}
+
+	if (($estadoCotizacionGral == 21) || ($estadoCotizacionGral == 22)) {
+		$resVentas = $serviciosReferencias->traerVentasPorCotizacion($id);
+
+		if (mysql_num_rows($resVentas) > 0) {
+			$resMetodoPago = $serviciosReferencias->traerPeriodicidadventasPorVenta(mysql_result($resVentas,0,0));
+			if (mysql_num_rows($resMetodoPago) > 0) {
+				header('Location: comercio_fin.php?id='.$id);
+			} else {
+				header('Location: documentos.php?id='.$id);
+			}
+		} else {
+			header('Location: documentos.php?id='.$id);
+		}
+	}
+
 	$refIdAsegurados = mysql_result($resultado,0,'refasegurados');
 	$tieneAsegurado = mysql_result($resultado,0,'tieneasegurado');
+
+	$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta($refProductos);
+
+	$tipoProducto = mysql_result($resProductoPrincipal,0,'reftipoproducto');
+
+	if (mysql_result($resProductoPrincipal,0,'beneficiario')) {
+		$llevaBeneficiario = 1;
+	} else {
+		$llevaBeneficiario = 0;
+	}
+
+	if (mysql_result($resProductoPrincipal,0,'asegurado')) {
+		$llevaAsegurado = 1;
+	} else {
+		$llevaAsegurado = 0;
+	}
 
 	$resCliente = $serviciosReferencias->traerClientesPorId($refCliente);
 	$cadRef2 = $serviciosFunciones->devolverSelectBox($resCliente,array(3,4,2),' ');
@@ -434,6 +434,22 @@ if (isset($_GET['id'])) {
 
 	$id = 0;
 
+	$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta($rIdProducto);
+
+	$tipoProducto = mysql_result($resProductoPrincipal,0,'reftipoproducto');
+
+	if (mysql_result($resProductoPrincipal,0,'beneficiario')) {
+		$llevaBeneficiario = 1;
+	} else {
+		$llevaBeneficiario = 0;
+	}
+
+	if (mysql_result($resProductoPrincipal,0,'asegurado')) {
+		$llevaAsegurado = 1;
+	} else {
+		$llevaAsegurado = 0;
+	}
+
 	$refIdAsegurados = 0;
 	$tieneAsegurado = '';
 
@@ -481,6 +497,9 @@ if (isset($_GET['id'])) {
 
 
 	$idasesor = 25;
+
+	$iddocumentacion2 = 0;
+	$iddocumentacion = 0;
 
 
 }
@@ -536,6 +555,9 @@ $frmUnidadNegociosASG 	= $serviciosFunciones->camposTablaViejo($insertarASG ,$ta
 $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuestionarioObligatorias(mysql_result($resProducto,0,'refcuestionarios'));
 
 
+$resEstadoCivil = $serviciosReferencias->traerEstadocivilPorIn('1,2');
+$cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,array(1),'');
+
 ?>
 
 <!DOCTYPE html>
@@ -577,7 +599,10 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	<!-- Additional CSS Themes file - not required-->
 	<link rel="stylesheet" href="../../css/easy-autocomplete.themes.min.css">
 
+	<link rel="stylesheet" href="../../css/materialDateTimePicker.css">
 
+	<!-- noUISlider Css -->
+   <link href="../../plugins/nouislider/nouislider.min.css" rel="stylesheet" />
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
@@ -672,7 +697,18 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 										<input type="hidden" name="reftipopersonasaux" id="reftipopersonasaux" value="<?php echo $rTipoPersona; ?>" />
 										<input type="hidden" name="idcotizacion" id="idcotizacion" value="<?php echo $id; ?>" />
 										<input type="hidden" name="actualizacliente" id="actualizacliente" value="0" />
-										<input type="hidden" name="lead" id="lead" value="<?php echo $lead; ?>" />
+										<input type="hidden" name="lead" id="lead" value="-1" />
+
+										<input type="hidden" id="existeprimaobjetivo" name="existeprimaobjetivo" value="0">
+										<input type="hidden" id="primaobjetivo" name="primaobjetivo" value="0">
+										<input type="hidden" id="cobertura" name="cobertura" value="0">
+										<input type="hidden" id="reasegurodirecto" name="reasegurodirecto" value="0">
+										<input type="hidden" id="tiponegocio" name="tiponegocio" value="0">
+										<input type="hidden" id="fechavencimiento" name="fechavencimiento" value="0000-00-00">
+										<input type="hidden" id="fecharenovacion" name="fecharenovacion" value="0000-00-00">
+										<input type="hidden" id="presentacotizacion" name="presentacotizacion" value="0">
+										<input type="hidden" id="coberturaactual" name="coberturaactual" value="0">
+										<input type="hidden" id="observaciones" name="observaciones" value="Venta en linea">
 
                               <h3>Producto</h3>
                                  <fieldset>
@@ -688,7 +724,38 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
                                        </div>
                                     </div>
 												<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
+													<div class="row contRangers">
+														<div class="col-md-6">
+															<label>Deslice para cargar el Peso</label>
+															<div style="margin-top:10px;" id="nouislider_altura"></div>
+														</div>
+														<div class="col-md-6">
+															<label>Deslice para cargar la Altura</label>
+															<div style="margin-top:10px;" id="nouislider_peso"></div>
+														</div>
+													</div>
 													<div class="contCuestionario">
+
+													</div>
+
+												</div>
+
+                              </fieldset>
+
+
+										<h3>CONTRATANTE</h3>
+                                 <fieldset>
+												<div class="row">
+													<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
+														<div class="form-group form-float">
+															<label class="form-label" style="margin-top:20px;">Complete la información del cuestionario *</label>
+
+		                                    </div>
+													</div>
+
+												</div>
+												<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContcuestionarioasegurado" style="display:block">
+													<div class="contCuestionarioPersonasContratante">
 
 													</div>
 												</div>
@@ -701,12 +768,12 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 												<div class="row">
 													<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
 														<div class="form-group form-float">
-															<label class="form-label" style="margin-top:20px;">El Asegurado es usted mismo u otra persona *</label>
+															<label class="form-label" style="margin-top:20px;">El asegurado es usted mismo o deseas asegurar a alguien más  *</label>
 		                                       <div class="form-line">
 
 									   						<select style="margin-top:10px;" class="form-control" id="tieneasegurado" name="tieneasegurado" required>
 																	<option value=''>-- Seleccionar --</option>
-																	<option value='0'>Yo mismo</option>
+																	<option value='0'>El Cliente</option>
 																	<option value='1'>Otra persona</option>
 																</select>
 
@@ -735,14 +802,14 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 												</div>
 
                               </fieldset>
-									<?php } ?>
+										<?php } ?>
 
-									<!-- verifico que existan archivos para cargarle al producto -->
-									<?php
-									$cargados = 0;
-									$i = 0;
-									if ($iddocumentacion > 0) {
-									?>
+										<!-- verifico que existan archivos para cargarle al producto -->
+										<?php
+										$cargados = 0;
+										$i = 0;
+										if ($iddocumentacion > 0) {
+										?>
 										<h3>Galeria Producto</h3>
                               <fieldset>
 											<?php if ($documentacionNombre != '') { ?>
@@ -824,220 +891,37 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 												</div>
 
 											</div>
-                      			</fieldset>
+                      </fieldset>
 										<?php } ?>
 											<!-- fin verifico que existan archivos para cargarle al producto -->
 
-                              <h3>Información del Negocio</h3>
-                              <fieldset>
-											<?php
-												// si el tipo de producto es seguros lo dejo entrar
-												if ($tipoProducto == 3) {
+
+										<?php
+										// seteo el beneficiario en cero
+										$llevaBeneficiario = 0;
+										if ($llevaBeneficiario == 1) {
 											?>
-											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
-												<div class="form-group form-float">
-													<label class="form-label" style="margin-top:20px;">Existe Prima Objetivo</label>
-                                       <div class="form-line">
-
-							   						<select style="margin-top:10px;" class="form-control" id="existeprimaobjetivo" name="existeprimaobjetivo" required>
-															<?php echo $cadRef11b; ?>
-														</select>
-
-                                       </div>
-                                    </div>
-											</div>
-											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContprimaobjetivo" style="display:block">
-												<div class="form-group form-float">
-													<label class="form-label" style="margin-top:30px;">Prima Objetivo</label>
-		                                <div class="form-line">
-
-												   	<input style="width:200px;" type="text" class="form-control" id="primaobjetivo" name="primaobjetivo" value="<?php echo $primaobjetivo; ?>" />
+										<h3>BENEFICIARIO</h3>
+                                 <fieldset>
+												<div class="row">
 
 
-		                                </div>
-		                              </div>
-											</div>
+													<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContbeneficiarioaux" style="display:block">
+														<div class="form-group form-float">
+															<label class="form-label" style="margin-top:20px;">Seleccione el Beneficiario de su catalogo *</label>
+		                                       <div class="form-line">
 
-										   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcobertura" style="display:block">
-												<div class="form-group form-float">
-													<label class="form-label" style="margin-top:20px;">Cobertura Requiere Reaseguro</label>
-                                       <div class="form-line">
+									   						<select style="margin-top:10px;" class="form-control" id="refbeneficiarioaux" name="refbeneficiarioaux" required>
+																	<option value='0'>Nuevo</option>
+																</select>
 
-							   						<select style="margin-top:10px;" class="form-control" id="cobertura" name="cobertura" required>
-															<?php echo $cadRef7b; ?>
-														</select>
-
-                                       </div>
-                                    </div>
-											</div>
-											<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcobertura" style="display:block">
-												<input type="hidden" class="form-control" id="reasegurodirecto" name="reasegurodirecto">
-
-												<div class="form-group form-float">
-													<label class="form-label">Presenta Cotizacion O Poliza De Competencia</label>
-                                       <div class="form-line">
-
-							   						<select style="margin-top:10px;" class="form-control" id="presentacotizacion" name="presentacotizacion" required>
-															<?php echo $cadRef8b; ?>
-														</select>
-
-                                       </div>
-                                    </div>
-										   </div>
-
-
-											<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmConttiponegocio" style="display:block">
-
-												<div class="form-group input-group">
-													<label class="form-label">Tipo De Negocio Para Agente </label>
-													<div class="form-line">
-														<select style="margin-top:10px;" class="form-control" id="tiponegocio" name="tiponegocio" required>
-															<?php echo $cadRef9b; ?>
-														</select>
+		                                       </div>
+		                                    </div>
 													</div>
 												</div>
-											</div>
-											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContfechavencimiento" style="display:block">
-												<b>Fecha de Vencimiento póliza Actual</b>
-												<div class="input-group">
-
-												<span class="input-group-addon">
-													 <i class="material-icons">date_range</i>
-												</span>
-		                                <div class="form-line">
-
-												   	<input style="width:200px;" type="text" class="datepicker form-control" id="fechavencimiento" name="fechavencimiento" value="<?php echo $fechavencimiento; ?>" />
-
-		                                </div>
-		                              </div>
-											</div>
-
-											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcoberturaactual" style="display:block">
-
-												<div class="form-group input-group">
-													<label class="form-label">Aseguradora con quien esta suscrita la póliza</label>
-													<div class="form-line">
-														<select class="form-control" id="coberturaactual" name="coberturaactual" required>
-															<option value='0'>-- Seleccionar --</option>
-															<?php echo $cadRef10; ?>
-														</select>
-													</div>
-												</div>
-
-												<input style="width:200px;" type="hidden" class="form-control" id="fecharenovacion" name="fecharenovacion" />
-											</div>
-										<?php } // fin del tipo de producto ?>
-
-											<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContobservaciones" style="display:block">
-												<label class="form-label">Observaciones </label>
-												<div class="form-group input-group">
-													<div class="form-line">
-														<textarea id="observaciones" name="observaciones"  rows="2" class="form-control no-resize"></textarea>
-
-													</div>
-												</div>
-											</div>
-
-											<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContadjuntos" style="display:block">
-												<div class="col-xs-4">
-													<label class="form-label">Puede adjuntar los siguientes archivos </label>
-													<?php
-														while ($rowD = mysql_fetch_array($documentacionesadicionales)) {
-
-													?>
-													<div class="form-group form-float">
-														<button type="button" class="btn bg-<?php echo $rowD['color']; ?> waves-effect btnA<?php echo str_replace(' ','',$rowD['documentacion']); ?>"><i class="material-icons">unarchive</i><span><?php echo $rowD['documentacion']; ?></span></button>
-													</div>
-													<?php
-														}
-
-													?>
-												</div>
-												<div class="col-xs-8">
-													<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-														<div class="card">
-															<div class="header bg-blue">
-																<h2>
-																	ARCHIVO CARGADO
-																</h2>
-																<ul class="header-dropdown m-r--5">
-																	<li class="dropdown">
-																		<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-																			<i class="material-icons">more_vert</i>
-																		</a>
-																	</li>
-																</ul>
-															</div>
-															<div class="body">
-																<div class="row">
-																	<button type="button" class="btn bg-red waves-effect btnEliminar2">
-																		<i class="material-icons">remove</i>
-																		<span>ELIMINAR</span>
-																	</button>
-																</div>
-																<div class="row">
-																	<a href="javascript:void(0);" class="thumbnail timagen12">
-																		<img class="img-responsive">
-																	</a>
-																	<div id="example12"></div>
-																</div>
-																<div class="row">
-																	<div class="alert bg-<?php echo $color2; ?>">
-																		<h4>
-																			Estado: <b><?php echo $estadoDocumentacion2; ?></b>
-																		</h4>
-																	</div>
-																	<div class="col-xs-6 col-md-6" style="display:block">
-																		<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
-																		<div class="input-group col-md-12">
-																			<select class="form-control show-tick" id="refestados2" name="refestados2">
-																				<?php echo $cadRefEstados2; ?>
-																			</select>
-																		</div>
-																		<?php
-																		if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11)) {
-																		?>
-																		<button type="button" class="btn btn-primary guardarEstado2" style="margin-left:0px;">Guardar Estado</button>
-																	<?php } ?>
-																	</div>
-
-																</div>
-															</div>
-														</div>
-													</div>
-
-												</div>
-											</div>
-
-
-
 
                               </fieldset>
-
-										<?php if ($llevaBeneficiario == 1) { ?>
-											<h3>BENEFICIARIO</h3>
-	                                 <fieldset>
-													<div class="row">
-
-
-														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContbeneficiarioaux" style="display:block">
-															<div class="form-group form-float">
-																<label class="form-label" style="margin-top:20px;">Seleccione el Beneficiario de su catalogo *</label>
-			                                       <div class="form-line">
-
-										   						<select style="margin-top:10px;" class="form-control" id="refbeneficiarioaux" name="refbeneficiarioaux" required>
-																		<option value='0'>El contratante</option>
-																		<option value='0'>Nuevo</option>
-																	</select>
-
-			                                       </div>
-			                                    </div>
-														</div>
-													</div>
-
-	                              </fieldset>
-									<?php } ?>
-
+										<?php } ?>
 
                            </form>
 
@@ -1078,38 +962,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 						</div>
 					</div>
 				<?php } ?>
-				<?php if ($documentacionNombre2 != '') { ?>
-					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 contSubirArchivos2">
-						<div class="card">
-							<div class="header bg-blue">
-								<h2>
-									CARGA/MODIFIQUE LA DOCUMENTACIÓN <?php echo $documentacionNombre2; ?> AQUI
-								</h2>
-								<ul class="header-dropdown m-r--5">
-									<li class="dropdown">
-										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-											<i class="material-icons">more_vert</i>
-										</a>
-									</li>
-								</ul>
-							</div>
-							<div class="body">
-								<form action="subir.php" id="frmFileUpload2" class="dropzone" method="post" enctype="multipart/form-data">
-									<div class="dz-message">
-										<div class="drag-icon-cph">
-											<i class="material-icons">touch_app</i>
-										</div>
-										<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
-									</div>
-									<div class="fallback">
-										<input name="file" type="file" id="archivos2" />
-										<input type="hidden" id="idasociado2" name="idasociado" value="<?php echo $id; ?>" />
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>
-				<?php } ?>
+
 
             </div>
 		</div>
@@ -1131,7 +984,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 							<div class="row">
 
 								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContnombre" style="display:block">
-									<label class="form-label">Nombre  <span style="color:red;">*</span> </label>
+									<label class="form-label">Nombre Completo <span style="color:red;">*</span> </label>
 									<div class="form-group input-group">
 										<div class="form-line">
 											<input type="text" class="form-control" id="nombreASG" name="nombre"  required />
@@ -1167,6 +1020,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 									<div class="form-group input-group col-md-12">
 										<div class="form-line">
 											<select class="form-control" id="reftipoparentescoASG" name="reftipoparentesco"  required >
+												<option value="">-- Seleccionar --</option>
 												<option value="1">Padres</option>
 												<option value="2">Conyuge</option>
 												<option value="3">Hijos</option>
@@ -1175,168 +1029,67 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 										</div>
 									</div>
 								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContparentescoASG" style="display:block">
+									<label class="form-label">Ingrese el Parentesco  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="parentescoASG" name="parentesco" />
+										</div>
+									</div>
+								</div>
 							</div>
 							<div class="row" style="margin-top:15px;">
 
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="display:block">
-									<label class="form-label">Email </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="email" class="form-control" id="emailASG" name="email" />
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContrfc" style="display:block">
-									<label class="form-label">RFC </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="rfcASG" name="rfc" />
-										</div>
-									</div>
-								</div>
-
 
 								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcurp" style="display:block">
-									<label class="form-label">CURP </label>
+									<label class="form-label">CURP <span style="color:red;">*</span>  </label>
 									<div class="form-group input-group">
 										<div class="form-line">
-											<input type="text" class="form-control" id="curpASG" name="curp" />
+											<input type="text" class="form-control" id="curpASG" name="curp" maxlength="18" required />
 										</div>
 									</div>
 								</div>
 
 
 								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContfechanacimiento" style="display:block">
-									<label class="form-label">Fecha De Nacimiento </label>
+									<label class="form-label">Fecha De Nacimiento <span style="color:red;">*</span>  </label>
 									<div class="form-group input-group">
 										<div class="form-line">
-											<input type="text" class="form-control" id="fechanacimientoASG" name="fechanacimiento" />
+											<input type="text" class="form-control" id="fechanacimientoASG" name="fechanacimiento" required/>
 										</div>
 									</div>
 								</div>
 
-
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmConttelefonofijo" style="display:block">
-									<label class="form-label">Tel. Fijo </label>
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContgenero" style="display:block">
+									<label class="form-label">Genero <span style="color:red;">*</span>  </label>
 									<div class="form-group input-group">
 										<div class="form-line">
-											<input type="text" class="form-control" id="telefonofijoASG" name="telefonofijo" />
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmConttelefonocelular" style="display:block">
-									<label class="form-label">Tel. Celular </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="telefonocelularASG" name="telefonocelular" />
-										</div>
-									</div>
-								</div>
-
-							</div>
-							<div class="row" style="margin-top:15px;">
-
-
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContreftipoparentesco" style="display:block">
-									<label for="reftipoparentesco" class="control-label" style="text-align:left">La dirección es la misma que la del contratante?  <span style="color:red;">*</span> </label>
-									<div class="form-group input-group col-md-12">
-										<div class="form-line">
-											<select class="form-control" id="mismadireccionASG" name="mismadireccion"  required >
-												<option value="0">No</option>
-												<option value="1">Si</option>
+											<select class="form-control" id="generoASG" name="genero"  required >
+												<option value="">-- Seleccionar --</option>
+												<option value="Femenino">Femenino</option>
+												<option value="Masculino">Masculino</option>
 											</select>
 										</div>
 									</div>
 								</div>
 
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContdomicilio" style="display:block">
-									<label class="form-label">Calle </label>
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrefestadocivil" style="display:block">
+									<label class="form-label">Estado Civil <span style="color:red;">*</span>  </label>
 									<div class="form-group input-group">
 										<div class="form-line">
-											<input type="text" class="form-control" id="domicilioASG" name="domicilio" />
+											<select class="form-control" id="refestadocivilASG" name="refestadocivil"  required >
+												<option value="">-- Seleccionar --</option>
+												<?php echo $cadRefEstadoCivil; ?>
+											</select>
 										</div>
 									</div>
 								</div>
-
-
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContnroexterior" style="display:block">
-									<label class="form-label">Nro Exterior </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="nroexteriorASG" name="nroexterior" />
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContnrointerior" style="display:block">
-									<label class="form-label">Nro Interior </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="nrointeriorASG" name="nrointerior" />
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContedificio" style="display:block">
-									<label class="form-label">Edificio </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="edificioASG" name="edificio" />
-										</div>
-									</div>
-								</div>
-
-
 
 							</div>
+
 							<div class="row" style="margin-top:15px;">
 
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcodigopostal" style="display:block">
-									<label class="form-label">Cod. Postal </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="codigopostalASG" name="codigopostal" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ingresa el Cod. Postal para completar los otros campos de forma automatica"/>
-
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContestado" style="display:block">
-									<label class="form-label">Estado </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="estadoASG" name="estado" readonly />
-
-										</div>
-									</div>
-								</div>
-
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContmunicipio" style="display:block">
-									<label class="form-label">Municipio </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="municipioASG" name="municipio" readonly/>
-
-										</div>
-									</div>
-								</div>
-
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcolonia" style="display:block">
-									<label class="form-label">Colonia </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="coloniaASG" name="colonia" readonly/>
-
-										</div>
-									</div>
-								</div>
 
 								<input type="hidden" id="accion" name="accion" value="insertarAsegurados"/>
 								<input type="hidden" id="refclientesASG" name="refclientes" value="<?php echo $rIdCliente; ?>"/>
@@ -1365,7 +1118,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	               <div class="modal-body">
 							<div class="row">
 								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContnombre" style="display:block">
-									<label class="form-label">Nombre  <span style="color:red;">*</span> </label>
+									<label class="form-label">Nombre Completo  <span style="color:red;">*</span> </label>
 									<div class="form-group input-group">
 										<div class="form-line">
 											<input type="text" class="form-control" id="nombreBNF" name="nombre"  required />
@@ -1401,6 +1154,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 									<div class="form-group input-group col-md-12">
 										<div class="form-line">
 											<select class="form-control" id="reftipoparentescoBNF" name="reftipoparentesco"  required >
+												<option value="">-- Seleccionar --</option>
 												<option value="1">Padres</option>
 												<option value="2">Conyuge</option>
 												<option value="3">Hijos</option>
@@ -1410,159 +1164,65 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 									</div>
 								</div>
 
-
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="display:block">
-									<label class="form-label">Email </label>
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContparentescoBNF" style="display:block">
+									<label class="form-label">Ingrese el Parentesco  <span style="color:red;">*</span> </label>
 									<div class="form-group input-group">
 										<div class="form-line">
-											<input type="email" class="form-control" id="emailBNF" name="email" />
+											<input type="text" class="form-control" id="parentescoBNF" name="parentesco" />
 										</div>
 									</div>
 								</div>
 
 
-								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContrfc" style="display:block">
-									<label class="form-label">RFC </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="rfcBNF" name="rfc" />
-										</div>
-									</div>
-								</div>
 
 
 								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcurp" style="display:block">
 									<label class="form-label">CURP </label>
 									<div class="form-group input-group">
 										<div class="form-line">
-											<input type="text" class="form-control" id="curpBNF" name="curp" />
+											<input type="text" class="form-control" id="curpBNF" name="curp" maxlength="18" />
 										</div>
 									</div>
 								</div>
 
 
 								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContfechanacimiento" style="display:block">
-									<label class="form-label">Fecha De Nacimiento </label>
+									<label class="form-label">Fecha De Nacimiento  <span style="color:red;">*</span> </label>
 									<div class="form-group input-group">
 										<div class="form-line">
-											<input type="text" class="form-control" id="fechanacimientoBNF" name="fechanacimiento" />
+											<input type="text" class="form-control" id="fechanacimientoBNF" name="fechanacimiento" required/>
 										</div>
 									</div>
 								</div>
 
-
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmConttelefonofijo" style="display:block">
-									<label class="form-label">Tel. Fijo </label>
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContgenero" style="display:block">
+									<label class="form-label">Genero <span style="color:red;">*</span>  </label>
 									<div class="form-group input-group">
 										<div class="form-line">
-											<input type="text" class="form-control" id="telefonofijoBNF" name="telefonofijo" />
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmConttelefonocelular" style="display:block">
-									<label class="form-label">Tel. Celular </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="telefonocelularBNF" name="telefonocelular" />
-										</div>
-									</div>
-								</div>
-
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContreftipoparentesco" style="display:block">
-									<label for="reftipoparentesco" class="control-label" style="text-align:left">La dirección es la misma que la del contratante?  <span style="color:red;">*</span> </label>
-									<div class="form-group input-group col-md-12">
-										<div class="form-line">
-											<select class="form-control" id="mismadireccionBNF" name="mismadireccionBNF"  required >
-												<option value="0">No</option>
-												<option value="1">Si</option>
+											<select class="form-control" id="generoBNF" name="genero"  required >
+												<option value="">-- Seleccionar --</option>
+												<option value="Femenino">Femenino</option>
+												<option value="Masculino">Masculino</option>
 											</select>
 										</div>
 									</div>
 								</div>
 
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContdomicilio" style="display:block">
-									<label class="form-label">Calle </label>
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrefestadocivil" style="display:block">
+									<label class="form-label">Estado Civil <span style="color:red;">*</span>  </label>
 									<div class="form-group input-group">
 										<div class="form-line">
-											<input type="text" class="form-control" id="domicilioBNF" name="domicilio" />
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContnroexterior" style="display:block">
-									<label class="form-label">Nro Exterior </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="nroexteriorBNF" name="nroexterior" />
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContnrointerior" style="display:block">
-									<label class="form-label">Nro Interior </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="nrointeriorBNF" name="nrointerior" />
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-1 col-md-1 col-sm-6 col-xs-12 frmContedificio" style="display:block">
-									<label class="form-label">Edificio </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="edificioBNF" name="edificio" />
+											<select class="form-control" id="refestadocivilBNF" name="refestadocivil"  required >
+												<option value="">-- Seleccionar --</option>
+												<?php echo $cadRefEstadoCivil; ?>
+											</select>
 										</div>
 									</div>
 								</div>
 
 
 
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcodigopostal" style="display:block">
-									<label class="form-label">Cod. Postal </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="codigopostalBNF" name="codigopostal" data-toggle="tooltip" data-placement="top" title="" data-original-title="Ingresa el Cod. Postal para completar los otros campos de forma automatica"/>
 
-										</div>
-									</div>
-								</div>
-
-
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContestado" style="display:block">
-									<label class="form-label">Estado </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="estadoBNF" name="estado" readonly/>
-
-										</div>
-									</div>
-								</div>
-
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContmunicipio" style="display:block">
-									<label class="form-label">Municipio </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="municipioBNF" name="municipio" readonly/>
-
-										</div>
-									</div>
-								</div>
-
-								<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcolonia" style="display:block">
-									<label class="form-label">Colonia </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="coloniaBNF" name="colonia" readonly/>
-
-										</div>
-									</div>
-								</div>
 
 								<input type="hidden" id="accion" name="accion" value="insertarAsegurados"/>
 								<input type="hidden" id="refclientesBNF" name="refclientes" value="<?php echo $rIdCliente; ?>"/>
@@ -1585,6 +1245,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 <script src="../../js/jquery.easy-autocomplete.min.js"></script>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
+
+<script src="../../js/pages/ui/tooltips-popovers.js"></script>
 
 <!-- Custom Js -->
 <script src="../../js/pages/cards/colored.js"></script>
@@ -1611,16 +1273,48 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 <script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
 
+<script src="../../js/materialDateTimePicker.js"></script>
+
 <script src="../../plugins/dropzone/dropzone.js"></script>
 
 <script src="../../js/pdfobject.min.js"></script>
-<!-- Chart Plugins Js -->
 
+<!-- noUISlider Plugin Js -->
+<script src="../../plugins/nouislider/nouislider.js"></script>
+
+
+<!-- Chart Plugins Js -->
 
 
 <script>
 	$(document).ready(function(){
 
+
+
+
+
+		$('.frmContparentescoASG').hide();
+		$('.frmContparentescoBNF').hide();
+
+		$('#reftipoparentescoASG').change(function() {
+			if ($(this).val() == 4) {
+				$('.frmContparentescoASG').show();
+				$("#parentescoASG").prop('required',true);
+			} else {
+				$('.frmContparentescoASG').hide();
+				$("#parentescoASG").prop('required',false);
+			}
+		});
+
+		$('#reftipoparentescoBNF').change(function() {
+			if ($(this).val() == 4) {
+				$('.frmContparentescoBNF').show();
+				$("#parentescoBNF").prop('required',true);
+			} else {
+				$('.frmContparentescoBNF').hide();
+				$("#parentescoBNF").prop('required',false);
+			}
+		});
 
 		var options = {
 
@@ -1789,7 +1483,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 			$('#wizard_with_validation .clcontPregunta'+idRespuesta).show(400);
 		});
 
-		cuestionarioPersonasContratante(<?php echo $rIdProducto; ?>,<?php echo $id; ?>);
+
 
 		function cuestionarioPersonasContratante(idproducto,idcotizacion) {
 			$.ajax({
@@ -1805,59 +1499,66 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 				//una vez finalizado correctamente
 				success: function(data){
 
+					$('.contCuestionarioPersonasContratante').show();
+
+					$('.contCuestionarioPersonasContratante').html(data.datos.cuestionario);
+
+					$('#wizard_with_validation .tsfechanacimiento').pickadate({
+						format: 'yyyy-mm-dd',
+						labelMonthNext: 'Siguiente mes',
+						labelMonthPrev: 'Previo mes',
+						labelMonthSelect: 'Selecciona el mes del año',
+						labelYearSelect: 'Selecciona el año',
+						selectMonths: true,
+						selectYears: 100,
+						today: 'Hoy',
+						clear: 'Borrar',
+						close: 'Cerrar',
+						monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+						monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+						weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+						weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+					});
+
+
+					$("#wizard_with_validation .tsmunicipio").prop('readonly',true);
+					$("#wizard_with_validation .tsestado").prop('readonly',true);
+					$("#wizard_with_validation .tscolonia").prop('readonly',true);
+					$("#wizard_with_validation .tsrfc").attr('maxlength','13');
+					$("#wizard_with_validation .tsrfc").attr('minlength','13');
+
+
+					$("#wizard_with_validation .tscodigopostal").easyAutocomplete(options);
+
+
+					$('#wizard_with_validation .contCuestionarioPersonasContratante .escondido').hide();
+
+					$('#wizard_with_validation [data-toggle="tooltip"]').tooltip();
+
+					$('#wizard_with_validation .contCuestionarioPersonasContratante .aparecer').click(function() {
+						idTable =  $(this).attr("id");
+						idPregunta =  $('#'+idTable).data("pregunta");
+						idRespuesta =  $('#'+idTable).data("respuesta");
+						idPreguntaId =  $('#'+idTable).data("idpregunta");
+
+						$('#wizard_with_validation .contCuestionarioPersonasContratante .escondido'+idPreguntaId).hide();
+
+						$('#wizard_with_validation .contCuestionarioPersonasContratante #contPregunta'+idPregunta).show(400);
+					});
+
 					if (data.error == false) {
 
+						<?php if (isset($_GET['id'])) { ?>
 						if (data.sigue) {
 
-							//form.steps("next");
-
+							form.steps("next");
+							form.steps("next");
 						} else {
-							//form.steps("next");
+							form.steps("next");
 						}
-
-						$('.contCuestionarioPersonasContratante').show();
-
-						$('.contCuestionarioPersonasContratante').html(data.datos.cuestionario);
-
-						$('#wizard_with_validation .tsfechanacimiento').pickadate({
-							format: 'yyyy-mm-dd',
-							labelMonthNext: 'Siguiente mes',
-							labelMonthPrev: 'Previo mes',
-							labelMonthSelect: 'Selecciona el mes del año',
-							labelYearSelect: 'Selecciona el año',
-							selectMonths: true,
-							selectYears: 100,
-							today: 'Hoy',
-							clear: 'Borrar',
-							close: 'Cerrar',
-							monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-							monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-							weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-							weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-						});
+						<?php } ?>
 
 
-						$("#wizard_with_validation .tsmunicipio").prop('readonly',true);
-						$("#wizard_with_validation .tsestado").prop('readonly',true);
-						$("#wizard_with_validation .tscolonia").prop('readonly',true);
-
-						$("#wizard_with_validation .tscodigopostal").easyAutocomplete(options);
-
-
-						$('#wizard_with_validation .contCuestionarioPersonasContratante .escondido').hide();
-
-						$('#wizard_with_validation .contCuestionarioPersonasContratante .aparecer').click(function() {
-							idTable =  $(this).attr("id");
-							idPregunta =  $('#'+idTable).data("pregunta");
-							idRespuesta =  $('#'+idTable).data("respuesta");
-							idPreguntaId =  $('#'+idTable).data("idpregunta");
-
-							$('#wizard_with_validation .contCuestionarioPersonasContratante .escondido'+idPreguntaId).hide();
-
-							$('#wizard_with_validation .contCuestionarioPersonasContratante #contPregunta'+idPregunta).show(400);
-						});
-
-						$('#wizard_with_validation [data-toggle="tooltip"]').tooltip();
 					} else {
 						swal({
 								title: "Respuesta",
@@ -1930,6 +1631,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 						$('#wizard_with_validation .contCuestionarioPersonas .escondido').hide();
 
+						$('#wizard_with_validation [data-toggle="tooltip"]').tooltip();
+
 						$('#wizard_with_validation .contCuestionarioPersonas .aparecer').click(function() {
 							idTable =  $(this).attr("id");
 							idPregunta =  $('#'+idTable).data("pregunta");
@@ -1940,9 +1643,6 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 							$('#wizard_with_validation .contCuestionarioPersonas #contPregunta'+idPregunta).show(400);
 						});
-
-						$('#wizard_with_validation [data-toggle="tooltip"]').tooltip();
-
 					} else {
 						swal({
 								title: "Respuesta",
@@ -1985,13 +1685,18 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					if (data != '') {
 						$('.contCuestionario').html(data.datos.cuestionario);
 
-
+						if ((data.datos.cuestionario.indexOf("Altura") > 0) || (data.datos.cuestionario.indexOf("Peso") > 0) || (data.datos.cuestionario.indexOf("Talla") > 0) || (data.datos.cuestionario.indexOf("Estatura") > 0)) {
+							$('.contRangers').show();
+						}
 
 						<?php if (isset($_GET['id'])) { ?>
 						$('#wizard_with_validation .contCuestionario .escondido').remove();
 						<?php } else { ?>
 						$('#wizard_with_validation .contCuestionario .escondido').hide();
+						$('#wizard_with_validation .contCuestionario .escondido').find('input').prop('disabled', true);
 						<?php } ?>
+
+						$('#wizard_with_validation [data-toggle="tooltip"]').tooltip();
 
 						$('#wizard_with_validation .aparecer').click(function() {
 							idTable =  $(this).attr("id");
@@ -2000,8 +1705,12 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 							idPreguntaId =  $('#'+idTable).data("idpregunta");
 
 							$('#wizard_with_validation .escondido'+idPreguntaId).hide();
+							$('#wizard_with_validation .escondido'+idPreguntaId).find('input').prop('disabled', true);
 
 							$('#wizard_with_validation #contPregunta'+idPregunta).show(400);
+							$('#wizard_with_validation #contPregunta'+idPregunta).find('input').prop('disabled', false);
+							$('#wizard_with_validation #rulesPregunta'+idPregunta).find('input').prop('disabled', false);
+
 
 						});
 
@@ -2021,9 +1730,6 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 							weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
 							weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
 						});
-
-						$('#wizard_with_validation [data-toggle="tooltip"]').tooltip();
-
 					} else {
 						swal({
 								title: "Respuesta",
@@ -2049,7 +1755,61 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 			});
 		}
 
+		cuestionario(<?php echo $rIdProducto; ?>,<?php echo $id; ?>);
 
+		cuestionarioPersonasContratante(<?php echo $rIdProducto; ?>,<?php echo $id; ?>);
+
+		function modificoAseguradoPorCotizacion() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificoAseguradoPorCotizacion',
+					id: <?php echo $id; ?>,
+					tieneasegurado: $('#wizard_with_validation #tieneasegurado').val(),
+					refaseguradaaux: $('#wizard_with_validation #refaseguradaaux').val()
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.contCuestionario').html('');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error) {
+						swal({
+								title: "Respuesta",
+								text: 'Se genero un error al guardar el asegurado',
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+					} else {
+						swal({
+								title: "Respuesta",
+								text: 'Se guardo correctamente el asegurado',
+								type: "success",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
 
 
 		function validarCuestionario(idproducto) {
@@ -2102,7 +1862,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	 								timer: 2000,
 	 								showConfirmButton: false
 	 						});
-							$(location).attr('href', 'newfilter.php?producto=<?php echo $rIdProducto; ?>&id='+data.idcotizacion);
+							$(location).attr('href', 'new.php?producto=<?php echo $rIdProducto; ?>&id='+data.idcotizacion);
 						}
 
 
@@ -2167,7 +1927,6 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 						});
 
 						form.steps("previous");
-						alert('asd');
 
 					} else {
 
@@ -2247,7 +2006,6 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 						});
 
 						form.steps("previous");
-						alert('asd');
 
 					} else {
 
@@ -2328,8 +2086,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 			}
 		});
 
-		$('.contSubirArchivos1').hide();
-		$('.contSubirArchivos2').hide();
+
 
 		function setButtonWavesEffect(event) {
 			$(event.currentTarget).find('[role="menu"] li a').removeClass('waves-effect');
@@ -2354,6 +2111,17 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	            setButtonWavesEffect(event);
 	        },
 	        onStepChanging: function (event, currentIndex, newIndex) {
+
+					var $tab = $('#wizard_with_validation-h-' + currentIndex).html();
+
+					<?php if ($tieneAsegurado == '') { ?>
+					if ($tab.trim() == 'ASEGURADO') {
+						modificoAseguradoPorCotizacion();
+					}
+					<?php }  ?>
+
+
+
 	            if (currentIndex > newIndex) { return true; }
 
 	            if (currentIndex < newIndex) {
@@ -2382,12 +2150,18 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 								}
 							}
 
-							if ($tab.trim() == 'ASEGURADO') {
+							if (currentIndex == 2) {
 								validarCuestionarioContratante(<?php echo $rIdCliente; ?>,0 );
 							}
 
+							<?php if ($tieneAsegurado != '') { ?>
+								if ($tab.trim() == 'ASEGURADO') {
+									seguirAdelante();
+								}
+							<?php } ?>
+
 							if ($tab.trim() == 'BENEFICIARIO') {
-								validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
+								//validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
 							}
 
 						<?php if (!(isset($_GET['id']))) { ?>
@@ -2399,6 +2173,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 						<?php } ?>
 
+
+
 	        },
 	        onFinishing: function (event, currentIndex) {
 	            form.validate().settings.ignore = ':disabled';
@@ -2406,15 +2182,19 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	            return form.valid();
 	        },
 	        onFinished: function (event, currentIndex) {
-	            modificarCotizacion(4);
+	            modificarCotizacion(1);
 	        }
 	    });
+
+		function seguirAdelante() {
+			form.steps("next");
+		}
 
 		var esconde1 = 0;
 		var esconde2 = 0;
 
 		<?php if (isset($_GET['id'])) { ?>
-			cuestionario($('#refproductos').val(),<?php echo $id; ?>);
+
 
 			//form.steps("next");
 			<?php if (($i == $cargados) && (!(isset($_GET['iddocumentacion'])))) { ?>
@@ -2423,11 +2203,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 				//esconde2 = 1;
 			<?php } ?>
 
-		<?php } else { ?>
-			cuestionario(<?php echo $rIdProducto; ?>,<?php echo $id; ?>);
 		<?php } ?>
-
-
 
 
 	    form.validate({
@@ -2443,7 +2219,10 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 	        rules: {
 	            'confirm': {
 	                equalTo: '#password'
-	            }
+	            },
+					'refclientes': {
+						required: true
+					}
 	        }
 	    });
 
@@ -2459,7 +2238,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		?>
 
 		$('#wizard_with_validation .btn<?php echo str_replace(' ','',$rowD['documentacion']); ?>').click(function() {
-			url = "newfilter.php?id=<?php echo $id; ?>&iddocumentacion=<?php echo $rowD['iddocumentacion']; ?>";
+			url = "new.php?id=<?php echo $id; ?>&iddocumentacion=<?php echo $rowD['iddocumentacion']; ?>";
 			$(location).attr('href',url);
 		});
 		<?php
@@ -2473,7 +2252,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		?>
 
 		$('#wizard_with_validation .btnA<?php echo str_replace(' ','',$rowD['documentacion']); ?>').click(function() {
-			url = "newfilter.php?id=<?php echo $id; ?>&iddocumentaciona=<?php echo $rowD['iddocumentacion']; ?>";
+			url = "new.php?id=<?php echo $id; ?>&iddocumentaciona=<?php echo $rowD['iddocumentacion']; ?>";
 			$(location).attr('href',url);
 		});
 		<?php
@@ -2525,9 +2304,9 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
  								showConfirmButton: false
  						});
 						if (refestadocotizaciones == 1) {
-							$(location).attr('href', '../engestion/modificar.php?id='+data);
+							$(location).attr('href', 'new.php?id='+data);
 						} else {
-							$(location).attr('href', '../engestion/modificar.php?id='+data);
+							$(location).attr('href', 'modificar.php?id='+data);
 						}
 
  					} else {
@@ -2583,7 +2362,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					existeprimaobjetivo: $('#existeprimaobjetivo').val(),
 					primaobjetivo: $('#primaobjetivo').val(),
 					id: <?php echo $id; ?>,
-					estadoactual: 4,
+					estadoactual: 19,
 					fechaemitido: '<?php echo date('Y-m-d'); ?>',
 					fechapropuesta: '<?php echo date('Y-m-d'); ?>',
 					foliotys: '',
@@ -2604,7 +2383,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
  								timer: 2000,
  								showConfirmButton: false
  						});
-						$(location).attr('href', '../engestion/modificar.php?id=<?php echo $id; ?>');
+						$(location).attr('href', 'index.php');
 
  					} else {
  						swal({
@@ -2643,22 +2422,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 
 
-		$('#fechavencimiento').pickadate({
- 			format: 'yyyy-mm-dd',
- 			labelMonthNext: 'Siguiente mes',
- 			labelMonthPrev: 'Previo mes',
- 			labelMonthSelect: 'Selecciona el mes del año',
- 			labelYearSelect: 'Selecciona el año',
- 			selectMonths: true,
- 			selectYears: 100,
- 			today: 'Hoy',
- 			clear: 'Borrar',
- 			close: 'Cerrar',
- 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
- 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
- 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
- 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
- 		});
+
 
 
 		$('#primaobjetivo').number( true, 2 ,'.','');
@@ -2703,8 +2467,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 				$('#wizard_with_validation #refaseguradaaux').val(<?php echo $refIdAsegurados; ?>);
 				$('#wizard_with_validation #refaseguradaaux').show();
 			<?php } else { ?>
-				$('#wizard_with_validation #tieneasegurado').html("<option value='0'>Yo mismo</option>");
-				$('#wizard_with_validation #refaseguradaaux').html("<option value='0'>Yo mismo</option>");
+				$('#wizard_with_validation #tieneasegurado').html("<option value='0'>El Cliente</option>");
+				$('#wizard_with_validation #refaseguradaaux').html("<option value='0'>El Cliente</option>");
 				$('#wizard_with_validation .frmContaseguradoaux').hide();
 
 
@@ -2719,10 +2483,10 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		$('#wizard_with_validation #tieneasegurado').change(function() {
 			if ($(this).val() == '1') {
 				$('#wizard_with_validation .frmContaseguradoaux').show();
-				traerAseguradosPorCliente();
+				traerAseguradosPorCliente(0);
 				$('#wizard_with_validation .contCuestionarioPersonas').hide();
 			} else {
-				if ($('#wizard_with_validation #tieneasegurado option:selected').text() == 'Yo mismo') {
+				if ($('#wizard_with_validation #tieneasegurado option:selected').text() == 'El Cliente') {
 					cuestionarioPersonas(<?php echo $rIdProducto; ?>,<?php echo $id; ?>,<?php echo $rIdCliente; ?>,0);
 				} else {
 					$('#wizard_with_validation .contCuestionarioPersonas').hide();
@@ -2730,15 +2494,15 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 
 				$('#wizard_with_validation .frmContaseguradoaux').hide();
-				$('#refaseguradaaux').html('<option value="0">Yo mismo</option>');
+				$('#refaseguradaaux').html('<option value="0">El Cliente</option>');
 			}
 		});
 
-		traerAseguradosPorCliente();
+		traerAseguradosPorCliente(0);
 
 		<?php } ?>
 
-		traerBeneficiariosPorCliente();
+		traerBeneficiariosPorCliente(0);
 
 
 		$('#activo').prop('checked',true);
@@ -2785,7 +2549,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 			} else {
 				if ( $(this).val() > 0) {
-					cuestionarioPersonas(<?php echo $rIdProducto; ?>,<?php echo $id; ?>,0,$(this).val());
+					//cuestionarioPersonas(<?php echo $rIdProducto; ?>,<?php echo $id; ?>,0,$(this).val());
 				}
 
 			}
@@ -2801,7 +2565,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		});
 
 
-		function traerAseguradosPorCliente() {
+		function traerAseguradosPorCliente(idasegurado) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
@@ -2815,6 +2579,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 				//una vez finalizado correctamente
 				success: function(data){
 					$('#refaseguradaaux').html(data.dato);
+
+					$('#refaseguradaaux').val(idasegurado);
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -2830,7 +2596,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 			});
 		}
 
-		function traerBeneficiariosPorCliente() {
+		function traerBeneficiariosPorCliente(idbeneficiario) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
@@ -2844,6 +2610,8 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 				//una vez finalizado correctamente
 				success: function(data){
 					$('#refbeneficiarioaux').html(data.dato);
+
+					$('#refbeneficiarioaux').val(idbeneficiario);
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -2874,7 +2642,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 				//una vez finalizado correctamente
 				success: function(data){
 					$('#refaseguradaaux').html(data.dato);
-					//form.steps("next");
+					form.steps("next");
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -3008,7 +2776,7 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 
 		$("#example").on("click",'.btnModificar', function(){
 			idTable =  $(this).attr("id");
-			$(location).attr('href','../engestion/modificar.php?id=' + idTable);
+			$(location).attr('href','modificar.php?id=' + idTable);
 		});//fin del boton modificar
 
 		$("#example").on("click",'.btnVer', function(){
@@ -3037,17 +2805,18 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					processData: false,
 					//mientras enviamos el archivo
 					beforeSend: function(){
-
+						$('.frmContparentescoASG').hide();
 					},
 					//una vez finalizado correctamente
 					success: function(data){
 
-						if (data == '') {
+						if (data.error == false) {
 							swal("Ok!", 'Se guardo correctamente el asegurado', "success");
 
 							$('#lgmNuevoASG').modal('hide');
 
-							traerAseguradosPorCliente();
+							traerAseguradosPorCliente(data.id);
+
 						} else {
 							swal({
 									title: "Respuesta",
@@ -3090,17 +2859,18 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 					processData: false,
 					//mientras enviamos el archivo
 					beforeSend: function(){
-
+						$('.frmContparentescoBNF').hide();
 					},
 					//una vez finalizado correctamente
 					success: function(data){
 
-						if (data == '') {
+						if (data.error == false) {
 							swal("Ok!", 'Se guardo correctamente el beneficiario', "success");
 
 							$('#lgmNuevoBNF').modal('hide');
 
-							traerBeneficiariosPorCliente();
+							traerBeneficiariosPorCliente(data.id);
+
 						} else {
 							swal({
 									title: "Respuesta",
@@ -3302,15 +3072,6 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		<?php if ($iddocumentacion != 0) { ?>
 		<?php if ($documentacionNombre != '') { ?>
 		<?php if (($idestadodocumentacion != 5)) { ?>
-
-		<?php if (!(isset($_GET['iddocumentaciona']))) { ?>
-			<?php if ($llevaAsegurado == 1) { ?>
-				form.steps("setStep", 3);
-			<?php } else { ?>
-				form.steps("setStep", 2);
-			<?php } ?>
-		<?php } ?>
-
 		var myDropzone = new Dropzone("#archivos", {
 			params: {
 				 idasociado: <?php echo $id; ?>,
@@ -3328,163 +3089,52 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 		/////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-		$('.guardarEstado2').click(function() {
-			modificarEstadoDocumentacionCotizaciones2($('#refestados2').val());
-		});
+		<?php } ?>
 
-		function modificarEstadoDocumentacionCotizaciones2(idestado) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {
-					accion: 'modificarEstadoDocumentacionCotizaciones',
-					iddocumentacioncotizacion: <?php echo $iddocumentacionasociado2; ?>,
-					idestado: idestado
-				},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-					$('.guardarEstado2').hide();
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data.error == false) {
-						swal("Ok!", 'Se modifico correctamente el estado de la documentación <?php echo $campo; ?>', "success");
-						$('.guardarEstado2').show();
-						//location.reload();
-					} else {
-						swal("Error!", data.leyenda, "warning");
-
-						$("#load").html('');
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
-		}
-
-		function traerImagen2(contenedorpdf, contenedor) {
-			$.ajax({
-				data:  {idcotizacion: <?php echo $id; ?>,
-						iddocumentacion: <?php echo $iddocumentacion2; ?>,
-						accion: 'traerDocumentacionPorCotizacionDocumentacion'},
-				url:   '../../ajax/ajax.php',
-				type:  'post',
-				beforeSend: function () {
-					$("." + contenedor + " img").attr("src",'');
-				},
-				success:  function (response) {
-					var cadena = response.datos.type.toLowerCase();
-
-					if (response.datos.type != '') {
-						if (cadena.indexOf("pdf") > -1) {
-							PDFObject.embed(response.datos.imagen, "#"+contenedorpdf);
-							$('#'+contenedorpdf).show();
-							$("."+contenedor).hide();
-
-						} else {
-							$("." + contenedor + " img").attr("src",response.datos.imagen);
-							$("."+contenedor).show();
-							$('#'+contenedorpdf).hide();
-						}
-					}
-
-					if (response.error) {
-
-						$('.btnEliminar').hide();
-						$('.guardarEstado').hide();
-					} else {
-
-						$('.btnEliminar').show();
-						$('.guardarEstado').show();
-					}
-
-
-
-				}
-			});
-		}
-
-		traerImagen2('example12','timagen12');
-
-
-
-		Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
-
-		Dropzone.options.frmFileUpload2 = {
-			maxFilesize: 30,
-			acceptedFiles: ".jpg,.jpeg,.pdf",
-			accept: function(file, done) {
-				done();
-			},
-			init: function() {
-				this.on("sending", function(file, xhr, formData){
-					formData.append("idasociado", '<?php echo $id; ?>');
-					formData.append("iddocumentacion", '<?php echo $iddocumentacion2; ?>');
-				});
-				this.on('success', function( file, resp ){
-					traerImagen2('example12','timagen12');
-					$('.lblPlanilla').hide();
-					swal("Correcto!", resp.replace("1", ""), "success");
-					$('.btnGuardar').show();
-					$('.infoPlanilla').hide();
-					$('#<?php echo $iddocumentacion2; ?>').addClass('bg-blue');
-					$('#<?php echo $iddocumentacion2; ?> .number').html('Cargada');
-
-					location.reload();
-				});
-
-				this.on('error', function( file, resp ){
-					swal("Error!", resp.replace("1", ""), "warning");
-				});
+		var sliderAltura = document.getElementById('nouislider_altura');
+		var sliderPeso = document.getElementById('nouislider_peso');
+		noUiSlider.create(sliderAltura, {
+			start: [30],
+			connect: 'lower',
+			step: 1,
+			range: {
+				'min': [0],
+				'max': [230]
 			}
-		};
-
-		<?php if ($iddocumentacion2 != 0) { ?>
-		<?php if (($idestadodocumentacion2 != 5)) { ?>
-
-		<?php if ((isset($_GET['iddocumentaciona']))) { ?>
-			<?php if ($llevaAsegurado == 1) { ?>
-				form.steps("setStep", 4);
-			<?php } else { ?>
-				form.steps("setStep", 3);
-			<?php } ?>
-		<?php } ?>
-		var myDropzone2 = new Dropzone("#archivos2", {
-			params: {
-				 idasociado: <?php echo $id; ?>,
-				 iddocumentacion: <?php echo $iddocumentacion2; ?>
-			},
-			url: 'subir.php'
 		});
-		<?php } ?>
-		<?php } ?>
 
+		noUiSlider.create(sliderPeso, {
+			start: [30],
+			connect: 'lower',
+			step: 1,
+			range: {
+				'min': [0],
+				'max': [260]
+			}
+		});
 
+		getNoUISliderValue(sliderAltura, 0);
+		getNoUISliderValue(sliderPeso, 1);
 
+		function getNoUISliderValue(slider, tipo) {
+		    slider.noUiSlider.on('update', function () {
+		        var val = slider.noUiSlider.get();
+				  val = parseInt(val);
+		        if (tipo == 1) {
 
-
-
-
-		<?php } ?>
-		/*
-		if (esconde2 == 1) {
-			$('.contSubirArchivos2').hide();
-		} else {
-			$('.contSubirArchivos2').show();
+		            //val += '%';
+						$('#wizard_with_validation #respuestaAltura').val(val);
+						$('#wizard_with_validation #respuestaTalla').val(val);
+						$('#wizard_with_validation #respuestaEstatura').val(val);
+		        } else {
+					  $('#wizard_with_validation #respuestaPeso').val(val);
+				  }
+		        //$(slider).parent().find('span.js-nouislider-value').text(val);
+		    });
 		}
 
-		if (esconde1 == 1) {
-			$('.contSubirArchivos1').hide();
-		} else {
-			$('.contSubirArchivos1').show();
-		}
-		*/
+		$('.contRangers').hide();
+
 
 	});
 </script>

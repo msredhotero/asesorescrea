@@ -62,6 +62,9 @@ if (isset($_GET['id'])) {
 	$refAsociados = mysql_result($resultado,0,'refasociados');
 	$refProductos = mysql_result($resultado,0,'refproductos');
 
+	$refIdAsegurados = mysql_result($resultado,0,'refasegurados');
+	$tieneAsegurado = mysql_result($resultado,0,'tieneasegurado');
+
 	$resCliente = $serviciosReferencias->traerClientesPorId($refCliente);
 	$cadRef2 = $serviciosFunciones->devolverSelectBox($resCliente,array(3,4,2),' ');
 
@@ -292,7 +295,7 @@ if (isset($_GET['id'])) {
 
 		$idestadodocumentacion2 = mysql_result($resDocumentacionAsesor2,0,'refestadodocumentaciones');
 	} else {
-		$cadRefEstados2 = $serviciosFunciones->devolverSelectBox($resEstados2,array(1),'');
+		$cadRefEstados2 = '';
 
 		$iddocumentacionasociado2 = 0;
 
@@ -355,6 +358,18 @@ if (isset($_GET['id'])) {
 	$idasesor = 0;
 
 } else {
+	// sin id
+
+	$estadoDocumentacion2 = 'Falta Cargar';
+
+	$refIdAsegurados = 0;
+	$tieneAsegurado = 0;
+	$rIdCliente = 0;
+
+	$cadRefEstados2 = '';
+
+	$iddocumentacion = 0;
+	$iddocumentacion2 = 0;
 
 	$id = 0;
 
@@ -370,6 +385,7 @@ if (isset($_GET['id'])) {
 	$resVar10	= $serviciosReferencias->traerAseguradora();
 	$cadRef10 = $serviciosFunciones->devolverSelectBox($resVar10,array(1),'');
 
+
 	$cadRef2 = "<option value=''></option>";
 	$cadRef3 = "<option value=''></option>";
 	$cadRef4 = "<option value=''></option>";
@@ -382,6 +398,7 @@ if (isset($_GET['id'])) {
 
 	$resTipoProducto = $serviciosReferencias->traerTipoproductoPorIn('2,3');
 	$cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ');
+
 
 	$documentacionesrequeridas = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion(0,0);
 
@@ -406,10 +423,13 @@ if (isset($_GET['id'])) {
 			header('Location: ../index.php');
 		}
 
+
 		$idasesor = mysql_result($resVar5,0,'idasesor');
 
 		$resLstClientes = $serviciosReferencias->traerClientesasesoresPorAsesor($_SESSION['usuaid_sahilices']);
 		$cadRef2 = $serviciosFunciones->devolverSelectBox($resLstClientes,array(14),'');
+
+
 
 	} else {
 		$resVar5	= $serviciosReferencias->traerAsesores();
@@ -420,6 +440,10 @@ if (isset($_GET['id'])) {
 		$cadRef2 = $serviciosFunciones->devolverSelectBox($resLstClientes,array(19),'');
 
 	}
+
+
+
+
 
 
 }
@@ -450,7 +474,9 @@ $cadRef82 = $serviciosFunciones->devolverSelectBox($resVar82,array(1),'');
 $resVar92 = $serviciosReferencias->traerEstadocivilPorIn('1,2');
 $cadRef92 = $serviciosFunciones->devolverSelectBox($resVar92,array(1),'');
 
-$cadRef102 = "<option value='1'>Femenino</option><option value='2'>Masculino</option>";
+
+
+$cadRef102 = "<option value='Femenino'>Femenino</option><option value='Masculino'>Masculino</option>";
 
 $refdescripcion = array(0=>$cadRef82,1=>$cadRef92,2=>$cadRef102);
 $refCampo 	=  array('reftipopersonas','refestadocivil','genero');
@@ -605,6 +631,10 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 										<input type="hidden" name="accion" value="validarCuestionario"/>
 										<input type="hidden" name="actualizacliente" id="actualizacliente" value="0" />
 										<input type="hidden" name="lead" id="lead" value="0" />
+										<input type="hidden" name="refasociados" id="refasociados" value="0"/>
+										<input type="hidden" name="actualizacliente" id="actualizacliente" value="0" />
+
+										
 
                               <h3>Cliente</h3>
                               <fieldset>
@@ -750,7 +780,11 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 												</div>
 
                               </fieldset>
-
+										<?php
+										$cargados = 0;
+										$i = 0;
+										if ($iddocumentacion > 0) {
+										?>
 										<h3>Galeria Producto</h3>
                               <fieldset>
 											<?php if ($documentacionNombre != '') { ?>
@@ -834,6 +868,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 											</div>
                               </fieldset>
+										<?php } ?>
 
                               <h3>Información del Negocio</h3>
                               <fieldset>
@@ -1105,7 +1140,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	               </div>
 	               <div class="modal-body">
 						<div class="row">
-							<?php echo $frmUnidadNegocios; ?>
+							<?php //echo $frmUnidadNegocios; ?>
 						</div>
 	               </div>
 	               <div class="modal-footer">
@@ -1560,6 +1595,171 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 			});
 		}
 
+
+		function validarCuestionarioPersona(idcliente,idasegurado) {
+
+			$('#wizard_with_validation #accionprincipal').val('validarCuestionarioPersona');
+			if (idcliente > 0) {
+				$('#wizard_with_validation #actualizacliente').val(1);
+			} else {
+				$('#wizard_with_validation #actualizacliente').val(0);
+			}
+
+
+
+
+			var formData = new FormData($("#wizard_with_validation")[0]);
+
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: formData,
+				//necesario para subir archivos via ajax
+				cache: false,
+				contentType: false,
+				processData: false,
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.contCuestionarioPersonas').html('');
+					$('#wizard_with_validation #accionprincipal').val('validarCuestionarioPersona');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error) {
+
+						swal({
+								title: "Respuesta",
+								text: 'Ocurrio un error verifique los datos',
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+						form.steps("previous");
+
+					} else {
+
+
+						$('#wizard_with_validation .contCuestionarioPersonas .escondido').hide();
+
+						$('#wizard_with_validation .tsfechanacimiento').pickadate({
+				 			format: 'yyyy-mm-dd',
+				 			labelMonthNext: 'Siguiente mes',
+				 			labelMonthPrev: 'Previo mes',
+				 			labelMonthSelect: 'Selecciona el mes del año',
+				 			labelYearSelect: 'Selecciona el año',
+				 			selectMonths: true,
+				 			selectYears: 100,
+				 			today: 'Hoy',
+				 			clear: 'Borrar',
+				 			close: 'Cerrar',
+				 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+				 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+				 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+				 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+				 		});
+
+					}
+
+					$('#wizard_with_validation #accionprincipal').val('validarCuestionario');
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+
+
+		}
+
+		function validarCuestionarioContratante(idcliente,idasegurado) {
+
+			$('#wizard_with_validation #accionprincipal').val('validarCuestionarioPersona');
+			$('#wizard_with_validation #actualizacliente').val(1);
+
+			var formData = new FormData($("#wizard_with_validation")[0]);
+
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: formData,
+				//necesario para subir archivos via ajax
+				cache: false,
+				contentType: false,
+				processData: false,
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.contCuestionarioPersonasContratante').html('');
+					$('#wizard_with_validation #accionprincipal').val('validarCuestionarioPersona');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error) {
+
+						swal({
+								title: "Respuesta",
+								text: 'Ocurrio un error verifique los datos',
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+						form.steps("previous");
+
+					} else {
+
+						$('#wizard_with_validation .contCuestionarioPersonasContratante .escondido').hide();
+
+						$('#wizard_with_validation .tsfechanacimiento').pickadate({
+				 			format: 'yyyy-mm-dd',
+				 			labelMonthNext: 'Siguiente mes',
+				 			labelMonthPrev: 'Previo mes',
+				 			labelMonthSelect: 'Selecciona el mes del año',
+				 			labelYearSelect: 'Selecciona el año',
+				 			selectMonths: true,
+				 			selectYears: 100,
+				 			today: 'Hoy',
+				 			clear: 'Borrar',
+				 			close: 'Cerrar',
+				 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+				 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+				 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+				 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+				 		});
+
+					}
+
+					$('#wizard_with_validation #accionprincipal').val('validarCuestionario');
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+
+
+		}
+
 		function traerProductosPorTipo(idtipoproducto, reftipopersonas, idasesor) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
@@ -1800,104 +2000,67 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	            setButtonWavesEffect(event);
 	        },
 	        onStepChanging: function (event, currentIndex, newIndex) {
-				  	if (currentIndex == 0) {
-						if ($('#wizard_with_validation #refclientes').val() == '') {
-							return false;
-						} else {
-							return true;
-						}
-					} else {
-						if (currentIndex > newIndex) { return true; }
 
-		            if (currentIndex < newIndex) {
-		                form.find('.body:eq(' + newIndex + ') label.error').remove();
-		                form.find('.body:eq(' + newIndex + ') .error').removeClass('error');
-		            }
+					var $tab = $('#wizard_with_validation-h-' + currentIndex).html();
 
-		            form.validate().settings.ignore = ':disabled,:hidden';
-		            return form.valid();
+					<?php if ($tieneAsegurado == '') { ?>
+					if ($tab.trim() == 'ASEGURADO') {
+						modificoAseguradoPorCotizacion();
 					}
+					<?php }  ?>
 
+
+
+	            if (currentIndex > newIndex) { return true; }
+
+	            if (currentIndex < newIndex) {
+	                form.find('.body:eq(' + newIndex + ') label.error').remove();
+	                form.find('.body:eq(' + newIndex + ') .error').removeClass('error');
+	            }
+
+	            form.validate().settings.ignore = ':disabled,:hidden';
+	            return form.valid();
 	        },
 	        onStepChanged: function (event, currentIndex, priorIndex) {
 	            setButtonWavesEffect(event);
-					<?php if (!(isset($_GET['id']))) { ?>
-					<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
-						if (currentIndex == 4) {
-							validarCuestionario($('#refproductos').val());
-							//guardarCotizacion(1);
-						}
 
-						if (currentIndex == 4) {
-							$('.contSubirArchivos2').hide();
-							$('.contSubirArchivos1').show();
-						}
+							var $tab = $('#wizard_with_validation-h-' + currentIndex).html();
 
-						if (currentIndex == 5) {
-							$('.contSubirArchivos1').hide();
-							$('.contSubirArchivos2').show();
-						}
-
-						if (currentIndex < 4) {
-							$('.contSubirArchivos1').hide();
-							$('.contSubirArchivos2').hide();
-						}
-
-
-					<?php } else { ?>
-						if (currentIndex == 2) {
-							validarCuestionario($('#refproductos').val());
-							//guardarCotizacion(1);
-						}
-
-						if (currentIndex == 3) {
-							$('.contSubirArchivos2').hide();
-							$('.contSubirArchivos1').show();
-						}
-
-						if (currentIndex == 4) {
-							$('.contSubirArchivos1').hide();
-							$('.contSubirArchivos2').show();
-						}
-
-						if (currentIndex < 3) {
-							$('.contSubirArchivos1').hide();
-							$('.contSubirArchivos2').hide();
-						}
-					<?php } ?>
-					<?php } else { ?>
-						<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
-							if (currentIndex == 4) {
-								$('.contSubirArchivos2').hide();
-								$('.contSubirArchivos1').show();
-							}
-
-							if (currentIndex == 5) {
+							if ($tab.trim() == 'Información del Negocio') {
 								$('.contSubirArchivos1').hide();
 								$('.contSubirArchivos2').show();
+							} else {
+								if ($tab.trim() == 'Galeria Producto') {
+									$('.contSubirArchivos2').hide();
+									$('.contSubirArchivos1').show();
+								} else {
+									$('.contSubirArchivos1').hide();
+									$('.contSubirArchivos2').hide();
+								}
 							}
 
-							if (currentIndex < 4) {
-								$('.contSubirArchivos1').hide();
-								$('.contSubirArchivos2').hide();
-							}
-						<?php } else { ?>
 							if (currentIndex == 2) {
-								$('.contSubirArchivos2').hide();
-								$('.contSubirArchivos1').show();
+								validarCuestionarioContratante($('#refclientes').val(),0 );
 							}
 
-							if (currentIndex == 3) {
-								$('.contSubirArchivos1').hide();
-								$('.contSubirArchivos2').show();
+							<?php if ($tieneAsegurado != '') { ?>
+								if ($tab.trim() == 'ASEGURADO') {
+									seguirAdelante();
+								}
+							<?php } ?>
+
+							if ($tab.trim() == 'BENEFICIARIO') {
+								//validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
 							}
 
-							if (currentIndex < 2) {
-								$('.contSubirArchivos1').hide();
-								$('.contSubirArchivos2').hide();
+						<?php if (!(isset($_GET['id']))) { ?>
+
+							if (currentIndex == 2) {
+								validarCuestionario($('#refproductos').val());
+								//guardarCotizacion(1);
 							}
+
 						<?php } ?>
-					<?php } ?>
 
 
 
@@ -1908,33 +2071,27 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	            return form.valid();
 	        },
 	        onFinished: function (event, currentIndex) {
-	            modificarCotizacion(2);
+	            modificarCotizacion(1);
 	        }
 	    });
+
+		function seguirAdelante() {
+			form.steps("next");
+		}
 
 		var esconde1 = 0;
 		var esconde2 = 0;
 
 		<?php if (isset($_GET['id'])) { ?>
-			cuestionario($('#refproductos').val(),<?php echo $id; ?>,$('#refclientes').val());
-			<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
-				form.steps("next");
-				form.steps("next");
-				form.steps("next");
-				form.steps("next");
-					<?php if (($i == $cargados) && (!(isset($_GET['iddocumentacion'])))) { ?>
 
-						form.steps("next");
-						//esconde2 = 1;
-					<?php } ?>
-			<?php } else { ?>
-				form.steps("next");
-				form.steps("next");
-					<?php if (($i == $cargados) && (!(isset($_GET['iddocumentacion'])))) { ?>
-						form.steps("next");
-						//esconde2 = 1;
-					<?php } ?>
+
+			//form.steps("next");
+			<?php if (($i == $cargados) && (!(isset($_GET['iddocumentacion'])))) { ?>
+
+				//form.steps("next");
+				//esconde2 = 1;
 			<?php } ?>
+
 		<?php } ?>
 
 
@@ -2198,7 +2355,8 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 				},
 				onClickEvent: function() {
 					var value = $("#lstjugadores").getSelectedItemData().id;
-					$('#refclientes').val(value);
+
+					$('#wizard_with_validation #refclientes').val(value);
 					$('.clienteSelect').html($("#lstjugadores").getSelectedItemData().nombrecompleto);
 					$('#reftipopersonasaux').val($("#lstjugadores").getSelectedItemData().reftipopersonas);
 					//traerClientescarteraPorCliente(value);

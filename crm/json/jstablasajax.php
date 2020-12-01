@@ -1025,7 +1025,7 @@ switch ($tabla) {
 				$filtroNuevo = $_GET['filtroNuevo'];
 
 				$whereEstado = ' c.refestados in (1) ';
-				$termina = 6;
+				$termina = 5;
 			break;
 			case 2:
 				$label = array('btnModificar','btnEliminar');
