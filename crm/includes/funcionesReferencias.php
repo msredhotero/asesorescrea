@@ -4635,6 +4635,7 @@ return $res;
 		$where = '';
 
       $cadCliente = '';
+      $cadAsesor = '';
 
       $cadValidar = '';
       if ($idestado == 999) {
@@ -4646,6 +4647,11 @@ return $res;
    		$resCliente = $this->traerClientesPorUsuarioCompleto($_SESSION['usuaid_sahilices']);
 
    		$cadCliente = ' and cli.idcliente = '.mysql_result($resCliente,0,'idcliente').' ';
+   	}
+
+      if ($_SESSION['idroll_sahilices'] == 7) {
+
+   		$cadAsesor = ' and ase.refusuarios = '.$_SESSION['usuaid_sahilices'].' ';
    	}
 
 		$busqueda = str_replace("'","",$busqueda);
@@ -4689,7 +4695,7 @@ return $res;
 		inner join tbtipocobranza ti ON ti.idtipocobranza = per.reftipocobranza
 		inner join tbestadopago est ON est.idestadopago = p.refestadopago
       ".$cadValidar."
-        where p.refestadopago in (".$idestado.") ".$cadCliente.$where."
+        where p.refestadopago in (".$idestado.") ".$cadCliente.$cadAsesor.$where."
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
 
