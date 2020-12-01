@@ -691,7 +691,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
                               </fieldset>
 										<?php } else { ?>
 											<select style="display:none;" style="margin-top:10px;" class="form-control" id="refasesores" name="refasesores" required readonly="readonly">
-												<?php echo $cadRef6; ?>
+												<?php echo $cadRef3; ?>
 											</select>
 										<?php } ?>
 
