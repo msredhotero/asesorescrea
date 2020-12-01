@@ -9733,7 +9733,9 @@ function insertarClientes($serviciosReferencias) {
 
    if ((integer)$res > 0) {
       if ($_SESSION['idroll_sahilices'] == 7) {
-         $resClienteAsedor = $serviciosReferencias->insertarClientesasesores($res,$_SESSION['usuaid_sahilices'],$apellidopaterno,$apellidomaterno,$nombre,$razonsocial,$domicilio,$email,$rfc,$ine,$reftipopersonas,$telefonofijo,$telefonocelular,$genero,$refestadocivil);
+         $resAsesores = $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
+
+         $resClienteAsedor = $serviciosReferencias->insertarClientesasesores($res,mysql_result($resAsesores,0,0),$apellidopaterno,$apellidomaterno,$nombre,$razonsocial,$domicilio,$email,$rfc,$ine,$reftipopersonas,$telefonofijo,$telefonocelular,$genero,$refestadocivil);
       }
       echo '';
    } else {
