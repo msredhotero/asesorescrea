@@ -287,8 +287,8 @@ $cadBancos .= $serviciosFunciones->devolverSelectBoxText($resBancos,array(1),'')
 						?>
 
 							<div class="text-center">
-								<h1 class="display-4">¡Elige tu metodo de pago!</h1>
-								<h4>Elige tu metodo de pago</h4>
+								<h1 class="display-4">¡Elige tu método de pago!</h1>
+
 							</div>
 							<?php //echo $detalleProducto; ?>
 
