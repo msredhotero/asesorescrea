@@ -634,7 +634,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 										<input type="hidden" name="refasociados" id="refasociados" value="0"/>
 										<input type="hidden" name="actualizacliente" id="actualizacliente" value="0" />
 
-										
+
 
                               <h3>Cliente</h3>
                               <fieldset>
@@ -765,11 +765,11 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 												<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContcuestionarioCompleto" style="display:block">
 													<div class="row contRangers">
 														<div class="col-md-6">
-															<label>Deslice para cargar el Peso</label>
+															<label>Deslice para indicar el Peso del Asegurado (KG)</label>
 															<div style="margin-top:10px;" id="nouislider_altura"></div>
 														</div>
 														<div class="col-md-6">
-															<label>Deslice para cargar la Altura</label>
+															<label>Deslice para indicar la Altura del Asegurado (CM)</label>
 															<div style="margin-top:10px;" id="nouislider_peso"></div>
 														</div>
 													</div>
