@@ -1250,6 +1250,8 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 <script src="../../js/pdfobject.min.js"></script>
 <!-- Chart Plugins Js -->
 
+<script src="../../plugins/nouislider/nouislider.js"></script>
+
 
 <script>
 	$(document).ready(function(){
