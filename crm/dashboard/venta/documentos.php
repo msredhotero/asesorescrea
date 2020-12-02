@@ -235,7 +235,7 @@ if ($tipoFirma == 2) {
 
 	      $cuerpo .= '<body>';
 
-	      $cuerpo .= '<h3><small><p>Este es el nuevo NIP generado para firmar de forma digital, por favor ingrese al siguiente <a href="https://asesorescrea.com/desarrollo/crm/dashboard/venta/documentos.php?id='.$id.'" target="_blank"> enlace </a> para finalizar el proceso de venta. </small></h3><p>';
+	      $cuerpo .= '<h3><small><p>Este es el nuevo NIP generado para firmar digitalmente el servicio solicitado, por favor ingrese al siguiente <a href="https://asesorescrea.com/desarrollo/crm/dashboard/venta/documentos.php?id='.$id.'" target="_blank"> enlace </a> para finalizar el proceso de venta. </small></h3><p>';
 
 			$cuerpo .= "<center>NIP:<b>".$token."</b></center><p> ";
 
@@ -575,20 +575,7 @@ if (mysql_num_rows($resFirma) > 0) {
 
 
 
-							<div class="list-group">
-								<a href="javascript:void(0);" class="list-group-item active">
-								Documentos para Firmar
-								</a>
-								<a href="javascript:void(0);" class="list-group-item">VRIM PLATINO MÉDICA</a>
-								<a href="javascript:void(0);" class="list-group-item">F-2092-6 SOLICITUD DE PÓLIZA DE SEGURO DE GASTOS MÉDICOS MAYORES INDIVIDUAL Y SEVI SOLO PARA RESIDENTES EN MÉXICO</a>
-								<a href="javascript:void(0);" class="list-group-item">INE</a>
-								<?php
-									if (mysql_result($resMetodoPago,0,'reftipocobranza') == 1) {
-								?>
-								<a href="javascript:void(0);" class="list-group-item">Solicitud de Cargo Automatico en Tarjeta de credito cuenta de deposito cuenta de cheques</a>
-								<?php } ?>
-								<a href="javascript:void(0);" class="list-group-item"><div id="example1"></div></a>
-							</div>
+
 
 						<?php if ($tipoFirma == 3) { ?>
 						<?php if ($existeNIP == 2) { ?>

@@ -71,12 +71,14 @@ $refCampo 	=  array('activo');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
-$resList = $serviciosReferencias->traerSolicitudesrespuestasInCompleto();
+$resList = $serviciosReferencias->traerSolicitudesrespuestasInCompleto($id);
 $cadRefL = $serviciosFunciones->devolverSelectBox($resList,array(1),'');
 
-$resListAux = $serviciosReferencias->traerSolicitudesrespuestasCompleto();
+$resListAux = $serviciosReferencias->traerSolicitudesrespuestasCompleto($id);
 $cadRefLAux = $serviciosFunciones->devolverSelectBox($resListAux,array(1),'');
 
+
+//die(var_dump($cadRefL));
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 ?>
@@ -234,9 +236,13 @@ $cadRefLAux = $serviciosFunciones->devolverSelectBox($resListAux,array(1),'');
 											?>
 											<tr>
 												<td>
-													<select id="mapeo<?php echo $row['idrespuestacuestionario']; ?>" name="mapeo<?php echo $row['idrespuestacuestionario']; ?>" class="form-control">
-														<?php echo $cadRefL; ?>
-													</select>
+													<div class="col-md-12">
+
+														<select id="mapeo<?php echo $row['idrespuestacuestionario']; ?>" name="mapeo<?php echo $row['idrespuestacuestionario']; ?>" class="form-control show-tick" data-live-search="true">
+															<?php echo $cadRefL; ?>
+														</select>
+
+													</div>
 												</td>
 												<td><?php echo $row['pregunta']; ?></td>
 												<td><?php echo $row['respuesta']; ?></td>
@@ -280,7 +286,7 @@ $cadRefLAux = $serviciosFunciones->devolverSelectBox($resListAux,array(1),'');
 											?>
 											<tr>
 												<td>
-													<select id="mapeoa<?php echo $row['idrespuestacuestionario']; ?>" name="mapeoa<?php echo $row['idrespuestacuestionario']; ?>" class="form-control">
+													<select id="mapeoa<?php echo $row['idrespuestacuestionario']; ?>" name="mapeoa<?php echo $row['idrespuestacuestionario']; ?>" class="form-control show-tick" data-live-search="true">
 														<?php echo $cadRefLAux; ?>
 													</select>
 												</td>

@@ -33,22 +33,6 @@ $metodopago = $serviciosReferencias->traerMetodopagoPorCotizacionCompleto($id);
 
 $idCliente = mysql_result($resCotizacion,0,'refclientes');
 
-
-if (mysql_result($resCotizacion,0,'tieneasegurado') == '1') {
-   $idasegurado = mysql_result($resCotizacion,0,'refasegurados');
-   $resAsegurado = $serviciosReferencias->traerAseguradosPorId($idasegurado);
-} else {
-   $idasegurado = 0;
-}
-
-if (mysql_result($resCotizacion,0,'refbeneficiarios') > 0) {
-   $idbeneficiario = mysql_result($resCotizacion,0,'refbeneficiarios');
-   $resBeneficiario = $serviciosReferencias->traerAseguradosPorId($idbeneficiario);
-} else {
-   $idbeneficiario = 0;
-   $resBeneficiario = $serviciosReferencias->traerAseguradosPorId($idbeneficiario);
-}
-
 $pdf = new FPDF();
 
 $pdfi = new FPDI();
@@ -69,6 +53,44 @@ $yCuadrado1 = 7.7;
 $yConstCuadrado1 = 58;
 
 $pdf->Image(__DIR__.'/'.'F20926_0001.png' , 0 ,0, 210 , 0,'PNG');
+
+
+if (mysql_result($resCotizacion,0,'tieneasegurado') == '1') {
+   $idasegurado = mysql_result($resCotizacion,0,'refasegurados');
+   $resAsegurado = $serviciosReferencias->traerAseguradosPorIdPDF($idasegurado);
+
+   /// fijo para entidad federativa de nacimiento
+   $pdf->SetXY(106, 99.5);
+   $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resAsegurado,0,'curp'), mysql_result($resAsegurado,0,'estado'));
+   $pdf->Write(0, $resEF);
+   // fin de entidad federativa
+
+   /// fijo para entidad federativa de nacimiento
+   $pdf->SetXY(75, 185.5);
+   $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resCliente,0,'curp'), mysql_result($resCliente,0,'estado'));
+   $pdf->Write(0, $resEF);
+   // fin de entidad federativa
+
+} else {
+   $idasegurado = 0;
+
+   /// fijo para entidad federativa de nacimiento
+
+   $pdf->SetXY(106, 99.5);
+   $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resCliente,0,'curp'), mysql_result($resCliente,0,'estado'));
+   $pdf->Write(0, $resEF);
+   // fin de entidad federativa
+}
+
+if (mysql_result($resCotizacion,0,'refbeneficiarios') > 0) {
+   $idbeneficiario = mysql_result($resCotizacion,0,'refbeneficiarios');
+   $resBeneficiario = $serviciosReferencias->traerAseguradosPorIdPDF($idbeneficiario);
+} else {
+   $idbeneficiario = 0;
+   $resBeneficiario = $serviciosReferencias->traerAseguradosPorIdPDF($idbeneficiario);
+}
+
+
 
 ////*************** datos **********************************/
 $resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 1);
@@ -116,7 +138,15 @@ while ($row = mysql_fetch_array($resReferencias)) {
                   $pdf->Write(0, 'x');
                }
             } else {
-               $pdf->Write(0, mysql_result($resAsegurado,0,$row['camporeferencia']));
+
+               if ($row['camporeferencia']== 'reftipoidentificacion') {
+                  $resTI = $serviciosReferencias->traerTipoidentificacionPorId(mysql_result($resAsegurado,0,$row['camporeferencia']));
+
+                  $pdf->Write(0, mysql_result($resTI,0,1));
+
+               } else {
+                  $pdf->Write(0, mysql_result($resAsegurado,0,$row['camporeferencia']));
+               }
             }
          }
 
@@ -135,7 +165,17 @@ while ($row = mysql_fetch_array($resReferencias)) {
                   $pdf->Write(0, 'x');
                }
             } else {
-               $pdf->Write(0, mysql_result($resCliente,0,$row['camporeferencia']));
+
+               if ($row['camporeferencia']== 'reftipoidentificacion') {
+                  $resTI = $serviciosReferencias->traerTipoidentificacionPorId(mysql_result($resCliente,0,$row['camporeferencia']));
+
+                  $pdf->Write(0, mysql_result($resTI,0,1));
+
+               } else {
+                  $pdf->Write(0, mysql_result($resCliente,0,$row['camporeferencia']));
+               }
+
+
             }
          }
 
@@ -159,7 +199,16 @@ while ($row = mysql_fetch_array($resReferencias)) {
                      $pdf->Write(0, 'x');
                   }
                } else {
-                  $pdf->Write(0, mysql_result($resBeneficiario,0,$row['camporeferencia']));
+                  if ($row['camporeferencia']== 'reftipoidentificacion') {
+                     $resTI = $serviciosReferencias->traerTipoidentificacionPorId(mysql_result($resBeneficiario,0,$row['camporeferencia']));
+
+                     $pdf->Write(0, mysql_result($resTI,0,1));
+
+                  } else {
+                     $pdf->Write(0, mysql_result($resBeneficiario,0,$row['camporeferencia']));
+                  }
+
+
                }
             }
          }
@@ -211,55 +260,39 @@ $yConstCuadrado1 = 148.5;
 $pdf->Image(__DIR__.'/'.'F20926_0002.png' , 0 ,0, 210 , 0,'PNG');
 
 ////*************** datos **********************************/
-$resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 2);
 
-while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
-   $pdf->SetXY($row['x'], $row['y']);
-   if ($row['default'] == '') {
-      if ($row['idtiporespuesta'] == 1) {
-         $pdf->Write(0, $row['respuestavalor']);
-      } else {
-         $pdf->Write(0, $row['respuesta']);
-      }
+if ($idasegurado > 0) {
 
-   } else {
-      $pdf->Write(0, $row['default']);
-   }
+   $resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 2);
 
-}
-
-$resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(2);
-while ($row = mysql_fetch_array($resReferenciasFijo)) {
-   $pdf->SetXY($row['x'], $row['y']);
-   $pdf->Write(0, $row['default']);
-
-}
-
-$resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(2);
-
-while ($row = mysql_fetch_array($resReferencias)) {
-   $pdf->SetXY($row['x'], $row['y']);
-   if ($row['sector'] == 'datos generales del solicitante titular') {
-      if ($idasegurado > 0) {
-         if ($row['camporeferencia']== 'genero') {
-            if (mysql_result($resAsegurado,0,$row['camporeferencia']) == $row['nombre']) {
-               $pdf->Write(0, 'x');
-            }
+   while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
+      $pdf->SetXY($row['x'], $row['y']);
+      if ($row['default'] == '') {
+         if ($row['idtiporespuesta'] == 1) {
+            $pdf->Write(0, $row['respuestavalor']);
          } else {
-
-            if ($row['camporeferencia']== 'refestadocivil') {
-               if (mysql_result($resAsegurado,0,$row['camporeferencia']) == 1 && 'soltero' == $row['nombre']) {
-                  $pdf->Write(0, 'x');
-               }
-               if (mysql_result($resAsegurado,0,$row['camporeferencia']) == 2 && 'casado' == $row['nombre']) {
-                  $pdf->Write(0, 'x');
-               }
-            } else {
-               $pdf->Write(0, mysql_result($resAsegurado,0,$row['camporeferencia']));
-            }
+            $pdf->Write(0, $row['respuesta']);
          }
 
       } else {
+         $pdf->Write(0, $row['default']);
+      }
+
+   }
+
+   $resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(2);
+   while ($row = mysql_fetch_array($resReferenciasFijo)) {
+      $pdf->SetXY($row['x'], $row['y']);
+      $pdf->Write(0, $row['default']);
+
+   }
+
+   $resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(2);
+
+   while ($row = mysql_fetch_array($resReferencias)) {
+      $pdf->SetXY($row['x'], $row['y']);
+      if ($row['sector'] == 'datos generales del contratante') {
+
          if ($row['camporeferencia']== 'genero') {
             if (mysql_result($resCliente,0,$row['camporeferencia']) == $row['nombre']) {
                $pdf->Write(0, 'x');
@@ -274,66 +307,75 @@ while ($row = mysql_fetch_array($resReferencias)) {
                   $pdf->Write(0, 'x');
                }
             } else {
-               $pdf->Write(0, mysql_result($resCliente,0,$row['camporeferencia']));
-            }
-         }
+               if ($row['camporeferencia']== 'reftipoidentificacion') {
+                  $resTI = $serviciosReferencias->traerTipoidentificacionPorId(mysql_result($resCliente,0,$row['camporeferencia']));
 
-      }
+                  $pdf->Write(0, mysql_result($resTI,0,1));
 
-   } else {
-      if ($row['sector'] == 'beneficiario') {
-         if (mysql_num_rows($resBeneficiario)>0) {
-
-            if ($row['camporeferencia']== 'genero') {
-               if (mysql_result($resBeneficiario,0,$row['camporeferencia']) == $row['nombre']) {
-                  $pdf->Write(0, 'x');
-               }
-            } else {
-
-               if ($row['camporeferencia']== 'refestadocivil') {
-                  if (mysql_result($resBeneficiario,0,$row['camporeferencia']) == 1 && 'soltero' == $row['nombre']) {
-                     $pdf->Write(0, 'x');
-                  }
-                  if (mysql_result($resBeneficiario,0,$row['camporeferencia']) == 2 && 'casado' == $row['nombre']) {
-                     $pdf->Write(0, 'x');
-                  }
                } else {
-                  $pdf->Write(0, mysql_result($resBeneficiario,0,$row['camporeferencia']));
+                  $pdf->Write(0, mysql_result($resCliente,0,$row['camporeferencia']));
                }
+
             }
          }
+
+
 
       } else {
-         switch ($row['tabla']) {
-            case 'dbasesores':
-               $pdf->Write(0, mysql_result($resAsesor,0,$row['camporeferencia']));
-            break;
-            case 'dbclientes':
+         if ($row['sector'] == 'beneficiario') {
+            if (mysql_num_rows($resBeneficiario)>0) {
+
                if ($row['camporeferencia']== 'genero') {
-                  if (mysql_result($resCliente,0,$row['camporeferencia']) == $row['nombre']) {
+                  if (mysql_result($resBeneficiario,0,$row['camporeferencia']) == $row['nombre']) {
                      $pdf->Write(0, 'x');
                   }
                } else {
 
                   if ($row['camporeferencia']== 'refestadocivil') {
-                     if (mysql_result($resCliente,0,$row['camporeferencia']) == 1 && 'soltero' == $row['nombre']) {
+                     if (mysql_result($resBeneficiario,0,$row['camporeferencia']) == 1 && 'soltero' == $row['nombre']) {
                         $pdf->Write(0, 'x');
                      }
-                     if (mysql_result($resCliente,0,$row['camporeferencia']) == 2 && 'casado' == $row['nombre']) {
+                     if (mysql_result($resBeneficiario,0,$row['camporeferencia']) == 2 && 'casado' == $row['nombre']) {
                         $pdf->Write(0, 'x');
                      }
                   } else {
-                     $pdf->Write(0, mysql_result($resCliente,0,$row['camporeferencia']));
+                     $pdf->Write(0, mysql_result($resBeneficiario,0,$row['camporeferencia']));
                   }
                }
+            }
 
-            break;
+         } else {
+            switch ($row['tabla']) {
+               case 'dbasesores':
+                  $pdf->Write(0, mysql_result($resAsesor,0,$row['camporeferencia']));
+               break;
+               case 'dbclientes':
+                  if ($row['camporeferencia']== 'genero') {
+                     if (mysql_result($resCliente,0,$row['camporeferencia']) == $row['nombre']) {
+                        $pdf->Write(0, 'x');
+                     }
+                  } else {
+
+                     if ($row['camporeferencia']== 'refestadocivil') {
+                        if (mysql_result($resCliente,0,$row['camporeferencia']) == 1 && 'soltero' == $row['nombre']) {
+                           $pdf->Write(0, 'x');
+                        }
+                        if (mysql_result($resCliente,0,$row['camporeferencia']) == 2 && 'casado' == $row['nombre']) {
+                           $pdf->Write(0, 'x');
+                        }
+                     } else {
+                        $pdf->Write(0, mysql_result($resCliente,0,$row['camporeferencia']));
+                     }
+                  }
+
+               break;
+            }
+
          }
 
       }
 
    }
-
 }
 
 ////*************** fin datos **********************************/

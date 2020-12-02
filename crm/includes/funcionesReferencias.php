@@ -9,6 +9,80 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+   function devolverEntidadNacimientoPorCURP($curp, $estado='') {
+      $error = false;
+
+      if ($curp == '') {
+         return $estado;
+      } else {
+         if (strlen($curp) < 18) {
+            return $estado;
+         } else {
+            $resEN = $this->traerEntidadnacimientoPorCodigo(substr($curp,11,2));
+            if (mysql_num_rows($resEN)>0) {
+               return mysql_result($resEN,0,0);
+            } else {
+               return $estado;
+            }
+         }
+      }
+   }
+
+   function traerEntidadnacimientoPorCodigo($codigo) {
+      $sql = "select entidadnacimiento from tbcodigoentidadnacimiento where codigo = '".$codigo."'";
+      $res = $this->query($sql,0);
+
+      return $res;
+   }
+
+   /* PARA Tipoidentificacion */
+
+   function insertarTipoidentificacion($tipoidentificacion) {
+      $sql = "insert into tbtipoidentificacion(idtipoidentificacion,tipoidentificacion)
+      values ('','".$tipoidentificacion."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarTipoidentificacion($id,$tipoidentificacion) {
+      $sql = "update tbtipoidentificacion
+      set
+      tipoidentificacion = '".$tipoidentificacion."'
+      where idtipoidentificacion =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarTipoidentificacion($id) {
+      $sql = "delete from tbtipoidentificacion where idtipoidentificacion =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerTipoidentificacion() {
+      $sql = "select
+      t.idtipoidentificacion,
+      t.tipoidentificacion
+      from tbtipoidentificacion t
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerTipoidentificacionPorId($id) {
+      $sql = "select idtipoidentificacion,tipoidentificacion from tbtipoidentificacion where idtipoidentificacion =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: tbtipoidentificacion*/
+
 
    /* PARA Siniestros */
 
@@ -716,7 +790,7 @@ return $res;
       return $res;
    }
 
-   function traerSolicitudesrespuestasCompleto() {
+   function traerSolicitudesrespuestasCompleto($idcuestionario) {
       $sql = "select
       s.idsolicituderespuesta,
       concat(' Pagina: ',s.pagina, ' | Sector: ', s.sector, ' | Preg: ', s.pregunta, ' | Nombre: ', s.nombre, ' | pordefecto: ', s.`default`, ' | Fijo', (case when s.fijo = '1' then 'Si' else 'No' end), ' | T: ',coalesce(tt.especifico,''),' | CR: ', s.camporeferencia ) as completo,
@@ -738,16 +812,19 @@ return $res;
       inner join tbsolicitudpdf tp on tp.idsolicitudpdf = s.refsolicitudpdf
       left join tbtabla tt on tt.idtabla = s.reftabla
       inner join dbrespuestascuestionario rr on rr.refsolicitudesrespuestas = s.idsolicituderespuesta
+      inner join
+	     dbpreguntascuestionario pr
+        on pr.idpreguntacuestionario = rr.refpreguntascuestionario and pr.refcuestionarios = ".$idcuestionario."
       where tt.idtabla is null
       order by 1";
       $res = $this->query($sql,0);
       return $res;
    }
 
-   function traerSolicitudesrespuestasInCompleto() {
+   function traerSolicitudesrespuestasInCompleto($idcuestionario) {
       $sql = "select
       s.idsolicituderespuesta,
-      concat(' Pagina: ',s.pagina, ' | Sector: ', s.sector, ' | Preg: ', s.pregunta, ' | Nombre: ', s.nombre, ' | pordefecto: ', s.`default`, ' | Fijo', (case when s.fijo = '1' then 'Si' else 'No' end), ' | T: ',coalesce(tt.especifico,''),' | CR: ', s.camporeferencia ) as completo,
+      concat(' Pagina: ',s.pagina, ' | Sector: ', s.sector, ' | Preg: ', s.pregunta, ' | Nombre: ', s.nombre ) as completo,
       tp.solicitudpdf,
       s.pagina,
       s.sector,
@@ -766,6 +843,9 @@ return $res;
       inner join tbsolicitudpdf tp on tp.idsolicitudpdf = s.refsolicitudpdf
       left join tbtabla tt on tt.idtabla = s.reftabla
       left join dbrespuestascuestionario rr on rr.refsolicitudesrespuestas = s.idsolicituderespuesta
+      left join
+	        dbpreguntascuestionario pr
+         on pr.idpreguntacuestionario = rr.refpreguntascuestionario and pr.refcuestionarios = ".$idcuestionario."
       where tt.idtabla is null and rr.idrespuestacuestionario is null
       order by 1";
       $res = $this->query($sql,0);
@@ -8713,18 +8793,18 @@ return $res;
 
 	/* PARA Clientesasesores */
 
-	function insertarClientesasesores($refclientes,$refasesores,$apellidopaterno,$apellidomaterno,$nombre,$razonsocial,$domicilio,$email,$rfc,$ine,$reftipopersonas,$telefonofijo,$telefonocelular,$genero,$refestadocivil) {
-		$sql = "insert into dbclientesasesores(idclienteasesor,refclientes,refasesores,apellidopaterno,apellidomaterno,nombre,razonsocial,domicilio,email,rfc,ine,reftipopersonas,telefonofijo,telefonocelular,genero,refestadocivil)
-		values ('',".$refclientes.",".$refasesores.",'".$apellidopaterno."','".$apellidomaterno."','".$nombre."','".$razonsocial."','".$domicilio."','".$email."','".$rfc."','".$ine."',".$reftipopersonas.",'".$telefonofijo."','".$telefonocelular."','".$genero."',".$refestadocivil.")";
+	function insertarClientesasesores($refclientes,$refasesores,$apellidopaterno,$apellidomaterno,$nombre,$razonsocial,$domicilio,$email,$rfc,$ine,$reftipopersonas,$telefonofijo,$telefonocelular,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion) {
+		$sql = "insert into dbclientesasesores(idclienteasesor,refclientes,refasesores,apellidopaterno,apellidomaterno,nombre,razonsocial,domicilio,email,rfc,ine,reftipopersonas,telefonofijo,telefonocelular,genero,refestadocivil,reftipoidentificacion,nroidentificacion)
+		values ('',".$refclientes.",".$refasesores.",'".$apellidopaterno."','".$apellidomaterno."','".$nombre."','".$razonsocial."','".$domicilio."','".$email."','".$rfc."','".$ine."',".$reftipopersonas.",'".$telefonofijo."','".$telefonocelular."','".$genero."',".$refestadocivil.",".$reftipoidentificacion.",'".$nroidentificacion."')";
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarClientesasesores($id,$refclientes,$refasesores,$apellidopaterno,$apellidomaterno,$nombre,$razonsocial,$domicilio,$email,$rfc,$ine,$reftipopersonas,$telefonofijo,$telefonocelular,$genero,$refestadocivil) {
+	function modificarClientesasesores($id,$refclientes,$refasesores,$apellidopaterno,$apellidomaterno,$nombre,$razonsocial,$domicilio,$email,$rfc,$ine,$reftipopersonas,$telefonofijo,$telefonocelular,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion) {
 		$sql = "update dbclientesasesores
 		set
-		refclientes = ".$refclientes.",refasesores = ".$refasesores.",apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',nombre = '".$nombre."',razonsocial = '".$razonsocial."',domicilio = '".$domicilio."',email = '".$email."',rfc = '".$rfc."',ine = '".$ine."',reftipopersonas = ".$reftipopersonas.",telefonofijo = '".$telefonofijo."',telefonocelular = '".$telefonocelular."',genero = '".$genero."',refestadocivil = ".$refestadocivil." where idclienteasesor =".$id;
+		refclientes = ".$refclientes.",refasesores = ".$refasesores.",apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',nombre = '".$nombre."',razonsocial = '".$razonsocial."',domicilio = '".$domicilio."',email = '".$email."',rfc = '".$rfc."',ine = '".$ine."',reftipopersonas = ".$reftipopersonas.",telefonofijo = '".$telefonofijo."',telefonocelular = '".$telefonocelular."',genero = '".$genero."',refestadocivil = ".$refestadocivil.", reftipoidentificacion = ".$reftipoidentificacion.",nroidentificacion = '".$nroidentificacion."' where idclienteasesor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -8762,7 +8842,7 @@ return $res;
 
 
 	function traerClientesasesoresPorId($id) {
-		$sql = "select idclienteasesor,refclientes,refasesores,apellidopaterno,apellidomaterno,nombre,razonsocial,domicilio,email,rfc,ine,reftipopersonas,telefonofijo,telefonocelular,genero,refestadocivil from dbclientesasesores where idclienteasesor =".$id;
+		$sql = "select idclienteasesor,refclientes,refasesores,apellidopaterno,apellidomaterno,nombre,razonsocial,domicilio,email,rfc,ine,reftipopersonas,telefonofijo,telefonocelular,genero,refestadocivil,reftipoidentificacion,nroidentificacion from dbclientesasesores where idclienteasesor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -8783,7 +8863,7 @@ return $res;
 		c.telefonofijo,
 		c.telefonocelular,
 		c.refasesores,
-		concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) as nombrecompleto,c.genero,c.refestadocivil
+		concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) as nombrecompleto,c.genero,c.refestadocivil,c.reftipoidentificacion,c.nroidentificacion
 		from dbclientesasesores c
 		inner join dbclientes cl ON cl.idcliente = c.refclientes
 		inner join dbasesores ase on ase.refusuarios = c.refasesores
@@ -16159,19 +16239,19 @@ return $res;
 		return 'CLI0000001';
 	}
 
-	function insertarClientes($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$genero,$refestadocivil) {
-		$sql = "insert into dbclientes(idcliente,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,emisioncomprobantedomicilio,emisionrfc,vencimientoine,idclienteinbursa,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,genero,refestadocivil)
-		values ('',".$reftipopersonas.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$razonsocial."','".$domicilio."','".$telefonofijo."','".$telefonocelular."','".$email."','".$rfc."','".$ine."','".$this->generaNroCliente()."',".$refusuarios.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."','".$emisioncomprobantedomicilio."','".$emisionrfc."','".$vencimientoine."','".$idclienteinbursa."','".$colonia."','".$municipio."','".$codigopostal."','".$edificio."','".$nroexterior."','".$nrointerior."','".$estado."','".$ciudad."','".$curp."','".$genero."',".$refestadocivil.")";
+	function insertarClientes($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion) {
+		$sql = "insert into dbclientes(idcliente,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,emisioncomprobantedomicilio,emisionrfc,vencimientoine,idclienteinbursa,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,genero,refestadocivil,reftipoidentificacion,nroidentificacion)
+		values ('',".$reftipopersonas.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$razonsocial."','".$domicilio."','".$telefonofijo."','".$telefonocelular."','".$email."','".$rfc."','".$ine."','".$this->generaNroCliente()."',".$refusuarios.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."','".$emisioncomprobantedomicilio."','".$emisionrfc."','".$vencimientoine."','".$idclienteinbursa."','".$colonia."','".$municipio."','".$codigopostal."','".$edificio."','".$nroexterior."','".$nrointerior."','".$estado."','".$ciudad."','".$curp."','".$genero."',".$refestadocivil.",".$reftipoidentificacion.",'".$nroidentificacion."')";
 
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarClientes($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$genero,$refestadocivil) {
+	function modificarClientes($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion) {
 		$sql = "update dbclientes
 		set
-		reftipopersonas = ".$reftipopersonas.",nombre = '".$nombre."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',razonsocial = '".$razonsocial."',domicilio = '".$domicilio."',telefonofijo = '".$telefonofijo."',telefonocelular = '".$telefonocelular."',email = '".$email."',rfc = '".$rfc."',ine = '".$ine."',numerocliente = '".$numerocliente."',refusuarios = ".$refusuarios.",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',emisioncomprobantedomicilio = '".$emisioncomprobantedomicilio."',emisionrfc = '".$emisionrfc."',vencimientoine = '".$vencimientoine."',idclienteinbursa = '".$idclienteinbursa."',colonia = '".$colonia."',municipio = '".$municipio."',codigopostal = '".$codigopostal."',edificio = '".$edificio."',nroexterior = '".$nroexterior."',nrointerior = '".$nrointerior."',estado = '".$estado."',ciudad = '".$ciudad."',curp = '".$curp."',genero = '".$genero."',refestadocivil = ".$refestadocivil." where idcliente =".$id;
+		reftipopersonas = ".$reftipopersonas.",nombre = '".$nombre."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',razonsocial = '".$razonsocial."',domicilio = '".$domicilio."',telefonofijo = '".$telefonofijo."',telefonocelular = '".$telefonocelular."',email = '".$email."',rfc = '".$rfc."',ine = '".$ine."',numerocliente = '".$numerocliente."',refusuarios = ".$refusuarios.",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',emisioncomprobantedomicilio = '".$emisioncomprobantedomicilio."',emisionrfc = '".$emisionrfc."',vencimientoine = '".$vencimientoine."',idclienteinbursa = '".$idclienteinbursa."',colonia = '".$colonia."',municipio = '".$municipio."',codigopostal = '".$codigopostal."',edificio = '".$edificio."',nroexterior = '".$nroexterior."',nrointerior = '".$nrointerior."',estado = '".$estado."',ciudad = '".$ciudad."',curp = '".$curp."',genero = '".$genero."',refestadocivil = ".$refestadocivil.",reftipoidentificacion = ".$reftipoidentificacion.",nroidentificacion = '".$nroidentificacion."' where idcliente =".$id;
 
 		$res = $this->query($sql,0);
 		return $res;
@@ -16345,13 +16425,19 @@ return $res;
 
 
 	function traerClientesPorId($id) {
-		$sql = "select idcliente,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,fechanacimiento,genero,refestadocivil from dbclientes where idcliente =".$id;
+		$sql = "select idcliente,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,fechanacimiento,genero,refestadocivil,reftipoidentificacion,nroidentificacion from dbclientes where idcliente =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function traerClientesPorIdPDF($id) {
+		$sql = 'select idcliente,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,DATE_FORMAT(fechanacimiento, "%d/%m/%Y") as fechanacimiento,genero,refestadocivil,reftipoidentificacion,nroidentificacion from dbclientes where idcliente ='.$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
 	function traerClientesPorUsuario($id) {
-		$sql = "select idcliente,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,fechanacimiento,genero,refestadocivil from dbclientes where refusuarios =".$id;
+		$sql = "select idcliente,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,fechanacimiento,genero,refestadocivil,reftipoidentificacion,nroidentificacion from dbclientes where refusuarios =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -16364,7 +16450,7 @@ return $res;
       fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa ,
       concat(apellidopaterno, ' ', apellidomaterno, ' ', nombre) as nombrecompleto,
       colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,
-      fechanacimiento,genero,refestadocivil
+      fechanacimiento,genero,refestadocivil,reftipoidentificacion,nroidentificacion
       from dbclientes where refusuarios =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -16375,7 +16461,7 @@ return $res;
       (case when DATEDIFF(CURDATE(), coalesce( emisioncomprobantedomicilio,'1990-01-01')) > 90 then 'true' else 'false' end) as demisioncomprobantedomicilio,
       (case when DATEDIFF(CURDATE(),coalesce( emisionrfc,'1990-01-01')) > 90 then 'true' else 'false' end) as demisionrfc,
       (case when coalesce( vencimientoine,'1990-01-01') > CURDATE() then 'false' else 'true' end) as dvencimientoine,
-      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp, fechanacimiento,genero,refestadocivil
+      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp, fechanacimiento,genero,refestadocivil,reftipoidentificacion,nroidentificacion
       from dbclientes where idcliente =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -16401,19 +16487,19 @@ return $res;
 		return 'ASG0000001';
 	}
 
-	function insertarAsegurados($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco,$fechanacimiento,$parentesco,$genero,$refestadocivil) {
-		$sql = "insert into dbasegurados(idasegurado,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,emisioncomprobantedomicilio,emisionrfc,vencimientoine,idclienteinbursa,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,refclientes,reftipoparentesco,fechanacimiento,parentesco,genero,refestadocivil)
-		values ('',".$reftipopersonas.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$razonsocial."','".$domicilio."','".$telefonofijo."','".$telefonocelular."','".$email."','".$rfc."','".$ine."','".$this->generaNroAsegurado()."',".$refusuarios.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."','".$emisioncomprobantedomicilio."','".$emisionrfc."','".$vencimientoine."','".$idclienteinbursa."','".$colonia."','".$municipio."','".$codigopostal."','".$edificio."','".$nroexterior."','".$nrointerior."','".$estado."','".$ciudad."','".$curp."',".$refclientes.",".$reftipoparentesco.",'".$fechanacimiento."','".$parentesco."','".$genero."',".$refestadocivil.")";
+	function insertarAsegurados($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco,$fechanacimiento,$parentesco,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion) {
+		$sql = "insert into dbasegurados(idasegurado,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,emisioncomprobantedomicilio,emisionrfc,vencimientoine,idclienteinbursa,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,refclientes,reftipoparentesco,fechanacimiento,parentesco,genero,refestadocivil,reftipoidentificacion,nroidentificacion)
+		values ('',".$reftipopersonas.",'".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$razonsocial."','".$domicilio."','".$telefonofijo."','".$telefonocelular."','".$email."','".$rfc."','".$ine."','".$this->generaNroAsegurado()."',".$refusuarios.",'".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."','".$emisioncomprobantedomicilio."','".$emisionrfc."','".$vencimientoine."','".$idclienteinbursa."','".$colonia."','".$municipio."','".$codigopostal."','".$edificio."','".$nroexterior."','".$nrointerior."','".$estado."','".$ciudad."','".$curp."',".$refclientes.",".$reftipoparentesco.",'".$fechanacimiento."','".$parentesco."','".$genero."',".$refestadocivil.",".$reftipoidentificacion.",'".$nroidentificacion."')";
 
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
 
-	function modificarAsegurados($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco,$fechanacimiento,$parentesco,$genero,$refestadocivil) {
+	function modificarAsegurados($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco,$fechanacimiento,$parentesco,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion) {
 		$sql = "update dbasegurados
 		set
-		reftipopersonas = ".$reftipopersonas.",nombre = '".$nombre."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',razonsocial = '".$razonsocial."',domicilio = '".$domicilio."',telefonofijo = '".$telefonofijo."',telefonocelular = '".$telefonocelular."',email = '".$email."',rfc = '".$rfc."',ine = '".$ine."',numerocliente = '".$numerocliente."',refusuarios = ".$refusuarios.",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',emisioncomprobantedomicilio = '".$emisioncomprobantedomicilio."',emisionrfc = '".$emisionrfc."',vencimientoine = '".$vencimientoine."',idclienteinbursa = '".$idclienteinbursa."',colonia = '".$colonia."',municipio = '".$municipio."',codigopostal = '".$codigopostal."',edificio = '".$edificio."',nroexterior = '".$nroexterior."',nrointerior = '".$nrointerior."',estado = '".$estado."',ciudad = '".$ciudad."',curp = '".$curp."',refclientes = '".$refclientes."',reftipoparentesco = ".$reftipoparentesco.",fechanacimiento = '".$fechanacimiento."',parentesco = '".$parentesco."',genero = '".$genero."',refestadocivil = ".$refestadocivil." where idasegurado =".$id;
+		reftipopersonas = ".$reftipopersonas.",nombre = '".$nombre."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',razonsocial = '".$razonsocial."',domicilio = '".$domicilio."',telefonofijo = '".$telefonofijo."',telefonocelular = '".$telefonocelular."',email = '".$email."',rfc = '".$rfc."',ine = '".$ine."',numerocliente = '".$numerocliente."',refusuarios = ".$refusuarios.",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',emisioncomprobantedomicilio = '".$emisioncomprobantedomicilio."',emisionrfc = '".$emisionrfc."',vencimientoine = '".$vencimientoine."',idclienteinbursa = '".$idclienteinbursa."',colonia = '".$colonia."',municipio = '".$municipio."',codigopostal = '".$codigopostal."',edificio = '".$edificio."',nroexterior = '".$nroexterior."',nrointerior = '".$nrointerior."',estado = '".$estado."',ciudad = '".$ciudad."',curp = '".$curp."',refclientes = '".$refclientes."',reftipoparentesco = ".$reftipoparentesco.",fechanacimiento = '".$fechanacimiento."',parentesco = '".$parentesco."',genero = '".$genero."',refestadocivil = ".$refestadocivil.", reftipoidentificacion = ".$reftipo9dreftipoidentificacion.", nroidentificacion = '".$nroidentificacion."' where idasegurado =".$id;
 
 		$res = $this->query($sql,0);
 		return $res;
@@ -16593,13 +16679,19 @@ return $res;
 
 
 	function traerAseguradosPorId($id) {
-		$sql = "select idasegurado,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,refclientes,reftipoparentesco,fechanacimiento,parentesco, genero,refestadocivil from dbasegurados where idasegurado =".$id;
+		$sql = "select idasegurado,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,refclientes,reftipoparentesco,fechanacimiento,parentesco, genero,refestadocivil,reftipoidentificacion,nroidentificacion from dbasegurados where idasegurado =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function traerAseguradosPorIdPDF($id) {
+		$sql = 'select idasegurado,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,refclientes,reftipoparentesco,DATE_FORMAT(fechanacimiento, "%d/%m/%Y") as fechanacimiento,parentesco, genero,refestadocivil,reftipoidentificacion,nroidentificacion from dbasegurados where idasegurado ='.$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
 	function traerAseguradosPorUsuario($id) {
-		$sql = "select idasegurado,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,refclientes,reftipoparentesco,fechanacimiento,parentesco, genero,refestadocivil from dbasegurados where refusuarios =".$id;
+		$sql = "select idasegurado,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,refclientes,reftipoparentesco,fechanacimiento,parentesco, genero,refestadocivil,reftipoidentificacion,nroidentificacion from dbasegurados where refusuarios =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -16612,7 +16704,7 @@ return $res;
       fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa ,
       concat(apellidopaterno, ' ', apellidomaterno, ' ', nombre) as nombrecompleto,
       colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,refclientes,
-      reftipoparentesco,fechanacimiento,parentesco, genero,refestadocivil
+      reftipoparentesco,fechanacimiento,parentesco, genero,refestadocivil,reftipoidentificacion,nroidentificacion
       from dbasegurados where refusuarios =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -16623,7 +16715,7 @@ return $res;
       (case when DATEDIFF(CURDATE(), coalesce( emisioncomprobantedomicilio,'1990-01-01')) > 90 then 'true' else 'false' end) as demisioncomprobantedomicilio,
       (case when DATEDIFF(CURDATE(),coalesce( emisionrfc,'1990-01-01')) > 90 then 'true' else 'false' end) as demisionrfc,
       (case when coalesce( vencimientoine,'1990-01-01') > CURDATE() then 'false' else 'true' end) as dvencimientoine,
-      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp, refclientes,reftipoparentesco,fechanacimiento,parentesco, genero,refestadocivil
+      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp, refclientes,reftipoparentesco,fechanacimiento,parentesco, genero,refestadocivil,reftipoidentificacion,nroidentificacion
       from dbasegurados where idasegurado =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -16635,7 +16727,7 @@ return $res;
       (case when DATEDIFF(CURDATE(), coalesce( emisioncomprobantedomicilio,'1990-01-01')) > 90 then 'true' else 'false' end) as demisioncomprobantedomicilio,
       (case when DATEDIFF(CURDATE(),coalesce( emisionrfc,'1990-01-01')) > 90 then 'true' else 'false' end) as demisionrfc,
       (case when coalesce( vencimientoine,'1990-01-01') > CURDATE() then 'false' else 'true' end) as dvencimientoine,
-      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp, refclientes,reftipoparentesco,fechanacimiento,parentesco, genero,refestadocivil
+      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp, refclientes,reftipoparentesco,fechanacimiento,parentesco, genero,refestadocivil,reftipoidentificacion,nroidentificacion
       from dbasegurados where refclientes =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -16647,7 +16739,7 @@ return $res;
       (case when DATEDIFF(CURDATE(), coalesce( emisioncomprobantedomicilio,'1990-01-01')) > 90 then 'true' else 'false' end) as demisioncomprobantedomicilio,
       (case when DATEDIFF(CURDATE(),coalesce( emisionrfc,'1990-01-01')) > 90 then 'true' else 'false' end) as demisionrfc,
       (case when coalesce( vencimientoine,'1990-01-01') > CURDATE() then 'false' else 'true' end) as dvencimientoine,
-      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp, refclientes,reftipoparentesco,fechanacimiento,parentesco, genero,refestadocivil
+      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp, refclientes,reftipoparentesco,fechanacimiento,parentesco, genero,refestadocivil,reftipoidentificacion,nroidentificacion
       from dbasegurados where idasegurado not in (".$idasegurado.") and refclientes =".$id;
 		$res = $this->query($sql,0);
       //die(var_dump($sql));

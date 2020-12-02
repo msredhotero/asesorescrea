@@ -3818,7 +3818,10 @@ function insertarAsegurados($serviciosReferencias) {
    $genero = $_POST['genero'];
    $refestadocivil = $_POST['refestadocivil'];
 
-   $res = $serviciosReferencias->insertarAsegurados($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco,$fechanacimiento,$parentesco,$genero,$refestadocivil);
+   $reftipoidentificacion = $_POST['reftipoidentificacion'];
+   $nroidentificacion = $_POST['nroidentificacion'];
+
+   $res = $serviciosReferencias->insertarAsegurados($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco,$fechanacimiento,$parentesco,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion);
 
    if ((integer)$res > 0) {
       $resV['error'] = false;
@@ -3877,7 +3880,10 @@ function modificarAsegurados($serviciosReferencias) {
    $genero = $_POST['genero'];
    $refestadocivil = $_POST['refestadocivil'];
 
-   $res = $serviciosReferencias->modificarAsegurados($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco,$parentesco,$genero, $refestadocivil);
+   $reftipoidentificacion = $_POST['reftipoidentificacion'];
+   $nroidentificacion = $_POST['nroidentificacion'];
+
+   $res = $serviciosReferencias->modificarAsegurados($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco,$parentesco,$genero, $refestadocivil,$reftipoidentificacion,$nroidentificacion);
 
    if ($res == true) {
       echo '';
@@ -9032,8 +9038,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
       case 'dbclientes':
          $resultado = $serviciosReferencias->traerClientesPorId($id);
 
-         $lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','emisioncomprobantedomicilio','emisionrfc','vencimientoine','idclienteinbursa','nroexterior','nrointerior','codigopostal','ine','rfc','curp');
-         $lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social','Fecha Emision Compr. Domicilio','Fecha Emision RFC','Vencimiento INE','ID Cliente Inbursa','Nro Exterior','Nro Interior','Cod. Postal','INE','RFC','CURP');
+         $lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','emisioncomprobantedomicilio','emisionrfc','vencimientoine','idclienteinbursa','nroexterior','nrointerior','codigopostal','ine','rfc','curp','refestadocivil','reftipoidentificacion','nroidentificacion');
+         $lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social','Fecha Emision Compr. Domicilio','Fecha Emision RFC','Vencimiento INE','ID Cliente Inbursa','Nro Exterior','No. Interior','Cod. Postal','INE','RFC','CURP','Estado Civil','Tipo de Identificación','No Identificación');
 
          $modificar = "modificarClientes";
          $idTabla = "idcliente";
@@ -9044,8 +9050,22 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $resVar9 = $serviciosReferencias->traerUsuariosPorRol(16);
          $cadRef9 = $serviciosFunciones->devolverSelectBoxActivo($resVar9,array(1),'',mysql_result($resultado,0,'refusuarios'));
 
-         $refdescripcion = array(0=>$cadRef8,1=>$cadRef9);
-         $refCampo 	=  array('reftipopersonas','refusuarios');
+
+         $resVar13 = $serviciosReferencias->traerEstadoCivil();
+         $cadRef13 = $serviciosFunciones->devolverSelectBoxActivo($resVar13,array(1),'',mysql_result($resultado,0,'refestadocivil'));
+
+         if (mysql_result($resultado,0,'genero') == 'Femenino') {
+            $cadRef10 = "<option value='Femenino' selected>Femenino</option><option value='Masculino'>Masculino</option>";
+         } else {
+            $cadRef10 = "<option value='Femenino'>Femenino</option><option value='Masculino' selected>Masculino</option>";
+         }
+
+
+         $resVar11 = $serviciosReferencias->traerTipoidentificacion();
+         $cadRef11 = $serviciosFunciones->devolverSelectBoxActivo($resVar11,array(1),'',mysql_result($resultado,0,'reftipoidentificacion'));
+
+         $refdescripcion = array(0=>$cadRef8,1=>$cadRef9,2=>$cadRef13,3=>$cadRef10,4=>$cadRef11);
+         $refCampo 	=  array('reftipopersonas','refusuarios','refestadocivil','genero','reftipoidentificacion');
       break;
       case 'dbdirectorioasesores':
          $resultado = $serviciosReferencias->traerDirectorioasesoresPorId($id);
@@ -9729,13 +9749,16 @@ function insertarClientes($serviciosReferencias) {
    $genero = $_POST['genero'];
    $refestadocivil = $_POST['refestadocivil'];
 
-   $res = $serviciosReferencias->insertarClientes($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$genero,$refestadocivil);
+   $reftipoidentificacion = $_POST['reftipoidentificacion'];
+   $nroidentificacion = $_POST['nroidentificacion'];
+
+   $res = $serviciosReferencias->insertarClientes($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion);
 
    if ((integer)$res > 0) {
       if ($_SESSION['idroll_sahilices'] == 7) {
          $resAsesores = $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
 
-         $resClienteAsedor = $serviciosReferencias->insertarClientesasesores($res,mysql_result($resAsesores,0,0),$apellidopaterno,$apellidomaterno,$nombre,$razonsocial,$domicilio,$email,$rfc,$ine,$reftipopersonas,$telefonofijo,$telefonocelular,$genero,$refestadocivil);
+         $resClienteAsedor = $serviciosReferencias->insertarClientesasesores($res,mysql_result($resAsesores,0,0),$apellidopaterno,$apellidomaterno,$nombre,$razonsocial,$domicilio,$email,$rfc,$ine,$reftipopersonas,$telefonofijo,$telefonocelular,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion);
       }
       echo '';
    } else {
@@ -9786,7 +9809,10 @@ function modificarClientes($serviciosReferencias) {
    $genero = $_POST['genero'];
    $refestadocivil = $_POST['refestadocivil'];
 
-   $res = $serviciosReferencias->modificarClientes($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$genero,$refestadocivil);
+   $reftipoidentificacion = $_POST['reftipoidentificacion'];
+   $nroidentificacion = $_POST['nroidentificacion'];
+
+   $res = $serviciosReferencias->modificarClientes($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion);
 
    if ($res == true) {
       echo '';

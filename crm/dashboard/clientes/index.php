@@ -56,8 +56,8 @@ $modificar = "modificarClientes";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbclientes";
 
-$lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','emisioncomprobantedomicilio','emisionrfc','vencimientoine','idclienteinbursa','nroexterior','nrointerior','codigopostal','ine','rfc','curp','refestadocivil');
-$lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social','Fecha Emision Compr. Domicilio','Fecha Emision RFC','Vencimiento INE','ID Cliente Inbursa','Nro Exterior','Nro Interior','Cod. Postal','INE','RFC','CURP','Estado Civil');
+$lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','emisioncomprobantedomicilio','emisionrfc','vencimientoine','idclienteinbursa','nroexterior','nrointerior','codigopostal','ine','rfc','curp','refestadocivil','reftipoidentificacion','nroidentificacion');
+$lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social','Fecha Emision Compr. Domicilio','Fecha Emision RFC','Vencimiento INE','ID Cliente Inbursa','Nro Exterior','No. Interior','Cod. Postal','INE','RFC','CURP','Estado Civil','Tipo de Identificación','No Identificación');
 
 
 $resVar8 = $serviciosReferencias->traerTipopersonas();
@@ -68,8 +68,12 @@ $cadRef9 = $serviciosFunciones->devolverSelectBox($resVar9,array(1),'');
 
 $cadRef10 = "<option value='Femenino'>Femenino</option><option value='Masculino'>Masculino</option>";
 
-$refdescripcion = array(0=>$cadRef8,1=>$cadRef9,2=>$cadRef10);
-$refCampo 	=  array('reftipopersonas','refestadocivil','genero');
+$resVar11 = $serviciosReferencias->traerTipoidentificacion();
+$cadRef11 = $serviciosFunciones->devolverSelectBox($resVar11,array(1),'');
+
+
+$refdescripcion = array(0=>$cadRef8,1=>$cadRef9,2=>$cadRef10,3=>$cadRef11);
+$refCampo 	=  array('reftipopersonas','refestadocivil','genero','reftipoidentificacion');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
