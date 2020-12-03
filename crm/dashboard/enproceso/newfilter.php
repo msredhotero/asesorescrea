@@ -125,13 +125,13 @@ if (isset($_GET['id'])) {
 
 	$tipoProducto = mysql_result($resProductoPrincipal,0,'reftipoproducto');
 
-	if (mysql_result($resProductoPrincipal,0,'beneficiario')) {
+	if (mysql_result($resProductoPrincipal,0,'beneficiario') == '1') {
 		$llevaBeneficiario = 1;
 	} else {
 		$llevaBeneficiario = 0;
 	}
 
-	if (mysql_result($resProductoPrincipal,0,'asegurado')) {
+	if (mysql_result($resProductoPrincipal,0,'asegurado') == '1') {
 		$llevaAsegurado = 1;
 	} else {
 		$llevaAsegurado = 0;
@@ -438,13 +438,13 @@ if (isset($_GET['id'])) {
 
 	$tipoProducto = mysql_result($resProductoPrincipal,0,'reftipoproducto');
 
-	if (mysql_result($resProductoPrincipal,0,'beneficiario')) {
+	if (mysql_result($resProductoPrincipal,0,'beneficiario') == '1') {
 		$llevaBeneficiario = 1;
 	} else {
 		$llevaBeneficiario = 0;
 	}
 
-	if (mysql_result($resProductoPrincipal,0,'asegurado')) {
+	if (mysql_result($resProductoPrincipal,0,'asegurado') == '1') {
 		$llevaAsegurado = 1;
 	} else {
 		$llevaAsegurado = 0;
@@ -898,13 +898,13 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 										<?php
 										// seteo el beneficiario en cero
-										$llevaBeneficiario = 0;
+
 										if ($llevaBeneficiario == 1) {
 											?>
 										<h3>BENEFICIARIO</h3>
                                  <fieldset>
 												<div class="row">
-
+													<h4>La contratación de VRIM Platino te cubre por muerte accidental por $500,000 pesos en caso de tener una eventualidad indícanos quien seria el beneficiario.</h4>
 
 													<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContbeneficiarioaux" style="display:block">
 														<div class="form-group form-float">
@@ -1088,6 +1088,44 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 							</div>
 
+
+							<div class="row" style="margin-top:15px;">
+
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">RFC <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="rfcASG" name="rfc" maxlength="13" required />
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmConttipoidentificacion" style="display:block">
+									<label class="form-label">Tipo Identificación <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<select class="form-control" id="reftipoidentificacionASG" name="reftipoidentificacion"  required >
+												<option value="">-- Seleccionar --</option>
+												<option value="1">INE</option>
+												<option value="2">Pasaporte</option>
+											</select>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContidentificacion" style="display:block">
+									<label class="form-label">Identificación <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="identificacionASG" name="identificacion" maxlength="13" required />
+										</div>
+									</div>
+								</div>
+
+
+							</div>
+
 							<div class="row" style="margin-top:15px;">
 
 
@@ -1117,110 +1155,149 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 	               </div>
 	               <div class="modal-body">
 							<div class="row">
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContnombre" style="display:block">
-									<label class="form-label">Nombre Completo  <span style="color:red;">*</span> </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="nombreBNF" name="nombre"  required />
 
+								<div class="row" style="margin-top:15px;">
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContnombre" style="display:block">
+										<label class="form-label">Nombre Completo  <span style="color:red;">*</span> </label>
+										<div class="form-group input-group">
+											<div class="form-line">
+												<input type="text" class="form-control" id="nombreBNF" name="nombre"  required />
+
+											</div>
 										</div>
 									</div>
-								</div>
 
 
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContapellidopaterno" style="display:block">
-									<label class="form-label">Apellido Paterno  <span style="color:red;">*</span> </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="apellidopaternoBNF" name="apellidopaterno"  required />
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContapellidopaterno" style="display:block">
+										<label class="form-label">Apellido Paterno  <span style="color:red;">*</span> </label>
+										<div class="form-group input-group">
+											<div class="form-line">
+												<input type="text" class="form-control" id="apellidopaternoBNF" name="apellidopaterno"  required />
 
+											</div>
 										</div>
 									</div>
-								</div>
 
 
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContapellidomaterno" style="display:block">
-									<label class="form-label">Apellido Materno  <span style="color:red;">*</span> </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="apellidomaternoBNF" name="apellidomaterno"  required />
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContapellidomaterno" style="display:block">
+										<label class="form-label">Apellido Materno  <span style="color:red;">*</span> </label>
+										<div class="form-group input-group">
+											<div class="form-line">
+												<input type="text" class="form-control" id="apellidomaternoBNF" name="apellidomaterno"  required />
 
+											</div>
 										</div>
 									</div>
-								</div>
 
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContreftipoparentesco" style="display:block">
-									<label for="reftipoparentesco" class="control-label" style="text-align:left">Tipo de Parentesco  <span style="color:red;">*</span> </label>
-									<div class="form-group input-group col-md-12">
-										<div class="form-line">
-											<select class="form-control" id="reftipoparentescoBNF" name="reftipoparentesco"  required >
-												<option value="">-- Seleccionar --</option>
-												<option value="1">Padres</option>
-												<option value="2">Conyuge</option>
-												<option value="3">Hijos</option>
-												<option value="4">Otro</option>
-											</select>
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContreftipoparentesco" style="display:block">
+										<label for="reftipoparentesco" class="control-label" style="text-align:left">Tipo de Parentesco  <span style="color:red;">*</span> </label>
+										<div class="form-group input-group col-md-12">
+											<div class="form-line">
+												<select class="form-control" id="reftipoparentescoBNF" name="reftipoparentesco"  required >
+													<option value="">-- Seleccionar --</option>
+													<option value="1">Padres</option>
+													<option value="2">Conyuge</option>
+													<option value="3">Hijos</option>
+													<option value="4">Otro</option>
+												</select>
+											</div>
 										</div>
 									</div>
-								</div>
 
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContparentescoBNF" style="display:block">
-									<label class="form-label">Ingrese el Parentesco  <span style="color:red;">*</span> </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="parentescoBNF" name="parentesco" />
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContparentescoBNF" style="display:block">
+										<label class="form-label">Ingrese el Parentesco  <span style="color:red;">*</span> </label>
+										<div class="form-group input-group">
+											<div class="form-line">
+												<input type="text" class="form-control" id="parentescoBNF" name="parentesco" />
+											</div>
 										</div>
 									</div>
+
 								</div>
+								<div class="row" style="margin-top:15px;">
 
-
-
-
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcurp" style="display:block">
-									<label class="form-label">CURP </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="curpBNF" name="curp" maxlength="18" />
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcurp" style="display:block">
+										<label class="form-label">CURP </label>
+										<div class="form-group input-group">
+											<div class="form-line">
+												<input type="text" class="form-control" id="curpBNF" name="curp" maxlength="18" />
+											</div>
 										</div>
 									</div>
-								</div>
 
 
-								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContfechanacimiento" style="display:block">
-									<label class="form-label">Fecha De Nacimiento  <span style="color:red;">*</span> </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<input type="text" class="form-control" id="fechanacimientoBNF" name="fechanacimiento" required/>
+									<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContfechanacimiento" style="display:block">
+										<label class="form-label">Fecha De Nacimiento  <span style="color:red;">*</span> </label>
+										<div class="form-group input-group">
+											<div class="form-line">
+												<input type="text" class="form-control" id="fechanacimientoBNF" name="fechanacimiento" required/>
+											</div>
 										</div>
 									</div>
-								</div>
 
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContgenero" style="display:block">
-									<label class="form-label">Genero <span style="color:red;">*</span>  </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<select class="form-control" id="generoBNF" name="genero"  required >
-												<option value="">-- Seleccionar --</option>
-												<option value="Femenino">Femenino</option>
-												<option value="Masculino">Masculino</option>
-											</select>
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContgenero" style="display:block">
+										<label class="form-label">Genero <span style="color:red;">*</span>  </label>
+										<div class="form-group input-group">
+											<div class="form-line">
+												<select class="form-control" id="generoBNF" name="genero"  required >
+													<option value="">-- Seleccionar --</option>
+													<option value="Femenino">Femenino</option>
+													<option value="Masculino">Masculino</option>
+												</select>
+											</div>
 										</div>
 									</div>
-								</div>
 
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrefestadocivil" style="display:block">
-									<label class="form-label">Estado Civil <span style="color:red;">*</span>  </label>
-									<div class="form-group input-group">
-										<div class="form-line">
-											<select class="form-control" id="refestadocivilBNF" name="refestadocivil"  required >
-												<option value="">-- Seleccionar --</option>
-												<?php echo $cadRefEstadoCivil; ?>
-											</select>
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrefestadocivil" style="display:block">
+										<label class="form-label">Estado Civil <span style="color:red;">*</span>  </label>
+										<div class="form-group input-group">
+											<div class="form-line">
+												<select class="form-control" id="refestadocivilBNF" name="refestadocivil"  required >
+													<option value="">-- Seleccionar --</option>
+													<?php echo $cadRefEstadoCivil; ?>
+												</select>
+											</div>
 										</div>
 									</div>
+
 								</div>
 
+								<div class="row" style="margin-top:15px;">
 
+
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+										<label class="form-label">RFC <span style="color:red;">*</span>  </label>
+										<div class="form-group input-group">
+											<div class="form-line">
+												<input type="text" class="form-control" id="rfcBNF" name="rfc" maxlength="13" required />
+											</div>
+										</div>
+									</div>
+
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmConttipoidentificacion" style="display:block">
+										<label class="form-label">Tipo Identificación <span style="color:red;">*</span>  </label>
+										<div class="form-group input-group">
+											<div class="form-line">
+												<select class="form-control" id="reftipoidentificacionBNF" name="reftipoidentificacion"  required >
+													<option value="">-- Seleccionar --</option>
+													<option value="1">INE</option>
+													<option value="2">Pasaporte</option>
+												</select>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContidentificacion" style="display:block">
+										<label class="form-label">Identificación <span style="color:red;">*</span>  </label>
+										<div class="form-group input-group">
+											<div class="form-line">
+												<input type="text" class="form-control" id="identificacionBNF" name="identificacion" maxlength="13" required />
+											</div>
+										</div>
+									</div>
+
+
+								</div>
 
 
 
