@@ -633,6 +633,7 @@ while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
 
 $resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(4);
 while ($row = mysql_fetch_array($resReferenciasFijo)) {
+
    $pdf->SetXY($row['x'], $row['y']);
    $pdf->Write(0, $row['default']);
 
@@ -1038,6 +1039,12 @@ $pdf->Image(__DIR__.'/'.'F20926_0007.png' , 0 ,0, 210 , 0,'PNG');
 
 
 ////*************** datos **********************************/
+
+///// fijo nombre del asesor ////
+$pdf->SetXY(50, 189.5);
+$pdf->Write(0, strtoupper( utf8_decode( mysql_result($resAsesor,0,'apellidopaterno').' '.mysql_result($resAsesor,0,'apellidomaterno').' '.mysql_result($resAsesor,0,'nombre'))));
+///////////////
+
 $resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 7);
 
 while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
