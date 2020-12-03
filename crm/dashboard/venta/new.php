@@ -130,7 +130,7 @@ if (isset($_GET['id'])) {
 
 	$tipoProducto = mysql_result($resProductoPrincipal,0,'reftipoproducto');
 
-	if (mysql_result($resProductoPrincipal,0,'beneficiario')) {
+	if (mysql_result($resProductoPrincipal,0,'beneficiario') == '1') {
 		$llevaBeneficiario = 1;
 	} else {
 		$llevaBeneficiario = 0;
@@ -443,11 +443,13 @@ if (isset($_GET['id'])) {
 
 	$tipoProducto = mysql_result($resProductoPrincipal,0,'reftipoproducto');
 
-	if (mysql_result($resProductoPrincipal,0,'beneficiario')) {
+	if (mysql_result($resProductoPrincipal,0,'beneficiario') == '1') {
 		$llevaBeneficiario = 1;
 	} else {
 		$llevaBeneficiario = 0;
 	}
+
+
 
 	if (mysql_result($resProductoPrincipal,0,'asegurado')) {
 		$llevaAsegurado = 1;
@@ -913,13 +915,13 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 										<?php
 										// seteo el beneficiario en cero
-										$llevaBeneficiario = 0;
+
 										if ($llevaBeneficiario == 1) {
 											?>
 										<h3>BENEFICIARIO</h3>
                                  <fieldset>
 												<div class="row">
-
+													<h4>La contratación de VRIM Platino te cubre por muerte accidental por $500,000 pesos en caso de tener una eventualidad indícanos quien seria el beneficiario.</h4>
 
 													<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContbeneficiarioaux" style="display:block">
 														<div class="form-group form-float">

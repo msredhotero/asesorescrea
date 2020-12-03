@@ -145,7 +145,7 @@ while ($row = mysql_fetch_array($resReferencias)) {
                   $pdf->Write(0, mysql_result($resTI,0,1));
 
                } else {
-                  $pdf->Write(0, mysql_result($resAsegurado,0,$row['camporeferencia']));
+                  $pdf->Write(0, utf8_decode( mysql_result($resAsegurado,0,$row['camporeferencia'])));
                }
             }
          }
@@ -172,7 +172,7 @@ while ($row = mysql_fetch_array($resReferencias)) {
                   $pdf->Write(0, mysql_result($resTI,0,1));
 
                } else {
-                  $pdf->Write(0, mysql_result($resCliente,0,$row['camporeferencia']));
+                  $pdf->Write(0, utf8_decode(mysql_result($resCliente,0,$row['camporeferencia'])));
                }
 
 
@@ -310,10 +310,10 @@ if ($idasegurado > 0) {
                if ($row['camporeferencia']== 'reftipoidentificacion') {
                   $resTI = $serviciosReferencias->traerTipoidentificacionPorId(mysql_result($resCliente,0,$row['camporeferencia']));
 
-                  $pdf->Write(0, mysql_result($resTI,0,1));
+                  $pdf->Write(0, utf8_decode(mysql_result($resTI,0,1)));
 
                } else {
-                  $pdf->Write(0, mysql_result($resCliente,0,$row['camporeferencia']));
+                  $pdf->Write(0, utf8_decode(mysql_result($resCliente,0,$row['camporeferencia'])));
                }
 
             }

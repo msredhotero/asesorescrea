@@ -573,6 +573,83 @@ if (mysql_num_rows($resFirma) > 0) {
 
 			            <hr>
 
+							<?php if ($tipoFirma == 2) { ?>
+								<?php if ($existeNIP == 1) { ?>
+							<div class="row">
+								<div class="col-xs-12 text-center">
+									<h4>INGRESE EL NIP</h4>
+									<h5>
+										<div class="demo-checkbox">
+
+                              	<input type="checkbox" id="basic_checkbox_2" class="filled-in">
+                              	<label for="basic_checkbox_2">al ingresar los dígitos confirmo mi consentimiento de firmar la solicitud F-2092-6 Solicitud de SEVI</label>
+
+                           	</div>
+									</h5>
+								</div>
+								<div class="col-xs-2">
+									<div class="form-group">
+										<div class="form-line">
+											<input type="text" class="form-control numero" placeholder="0" id="numero1" name="numero1" MAXLENGTH="1"/>
+										</div>
+									</div>
+								</div>
+								<div class="col-xs-2">
+									<div class="form-group">
+										<div class="form-line">
+											<input type="text" class="form-control numero" placeholder="0" id="numero2" name="numero2" MAXLENGTH="1"/>
+										</div>
+									</div>
+								</div>
+								<div class="col-xs-2">
+									<div class="form-group">
+										<div class="form-line">
+											<input type="text" class="form-control numero" placeholder="0" id="numero3" name="numero3" MAXLENGTH="1"/>
+										</div>
+									</div>
+								</div>
+								<div class="col-xs-2">
+									<div class="form-group">
+										<div class="form-line">
+											<input type="text" class="form-control numero" placeholder="0" id="numero4" name="numero4" MAXLENGTH="1"/>
+										</div>
+									</div>
+								</div>
+								<div class="col-xs-2">
+									<div class="form-group">
+										<div class="form-line">
+											<input type="text" class="form-control numero" placeholder="0" id="numero5" name="numero5" MAXLENGTH="1"/>
+										</div>
+									</div>
+								</div>
+								<div class="col-xs-2">
+									<div class="form-group">
+										<div class="form-line">
+											<input type="text" class="form-control numero" placeholder="0" id="numero6" name="numero6" MAXLENGTH="1"/>
+										</div>
+									</div>
+								</div>
+
+							</div>
+							<div class="row">
+								<div class="col-xs-3"></div>
+								<div class="col-xs-6">
+									<button type="button" class="btn btn-lg btn-block btn-success" id="btnConfirmarF" style="font-size:1.2em;">
+										<i class="material-icons" style="font-size:1.2em;">save</i>
+										<span>FIRMAR</span>
+									</button>
+								</div>
+								<div class="col-xs-3"></div>
+							</div>
+						<?php } } ?>
+
+						<div class="list-group">
+							<a href="javascript:void(0);" class="list-group-item active">
+							Documentos para Firmar
+							</a>
+							<a href="javascript:void(0);" class="list-group-item"><div id="example1"></div></a>
+						</div>
+
 
 
 
@@ -632,64 +709,7 @@ if (mysql_num_rows($resFirma) > 0) {
 						<?php if ($tipoFirma == 2) { ?>
 							<?php if ($existeNIP == 1) { ?>
 
-									<div class="row">
-										<div class="col-xs-12 text-center">
-											<h4>INGRESE EL NIP</h4>
-										</div>
-										<div class="col-xs-2">
-											<div class="form-group">
-												<div class="form-line">
-													<input type="text" class="form-control numero" placeholder="0" id="numero1" name="numero1" MAXLENGTH="1"/>
-												</div>
-											</div>
-										</div>
-										<div class="col-xs-2">
-											<div class="form-group">
-												<div class="form-line">
-													<input type="text" class="form-control numero" placeholder="0" id="numero2" name="numero2" MAXLENGTH="1"/>
-												</div>
-											</div>
-										</div>
-										<div class="col-xs-2">
-											<div class="form-group">
-												<div class="form-line">
-													<input type="text" class="form-control numero" placeholder="0" id="numero3" name="numero3" MAXLENGTH="1"/>
-												</div>
-											</div>
-										</div>
-										<div class="col-xs-2">
-											<div class="form-group">
-												<div class="form-line">
-													<input type="text" class="form-control numero" placeholder="0" id="numero4" name="numero4" MAXLENGTH="1"/>
-												</div>
-											</div>
-										</div>
-										<div class="col-xs-2">
-											<div class="form-group">
-												<div class="form-line">
-													<input type="text" class="form-control numero" placeholder="0" id="numero5" name="numero5" MAXLENGTH="1"/>
-												</div>
-											</div>
-										</div>
-										<div class="col-xs-2">
-											<div class="form-group">
-												<div class="form-line">
-													<input type="text" class="form-control numero" placeholder="0" id="numero6" name="numero6" MAXLENGTH="1"/>
-												</div>
-											</div>
-										</div>
 
-									</div>
-									<div class="row">
-										<div class="col-xs-3"></div>
-										<div class="col-xs-6">
-											<button type="button" class="btn btn-lg btn-block btn-success" id="btnConfirmarF" style="font-size:1.2em;">
-												<i class="material-icons" style="font-size:1.2em;">save</i>
-												<span>FIRMAR</span>
-											</button>
-										</div>
-										<div class="col-xs-3"></div>
-									</div>
 							<?php } else { ?>
 								<div class="row">
 									<div class="col-xs-3"></div>
@@ -931,23 +951,30 @@ if (mysql_num_rows($resFirma) > 0) {
 			});
 		}
 
-		$('#btnConfirmarF').click(function() {
-			//insertarFirmarcontratos();
-			$('#lgmFirmar').modal();
-		});
 
 		$('#btnConfirmarF').click(function() {
-			if (($('#numero1').val() != '') && ($('#numero2').val() != '') && ($('#numero3').val() != '') && ($('#numero4').val() != '') && ($('#numero5').val() != '') && ($('#numero6').val() != '')) {
-				insertarFirmarcontratos();
-			} else {
-				swal({
+			if ($('#basic_checkbox_2').is(':checked')) {
+				if (($('#numero1').val() != '') && ($('#numero2').val() != '') && ($('#numero3').val() != '') && ($('#numero4').val() != '') && ($('#numero5').val() != '') && ($('#numero6').val() != '')) {
+					insertarFirmarcontratos();
+				} else {
+					swal({
 						title: "Respuesta",
 						text: 'Debe completar los 6 digitos',
 						type: "error",
 						timer: 2000,
 						showConfirmButton: false
+					});
+				}
+			} else {
+				swal({
+					title: "Respuesta",
+					text: 'Debes confirmar tu consentimiento',
+					type: "error",
+					timer: 2000,
+					showConfirmButton: false
 				});
 			}
+
 
 		});
 
