@@ -413,6 +413,7 @@ while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
 
 $resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(3);
 while ($row = mysql_fetch_array($resReferenciasFijo)) {
+
    $pdf->SetXY($row['x'], $row['y']);
    $pdf->Write(0, $row['default']);
 
@@ -633,10 +634,15 @@ while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
 
 $resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(4);
 while ($row = mysql_fetch_array($resReferenciasFijo)) {
-
-   $pdf->SetXY($row['x'], $row['y']);
-   $pdf->Write(0, $row['default']);
-
+   if ($idbeneficiario == 0) {
+      if (($row['camporeferencia'] != 'porcentaje (simpre 100%)') && ($row['camporeferencia'] != 'rebocable')) {
+         $pdf->SetXY($row['x'], $row['y']);
+         $pdf->Write(0, $row['default']);
+      }
+   } else {
+      $pdf->SetXY($row['x'], $row['y']);
+      $pdf->Write(0, $row['default']);
+   }
 }
 
 $resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(4);
