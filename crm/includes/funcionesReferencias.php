@@ -779,7 +779,8 @@ return $res;
          tt.tabla,
          tt.nombreid,
          s.camporeferencia,
-         s.`default`
+         s.`default`,
+         s.nombre
       from dbsolicitudesrespuestas s
       inner join tbsolicitudpdf tp on tp.idsolicitudpdf = s.refsolicitudpdf
       left join tbtabla tt on tt.idtabla = s.reftabla

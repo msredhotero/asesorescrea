@@ -633,7 +633,7 @@ while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
 $resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(4);
 while ($row = mysql_fetch_array($resReferenciasFijo)) {
    if ($idbeneficiario == 0) {
-      if (($row['camporeferencia'] != 'porcentaje (simpre 100%)') && ($row['camporeferencia'] != 'rebocable')) {
+      if (($row['nombre'] != 'porcentaje (simpre 100%)') && ($row['nombre'] != 'revocable')) {
          $pdf->SetXY($row['x'], $row['y']);
          $pdf->Write(0, $row['default']);
       }
