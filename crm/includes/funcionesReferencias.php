@@ -16524,6 +16524,16 @@ return $res;
 		return $res;
 	}
 
+   function copiarDatosDomicilioContratante($id,$idcliente) {
+      $sql = "update dbasegurados a
+               inner join dbclientes c on c.idcliente = a.refclientes
+               set a.domicilio = c.domicilio,a.telefonocelular = c.telefonocelular,a.colonia = c.colonia,a.municipio = c.municipio,a.codigopostal = c.codigopostal,a.edificio = c.edificio,a.nroexterior = c.nroexterior,a.nrointerior = c.nrointerior,a.estado = c.estado,a.ciudad = c.ciudad
+               where c.idcliente =".$idcliente." and a.idasegurado = ".$id;
+
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
 
 	function eliminarAsegurados($id) {
 		$sql = "delete from dbasegurados where idasegurado =".$id;

@@ -3799,7 +3799,7 @@ function insertarAsegurados($serviciosReferencias) {
 
    $domicilio = '';
    $email = '';
-   $rfc = '';
+   $rfc = $_POST['rfc'];
    $colonia = '';
    $municipio = '';
    $codigopostal = '';
@@ -3828,6 +3828,8 @@ function insertarAsegurados($serviciosReferencias) {
       $resV['id'] = $res;
       $resM1 = $serviciosReferencias->modificarCampoParticularAsegurados($res,'email',mysql_result($resCliente,0,'email'));
       $resM2 = $serviciosReferencias->modificarCampoParticularAsegurados($res,'telefonofijo',mysql_result($resCliente,0,'telefonofijo'));
+      $resDomicilio = $serviciosReferencias->copiarDatosDomicilioContratante($res,$refclientes);
+
       echo '';
    } else {
       $resV['error'] = true;
