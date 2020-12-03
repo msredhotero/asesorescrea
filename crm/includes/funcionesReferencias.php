@@ -845,7 +845,7 @@ return $res;
       left join (select idrespuestacuestionario,refsolicitudesrespuestas from dbrespuestascuestionario rr
    		inner join
    	dbpreguntascuestionario pr on pr.idpreguntacuestionario = rr.refpreguntascuestionario
-                              and pr.refcuestionarios = ".$idcuidcuestionario."
+                              and pr.refcuestionarios = ".$idcuestionario."
        ) rt ON rt.refsolicitudesrespuestas = s.idsolicituderespuesta
       where tt.idtabla is null and rt.idrespuestacuestionario is null
       order by 1";
