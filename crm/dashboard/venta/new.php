@@ -1132,10 +1132,10 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 								</div>
 
 								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContidentificacion" style="display:block">
-									<label class="form-label">Identificación <span style="color:red;">*</span>  </label>
+									<label class="form-label">No. Identificación <span style="color:red;">*</span>  </label>
 									<div class="form-group input-group">
 										<div class="form-line">
-											<input type="text" class="form-control" id="identificacionASG" name="identificacion" maxlength="13" required />
+											<input type="text" class="form-control" id="identificacionASG" name="nroidentificacion" maxlength="13" required />
 										</div>
 									</div>
 								</div>
@@ -1305,10 +1305,10 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 									</div>
 
 									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContidentificacion" style="display:block">
-										<label class="form-label">Identificación <span style="color:red;">*</span>  </label>
+										<label class="form-label">No. Identificación <span style="color:red;">*</span>  </label>
 										<div class="form-group input-group">
 											<div class="form-line">
-												<input type="text" class="form-control" id="identificacionBNF" name="identificacion" maxlength="13" required />
+												<input type="text" class="form-control" id="identificacionBNF" name="nroidentificacion" maxlength="13" required />
 											</div>
 										</div>
 									</div>

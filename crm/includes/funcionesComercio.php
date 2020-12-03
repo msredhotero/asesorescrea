@@ -180,6 +180,12 @@ class serviciosComercio
       return $res;
    }
 
+   function modificarComercioInicioDigest($id,$comdigest) {
+      $sql = "update dbcomercioinicio set comdigest = '".$comdigest."' where idcomercioinicio = ".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
 
    function eliminarComercioinicio($id) {
       $sql = "delete from dbcomercioinicio where idcomercioinicio =".$id;

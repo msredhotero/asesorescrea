@@ -322,6 +322,8 @@ if (($refEstadoCotizacion == 20)) {
 }
 
 
+$resClientes = $serviciosReferencias->traerClientesPorId($idCliente);
+
 
 ?>
 
@@ -453,8 +455,34 @@ if (($refEstadoCotizacion == 20)) {
 						<!-- inicio del primer tab -->
 						<div class="tab-content">
                      <div role="tabpanel" class="tab-pane fade <?php echo $jqueryactivocliente2; ?>" id="tabcontratente">
+								<?php if (mysql_result($resClientes,0,'nroidentificacion') == '') { ?>
+								<div class="row">
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmConttipoidentificacion" style="display:block">
+										<label class="form-label">Tipo Identificación <span style="color:red;">*</span>  </label>
+										<div class="form-group input-group">
+											<div class="form-line">
+												<select class="form-control" id="reftipoidentificacion" name="reftipoidentificacion"  required >
+													<option value="">-- Seleccionar --</option>
+													<option value="1">INE</option>
+													<option value="2">Pasaporte</option>
+												</select>
+											</div>
+										</div>
+									</div>
 
-
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContidentificacion" style="display:block">
+										<label class="form-label">No. Identificación <span style="color:red;">*</span>  </label>
+										<div class="form-group input-group">
+											<div class="form-line">
+												<input type="text" class="form-control" id="nroidentificacion" name="nroidentificacion" maxlength="13" required />
+											</div>
+										</div>
+									</div>
+								</div>
+							<?php } else { ?>
+								<input type="hidden" name="nroidentificacion" id="nroidentificacion" value="<?php echo mysql_result($resClientes,0,'nroidentificacion'); ?>" />
+								<input type="hidden" name="reftipoidentificacion" id="reftipoidentificacion" value="<?php echo mysql_result($resClientes,0,'reftipoidentificacion'); ?>" />
+							<?php } ?>
 
 							<div class="col-xs-12">
 							<?php
@@ -839,18 +867,7 @@ if (($refEstadoCotizacion == 20)) {
 		}
 		?>
 
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '315px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
 
-		});
 
 
 		$("#sign_in").submit(function(e){
@@ -858,7 +875,19 @@ if (($refEstadoCotizacion == 20)) {
 		});
 
 		$('#btnConfirmar3').click(function() {
-			ineCargadoCotizacion();
+			if (($('#reftipoidentificacion').val() != 0) && ($('#nroidentificacion').val().length > 6)) {
+				ineCargadoCotizacion();
+			} else {
+
+				swal({
+						title: "Respuesta",
+						text: 'Por favor ingrese el Tipo de Identificación y un No. de Identificación válido',
+						type: "error",
+						timer: 2500,
+						showConfirmButton: false
+				});
+			}
+
 		});
 
 		function ineCargadoCotizacion() {
@@ -869,7 +898,9 @@ if (($refEstadoCotizacion == 20)) {
 				//datos del formulario
 				data: {
 					accion: 'ineCargadoCotizacion',
-					id: <?php echo $id; ?>
+					id: <?php echo $id; ?>,
+					reftipoidentificacion: $('#reftipoidentificacion').val(),
+					nroidentificacion: $('#nroidentificacion').val()
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){

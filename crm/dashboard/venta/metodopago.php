@@ -126,8 +126,11 @@ if (mysql_result($resCotizaciones,0,'tieneasegurado') == '1') {
 
 $acumPrecio = 0;
 
+$edadNoAplica = 0;
+
 if ($edad >= 60) {
 	$nopuedeContinuar = 1;
+	$edadNoAplica = 1;
 } else {
 	$nopuedeContinuar = 0;
 	// calculos

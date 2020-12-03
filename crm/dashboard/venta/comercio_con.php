@@ -224,7 +224,7 @@ if (!isset($_SESSION['usua_sahilices']))
 			$archivos = 'ReciboPago.pdf';
 			$type = 'pdf';
 			$refestado = 1;
-			$resPago = $serviciosReferencias->insertarPagos(12,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,5,'Inbursa',$lblCliente,$nroComprobante,'0');
+			$resPago = $serviciosReferencias->insertarPagos(12,$idcotizacion,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,5,'Inbursa',$lblCliente,$nroComprobante,'0');
 
 			///////////////// fin del pago /////////////////////////////////
 
@@ -242,7 +242,7 @@ if (!isset($_SESSION['usua_sahilices']))
 		$usuariocrea = $_SESSION['usua_sahilices'];
 		$archivos = '';
 		$type = '';
-		$resPago = $serviciosReferencias->insertarPagos(12,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,2,'Inbursa',$lblCliente,'','0');
+		$resPago = $serviciosReferencias->insertarPagos(12,$idcotizacion,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,2,'Inbursa',$lblCliente,'','0');
 
 		///////////////// fin del pago /////////////////////////////////
 	}
@@ -373,7 +373,7 @@ if (!isset($_SESSION['usua_sahilices']))
 
 
 								</div>
-								
+
 
 							<div class="text-center">
 								<div class="list-group">

@@ -176,6 +176,10 @@ if (mysql_num_rows($existeComercio) > 0) {
 	$resModOrder = $serviciosComercio->modificarComercioInicioOrderID($idComercio);
 
 	$comorder_id = $idComercio;
+
+	$comdigest=sha1($commerchant.$comstore.$comterm.$comtotal.$comcurrency.$comorder_id);
+
+	$resModOrder = $serviciosComercio->modificarComercioInicioDigest($comorder_id,$comdigest);
 }
 
 

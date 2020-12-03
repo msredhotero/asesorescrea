@@ -1303,8 +1303,11 @@ switch ($accion) {
    case 'eliminarSiniestros':
    eliminarSiniestros($serviciosReferencias);
    break;
+
 }
 /* FinFinFin */
+
+
 
 function insertarSiniestros($serviciosReferencias) {
    $refventas = $_POST['refventas'];
@@ -2563,8 +2566,17 @@ function insertarTokens($serviciosReferencias) {
 function ineCargadoCotizacion($serviciosReferencias) {
    session_start();
    $id = $_POST['id'];
+   $reftipoidentificacion = $_POST['reftipoidentificacion'];
+   $nroidentificacion = $_POST['nroidentificacion'];
 
    $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',21,$_SESSION['usua_sahilices']);
+
+   $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+
+   $idcliente = mysql_result($resCotizaciones,0,'refclientes');
+
+   $resTI = $serviciosReferencias->modificarClienteUnicaDocumentacion($idcliente, 'reftipoidentificacion', $reftipoidentificacion);
+   $resI = $serviciosReferencias->modificarClienteUnicaDocumentacion($idcliente, 'nroidentificacion', $nroidentificacion);
 
    if ($resEstado) {
       $resV['error'] = false;
