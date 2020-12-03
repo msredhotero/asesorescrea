@@ -842,11 +842,12 @@ return $res;
       from dbsolicitudesrespuestas s
       inner join tbsolicitudpdf tp on tp.idsolicitudpdf = s.refsolicitudpdf
       left join tbtabla tt on tt.idtabla = s.reftabla
-      left join dbrespuestascuestionario rr on rr.refsolicitudesrespuestas = s.idsolicituderespuesta
-      left join
-	        dbpreguntascuestionario pr
-         on pr.idpreguntacuestionario = rr.refpreguntascuestionario and pr.refcuestionarios = ".$idcuestionario."
-      where tt.idtabla is null and rr.idrespuestacuestionario is null
+      left join (select idrespuestacuestionario,refsolicitudesrespuestas from dbrespuestascuestionario rr
+   		inner join
+   	dbpreguntascuestionario pr on pr.idpreguntacuestionario = rr.refpreguntascuestionario
+                              and pr.refcuestionarios = ".$idcuidcuestionario."
+       ) rt ON rt.refsolicitudesrespuestas = s.idsolicituderespuesta
+      where tt.idtabla is null and rt.idrespuestacuestionario is null
       order by 1";
       $res = $this->query($sql,0);
       return $res;
