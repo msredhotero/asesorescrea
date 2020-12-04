@@ -2042,7 +2042,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 								}
 							}
 
-							
+
 
 						<?php if (!(isset($_GET['id']))) { ?>
 
@@ -2118,7 +2118,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 		?>
 
 		$('#wizard_with_validation .btn<?php echo str_replace(' ','',$rowD['documentacion']); ?>').click(function() {
-			url = "new.php?id=<?php echo $id; ?>&iddocumentacion=<?php echo $rowD['iddocumentacion']; ?>";
+			url = "newfilter.php?id=<?php echo $id; ?>&iddocumentacion=<?php echo $rowD['iddocumentacion']; ?>";
 			$(location).attr('href',url);
 		});
 		<?php
@@ -2132,7 +2132,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 		?>
 
 		$('#wizard_with_validation .btnA<?php echo str_replace(' ','',$rowD['documentacion']); ?>').click(function() {
-			url = "new.php?id=<?php echo $id; ?>&iddocumentaciona=<?php echo $rowD['iddocumentacion']; ?>";
+			url = "newfilter.php?id=<?php echo $id; ?>&iddocumentaciona=<?php echo $rowD['iddocumentacion']; ?>";
 			$(location).attr('href',url);
 		});
 		<?php

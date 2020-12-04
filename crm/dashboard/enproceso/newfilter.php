@@ -2319,7 +2319,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 		?>
 
 		$('#wizard_with_validation .btn<?php echo str_replace(' ','',$rowD['documentacion']); ?>').click(function() {
-			url = "new.php?id=<?php echo $id; ?>&iddocumentacion=<?php echo $rowD['iddocumentacion']; ?>";
+			url = "newfilter.php?id=<?php echo $id; ?>&iddocumentacion=<?php echo $rowD['iddocumentacion']; ?>";
 			$(location).attr('href',url);
 		});
 		<?php
@@ -2333,7 +2333,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 		?>
 
 		$('#wizard_with_validation .btnA<?php echo str_replace(' ','',$rowD['documentacion']); ?>').click(function() {
-			url = "new.php?id=<?php echo $id; ?>&iddocumentaciona=<?php echo $rowD['iddocumentacion']; ?>";
+			url = "newfilter.php?id=<?php echo $id; ?>&iddocumentaciona=<?php echo $rowD['iddocumentacion']; ?>";
 			$(location).attr('href',url);
 		});
 		<?php
