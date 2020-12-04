@@ -802,7 +802,9 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 												</div>
 
                               </fieldset>
-										<?php } ?>
+									<?php } else { ?>
+										<input type="hidden" class="form-control" id="tieneasegurado" name="tieneasegurado" value="0">
+									<?php } ?>
 
 										<!-- verifico que existan archivos para cargarle al producto -->
 										<?php
@@ -921,7 +923,9 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 												</div>
 
                               </fieldset>
-										<?php } ?>
+									<?php } else { ?>
+										<input type="hidden" class="form-control" id="refbeneficiarioaux" name="refbeneficiarioaux" value="0">
+									<?php } ?>
 
                            </form>
 

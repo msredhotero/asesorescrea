@@ -2042,23 +2042,11 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 								}
 							}
 
-							if (currentIndex == 2) {
-								validarCuestionarioContratante($('#refclientes').val(),0 );
-							}
-
-							<?php if ($tieneAsegurado != '') { ?>
-								if ($tab.trim() == 'ASEGURADO') {
-									seguirAdelante();
-								}
-							<?php } ?>
-
-							if ($tab.trim() == 'BENEFICIARIO') {
-								//validarCuestionarioPersona(0,  $('#wizard_with_validation #refaseguradaaux').val());
-							}
+							
 
 						<?php if (!(isset($_GET['id']))) { ?>
 
-							if (currentIndex == 2) {
+							if (currentIndex == 4) {
 								validarCuestionario($('#refproductos').val());
 								//guardarCotizacion(1);
 							}
