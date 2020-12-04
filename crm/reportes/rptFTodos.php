@@ -25,7 +25,7 @@ $id         =  $_GET['id'];
 
 $resCotizacion = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
-$resCliente = $serviciosReferencias->traerClientesPorId(mysql_result($resCotizacion,0,'refclientes'));
+$resCliente = $serviciosReferencias->traerClientesPorIdPDF(mysql_result($resCotizacion,0,'refclientes'));
 
 $resAsesor = $serviciosReferencias->traerAsesoresPorId(mysql_result($resCotizacion,0,'refasesores'));
 
@@ -635,7 +635,7 @@ while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
 $resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(4);
 while ($row = mysql_fetch_array($resReferenciasFijo)) {
    if ($idbeneficiario == 0) {
-      if (($row['nombre'] != 'porcentaje (simpre 100%)') && ($row['nombre'] != 'revocable')) {
+      if (($row['nombre'] != 'porcentaje (simpre 100%)') && ($row['nombre'] != 'pais de nacimiento') && ($row['nombre'] != 'revocable') && ($row['nombre'] != 'nacionalidad')) {
          $pdf->SetXY($row['x'], $row['y']);
          $pdf->Write(0, $row['default']);
       }
@@ -708,7 +708,13 @@ while ($row = mysql_fetch_array($resReferencias)) {
                      $pdf->Write(0, 'x');
                   }
                } else {
-                  $pdf->Write(0, mysql_result($resBeneficiario,0,$row['camporeferencia']));
+                  if ($row['camporeferencia']== 'reftipoparentesco') {
+                     $resParentesco = $serviciosReferencias->traerTipoparentescoPorId(mysql_result($resBeneficiario,0,$row['camporeferencia']));
+
+                     $pdf->Write(0, strtoupper( utf8_decode( mysql_result($resParentesco,0,1))));
+                  } else {
+                     $pdf->Write(0, strtoupper( utf8_decode( mysql_result($resBeneficiario,0,$row['camporeferencia']))));
+                  }
                }
             }
          }
