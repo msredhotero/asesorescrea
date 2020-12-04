@@ -1079,7 +1079,7 @@ while ($row = mysql_fetch_array($resReferenciasFijo)) {
    $pdf->SetXY($row['x'], $row['y']);
    switch ($row['default']) {
       case 'fecha':
-         $pdf->Write(0, date('d-m-Y'));
+         $pdf->Write(0, date('d/m/Y'));
       break;
       default:
          $pdf->Write(0, $row['default']);
