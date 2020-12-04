@@ -464,8 +464,8 @@ $lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','E
 
 $tabla2 			= "dbclientes";
 
-$lblCambio2	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','idclienteinbursa','nroexterior','nrointerior','codigopostal','ine','rfc','curp','refestadocivil');
-$lblreemplazo2	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social','ID Cliente Inbursa','Nro Exterior','Nro Interior','Cod. Postal','INE','RFC','CURP','Estado Civil');
+$lblCambio2	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','emisioncomprobantedomicilio','emisionrfc','vencimientoine','idclienteinbursa','nroexterior','nrointerior','codigopostal','ine','rfc','curp','refestadocivil','reftipoidentificacion','nroidentificacion');
+$lblreemplazo2	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social','Fecha Emision Compr. Domicilio','Fecha Emision RFC','Vencimiento INE','ID Cliente Inbursa','Nro Exterior','No. Interior','Cod. Postal','INE','RFC','CURP','Estado Civil','Tipo de Identificación','No Identificación');
 
 
 $resVar82 = $serviciosReferencias->traerTipopersonas();
@@ -478,11 +478,14 @@ $cadRef92 = $serviciosFunciones->devolverSelectBox($resVar92,array(1),'');
 
 $cadRef102 = "<option value='Femenino'>Femenino</option><option value='Masculino'>Masculino</option>";
 
-$refdescripcion = array(0=>$cadRef82,1=>$cadRef92,2=>$cadRef102);
-$refCampo 	=  array('reftipopersonas','refestadocivil','genero');
+$resVar112 = $serviciosReferencias->traerTipoidentificacion();
+$cadRef112 = $serviciosFunciones->devolverSelectBox($resVar112,array(1),'');
 
-$refdescripcion2 = array(0=>$cadRef82,1=>$cadRef92,2=>$cadRef102);
-$refCampo2 	=  array('reftipopersonas','refestadocivil','genero');
+$refdescripcion = array(0=>$cadRef82,1=>$cadRef92,2=>$cadRef102,3=>$cadRef112);
+$refCampo 	=  array('reftipopersonas','refestadocivil','genero','reftipoidentificacion');
+
+$refdescripcion2 = array(0=>$cadRef82,1=>$cadRef92,2=>$cadRef102,3=>$cadRef112);
+$refCampo2 	=  array('reftipopersonas','refestadocivil','genero','reftipoidentificacion');
 
 $frmUnidadNegocios2 	= $serviciosFunciones->camposTablaViejo('insertarClientes' ,$tabla2,$lblCambio2,$lblreemplazo2,$refdescripcion2,$refCampo2);
 

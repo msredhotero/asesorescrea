@@ -63,10 +63,16 @@ $insertar = "insertarCotizaciones";
 $modificar = "modificarCotizaciones";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
-
+$inhabilitadoPorRespuesta = 0;
 if (isset($_GET['id'])) {
 	$id = $_GET['id'];
 	$resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+
+	$resInhabilitaRespuesta = $serviciosReferencias->inhabilitaRespuestascuestionarioPorCotizacion($id);
+
+	if (mysql_num_rows($resInhabilitaRespuesta)>0) {
+		$inhabilitadoPorRespuesta = 1;
+	}
 
 	$refCliente = mysql_result($resultado,0,'refclientes');
 	$refAsesores = 25;
@@ -706,6 +712,16 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
                             </ul>
                         </div>
                         <div class="body">
+									<?php if ($inhabilitadoPorRespuesta == 1) { ?>
+										<h3 class="display-4">Lo sentimos las preguntas que respondio en el cuestionario, no superan lo necesario para acceder al Servicio/Producto.</h3>
+										<br>
+										<hr>
+										<h5>Por favor pongase en contacto con uno de nuestros representantes para solicitar asesoramiento, acerca del producto</h5>
+										<p>Puedes contactarnos en el Teléfono: <b><span style="color:#5DC1FD;">55 51 35 02 59</span></b></p>
+										<br>
+										<br>
+										<h4>Muchas Gracias!.</h4>
+									<?php } else { ?>
                            <form id="wizard_with_validation" method="POST">
 										<input type="hidden" id="accionprincipal" name="accion" value="validarCuestionario"/>
 										<input type="hidden" name="refclientes" id="refclientes" value="<?php echo $rIdCliente; ?>"/>
@@ -941,7 +957,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 										<?php } ?>
 
                            </form>
-
+									<?php } ?>
 
 
                      </div>
@@ -1785,6 +1801,12 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 						<?php if (isset($_GET['id'])) { ?>
 						$('#wizard_with_validation .contCuestionario .escondido').remove();
+
+						$('#wizard_with_validation .contCuestionario input').each(function() {
+							//alert($( this ).val());
+							$( this ).attr("disabled", true);
+						});
+
 						<?php } else { ?>
 						$('#wizard_with_validation .contCuestionario .escondido').hide();
 						$('#wizard_with_validation .contCuestionario .escondido').find('input').prop('disabled', true);
@@ -1824,6 +1846,8 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 							weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
 							weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
 						});
+
+
 					} else {
 						swal({
 								title: "Respuesta",
