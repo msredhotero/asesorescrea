@@ -250,7 +250,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 
 <!-- NUEVO -->
-	<form class="formulario" role="form" id="sign_in">
+	<form class="formulario frmNuevo" role="form" id="sign_in">
 	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
 	       <div class="modal-dialog modal-lg" role="document">
 	           <div class="modal-content">
@@ -274,7 +274,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	</form>
 
 	<!-- MODIFICAR -->
-		<form class="formulario" role="form" id="sign_in">
+		<form class="formulario frmModificar" role="form" id="sign_in">
 		   <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
 		       <div class="modal-dialog modal-lg" role="document">
 		           <div class="modal-content">
@@ -676,114 +676,121 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 		});//fin del boton modificar
 
-		$('.nuevo').click(function(){
+		$('.frmNuevo').submit(function(e){
 
-			//información del formulario
-			var formData = new FormData($(".formulario")[0]);
-			var message = "";
-			//hacemos la petición ajax
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: formData,
-				//necesario para subir archivos via ajax
-				cache: false,
-				contentType: false,
-				processData: false,
-				//mientras enviamos el archivo
-				beforeSend: function(){
+			e.preventDefault();
+			if ($('#sign_in')[0].checkValidity()) {
+				//información del formulario
+				var formData = new FormData($(".formulario")[0]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
 
-				},
-				//una vez finalizado correctamente
-				success: function(data){
+					},
+					//una vez finalizado correctamente
+					success: function(data){
 
-					if (data == '') {
-						swal({
-								title: "Respuesta",
-								text: "Registro Creado con exito!!",
-								type: "success",
-								timer: 1500,
-								showConfirmButton: false
-						});
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Creado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
 
-						$('#lgmNuevo').modal('hide');
-						$('#unidadnegocio').val('');
-						table.ajax.reload();
-					} else {
-						swal({
-								title: "Respuesta",
-								text: data,
-								type: "error",
-								timer: 2500,
-								showConfirmButton: false
-						});
+							$('#lgmNuevo').modal('hide');
+							$('#unidadnegocio').val('');
+							table.ajax.reload();
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
 
 
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
 					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
+				});
+			}
 		});
 
 
-		$('.modificar').click(function(){
+		$('.frmModificar').submit(function(e){
 
-			//información del formulario
-			var formData = new FormData($(".formulario")[1]);
-			var message = "";
-			//hacemos la petición ajax
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: formData,
-				//necesario para subir archivos via ajax
-				cache: false,
-				contentType: false,
-				processData: false,
-				//mientras enviamos el archivo
-				beforeSend: function(){
+			e.preventDefault();
+			if ($('.frmModificar')[0].checkValidity()) {
 
-				},
-				//una vez finalizado correctamente
-				success: function(data){
+				//información del formulario
+				var formData = new FormData($(".formulario")[1]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
 
-					if (data == '') {
-						swal({
-								title: "Respuesta",
-								text: "Registro Modificado con exito!!",
-								type: "success",
-								timer: 1500,
-								showConfirmButton: false
-						});
+					},
+					//una vez finalizado correctamente
+					success: function(data){
 
-						$('#lgmModificar').modal('hide');
-						table.ajax.reload();
-					} else {
-						swal({
-								title: "Respuesta",
-								text: data,
-								type: "error",
-								timer: 2500,
-								showConfirmButton: false
-						});
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Modificado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
+
+							$('#lgmModificar').modal('hide');
+							table.ajax.reload();
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
 
 
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
 					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
+				});
+			}
 		});
 	});
 </script>
