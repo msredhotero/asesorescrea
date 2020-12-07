@@ -653,6 +653,28 @@ switch ($tabla) {
 
 	break;
 
+	case 'cobrosgeneracion':
+
+		$idventa = $_GET['id'];
+		$datos = $serviciosReferencias->traerPeriodicidadventasdetalleajax($length, $start, $busqueda,$colSort,$colSortDir,$idventa);
+
+		//die(var_dump($datos));
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+
+		$label = array('btnRecibo','btnEliminar');
+		$class = array('bg-orange','bg-red');
+		$icon = array('unarchive','delete');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 8;
+
+	break;
+
 	case 'constanciasseguimiento':
 
 		$asesor = $_GET['sSearch_0'];
@@ -1032,7 +1054,7 @@ switch ($tabla) {
 				$class = array('bg-amber','bg-red');
 				$icon = array('create','delete');
 				$whereEstado = ' c.refestados in (2) ';
-				$termina = 6;
+				$termina = 5;
 
 				$filtroNuevo = '';
 			break;

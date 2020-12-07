@@ -767,7 +767,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 											<th>Monto</th>
 											<th>Folio De Pago Asesores Crea</th>
 											<th>Fecha Pago</th>
-											<th>Notifacacion a Inbursa</th>
+
 											<th>Acciones</th>
 										</thead>
 										<tbody>
@@ -779,7 +779,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 										<td><?php echo $rowPagos['monto']; ?></td>
 										<td><?php echo $rowPagos['nrorecibo']; ?></td>
 										<td><?php echo $rowPagos['fechapago']; ?></td>
-										<td><?php echo ($rowPagos['avisoinbursa'] == '0' ? 'No' : 'Si'); ?></td>
+
 										<td>
 											<button type="button" class="btn bg-orange waves-effect btnModificarPago" id="<?php echo $rowPagos['idperiodicidadventapago']; ?>">
 					 							MODIFICAR
@@ -1096,6 +1096,10 @@ if (mysql_num_rows($resPaquete) > 0) {
 	$(document).ready(function(){
 
 		$('.frmContnrofactura').hide();
+		$('.frmContavisoinbursa').hide();
+
+		$('#monto').number( true, 2 ,'.','');
+
 
 		<?php if ($apareceaviso == 1) { ?>
 		$('#avisoinbursa').prop('disabled',true);
@@ -1565,6 +1569,8 @@ if (mysql_num_rows($resPaquete) > 0) {
 						$('.frmAjaxModificar .frmContfechamodi').hide();
 						$('.frmAjaxModificar .frmContfechamodi').hide();
 						$('.frmAjaxModificar .frmContavisoinbursa').hide();
+
+						$('.frmAjaxModificar #monto').number( true, 2 ,'.','');
 
 						$('.frmAjaxModificar #fechapago').pickadate({
 							format: 'yyyy-mm-dd',

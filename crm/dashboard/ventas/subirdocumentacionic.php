@@ -509,7 +509,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumenta
 
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
-			url = "subirdocumentacioni.php?id=<?php echo $id; ?>" ;
+			url = "subirdocumentacionic.php?id=<?php echo $id; ?>" ;
 			$(location).attr('href',url);
 		});
 

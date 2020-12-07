@@ -9,6 +9,54 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+   /* PARA Etapacotizacion */
+
+   function insertarEtapacotizacion($etapacotizacion) {
+   $sql = "insert into tbetapacotizacion(idetapacotizacion,etapacotizacion)
+   values ('','".$etapacotizacion."')";
+   $res = $this->query($sql,1);
+   return $res;
+   }
+
+
+   function modificarEtapacotizacion($id,$etapacotizacion) {
+   $sql = "update tbetapacotizacion
+   set
+   etapacotizacion = '".$etapacotizacion."'
+   where idetapacotizacion =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function eliminarEtapacotizacion($id) {
+   $sql = "delete from tbetapacotizacion where idetapacotizacion =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function traerEtapacotizacion() {
+   $sql = "select
+   e.idetapacotizacion,
+   e.etapacotizacion
+   from tbetapacotizacion e
+   order by 1";
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function traerEtapacotizacionPorId($id) {
+   $sql = "select idetapacotizacion,etapacotizacion from tbetapacotizacion where idetapacotizacion =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: tbetapacotizacion*/
+
    function devolverEntidadNacimientoPorCURP($curp, $estado='') {
       $error = false;
 
@@ -5856,7 +5904,7 @@ return $res;
          inner join dbasesores ase on ase.idasesor = co.refasesores
          inner join dbusuarios usua ON usua.idusuario = ase.refusuarios
 			inner join dbclientes cli ON cli.idcliente = co.refclientes
-         inner join dbusuarios usu ON usu.idusuario = cli.refusuarios
+         left join dbusuarios usu ON usu.idusuario = cli.refusuarios
 			inner join tbproductos pro ON pro.idproducto = co.refproductos
          left join tbformapago fp on fp.idformapago = pvd.refformapago
       inner join tbestadopago tp ON tp.idestadopago = pvd.refestadopago

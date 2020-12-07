@@ -125,8 +125,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 /////////////// ver de las ventas  ////////////////////////////////////////////////////
 $tabla22 			= "dbventas";
 
-$lblCambio22	 	= array('refcotizaciones','primaneta','primatotal','porcentajecomision','montocomision','fechavencimientopoliza','nropoliza');
-$lblreemplazo22	= array('Venta','Prima Neta','Prima Total','% Comision','Monto Comision','Fecha Vencimiento de la Poliza','Nro Poliza');
+$lblCambio22	 	= array('refcotizaciones','primaneta','primatotal','porcentajecomision','montocomision','fechavencimientopoliza','nropoliza','fechapagoreal');
+$lblreemplazo22	= array('Venta','Prima Neta','Prima Total','% Comision','Monto Comision','Fecha Vencimiento de la Poliza','Nro Poliza','Fecha de Pago Real');
 
 $modificar22 = "modificarVentas";
 $idTabla22 = "idventa";
@@ -251,12 +251,12 @@ $formulario22 = $serviciosFunciones->camposTablaModificar($id, $idTabla22,$modif
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
-										<?php if ($stockMeses > 0) { ?>
+
 											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
 												<i class="material-icons">add</i>
 												<span>NUEVO</span>
 											</button>
-										<?php } ?>
+
 											<button type="button" class="btn bg-deep-orange waves-effect">
 												<i class="material-icons">build</i>
 												<span>FALTAN CARGAR <?php echo $stockMeses; ?></span>
@@ -412,6 +412,11 @@ $formulario22 = $serviciosFunciones->camposTablaModificar($id, $idTabla22,$modif
 <script>
 	$(document).ready(function(){
 
+		$('.frmContfechapagoreal').hide();
+		$('.frmContrefformapago').hide();
+
+		$('#refformapago').val(0);
+
 		$('.btnVolver').click(function() {
 			url = "index.php";
 			$(location).attr('href',url);
@@ -481,7 +486,7 @@ $formulario22 = $serviciosFunciones->camposTablaModificar($id, $idTabla22,$modif
 			"bProcessing": true,
 			"bServerSide": true,
 			"order": [[ 5, "asc" ]],
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=cobros&id=<?php echo $id; ?>",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=cobrosgeneracion&id=<?php echo $id; ?>",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",

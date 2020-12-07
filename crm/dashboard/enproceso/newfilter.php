@@ -2263,7 +2263,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 	            return form.valid();
 	        },
 	        onFinished: function (event, currentIndex) {
-	            modificarCotizacion(1);
+	            modificarCotizacion(4);
 	        }
 	    });
 
@@ -2443,7 +2443,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 					existeprimaobjetivo: $('#existeprimaobjetivo').val(),
 					primaobjetivo: $('#primaobjetivo').val(),
 					id: <?php echo $id; ?>,
-					estadoactual: 19,
+					estadoactual: 4,
 					fechaemitido: '<?php echo date('Y-m-d'); ?>',
 					fechapropuesta: '<?php echo date('Y-m-d'); ?>',
 					foliotys: '',

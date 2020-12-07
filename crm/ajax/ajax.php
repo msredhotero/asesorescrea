@@ -6916,12 +6916,10 @@ function modificarCotizaciones($serviciosReferencias) {
 
    if ($refestadocotizaciones == 12) {
 
+
+
       // modifico la cotizacion a la ultima etapa
       $resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',4,$usuariomodi);
-
-      $foliointerno = $serviciosReferencias->generaFolioInterno();
-      $resIV = $serviciosReferencias->insertarVentas($id,1,0,0,'','',date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$usuariomodi,$usuariomodi,$foliotys,$foliointerno,0,'',date('Y-m-d'));
-
 
       // generada la venta lo guardo en la cartera del cliente
       $resIC = $serviciosReferencias->insertarClientescartera($refclientes,$refproductos,$fechaemitido,'','1');
