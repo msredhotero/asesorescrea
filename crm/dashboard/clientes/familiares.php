@@ -40,15 +40,15 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Cliente";
+$singular = "Familiares";
 
-$plural = "Clientes";
+$plural = "Familiares";
 
-$eliminar = "eliminarClientes";
+$eliminar = "eliminarAsegurados";
 
-$insertar = "insertarClientes";
+$insertar = "insertarAsegurados";
 
-$modificar = "modificarClientes";
+$modificar = "modificarAsegurados";
 
 $id = $_GET['id'];
 
@@ -57,7 +57,7 @@ $id = $_GET['id'];
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbasegurados";
-/*
+
 
 
 $lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','emisioncomprobantedomicilio','emisionrfc','vencimientoine','idclienteinbursa','nroexterior','nrointerior','codigopostal','ine','rfc','curp');
@@ -71,7 +71,7 @@ $refdescripcion = array(0=>$cadRef8);
 $refCampo 	=  array('reftipopersonas');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
-*/
+
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 ?>

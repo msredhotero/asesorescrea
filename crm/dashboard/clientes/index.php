@@ -349,6 +349,12 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 <script>
 	$(document).ready(function(){
 
+		$('#fechacrea').val('20/02/2020');
+		$('#fechamodi').val('20/02/2020');
+		$('#usuariocrea').val('20/02/2020');
+		$('#usuariomodi').val('20/02/2020');
+
+
 		$('.frmContnumerocliente').hide();
 		$('.frmContrefusuarios').hide();
 
@@ -455,18 +461,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 		});
 
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '315px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
 
-		});
 
 		$("#example").on("click",'.btnDocumentacion', function(){
 			idTable =  $(this).attr("id");
