@@ -3809,6 +3809,7 @@ return $res;
       n.estilo,
       n.url
       from dbnotificaciones n
+      ".$where."
       ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
 
