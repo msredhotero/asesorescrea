@@ -3791,7 +3791,7 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " where n.mensaje like '%".$busqueda."%' or n.autor like '%".$busqueda."%' or n.destinatario like '%".$busqueda."%')";
+			$where = " where (n.mensaje like '%".$busqueda."%' or n.autor like '%".$busqueda."%' or n.destinatario like '%".$busqueda."%')";
 		}
 
       $sql = "select
