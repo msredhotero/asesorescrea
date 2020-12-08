@@ -174,9 +174,13 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
-											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
+											<button type="button" class="btn bg-teal waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
 												<i class="material-icons">add</i>
-												<span>NUEVO</span>
+												<span>CARGAR A PARTIR DE UNA COTIZACION</span>
+											</button>
+											<button type="button" class="btn bg-green waves-effect btnNuevoAux">
+												<i class="material-icons">add</i>
+												<span>CARGAR DIRECTAMENTE</span>
 											</button>
 											<button type="button" class="btn bg-light-blue waves-effect btnIniciada">
 												<i class="material-icons">alarm</i>
@@ -184,7 +188,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 											</button>
 											<button type="button" class="btn bg-blue waves-effect btnVigente">
 												<i class="material-icons">timeline</i>
-												<span>VIGENTE</span>
+												<span>ACTIVAS</span>
 											</button>
 											<button type="button" class="btn bg-grey waves-effect btnHistorico">
 												<i class="material-icons">history</i>
@@ -716,6 +720,10 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 
 		$("#sign_in").submit(function(e){
 			e.preventDefault();
+		});
+
+		$('.btnNuevoAux').click(function() {
+			$(location).attr('href','nuevo.php');
 		});
 
 		$("#example").on("click",'.btnVer', function(){

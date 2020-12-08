@@ -433,6 +433,14 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			$('#refesquemareclutamiento').val(5);
 			$('#sexo').val(1);
 			$('.frmContrazonsocial').show();
+			$("#razonsocial").prop('required',true);
+			$("#nombre").prop('required',false);
+			$("#apellidopaterno").prop('required',false);
+			$("#apellidomaterno").prop('required',false);
+			$('.frmContapellidomaterno label span').remove();
+			$('.frmContapellidopaterno label span').remove();
+			$('.frmContnombre label span').remove();
+
 
 		});
 
@@ -458,6 +466,19 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			$('#refesquemareclutamiento option[value="6"]').prop("disabled","true");
 			$('#refesquemareclutamiento').val(1);
 			$('.frmContrazonsocial').hide();
+
+			$("#razonsocial").prop('required',false);
+			$("#nombre").prop('required',true);
+			$("#apellidopaterno").prop('required',true);
+			$("#apellidomaterno").prop('required',true);
+			$('.frmContapellidomaterno label span').remove();
+			$('.frmContapellidopaterno label span').remove();
+			$('.frmContnombre label span').remove();
+
+			$('.frmContapellidomaterno label').append('<span style="color:red;">*</span>');
+			$('.frmContapellidopaterno label').append('<span style="color:red;">*</span>');
+			$('.frmContnombre label').append('<span style="color:red;">*</span>');
+
 
 		});
 

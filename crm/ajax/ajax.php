@@ -1304,9 +1304,85 @@ switch ($accion) {
    eliminarSiniestros($serviciosReferencias);
    break;
 
+   case 'insertarVentasCompleto':
+      insertarVentasCompleto($serviciosReferencias);
+   break;
+
 }
 /* FinFinFin */
 
+
+function insertarVentasCompleto($serviciosReferencias) {
+   session_start();
+
+   $refclientes = $_POST['refclientes'];
+   $refproductos = $_POST['refproductos'];
+   $refasesores = $_POST['refasesores'];
+   $refasociados = ($_POST['refasociados'] == '' ? 'NULL' : $_POST['refasociados']);
+   $refestadocotizaciones = 12;
+   $observaciones = $_POST['observaciones'];
+
+   $fechacrea = date('Y-m-d H:i:s');
+   $fechamodi = date('Y-m-d H:i:s');
+   $usuariocrea = $_SESSION['usua_sahilices'];
+   $usuariomodi = $_SESSION['usua_sahilices'];
+   $refusuarios = $_SESSION['usuaid_sahilices'];
+
+   $tiponegocio = $_POST['tiponegocio'];
+
+   if ($tiponegocio != 'Negocio nuevo') {
+      $fechavencimiento = $_POST['fechavencimiento'];
+      $coberturaactual = $_POST['coberturaactual'];
+   } else {
+      $fechavencimiento = '';
+      $coberturaactual = '';
+   }
+
+
+   $cobertura = $_POST['cobertura'];
+   $reasegurodirecto = $_POST['reasegurodirecto'];
+   $fecharenovacion = $_POST['fecharenovacion'];
+   $fechapropuesta = $fechacrea;
+
+   $presentacotizacion = $_POST['presentacotizacion'];
+   $fechaemitido = $fechacrea;
+
+   $existeprimaobjetivo = $_POST['existeprimaobjetivo'];
+   $primaobjetivo = ($_POST['primaobjetivo'] == '' ? 0 : $_POST['primaobjetivo']);
+
+   $primaneta = ($_POST['primaneta'] == '' ? 0 : $_POST['primaneta']);
+   $primatotal = ($_POST['primatotal'] == '' ? 0 : $_POST['primatotal']);
+   $fechavencimientopoliza = $_POST['fechavencimientopoliza'];
+   $nropoliza = $_POST['nropoliza'];
+   $foliotys = $_POST['foliotys'];
+   $foliointerno = $serviciosReferencias->generaFolioInterno();
+   $vigenciadesde = $_POST['vigenciadesde'];
+
+   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo);
+
+   if ((integer)$res > 0) {
+
+      $resModificarEST = $serviciosReferencias->modificarCotizacionesPorCampo($res,'refestados',4,$usuariomodi);
+
+      $tieneasegurado = $_POST['tieneasegurado'];
+      $refasegurados = $_POST['refasegurados'];
+
+      $resAsegurados = $serviciosReferencias->modificarCotizacionesAsegurado($res,$tieneasegurado,$refasegurados);
+
+      $refbeneficiarios = $_POST['refbeneficiarios'];
+      $resModificarBEN = $serviciosReferencias->modificarCotizacionesBeneficiario($res,$refbeneficiarios);
+
+      $resVenta = $serviciosReferencias->insertarVentas($res,6,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,0,0,1,$observaciones='',$vigenciadesde);
+
+
+
+      /**** fin cuestionario     ****/
+
+      echo $res;
+   } else {
+      echo 'Hubo un error al insertar datos ';
+   }
+}
 
 
 function insertarSiniestros($serviciosReferencias) {
