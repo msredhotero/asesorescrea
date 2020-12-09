@@ -1378,7 +1378,7 @@ function insertarVentasCompleto($serviciosReferencias) {
 
       /**** fin cuestionario     ****/
 
-      echo $res;
+      echo '';
    } else {
       echo 'Hubo un error al insertar datos ';
    }
