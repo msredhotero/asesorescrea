@@ -8918,7 +8918,7 @@ return $res;
       c.refestadocivil,
       c.reftipoidentificacion,
       c.nroidentificacion,
-      (case when reftipopersonas = 1 then concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) else c.razonsocial end) as nombrecompleto
+      (case when reftipopersonas = 1 then concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) else concat(c.razonsocial, ' - ', c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) end) as nombrecompleto
 		from dbclientesasesores c
 		inner join dbclientes cl ON cl.idcliente = c.refclientes
 		inner join dbasesores ase on ase.refusuarios = c.refasesores
@@ -16440,7 +16440,7 @@ return $res;
 		c.usuariocrea,
 		c.usuariomodi,
 		c.reftipopersonas,
-		(case when reftipopersonas = 1 then concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) else c.razonsocial end) as nombrecompleto
+		(case when reftipopersonas = 1 then concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) else concat(c.razonsocial, ' - ', c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) end) as nombrecompleto
 		from dbclientes c
 		inner join tbtipopersonas tip ON tip.idtipopersona = c.reftipopersonas
 		order by 1";
