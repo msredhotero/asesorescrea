@@ -99,7 +99,7 @@ if (isset($_GET['id'])) {
 				header('Location: archivos.php?id='.$id);
 			}
 		} else {
-			header('Location: archivos.php?id='.$id);
+			header('Location: modificar.php?id='.$id);
 		}
 	}
 
@@ -114,7 +114,7 @@ if (isset($_GET['id'])) {
 				header('Location: documentos.php?id='.$id);
 			}
 		} else {
-			header('Location: documentos.php?id='.$id);
+			header('Location: modificar.php?id='.$id);
 		}
 	}
 

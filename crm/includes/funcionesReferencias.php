@@ -11075,7 +11075,7 @@ return $res;
 	      c.tieneasegurado, c.refasegurados, c.refbeneficiarios, ec.estadocotizacion          ,c.folio,c.version,c.refcotizaciones, c.refestados, est.estado, est.color,c.primaneta,c.primatotal,
          pro.reftipodocumentaciones, cli.telefonocelular, cli.email, ase.email as emailasesor,
          ase.claveasesor, cli.refusuarios as idusuariocliente, ase.refusuarios as idusuarioasesor,
-         ase.envioalcliente
+         ase.envioalcliente, pro.consolicitud
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join dbasesores ase ON ase.idasesor = c.refasesores

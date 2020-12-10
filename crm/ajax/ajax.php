@@ -2170,7 +2170,7 @@ function verificarFirmasPendientes($serviciosReferencias) {
 
             $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',12,$_SESSION['usua_sahilices']);
 
-            $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',4,$_SESSION['usua_sahilices']);
+            $resEstado2 = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',4,$_SESSION['usua_sahilices']);
          } else {
             $resV['error'] = true;
             $resV['mensaje'] = 'Se genero un error al modificar los datos, vuelva a intentarlo '.$res;
@@ -2645,9 +2645,24 @@ function ineCargadoCotizacion($serviciosReferencias) {
    $reftipoidentificacion = $_POST['reftipoidentificacion'];
    $nroidentificacion = $_POST['nroidentificacion'];
 
-   $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',21,$_SESSION['usua_sahilices']);
-
    $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+
+   $idProducto = mysql_result($resCotizaciones,0,'refproductos');
+
+   $resProducto = $serviciosReferencias->traerProductosPorId($idProducto);
+
+   $consolicitud = mysql_result($resProducto,0,'consolicitud');
+
+   if ($consolicitud == '1') {
+      $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',21,$_SESSION['usua_sahilices']);
+   } else {
+      $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',12,$_SESSION['usua_sahilices']);
+
+      $resEstado2 = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',4,$_SESSION['usua_sahilices']);
+   }
+
+
+
 
    $idcliente = mysql_result($resCotizaciones,0,'refclientes');
 

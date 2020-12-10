@@ -75,7 +75,9 @@ $idcuestionario = mysql_result($resProducto,0,'refcuestionarios');
 
 $detalleProducto = mysql_result($resProducto,0,'detalle');
 
+$reftipoproductorama = mysql_result($resProducto,0,'reftipoproductorama');
 
+$consolicitud = mysql_result($resProducto,0,'consolicitud');
 
 if (mysql_result($resCotizaciones,0,'tieneasegurado') == '1') {
 	$resDatosSencibles = $serviciosReferencias->necesitoPreguntaSencibleAsegurado(mysql_result($resCotizaciones,0,'refasegurados'),$idcuestionario);
@@ -434,14 +436,16 @@ $resClientes = $serviciosReferencias->traerClientesPorId($idCliente);
 								 <a href="siap.php?id=13" class="bs-wizard-dot"></a>
 								 <div class="bs-wizard-info text-center">CARGA TUS DOCUMENTOS</div>
 							 </div>
-							 <div class="col-xs-6 bs-wizard-step disabled">
-								 <div class="text-center bs-wizard-stepnum">Paso 2</div>
-								 <div class="progress">
-									 <div class="progress-bar"></div>
+							 <?php if ($consolicitud == '1') { ?>
+								 <div class="col-xs-6 bs-wizard-step disabled">
+									 <div class="text-center bs-wizard-stepnum">Paso 2</div>
+									 <div class="progress">
+										 <div class="progress-bar"></div>
+									 </div>
+									 <a href="javascript:void(0)" class="bs-wizard-dot"></a>
+									 <div class="bs-wizard-info text-center">FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
 								 </div>
-								 <a href="javascript:void(0)" class="bs-wizard-dot"></a>
-								 <div class="bs-wizard-info text-center">FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
-							 </div>
+							 <?php } ?>
 						 </div>
 
 

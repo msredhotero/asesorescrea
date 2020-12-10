@@ -33,7 +33,7 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 
-/*
+
 
 $EM_Response= $_POST["EM_Response"];
 $EM_Total= $_POST["EM_Total"];
@@ -45,10 +45,11 @@ $EM_RefNum= $_POST["EM_RefNum"];
 $EM_Auth= $_POST["EM_Auth"];
 $EM_Digest= $_POST["EM_Digest"];
 
-*/
+
 
 $redireccionar = array('error'=> 0, 'url' => '');
 
+/*
 switch (trim(str_replace(' ','',$_POST['cc_number']))) {
 	case '5062541600005232':
 		$EM_Response= 'approved';
@@ -78,6 +79,8 @@ switch (trim(str_replace(' ','',$_POST['cc_number']))) {
 
 }
 
+
+
 if (!(isset($_POST["EM_RefNum"]))) {
 	$EM_RefNum= '123456789123';
 } else {
@@ -98,6 +101,8 @@ $EM_Store= $_POST["store"];
 $EM_Term= $_POST["term"];
 
 $EM_Digest= $_POST["digest"];
+
+*/
 
 
 //$newdigest  = sha1($_POST["EM_Total"].$_POST["EM_OrderID"].$_POST["EM_Merchant"].$_POST["EM_Store"].$_POST["EM_Term"].$_POST["EM_RefNum"]+"-"+$_POST["EM_Auth"]);
@@ -167,6 +172,14 @@ $precioTotal = mysql_result($resCotizaciones,0,'primatotal');
 $lblCliente = mysql_result($resCotizaciones,0,'clientesolo');
 
 $idusuariocliente  = mysql_result($resCotizaciones,0,'idusuariocliente');
+
+$idProducto = mysql_result($resCotizaciones,0,'refproductos');
+
+$resProducto = $serviciosReferencias->traerProductosPorId($idProducto);
+
+$reftipoproductorama = mysql_result($resProducto,0,'reftipoproductorama');
+
+$consolicitud = mysql_result($resProducto,0,'consolicitud');
 
 $resUsuario = $serviciosUsuario->traerUsuarioId($idusuariocliente);
 
@@ -362,6 +375,7 @@ if (!isset($_SESSION['usua_sahilices']))
 										<a href="siap.php?id=13" class="bs-wizard-dot"></a>
 										<div class="bs-wizard-info text-center">CARGA TUS DOCUMENTOS</div>
 									</div>
+								<?php if ($consolicitud == '1') { ?>
 									<div class="col-xs-6 bs-wizard-step disabled">
 										<div class="text-center bs-wizard-stepnum">Paso 2</div>
 										<div class="progress">
@@ -370,6 +384,7 @@ if (!isset($_SESSION['usua_sahilices']))
 										<a href="javascript:void(0)" class="bs-wizard-dot"></a>
 										<div class="bs-wizard-info text-center">FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
 									</div>
+								<?php } ?>
 
 
 								</div>
@@ -386,7 +401,11 @@ if (!isset($_SESSION['usua_sahilices']))
 
 								<?php if ($instanciaDelError != 3) { ?>
 
-									<form action="8407825_asesorescrea.php" method="post" id="formFin">
+									<?php if ($reftipoproductorama == 12) { ?>
+										<form action="https://www.procom.prosa.com.mx/eMerch2/8418704_OperMedicaVrim.jsp" method="post" id="formFin">
+									<?php } else { ?>
+										<form action="https://www.procom.prosa.com.mx/eMerch2/8407825_SegInbursa.jsp" method="post" id="formFin">
+									<?php } ?>
 					               <input type="hidden" name="total" value="<?php echo $EM_Total; ?>">
 					               <input type="hidden" name="currency" value="<?php echo '484'; ?>">
 					               <input type="hidden" name="address" value="<?php echo ''; ?>">
@@ -396,7 +415,7 @@ if (!isset($_SESSION['usua_sahilices']))
 					               <input type="hidden" name="term" value="<?php echo $EM_Term; ?>">
 					               <input type="hidden" name="digest" value="<?php echo $newdigest; ?>">
 					               <input type="hidden" name="return_target" value="">
-					               <input type="hidden" name="urlBack" value="../pay/comercio_con.php">
+					               <input type="hidden" name="urlBack" value="https://asesorescrea.com/desarrollo/crm/dashboard/venta/comercio_con.php">
 										<div class="row">
 										<div class="col-xs-1"></div>
 					               <div class="col-xs-5">

@@ -73,6 +73,10 @@ $idcuestionario = mysql_result($resProducto,0,'refcuestionarios');
 
 $detalleProducto = mysql_result($resProducto,0,'detalle');
 
+$reftipoproductorama = mysql_result($resProducto,0,'reftipoproductorama');
+
+$consolicitud = mysql_result($resProducto,0,'consolicitud');
+
 
 if (mysql_num_rows($resCotizaciones)>0) {
 	$precio = mysql_result($resCotizaciones,0,'primatotal');
@@ -210,6 +214,10 @@ if ($refEstadoCotizacion == 22) {
 			border: 10px solid rgba(0,0,0,.2);
 			margin: 0;
 		}
+
+		.progress {
+			background-color: #1b2646;
+		}
 	</style>
 
 
@@ -267,8 +275,32 @@ if ($refEstadoCotizacion == 22) {
 		            <h4 class="my-0 font-weight-normal">Resumen del Pedido: <?php echo mysql_result($resultado,0,'producto'); ?></h4>
 		          </div>
 		          <div class="body table-responsive">
+
 						 <div class="text-center">
 							 <h1 class="display-4">¡Suba su comprobante de pago para ser validado por el area de cobranza!</h1>
+						 </div>
+
+
+						 <div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
+							 <div class="col-xs-6 bs-wizard-step disabled">
+								 <div class="text-center bs-wizard-stepnum">Paso 1</div>
+								 <div class="progress">
+									 <div class="progress-bar"></div>
+								 </div>
+								 <a href="siap.php?id=13" class="bs-wizard-dot"></a>
+								 <div class="bs-wizard-info text-center">CARGA TUS DOCUMENTOS</div>
+							 </div>
+						 <?php if ($consolicitud == '1') { ?>
+							 <div class="col-xs-6 bs-wizard-step disabled">
+								 <div class="text-center bs-wizard-stepnum">Paso 2</div>
+								 <div class="progress">
+									 <div class="progress-bar"></div>
+								 </div>
+								 <a href="javascript:void(0)" class="bs-wizard-dot"></a>
+								 <div class="bs-wizard-info text-center">FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
+							 </div>
+						 <?php } ?>
+
 
 						 </div>
 
