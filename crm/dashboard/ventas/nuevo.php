@@ -64,11 +64,11 @@ $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
 if ($_SESSION['idroll_sahilices'] == 7) {
 	$resVar2	= $serviciosReferencias->traerClientesasesoresPorAsesor($_SESSION['usuaid_sahilices']);
 } else {
-	$resVar2	= $serviciosReferencias->traerClientes();
+	$resVar2	= $serviciosReferencias->traerClientesAux();
 }
 
 if (mysql_num_rows($resVar2) > 0) {
-	$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(3,4,2),' ');
+	$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(19),' ');
 } else {
 	$cadRef2 = "<option value='0'>-- No cargo ningun cliente aun --</option>";
 }

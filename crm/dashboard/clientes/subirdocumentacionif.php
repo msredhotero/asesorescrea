@@ -33,7 +33,7 @@ $fecha = date('Y-m-d');
 $id = $_GET['id'];
 $resultado 		= 	$serviciosReferencias->traerAseguradosPorId($id);
 
-
+$idcliente = mysql_result($resultado,0,'refclientes');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
 $resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Clientes",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
@@ -618,7 +618,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorFamiliarDocume
 		<?php } ?>
 
 		$('.btnVolver').click(function() {
-			url = "index.php";
+			url = "familiares.php?id=<?php echo $idcliente; ?>";
 			$(location).attr('href',url);
 		});
 
@@ -812,7 +812,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorFamiliarDocume
 					swal("Correcto!", resp.replace("1", ""), "success");
 					$('.btnGuardar').show();
 					$('.infoPlanilla').hide();
-					//location.reload();
+					location.reload();
 				});
 
 				this.on('error', function( file, resp ){

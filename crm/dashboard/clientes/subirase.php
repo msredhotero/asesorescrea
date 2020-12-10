@@ -96,7 +96,7 @@
 
 			$resEliminar = $serviciosReferencias->eliminarDocumentacionfamiliaresPorFamiliarDocumentacion($id,$iddocumentacion);
 
-			$resInsertar = $serviciosReferencias->insertarDocumentacionfamiliares($id,$iddocumentacion,$newname,$type,1,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices']);
+			$resInsertar = $serviciosReferencias->insertarDocumentacionfamiliares($id,$iddocumentacion,$newname,$type,5,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices']);
 
 			/**** creo la notificacion ******/
 			$emailReferente = 'ruth-arana@asesorescrea.com'; //por ahora fijo

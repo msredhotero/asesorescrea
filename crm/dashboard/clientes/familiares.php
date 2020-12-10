@@ -60,15 +60,29 @@ $tabla 			= "dbasegurados";
 
 
 
-$lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','emisioncomprobantedomicilio','emisionrfc','vencimientoine','idclienteinbursa','nroexterior','nrointerior','codigopostal','ine','rfc','curp');
-$lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social','Fecha Emision Compr. Domicilio','Fecha Emision RFC','Vencimiento INE','ID Cliente Inbursa','Nro Exterior','Nro Interior','Cod. Postal','INE','RFC','CURP');
+$lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','emisioncomprobantedomicilio','emisionrfc','vencimientoine','idclienteinbursa','nroexterior','nrointerior','codigopostal','ine','rfc','curp','reftipoparentesco','refclientes','refestadocivil','nroidentificacion','reftipoidentificacion');
+$lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social','Fecha Emision Compr. Domicilio','Fecha Emision RFC','Vencimiento INE','ID Cliente Inbursa','Nro Exterior','Nro Interior','Cod. Postal','INE','RFC','CURP','Tipo de Parentesco','Titular','Estado Civil','No. Identificación','Tipo de Identificación');
 
 
-$resVar8 = $serviciosReferencias->traerTipopersonas();
-$cadRef8 = $serviciosFunciones->devolverSelectBox($resVar8,array(1),'');
+$resVar1 = $serviciosReferencias->traerTipopersonas();
+$cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 
-$refdescripcion = array(0=>$cadRef8);
-$refCampo 	=  array('reftipopersonas');
+$resVar2 = $serviciosReferencias->traerEstadoCivil();
+$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),'');
+
+$cadRef3 = "<option value='Femenino'>Femenino</option><option value='Masculino'>Masculino</option>";
+
+$resVar4 = $serviciosReferencias->traerTipoidentificacion();
+$cadRef4 = $serviciosFunciones->devolverSelectBox($resVar4,array(1),'');
+
+$resVar5 = $serviciosReferencias->traerTipoparentesco();
+$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(1),'');
+
+$resVar6 = $serviciosReferencias->traerClientesPorIdCompleto($id);
+$cadRef6 = $serviciosFunciones->devolverSelectBox($resVar6,array(3,4,2),' ');
+
+$refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef4,4=>$cadRef5,5=>$cadRef6);
+$refCampo 	=  array('reftipopersonas','refestadocivil','genero','reftipoidentificacion','reftipoparentesco','refclientes');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
@@ -104,14 +118,36 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	<link rel="stylesheet" type="text/css" href="../../css/classic.css"/>
 	<link rel="stylesheet" type="text/css" href="../../css/classic.date.css"/>
 
+	<!-- CSS file -->
+	<link rel="stylesheet" href="../../css/easy-autocomplete.min.css">
+	<!-- Additional CSS Themes file - not required-->
+	<link rel="stylesheet" href="../../css/easy-autocomplete.themes.min.css">
+
 
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.bootstrap.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.jqueryui.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.css">
 
+	<link rel="stylesheet" href="../../css/materialDateTimePicker.css">
+
 	<style>
 		.alert > i{ vertical-align: middle !important; }
+		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
+		.codigopostal { width: 400px; }
+
+		.ui-autocomplete { position: absolute; cursor: default;z-index:30 !important;}
+
+		.sectionC {
+			height:360px;
+			z-index:1 !important;
+		}
+
+		@media (min-width: 1200px) {
+		   .modal-xlg {
+		      width: 90%;
+		   }
+		}
 	</style>
 
 
@@ -211,7 +247,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Ape. Materno</th>
 												<th>Nombre</th>
 												<th>RFC</th>
-												<th>INE</th>
+												<th>No.Identificación</th>
 												<th>CURP</th>
 												<th>Fecha Nacimiento</th>
 												<th>Parentesco</th>
@@ -225,7 +261,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Ape. Materno</th>
 												<th>Nombre</th>
 												<th>RFC</th>
-												<th>INE</th>
+												<th>No.Identificación</th>
 												<th>CURP</th>
 												<th>Fecha Nacimiento</th>
 												<th>Parentesco</th>
@@ -246,7 +282,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 
 <!-- NUEVO -->
-	<form class="formulario" role="form" id="sign_in">
+	<form class="formulario frmNuevo" role="form" id="sign_in">
 	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
 	       <div class="modal-dialog modal-lg" role="document">
 	           <div class="modal-content">
@@ -270,7 +306,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	</form>
 
 	<!-- MODIFICAR -->
-		<form class="formulario" role="form" id="sign_in">
+		<form class="formulario frmModificar" role="form" id="sign_in">
 		   <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
 		       <div class="modal-dialog modal-lg" role="document">
 		           <div class="modal-content">
@@ -283,7 +319,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 								</div>
 		               </div>
 		               <div class="modal-footer">
-		                   <button type="button" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
+		                   <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
 		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
 		               </div>
 		           </div>
@@ -341,14 +377,122 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
     <script src="../../plugins/momentjs/moment.js"></script>
 	 <script src="../../js/moment-with-locales.js"></script>
 
+<script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
+
+<script src="../../js/materialDateTimePicker.js"></script>
+
+<script src="../../js/jquery.easy-autocomplete.min.js"></script>
+
 
 <script>
 	$(document).ready(function(){
 
+
+		var options2 = {
+
+			url: "../../json/jsbuscarpostal.php",
+
+			getValue: function(element) {
+				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					busqueda: $("#codigopostal").val()
+				}
+			},
+
+			preparePostData: function (data) {
+				data.busqueda = $("#codigopostal").val();
+				return data;
+			},
+
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $("#codigopostal").getSelectedItemData().codigo;
+					$("#codigopostal").val(value);
+					$("#municipio").val($("#codigopostal").getSelectedItemData().municipio);
+					$("#estado").val($("#codigopostal").getSelectedItemData().estado);
+					$("#colonia").val($("#codigopostal").getSelectedItemData().colonia);
+
+
+				}
+			}
+		};
+
+		$("#codigopostal").easyAutocomplete(options2);
+
+		var optionsMod = {
+
+			url: "../../json/jsbuscarpostal.php",
+
+			getValue: function(element) {
+				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					busqueda: $(".frmAjaxModificar #codigopostal2").val()
+				}
+			},
+
+			preparePostData: function (data) {
+				data.busqueda = $(".frmAjaxModificar #codigopostal2").val();
+				return data;
+			},
+
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $(".frmAjaxModificar #codigopostal2").getSelectedItemData().codigo;
+					$(".frmAjaxModificar #codigopostal2").val(value);
+					$(".frmAjaxModificar #municipio").val($(".frmAjaxModificar #codigopostal2").getSelectedItemData().municipio);
+					$(".frmAjaxModificar #estado").val($(".frmAjaxModificar #codigopostal2").getSelectedItemData().estado);
+					$(".frmAjaxModificar #colonia").val($(".frmAjaxModificar #codigopostal2").getSelectedItemData().colonia);
+
+
+				}
+			}
+		};
+
+		$('#fechacrea').val('20/02/2020');
+		$('#fechamodi').val('20/02/2020');
+		$('#usuariocrea').val('20/02/2020');
+		$('#usuariomodi').val('20/02/2020');
+
 		$('.frmContnumerocliente').hide();
 		$('.frmContrefusuarios').hide();
 
+		$('#reftipoparentesco').change(function() {
+			if ($(this).val() == 4) {
+				$('.frmContparentesco').show();
+				$("#parentesco").prop('required',true);
+			} else {
+				$('.frmContparentesco').hide();
+				$("#parentesco").prop('required',false);
+			}
+		});
+
 		$("#numerocliente").prop('readonly',true);
+
+		$('#fechanacimiento').bootstrapMaterialDatePicker({
+			format: 'YYYY-MM-DD',
+			lang : 'es',
+			clearButton: true,
+			weekStart: 1,
+			time: false
+		});
 
 		$('#emisioncomprobantedomicilio').pickadate({
  			format: 'yyyy-mm-dd',
@@ -423,6 +567,13 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			$('#refesquemareclutamiento').val(5);
 			$('#sexo').val(1);
 			$('.frmContrazonsocial').show();
+			$("#razonsocial").prop('required',true);
+			$("#nombre").prop('required',false);
+			$("#apellidopaterno").prop('required',false);
+			$("#apellidomaterno").prop('required',false);
+			$('.frmContapellidomaterno label span').remove();
+			$('.frmContapellidopaterno label span').remove();
+			$('.frmContnombre label span').remove();
 
 		});
 
@@ -449,20 +600,25 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			$('#refesquemareclutamiento').val(1);
 			$('.frmContrazonsocial').hide();
 
+			$("#razonsocial").prop('required',false);
+			$("#nombre").prop('required',true);
+			$("#apellidopaterno").prop('required',true);
+			$("#apellidomaterno").prop('required',true);
+			$('.frmContapellidomaterno label span').remove();
+			$('.frmContapellidopaterno label span').remove();
+			$('.frmContnombre label span').remove();
+
+			$('#apellidopaterno-error').remove();
+			$('#apellidomaterno-error').remove();
+			$('#nombre-error').remove();
+
+			$('.frmContapellidomaterno label').append('<span style="color:red;">*</span>');
+			$('.frmContapellidopaterno label').append('<span style="color:red;">*</span>');
+			$('.frmContnombre label').append('<span style="color:red;">*</span>');
+
 		});
 
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '315px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
 
-		});
 
 		$("#example").on("click",'.btnDocumentos', function(){
 			idTable =  $(this).attr("id");
@@ -505,6 +661,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 		$('#activo').prop('checked',true);
 
+		$('#telefonofijo').inputmask('999 9999999', { placeholder: '___ _______' });
+		$('#telefonocelular').inputmask('999 9999999', { placeholder: '___ _______' });
+
 		function frmAjaxModificar(id) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
@@ -522,9 +681,33 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 					if (data != '') {
 						$('.frmAjaxModificar').html(data);
 
+						$(".frmAjaxModificar .frmContcodigopostal input").removeAttr("id");
+   					$(".frmAjaxModificar .frmContcodigopostal input").attr("id","codigopostal2");
+
+						$(".frmAjaxModificar #codigopostal2").easyAutocomplete(optionsMod);
+
 						$(".frmAjaxModificar #numerocliente").prop('readonly',true);
 
+						$('.frmAjaxModificar #telefonofijo').inputmask('999 9999999', { placeholder: '___ _______' });
+						$('.frmAjaxModificar #telefonocelular').inputmask('999 9999999', { placeholder: '___ _______' });
 
+						$(".frmAjaxModificar #nombre").prop('required',false);
+						$(".frmAjaxModificar #apellidopaterno").prop('required',false);
+						$(".frmAjaxModificar #apellidomaterno").prop('required',false);
+						$('.frmAjaxModificar .frmContapellidomaterno label span').remove();
+						$('.frmAjaxModificar .frmContapellidopaterno label span').remove();
+						$('.frmAjaxModificar .frmContnombre label span').remove();
+
+						$('.frmContnumerocliente').hide();
+						$('.frmContrefusuarios').hide();
+
+						$('.frmAjaxModificar #fechanacimiento').bootstrapMaterialDatePicker({
+							format: 'YYYY-MM-DD',
+							lang : 'es',
+							clearButton: true,
+							weekStart: 1,
+							time: false
+						});
 
 						$('.frmAjaxModificar #emisioncomprobantedomicilio').pickadate({
 				 			format: 'yyyy-mm-dd',
@@ -664,114 +847,124 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 		});//fin del boton modificar
 
-		$('.nuevo').click(function(){
+		$('.frmNuevo').submit(function(e){
 
-			//información del formulario
-			var formData = new FormData($(".formulario")[0]);
-			var message = "";
-			//hacemos la petición ajax
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: formData,
-				//necesario para subir archivos via ajax
-				cache: false,
-				contentType: false,
-				processData: false,
-				//mientras enviamos el archivo
-				beforeSend: function(){
+			e.preventDefault();
+			if ($('#sign_in')[0].checkValidity()) {
+				//información del formulario
+				var formData = new FormData($(".formulario")[0]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
 
-				},
-				//una vez finalizado correctamente
-				success: function(data){
+					},
+					//una vez finalizado correctamente
+					success: function(data){
 
-					if (data == '') {
-						swal({
-								title: "Respuesta",
-								text: "Registro Creado con exito!!",
-								type: "success",
-								timer: 1500,
-								showConfirmButton: false
-						});
+						if (data.error == false) {
+							swal({
+									title: "Respuesta",
+									text: "Registro Creado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
 
-						$('#lgmNuevo').modal('hide');
-						$('#unidadnegocio').val('');
-						table.ajax.reload();
-					} else {
-						swal({
-								title: "Respuesta",
-								text: data,
-								type: "error",
-								timer: 2500,
-								showConfirmButton: false
-						});
+							$('#lgmNuevo').modal('hide');
+							$('#unidadnegocio').val('');
+							table.ajax.reload();
+
+							$('.frmNuevo input').val('');
+
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
 
 
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
 					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
+				});
+			}
 		});
 
 
-		$('.modificar').click(function(){
+		$('.frmModificar').submit(function(e){
 
-			//información del formulario
-			var formData = new FormData($(".formulario")[1]);
-			var message = "";
-			//hacemos la petición ajax
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: formData,
-				//necesario para subir archivos via ajax
-				cache: false,
-				contentType: false,
-				processData: false,
-				//mientras enviamos el archivo
-				beforeSend: function(){
+			e.preventDefault();
+			if ($('.frmModificar')[0].checkValidity()) {
 
-				},
-				//una vez finalizado correctamente
-				success: function(data){
+				//información del formulario
+				var formData = new FormData($(".formulario")[1]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
 
-					if (data == '') {
-						swal({
-								title: "Respuesta",
-								text: "Registro Modificado con exito!!",
-								type: "success",
-								timer: 1500,
-								showConfirmButton: false
-						});
+					},
+					//una vez finalizado correctamente
+					success: function(data){
 
-						$('#lgmModificar').modal('hide');
-						table.ajax.reload();
-					} else {
-						swal({
-								title: "Respuesta",
-								text: data,
-								type: "error",
-								timer: 2500,
-								showConfirmButton: false
-						});
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Modificado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
+
+							$('#lgmModificar').modal('hide');
+							table.ajax.reload();
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
 
 
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
 					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
+				});
+			}
 		});
 	});
 </script>

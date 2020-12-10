@@ -3930,6 +3930,8 @@ function insertarAsegurados($serviciosReferencias) {
 }
 
 function modificarAsegurados($serviciosReferencias) {
+   session_start();
+
    $id = $_POST['id'];
    $nombre = $_POST['nombre'];
    $apellidopaterno = $_POST['apellidopaterno'];
@@ -3973,7 +3975,8 @@ function modificarAsegurados($serviciosReferencias) {
    $reftipoidentificacion = $_POST['reftipoidentificacion'];
    $nroidentificacion = $_POST['nroidentificacion'];
 
-   $res = $serviciosReferencias->modificarAsegurados($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco,$parentesco,$genero, $refestadocivil,$reftipoidentificacion,$nroidentificacion);
+   $res = $serviciosReferencias->modificarAsegurados($id,$reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechamodi,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco,$fechanacimiento,$parentesco,$genero, $refestadocivil,$reftipoidentificacion,$nroidentificacion);
+
 
    if ($res == true) {
       echo '';
@@ -8585,6 +8588,42 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+      case 'dbasegurados':
+         $resultado = $serviciosReferencias->traerAseguradosPorId( $id);
+
+         $modificar = "modificarAsegurados";
+         $idTabla = "idasegurado";
+
+
+         $lblCambio	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial','emisioncomprobantedomicilio','emisionrfc','vencimientoine','idclienteinbursa','nroexterior','nrointerior','codigopostal','ine','rfc','curp','reftipoparentesco','refclientes','refestadocivil','nroidentificacion','reftipoidentificacion');
+         $lblreemplazo	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social','Fecha Emision Compr. Domicilio','Fecha Emision RFC','Vencimiento INE','ID Cliente Inbursa','Nro Exterior','Nro Interior','Cod. Postal','INE','RFC','CURP','Tipo de Parentesco','Titular','Estado Civil','No. Identificación','Tipo de Identificación');
+
+         $resVar1 = $serviciosReferencias->traerTipopersonas();
+         $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),'',mysql_result($resultado,0,'reftipopersonas'));
+
+         $resVar2 = $serviciosReferencias->traerEstadoCivil();
+         $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),'',mysql_result($resultado,0,'refestadocivil'));
+
+         if (mysql_result($resultado,0,'genero') == '1') {
+            $cadRef3 = "<option value='Femenino'>Femenino</option><option value='Masculino'>Masculino</option>";
+         } else {
+            $cadRef3 = "<option value='Femenino'>Femenino</option><option value='Masculino'>Masculino</option>";
+         }
+
+         $resVar4 = $serviciosReferencias->traerTipoidentificacion();
+         $cadRef4 = $serviciosFunciones->devolverSelectBoxActivo($resVar4,array(1),'',mysql_result($resultado,0,'reftipoidentificacion'));
+
+         $resVar5 = $serviciosReferencias->traerTipoparentesco();
+         $cadRef5 = $serviciosFunciones->devolverSelectBoxActivo($resVar5,array(1),'',mysql_result($resultado,0,'reftipoparentesco'));
+
+         $resVar6 = $serviciosReferencias->traerClientesPorIdCompleto(mysql_result($resultado,0,'refclientes'));
+         $cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(3,4,2),' ',mysql_result($resultado,0,'refclientes'));
+
+
+         $refdescripcion = array(0=>$cadRef1,1=>$cadRef2,2=>$cadRef3,3=>$cadRef4,4=>$cadRef5,5=>$cadRef6);
+         $refCampo 	=  array('reftipopersonas','refestadocivil','genero','reftipoidentificacion','reftipoparentesco','refclientes');
+
+      break;
       case 'dbperiodicidadventaspagos':
          $resultado = $serviciosReferencias->traerPeriodicidadventaspagosPorId( $id);
 

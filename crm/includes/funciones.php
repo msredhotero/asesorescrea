@@ -1341,7 +1341,7 @@ class Servicios {
 				$ocultar = array("usuariomodi","fechacrea","fechamodi","usuariocrea","usuariomodi","cantidadarchivos",'carpeta');
 			break;
 			default:
-				$ocultar = array();
+				$ocultar = array("usuariomodi","fechacrea","fechamodi","usuariocrea");
 				break;
 
 		}

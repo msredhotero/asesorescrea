@@ -213,7 +213,7 @@ switch ($tabla) {
 
 		$label = array('btnModificar','btnDocumentos');
 		$class = array('bg-amber','bg-green');
-		$icon = array('search','photo');
+		$icon = array('edit','photo');
 
 
 		$indiceID = 0;

@@ -114,8 +114,30 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.jqueryui.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.css">
 
+	<link rel="stylesheet" href="../../css/materialDateTimePicker.css">
+
+	<!-- CSS file -->
+	<link rel="stylesheet" href="../../css/easy-autocomplete.min.css">
+	<!-- Additional CSS Themes file - not required-->
+	<link rel="stylesheet" href="../../css/easy-autocomplete.themes.min.css">
+
 	<style>
 		.alert > i{ vertical-align: middle !important; }
+		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
+		.codigopostal { width: 400px; }
+
+		.ui-autocomplete { position: absolute; cursor: default;z-index:30 !important;}
+
+		.sectionC {
+			height:360px;
+			z-index:1 !important;
+		}
+
+		@media (min-width: 1200px) {
+		   .modal-xlg {
+		      width: 90%;
+		   }
+		}
 	</style>
 
 
@@ -287,7 +309,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 								</div>
 		               </div>
 		               <div class="modal-footer">
-		                   <button type="button" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
+		                   <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
 		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
 		               </div>
 		           </div>
@@ -345,9 +367,105 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
     <script src="../../plugins/momentjs/moment.js"></script>
 	 <script src="../../js/moment-with-locales.js"></script>
 
+<script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
+
+<script src="../../js/materialDateTimePicker.js"></script>
+
+<script src="../../js/jquery.easy-autocomplete.min.js"></script>
+
 
 <script>
 	$(document).ready(function(){
+
+		var options2 = {
+
+			url: "../../json/jsbuscarpostal.php",
+
+			getValue: function(element) {
+				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					busqueda: $(".frmNuevo #codigopostal").val()
+				}
+			},
+
+			preparePostData: function (data) {
+				data.busqueda = $(".frmNuevo #codigopostal").val();
+				return data;
+			},
+
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $(".frmNuevo #codigopostal").getSelectedItemData().codigo;
+					$(".frmNuevo #codigopostal").val(value);
+					$(".frmNuevo #municipio").val($(".frmNuevo #codigopostal").getSelectedItemData().municipio);
+					$(".frmNuevo #estado").val($(".frmNuevo #codigopostal").getSelectedItemData().estado);
+					$(".frmNuevo #colonia").val($(".frmNuevo #codigopostal").getSelectedItemData().colonia);
+
+
+				}
+			}
+		};
+
+
+		var optionsMod = {
+
+			url: "../../json/jsbuscarpostal.php",
+
+			getValue: function(element) {
+				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					busqueda: $(".frmAjaxModificar #codigopostal2").val()
+				}
+			},
+
+			preparePostData: function (data) {
+				data.busqueda = $(".frmAjaxModificar #codigopostal2").val();
+				return data;
+			},
+
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $(".frmAjaxModificar #codigopostal2").getSelectedItemData().codigo;
+					$(".frmAjaxModificar #codigopostal2").val(value);
+					$(".frmAjaxModificar #municipio").val($(".frmAjaxModificar #codigopostal2").getSelectedItemData().municipio);
+					$(".frmAjaxModificar #estado").val($(".frmAjaxModificar #codigopostal2").getSelectedItemData().estado);
+					$(".frmAjaxModificar #colonia").val($(".frmAjaxModificar #codigopostal2").getSelectedItemData().colonia);
+
+
+				}
+			}
+		};
+
+		$("#codigopostal").easyAutocomplete(options2);
+
+		$('#fechanacimiento').bootstrapMaterialDatePicker({
+			format: 'YYYY-MM-DD',
+			lang : 'es',
+			clearButton: true,
+			weekStart: 1,
+			time: false
+		});
+
+		$('#telefonofijo').inputmask('999 9999999', { placeholder: '___ _______' });
+		$('#telefonocelular').inputmask('999 9999999', { placeholder: '___ _______' });
 
 		$('#fechacrea').val('20/02/2020');
 		$('#fechamodi').val('20/02/2020');
@@ -440,6 +558,10 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 			$('.frmContapellidomaterno label span').remove();
 			$('.frmContapellidopaterno label span').remove();
 			$('.frmContnombre label span').remove();
+
+			$('#apellidopaterno-error').remove();
+			$('#apellidomaterno-error').remove();
+			$('#nombre-error').remove();
 
 
 		});
@@ -548,11 +670,33 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 				success: function(data){
 
 					if (data != '') {
+
 						$('.frmAjaxModificar').html(data);
+
+						$(".frmAjaxModificar .frmContcodigopostal input").removeAttr("id");
+   					$(".frmAjaxModificar .frmContcodigopostal input").attr("id","codigopostal2");
 
 						$(".frmAjaxModificar #numerocliente").prop('readonly',true);
 
+						$('.frmAjaxModificar #telefonofijo').inputmask('999 9999999', { placeholder: '___ _______' });
+						$('.frmAjaxModificar #telefonocelular').inputmask('999 9999999', { placeholder: '___ _______' });
 
+						$(".frmAjaxModificar #nombre").prop('required',false);
+						$(".frmAjaxModificar #apellidopaterno").prop('required',false);
+						$(".frmAjaxModificar #apellidomaterno").prop('required',false);
+						$('.frmAjaxModificar .frmContapellidomaterno label span').remove();
+						$('.frmAjaxModificar .frmContapellidopaterno label span').remove();
+						$('.frmAjaxModificar .frmContnombre label span').remove();
+
+						$(".frmAjaxModificar #codigopostal2").easyAutocomplete(optionsMod);
+
+						$('.frmAjaxModificar #fechanacimiento').bootstrapMaterialDatePicker({
+							format: 'YYYY-MM-DD',
+							lang : 'es',
+							clearButton: true,
+							weekStart: 1,
+							time: false
+						});
 
 						$('.frmAjaxModificar #emisioncomprobantedomicilio').pickadate({
 				 			format: 'yyyy-mm-dd',

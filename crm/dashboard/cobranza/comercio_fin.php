@@ -77,11 +77,14 @@ $resCotizaciones = $serviciosReferencias->traerPeriodicidadventasdetallePorIdCom
 $lblCliente = mysql_result($resCotizaciones,0,'clientesolo');
 
 if (mysql_result($resCotizaciones,0,'refproductosaux') == 0) {
-	$lblProducto =mysql_result($resCotizaciones,0,'producto');
+	$lblProducto = mysql_result($resCotizaciones,0,'producto');
+	$resProducto = $serviciosReferencias->traerProductosPorId(mysql_result($resCotizaciones,0,'refproductos'));
 } else {
 	$resProducto = $serviciosReferencias->traerProductosPorId(mysql_result($resCotizaciones,0,'refproductosaux'));
 	$lblProducto =mysql_result($resProducto,0,'producto');
 }
+
+$reftipoproductorama = mysql_result($resProducto,0,'reftipoproductorama');
 
 if (mysql_num_rows($resCotizaciones)>0) {
 	//$precio = mysql_result($resCotizaciones,0,'precio');
@@ -105,8 +108,15 @@ $comcurrency = '484';
 $comaddress = '';
 //el id de la cotizacion
 $comorder_id = $idorder;
-//numero proporcionado por el banco
-$commerchant = '8407825';
+
+if ($reftipoproductorama == 12) {
+	// VRIM
+	//numero proporcionado por el banco
+	$commerchant = '8418704';
+} else {
+	//numero proporcionado por el banco
+	$commerchant = '8407825';
+}
 //siempre va lo mismo
 $comstore = '0123';
 //siempre va lo mismo
@@ -264,8 +274,12 @@ if (mysql_num_rows($existeComercio) > 0) {
 			               <li class="list-inline-item"><img src="../../imagenes/mastercard.png" width="90" height="63"></li>
 
 			            </ul>
-			            <form action="8407825_asesorescrea.php" method="post" id="formFin">
-							<!--<form action="https://www.procom.prosa.com.mx/eMerch2/8407825_SegInbursa.jsp" method="post" id="formFin">-->
+							<!--<form action="8407825_asesorescrea.php" method="post" id="formFin">-->
+							<?php if ($reftipoproductorama == 12) { ?>
+								<form action="https://www.procom.prosa.com.mx/eMerch2/8418704_OperMedicaVrim.jsp" method="post" id="formFin">
+							<?php } else { ?>
+								<form action="https://www.procom.prosa.com.mx/eMerch2/8407825_SegInbursa.jsp" method="post" id="formFin">
+							<?php } ?>
 			               <input type="hidden" name="total" value="<?php echo $comtotal; ?>">
 			               <input type="hidden" name="currency" value="<?php echo $comcurrency; ?>">
 			               <input type="hidden" name="address" value="<?php echo $comaddress; ?>">
