@@ -164,8 +164,14 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 	$resGuia = $serviciosReferencias->traerEstadocotizacionesPorIn('1,2,3,4,5');
 }
 
-$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId($ordenPosible);
-$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$idestado);
+if ($_SESSION['idroll_sahilices'] == 7) {
+	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId($ordenPosible);
+	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$idestado);
+} else {
+	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorIn('1,4,8,10,12,13');
+	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$ordenPosible);
+}
+
 
 
 
@@ -220,9 +226,12 @@ switch (mysql_result($resultado,0,'existeprimaobjetivo')) {
 $resVar10	= $serviciosReferencias->traerAseguradora();
 $cadRef10 = $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',mysql_result($resultado,0,'coberturaactual'));
 
+$resVarEtapa = $serviciosReferencias->traerEtapacotizacion();
+$cadEtapa = $serviciosFunciones->devolverSelectBoxActivo($resVarEtapa,array(1),'',mysql_result($resultado,0,'coberturaactual'));
 
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadRef7,7=>$cadRef8,8=>$cadRef9,9=>$cadRef10,10=>$cadRef11);
-$refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones','cobertura','presentacotizacion','tiponegocio','coberturaactual','existeprimaobjetivo');
+
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadRef7,7=>$cadRef8,8=>$cadRef9,9=>$cadRef10,10=>$cadRef11,11=>$cadEtapa);
+$refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones','cobertura','presentacotizacion','tiponegocio','coberturaactual','existeprimaobjetivo','refestados');
 
 $frmUnidadNegocios = $serviciosFunciones->camposTablaModificar($id, $idTabla,$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -827,6 +836,8 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 		$('.frmContrefbeneficiarios').hide();
 		$('.frmContversion').hide();
 		$('.frmContrefcotizaciones').hide();
+
+
 		$('.frmContrefestados').hide();
 
 		$('.btnLstEnviar').click(function() {
@@ -1571,6 +1582,11 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 				});
 			}
 		});
+
+		<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
+			$('.frmContrefestados').show();
+			$('.frmContrefestadocotizaciones').show();
+		<?php } ?>
 	});
 </script>
 
