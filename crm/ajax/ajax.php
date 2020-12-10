@@ -1374,6 +1374,9 @@ function insertarVentasCompleto($serviciosReferencias) {
 
       $resVenta = $serviciosReferencias->insertarVentas($res,6,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,0,0,1,$observaciones='',$vigenciadesde);
 
+      // inserto la cartera de productos del cliente
+      $resIC = $serviciosReferencias->insertarClientescartera($refclientes,$refproductos,$vigenciadesde,'','1');
+
 
 
       /**** fin cuestionario     ****/
@@ -2258,6 +2261,15 @@ function insertarVentas($serviciosReferencias) {
    $res = $serviciosReferencias->insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux, $refventas,$version, $observaciones,$vigenciadesde);
 
    if ((integer)$res > 0) {
+
+      $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($refcotizaciones);
+
+      $refclientes = mysql_result($resCotizaciones,0,'refclientes');
+      $refproductos = mysql_result($resCotizaciones,0,'refproductos');
+
+      // inserto la cartera de productos del cliente
+      $resIC = $serviciosReferencias->insertarClientescartera($refclientes,$refproductos,$vigenciadesde,'','1');
+
       if ($origen == 1) {
          $resMetodoPago = $serviciosReferencias->traerMetodopagoPorCotizacion($refcotizaciones);
 
@@ -7016,7 +7028,7 @@ function modificarCotizaciones($serviciosReferencias) {
       $resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',4,$usuariomodi);
 
       // generada la venta lo guardo en la cartera del cliente
-      $resIC = $serviciosReferencias->insertarClientescartera($refclientes,$refproductos,$fechaemitido,'','1');
+      //$resIC = $serviciosReferencias->insertarClientescartera($refclientes,$refproductos,$fechaemitido,'','1');
 
       //generada la venta solicito el idcliente inbursa
       if (isset($_POST['idclienteinbursa'])) {
