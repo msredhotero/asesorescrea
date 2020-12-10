@@ -119,7 +119,9 @@ switch ($orden) {
 	break;
 
 	default:
-		// code...
+		$ordenPosible = 2;
+		$ordenRechazo = 0;
+		$lblOrden = 'En proceso';
 		break;
 }
 
