@@ -96,7 +96,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 } else {
 	$resVar5	= $serviciosReferencias->traerAsesores();
-	$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(4,2,3),' ');
+	$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(3,4,2),' ');
 }
 
 
@@ -146,6 +146,11 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 	<!-- Bootstrap Material Datetime Picker Css -->
 	<link href="../../plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet" />
+
+	<!-- CSS file -->
+	<link rel="stylesheet" href="../../css/easy-autocomplete.min.css">
+	<!-- Additional CSS Themes file - not required-->
+	<link rel="stylesheet" href="../../css/easy-autocomplete.themes.min.css">
 
 	<!-- Dropzone Css -->
 	<link href="../../plugins/dropzone/dropzone.css" rel="stylesheet">
@@ -534,8 +539,50 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 <script src="../../js/materialDateTimePicker.js"></script>
 
+<script src="../../js/jquery.easy-autocomplete.min.js"></script>
+
 <script>
 	$(document).ready(function(){
+
+		var options2 = {
+
+			url: "../../json/jsbuscarpostal.php",
+
+			getValue: function(element) {
+				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					busqueda: $("#codigopostalASG").val()
+				}
+			},
+
+			preparePostData: function (data) {
+				data.busqueda = $("#codigopostalASG").val();
+				return data;
+			},
+
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $("#codigopostalASG").getSelectedItemData().codigo;
+					$("#codigopostalASG").val(value);
+					$("#municipioASG").val($("#codigopostalASG").getSelectedItemData().municipio);
+					$("#estadoASG").val($("#codigopostalASG").getSelectedItemData().estado);
+					$("#coloniaASG").val($("#codigopostalASG").getSelectedItemData().colonia);
+
+
+				}
+			}
+		};
+
+		$("#codigopostalASG").easyAutocomplete(options2);
 
 		$('#fechacrea').val('20/02/2020');
 		$('#fechamodi').val('20/02/2020');
