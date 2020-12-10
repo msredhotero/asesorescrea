@@ -50,6 +50,13 @@ $insertar = "insertarCotizaciones";
 $modificar = "modificarCotizaciones";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
+
+if (isset($_GET['habilitacambio'])) {
+	$habilitacambio = 1;
+} else {
+	$habilitacambio = 0;
+}
+
 $id = $_GET['id'];
 $resultado = $serviciosReferencias->traerCotizacionesPorId($id);
 
@@ -85,6 +92,8 @@ $resEstados = $serviciosReferencias->traerEstadocotizacionesPorId($idestado);
 $orden = mysql_result($resEstados,0,'orden');
 $ordenAux = $orden;
 
+//die(var_dump($orden));
+
 switch ($orden) {
 	case 1:
 		$ordenPosible = 2;
@@ -113,6 +122,11 @@ switch ($orden) {
 	break;
 
 	case 9:
+		$ordenPosible = 0;
+		$ordenRechazo = 0;
+		$lblOrden = 'Finalizado';
+	break;
+	case 12:
 		$ordenPosible = 0;
 		$ordenRechazo = 0;
 		$lblOrden = 'Finalizado';
@@ -168,6 +182,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId($ordenPosible);
 	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$idestado);
 } else {
+
 	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorIn('1,4,8,10,12,13');
 	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$ordenPosible);
 }
@@ -185,6 +200,9 @@ switch (mysql_result($resultado,0,'cobertura')) {
 	case 'No lo se':
 		$cadRef7 = "<option value='Si'>Si</option><option value='No'>No</option><option value='No lo se' selected>No lo se</option>";
 	break;
+	default:
+		$cadRef7 = "<option value='Si'>Si</option><option value='No'>No</option><option value='No lo se' selected>No lo se</option>";
+	break;
 }
 
 //die(var_dump($ordenPosible));
@@ -194,6 +212,9 @@ switch (mysql_result($resultado,0,'presentacotizacion')) {
 		$cadRef8 = "<option value='Si' selected>Si</option><option value='No'>No</option>";
 	break;
 	case 'No':
+		$cadRef8 = "<option value='Si'>Si</option><option value='No' selected>No</option>";
+	break;
+	default:
 		$cadRef8 = "<option value='Si'>Si</option><option value='No' selected>No</option>";
 	break;
 }
@@ -528,6 +549,9 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 						<div class="header bg-blue">
 							<h2>
 								MODIFICAR <?php echo strtoupper($plural); ?> <button type="button" class="btn bg-cyan waves-effect btnLstDocumentaciones"><i class="material-icons">unarchive</i><span class="js-right-sidebar" data-close="true">DOCUMENTACIONES</span></button> <button type="button" class="btn bg-green waves-effect btnLstEnviar"><i class="material-icons">send</i><span>ENVIAR COTIZACION A CLIENTE</span></button>
+								<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
+									<button type="button" class="btn bg-orange waves-effect btnHabilitaCambios"><i class="material-icons">edit</i><span>HABILITAR CAMBIOS</span></button>
+								<?php } ?>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -547,7 +571,12 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 								<div class="row" style="padding: 5px 20px;">
 
 									<?php echo $frmUnidadNegocios; ?>
-									<input type="hidden" id="estadoactual" name="estadoactual" value=""/>
+									<?php if ($habilitacambio == 1) { ?>
+										<input type="hidden" id="estadoactual" name="estadoactual" value=""/>
+									<?php } else { ?>
+										<input type="hidden" id="estadoactual" name="estadoactual" value=""/>
+									<?php } ?>
+
 								</div>
 								<div class="row">
 									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContidclienteinbursa" style="display:block">
@@ -1355,7 +1384,9 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 
 		$(".btnModificar").click( function(){
 			idTable =  $(this).attr("id");
+			<?php if ($habilitacambio == 0) { ?>
 			$('#estadoactual').val(idTable);
+			<?php } ?>
 			$('.btnContinuar').click();
 		});//fin del boton modificar
 
@@ -1364,6 +1395,10 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 			$(location).attr('href','ver.php?id=' + idTable);
 
 		});//fin del boton modificar
+
+		$('.btnHabilitaCambios').click(function() {
+			$(location).attr('href','modificar.php?id=<?php echo $id; ?>&habilitacambio=1');
+		});
 
 		function refrescar(){
 	    //Actualiza la página
@@ -1583,8 +1618,8 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 			}
 		});
 
-		<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
-			$('.frmContrefestados').show();
+		<?php if (($_SESSION['idroll_sahilices'] != 7) && ($habilitacambio == 1)) { ?>
+			//$('.frmContrefestados').show();
 			$('.frmContrefestadocotizaciones').show();
 		<?php } ?>
 	});
