@@ -57,6 +57,8 @@ $lblCliente = mysql_result($resCotizaciones,0,'clientesolo');
 
 $idProducto = mysql_result($resCotizaciones,0,'refproductos');
 
+$refEstadoCotizacion = mysql_result($resCotizaciones,0,'refestadocotizaciones');
+
 $resProducto = $serviciosReferencias->traerProductosPorId($idProducto);
 
 $idcuestionario = mysql_result($resProducto,0,'refcuestionarios');
@@ -64,6 +66,8 @@ $idcuestionario = mysql_result($resProducto,0,'refcuestionarios');
 $detalleProducto = mysql_result($resProducto,0,'detalle');
 
 $tipoFirma = mysql_result($resProducto,0,'reftipofirma');
+
+$consolicitud = mysql_result($resProducto,0,'consolicitud');
 
 $cargados = 0;
 $necesariasParaAprobar = 0;
@@ -184,190 +188,197 @@ while ($rowD = mysql_fetch_array($documentacionesrequeridas)) {
 	$necesariasParaAprobar += 1;
 }
 
-$refEstadoCotizacion = mysql_result($resultado,0,'refestadocotizaciones');
+
 
 
 //////////////////// verifico en el proceso si firma con fiel, simple o autografa ////////////////
 
-$generoFirmaAlFinal = 0;
+// verifico si necesita una solicitud
+if ($consolicitud == 1) {
+	$generoFirmaAlFinal = 0;
 
-$solicitudParaFirmar = '../../archivos/solicitudes/cotizaciones/'.$id.'/FSOLICITUDAC.pdf';
-if ($tipoFirma == 2) {
-	$resNIP = $serviciosReferencias->traerTokensPorCotizacionVigente($id);
-
-	if (mysql_num_rows($resNIP) > 0) {
-		$existeNIP = 1;
-		$nip = mysql_result($resNIP,0,'token');
-	} else {
-
-		$reftipo = 1;
-	   $token = $serviciosReferencias->generarNIP();
-
-	   $fechacreac = date('Y-m-d H:i:s');
-	   $nuevafecha = strtotime ( '+15 hour' , strtotime ( $fechacreac ) ) ;
-
-	   $refestadotoken = 1;
-	   $vigenciafin = $nuevafecha;
-
-	   $res = $serviciosReferencias->insertarTokens($id,$reftipo,$token,$fechacreac,$refestadotoken,$vigenciafin);
-
-	   if ((integer)$res > 0) {
-
-	      $resCliente = $serviciosReferencias->traerClientesPorId($idCliente);
-
-	      $email = mysql_result($resCliente,0,'email');
-
-	      $cuerpo = '';
-
-	      $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
-
-	      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
-
-	      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
-
-	      $cuerpo .= "
-	      <style>
-	      	body { font-family: 'Lato', sans-serif; }
-	      	header { font-family: 'Prata', serif; }
-	      </style>";
-
-
-
-	      $cuerpo .= '<body>';
-
-	      $cuerpo .= '<h3><small><p>Este es el nuevo NIP generado para firmar digitalmente el servicio solicitado, por favor ingrese al siguiente <a href="https://asesorescrea.com/desarrollo/crm/dashboard/venta/documentos.php?id='.$id.'" target="_blank"> enlace </a> para finalizar el proceso de venta. </small></h3><p>';
-
-			$cuerpo .= "<center>NIP:<b>".$token."</b></center><p> ";
-
-			$cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
-
-	      $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
-
-	      $cuerpo .= '</body>';
-
-	   	$fecha = date_create(date('Y').'-'.date('m').'-'.date('d'));
-	   	date_add($fecha, date_interval_create_from_date_string('30 days'));
-	   	$fechaprogramada =  date_format($fecha, 'Y-m-d');
-
-	   	//$res = $this->insertarActivacionusuarios($refusuarios,$token,'','');
-
-	   	$retorno = $serviciosReferencias->enviarEmail($email,'NIP para firma',utf8_decode($cuerpo));
-
-	      echo '';
-
-			$existeNIP = 1;
-	   } else {
-			$existeNIP = 0;
-		}
-
-	}
-
-} else {
-	if ($tipoFirma == 3) {
-
-
-
-
+	$solicitudParaFirmar = '../../archivos/solicitudes/cotizaciones/'.$id.'/FSOLICITUDAC.pdf';
+	if ($tipoFirma == 2) {
 		$resNIP = $serviciosReferencias->traerTokensPorCotizacionVigente($id);
 
 		if (mysql_num_rows($resNIP) > 0) {
 			$existeNIP = 1;
 			$nip = mysql_result($resNIP,0,'token');
-
-
 		} else {
-			///////////// firma fiel, creo los documentos a firmar //////////////////
-			// convierto el documento a base64
 
-			//die(var_dump($solicitudParaFirmar));
-
-			$generoFirmaAlFinal = 1;
-
-			$arFile = file_get_contents($solicitudParaFirmar);
-			//$b64Doc = chunk_split(base64_encode($arFile));
-			$b64Doc = base64_encode($arFile);
-
-			//die(var_dump($b64Doc));
-
-			$ch = curl_init();
-			$url = 'https://qafirma.signaturainnovacionesjuridicas.com/api/documentos/crear/';
-			curl_setopt($ch, CURLOPT_URL, $url);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-
-			$data = array(
-			   'b64documento'=> $b64Doc,
-				'firmantes'=> array(array('curp'=> 'TOMG730101MDFLZM00')),
-				'nombreDocumento' => 'FSOLICITUDAC.pdf'
-			);
-
-			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-			//set the content type to application/json
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-
-			//return response instead of outputting
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-			//execute the POST request
-			$result = curl_exec($ch);
-			curl_close($ch);
-
-			$arEFirma = json_decode($result, true);
-
-			//die(var_dump($arEFirma));
-
-			if (isset($arEFirma)) {
-				$nuevoToken = $arEFirma['urls']['url'][0];
-			} else {
-				$nuevoToken = '';
-			}
-
-			////////////////////////// fin de la firma fiel //////////////////////////
-
-			$reftipo = 2;
-			// aca va la url que me genero para firmar
-		   $token = $nuevoToken;
+			$reftipo = 1;
+		   $token = $serviciosReferencias->generarNIP();
 
 		   $fechacreac = date('Y-m-d H:i:s');
-		   $nuevafecha = strtotime ( '+48 hour' , strtotime ( $fechacreac ) ) ;
+		   $nuevafecha = strtotime ( '+15 hour' , strtotime ( $fechacreac ) ) ;
 
 		   $refestadotoken = 1;
 		   $vigenciafin = $nuevafecha;
 
-			if ($token != '') {
-				$res = $serviciosReferencias->insertarTokens($id,$reftipo,$token,$fechacreac,$refestadotoken,$vigenciafin);
+		   $res = $serviciosReferencias->insertarTokens($id,$reftipo,$token,$fechacreac,$refestadotoken,$vigenciafin);
 
-				if ((integer)$res > 0) {
-					$existeNIP = 1;
-				} else {
-					$existeNIP = 0;
-				}
-			} else {
-				$existeNIP = 2;
+		   if ((integer)$res > 0) {
+
+		      $resCliente = $serviciosReferencias->traerClientesPorId($idCliente);
+
+		      $email = mysql_result($resCliente,0,'email');
+
+		      $cuerpo = '';
+
+		      $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+		      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+		      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+		      $cuerpo .= "
+		      <style>
+		      	body { font-family: 'Lato', sans-serif; }
+		      	header { font-family: 'Prata', serif; }
+		      </style>";
+
+
+
+		      $cuerpo .= '<body>';
+
+		      $cuerpo .= '<h3><small><p>Este es el nuevo NIP generado para firmar digitalmente el servicio solicitado, por favor ingrese al siguiente <a href="https://asesorescrea.com/desarrollo/crm/dashboard/venta/documentos.php?id='.$id.'" target="_blank"> enlace </a> para finalizar el proceso de venta. </small></h3><p>';
+
+				$cuerpo .= "<center>NIP:<b>".$token."</b></center><p> ";
+
+				$cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
+
+		      $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+		      $cuerpo .= '</body>';
+
+		   	$fecha = date_create(date('Y').'-'.date('m').'-'.date('d'));
+		   	date_add($fecha, date_interval_create_from_date_string('30 days'));
+		   	$fechaprogramada =  date_format($fecha, 'Y-m-d');
+
+		   	//$res = $this->insertarActivacionusuarios($refusuarios,$token,'','');
+
+		   	$retorno = $serviciosReferencias->enviarEmail($email,'NIP para firma',utf8_decode($cuerpo));
+
+		      echo '';
+
+				$existeNIP = 1;
+		   } else {
+				$existeNIP = 0;
 			}
-
 
 		}
 
-
 	} else {
+		if ($tipoFirma == 3) {
 
+
+
+
+			$resNIP = $serviciosReferencias->traerTokensPorCotizacionVigente($id);
+
+			if (mysql_num_rows($resNIP) > 0) {
+				$existeNIP = 1;
+				$nip = mysql_result($resNIP,0,'token');
+
+
+			} else {
+				///////////// firma fiel, creo los documentos a firmar //////////////////
+				// convierto el documento a base64
+
+				//die(var_dump($solicitudParaFirmar));
+
+				$generoFirmaAlFinal = 1;
+
+				$arFile = file_get_contents($solicitudParaFirmar);
+				//$b64Doc = chunk_split(base64_encode($arFile));
+				$b64Doc = base64_encode($arFile);
+
+				//die(var_dump($b64Doc));
+
+				$ch = curl_init();
+				$url = 'https://qafirma.signaturainnovacionesjuridicas.com/api/documentos/crear/';
+				curl_setopt($ch, CURLOPT_URL, $url);
+				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+				$data = array(
+				   'b64documento'=> $b64Doc,
+					'firmantes'=> array(array('curp'=> 'TOMG730101MDFLZM00')),
+					'nombreDocumento' => 'FSOLICITUDAC.pdf'
+				);
+
+				curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+				//set the content type to application/json
+				curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+
+				//return response instead of outputting
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+				//execute the POST request
+				$result = curl_exec($ch);
+				curl_close($ch);
+
+				$arEFirma = json_decode($result, true);
+
+				//die(var_dump($arEFirma));
+
+				if (isset($arEFirma)) {
+					$nuevoToken = $arEFirma['urls']['url'][0];
+				} else {
+					$nuevoToken = '';
+				}
+
+				////////////////////////// fin de la firma fiel //////////////////////////
+
+				$reftipo = 2;
+				// aca va la url que me genero para firmar
+			   $token = $nuevoToken;
+
+			   $fechacreac = date('Y-m-d H:i:s');
+			   $nuevafecha = strtotime ( '+48 hour' , strtotime ( $fechacreac ) ) ;
+
+			   $refestadotoken = 1;
+			   $vigenciafin = $nuevafecha;
+
+				if ($token != '') {
+					$res = $serviciosReferencias->insertarTokens($id,$reftipo,$token,$fechacreac,$refestadotoken,$vigenciafin);
+
+					if ((integer)$res > 0) {
+						$existeNIP = 1;
+					} else {
+						$existeNIP = 0;
+					}
+				} else {
+					$existeNIP = 2;
+				}
+
+
+			}
+
+
+		} else {
+
+		}
 	}
-}
 
 
-$puedeContinuar = 0;
+	$puedeContinuar = 0;
 
-$resFirma = $serviciosReferencias->traerFirmarcontratosPorCotizacion($id);
-if (mysql_num_rows($resFirma) > 0) {
-	$existeFirma = 1;
-	$refestadofirma = mysql_result($resFirma,0,'refestadofirma');
-	if ($refestadofirma == 1) {
-		$puedeContinuar = 1;
+	$resFirma = $serviciosReferencias->traerFirmarcontratosPorCotizacion($id);
+	if (mysql_num_rows($resFirma) > 0) {
+		$existeFirma = 1;
+		$refestadofirma = mysql_result($resFirma,0,'refestadofirma');
+		if ($refestadofirma == 1) {
+			$puedeContinuar = 1;
+		} else {
+			$puedeContinuar = 0;
+		}
 	} else {
-		$puedeContinuar = 0;
+		$existeFirma = 0;
 	}
+
+	// fin de if de con solicitud
 } else {
-	$existeFirma = 0;
+	$puedeContinuar = 1;
 }
 
 ?>
@@ -505,16 +516,19 @@ if (mysql_num_rows($resFirma) > 0) {
 							<?php } ?>
 						<?php } else { ?>
 							<?php if ($puedeContinuar == 1) { ?>
-
+								<?php if ($consolicitud == 1) { ?>
 								<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
 								   <div class="col-xs-6 bs-wizard-step complete">
 										<div class="text-center bs-wizard-stepnum">Paso 1</div>
+
 										<div class="progress">
 											<div class="progress-bar"></div>
 										</div>
+
 										<a href="siap.php?id=13" class="bs-wizard-dot"></a>
 										<div class="bs-wizard-info text-center">CARGA TUS DOCUMENTOS</div>
 								   </div>
+
 								   <div class="col-xs-6 bs-wizard-step complete">
 										<div class="text-center bs-wizard-stepnum">Paso 2</div>
 										<div class="progress">
@@ -523,7 +537,12 @@ if (mysql_num_rows($resFirma) > 0) {
 										<a href="javascript:void(0)" class="bs-wizard-dot"></a>
 										<div class="bs-wizard-info text-center">FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
 								   </div>
+
 							   </div>
+							<?php } else { ?>
+								<div class="bs-wizard-info text-center"><i class="material-icons">done</i> PASO 1 - CARGA TUS DOCUMENTOS</div>
+								<hr>
+							<?php } ?>
 
 								<div class="text-center">
 									<h1 class="display-4"> ¡Muchas Gracias!</h1>

@@ -136,6 +136,8 @@ if (isset($_GET['id'])) {
 
 	$tipoProducto = mysql_result($resProductoPrincipal,0,'reftipoproducto');
 
+	$leyendabeneficiario = mysql_result($resProductoPrincipal,0,'leyendabeneficiario');
+
 	if (mysql_result($resProductoPrincipal,0,'beneficiario') == '1') {
 		$llevaBeneficiario = 1;
 	} else {
@@ -445,7 +447,13 @@ if (isset($_GET['id'])) {
 
 	$id = 0;
 
+	if (!(isset($_GET['producto']))) {
+		header('Location: ../index.php');
+	}
+
 	$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta($rIdProducto);
+
+	$leyendabeneficiario = mysql_result($resProductoPrincipal,0,'leyendabeneficiario');
 
 	$tipoProducto = mysql_result($resProductoPrincipal,0,'reftipoproducto');
 
@@ -949,7 +957,7 @@ if (count($contratentaDatosCompletos) > 0) {
 										<h3>BENEFICIARIO</h3>
                                  <fieldset>
 												<div class="row">
-													<h4>La contratación de VRIM Platino te cubre por muerte accidental por $500,000 pesos en caso de tener una eventualidad indícanos quien seria el beneficiario.</h4>
+													<h4><?php echo $leyendabeneficiario; ?></h4>
 
 													<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContbeneficiarioaux" style="display:block">
 														<div class="form-group form-float">
@@ -1673,7 +1681,9 @@ if (count($contratentaDatosCompletos) > 0) {
 						<?php if (isset($_GET['id'])) { ?>
 						if (data.sigue) {
 
+							<?php if ($existenDatosCompletosContratenta == 1) { ?>
 							form.steps("next");
+							<?php } ?>
 							form.steps("next");
 						} else {
 							form.steps("next");
@@ -1887,9 +1897,9 @@ if (count($contratentaDatosCompletos) > 0) {
 
 		cuestionario(<?php echo $rIdProducto; ?>,<?php echo $id; ?>);
 
-		<?php if ($existenDatosCompletosContratenta == 1) { ?>
+		<?php //if ($existenDatosCompletosContratenta == 1) { ?>
 		cuestionarioPersonasContratante(<?php echo $rIdProducto; ?>,<?php echo $id; ?>);
-		<?php } ?>
+		<?php //} ?>
 
 		function modificoAseguradoPorCotizacion() {
 			$.ajax({
@@ -2239,6 +2249,11 @@ if (count($contratentaDatosCompletos) > 0) {
 	            var tabCount = $tab.length;
 	            $tab.css('width', (100 / tabCount) + '%');
 
+					if (currentIndex == 0) {
+						$('.contSubirArchivos1').hide();
+						$('.contSubirArchivos2').hide();
+					}
+
 	            //set button waves effect
 	            setButtonWavesEffect(event);
 	        },
@@ -2247,12 +2262,10 @@ if (count($contratentaDatosCompletos) > 0) {
 					var $tab = $('#wizard_with_validation-h-' + currentIndex).html();
 
 					<?php if ($tieneAsegurado == '') { ?>
-					if ($tab.trim() == 'ASEGURADO') {
+					if ($tab.trim() == 'INFORMACION DEL ASEGURADO') {
 						modificoAseguradoPorCotizacion();
 					}
 					<?php }  ?>
-
-
 
 	            if (currentIndex > newIndex) { return true; }
 
@@ -2260,6 +2273,7 @@ if (count($contratentaDatosCompletos) > 0) {
 	                form.find('.body:eq(' + newIndex + ') label.error').remove();
 	                form.find('.body:eq(' + newIndex + ') .error').removeClass('error');
 	            }
+
 
 	            form.validate().settings.ignore = ':disabled,:hidden';
 	            return form.valid();
@@ -2276,6 +2290,7 @@ if (count($contratentaDatosCompletos) > 0) {
 								if ($tab.trim() == 'Galeria Producto') {
 									$('.contSubirArchivos2').hide();
 									$('.contSubirArchivos1').show();
+
 								} else {
 									$('.contSubirArchivos1').hide();
 									$('.contSubirArchivos2').hide();
@@ -2307,6 +2322,8 @@ if (count($contratentaDatosCompletos) > 0) {
 							}
 
 						<?php } ?>
+
+
 
 
 

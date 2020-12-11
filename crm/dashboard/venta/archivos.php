@@ -427,26 +427,33 @@ $resClientes = $serviciosReferencias->traerClientesPorId($idCliente);
 							 <!-- <h1 class="display-4">Adjunta los archivos solicitados</h1> -->
 
 						 </div>
+						 <?php if ($consolicitud == 1) { ?>
 						 <div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
-							 <div class="col-xs-6 bs-wizard-step active">
+							 <div class="col-xs-6 bs-wizard-step complete">
 								 <div class="text-center bs-wizard-stepnum">Paso 1</div>
+
 								 <div class="progress">
 									 <div class="progress-bar"></div>
 								 </div>
+
 								 <a href="siap.php?id=13" class="bs-wizard-dot"></a>
 								 <div class="bs-wizard-info text-center">CARGA TUS DOCUMENTOS</div>
 							 </div>
-							 <?php if ($consolicitud == '1') { ?>
-								 <div class="col-xs-6 bs-wizard-step disabled">
-									 <div class="text-center bs-wizard-stepnum">Paso 2</div>
-									 <div class="progress">
-										 <div class="progress-bar"></div>
-									 </div>
-									 <a href="javascript:void(0)" class="bs-wizard-dot"></a>
-									 <div class="bs-wizard-info text-center">FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
+
+							 <div class="col-xs-6 bs-wizard-step complete">
+								 <div class="text-center bs-wizard-stepnum">Paso 2</div>
+								 <div class="progress">
+									 <div class="progress-bar"></div>
 								 </div>
-							 <?php } ?>
+								 <a href="javascript:void(0)" class="bs-wizard-dot"></a>
+								 <div class="bs-wizard-info text-center">FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
+							 </div>
+
 						 </div>
+					 <?php } else { ?>
+						 <div class="bs-wizard-info text-center">PASO 1 - CARGA TUS DOCUMENTOS</div>
+						 <hr>
+					 <?php } ?>
 
 
 						<ul class="nav nav-tabs tab-nav-right" role="tablist">
