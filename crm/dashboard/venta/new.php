@@ -571,6 +571,17 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 $resEstadoCivil = $serviciosReferencias->traerEstadocivilPorIn('1,2');
 $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,array(1),'');
 
+// nuevo 10/12/2020 para verificar el contratante si tiene todos los datos necesarios cargados
+$contratentaDatosCompletos = $serviciosReferencias->CuestionarioAuxPersonas(mysql_result($resProducto,0,'refcuestionarios'),$id,$rIdCliente,0);
+
+//die(var_dump(count($contratentaDatosCompletos)));
+
+if (count($contratentaDatosCompletos) > 0) {
+	$existenDatosCompletosContratenta = 1;
+} else {
+	$existenDatosCompletosContratenta = 0;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -775,7 +786,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
                               </fieldset>
 
-
+										<?php if ($existenDatosCompletosContratenta == 1) { ?>
 										<h3>INFORMACION DEL CONTRATANTE</h3>
                                  <fieldset>
 												<div class="row">
@@ -794,6 +805,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 												</div>
 
                               </fieldset>
+									<?php } ?>
 
 										<?php if ($llevaAsegurado == 1) { ?>
 										<h3>INFORMACION DEL ASEGURADO</h3>
@@ -1875,7 +1887,9 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 		cuestionario(<?php echo $rIdProducto; ?>,<?php echo $id; ?>);
 
+		<?php if ($existenDatosCompletosContratenta == 1) { ?>
 		cuestionarioPersonasContratante(<?php echo $rIdProducto; ?>,<?php echo $id; ?>);
+		<?php } ?>
 
 		function modificoAseguradoPorCotizacion() {
 			$.ajax({
@@ -2268,9 +2282,12 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 								}
 							}
 
+
+							<?php if ($existenDatosCompletosContratenta == 1) { ?>
 							if (currentIndex == 2) {
 								validarCuestionarioContratante(<?php echo $rIdCliente; ?>,0 );
 							}
+							<?php } ?>
 
 							<?php if ($tieneAsegurado != '') { ?>
 								if ($tab.trim() == 'INFORMACION DEL ASEGURADO') {
