@@ -222,7 +222,7 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 											</button>
 										<?php } ?>
 										<button type="button" class="btn bg-cyan waves-effect btnContactos">
-											<i class="material-icons">update</i>
+											<i class="material-icons">supervisor_account</i>
 											<span>CONTACTOS</span>
 										</button>
 										<?php } ?>
