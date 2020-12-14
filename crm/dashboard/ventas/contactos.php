@@ -25,8 +25,6 @@ $baseHTML = new BaseHTML();
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
 $serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../ventas/');
-
-$arRoles = array(1,4,11,7,10);
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
@@ -41,45 +39,37 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Poliza";
+$singular = "Contacto";
 
-$plural = "Polizas";
+$plural = "Contactos";
 
-$eliminar = "eliminarVentas";
+$eliminar = "eliminarVentacontactos";
 
-$insertar = "insertarVentas";
+$insertar = "insertarVentacontactos";
 
-$modificar = "modificarVentas";
+$modificar = "modificarVentacontactos";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
+
 $id = $_GET['id'];
 
 $resultado = $serviciosReferencias->traerVentasPorId($id);
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbventas";
+$tabla 			= "dbventacontactos";
 
-$lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza');
-$lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza');
+$lblCambio	 	= array('refventas','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','titular');
+$lblreemplazo	= array('Venta','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tiular');
 
-$modificar = "modificarVentas";
-$idTabla = "idventa";
+$cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resultado,array(9),'',$id);
 
-$resVar = $serviciosReferencias->traerCotizacionesPorIdCompleto(mysql_result($resultado,0,'refcotizaciones'));
-$cadRef = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(1,2,3),' ',mysql_result($resultado,0,'refcotizaciones'));
+$cadRef2 = '<option value="0">No</option><option value="1">Si</option>';
 
-$resVar1 = $serviciosReferencias->traerEstadoventa();
-$cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),' ',mysql_result($resultado,0,'refestadoventa'));
+$refdescripcion = array(0=>$cadRef1,1=>$cadRef2);
+$refCampo 	=  array('refventas','titular');
 
-
-$refdescripcion = array(0=>$cadRef,1=>$cadRef2);
-$refCampo 	=  array('refcotizaciones','refestadoventa');
-
-$formulario = $serviciosFunciones->camposTablaModificar($id, $idTabla,$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
-
+$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
-
-$resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 
 ?>
 
@@ -107,9 +97,6 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 
 	<!-- Dropzone Css -->
 	<link href="../../plugins/dropzone/dropzone.css" rel="stylesheet">
-
-	<link rel="stylesheet" type="text/css" href="../../css/classic.css"/>
-	<link rel="stylesheet" type="text/css" href="../../css/classic.date.css"/>
 
 
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
@@ -190,47 +177,57 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 							</ul>
 						</div>
 						<div class="body table-responsive">
-							<form class="formulario frmModificar" role="form" id="sign_in">
+							<form class="form" id="formCountry">
+
 								<div class="row">
-									<?php echo $formulario; ?>
-								</div>
-								<div class="row">
-									<div class="button-demo">
-										<button type="button" class="btn btn-black waves-effect btnVolver">
-											<i class="material-icons">arrow_back</i>
-											<span>VOLVER</span>
-										</button>
-										<?php if (array_search($_SESSION['idroll_sahilices'], $arRoles) >= 0) { ?>
-											<button type="submit" class="btn bg-light-blue waves-effect modificar">
-												<i class="material-icons">save</i>
-												<span>GUARDAR</span>
+									<div class="col-lg-12 col-md-12">
+										<div class="button-demo">
+											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
+												<i class="material-icons">add</i>
+												<span>NUEVO</span>
+											</button>
+											<button type="button" class="btn btn-black waves-effect btnVolver">
+												<i class="material-icons">arrow_back</i>
+												<span>VOLVER</span>
 											</button>
 
-
-										<button type="button" class="btn bg-green waves-effect btnArchivos">
-											<i class="material-icons">unarchive</i>
-											<span>SUBIR POLIZA</span>
-										</button>
-										<button type="button" class="btn bg-orange waves-effect btnPagos">
-											<i class="material-icons">update</i>
-											<span>PERIODICIDAD DE PAGOS</span>
-										</button>
-										<?php if (mysql_num_rows($resPeriodicidad)>0) { ?>
-											<button type="button" class="btn bg-grey waves-effect btnRecibos">
-												<i class="material-icons">format_list_numbered</i>
-												<span>COBROS - RECIBOS</span>
-											</button>
-										<?php } ?>
-										<button type="button" class="btn bg-cyan waves-effect btnContactos">
-											<i class="material-icons">update</i>
-											<span>CONTACTOS</span>
-										</button>
-										<?php } ?>
+										</div>
 									</div>
 								</div>
 
-							</form>
+								<div class="row" style="padding: 5px 20px;">
 
+									<table id="example" class="display table " style="width:100%">
+										<thead>
+											<tr>
+												<th>Poliza</th>
+												<th>Apellido Paterno</th>
+												<th>Apellido Materno</th>
+												<th>Nombre</th>
+												<th>Tel. Fijo</th>
+												<th>Tel. Celular</th>
+												<th>Email</th>
+												<th>Es Titular</th>
+												<th>Acciones</th>
+											</tr>
+										</thead>
+										<tfoot>
+											<tr>
+												<th>Poliza</th>
+												<th>Apellido Paterno</th>
+												<th>Apellido Materno</th>
+												<th>Nombre</th>
+												<th>Tel. Fijo</th>
+												<th>Tel. Celular</th>
+												<th>Email</th>
+												<th>Es Titular</th>
+												<th>Acciones</th>
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+							</form>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -240,7 +237,52 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 </section>
 
 
+<!-- NUEVO -->
+	<form class="formulario frmNuevo" role="form" id="sign_in">
+	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
+	       <div class="modal-dialog modal-lg" role="document">
+	           <div class="modal-content">
+	               <div class="modal-header">
+	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular); ?></h4>
+	               </div>
+	               <div class="modal-body">
+							<div class="row">
+								<?php echo $frmUnidadNegocios; ?>
+							</div>
 
+	               </div>
+	               <div class="modal-footer">
+	                   <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
+	                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+	               </div>
+	           </div>
+	       </div>
+	   </div>
+		<input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
+	</form>
+
+	<!-- MODIFICAR -->
+		<form class="formulario frmModificar" role="form" id="sign_in">
+		   <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
+		       <div class="modal-dialog modal-lg" role="document">
+		           <div class="modal-content">
+		               <div class="modal-header">
+		                   <h4 class="modal-title" id="largeModalLabel">MODIFICAR <?php echo strtoupper($singular); ?></h4>
+		               </div>
+		               <div class="modal-body">
+								<div class="row frmAjaxModificar">
+
+								</div>
+		               </div>
+		               <div class="modal-footer">
+		                   <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
+		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+		               </div>
+		           </div>
+		       </div>
+		   </div>
+			<input type="hidden" id="accion" name="accion" value="<?php echo $modificar; ?>"/>
+		</form>
 
 
 	<!-- ELIMINAR -->
@@ -283,91 +325,21 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 
 <script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
 
-<script src="../../js/picker.js"></script>
-<script src="../../js/picker.date.js"></script>
-
 
 <script>
 	$(document).ready(function(){
+		$("#email").prop('required',false);
+		$('#email').parent().parent().parent().find('label span').remove();
 
 		$('.btnVolver').click(function() {
-			url = "index.php";
+			url = "ver.php?id=<?php echo $id; ?>";
 			$(location).attr('href',url);
 		});
-
-		$('.btnContactos').click(function() {
-			url = "contactos.php?id=<?php echo $id; ?>";
-			$(location).attr('href',url);
-		});
-
-
-
-		$('.frmContrefventas').hide();
-		$('.frmContrefproductosaux').hide();
-		$('.frmContrefmotivorechazopoliza').hide();
-
-		$('.btnArchivos').click(function() {
-			url = "subirdocumentacion.php?id=<?php echo $id; ?>&documentacion=35";
-			$(location).attr('href',url);
-		});
-
-		$('.btnPagos').click(function() {
-			url = "periodicidad.php?id=<?php echo $id; ?>";
-			$(location).attr('href',url);
-		});
-
-		$('.btnRecibos').click(function() {
-			url = "cobros.php?id=<?php echo $id; ?>";
-			$(location).attr('href',url);
-		});
-
-
-
-
-
-		$('.btnCalcularM').click(function() {
-			calcularBonoMonto();
-		});
-
-		$('.btnCalcularP').click(function() {
-			calcularBonoPorcentaje();
-		});
-
-		function calcularBonoPorcentaje() {
-			if (($('#montocomision').val() > 0) && $('#primaneta').val() > 0) {
-				$('#porcentajecomision').val( parseFloat(parseFloat($('#montocomision').val()) * 100 / parseFloat($('#primaneta').val())) );
-			} else {
-				$('#porcentajecomision').val( 0);
-			}
-		}
-
-		function calcularBonoMonto() {
-			if (($('#porcentajecomision').val() > 0) && $('#primaneta').val() > 0) {
-				$('#montocomision').val( parseFloat(parseFloat($('#porcentajecomision').val()) / 100 * parseFloat($('#primaneta').val())) );
-			} else {
-				$('#montocomision').val( 0);
-			}
-		}
-
-
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '315px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
-
-		});
-
 
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=ventas",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=contactos",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -397,28 +369,6 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 			e.preventDefault();
 		});
 
-		$('#primaneta').number( true, 2 ,'.','');
-		$('#primatotal').number( true, 2,'.','' );
-		$('#montocomision').number( true, 2,'.','' );
-		$('#porcentajecomision').number( true, 2,'.','' );
-
-		$('#fechavencimientopoliza').pickadate({
-			format: 'yyyy-mm-dd',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 100,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-		});
-
 
 		function frmAjaxModificar(id) {
 			$.ajax({
@@ -437,8 +387,8 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 					if (data != '') {
 						$('.frmAjaxModificar').html(data);
 
-
-
+						$(".frmAjaxModificar #email").prop('required',false);
+						$('.frmAjaxModificar #email').parent().parent().parent().find('label span').remove();
 					} else {
 						swal("Error!", data, "warning");
 
@@ -522,7 +472,63 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 		});//fin del boton modificar
 
 
+		$('.frmNuevo').submit(function(e){
 
+			e.preventDefault();
+			if ($('#sign_in')[0].checkValidity()) {
+				//información del formulario
+				var formData = new FormData($(".formulario")[0]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
+
+					},
+					//una vez finalizado correctamente
+					success: function(data){
+
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Creado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
+
+							$('#lgmNuevo').modal('hide');
+							$('#unidadnegocio').val('');
+							table.ajax.reload();
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
+
+
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
+					}
+				});
+			}
+		});
 
 
 		$('.frmModificar').submit(function(e){
@@ -531,7 +537,7 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 			if ($('.frmModificar')[0].checkValidity()) {
 
 				//información del formulario
-				var formData = new FormData($(".formulario")[0]);
+				var formData = new FormData($(".formulario")[1]);
 				var message = "";
 				//hacemos la petición ajax
 				$.ajax({

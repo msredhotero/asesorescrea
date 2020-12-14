@@ -1308,8 +1308,68 @@ switch ($accion) {
       insertarVentasCompleto($serviciosReferencias);
    break;
 
+   case 'insertarVentacontactos':
+      insertarVentacontactos($serviciosReferencias);
+   break;
+   case 'modificarVentacontactos':
+      modificarVentacontactos($serviciosReferencias);
+   break;
+   case 'eliminarVentacontactos':
+      eliminarVentacontactos($serviciosReferencias);
+   break;
+
 }
 /* FinFinFin */
+
+function insertarVentacontactos($serviciosReferencias) {
+   $refventas = $_POST['refventas'];
+   $apellidopaterno = $_POST['apellidopaterno'];
+   $apellidomaterno = $_POST['apellidomaterno'];
+   $nombre = $_POST['nombre'];
+   $telefonofijo = $_POST['telefonofijo'];
+   $telefonocelular = $_POST['telefonocelular'];
+   $email = $_POST['email'];
+   $titular = $_POST['titular'];
+
+   $res = $serviciosReferencias->insertarVentacontactos($refventas,$apellidopaterno,$apellidomaterno,$nombre,$telefonofijo,$telefonocelular,$email,$titular);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarVentacontactos($serviciosReferencias) {
+   $id = $_POST['id'];
+   $refventas = $_POST['refventas'];
+   $apellidopaterno = $_POST['apellidopaterno'];
+   $apellidomaterno = $_POST['apellidomaterno'];
+   $nombre = $_POST['nombre'];
+   $telefonofijo = $_POST['telefonofijo'];
+   $telefonocelular = $_POST['telefonocelular'];
+   $email = $_POST['email'];
+   $titular = $_POST['titular'];
+
+   $res = $serviciosReferencias->modificarVentacontactos($id,$refventas,$apellidopaterno,$apellidomaterno,$nombre,$telefonofijo,$telefonocelular,$email,$titular);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarVentacontactos($serviciosReferencias) {
+   $id = $_POST['id'];
+   $res = $serviciosReferencias->eliminarVentacontactos($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
 
 
 function insertarVentasCompleto($serviciosReferencias) {
@@ -8619,6 +8679,31 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+      case 'dbventacontactos':
+         $resultado = $serviciosReferencias->traerVentacontactosPorId( $id);
+
+         $modificar = "modificarVentacontactos";
+         $idTabla = "idventacontacto";
+
+
+         $lblCambio	 	= array('refventas','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','titular');
+         $lblreemplazo	= array('Venta','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tiular');
+
+
+         //insertar
+         $resVar	= $serviciosReferencias->traerVentasPorId(mysql_result($resultado,0,'refventas'));
+         $cadRef = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(9),'',$id);
+
+         if (mysql_result($resultado,0,'titular') == '1') {
+            $cadRef2 = "<option value='0'>No</option><option value='1' selected>Si</option>";
+         } else {
+            $cadRef2 = "<option value='0' selected>No</option><option value='1'>Si</option>";
+         }
+
+
+         $refdescripcion = array(0=>$cadRef,1=>$cadRef2);
+         $refCampo 	=  array('refventas','titular');
+      break;
       case 'dbasegurados':
          $resultado = $serviciosReferencias->traerAseguradosPorId( $id);
 

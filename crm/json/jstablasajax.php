@@ -69,6 +69,22 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 }
 
 switch ($tabla) {
+	case 'contactos':
+
+		$datos = $serviciosReferencias->traerVentacontactosajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-orange','bg-red');
+		$icon = array('edit','delete');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 8;
+	break;
 	case 'siniestros':
 
 		$estados = $_GET['estados'];

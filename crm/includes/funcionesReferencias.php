@@ -9,6 +9,107 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+
+
+   /* PARA Ventacontactos */
+
+   function insertarVentacontactos($refventas,$apellidopaterno,$apellidomaterno,$nombre,$telefonofijo,$telefonocelular,$email,$titular) {
+      $sql = "insert into dbventacontactos(idventacontacto,refventas,apellidopaterno,apellidomaterno,nombre,telefonofijo,telefonocelular,email,titular)
+      values ('',".$refventas.",'".$apellidopaterno."','".$apellidomaterno."','".$nombre."','".$telefonofijo."','".$telefonocelular."','".$email."','".$titular."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarVentacontactos($id,$refventas,$apellidopaterno,$apellidomaterno,$nombre,$telefonofijo,$telefonocelular,$email,$titular) {
+      $sql = "update dbventacontactos
+      set
+      refventas = ".$refventas.",apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',nombre = '".$nombre."',telefonofijo = '".$telefonofijo."',telefonocelular = '".$telefonocelular."',email = '".$email."',titular = '".$titular."'
+      where idventacontacto =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarVentacontactos($id) {
+      $sql = "delete from dbventacontactos where idventacontacto =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerVentacontactosajax($length, $start, $busqueda,$colSort,$colSortDir) {
+
+
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " where (concat(v.apellidopaterno, ' ', v.apellidomaterno, ' ', v.nombre) like '%".$busqueda."%' or ve.poliza like '%".$busqueda."%' or v.telefonofijo like '%".$busqueda."%' or v.telefonocelular like '%".$busqueda."%' or v.email like '%".$busqueda."%' or (case when v.titular = '1' then 'Si' else 'No' end) like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+      v.idventacontacto,
+      ve.nropoliza,
+      v.apellidopaterno,
+      v.apellidomaterno,
+      v.nombre,
+      v.telefonofijo,
+      v.telefonocelular,
+      v.email,
+      (case when v.titular = '1' then 'Si' else 'No' end) as titular,
+      v.refventas
+      from dbventacontactos v
+      inner join dbventas ve on ve.idventa = v.refventas or ve.refventas = v.refventas
+		".$where."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+
+   function traerVentacontactos() {
+      $sql = "select
+      v.idventacontacto,
+      v.refventas,
+      v.apellidopaterno,
+      v.apellidomaterno,
+      v.nombre,
+      v.telefonofijo,
+      v.telefonocelular,
+      v.email,
+      v.titular
+      from dbventacontactos v
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerVentacontactosPorId($id) {
+      $sql = "select idventacontacto,refventas,apellidopaterno,apellidomaterno,nombre,telefonofijo,telefonocelular,email,titular from dbventacontactos where idventacontacto =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerVentacontactosPorVenta($id) {
+      $sql = "select vc.idventacontacto,vc.refventas,vc.apellidopaterno,vc.apellidomaterno,vc.nombre,vc.telefonofijo,vc.telefonocelular,vc.email,vc.titular
+      from dbventacontactos vc
+      inner join dbventas v on v.idventa = vc.refventas or v.refventas = vc.refventas
+      where vc.refventas =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: dbventacontactos*/
+
    /* PARA Etapacotizacion */
 
    function insertarEtapacotizacion($etapacotizacion) {
@@ -6701,7 +6802,7 @@ return $res;
 
 		$sql = "select
 		v.idventa,
-		concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+		(case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
 		(case when v.refproductosaux > 0 then proa.producto else pro.producto end) as producto,
 		concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
 		concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
@@ -6850,7 +6951,7 @@ return $res;
 
 		$sql = "select
 		v.idventa,
-		concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+		(case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
 		(case when v.refproductosaux > 0 then proa.producto else pro.producto end) as producto,
 		concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
 		concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
@@ -6924,7 +7025,7 @@ return $res;
 
 		$sql = "select
 		v.idventa,
-		concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+		(case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
 		(case when v.refproductosaux > 0 then proa.producto else pro.producto end) as producto,
 		concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
 		concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
@@ -7000,7 +7101,7 @@ return $res;
 
 		$sql = "select
 		v.idventa,
-		concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+		(case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
 		(case when v.refproductosaux > 0 then proa.producto else pro.producto end) as producto,
 		concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
 		concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
