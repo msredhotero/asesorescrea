@@ -56,82 +56,17 @@ $modificar = "modificarCotizaciones";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbcotizaciones";
 
-$lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones','fechaemitido','primaneta','primatotal','recibopago','fechapago','nrorecibo','importecomisionagente','importebonopromotor','cobertura','reasegurodirecto','fecharenovacion','fechapropuesta','tiponegocio','presentacotizacion');
-$lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor','Cobertura Requiere Reaseguro','Reaseguro Directo con Inbursa o Broker','Fecha renovación o presentación de propueta al cliente','Fecha en que se entrega propuesta','Tipo de negocio para agente','Presenta Cotizacion o Poliza de competencia');
-
-
-$cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
-
-if ($_SESSION['idroll_sahilices'] == 7) {
-	$resVar2	= $serviciosReferencias->traerClientesasesoresPorAsesor($_SESSION['usuaid_sahilices']);
-} else {
-	$resVar2	= $serviciosReferencias->traerClientes();
-}
-
-if (mysql_num_rows($resVar2) > 0) {
-	$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(3,4,2),' ');
-} else {
-	$cadRef2 = "<option value='0'>-- No cargo ningun cliente aun --</option>";
-}
-
-
-$resVar3	= $serviciosReferencias->traerProductos();
-$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
-
-
-if ($_SESSION['idroll_sahilices'] != 7) {
-	$resVar4	= $serviciosReferencias->traerAsociados();
-	$cadRef4 = '<option value="0">-- Seleccionar --</option>';
-	$cadRef4 .= $serviciosFunciones->devolverSelectBox($resVar4,array(4,2,3),' ');
-} else {
-	$cadRef4 = '<option value="0">-- Sin valor --</option>';
-}
-
-if ($_SESSION['idroll_sahilices'] == 7) {
-	$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
-	if (mysql_num_rows($resVar5)>0) {
-		$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(4,2,3),' ');
-	} else {
-		header('Location: ../index.php');
-	}
-
-} else {
-	$resVar5	= $serviciosReferencias->traerAsesores();
-	$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(4,2,3),' ');
-}
-
-
-
-$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId(1);
-$cadRef6 = $serviciosFunciones->devolverSelectBox($resVar6,array(1),'');
-
-
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6);
-$refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones');
-
-$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
 $tabla2 			= "dbclientes";
 
-$lblCambio2	 	= array('refusuarios','fechanacimiento','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','reftipopersonas','numerocliente','razonsocial');
-$lblreemplazo2	= array('Usuario','Fecha de Nacimiento','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tipo Persona','Nro Cliente','Razon Social');
 
-
-$resVar82 = $serviciosReferencias->traerTipopersonas();
-$cadRef82 = $serviciosFunciones->devolverSelectBox($resVar82,array(1),'');
-
-$refdescripcion2 = array(0=>$cadRef82);
-$refCampo2 	=  array('reftipopersonas');
-
-$frmUnidadNegocios2 	= $serviciosFunciones->camposTablaViejo('insertarClientes' ,$tabla2,$lblCambio2,$lblreemplazo2,$refdescripcion2,$refCampo2);
-
-if ($_SESSION['idroll_sahilices'] == 3) {
-
+if ($_SESSION['idroll_sahilices'] == 7) {
+	$verFiltros = 0;
 
 } else {
-
+	$verFiltros = 1;
 }
 
 
@@ -267,6 +202,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 									</div>
 								</div>
 
+								<?php if ($verFiltros == 1) { ?>
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<?php
@@ -278,6 +214,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 										<button type="button" class="btn bg-red" id="filtrar">Filtrar</button>
 									</div>
 								</div>
+								<?php } ?>
 								<?php } ?>
 
 								<div class="row contActuales" style="padding: 5px 20px;">
@@ -327,7 +264,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 	               </div>
 	               <div class="modal-body">
 						<div class="row">
-							<?php echo $frmUnidadNegocios; ?>
+							<?php //echo $frmUnidadNegocios; ?>
 						</div>
 	               </div>
 	               <div class="modal-footer">
@@ -420,7 +357,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 	               </div>
 	               <div class="modal-body">
 							<div class="row">
-								<?php echo $frmUnidadNegocios2; ?>
+								<?php //echo $frmUnidadNegocios2; ?>
 							</div>
 
 	               </div>

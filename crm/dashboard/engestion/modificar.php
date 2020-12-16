@@ -50,6 +50,8 @@ $insertar = "insertarCotizaciones";
 $modificar = "modificarCotizaciones";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
+
+
 $id = $_GET['id'];
 $resultado = $serviciosReferencias->traerCotizacionesPorId($id);
 
@@ -117,10 +119,17 @@ switch ($orden) {
 		$ordenRechazo = 0;
 		$lblOrden = 'Finalizado';
 	break;
+	case 12:
+		$ordenPosible = 0;
+		$ordenRechazo = 0;
+		$lblOrden = 'Finalizado';
+	break;
 
 	default:
-		// code...
-		break;
+		$ordenPosible = 2;
+		$ordenRechazo = 0;
+		$lblOrden = 'En proceso';
+	break;
 }
 
 $ordenPosible = 0;
@@ -163,9 +172,14 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 	$resGuia = $serviciosReferencias->traerEstadocotizacionesPorIn('1,2,3,4,5');
 }
 
-$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorIn('4,12');
-$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$idestado);
+if ($_SESSION['idroll_sahilices'] == 7) {
+	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId($ordenPosible);
+	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$idestado);
+} else {
 
+	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorIn('1,4,8,10,12,13');
+	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$idestado);
+}
 
 
 switch (mysql_result($resultado,0,'cobertura')) {
@@ -219,6 +233,9 @@ switch (mysql_result($resultado,0,'existeprimaobjetivo')) {
 		$cadRef11 = "<option value='1' selected>Si</option><option value='0'>No</option>";
 	break;
 	case '0':
+		$cadRef11 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+	break;
+	default:
 		$cadRef11 = "<option value='1'>Si</option><option value='0' selected>No</option>";
 	break;
 }
@@ -486,7 +503,10 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								MODIFICAR <?php echo strtoupper($plural); ?> <button type="button" class="btn bg-cyan waves-effect btnLstDocumentaciones"><i class="material-icons">unarchive</i><span class="js-right-sidebar" data-close="true">DOCUMENTACIONES</span></button> <button type="button" class="btn bg-green waves-effect btnLstEnviar"><i class="material-icons">send</i><span>ENVIAR COTIZACION A CLIENTE</span></button>
+								MODIFICAR <?php echo strtoupper($plural); ?> <button type="button" class="btn bg-cyan waves-effect btnLstDocumentaciones"><i class="material-icons">unarchive</i><span class="js-right-sidebar" data-close="true">DOCUMENTACIONES</span></button>
+								<?php if ($_SESSION['idroll_sahilices'] != 7) { ?><button type="button" class="btn bg-green waves-effect btnLstEnviar"><i class="material-icons">send</i><span>ENVIAR COTIZACION A CLIENTE</span></button>
+								<?php } ?>
+
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -576,22 +596,30 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 										</tbody>
 									</table>
 								</div>
+
 								<div class="row">
 									<p>Acciones</p>
 									<div class="modal-footer">
 										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-											<?php if ($idestado == 4 ) { ?>
+									<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
+										<?php if (($idestado == 4 )) { ?>
 											<button id="4" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>
 
 											<button type="button" class="btn bg-orange waves-effect btnAbandonada">ABANDONADA</button>
 											<button type="button" class="btn bg-amber waves-effect btnDenegada">DENEGADA POR INBURSA</button>
 											<button type="button" class="btn bg-deep-orange waves-effect btnInsuficiente">PRIMA DE REFERENCIA INSUFICIENTE</button>
 										<?php } ?>
+									<?php }  else { ?>
+											<button type="button" class="btn btn-success waves-effect btnModificarBitacora">MODIFICAR BITACORA</button>
+									<?php } ?>
 
 
 										</div>
 				               </div>
 								</div>
+
+
+
 
 							</form>
 							</div>
@@ -694,6 +722,11 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 	$(document).ready(function(){
 
 
+
+		$('.btnModificarBitacora').click(function() {
+			modificarCotizacionesPorCampoCompleto();
+		});
+
 		$('.modificarEstadoCotizacionRechazo').click(function() {
 			modificarCotizacionesPorCampo();
 		});
@@ -724,6 +757,58 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 					});
 					$('#lgmModificarEstado').modal('toggle');
 					location.reload();
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
+		function modificarCotizacionesPorCampoCompleto() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificarCotizacionesPorCampoCompleto',
+					id: <?php echo $id; ?>,
+					campo: 'bitacoraagente',
+					valor: $('#bitacoraagente').val()
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data == '') {
+						swal({
+							title: "Respuesta",
+							text: 'Se guardo correctamente la bitacora',
+							type: "success",
+							timer: 1800,
+							showConfirmButton: false
+						});
+					} else {
+						swal({
+							title: "Respuesta",
+							text: data,
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+						});
+
+					}
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -775,7 +860,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 		$('.frmContrefbeneficiarios').hide();
 		$('.frmContversion').hide();
 		$('.frmContrefcotizaciones').hide();
-		/*$('.frmContrefestados').hide();*/
+		$('.frmContrefestados').hide();
 
 		$('.btnLstEnviar').click(function() {
 			$('#lgmENVIAR').modal();
@@ -1295,7 +1380,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 		$(".btnModificar").click( function(){
 
 			idTable =  $(this).attr("id");
-			$('#estadoactual').val(idTable);
+
 			$('.btnContinuar').click();
 		});//fin del boton modificar
 

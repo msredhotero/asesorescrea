@@ -1317,9 +1317,28 @@ switch ($accion) {
    case 'eliminarVentacontactos':
       eliminarVentacontactos($serviciosReferencias);
    break;
+   case 'modificarCotizacionesPorCampoCompleto':
+      modificarCotizacionesPorCampoCompleto($serviciosReferencias);
+   break;
 
 }
 /* FinFinFin */
+
+function modificarCotizacionesPorCampoCompleto($serviciosReferencias) {
+   session_start();
+
+   $id = $_POST['id'];
+   $campo = $_POST['campo'];
+   $valor = $_POST['valor'];
+
+   $res = $serviciosReferencias->modificarCotizacionesPorCampo($id,$campo, $valor, $_SESSION['usua_sahilices']);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
 
 function insertarVentacontactos($serviciosReferencias) {
    $refventas = $_POST['refventas'];
@@ -1725,9 +1744,24 @@ function avisarClientePoliza($serviciosReferencias, $serviciosUsuarios) {
 
    $nropoliza = mysql_result($resultado,0,'nropoliza');
 
-   $refusuarios = mysql_result($resultado,0,'refusuarios');
+   // si no es la clave clave de javier, se lo envio al asesor
+   if (mysql_result($resCotizaciones,0,'claveasesor') != '28222') {
+      $refusuarios = mysql_result($resultado,0,'refusuariosasesor');
 
-   $email = mysql_result($resultado,0,'email');
+      $email = mysql_result($resultado,0,'emialasesor');
+   } else {
+      $resContacto = $serviciosReferencias->traerVentacontactosPorVentaActivo($id);
+
+      $refusuarios = mysql_result($resultado,0,'refusuarios');
+      if (mysql_num_rows($resContacto) > 0) {
+         $email = mysql_result($resContacto,0,'email');
+      } else {
+         $email = mysql_result($resultado,0,'email');
+      }
+
+   }
+
+
 
    $url = "listadopolizas/poliza.php?id=".$id;
    $token = $serviciosReferencias->GUID();
@@ -2574,7 +2608,7 @@ function reenviarTokens($serviciosReferencias) {
 
    $refcotizaciones = $_POST['refcotizaciones'];
    $reftipo = 1;
-   $token = $serviciosReferencias->GUID();
+   $token = $serviciosReferencias->generarNIP();
 
    $fechacreac = date('Y-m-d H:i:s');
    $nuevafecha = strtotime ( '+15 hour' , strtotime ( $fechacreac ) ) ;
@@ -2621,7 +2655,7 @@ function reenviarTokens($serviciosReferencias) {
 
       $cuerpo .= '<h3><small><p>Este es el nuevo NIP generado para firmar de forma digital</small></h3><p>';
 
-      $cuerpo .= '<h4>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</h4>';
+      $cuerpo .= '<h4>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$tokenL.'">AQUI</a> para acceder</h4>';
 
 		$cuerpo .= "<center>NIP:<b>".$token."</b></center><p> ";
 
@@ -2669,6 +2703,11 @@ function insertarTokens($serviciosReferencias) {
 
       $email = mysql_result($resCliente,0,'email');
 
+      $idusuario = mysql_result($resCliente,0,'refusuarios');
+
+      $tokenL = $serviciosReferencias->GUID();
+      $resAutoLogin = $serviciosReferencias->insertarAutologin($idusuario,$tokenL,$url,'0');
+
       $cuerpo = '';
 
       $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
@@ -2687,7 +2726,7 @@ function insertarTokens($serviciosReferencias) {
 
       $cuerpo .= '<body>';
 
-      $cuerpo .= '<h3><small><p>Este es el nuevo NIP generado para firmar de forma digital, por favor ingrese al siguiente <a href="https://asesorescrea.com/desarrollo/crm/dashboard/venta/documentos.php?id='.$refcotizaciones.'" target="_blank"> enlace </a> para finalizar el proceso de venta. </small></h3><p>';
+      $cuerpo .= '<h3><small><p>Este es el nuevo NIP generado para firmar de forma digital, por favor ingrese al siguiente <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$tokenL.'"> enlace </a> para finalizar el proceso de venta. </small></h3><p>';
 
 		$cuerpo .= "<center>NIP:<b>".$token."</b></center><p> ";
 
@@ -3230,11 +3269,12 @@ function enviarCotizacion($serviciosReferencias, $serviciosUsuarios, $serviciosM
    if (mysql_num_rows($resCotizaciones) > 0) {
       $resV['error'] = false;
 
+
       if ((mysql_result($resCotizaciones,0,'claveasesor') != '28222') && (mysql_result($resCotizaciones,0,'envioalcliente') == '0')) {
          // destinatario del email
          $destinatario = mysql_result($resCotizaciones,0,'emailasesor');
          // url para ingreso
-         $url = "cotizaciones/modificar.php?id=".mysql_result($resCotizaciones,0,0);
+         $url = "engestion/modificar.php?id=".mysql_result($resCotizaciones,0,0);
          // usuario
          $idusuario = mysql_result($resCotizaciones,0,'idusuarioasesor');
       } else {
@@ -3252,6 +3292,8 @@ function enviarCotizacion($serviciosReferencias, $serviciosUsuarios, $serviciosM
          }
 
       }
+
+
 
       if ($noenviar == 0) {
          ///// para el auto login ///////////////

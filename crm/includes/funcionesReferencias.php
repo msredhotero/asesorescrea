@@ -106,6 +106,14 @@ class ServiciosReferencias {
       return $res;
    }
 
+   function traerVentacontactosPorVentaActivo($id) {
+      $sql = "select vc.idventacontacto,vc.refventas,vc.apellidopaterno,vc.apellidomaterno,vc.nombre,vc.telefonofijo,vc.telefonocelular,vc.email,vc.titular
+      from dbventacontactos vc
+      inner join dbventas v on v.idventa = vc.refventas or v.refventas = vc.refventas
+      where vc.refventas =".$id." and vc.titular='1'";
+      $res = $this->query($sql,0);
+      return $res;
+   }
 
    /* Fin */
    /* /* Fin de la Tabla: dbventacontactos*/
@@ -7186,7 +7194,7 @@ return $res;
       p.producto,
       cli.refusuarios,
       ase.refusuarios as refusuariosasesor,
-      cli.email, ase.email as emialasesor, v.refproductosaux, v.refventas, v.version, v.refmotivorechazopoliza, v.observaciones, v.vigenciadesde
+      cli.email, ase.email as emialasesor, v.refproductosaux, v.refventas, v.version, v.refmotivorechazopoliza, v.observaciones, v.vigenciadesde, ase.claveasesor, ase.envioalcliente
 		from dbventas v
 		inner join dbcotizaciones c ON c.idcotizacion = v.refcotizaciones
       inner join dbclientes cli ON cli.idcliente = c.refclientes
@@ -9019,7 +9027,7 @@ return $res;
       c.refestadocivil,
       c.reftipoidentificacion,
       c.nroidentificacion,
-      (case when reftipopersonas = 1 then concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) else concat(c.razonsocial, ' - ', c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) end) as nombrecompleto
+      (case when c.reftipopersonas = 1 then concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) else concat(c.razonsocial, ' - ', c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) end) as nombrecompleto
 		from dbclientesasesores c
 		inner join dbclientes cl ON cl.idcliente = c.refclientes
 		inner join dbasesores ase on ase.refusuarios = c.refasesores

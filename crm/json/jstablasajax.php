@@ -1066,9 +1066,16 @@ switch ($tabla) {
 				$termina = 5;
 			break;
 			case 2:
-				$label = array('btnModificar','btnEliminar');
-				$class = array('bg-amber','bg-red');
-				$icon = array('create','delete');
+				if ($_SESSION['idroll_sahilices'] == 7) {
+					$label = array('btnModificar');
+					$class = array('bg-green');
+					$icon = array('search');
+				} else {
+					$label = array('btnModificar','btnEliminar');
+					$class = array('bg-amber','bg-red');
+					$icon = array('create','delete');
+				}
+
 				$whereEstado = ' c.refestados in (2) ';
 				$termina = 5;
 
@@ -1113,6 +1120,22 @@ switch ($tabla) {
 				$whereEstado = ' c.refestados in (4) ';
 				$termina = 7;
 				$filtroNuevo = 'poroficina';
+			break;
+			case 10:
+				if ($_SESSION['idroll_sahilices'] == 7) {
+					$label = array('btnModificar');
+					$class = array('bg-green');
+					$icon = array('search');
+				} else {
+					$label = array('btnModificar','btnEliminar');
+					$class = array('bg-amber','bg-red');
+					$icon = array('create','delete');
+				}
+
+				$whereEstado = ' est.idestadocotizacion in (10) ';
+				$termina = 5;
+
+				$filtroNuevo = ' and ';
 			break;
 			default:
 				$label = array();

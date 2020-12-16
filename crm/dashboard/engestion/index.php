@@ -637,6 +637,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			$('#lgmEliminar').modal();
 		});//fin del boton eliminar
 
+
 		$("#example2").on("click",'.btnEliminar', function(){
 			idTable =  $(this).attr("id");
 			$('#ideliminar').val(idTable);

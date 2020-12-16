@@ -386,6 +386,8 @@ if (isset($_GET['id'])) {
 	$cadRef10 = $serviciosFunciones->devolverSelectBox($resVar10,array(1),'');
 
 
+
+
 	$cadRef2 = "<option value=''></option>";
 	$cadRef3 = "<option value=''></option>";
 	$cadRef4 = "<option value=''></option>";
@@ -429,7 +431,7 @@ if (isset($_GET['id'])) {
 		$resLstClientes = $serviciosReferencias->traerClientesasesoresPorAsesor($_SESSION['usuaid_sahilices']);
 		$cadRef2 = $serviciosFunciones->devolverSelectBox($resLstClientes,array(14),'');
 
-
+		//die(var_dump($_SESSION['usuaid_sahilices']));
 
 	} else {
 		$resVar5	= $serviciosReferencias->traerAsesores();
@@ -639,7 +641,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 
 
-                              <h3>Cliente</h3>
+                              <h3>CLIENTE</h3>
                               <fieldset>
 
                                     <div class="form-group form-float">
@@ -681,7 +683,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
                               </fieldset>
 										<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
-										<h3>Agente</h3>
+										<h3>AGENTE</h3>
                               <fieldset>
                                  <div class="form-group form-float">
                                      <div class="form-line">
@@ -699,7 +701,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
                                  </div>
                               </fieldset>
 
-										<h3>Asociados</h3>
+										<h3>ASOCIADO</h3>
                               <fieldset>
 											<div class="form-group form-float frmContasociadocheck" style="margin-top:20px;">
 												<div class="form-group">
@@ -733,7 +735,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 											</select>
 										<?php } ?>
 
-                              <h3>Producto</h3>
+                              <h3>CUESTIONARIO DEL PRODUCTO</h3>
                                  <fieldset>
 												<div class="form-group form-float">
 													<label class="form-label" style="margin-top:20px;">Ramo de Negocio *</label>
@@ -788,7 +790,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 										$i = 0;
 										if ($iddocumentacion > 0) {
 										?>
-										<h3>Galeria Producto</h3>
+										<h3>GALERIA PRODUCTO</h3>
                               <fieldset>
 											<?php if ($documentacionNombre != '') { ?>
 												<p>Archivos que debera cargar para continuar</p>
@@ -873,7 +875,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
                               </fieldset>
 										<?php } ?>
 
-                              <h3>Información del Negocio</h3>
+                              <h3>INFORMACIÓN DEL NEGOCIO</h3>
                               <fieldset>
 											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
 												<div class="form-group form-float">
@@ -1560,7 +1562,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 								timer: 4000,
 								showConfirmButton: false
 						});
-						form.steps("previous");
+						
 					} else {
 						if (data.errorinsert) {
 							swal({
@@ -2019,6 +2021,15 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	            if (currentIndex < newIndex) {
 	                form.find('.body:eq(' + newIndex + ') label.error').remove();
 	                form.find('.body:eq(' + newIndex + ') .error').removeClass('error');
+
+						 <?php if (!(isset($_GET['id']))) { ?>
+
+	 						if ($tab.trim() == 'CUESTIONARIO DEL PRODUCTO') {
+	 							validarCuestionario($('#refproductos').val());
+	 							//guardarCotizacion(1);
+	 						}
+
+	 					<?php } ?>
 	            }
 
 	            form.validate().settings.ignore = ':disabled,:hidden';
@@ -2029,11 +2040,11 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 							var $tab = $('#wizard_with_validation-h-' + currentIndex).html();
 
-							if ($tab.trim() == 'Información del Negocio') {
+							if ($tab.trim() == 'INFORMACIÓN DEL NNEGOCIO') {
 								$('.contSubirArchivos1').hide();
 								$('.contSubirArchivos2').show();
 							} else {
-								if ($tab.trim() == 'Galeria Producto') {
+								if ($tab.trim() == 'GALERIA PRODUCTO') {
 									$('.contSubirArchivos2').hide();
 									$('.contSubirArchivos1').show();
 								} else {
@@ -2041,18 +2052,6 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 									$('.contSubirArchivos2').hide();
 								}
 							}
-
-
-
-						<?php if (!(isset($_GET['id']))) { ?>
-
-							if (currentIndex == 4) {
-								validarCuestionario($('#refproductos').val());
-								//guardarCotizacion(1);
-							}
-
-						<?php } ?>
-
 
 
 	        },

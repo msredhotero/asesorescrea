@@ -444,7 +444,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			"bProcessing": true,
 			"bServerSide": true,
 			"order": [[ 5, "desc" ]],
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizaciones&estado=2",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizaciones&estado=10",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -588,7 +588,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 
 		$("#example2").on("click",'.btnModificar', function(){
 			idTable =  $(this).attr("id");
-			$(location).attr('href','../cotizaciones/modificar.php?id=' + idTable);
+			$(location).attr('href','modificar.php?id=' + idTable);
 		});//fin del boton modificar
 
 		$("#example2").on("click",'.btnVer', function(){
