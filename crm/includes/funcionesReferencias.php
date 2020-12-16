@@ -16393,6 +16393,17 @@ return $res;
 
 	/* PARA Clientes */
 
+   function existeClienteAPYN($nombre,$apellidopaterno,$apellidomaterno) {
+      $sql = "select * from dbclientes where nombre like '".$nombre."' and apellidopaterno like '".$apellidopaterno."' and apellidomaterno like '".$apellidomaterno."'";
+		$res = $this->query($sql,0);
+
+		if (mysql_num_rows($res) > 0) {
+			return 1;
+		}
+
+		return 0;
+   }
+
 	function generaNroCliente() {
 		$sql = "select max(idcliente) from dbclientes";
 		$res = $this->query($sql,0);

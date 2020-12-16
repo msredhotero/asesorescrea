@@ -10062,18 +10062,25 @@ function insertarClientes($serviciosReferencias) {
    $reftipoidentificacion = $_POST['reftipoidentificacion'];
    $nroidentificacion = $_POST['nroidentificacion'];
 
-   $res = $serviciosReferencias->insertarClientes($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion);
+   $existe = $serviciosReferencias->existeClienteAPYN($nombre,$apellidopaterno,$apellidomaterno);
 
-   if ((integer)$res > 0) {
-      if ($_SESSION['idroll_sahilices'] == 7) {
-         $resAsesores = $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
-
-         $resClienteAsedor = $serviciosReferencias->insertarClientesasesores($res,mysql_result($resAsesores,0,0),$apellidopaterno,$apellidomaterno,$nombre,$razonsocial,$domicilio,$email,$rfc,$ine,$reftipopersonas,$telefonofijo,$telefonocelular,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion);
-      }
-      echo '';
+   if ($existe == 1) {
+      echo 'El cliente ya existe en la base de datos';
    } else {
-      echo 'Hubo un error al insertar datos';
+      $res = $serviciosReferencias->insertarClientes($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion);
+
+      if ((integer)$res > 0) {
+         if ($_SESSION['idroll_sahilices'] == 7) {
+            $resAsesores = $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
+
+            $resClienteAsedor = $serviciosReferencias->insertarClientesasesores($res,mysql_result($resAsesores,0,0),$apellidopaterno,$apellidomaterno,$nombre,$razonsocial,$domicilio,$email,$rfc,$ine,$reftipopersonas,$telefonofijo,$telefonocelular,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion);
+         }
+         echo '';
+      } else {
+         echo 'Hubo un error al insertar datos';
+      }
    }
+
 }
 
 
