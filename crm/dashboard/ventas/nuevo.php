@@ -320,6 +320,10 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 									<div class="row" style="margin-top:150px;">
 										<hr>
 										<div class="button-demo">
+											<button type="button" class="btn bg-grey waves-effect btnVolver">
+												<i class="material-icons">reply</i>
+												<span>VOLVER</span>
+											</button>
 											<button type="submit" class="btn bg-light-blue waves-effect btnGuardar">
 												<i class="material-icons">save</i>
 												<span>GUARDAR</span>
@@ -543,6 +547,10 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 <script>
 	$(document).ready(function(){
+
+		$('.btnVolver').click(function() {
+			$(location).attr('href','index.php');
+		});
 
 		var options2 = {
 
@@ -921,7 +929,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 					processData: false,
 					//mientras enviamos el archivo
 					beforeSend: function(){
-
+						$('.btnGuardar').hide();
 					},
 					//una vez finalizado correctamente
 					success: function(data){
@@ -938,6 +946,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 							$('#lgmNuevo').modal('hide');
 							$('#unidadnegocio').val('');
 							table.ajax.reload();
+							$('.btnGuardar').hide();
 						} else {
 							swal({
 									title: "Respuesta",
@@ -946,6 +955,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 									timer: 2500,
 									showConfirmButton: false
 							});
+							$('.btnGuardar').show();
 
 
 						}
