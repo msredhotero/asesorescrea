@@ -16554,7 +16554,7 @@ return $res;
 		(case when reftipopersonas = 1 then concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) else concat(c.razonsocial, ' - ', c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) end) as nombrecompleto
 		from dbclientes c
 		inner join tbtipopersonas tip ON tip.idtipopersona = c.reftipopersonas
-		order by 1";
+		order by (case when reftipopersonas = 1 then concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) else concat(c.razonsocial, ' - ', c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) end)";
 		$res = $this->query($sql,0);
 		return $res;
 	}
