@@ -1244,7 +1244,8 @@ if (mysql_num_rows($resPaquete) > 0) {
 					idcliente: <?php echo $idcliente; ?>,
 					nropoliza: '<?php echo $nropoliza; ?>',
 					url: "cobranza/subirdocumentacioni.php?id=<?php echo $id; ?>&iddocumentacion=40",
-					idpago: <?php echo $id; ?>
+					idpago: <?php echo $id; ?>,
+					idventa: <?php echo $idventa; ?>
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){

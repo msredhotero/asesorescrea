@@ -1835,12 +1835,32 @@ function enviarFacturaAlCliente($serviciosReferencias) {
    $idcliente = $_POST['idcliente'];
    $nropoliza = $_POST['nropoliza'];
    $idpago = $_POST['idpago'];
+   $idventa = $_POST['idventa'];
 
    $resFechaReal = $serviciosReferencias->marcarFechaPagoRealInbursa($idpago);
 
+   $resVenta = $serviciosReferencias->traerVentasPorIdCompleto($idventa);
+
+   $resContacto = $serviciosReferencias->traerVentacontactosPorVentaActivo($idventa);
+
+   // si no es la clave de javier
+   if (mysql_result($resVenta,0,'claveasesor' != '28222') {
+
+      $refusuarios = mysql_result($resVenta,0,'refusuariosasesor');
+
+      if (mysql_num_rows($resContacto) > 0) {
+         $email = mysql_result($resContacto,0,'email');
+      } else {
+         $email = mysql_result($resVenta,0,'emialasesor');
+      }
+   } else {
+      $refusuarios = mysql_result($resCliente,0,'refusuarios');
+   }
+
+
    $resCliente = $serviciosReferencias->traerClientesPorId($idcliente);
 
-   $refusuarios = mysql_result($resCliente,0,'refusuarios');
+
 
    $token = $serviciosReferencias->GUID();
    $resAutoLogin = $serviciosReferencias->insertarAutologin($refusuarios,$token,$url,'0');
@@ -1861,7 +1881,7 @@ function enviarFacturaAlCliente($serviciosReferencias) {
 
    $cuerpo .= '<body>';
 
-   $cuerpo .= '<h3><small><p>Aqui tienes tu Factura Digital de la poliza '.$nropoliza.'</small></h3><p>';
+   $cuerpo .= '<h3><small><p>Factura Digital de la poliza '.$nropoliza.'</small></h3><p>';
 
    $cuerpo .= '<h4>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</h4>';
 
