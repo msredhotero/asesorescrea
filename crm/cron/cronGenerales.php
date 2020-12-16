@@ -24,5 +24,7 @@ $res4 = $serviciosReferencias->cronModificarEstadoOportunidades();
 
 $resI = $serviciosReferencias->insertarCron('Notificaciones Generales',date('Y-m-d H:i:s'));
 
+echo $resI;
+
 
 ?>
