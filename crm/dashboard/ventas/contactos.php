@@ -59,7 +59,7 @@ $resultado = $serviciosReferencias->traerVentasPorId($id);
 $tabla 			= "dbventacontactos";
 
 $lblCambio	 	= array('refventas','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','titular');
-$lblreemplazo	= array('Venta','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tiular');
+$lblreemplazo	= array('Venta','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Notificador');
 
 $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resultado,array(9),'',$id);
 
@@ -207,7 +207,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Tel. Fijo</th>
 												<th>Tel. Celular</th>
 												<th>Email</th>
-												<th>Es Titular</th>
+												<th>Es Notificador</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -220,7 +220,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Tel. Fijo</th>
 												<th>Tel. Celular</th>
 												<th>Email</th>
-												<th>Es Titular</th>
+												<th>Es Notificador</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -339,7 +339,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=contactos",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=contactos&idventa=<?php echo $id; ?>",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",

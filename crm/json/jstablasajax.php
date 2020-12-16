@@ -71,7 +71,8 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 switch ($tabla) {
 	case 'contactos':
 
-		$datos = $serviciosReferencias->traerVentacontactosajax($length, $start, $busqueda,$colSort,$colSortDir);
+		$idventa = $_GET['idventa'];
+		$datos = $serviciosReferencias->traerVentacontactosajax($length, $start, $busqueda,$colSort,$colSortDir,$idventa);
 
 		$resAjax = $datos[0];
 		$res = $datos[1];

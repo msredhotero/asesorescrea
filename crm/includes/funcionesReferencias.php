@@ -37,7 +37,7 @@ class ServiciosReferencias {
       return $res;
    }
 
-   function traerVentacontactosajax($length, $start, $busqueda,$colSort,$colSortDir) {
+   function traerVentacontactosajax($length, $start, $busqueda,$colSort,$colSortDir,$idventa) {
 
 
 
@@ -45,7 +45,7 @@ class ServiciosReferencias {
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " where (concat(v.apellidopaterno, ' ', v.apellidomaterno, ' ', v.nombre) like '%".$busqueda."%' or ve.poliza like '%".$busqueda."%' or v.telefonofijo like '%".$busqueda."%' or v.telefonocelular like '%".$busqueda."%' or v.email like '%".$busqueda."%' or (case when v.titular = '1' then 'Si' else 'No' end) like '%".$busqueda."%')";
+			$where = " and (concat(v.apellidopaterno, ' ', v.apellidomaterno, ' ', v.nombre) like '%".$busqueda."%' or ve.poliza like '%".$busqueda."%' or v.telefonofijo like '%".$busqueda."%' or v.telefonocelular like '%".$busqueda."%' or v.email like '%".$busqueda."%' or (case when v.titular = '1' then 'Si' else 'No' end) like '%".$busqueda."%')";
 		}
 
 
@@ -62,7 +62,7 @@ class ServiciosReferencias {
       v.refventas
       from dbventacontactos v
       inner join dbventas ve on ve.idventa = v.refventas or ve.refventas = v.refventas
-		".$where."
+		where v.refventas = ".$idventa." ".$where."
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
 

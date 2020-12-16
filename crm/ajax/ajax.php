@@ -8749,7 +8749,7 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 
 
          $lblCambio	 	= array('refventas','apellidopaterno','apellidomaterno','telefonofijo','telefonocelular','titular');
-         $lblreemplazo	= array('Venta','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Tiular');
+         $lblreemplazo	= array('Venta','Apellido Paterno','Apellido Materno','Tel. Fijo','Tel. Celular','Notificador');
 
 
          //insertar
