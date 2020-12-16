@@ -1444,7 +1444,12 @@ function insertarVentasCompleto($serviciosReferencias) {
       $resModificarEST = $serviciosReferencias->modificarCotizacionesPorCampo($res,'refestados',4,$usuariomodi);
 
       $tieneasegurado = $_POST['tieneasegurado'];
-      $refasegurados = $_POST['refasegurados'];
+      if (isset($_POST['refasegurados'])) {
+         $refasegurados = $_POST['refasegurados'];
+      } else {
+         $refasegurados = 0;
+      }
+
 
       $resAsegurados = $serviciosReferencias->modificarCotizacionesAsegurado($res,$tieneasegurado,$refasegurados);
 
@@ -1844,7 +1849,7 @@ function enviarFacturaAlCliente($serviciosReferencias) {
    $resContacto = $serviciosReferencias->traerVentacontactosPorVentaActivo($idventa);
 
    // si no es la clave de javier
-   if (mysql_result($resVenta,0,'claveasesor' != '28222') {
+   if (mysql_result($resVenta,0,'claveasesor' != '28222')) {
 
       $refusuarios = mysql_result($resVenta,0,'refusuariosasesor');
 
