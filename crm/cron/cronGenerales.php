@@ -24,7 +24,7 @@ $res4 = $serviciosReferencias->cronModificarEstadoOportunidades();
 
 $resI = $serviciosReferencias->insertarCron('Notificaciones Generales',date('Y-m-d H:i:s'));
 
-echo $resI;
+$email = $serviciosReferencias->enviarEmail('msredhotero@gmail.com','CRON: 1','Notificaciones Generales');
 
 
 ?>

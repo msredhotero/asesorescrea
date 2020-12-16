@@ -35,6 +35,6 @@ $resC = $serviciosAlertas->alertaVencimientoMarcarTabla(0,10);
 
 $resI = $serviciosReferencias->insertarCron('Vencimientos Polizas y Recibos',date('Y-m-d H:i:s'));
 
-echo $resI;
+$email = $serviciosReferencias->enviarEmail('msredhotero@gmail.com','CRON: 2','Vencimientos Polizas y Recibos');
 
 ?>
