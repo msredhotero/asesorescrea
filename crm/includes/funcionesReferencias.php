@@ -18888,6 +18888,13 @@ return $res;
    /* Fin */
    /* /* Fin de la Tabla: autologin*/
 
+   function insertarCron($nombre,$fecha) {
+      $sql = "insert into dbcron(idcron,nombre,fecha)
+      values ('','".$nombre."','".$fecha."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
 
  /*****************************       fin         ************************************************/
 

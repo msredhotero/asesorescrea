@@ -22,5 +22,7 @@ $res3 = $serviciosReferencias->cronNotificarSeguro();
 
 $res4 = $serviciosReferencias->cronModificarEstadoOportunidades();
 
+$resI = $serviciosReferencias->insertarCron('Notificaciones Generales',date('Y-m-d H:i:s'));
+
 
 ?>

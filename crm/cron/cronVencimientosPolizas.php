@@ -33,4 +33,6 @@ $resD = $serviciosAlertas->alertaVencimientoMarcarTabla(-11,9);
 
 $resC = $serviciosAlertas->alertaVencimientoMarcarTabla(0,10);
 
+$resI = $serviciosReferencias->insertarCron('Vencimientos Polizas y Recibos',date('Y-m-d H:i:s'));
+
 ?>
