@@ -7761,7 +7761,7 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones,
    $observaciones = $_POST['observaciones'];
    $refestadogeneraloportunidad = $_POST['refestadogeneraloportunidad'];
 
-   $reforigenreclutamiento = $_POST['reforigenreclutamiento'];
+   $reforigenreclutamiento = ($_POST['reforigenreclutamiento'] == '' ? 0 : $_POST['reforigenreclutamiento']);
 
    $error = '';
    if ($refestadooportunidad == 2) {
