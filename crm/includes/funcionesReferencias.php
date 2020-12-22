@@ -12796,7 +12796,7 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and ".$roles." (o.nombredespacho like '%".$busqueda."%' or o.apellidopaterno like '%".$busqueda."%' or o.apellidomaterno like '%".$busqueda."%' or o.nombre like '%".$busqueda."%' or o.telefonomovil like '%".$busqueda."%' or o.telefonotrabajo like '%".$busqueda."%' or o.email like '%".$busqueda."%' or usu.nombrecompleto like '%".$busqueda."%' or est.estadooportunidad like '%".$busqueda."%')";
+			$where = " and ".$roles." (o.nombredespacho like '%".$busqueda."%' or o.apellidopaterno like '%".$busqueda."%' or o.apellidomaterno like '%".$busqueda."%' or o.nombre like '%".$busqueda."%' or o.telefonomovil like '%".$busqueda."%' or o.telefonotrabajo like '%".$busqueda."%' or o.email like '%".$busqueda."%' or o.fechacrea like '%".$busqueda."%' or usu.nombrecompleto like '%".$busqueda."%' or est.estadooportunidad like '%".$busqueda."%')";
 		} else {
 			if ($responsableComercial != '') {
 	         $where = " and usu.idusuario = ".$responsableComercial." ";
