@@ -669,6 +669,8 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 						$('.frmAjaxModificar .frmContusuariomodi').hide();
 						$('.frmAjaxModificar .frmContfechacrea').hide();
 						$('.frmAjaxModificar .frmContfechamodi').hide();
+						$('.frmAjaxModificar .frmContrefformapago').hide();
+						$('.frmAjaxModificar .frmContfechapagoreal').hide();
 
 						$('.frmAjaxModificar #primaneta').number( true, 2 ,'.','');
 						$('.frmAjaxModificar #montototal').number( true, 2,'.','' );
