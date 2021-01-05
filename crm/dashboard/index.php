@@ -68,6 +68,9 @@ while ($row = mysql_fetch_array($resConstancias)) {
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 
+if ($_SESSION['idroll_sahilices'] == 19) {
+	header('Location: inicio/index.php');
+}
 
 ///// SI EL ROL ES DEL ASESOR
 if ($_SESSION['idroll_sahilices'] == 7) {
@@ -1076,7 +1079,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 								<?php
 								if ($refestado == 10) {
 								?>
-								<div class="alert bg-light-green"><i class="material-icons">done_all</i> Su Proceso de Reclutamiento finalizo correctamente.</div>
+
 
 							<?php }  else { ?>
 								<?php if ($refestado == 9) { ?>

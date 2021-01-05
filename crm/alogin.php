@@ -31,7 +31,7 @@ if (isset($_SESSION['usua_sahilices'])) {
 
       if (mysql_num_rows($resAutologin) > 0) {
          $resUsuario = $serviciosUsuario->traerUsuarioIdAutoLogin(mysql_result($resAutologin,0,'refusuarios'));
-         if (mysql_num_rows($resAutologin) > 0) {
+         if (mysql_num_rows($resUsuario) > 0) {
 
             if (mysql_result($resUsuario,0,'refroles') == 16) {
                $resCliente = $serviciosUsuario->traerClientesPorUsuario(mysql_result($resAutologin,0,'refusuarios'));

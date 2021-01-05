@@ -482,7 +482,20 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 				  $('td', row).css('background-color', '#F62121');
 				  $('td', row).css('color', 'white');
 			  }
-		   }
+		   }<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>,
+			"columnDefs": [
+				{
+					"targets": [ 2 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [ 3 ],
+					"visible": false,
+					"searchable": false
+				}
+
+		  ]<?php } ?>
 		});
 
 		$('#filtrar').click( function() {

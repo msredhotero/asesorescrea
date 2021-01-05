@@ -11,6 +11,128 @@ class ServiciosReferencias {
 
 
 
+/* PARA Tokenasesores */
+
+function insertarTokenasesores($token,$refasesores,$refclientes,$generousuario,$fechacrea,$vigencia,$activo,$accion,$tipoaccion,$refestados,$refusuarios) {
+$sql = "insert into dbtokenasesores(idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios)
+values ('','".$token."',".$refasesores.",".$refclientes.",'".$generousuario."','".$fechacrea."','".$vigencia."','".$activo."','".$accion."','".$tipoaccion."',".$refestados.",".$refusuarios.")";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarTokenasesores($id,$token,$refasesores,$refclientes,$generousuario,$fechacrea,$vigencia,$activo,$accion,$tipoaccion,$refestados,$refusuarios) {
+$sql = "update dbtokenasesores
+set
+token = '".$token."',refasesores = ".$refasesores.",refclientes = ".$refclientes.",generousuario = '".$generousuario."',fechacrea = '".$fechacrea."',vigencia = '".$vigencia."',activo = '".$activo."',accion = '".$accion."',tipoaccion = '".$tipoaccion."',refestados = ".$refestados.",refusuarios = ".$refusuarios."
+where idtokenasesor =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+function modificarTokenasesoresParcial($token,$refusuarios) {
+$sql = "update dbtokenasesores
+set
+generousuario = '1',activo = '0',refusuarios = ".$refusuarios."
+where token = '".$token."'";
+$res = $this->query($sql,0);
+return $res;
+}
+
+function modificarTokenasesoresEstado($token,$refestados) {
+$sql = "update dbtokenasesores
+set
+refestados = ".$refestados."
+where token = '".$token."'";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarTokenasesores($id) {
+$sql = "delete from dbtokenasesores where idtokenasesor =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerTokenasesores() {
+$sql = "select
+t.idtokenasesor,
+t.token,
+t.refasesores,
+t.refclientes,
+t.generousuario,
+t.fechacrea,
+t.vigencia,
+t.activo,
+t.accion,
+t.tipoaccion,
+t.refestados,
+t.refusuarios
+from dbtokenasesores t
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerTokenasesoresPorId($id) {
+$sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios from dbtokenasesores where idtokenasesor =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+function traerTokenasesoresPorToken($token) {
+$sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios from dbtokenasesores where token = '".$token."'";
+$res = $this->query($sql,0);
+return $res;
+}
+
+function traerTokenasesoresPorTokenActivo($token) {
+$sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios from dbtokenasesores where token = '".$token."' and now() <= vigencia ";
+$res = $this->query($sql,0);
+return $res;
+}
+
+function traerTokenasesoresPorAsesor($id) {
+$sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios from dbtokenasesores where refasesores =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+function traerTokenasesoresPorCliente($id) {
+$sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios from dbtokenasesores where refclientes =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+function traerTokenasesoresPorClienteActivoTipo($id,$tipo) {
+$sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,
+vigencia,activo,accion,tipoaccion,refestados,refusuarios , (case when tipoaccion = '1' then 'Pagar Recibo' else 'Cotizacion' end) descripcion
+from dbtokenasesores where refclientes =".$id." and tipoaccion ='".$tipo."'";
+$res = $this->query($sql,0);
+return $res;
+}
+
+function existeTokenAsesores($refasesores,$refclientes) {
+   $sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios from dbtokenasesores where refclientes =".$refclientes." and refasesores =".$refasesores." and generousuario = '1'";
+
+   $res = $this->query($sql,0);
+
+   if (mysql_num_rows($res) > 0) {
+      return mysql_result($res,0,'refusuarios');
+   }
+
+   return 0;
+}
+
+
+/* Fin */
+/* /* Fin de la Tabla: dbtokenasesores*/
+
+
+
    /* PARA Ventacontactos */
 
    function insertarVentacontactos($refventas,$apellidopaterno,$apellidomaterno,$nombre,$telefonofijo,$telefonocelular,$email,$titular) {
@@ -5286,7 +5408,7 @@ return $res;
 
       $cadRR = '';
       if ($estados == '2,7') {
-         $cadRR = ' and ve.refproductosaux = 0 ';
+         //$cadRR = ' and ve.refproductosaux = 0 ';
       }
 
 
@@ -5858,6 +5980,18 @@ return $res;
 	/* /* Fin de la Tabla: tbtipoproductorama*/
 
 	/* PARA Periodicidadventasdetalle */
+
+   function generaNroRecibo() {
+		$sql = "select max(idperiodicidadventadetalle) from dbperiodicidadventasdetalle";
+		$res = $this->query($sql,0);
+
+		if (mysql_num_rows($res) > 0) {
+			$idcliente = mysql_result($res,0,0);
+			return 'REC'.substr('0000000'.$idcliente,-7);
+		}
+
+		return 'REC0000001';
+	}
 
 	function insertarPeriodicidadventasdetalle($refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi,$nrorecibo,$fechapagoreal='',$refformapago=0) {
       if ($fechapagoreal == '') {
@@ -7201,6 +7335,47 @@ return $res;
       inner join dbasesores ase on ase.idasesor = c.refasesores
       inner join tbproductos p on p.idproducto = c.refproductos
 		where v.idventa =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+   function traerVentasPorAsesorCompleto($idasesor) {
+		$sql = "select
+		v.idventa,v.refcotizaciones,v.refestadoventa,v.primaneta,
+		v.primatotal,v.fechacrea,v.fechamodi,v.usuariocrea,
+		v.usuariomodi,v.nropoliza,v.fechavencimientopoliza,
+		v.foliotys,v.foliointerno,
+		c.refclientes,
+		c.refproductos,
+      p.producto,
+      tc.tipocobranza,
+      (case when c.tieneasegurado = '1' then concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) else  concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) end) as asegurado,
+      (case when v.fechavencimientopoliza > now() then 'green' else 'red' end) as color,
+      pv.idperiodicidadventa , v.refproductosaux, v.refventas, v.version, v.refmotivorechazopoliza,
+      v.observaciones , v.vigenciadesde
+		from dbventas v
+      inner join dbperiodicidadventas pv on pv.refventas = v.idventa
+      inner join tbtipocobranza tc on tc.idtipocobranza = pv.reftipocobranza
+		inner join dbcotizaciones c ON c.idcotizacion = v.refcotizaciones
+      inner join dbclientes cli ON cli.idcliente = c.refclientes
+      inner join tbproductos p on p.idproducto = c.refproductos
+      left join dbasegurados ase ON ase.idasegurado = c.refasegurados
+      left join dbasegurados ben ON ase.idasegurado = c.refbeneficiarios
+      inner join dbdocumentacionventas dv on dv.refventas = v.idventa and dv.refdocumentaciones = 35
+      inner join dbperiodicidadventasdetalle pvd on pvd.refperiodicidadventas = pv.idperiodicidadventa
+		where c.refasesores =".$idasesor."
+      group by v.idventa,v.refcotizaciones,v.refestadoventa,v.primaneta,
+		v.primatotal,v.fechacrea,v.fechamodi,v.usuariocrea,
+		v.usuariomodi,v.nropoliza,v.fechavencimientopoliza,
+		v.foliotys,v.foliointerno,
+		c.refclientes,
+		c.refproductos,
+      p.producto,
+      tc.tipocobranza,
+      c.tieneasegurado,ase.apellidopaterno, ase.apellidomaterno, ase.nombre,cli.apellidopaterno, cli.apellidomaterno, cli.nombre,
+      v.fechavencimientopoliza,pv.idperiodicidadventa
+      order by v.fechavencimientopoliza desc";
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -8973,6 +9148,47 @@ return $res;
 	function eliminarClientesasesores($id) {
 		$sql = "delete from dbclientesasesores where idclienteasesor =".$id;
 		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function traerClientesasesoresajax($length, $start, $busqueda,$colSort,$colSortDir,$idasesor) {
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (cl.apellidopaterno like '%".$busqueda."%' or cl.apellidomaterno like '%".$busqueda."%' or cl.nombre like '%".$busqueda."%' or cl.email like '%".$busqueda."%' or cl.razonsocial like '%".$busqueda."%' or cl.ine like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+		cl.idcliente,
+      tpp.tipopersona,
+		cl.apellidopaterno,
+		cl.apellidomaterno,
+		cl.nombre,
+		cl.razonsocial,
+      cl.telefonofijo,
+		cl.telefonocelular,
+      cl.email,
+      cl.numerocliente,
+		cl.domicilio,
+		cl.rfc,
+		cl.ine,
+      cl.reftipopersonas,
+      c.refclientes,
+		c.refasesores
+		from dbclientesasesores c
+      inner join dbclientes cl ON cl.idcliente = c.refclientes
+      inner join dbasesores ase on ase.idasesor = c.refasesores
+      inner join tbtipopersonas tpp ON tpp.idtipopersona = cl.reftipopersonas
+		where ase.idasesor = ".$idasesor." ".$where."
+      ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+      //die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
 	}
 
@@ -15221,7 +15437,7 @@ return $res;
 
 	function traerPostulantesPorIdUsuario($idusuario) {
 		$sql = "select idpostulante,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,refestadopostulantes,urlprueba,fechacrea,fechamodi,usuariocrea,usuariomodi,refasesores,comision,refsucursalesinbursa, refestadocivil,nss,afore,cedula,folio,refesquemareclutamiento,
-		datediff(now(),fechanacimiento)/365 as edad,reforigenreclutamiento,email2,vigdesderc,vighastarc from dbpostulantes where refusuarios =".$idusuario;
+		datediff(now(),fechanacimiento)/365 as edad, fechaalta, observaciones, ultimoestado, nropoliza, vighastaafore, vigdesdeafore, vigdesdecedulaseguro,vighastacedulaseguro,reftipopersonas,razonsocial,reforigenreclutamiento,email2,vigdesderc,vighastarc,refreferentes from dbpostulantes where refusuarios =".$idusuario;
 		$res = $this->query($sql,0);
 		return $res;
 	}

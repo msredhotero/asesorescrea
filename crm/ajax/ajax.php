@@ -72,6 +72,9 @@ switch ($accion) {
    case 'activarUsuarioCliente':
       activarUsuarioCliente($serviciosUsuarios, $serviciosReferencias);
    break;
+   case 'crearUsuarioClienteAgente':
+      crearUsuarioClienteAgente($serviciosUsuarios, $serviciosReferencias);
+   break;
 
 
    case 'frmAjaxModificar':
@@ -8683,6 +8686,82 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
 
    }
 
+
+   function crearUsuarioClienteAgente($serviciosUsuarios, $serviciosReferencias) {
+
+      // cliente del form
+      $idcliente = $_POST['idcliente'];
+      //token del form
+      $token = $_POST['token'];
+
+      $email = $_POST['email'];
+
+      $existeEmail = $serviciosUsuarios->existeUsuario($email);
+
+      if ($existeEmail == 1) {
+         echo 'Lo sentimos pero ese email ya existe en la base de datos, intente con otro o contactese con nuestro equipo en el Teléfono: 55 51 35 02 59';
+      } else {
+         $restoken = $serviciosReferencias->traerTokenasesoresPorTokenActivo($token);
+
+         // si el token existe
+         if (mysql_num_rows($restoken) > 0) {
+
+             // cliente del token
+             $idclienteaux = mysql_result($restoken,0,'refclientes');
+
+             $resClienteAux = $serviciosReferencias->traerClientesPorId($idclienteaux);
+
+             // si el cliente del token del susuario existe
+             if (mysql_num_rows($resClienteAux) > 0) {
+                 //verifico que tanto el cliente y el usuario del form, sean iguales a los del token.
+                 if (($idclienteaux == $idcliente)) {
+
+
+                     if (mysql_num_rows($resClienteAux) > 0) {
+                        $nombre           = mysql_result($resClienteAux,0,'nombre');
+                        $apellidopaterno  = mysql_result($resClienteAux,0,'apellidopaterno');
+                        $apellidomaterno  = mysql_result($resClienteAux,0,'apellidomaterno');
+
+                     } else {
+                        $nombre           = '';
+                        $apellidopaterno  = '';
+                        $apellidomaterno  = '';
+
+                     }
+
+                     $password = $_POST['password'];
+
+                     //pongo al usuario $activo
+                     $resUsuario = $serviciosUsuarios->insertarUsuario($_POST['nombre'],$password,19,$email,$apellidopaterno.' '.$apellidomaterno.' '.$nombre);
+
+                     if ((integer)$resUsuario > 0) {
+                        // concreto la activacion
+                        $resConcretar = $serviciosReferencias->modificarTokenasesoresParcial($token,$resUsuario);
+                     } else {
+                        echo 'Se genero un error al crear el usuario, intente nuevamente o contactese con nuestro equipo en el Teléfono: 55 51 35 02 59';
+                     }
+
+
+
+                 } else {
+                     echo 'Se genero un error con el token, por favor verifique los datos';
+                 }
+
+
+             } else {
+                 echo 'Se genero un error con el token, por favor verifique los datos';
+             }
+
+
+         } else {
+             echo 'Se genero un error con el token, por favor verifique los datos';
+         }
+      }
+
+
+
+   }
+
 function generaCURP($serviciosReferencias, $serviciosUsuarios, $serviciosFunciones) {
    $apellidopaterno = $_POST['apellidopaterno'];
    $apellidomaterno = $_POST['apellidomaterno'];
@@ -10064,7 +10143,7 @@ function insertarClientes($serviciosReferencias) {
 
    $existe = $serviciosReferencias->existeClienteAPYN($nombre,$apellidopaterno,$apellidomaterno);
 
-   if ($existe == 1) {
+   if (($existe == 1) && ($reftipopersonas == 1)) {
       echo 'El cliente ya existe en la base de datos';
    } else {
       $res = $serviciosReferencias->insertarClientes($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion);

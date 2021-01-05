@@ -144,6 +144,7 @@ if ($_SESSION['idroll_sahilices'] == 17) {
 //die(var_dump($pertenceaVRIM));
 
 if ($_SESSION['idroll_sahilices'] == 18) {
+
 	switch ($pertenceaVRIM) {
 		case 0:
 			$idestadonuevo = 2;
@@ -157,7 +158,7 @@ if ($_SESSION['idroll_sahilices'] == 18) {
 		break;
 		case 2:
 			$idestadonuevo = 5;
-			$puedeCargarDocumentaciones = 0;
+			$puedeCargarDocumentaciones = 1;
 			$puedeConcluir = 1;
 		break;
 	}
@@ -177,6 +178,7 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4)
 	$idestadonuevo = $idestadopago;
 	$puedeCargarDocumentaciones = 1;
 	$puedeConcluir = 1;
+	$completos = 1;
 }
 
 
@@ -464,6 +466,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 
 ////*** fin discriminar los productos *****///
 
+//die(var_dump($puedeCargarDocumentaciones));
 ?>
 
 <!DOCTYPE html>
@@ -634,21 +637,35 @@ if (mysql_num_rows($resPaquete) > 0) {
 						</div>
 					</div>
 				<?php }  ?>
-
+				<?php //lo tengo que corregir ($i == $completos) && ?>
 				<?php if (($i == $completos) && ($puedeConcluir == 1) && (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 18))) { ?>
 
 				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-					<div class="info-box-3 bg-blue hover-zoom-effect btnCursor concluirProceso">
+					<div class="info-box-3 bg-teal hover-zoom-effect btnCursor concluirProceso">
 						<div class="icon">
 							<i class="material-icons">done_all</i>
 						</div>
 						<div class="content">
-							<div class="text">CONCLUIR PROCESO</div>
-							<div class="number">CONCLUIR</div>
+							<div class="text">DAR CLICK PARA CONCLUIR</div>
+							<div class="number">CONCLUIR PROCESO</div>
+						</div>
+					</div>
+				</div>
+			<?php } else { ?>
+				<?php if (($pertenceaVRIM == 1) && ($puedeConcluir == 1) && ($_SESSION['idroll_sahilices'] == 17)) { ?>
+				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+					<div class="info-box-3 bg-teal hover-zoom-effect btnCursor concluirProceso">
+						<div class="icon">
+							<i class="material-icons">done_all</i>
+						</div>
+						<div class="content">
+							<div class="text">DAR CLICK PARA CONCLUIR</div>
+							<div class="number">CONCLUIR PROCESO</div>
 						</div>
 					</div>
 				</div>
 				<?php } ?>
+			<?php } ?>
 
 			</div>
 

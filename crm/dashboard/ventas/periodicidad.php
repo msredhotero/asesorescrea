@@ -74,8 +74,8 @@ $tabla 			= "dbperiodicidadventas";
 $lblCambio	 	= array('refventas','reftipoperiodicidad','reftipocobranza','afiliacionnumber','tipotarjeta');
 $lblreemplazo	= array('Venta','Periodicidad','Tipo de Cobranza','Afiliacion','Tipo Tarjeta');
 
-$resVar = $serviciosReferencias->traerCotizacionesPorIdCompletoV(mysql_result($resultado,0,'refcotizaciones'));
-$cadRef = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(1,2,3),' ',mysql_result($resultado,0,'refcotizaciones'));
+$resVar = $serviciosReferencias->traerVentasPorIdCompleto($id);
+$cadRef = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(15),' ',$id);
 
 
 $resVar2 = $serviciosReferencias->traerTipoperiodicidad();
@@ -326,6 +326,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 <script>
 	$(document).ready(function(){
+
+		$('#refventas').val
 
 		$('#banco').val('<?php echo $banco; ?>');
 		$('#afiliacionnumber').val('<?php //echo $afiliacionnumber; ?>');

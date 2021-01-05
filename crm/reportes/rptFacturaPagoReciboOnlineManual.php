@@ -27,8 +27,10 @@ require('fpdf.php');
 
 $resComercio = $serviciosComercio->traerComercioinicioPorToken($token);
 
+//die(var_dump($token));
+
 if (mysql_num_rows($resComercio)>0) {
-	$idCotizacion = mysql_result($resComercio,0,'comorderid');
+	$idCotizacion = mysql_result($resComercio,0,'idreferencia');
 
 	$resCotizaciones = $serviciosReferencias->traerPeriodicidadventasdetallePorIdCompleto($idCotizacion);
 
@@ -121,11 +123,11 @@ if (mysql_num_rows($resComercio)>0) {
 
 	/************************** fin ********************************************************/
 
-	if (!file_exists(__DIR__.'/'.'../archivos/pagosonlinerecibos/'.$idCotizacion.'/')) {
-		mkdir(__DIR__.'/'.'../archivos/pagosonlinerecibos/'.$idCotizacion.'/', 0777);
+	if (!file_exists(__DIR__.'/'.'../archivos/pagosonlinerecibos/'.$resPago.'/')) {
+		mkdir(__DIR__.'/'.'../archivos/pagosonlinerecibos/'.$resPago.'/', 0777);
 	}
 
-	$pdf->Output( __DIR__.'/'.'../archivos/pagosonlinerecibos/'.$idCotizacion.'/ReciboPago.pdf', 'F');
+	$pdf->Output( __DIR__.'/'.'../archivos/pagosonlinerecibos/'.$resPago.'/ReciboPago.pdf', 'F');
 
 } else {
 	return false;

@@ -43,7 +43,13 @@ $singular = "Listado Polizas";
 
 $plural = "Listado Polizas";
 
-$resultados = $serviciosReferencias->traerVentasPorUsuarioCompleto($_SESSION['usuaid_sahilices']);
+if ($_SESSION['idroll_sahilices'] == 7) {
+	
+	$resultados = $serviciosReferencias->traerVentasPorAsesorCompleto($_SESSION['usuaid_sahilices']);
+} else {
+	$resultados = $serviciosReferencias->traerVentasPorUsuarioCompleto($_SESSION['usuaid_sahilices']);
+}
+
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 

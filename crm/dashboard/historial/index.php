@@ -191,23 +191,41 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
+											<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
+												<th>Cliente</th>
+												<th>Producto</th>
+												<th>Asesor</th>
+												<th>Asociado</th>
+												<th>Estado</th>
+
+											<?php } else { ?>
 												<th>Cliente</th>
 												<th>Producto</th>
 												<th>Asesor</th>
 												<th>Asociado</th>
 												<th>Fecha</th>
 												<th>Estado</th>
+											<?php } ?>
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
-												<th>Cliente</th>
-												<th>Producto</th>
-												<th>Asesor</th>
-												<th>Asociado</th>
-												<th>Fecha</th>
-												<th>Estado</th>
+												<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
+													<th>Cliente</th>
+													<th>Producto</th>
+													<th>Asesor</th>
+													<th>Asociado</th>
+													<th>Estado</th>
+
+												<?php } else { ?>
+													<th>Cliente</th>
+													<th>Producto</th>
+													<th>Asesor</th>
+													<th>Asociado</th>
+													<th>Fecha</th>
+													<th>Estado</th>
+												<?php } ?>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -420,7 +438,20 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 					"sortAscending":  ": activate to sort column ascending",
 					"sortDescending": ": activate to sort column descending"
 				}
-			}
+			}<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>,
+			"columnDefs": [
+				{
+					"targets": [ 2 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [ 3 ],
+					"visible": false,
+					"searchable": false
+				}
+
+		  ]<?php } ?>
 		});
 
 

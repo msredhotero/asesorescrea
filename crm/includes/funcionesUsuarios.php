@@ -111,11 +111,13 @@ function login($usuario,$pass) {
                    u.email,
                    u.usuario,
                    r.descripcion,
-                   r.idrol
+                   r.idrol,
+                   coalesce(tk.token,'') as token
                FROM
                    dbusuarios u
                        INNER JOIN
                    tbroles r ON r.idrol = u.refroles
+                     left join dbtokenasesores tk on tk.refusuarios = u.idusuario
                WHERE
                    password = '".$pass."' AND u.activo = 1
                        AND idusuario = ".$idUsua;
@@ -151,6 +153,12 @@ function login($usuario,$pass) {
 			$_SESSION['email_sahilices'] = mysql_result($resppass,0,1);
 			$_SESSION['idroll_sahilices'] = mysql_result($resppass,0,4);
 			$_SESSION['refroll_sahilices'] = mysql_result($resppass,0,3);
+         if (mysql_result($resppass,0,4) == 19) {
+            $_SESSION['token_ac'] = mysql_result($resppass,0,5);
+         } else {
+            $_SESSION['token_ac'] = $this->GUID();
+         }
+
 
 
 			return 1;

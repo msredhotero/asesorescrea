@@ -60,6 +60,8 @@ $idcotizacion = mysql_result($resultado,0,'refcotizaciones');
 
 $nropoliza = mysql_result($resultado,0,'nropoliza');
 
+$idproductoaux = mysql_result($resultado,0,'refproductosaux');
+
 $resCotizacion = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcotizacion);
 
 $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
@@ -123,27 +125,17 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 
 /////////////// ver de las ventas  ////////////////////////////////////////////////////
-$tabla22 			= "dbventas";
+if ($idproductoaux == 0) {
+	$resProductos = $serviciosReferencias->traerProductosPorIdCompleta(mysql_result($resCotizacion,0,'refproductos'));
+} else {
+	$resProductos = $serviciosReferencias->traerProductosPorIdCompleta($idproductoaux);
+}
 
-$lblCambio22	 	= array('refcotizaciones','primaneta','primatotal','porcentajecomision','montocomision','fechavencimientopoliza','nropoliza');
-$lblreemplazo22	= array('Venta','Prima Neta','Prima Total','% Comision','Monto Comision','Fecha Vencimiento de la Poliza','Nro Poliza');
-
-$modificar22 = "modificarVentas";
-$idTabla22 = "idventa";
-
-$resVar22 = $serviciosReferencias->traerCotizacionesPorIdCompleto(mysql_result($resultado,0,'refcotizaciones'));
-$cadRef22 = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(1,2,3),' ',mysql_result($resultado,0,'refcotizaciones'));
-
-$ventaCompleto = mysql_result($resVar22,0,1).' '.mysql_result($resVar22,0,2).' '.mysql_result($resVar22,0,3);
-
-$cadRef222 = "<option value='1' selected>cargado</option>";
-
-
-$refdescripcion22 = array(0=>$cadRef22,1=>$cadRef222);
-$refCampo22 	=  array('refcotizaciones','refestadoventa');
-
-$formulario22 = $serviciosFunciones->camposTablaModificar($id, $idTabla22,$modificar22,$tabla22,$lblCambio22,$lblreemplazo22,$refdescripcion22,$refCampo22);
-
+if (mysql_result($resProductos,0,'reftipoproductorama') == 12) {
+	$lblRecibo = $serviciosReferencias->generaNroRecibo();
+} else {
+	$lblRecibo = '';
+}
 
 ///////////////////////////// fin del ver //////////////////////////////////////////////
 
@@ -409,6 +401,8 @@ $formulario22 = $serviciosFunciones->camposTablaModificar($id, $idTabla22,$modif
 
 <script>
 	$(document).ready(function(){
+
+		$('#nrorecibo').val('<?php echo $lblRecibo; ?>');
 
 		$('.btnVolver').click(function() {
 			url = "ver.php?id=<?php echo $id; ?>";

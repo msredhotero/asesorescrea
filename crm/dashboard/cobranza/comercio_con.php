@@ -178,35 +178,104 @@ if (!isset($_SESSION['usua_sahilices']))
 if (!isset($_SESSION['usua_sahilices']))
 {
 	header('Location: ../../error.php');
-	
+
 } else {
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cobranza/');
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cobranza",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+	$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cobranza/');
 
-/******* fin  **************************************************************/
+	$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Recibos de Pago",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
-
-if ($error == 0) {
-
-	// MODIFICO EL RECIBO A PROCESO DE VALIDACION, COPIA EL RECIBO Y LO ADJUNTO AL COMPROBANTE DE PAGO
-	$resME = $serviciosReferencias->modificarPeriodicidadventasdetalleEstado($idcotizacion,2,$_SESSION['usua_sahilices'],date('Y-m-d H:i:s'));
-
-	require ('../../reportes/rptFacturaPagoReciboOnlineManual.php');
-
-	$nroComprobante = $serviciosComercio->generaNroRecibo();
+	/******* fin  **************************************************************/
 
 
-	// modifico el estado a aprobado
-	$resModificarEstado = $serviciosComercio->modificarComercioInicioEstado($token,2);
+	if ($error == 0) {
+
+		// MODIFICO EL RECIBO A PROCESO DE VALIDACION, COPIA EL RECIBO Y LO ADJUNTO AL COMPROBANTE DE PAGO
+		$resME = $serviciosReferencias->modificarPeriodicidadventasdetalleEstado($idcotizacion,2,$_SESSION['usua_sahilices'],date('Y-m-d H:i:s'));
+
+
+		$nroComprobante = $serviciosComercio->generaNroRecibo();
+
+
+		// modifico el estado a aprobado
+		$resModificarEstado = $serviciosComercio->modificarComercioInicioEstado($token,2);
 
 
 
-	$resNroRecibo = $serviciosComercio->modificarComercioInicioNroRecibo($token,$nroComprobante);
+		$resNroRecibo = $serviciosComercio->modificarComercioInicioNroRecibo($token,$nroComprobante);
 
-	// verifico el origen de la transaccion para saber que tabla modificar
-	if ($reforigencomercio == 7) {
+		// verifico el origen de la transaccion para saber que tabla modificar
+		if ($reforigencomercio == 7) {
 
-		$resModificarPN = $serviciosReferencias->modificarPeriodicidadventasdetalleEstado($id,2,$_SESSION['usua_sahilices'],date('Y-m-d H:i:s'));
+			$resModificarPN = $serviciosReferencias->modificarPeriodicidadventasdetalleEstado($id,2,$_SESSION['usua_sahilices'],date('Y-m-d H:i:s'));
+
+			///////////////// creo el pago para luego conciliarlo /////////////////////////////////
+			$destino = 'Pago Online Venta Producto en Linea';
+			$refcuentasbancarias = 0;
+			$conciliado = '0';
+			$fechacrea = date('Y-m-d H:i:s');
+			$usuariocrea = $_SESSION['usua_sahilices'];
+			$archivos = 'ReciboPago.pdf';
+			$type = 'pdf';
+			$refestado = 1;
+			$resPago = $serviciosReferencias->insertarPagos(15,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,5,'Inbursa',$lblCliente,$nroComprobante,'0');
+
+			///////////////// fin del pago /////////////////////////////////
+
+		}
+
+		if ($reforigencomercio == 8) {
+
+			$resModificarPN = $serviciosReferencias->modificarPeriodicidadventasdetalleEstado($id,2,$_SESSION['usua_sahilices'],date('Y-m-d H:i:s'));
+
+			///////////////// creo el pago para luego conciliarlo /////////////////////////////////
+			$destino = 'Pago Online Recibo';
+			$refcuentasbancarias = 0;
+			$conciliado = '0';
+			$fechacrea = date('Y-m-d H:i:s');
+			$usuariocrea = $_SESSION['usua_sahilices'];
+			$archivos = 'ReciboPago.pdf';
+			$type = 'pdf';
+			$refestado = 1;
+			$resPago = $serviciosReferencias->insertarPagos(15,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,5,'Inbursa',$lblCliente,$nroComprobante,'0');
+
+			///////////////// fin del pago /////////////////////////////////
+
+		}
+
+		require ('../../reportes/rptFacturaPagoReciboOnlineManual.php');
+
+
+		////////////////// genero el insert del pago y copio el archivo ////////
+		$resPP = $serviciosReferencias->insertarPeriodicidadventaspagos($idcotizacion,$precioTotal,$nroComprobante,date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),'');
+
+		if ((integer)$resPP > 0) {
+			$resPagoAux = $serviciosReferencias->traerPagosPorId($idcomprobantedepago);
+
+			if (!file_exists('../archivos/cobros/'.$idcotizacion.'/')) {
+				mkdir('../archivos/cobros/'.$idcotizacion.'/', 0777);
+			}
+
+			if (!file_exists('../archivos/cobros/'.$idcotizacion.'/'.'facturacliente/')) {
+				mkdir('../archivos/cobros/'.$idcotizacion.'/'.'facturacliente/', 0777);
+			}
+
+			$resCopy = copy('../archivos/pagosonlinerecibos/'.mysql_result($resPagoAux,0,'idreferencia').'/'.mysql_result($resPagoAux,0,'archivos'), '../archivos/cobros/'.$idcotizacion.'/'.'facturacliente/'.mysql_result($resPagoAux,0,'archivos'));
+
+
+			if ($resCopy) {
+				$resEliminar = $serviciosReferencias->eliminarDocumentacionventasPorVentaDocumentacionDetalle($idcotizacion,39);
+
+				$resInsertar = $serviciosReferencias->insertarDocumentacionventas(0,39,mysql_result($resPagoAux,0,'archivos'),mysql_result($resPagoAux,0,'type'),5,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],$idcotizacion);
+			}
+
+			$resAplicar = $serviciosReferencias->aplicarPago($idcomprobantedepago,'1');
+		}
+
+		/////// fin ////////////////////////////////////////////////////////////
+
+
+	} else {
+		$resModificarEstado = $serviciosComercio->modificarComercioInicioEstado($token,$idestado);
 
 		///////////////// creo el pago para luego conciliarlo /////////////////////////////////
 		$destino = 'Pago Online Venta Producto en Linea';
@@ -214,79 +283,12 @@ if ($error == 0) {
 		$conciliado = '0';
 		$fechacrea = date('Y-m-d H:i:s');
 		$usuariocrea = $_SESSION['usua_sahilices'];
-		$archivos = 'ReciboPago.pdf';
-		$type = 'pdf';
-		$refestado = 1;
-		$resPago = $serviciosReferencias->insertarPagos(15,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,5,'Inbursa',$lblCliente,$nroComprobante,'0');
+		$archivos = '';
+		$type = '';
+		$resPago = $serviciosReferencias->insertarPagos(15,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,2,'Inbursa',$lblCliente,'','0');
 
 		///////////////// fin del pago /////////////////////////////////
-
 	}
-
-	if ($reforigencomercio == 8) {
-
-		$resModificarPN = $serviciosReferencias->modificarPeriodicidadventasdetalleEstado($id,2,$_SESSION['usua_sahilices'],date('Y-m-d H:i:s'));
-
-		///////////////// creo el pago para luego conciliarlo /////////////////////////////////
-		$destino = 'Pago Online Recibo';
-		$refcuentasbancarias = 0;
-		$conciliado = '0';
-		$fechacrea = date('Y-m-d H:i:s');
-		$usuariocrea = $_SESSION['usua_sahilices'];
-		$archivos = 'ReciboPago.pdf';
-		$type = 'pdf';
-		$refestado = 1;
-		$resPago = $serviciosReferencias->insertarPagos(15,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,5,'Inbursa',$lblCliente,$nroComprobante,'0');
-
-		///////////////// fin del pago /////////////////////////////////
-
-	}
-
-
-	////////////////// genero el insert del pago y copio el archivo ////////
-	$resPP = $serviciosReferencias->insertarPeriodicidadventaspagos($idcotizacion,$precioTotal,$nroComprobante,date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),'');
-
-	if ((integer)$resPP > 0) {
-		$resPagoAux = $serviciosReferencias->traerPagosPorId($idcomprobantedepago);
-
-		if (!file_exists('../archivos/cobros/'.$idcotizacion.'/')) {
-			mkdir('../archivos/cobros/'.$idcotizacion.'/', 0777);
-		}
-
-		if (!file_exists('../archivos/cobros/'.$idcotizacion.'/'.'facturacliente/')) {
-			mkdir('../archivos/cobros/'.$idcotizacion.'/'.'facturacliente/', 0777);
-		}
-
-		$resCopy = copy('../archivos/pagosonlinerecibos/'.mysql_result($resPagoAux,0,'idreferencia').'/'.mysql_result($resPagoAux,0,'archivos'), '../archivos/cobros/'.$idcotizacion.'/'.'facturacliente/'.mysql_result($resPagoAux,0,'archivos'));
-
-
-		if ($resCopy) {
-			$resEliminar = $serviciosReferencias->eliminarDocumentacionventasPorVentaDocumentacionDetalle($idcotizacion,39);
-
-			$resInsertar = $serviciosReferencias->insertarDocumentacionventas(0,39,mysql_result($resPagoAux,0,'archivos'),mysql_result($resPagoAux,0,'type'),5,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],$idcotizacion);
-		}
-
-		$resAplicar = $serviciosReferencias->aplicarPago($idcomprobantedepago,'1');
-	}
-
-	/////// fin ////////////////////////////////////////////////////////////
-
-
-} else {
-	$resModificarEstado = $serviciosComercio->modificarComercioInicioEstado($token,$idestado);
-
-	///////////////// creo el pago para luego conciliarlo /////////////////////////////////
-	$destino = 'Pago Online Venta Producto en Linea';
-	$refcuentasbancarias = 0;
-	$conciliado = '0';
-	$fechacrea = date('Y-m-d H:i:s');
-	$usuariocrea = $_SESSION['usua_sahilices'];
-	$archivos = '';
-	$type = '';
-	$resPago = $serviciosReferencias->insertarPagos(15,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,2,'Inbursa',$lblCliente,'','0');
-
-	///////////////// fin del pago /////////////////////////////////
-}
 
 
 ?>

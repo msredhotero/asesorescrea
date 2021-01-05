@@ -69,6 +69,23 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 }
 
 switch ($tabla) {
+	case 'misclientes':
+		$idasesor = $_GET['idasesor'];
+		$datos = $serviciosReferencias->traerClientesasesoresajax($length, $start, $busqueda,$colSort,$colSortDir,$idasesor);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array('btnModificar');
+		$class = array('bg-orange');
+		$icon = array('edit');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 9;
+	break;
+
 	case 'contactos':
 
 		$idventa = $_GET['idventa'];
@@ -1091,11 +1108,20 @@ switch ($tabla) {
 				$filtroNuevo = '';
 			break;
 			case 4:
-				$label = array();
-				$class = array();
-				$icon = array();
-				$whereEstado = ' c.refestados in (4) ';
-				$termina = 7;
+				if ($_SESSION['idroll_sahilices'] == 7) {
+					$label = array();
+					$class = array();
+					$icon = array();
+					$whereEstado = ' c.refestados in (4) ';
+					$termina = 5;
+				} else {
+					$label = array();
+					$class = array();
+					$icon = array();
+					$whereEstado = ' c.refestados in (4) ';
+					$termina = 6;
+				}
+
 				$filtroNuevo = '';
 			break;
 			case 5:
@@ -2028,7 +2054,7 @@ $id = 0;
 		//$id = $row[$indiceID];
 		// forma local utf8_decode
 		for ($i=$empieza;$i<=$termina;$i++) {
-			array_push($arAux, ($row[$i]));
+			array_push($arAux, utf8_decode($row[$i]));
 		}
 
 		if (($tabla == 'postulantes') || ($tabla == 'ventas') || ($tabla == 'ventasiniciadas') || ($tabla == 'postulanteshistorico') || ($tabla == 'asesores') || ($tabla == 'asociadostemporales') || ($tabla == 'asociados') || ($tabla == 'clientes') || ($tabla == 'cuestionario') || ($tabla == 'preguntascuestionario') || ($tabla == 'respuestascuestionario')) {

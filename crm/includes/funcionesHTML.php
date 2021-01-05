@@ -5,12 +5,56 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosHTML {
 
+	function traerAsesoresPorUsuario($idusuario) {
+		$sql = "select
+			a.idasesor,
+			a.refusuarios,
+			a.nombre,
+			a.apellidopaterno,
+			a.apellidomaterno,
+			a.email,
+			a.curp,
+			a.rfc,
+			a.ine,
+			a.fechanacimiento,
+			a.sexo,
+			a.codigopostal,
+			a.refescolaridades,
+			a.telefonomovil,
+			a.telefonocasa,
+			a.telefonotrabajo,
+			a.fechacrea,
+			a.fechamodi,
+			a.usuariocrea,
+			a.usuariomodi,
+			a.reftipopersonas,
+			a.razonsocial
+			from dbasesores a
+			inner join dbusuarios u ON u.idusuario = a.refusuarios
+			where u.idusuario = ".$idusuario."
+			order by a.apellidopaterno,
+			a.apellidomaterno,a.nombre";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 function menu($usuario,$titulo,$rol,$empresa) {
 
 	$rol = str_replace(' ','',$rol);
 
 	$cadmenu = "";
 	$cadhover= "";
+
+	$resultado = $this->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
+
+	if ($_SESSION['idroll_sahilices'] == 7) {
+		$puedeCotizar = 0;
+		if (mysql_num_rows($resultado) > 0) {
+			$puedeCotizar = 1;
+		}
+	} else {
+		$puedeCotizar = 1;
+	}
 
 	if ($_SESSION['idroll_sahilices'] == 16) {
 		if ($_SESSION['usuaid_sahilices'] != 201) {
@@ -231,7 +275,12 @@ function menu($usuario,$titulo,$rol,$empresa) {
 		}
 	} else {
 		// menu colapsado de cotizaciones //
-		$sql = "select idmenu,url,icono, nombre, permiso from predio_menu where permiso like '%".$rol."%' and grupo = 2 order by orden";
+		if ($puedeCotizar == 1) {
+			$sql = "select idmenu,url,icono, nombre, permiso from predio_menu where permiso like '%".$rol."%' and grupo = 2 order by orden";
+		} else {
+			$sql = "select idmenu,url,icono, nombre, permiso from predio_menu where permiso like '%".$rol."%' and grupo = 99 order by orden";
+		}
+
 		$res = $this->query($sql,0);
 
 		$cadmenuCotizacion = '';

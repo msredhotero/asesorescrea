@@ -105,6 +105,8 @@ $newdigest  = sha1($_POST["total"].$_POST["order_id"].$_POST["merchant"].$_POST[
 
 $resultado = $serviciosComercio->traerComercioinicioPorOrderId($EM_OrderID);
 
+//die(var_dump($EM_OrderID));
+
 if (mysql_num_rows($resultado)>0) {
 	$token = mysql_result($resultado,0,'token');
 	$idestado = mysql_result($resultado,0,'refestadotransaccion');
@@ -118,6 +120,8 @@ if (mysql_num_rows($resultado)>0) {
 if ($idestado == 2) {
 	header('Location: ../facturacion/index.php');
 }
+
+
 
 
 $error = 0;
@@ -156,50 +160,52 @@ $resTransaccion = $serviciosComercio->insertarComerciofin($EM_Response,$EM_Total
 
 /********** dato de la cotizacion ******************************************/
 
-$resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcotizacion);
-$precioTotal = mysql_result($resCotizaciones,0,'primatotal');
+$resCotizaciones = $serviciosReferencias->traerPeriodicidadventasdetallePorIdCompleto($idcotizacion);
+$precioTotal = mysql_result($resCotizaciones,0,'montototal');
 $lblCliente = mysql_result($resCotizaciones,0,'clientesolo');
 
-$idusuariocliente  = mysql_result($resCotizaciones,0,'idusuariocliente');
+$idusuariocliente  = mysql_result($resCotizaciones,0,'refusuarios');
 
 $resUsuario = $serviciosUsuario->traerUsuarioId($idusuariocliente);
 
-$resLogin = $serviciosUsuario->login(mysql_result($resUsuario,0,'email'),mysql_result($resUsuario,0,'password'));
+// solo para
+if (!isset($_SESSION['usua_sahilices']))
+{
+	$resLogin = $serviciosUsuario->login(mysql_result($resUsuario,0,'email'),mysql_result($resUsuario,0,'password'));
+}
+
 
 if (!isset($_SESSION['usua_sahilices']))
 {
 	header('Location: ../../error.php');
+
 } else {
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../venta/');
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Venta",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cobranzavrim/');
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Recibos de Pago VRIM",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 /******* fin  **************************************************************/
 
 
 if ($error == 0) {
+
+	// MODIFICO EL RECIBO A PROCESO DE VALIDACION, COPIA EL RECIBO Y LO ADJUNTO AL COMPROBANTE DE PAGO
+	$resME = $serviciosReferencias->modificarPeriodicidadventasdetalleEstado($idcotizacion,2,$_SESSION['usua_sahilices'],date('Y-m-d H:i:s'));
+
+
+	$nroComprobante = $serviciosComercio->generaNroRecibo();
+
+
 	// modifico el estado a aprobado
 	$resModificarEstado = $serviciosComercio->modificarComercioInicioEstado($token,2);
 
-	$nroComprobante = $serviciosComercio->generaNroRecibo();
+
 
 	$resNroRecibo = $serviciosComercio->modificarComercioInicioNroRecibo($token,$nroComprobante);
 
 	// verifico el origen de la transaccion para saber que tabla modificar
 	if ($reforigencomercio == 7) {
 
-		$resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestados',1,$_SESSION['usua_sahilices']);
-
-		$resModificarPM = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestadocotizaciones',20,$_SESSION['usua_sahilices']);
-
-		// obstengo el lead que se genero en venta en linea
-		$resLead = $serviciosReferencias->traerLeadPorCotizacion($idcotizacion);
-
-		// se viene de ahi lo marco como vendido el estado del mismo
-		if (mysql_num_rows($resLead)>0) {
-			$resModificarLead = $serviciosReferencias->modificarLeadCotizacion(mysql_result($resLead,0,0),$idcotizacion,5);
-		}
-
-
+		$resModificarPN = $serviciosReferencias->modificarPeriodicidadventasdetalleEstado($id,2,$_SESSION['usua_sahilices'],date('Y-m-d H:i:s'));
 
 		///////////////// creo el pago para luego conciliarlo /////////////////////////////////
 		$destino = 'Pago Online Venta Producto en Linea';
@@ -210,11 +216,61 @@ if ($error == 0) {
 		$archivos = 'ReciboPago.pdf';
 		$type = 'pdf';
 		$refestado = 1;
-		$resPago = $serviciosReferencias->insertarPagos(12,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,5,'Inbursa',$lblCliente,$nroComprobante,'0');
+		$resPago = $serviciosReferencias->insertarPagos(15,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,5,'Inbursa',$lblCliente,$nroComprobante,'0');
 
 		///////////////// fin del pago /////////////////////////////////
 
 	}
+
+	if ($reforigencomercio == 8) {
+
+		$resModificarPN = $serviciosReferencias->modificarPeriodicidadventasdetalleEstado($id,2,$_SESSION['usua_sahilices'],date('Y-m-d H:i:s'));
+
+		///////////////// creo el pago para luego conciliarlo /////////////////////////////////
+		$destino = 'Pago Online Recibo';
+		$refcuentasbancarias = 0;
+		$conciliado = '0';
+		$fechacrea = date('Y-m-d H:i:s');
+		$usuariocrea = $_SESSION['usua_sahilices'];
+		$archivos = 'ReciboPago.pdf';
+		$type = 'pdf';
+		$refestado = 1;
+		$resPago = $serviciosReferencias->insertarPagos(15,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,5,'Inbursa',$lblCliente,$nroComprobante,'0');
+
+		///////////////// fin del pago /////////////////////////////////
+
+	}
+
+	require ('../../reportes/rptFacturaPagoReciboOnlineManual.php');
+
+
+	////////////////// genero el insert del pago y copio el archivo ////////
+	$resPP = $serviciosReferencias->insertarPeriodicidadventaspagos($idcotizacion,$precioTotal,$nroComprobante,date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),'');
+
+	if ((integer)$resPP > 0) {
+		$resPagoAux = $serviciosReferencias->traerPagosPorId($idcomprobantedepago);
+
+		if (!file_exists('../archivos/cobros/'.$idcotizacion.'/')) {
+			mkdir('../archivos/cobros/'.$idcotizacion.'/', 0777);
+		}
+
+		if (!file_exists('../archivos/cobros/'.$idcotizacion.'/'.'facturacliente/')) {
+			mkdir('../archivos/cobros/'.$idcotizacion.'/'.'facturacliente/', 0777);
+		}
+
+		$resCopy = copy('../archivos/pagosonlinerecibos/'.mysql_result($resPagoAux,0,'idreferencia').'/'.mysql_result($resPagoAux,0,'archivos'), '../archivos/cobros/'.$idcotizacion.'/'.'facturacliente/'.mysql_result($resPagoAux,0,'archivos'));
+
+
+		if ($resCopy) {
+			$resEliminar = $serviciosReferencias->eliminarDocumentacionventasPorVentaDocumentacionDetalle($idcotizacion,39);
+
+			$resInsertar = $serviciosReferencias->insertarDocumentacionventas(0,39,mysql_result($resPagoAux,0,'archivos'),mysql_result($resPagoAux,0,'type'),5,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],$idcotizacion);
+		}
+
+		$resAplicar = $serviciosReferencias->aplicarPago($idcomprobantedepago,'1');
+	}
+
+	/////// fin ////////////////////////////////////////////////////////////
 
 
 } else {
@@ -228,7 +284,7 @@ if ($error == 0) {
 	$usuariocrea = $_SESSION['usua_sahilices'];
 	$archivos = '';
 	$type = '';
-	$resPago = $serviciosReferencias->insertarPagos(12,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,2,'Inbursa',$lblCliente,'','0');
+	$resPago = $serviciosReferencias->insertarPagos(15,$EM_OrderID,$precioTotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,2,'Inbursa',$lblCliente,'','0');
 
 	///////////////// fin del pago /////////////////////////////////
 }
@@ -330,22 +386,13 @@ if ($error == 0) {
 							<?php if ($error == 0) { ?>
 								<div class="text-center">
 									<h2 class="display-4">Hemos procesamos tu pago Correctamente.</h2>
-									<h5>¡Muchas Gracias! por completar el proceso de suscripción, en breve te enviaremos tu póliza, a partir de ese momento estarás protegido</h5>
+									<h5>¡Muchas Gracias! en breve te enviaremos tu factura</h5>
 								</div>
 
-								<div class="list-group">
-									<a href="javascript:void(0);" class="list-group-item active"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
-								PASOS PARA OBTENER TU POLIZA
-								</font></font></a>
-									<a href="javascript:void(0);" class="list-group-item"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">CARGA TU IDENTIFICACIÓN OFICIAL VIGENTE</font></font></a>
-									<a href="javascript:void(0);" class="list-group-item"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">FIRMAR TU SOLICITUD DE FORMA DIGITAL</font></font></a>
-									<a href="javascript:void(0);" class="list-group-item"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">TE ENVIAREMOS LA POLIZA Y TENDRAS CUBERTURA INMEDIATA</font></font></a>
-								</div>
+
 
 							<div class="text-center">
-								<div class="list-group">
-									<a href="archivos.php?id=<?php echo $EM_OrderID; ?>" class="list-group-item bg-green">CONTINUAR</a>
-								</div>
+
 							<?php } else { ?>
 							<div class="text-center">
 								<h1 class="display-4"><?php echo $lblError; ?></h1>
@@ -474,7 +521,7 @@ if ($error == 0) {
 			$.ajax({
 				data:  {
 					id: <?php echo $EM_OrderID; ?>,
-					accion: 'cambiarMetodoDePago'
+					accion: 'cambiarMetodoDePagoRecibos'
 				},
 				url:   '../../ajax/ajax.php',
 				type:  'post',

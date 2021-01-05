@@ -2,6 +2,11 @@
 
 date_default_timezone_set('America/Mexico_City');
 
+/*
+* DEBO VERIFICAR EN LAS ALERTAS SI LA POLIZA ES DE LA PROMOTORIA O DE UN AGENTE
+*
+*
+*/
 class serviciosAlertas
 {
 
@@ -45,7 +50,9 @@ class serviciosAlertas
                   ve.nropoliza,
                   usu.idusuario as idusuariocliente,
                   usua.idusuario as idusuarioasesor,
-                  ve.idventa
+                  ve.idventa,
+                  ase.claveasesor,
+                  ase.envioalcliente
 
                FROM
                   dbperiodicidadventasdetalle p

@@ -420,7 +420,20 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 					"sortAscending":  ": activate to sort column ascending",
 					"sortDescending": ": activate to sort column descending"
 				}
-			}
+			}<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>,
+			"columnDefs": [
+				{
+					"targets": [ 2 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [ 3 ],
+					"visible": false,
+					"searchable": false
+				}
+
+		  ]<?php } ?>
 		});
 
 
