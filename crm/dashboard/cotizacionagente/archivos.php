@@ -26,19 +26,29 @@ if (!isset($_SESSION['usua_sahilices']))
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../venta/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cotizacionagente/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Venta",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cotizaciones Recibidas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
 $tituloWeb = mysql_result($configuracion,0,'sistema');
 
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
+
+
+$token = $_SESSION['token_ac'];
+
+if (!(isset($token))) {
+	header('Location: index.php');
+}
+
+$resultadoToken = $serviciosReferencias->traerTokenasesoresPorTokenActivo($token);
+
 
 if (!(isset($_GET['id']))) {
 	header('Location: index.php');
@@ -155,7 +165,7 @@ if (isset($_GET['iddocumentacion'])) {
 
 	$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorClienteDocumentacion($idCliente, $iddocumentacion);
 
-	$iddocumentacionasociado = mysql_result($resDocumentacionAsesor,0,'iddocumentacioncliente');
+	$iddocumentacionasociado = $_GET['iddocumentacion'];
 
 	$jqueryidcliente = $idCliente;
    $jqueryiddocumentacion = $iddocumentacion;
@@ -571,7 +581,12 @@ $resClientes = $serviciosReferencias->traerClientesPorId($idCliente);
 												<div id="example1"></div>
 											</div>
 											<div class="row">
+												<?php if ($estadoDocumentacion == 'Falta Cargar') { ?>
+												<div class="alert bg-blue">
+												<?php } else { ?>
 												<div class="alert bg-<?php echo ($color == 'blue' ? 'green' : $color); ?>">
+												<?php } ?>
+
 													<h4>
 														Estado: <b><?php echo $estadoDocumentacion; ?></b>
 													</h4>

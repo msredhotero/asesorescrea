@@ -141,7 +141,9 @@ $tablasAr	= array('rolhogar' => 'tbrolhogar',
 							'tokens' => 'dbtokens',
 							'firmarcontratos' => 'dbfirmarcontratos',
 							'metodopago' => 'dbmetodopago',
-							'pagos' => 'dbpagos'
+							'pagos' => 'dbpagos',
+							'solicitudesrespuestas' => 'dbsolicitudesrespuestas',
+							'renovaciones' => 'dbrenovaciones'
 							);
 
 
@@ -253,7 +255,9 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'tokens' => 'dbtokens',
 								'firmarcontratos' => 'dbfirmarcontratos',
 								'metodopago' => 'dbmetodopago',
-								'pagos' => 'dbpagos'
+								'pagos' => 'dbpagos',
+								'solicitudesrespuestas' => 'dbsolicitudesrespuestas',
+								'renovaciones' => 'dbrenovaciones'
 							);
 
 	$tablasArAux	= array('rolhogar' => 1,
@@ -362,7 +366,9 @@ function recursiveTablas($ar, $tabla, $aliasTablaMadre) {
 								'tokens' => 1,
 								'firmarcontratos' => 1,
 								'metodopago' => 3,
-								'pagos' => 1
+								'pagos' => 1,
+								'solicitudesrespuestas' => 1,
+								'renovaciones' => 1
 							);
 
 	$inner= '';

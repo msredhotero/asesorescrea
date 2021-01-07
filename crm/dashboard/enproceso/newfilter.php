@@ -72,49 +72,56 @@ if (isset($_GET['id'])) {
 
 	$estadoCotizacionGral = mysql_result($resultado,0,'refestadocotizaciones');
 
-	if ($estadoCotizacionGral == 19) {
-		$resVentas = $serviciosReferencias->traerVentasPorCotizacion($id);
+	$resCotizacionPrincipal = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+
+	if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 19) {
+		$resVentas = $serviciosReferencias->traerMetodopagoPorCotizacion($_GET['id']);
 
 		if (mysql_num_rows($resVentas) > 0) {
-			$resMetodoPago = $serviciosReferencias->traerPeriodicidadventasPorVenta(mysql_result($resVentas,0,0));
-			if (mysql_num_rows($resMetodoPago) > 0) {
-				header('Location: comercio_fin.php?id='.$id);
-			} else {
-				header('Location: metodopago.php?id='.$id);
-			}
+			return header('Location: comercio_fin.php?id='.$_GET['id']);
 		} else {
-			header('Location: metodopago.php?id='.$id);
+			return header('Location: metodopago.php?id='.$_GET['id']);
 		}
 
 	}
 
-	if (($estadoCotizacionGral == 20)) {
-		$resVentas = $serviciosReferencias->traerVentasPorCotizacion($id);
+	if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 20) {
+		$resVentas = $serviciosReferencias->traerMetodopagoPorCotizacion($_GET['id']);
 
 		if (mysql_num_rows($resVentas) > 0) {
-			$resMetodoPago = $serviciosReferencias->traerPeriodicidadventasPorVenta(mysql_result($resVentas,0,0));
-			if (mysql_num_rows($resMetodoPago) > 0) {
-				header('Location: comercio_fin.php?id='.$id);
-			} else {
-				header('Location: archivos.php?id='.$id);
-			}
+			return header('Location: archivos.php?id='.$_GET['id']);
 		} else {
-			header('Location: modificar.php?id='.$id);
+			return header('Location: metodopago.php?id='.$_GET['id']);
 		}
 	}
 
-	if (($estadoCotizacionGral == 21) || ($estadoCotizacionGral == 22)) {
-		$resVentas = $serviciosReferencias->traerVentasPorCotizacion($id);
+	if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 22) {
+		$resVentas = $serviciosReferencias->traerMetodopagoPorCotizacion($_GET['id']);
 
 		if (mysql_num_rows($resVentas) > 0) {
-			$resMetodoPago = $serviciosReferencias->traerPeriodicidadventasPorVenta(mysql_result($resVentas,0,0));
-			if (mysql_num_rows($resMetodoPago) > 0) {
-				header('Location: comercio_fin.php?id='.$id);
-			} else {
-				header('Location: documentos.php?id='.$id);
-			}
+			return header('Location: comprobantepago.php?id='.$_GET['id']);
 		} else {
-			header('Location: modificar.php?id='.$id);
+			return header('Location: metodopago.php?id='.$_GET['id']);
+		}
+	}
+
+	if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 23) {
+		$resVentas = $serviciosReferencias->traerMetodopagoPorCotizacion($_GET['id']);
+
+		if (mysql_num_rows($resVentas) > 0) {
+			return header('Location: descuentopornomina.php?id='.$_GET['id']);
+		} else {
+			return header('Location: metodopago.php?id='.$_GET['id']);
+		}
+	}
+
+	if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 21) {
+		$resVentas = $serviciosReferencias->traerMetodopagoPorCotizacion($_GET['id']);
+
+		if (mysql_num_rows($resVentas) > 0) {
+			return header('Location: documentos.php?id='.$_GET['id']);
+		} else {
+			return header('Location: metodopago.php?id='.$_GET['id']);
 		}
 	}
 

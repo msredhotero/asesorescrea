@@ -1212,7 +1212,8 @@ while ($rowD = mysql_fetch_array($documentacionesrequeridas)) {
 
    if (strpos( strtolower($rowD['type']),"pdf") !== false) {
       // set the sourcefile
-      $pdf->setSourceFile(__DIR__.'/'.'../archivos/clientes/'.$idCliente.'/'.$rowD['carpeta'].'/'.$rowD['archivo']);
+
+         $pdf->setSourceFile(__DIR__.'/'.'../archivos/clientes/'.$idCliente.'/'.$rowD['carpeta'].'/'.$rowD['archivo']);
 
 
       // import page 1
@@ -1220,7 +1221,10 @@ while ($rowD = mysql_fetch_array($documentacionesrequeridas)) {
 
       $pdf->useTemplate($tplIdx, 0, 0);
    } else {
+
       $pdf->Image(__DIR__.'/'.'../archivos/clientes/'.$idCliente.'/'.$rowD['carpeta'].'/'.$rowD['archivo'] , 0 ,0, 100 , 0,explode('/',$rowD['type'])[1]);
+
+
    }
 
 

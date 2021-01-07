@@ -5,6 +5,7 @@ require 'includes/funcionesReferencias.php';
 require 'includes/funciones.php';
 require 'includes/validadores.php';
 
+
 session_start();
 
 $serviciosUsuario = new ServiciosUsuarios();
@@ -15,10 +16,20 @@ $serviciosValidador = new serviciosValidador();
 
 
 if (isset($_SESSION['usua_sahilices'])) {
-   $token = $_SESSION['token_ac'];
+
+   if (isset($_GET['token'])) {
+      $token           = $_GET['token'];
+   } else {
+      header('Location: error.php');
+   }
+
+   $token = $_GET['token'];
+
+   $_SESSION['token_ac'] = $token;
 
    $resultado = $serviciosReferencias->traerTokenasesoresPorTokenActivo($token);
 
+   //die(var_dump($token));
    if (mysql_num_rows($resultado)>0) {
       header('Location: dashboard/'.mysql_result($resultado,0,'accion'));
    } else {
@@ -78,6 +89,7 @@ if (isset($_SESSION['usua_sahilices'])) {
       			$_SESSION['refroll_sahilices'] = mysql_result($resUsuario,0,'descripcion');
 
                //die(var_dump(mysql_result($resultado,0,'accion')));
+
                header('Location: dashboard/'.mysql_result($resultado,0,'accion'));
             } else {
                $error = true;

@@ -1067,8 +1067,16 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 						</div>
 						<div class="body table-responsive">
 							<form class="form" id="formFacturas">
-								<h3>Bienvenido al CRM de Asesores Crea</h3>
-								<h4>Gracias por tu interés en unirte a nuestra fuerza de ventas, espera una llamada en breve para continuar con el proceso de reclutamiento.</h4>
+
+
+								<button type="button" class="btn btn-lg btn-block bg-cyan" onclick="window.location='cotizacionesvigentes/new.php?producto=30'">Venta En Linea</button>
+
+								<button type="button" class="btn btn-lg btn-block bg-cyan" onclick="window.location='enproceso/new.php'">Solicitar Cotizacion</button>
+
+								<button type="button" class="btn btn-lg btn-block bg-cyan" onclick="window.location='siniestros/'">Mejorar Condiciones</button>
+
+								<hr>
+
 								<p>Puedes contactarnos en el Teléfono: <b><span style="color:#5DC1FD;">55 51 35 02 59</span></b></p>
 								<p>Horarios de atención: <b>09:00 a 16:00.</b></p>
 								<p>Correo: <a href="mailto:reclutamiento@asesorescrea.com" style="color:#5DC1FD !important;"><b>reclutamiento@asesorescrea.com</b></a></p>

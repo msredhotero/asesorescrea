@@ -2795,6 +2795,9 @@ function ineCargadoCotizacion($serviciosReferencias) {
    if ($consolicitud == '1') {
       $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',21,$_SESSION['usua_sahilices']);
    } else {
+      if (isset($_SESSION['token_ac'])) {
+         $resModToken = $serviciosReferencias->modificarTokenasesoresEstado($_SESSION['token_ac'],2);
+      }
       $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',12,$_SESSION['usua_sahilices']);
 
       $resEstado2 = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',4,$_SESSION['usua_sahilices']);
@@ -5053,6 +5056,12 @@ function validarCuestionario($serviciosReferencias) {
 
          // hago esto porque todavia no tengo en claro porque me inserta dos veces una misma respuesta y pregunta
          $resResuelvoDuplicidad = $serviciosReferencias->resolverDuplicidadCuestionarioDetalle(11, $res);
+
+         // para cuando es un cliente temporario, modifico la url para ingresar.
+         if (isset($_SESSION['token_ac'])) {
+            $resToken = $serviciosReferencias->traerTokenasesoresPorToken($_SESSION['token_ac']);
+            $modAccion = $serviciosReferencias->modificarTokenasesoresAccion($_SESSION['token_ac'],mysql_result($resToken,0,'accion')."&id=".$res);
+         }
 
 
 

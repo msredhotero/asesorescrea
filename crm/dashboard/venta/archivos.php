@@ -155,7 +155,7 @@ if (isset($_GET['iddocumentacion'])) {
 
 	$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorClienteDocumentacion($idCliente, $iddocumentacion);
 
-	$iddocumentacionasociado = mysql_result($resDocumentacionAsesor,0,'iddocumentacioncliente');
+	$iddocumentacionasociado = $_GET['iddocumentacion'];
 
 	$jqueryidcliente = $idCliente;
    $jqueryiddocumentacion = $iddocumentacion;

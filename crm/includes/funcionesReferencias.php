@@ -48,6 +48,15 @@ $res = $this->query($sql,0);
 return $res;
 }
 
+function modificarTokenasesoresAccion($token,$accion) {
+$sql = "update dbtokenasesores
+set
+accion = '".$accion."'
+where token = '".$token."'";
+$res = $this->query($sql,0);
+return $res;
+}
+
 
 function eliminarTokenasesores($id) {
 $sql = "delete from dbtokenasesores where idtokenasesor =".$id;
@@ -10404,6 +10413,33 @@ return $res;
 	}
 
 
+   function traerProductosPorNombreCompleta($nombre) {
+		$sql = "select
+		p.idproducto,
+		p.producto,
+		p.prima,
+      p.activo,
+      p.reftipoproductorama,
+      tp.reftipoproducto,
+      p.reftipodocumentaciones,
+      p.refcuestionarios,
+      p.reftipopersonas,
+      p.precio,p.detalle,p.ventaenlinea,p.cotizaenlinea,p.beneficiario,p.asegurado,p.reftipofirma,
+      p.reftipoemision,
+      p.esdomiciliado,
+      p.consolicitud,
+      p.leyendabeneficiario
+		from tbproductos p
+		inner join tbtipoproductorama tp ON tp.idtipoproductorama = p.reftipoproductorama
+      inner join tbtipoproducto t on t.idtipoproducto = tp.reftipoproducto
+      left join tbtipopersonas tpp ON tpp.idtipopersona = p.reftipoproductorama
+		where p.producto = '%".$nombre."%' and p.activo = '1'
+		order by 1";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
    function traerProductosPorIdCompletaTipo($tipo) {
 		$sql = "select
 		p.idproducto,
@@ -16481,10 +16517,48 @@ return $res;
 			a.usuariomodi,
 			a.reftipopersonas,
 			a.razonsocial,
+         (case when a.refestadoasesor = '1' then 'Si' else 'No' end) as activoasesorescrea,
+         (case when a.refestadoasesorinbursa = '1' then 'Si' else 'No' end) as activoinbursa,
 			concat(a.apellidopaterno, ' ', a.apellidomaterno, ' ', a.nombre) as nombrecompleto
 			from dbasesores a
 			inner join dbusuarios u ON u.idusuario = a.refusuarios
 			where concat(a.apellidopaterno, ' ', a.apellidomaterno, ' ', a.nombre) like '%".$busqueda."%'
+			order by a.apellidopaterno,
+			a.apellidomaterno,a.nombre limit 50";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function bAsesoresPorClave($clave) {
+		$sql = "select
+			a.idasesor,
+			a.refusuarios,
+			a.nombre,
+			a.apellidopaterno,
+			a.apellidomaterno,
+			a.email,
+			a.curp,
+			a.rfc,
+			a.ine,
+			a.fechanacimiento,
+			a.sexo,
+			a.codigopostal,
+			a.refescolaridades,
+			a.telefonomovil,
+			a.telefonocasa,
+			a.telefonotrabajo,
+			a.fechacrea,
+			a.fechamodi,
+			a.usuariocrea,
+			a.usuariomodi,
+			a.reftipopersonas,
+			a.razonsocial,
+         (case when a.refestadoasesor = '1' then 'Si' else 'No' end) as activoasesorescrea,
+         (case when a.refestadoasesorinbursa = '1' then 'Si' else 'No' end) as activoinbursa,
+			concat(a.apellidopaterno, ' ', a.apellidomaterno, ' ', a.nombre) as nombrecompleto
+			from dbasesores a
+			inner join dbusuarios u ON u.idusuario = a.refusuarios
+			where a.claveasesor = '".$clave."'
 			order by a.apellidopaterno,
 			a.apellidomaterno,a.nombre";
 		$res = $this->query($sql,0);

@@ -107,6 +107,9 @@ $refEstadoCotizacion = mysql_result($resultado,0,'refestadocotizaciones');
 
 $resPagos = $serviciosReferencias->traerPagosPorTablaReferencia(12, 'dbcotizaciones', 'idcotizacion', $id);
 
+$resEstados = $serviciosReferencias->traerEstadodocumentaciones();
+$cadRefEstados = $serviciosFunciones->devolverSelectBox($resEstados,array(1),'');
+
 if (mysql_num_rows($resPagos) > 0) {
 	$idpago = mysql_result($resPagos,0,0);
 	$idpagoestado = mysql_result($resPagos,0,'refestado');
@@ -114,6 +117,8 @@ if (mysql_num_rows($resPagos) > 0) {
 	$archivo = mysql_result($resPagos,0,'archivos');
 
 	$resEstadoDocumentacion = $serviciosReferencias->traerEstadodocumentacionesPorId($idpagoestado);
+
+
 
 	$lblEstado = mysql_result($resEstadoDocumentacion,0,'estadodocumentacion');
 	$lblColor = mysql_result($resEstadoDocumentacion,0,'color');
@@ -325,6 +330,8 @@ if ($refEstadoCotizacion == 22) {
 												</h4>
 											</div>
 
+											
+
 
 										</div>
 
@@ -391,6 +398,7 @@ if ($refEstadoCotizacion == 22) {
 
 <script>
 	$(document).ready(function(){
+
 
 		function traerImagen(contenedorpdf, contenedor) {
 			$.ajax({

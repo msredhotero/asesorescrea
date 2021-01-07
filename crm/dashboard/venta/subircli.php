@@ -64,6 +64,8 @@
 
 
 		// desarrollo
+		$dir_base = '../../archivos/clientes/'.$id.'/';
+
 		$dir_destino = '../../archivos/clientes/'.$id.'/'.mysql_result($resDocumentacion,0,'carpeta').'/';
 		list($base,$extension) = explode('.',$name);
 		$newname = implode('.', [mysql_result($resDocumentacion,0,'carpeta'), time(), $extension]);
@@ -78,7 +80,10 @@
 
 		// produccion
 		// $nuevo_noentrar = 'https://www.saupureinconsulting.com.ar/aifzn/data/'.$_SESSION['idclub_aif'].'/'.'index.php';
-
+		if (!file_exists($dir_base)) {
+			mkdir($dir_base, 0777);
+		}
+		
 		if (!file_exists($dir_destino)) {
 			mkdir($dir_destino, 0777);
 		}

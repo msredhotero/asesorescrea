@@ -24,25 +24,49 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../venta/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cotizacionagente/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
-$rCliente = $serviciosReferencias->traerClientesPorUsuario($_SESSION['usuaid_sahilices']);
+//die();
+
+$token = $_SESSION['token_ac'];
+
+if (!(isset($token))) {
+	header('Location: index.php');
+}
+
+$resultadoToken = $serviciosReferencias->traerTokenasesoresPorTokenActivo($token);
+
+
+
+$url_real = substr($_SERVER['REQUEST_URI'],strpos($_SERVER['REQUEST_URI'],'dashboard/')+10);
+
+//die(var_dump(mysql_result($resultadoToken,0,'accion')));
+
+if ($url_real !== mysql_result($resultadoToken,0,'accion')) {
+	header('Location: ../index.php');
+}
+
+
+
+$rCliente = $serviciosReferencias->traerClientesPorId(mysql_result($resultadoToken,0,'refclientes'));
 //die(var_dump($_SESSION['usuaid_sahilices']));
 $rIdCliente = mysql_result($rCliente,0,0);
 
 $rTipoPersona = mysql_result($rCliente,0,'reftipopersonas');
 
+
 if (isset($_GET['producto'])) {
 	$rIdProducto = $_GET['producto'];
+} else {
+	header('Location: index.php');
 }
 
 
-
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Venta",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cotizaciones Recibidas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -75,7 +99,7 @@ if (isset($_GET['id'])) {
 	}
 
 	$refCliente = mysql_result($resultado,0,'refclientes');
-	$refAsesores = 25;
+	$refAsesores = mysql_result($resultadoToken,0,'refasesores');
 	$refAsociados = mysql_result($resultado,0,'refasociados');
 	$refProductos = mysql_result($resultado,0,'refproductos');
 
@@ -97,6 +121,10 @@ if (isset($_GET['id'])) {
 			header('Location: metodopago.php?id='.$id);
 		}
 
+	}
+
+	if (($estadoCotizacionGral == 12)) {
+		header('Location: documentos.php?id='.$id);
 	}
 
 	if (($estadoCotizacionGral == 20)) {
@@ -440,7 +468,7 @@ if (isset($_GET['id'])) {
 		$documentacionNombre2 = '';
 	}
 
-	$idasesor = 25;
+	$idasesor = mysql_result($resultadoToken,0,'refasesores');
 
 // fin de cuando ya graba el producto
 } else {
@@ -517,7 +545,7 @@ if (isset($_GET['id'])) {
 
 
 
-	$idasesor = 25;
+	$idasesor = mysql_result($resultadoToken,0,'refasesores');
 
 	$iddocumentacion2 = 0;
 	$iddocumentacion = 0;

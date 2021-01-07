@@ -27,19 +27,29 @@ if (!isset($_SESSION['usua_sahilices']))
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../venta/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cotizacionagente/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Venta",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cotizaciones Recibidas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
 $tituloWeb = mysql_result($configuracion,0,'sistema');
 
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
+
+
+$token = $_SESSION['token_ac'];
+
+if (!(isset($token))) {
+	header('Location: index.php');
+}
+
+$resultadoToken = $serviciosReferencias->traerTokenasesoresPorTokenActivo($token);
+
 
 if (!(isset($_GET['id']))) {
 	header('Location: index.php');
@@ -160,7 +170,9 @@ if (mysql_num_rows($resMetodoPago)>0) {
 	$filesSolicitud = array_diff(scandir($pathSolcitud), array('.', '..'));
 	if (count($filesSolicitud) < 1) {
 		//die(var_dump(__DIR__));
+
 		require ('../../reportes/rptFTodos.php');
+
 	}
 } else {
 	$existeMetodoPago = 0;

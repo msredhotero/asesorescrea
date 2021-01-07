@@ -1,8 +1,8 @@
 <?php
 
 
-include ('../includes/funciones.php');
-include ('../includes/funcionesReferencias.php');
+include ('../../includes/funciones.php');
+include ('../../includes/funcionesReferencias.php');
 
 $serviciosFunciones = new Servicios();
 $serviciosReferencias 	= new ServiciosReferencias();

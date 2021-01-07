@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../pagorecibo/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cotizacionagente/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Pagar Recibos",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cotizaciones Recibidas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -71,7 +71,7 @@ $resultado = $serviciosReferencias->traerTokenasesoresPorTokenActivo($token);
 
 $idcliente = mysql_result($resultado,0,'refclientes');
 
-$resultado = $serviciosReferencias->traerTokenasesoresPorClienteActivoTipo($idcliente,'1');
+$resultado = $serviciosReferencias->traerTokenasesoresPorClienteActivoTipo($idcliente,'2');
 
 
 ?>
@@ -166,7 +166,7 @@ $resultado = $serviciosReferencias->traerTokenasesoresPorClienteActivoTipo($idcl
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								RECIBOS DE PAGO
+								COTIZACIONES RECIBIDAS
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -190,9 +190,7 @@ $resultado = $serviciosReferencias->traerTokenasesoresPorClienteActivoTipo($idcl
 										<thead>
 											<tr>
 												<th>Descripción</th>
-												<th>Nro Poliza / Tarjeta</th>
-												<th>Nro Recibo</th>
-												<th>Monto</th>
+												<th>Producto</th>
 												<th>Vigencia</th>
 												<th>Acciones</th>
 											</tr>
@@ -201,24 +199,30 @@ $resultado = $serviciosReferencias->traerTokenasesoresPorClienteActivoTipo($idcl
 											<?php
 
 												while ($row = mysql_fetch_array($resultado)) {
-													$url_id = substr($row['accion'],strpos($row['accion'],'id=')+3);
-													$resRecibo = $serviciosReferencias->traerPeriodicidadventasdetallePorIdCompleto($url_id);
+													if (strpos($row['accion'],"&id=") !== false) {
+														$varCount1 = (integer)strpos($row['accion'],'&');
+														$varCount2 =  (integer)strpos($row['accion'],'producto=')+9;
+														$url_id = substr($row['accion'],strpos($row['accion'],'producto=')+9, $varCount1 - $varCount2);
 
-													$nroPoliza = mysql_result($resRecibo,0,'nropoliza');
-													$nroRecibo = mysql_result($resRecibo,0,'nrorecibo');
-													$monto = mysql_result($resRecibo,0,'montototal');
+														//die(var_dump($url_id));
+
+													} else {
+														$url_id = substr($row['accion'],strpos($row['accion'],'producto=')+9);
+													}
+
+													$res = $serviciosReferencias->traerProductosPorId($url_id);
+
+													$producto = mysql_result($res,0,'producto');
 											?>
 											<tr>
 												<td><?php echo $row['descripcion']; ?></td>
-												<td><?php echo $nroPoliza; ?></td>
-												<td><?php echo $nroRecibo; ?></td>
-												<td><?php echo $monto; ?></td>
+												<td><?php echo $producto; ?></td>
 												<td><?php echo $row['vigencia']; ?></td>
 												<?php if ($row['refestados'] == 1) { ?>
 												<td>
 													<button type="button" id="<?php echo $row['token']; ?>" class="btn btn-primary waves-effect btnPagar">
 														<i class="material-icons">monetization_on</i>
-														<span>PAGAR</span>
+														<span>COTIZAR</span>
 													</button>
 												</td>
 												<?php } ?>
