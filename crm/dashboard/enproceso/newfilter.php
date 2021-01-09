@@ -74,6 +74,7 @@ if (isset($_GET['id'])) {
 
 	$resCotizacionPrincipal = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
+
 	if (mysql_result($resCotizacionPrincipal,0,'refestadocotizaciones') == 19) {
 		$resVentas = $serviciosReferencias->traerMetodopagoPorCotizacion($_GET['id']);
 

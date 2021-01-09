@@ -44,8 +44,11 @@ $singular = "Listado Polizas";
 $plural = "Listado Polizas";
 
 if ($_SESSION['idroll_sahilices'] == 7) {
-	
-	$resultados = $serviciosReferencias->traerVentasPorAsesorCompleto($_SESSION['usuaid_sahilices']);
+
+	$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
+	$idasesor = mysql_result($resVar5,0,'idasesor');
+
+	$resultados = $serviciosReferencias->traerVentasPorAsesorCompleto($idasesor);
 } else {
 	$resultados = $serviciosReferencias->traerVentasPorUsuarioCompleto($_SESSION['usuaid_sahilices']);
 }

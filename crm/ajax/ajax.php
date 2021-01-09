@@ -1323,9 +1323,72 @@ switch ($accion) {
    case 'modificarCotizacionesPorCampoCompleto':
       modificarCotizacionesPorCampoCompleto($serviciosReferencias);
    break;
+   case 'enviarCotizadorAlCliente':
+      enviarCotizadorAlCliente($serviciosReferencias, $serviciosUsuarios, $serviciosValidador);
+   break;
 
 }
 /* FinFinFin */
+
+function enviarCotizadorAlCliente($serviciosReferencias, $serviciosUsuarios, $serviciosValidador) {
+   $idcliente = $_POST['idcliente'];
+   $idasesor = $_POST['idasesor'];
+   $idreferencia = $_POST['idreferencia'];
+   $tipoaccion = $_POST['tipoaccion'];
+
+   $resCliente = $serviciosReferencias->traerClientesPorId($idcliente);
+
+   if ((mysql_result($resCliente,0,'email') != '') || ($serviciosValidador->validaEmail( mysql_result($resCliente,0,'email')))) {
+      $resV['error'] = false;
+
+      if ($tipoaccion == '2') {
+         $accion = "cotizacionagente/new.php?producto=".$idreferencia;
+      }
+      if ($tipoaccion == '1') {
+         $accion = "pagorecibo/metodopago.php?id=".$idreferencia;
+      }
+
+      $token = $serviciosReferencias->GUID();
+      $generousuario = 1;
+      $fechacrea = date('Y-m-d H:i:s');
+      $fecha_actual = date("d-m-Y");
+      //sumo 30 días
+      $vigencia = date("Y-m-d",strtotime($fecha_actual."+ 30 days"));
+      $activo = '1';
+
+      $refestados = 1;
+
+      $nombre = mysql_result($resCliente,0,'nombre');
+      $apellidopaterno  = mysql_result($resCliente,0,'apellidopaterno');
+      $apellidomaterno  = mysql_result($resCliente,0,'apellidomaterno');
+      $email  = mysql_result($resCliente,0,'email');
+
+      $password = $serviciosReferencias->GUID();
+
+      $refusuarios = $serviciosUsuarios->insertarUsuario($nombre,$password,19,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
+
+      $res = $serviciosReferencias->insertarTokenasesores($token,$idasesor,$idcliente,$generousuario,$fechacrea,$vigencia,$activo,$accion,$tipoaccion,$refestados,$refusuarios);
+
+      if ($res) {
+         $resV['error'] = false;
+         //$resV['url'] = 'https://asesorescrea.com/desarrollo/crm/token.php?token='.$token;
+         $resV['url'] = 'http://localhost/asesorescrea_nuevo.git/trunk/crm/token.php?token='.$token;
+      } else {
+         $resV['error'] = true;
+         $resV['mensaje'] = 'Se genero un error al crear la liga, contactese con el administrador';
+      }
+
+   } else {
+      $resV['error'] = true;
+      $resV['mensaje'] = 'El cliente no posee un email o es invalido, verificar';
+   }
+
+
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function modificarCotizacionesPorCampoCompleto($serviciosReferencias) {
    session_start();
@@ -4228,11 +4291,11 @@ function traerAseguradosPorId($serviciosReferencias, $serviciosFunciones) {
 
 function insertarMejorarcondiciones($serviciosReferencias) {
    $refclientes = $_POST['refclientes'];
-   $refproductos = $_POST['refproductos'];
+   $refasesores = $_POST['refasesores'];
    $fechacrea = date('Y-m-d H:i:s');
    $fechamodi = date('Y-m-d H:i:s');
    $observaciones = $_POST['observaciones'];
-   $res = $serviciosReferencias->insertarMejorarcondiciones($refclientes,$refproductos,$fechacrea,$fechamodi,$observaciones);
+   $res = $serviciosReferencias->insertarMejorarcondiciones($refclientes,$refasesores,$fechacrea,$fechamodi,$observaciones);
 
    if ((integer)$res > 0) {
       $resV['error'] = false;
@@ -9446,7 +9509,11 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $cadRef8 = $serviciosFunciones->devolverSelectBoxActivo($resVar8,array(1),'',mysql_result($resultado,0,'reftipopersonas'));
 
          $resVar9 = $serviciosReferencias->traerUsuariosPorRol(16);
-         $cadRef9 = $serviciosFunciones->devolverSelectBoxActivo($resVar9,array(1),'',mysql_result($resultado,0,'refusuarios'));
+         $cadRef9 = '<option value="0">-- Seleccionar --</option>';
+         if ($_SESSION['idroll_sahilices'] != 7) {
+            $cadRef9 .= $serviciosFunciones->devolverSelectBoxActivo($resVar9,array(1),'',mysql_result($resultado,0,'refusuarios'));
+         }
+
 
 
          $resVar13 = $serviciosReferencias->traerEstadoCivil();

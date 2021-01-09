@@ -74,7 +74,16 @@ if ($_SESSION['idroll_sahilices'] == 19) {
 
 ///// SI EL ROL ES DEL ASESOR
 if ($_SESSION['idroll_sahilices'] == 7) {
+
 	$resultado = $serviciosReferencias->traerPostulantesPorIdUsuario($_SESSION['usuaid_sahilices']);
+
+	$resultadoB		=  $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
+
+	if (mysql_num_rows($resultadoB) > 0) {
+		$idasesor = mysql_result($resultadoB,0,'idasesor');
+	} else {
+		$idasesor = 0;
+	}
 
 	if (mysql_num_rows($resultado) > 0) {
 		$refestado = mysql_result($resultado,0,'refestadopostulantes');
@@ -515,6 +524,14 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 			.header .bg-blue h2 {
 			   color:#c6ac83 !important;
 			}
+
+			.imgVenta {
+				background-image: url("../imagenes/ventaenlinea_bck.jpg");
+				width: 100%;
+				height: 100%;
+				display: block;
+			}
+
     </style>
 
 </head>
@@ -1068,12 +1085,33 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 						<div class="body table-responsive">
 							<form class="form" id="formFacturas">
 
+								<div class"row imgVenta button-container-img">
+									<img src="../imagenes/ventaenlinea_bck.jpg" width="100%"/>
+									<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.5em;" onclick="window.location='ventaenlinea/'">ENVIAR LIGA AL AGENTE</button>
+								</div>
+								<div class"row imgCotiza button-container-img" style="margin-top:20px;">
+									<img src="../imagenes/cotiza_bck.jpg" width="100%"/>
+									<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.5em;" onclick="window.location='enproceso/new.php'">SOLICITAR COTIZACION</button>
+								</div>
+								<div class"row imgMejopra button-container-img" style="margin-top:20px;">
+									<img src="../imagenes/mejoratuscondiciones_bck.jpg" width="100%"/>
+									<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.5em;" onclick="window.location='mejorarcondiciones/'">ADJUNTAR POLIZA</button>
+								</div>
 
-								<button type="button" class="btn btn-lg btn-block bg-cyan" onclick="window.location='cotizacionesvigentes/new.php?producto=30'">Venta En Linea</button>
+								<div class="row">
+									<div class="form-group input-group" style="martin-top:20px;">
+										<button type="button" class="btn btn-lg btn-block bg-blue btnCargarPagoRecibo">CARGAR PAGO RECIBO</button>
+										<div class="form-line">
+											<label class="form-label">URL:</label>
+											<input type="text" readonly name="url" id="url" class="form-control"/>
+										</div>
+									</div>
+								</div>
 
-								<button type="button" class="btn btn-lg btn-block bg-cyan" onclick="window.location='enproceso/new.php'">Solicitar Cotizacion</button>
 
-								<button type="button" class="btn btn-lg btn-block bg-cyan" onclick="window.location='siniestros/'">Mejorar Condiciones</button>
+
+
+
 
 								<hr>
 
@@ -1258,6 +1296,66 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 	<script>
 		$(document).ready(function(){
+
+			$('.btnCargarPagoRecibo').click(function() {
+				traerEnviarCotizadorAlCliente();
+			});
+
+			function traerEnviarCotizadorAlCliente() {
+				$.ajax({
+					url: '../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: {
+						accion: 'enviarCotizadorAlCliente',
+						idasesor: <?php echo $idasesor; ?>,
+						idcliente: 20,
+						idreferencia: 6,
+						tipoaccion: '1'
+					},
+					//mientras enviamos el archivo
+					beforeSend: function(){
+
+					},
+					//una vez finalizado correctamente
+					success: function(data){
+
+						if (data.error == false) {
+							swal({
+									title: "Respuesta",
+									text: 'Se genero correctamente la liga',
+									type: "success",
+									timer: 2000,
+									showConfirmButton: false
+							});
+							$('#url').val(data.url);
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data.mensaje,
+									type: "error",
+									timer: 2000,
+									showConfirmButton: false
+							});
+
+						}
+
+					},
+					//si ha ocurrido un error
+					error: function(){
+						swal({
+								title: "Respuesta",
+								text: 'Actualice la pagina',
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+					}
+				});
+
+			}
 
 			$('.btnEmailEnviarSeguro').click(function() {
 				idTable =  $(this).attr("id");

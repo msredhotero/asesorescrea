@@ -62,8 +62,8 @@ $resultado = $serviciosReferencias->traerMejorarcondicionesPorId($id);
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbmejorarcondiciones";
 
-$lblCambio	 	= array('refclientes','refproductos');
-$lblreemplazo	= array('Clientes','Selecciona el producto en cuestion');
+$lblCambio	 	= array('refclientes','refasesores');
+$lblreemplazo	= array('Clientes','Asesores');
 
 if ($_SESSION['idroll_sahilices'] == 16) {
 	$resVar1 = $serviciosReferencias->traerClientesPorUsuario($_SESSION['usuaid_sahilices']);
@@ -78,13 +78,13 @@ if ($_SESSION['idroll_sahilices'] == 16) {
 
 }
 
-$idproducto = mysql_result($resultado,0,'refproductos');
+$idasesor = mysql_result($resultado,0,'refasesores');
 
-$resVar2 = $serviciosReferencias->traerProductosPorId($idproducto);
-$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),' ');
+$resVar2 = $serviciosReferencias->traerAsesoresPorId($idasesor);
+$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(3,4,2),' ');
 
 $refdescripcion = array(0=>$cadRef1,1=>$cadRef2);
-$refCampo 	=  array('refclientes','refproductos');
+$refCampo 	=  array('refclientes','refasesores');
 
 
 
@@ -522,7 +522,7 @@ $resArchivos = $serviciosReferencias->traerMejorarcondicionesarchivosPorMejora($
 		});//fin del boton modificar
 
 		$('.btnNuevaCotizacion').click(function() {
-			url = "../cotizaciones/newfilter.php?idcliente=" + <?php echo $idcliente; ?> + "&idproducto=" + <?php echo $idproducto; ?>;
+			url = "../enproceso/new.php";
 			$(location).attr('href',url);
 		});
 

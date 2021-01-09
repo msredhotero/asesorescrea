@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../asesores/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../miperfil/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Asesores",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Mi Perfil",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -43,6 +43,8 @@ $id = $_GET['id'];
 $resAsesor = $serviciosReferencias->traerAsesoresPorId($id);
 
 $idusuario = mysql_result($resAsesor,0,'refusuarios');
+
+$resultado = $serviciosReferencias->traerAsesoresPorId($id);
 
 ////////// validar solo que pueda ingrear los perfiles permitidos /////////////////////////
 
@@ -64,368 +66,63 @@ $modificar = "modificarEntrevistas";
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$resultado 		= 	$serviciosReferencias->traerPostulantesPorIdUsuario($idusuario);
 
-
-if (mysql_num_rows($resultado)<= 0) {
-
-	header('Location: expediente.php?id='.$id.'&documentacion=31');
-}
-if (mysql_result($resultado,0,'refestadopostulantes') == 9) {
-	header('Location: ../index.php');
-}
-
-$id = mysql_result($resultado,0,'idpostulante');
-
-/**************  alertas **********************************/
-if (mysql_result($resultado,0,'edad') < 18) {
-	$alertaEdad = '<div class="row"><div class="alert bg-red"><i class="material-icons">warning</i> El postulante es menor de edad!!!</div></div>';
-} else {
-	$alertaEdad = '';
-}
-
-if (mysql_result($resultado,0,'refescolaridades') < 3) {
-	$alertaEscolaridad = '<div class="row"><div class="alert bg-red"><i class="material-icons">warning</i> El postulante no cumple con la Escolaridad Basica!!!</div></div>';
-} else {
-	$alertaEscolaridad = '';
-}
 
 
 /******************** fin *********************************/
 
-$tabla 			= "dbpostulantes";
+$tabla 			= "dbasesores";
 
-$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','nss','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta','urlprueba','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','vigdesderc','vighastarc','razonsocial');
-$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Nro de Seguro Social','Clave Interbancaria','ID Cliente Inbursa','Clave Asesor','Fecha de Alta','URL Prueba','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Vigencia RC desde','Vigencia RC hasta','Razon Social');
+$lblCambio	 	= array('refusuarios','refescolaridades','fechanacimiento','codigopostal','refestadocivil','refestadopostulantes','apellidopaterno','apellidomaterno','telefonomovil','telefonocasa','telefonotrabajo','sexo','nacionalidad','afore','compania','cedula','refesquemareclutamiento','nss','claveinterbancaria','idclienteinbursa','claveasesor','fechaalta','urlprueba','vigdesdecedulaseguro','vighastacedulaseguro','vigdesdeafore','vighastaafore','nropoliza','reftipopersonas','razonsocial','vigdesderc','vighastarc','refestadoasesor','refestadoasesorinbursa','envioalcliente');
+$lblreemplazo	= array('Usuario','Escolaridad','Fecha de Nacimiento','Cod. Postal','Estado Civil','Estado','Apellido Paterno','Apellido Materno','Tel. Movil','Tel. Casa','Tel. Trabajo','Sexo','Nacionalidad','¿Cuenta con cédula definitiva para venta de Afore?','¿Con que compañía vende actualmente?','¿Cuenta Con cedula definitiva para venta de Seguros?','Esquema de Reclutamiento','Nro de Seguro Social','Clave Interbancaria','ID Cliente Inbursa','Clave Asesor','Fecha de Alta','URL Prueba','Cedula Seg. Vig. Desde','Cedula Seg. Vig. Hasta','Afore Vig. Desde','Afore Vig. Hasta','N° Poliza','Tipo Persona','Razon Social','Vig. Desde RC','Vig. Hasta RC','Est. CREA','Est. INBURSA','Envia informacion al Cliente');
+
+
+
+$modificar = "modificarAsesores";
+$idTabla = "idasesor";
 
 $resUsuario = $serviciosUsuario->traerUsuarioId(mysql_result($resultado,0,'refusuarios'));
 $cadRef1 	= $serviciosFunciones->devolverSelectBox($resUsuario,array(1),'');
 
-$resVar2	= $serviciosReferencias->traerEscolaridadesPorId(mysql_result($resultado,0,'refescolaridades'));
+$resVar2	= $serviciosReferencias->traerEscolaridades();
 $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(1),'',mysql_result($resultado,0,'refescolaridades'));
 
-$resVar3	= $serviciosReferencias->traerEstadocivil();
-$cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resVar3,array(1),'',mysql_result($resultado,0,'refestadocivil'));
-
-$resVar4	= $serviciosReferencias->traerEstadopostulantesPorId(mysql_result($resultado,0,'refestadopostulantes'));
-$cadRef4 = $serviciosFunciones->devolverSelectBoxActivo($resVar4,array(1),'',mysql_result($resultado,0,'refestadopostulantes'));
-
-if (mysql_result($resultado,0,'refestadopostulantes') == '1') {
+if (mysql_result($resultado,0,'sexo') == '1') {
 	$cadRef5 = "<option value=''>-- Seleccionar --</option><option value='1' selected>Femenino</option><option value='2'>Masculino</option>";
 } else {
 	$cadRef5 = "<option value=''>-- Seleccionar --</option><option value='1'>Femenino</option><option value='2' selected>Masculino</option>";
 }
 
-if (mysql_result($resultado,0,'afore') == '1') {
-	$cadRef7 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+if (mysql_result($resultado,0,'codigopostal') == '') {
+	$codigopostal = '';
 } else {
-	$cadRef7 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+	$resPostal = $serviciosReferencias->traerPostalPorId(mysql_result($resultado,0,'codigopostal'));
+
+	$codigopostal = mysql_result($resPostal,0,'codigo');
 }
 
-if (mysql_result($resultado,0,'cedula') == '1') {
-	$cadRef8 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+$resVar8 = $serviciosReferencias->traerTipopersonas();
+$cadRef8 = $serviciosFunciones->devolverSelectBoxActivo($resVar8,array(1),'',mysql_result($resultado,0,'reftipopersonas'));
+
+$resVar9 = $serviciosReferencias->traerEstadoasesor();
+$cadRef9 = $serviciosFunciones->devolverSelectBoxActivo($resVar9,array(1),'',mysql_result($resultado,0,'refestadoasesor'));
+
+$resVar10 = $serviciosReferencias->traerEstadoasesor();
+$cadRef10 = $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',mysql_result($resultado,0,'refestadoasesorinbursa'));
+
+if (mysql_result($resultado,0,'envioalcliente') == '1') {
+	$cadRef55 = "<option value='0'>No</option><option value='1' selected>Si</option>";
 } else {
-	$cadRef8 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+	$cadRef55 = "<option value='0' selected>No</option><option value='1'>Si</option>";
 }
 
-$resVar8 = $serviciosReferencias->traerEsquemareclutamientoPorId(mysql_result($resultado,0,'refesquemareclutamiento'));
-$cadRef9 = $serviciosFunciones->devolverSelectBoxActivo($resVar8,array(1),'',mysql_result($resultado,0,'refesquemareclutamiento'));
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2, 2=>$cadRef5,3=>$cadRef8,4=>$cadRef9,5=>$cadRef10,6=>$cadRef55);
+$refCampo 	=  array('refusuarios','refescolaridades','sexo','reftipopersonas','refestadoasesor','refestadoasesorinbursa','envioalcliente');
 
-$resPostal = $serviciosReferencias->traerPostalPorId(mysql_result($resultado,0,'codigopostal'));
-
-$codigopostal = mysql_result($resPostal,0,'codigo');
-
-$cadRef6 	= "<option value='Mexico'>Mexico</option>";
-
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadRef7,7=>$cadRef8,8=>$cadRef9);
-$refCampo 	=  array('refusuarios','refescolaridades','refestadocivil','refestadopostulantes','sexo','nacionalidad','afore','cedula','refesquemareclutamiento');
-
-$frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($id,'idpostulante','modificarPostulantes',$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+$frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($id,'idasesor','modificarAsesores',$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
-$path  = '../../archivos/postulantes/'.$id;
-
-if (!file_exists($path)) {
-	mkdir($path, 0777);
-}
-
-
-$pathFOLIOC  = '../../archivos/postulantes/'.$id.'/foliocompleto';
-
-if (!file_exists($pathFOLIOC)) {
-	mkdir($pathFOLIOC, 0777);
-}
-
-$filesFOLIOC = array_diff(scandir($pathFOLIOC), array('.', '..'));
-
-//////////////////////////////////////////////////////////////////////
-$pathSIAP  = '../../archivos/postulantes/'.$id.'/siap';
-
-if (!file_exists($pathSIAP)) {
-	mkdir($pathSIAP, 0777);
-}
-
-$filesSIAP = array_diff(scandir($pathSIAP), array('.', '..'));
-//////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////
-$pathVeritas  = '../../archivos/postulantes/'.$id.'/veritas';
-
-if (!file_exists($pathVeritas)) {
-	mkdir($pathVeritas, 0777);
-}
-
-$filesVeritas = array_diff(scandir($pathVeritas), array('.', '..'));
-//////////////////////////////////////////////////////////////////////
-
-$resEstados = $serviciosReferencias->traerEstadodocumentaciones();
-
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,mysql_result($resultado,0,'refestadopostulantes'));
-
-
-// documentacion por documentacion //
-$resDocumentacionAsesor1 = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacion($id, 2);
-
-$resDocumentacion1 = $serviciosReferencias->traerDocumentacionesPorId(2);
-
-if (mysql_num_rows($resDocumentacionAsesor1) > 0) {
-	$cadRefEstados1 = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor1,0,'refestadodocumentaciones'));
-
-	$iddocumentacionasesores1 = mysql_result($resDocumentacionAsesor1,0,'iddocumentacionasesor');
-
-	$estadoDocumentacion1 = mysql_result($resDocumentacionAsesor1,0,'estadodocumentacion');
-
-	$color1 = mysql_result($resDocumentacionAsesor1,0,'color');
-
-	$span1 = '';
-	switch (mysql_result($resDocumentacionAsesor1,0,'estadodocumentacion')) {
-		case 1:
-			$span1 = 'text-info glyphicon glyphicon-plus-sign';
-		break;
-		case 2:
-			$span1 = 'text-danger glyphicon glyphicon-remove-sign';
-		break;
-		case 3:
-			$span1 = 'text-danger glyphicon glyphicon-remove-sign';
-		break;
-		case 4:
-			$span1 = 'text-danger glyphicon glyphicon-remove-sign';
-		break;
-		case 5:
-			$span1 = 'text-success glyphicon glyphicon-remove-sign';
-		break;
-	}
-} else {
-	$cadRefEstados1 = $serviciosFunciones->devolverSelectBox($resEstados,array(1),'');
-
-	$iddocumentacionasesores1 = 0;
-
-	$estadoDocumentacion1 = 'Falta Cargar';
-
-	$color1 = 'blue';
-
-	$span1 = 'text-info glyphicon glyphicon-plus-sign';
-}
-
-///////////////////////////////////////////////////////////////////////////////////////
-
-
-// documentacion por documentacion //
-$resDocumentacionAsesor2 = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacion($id, 1);
-
-$resDocumentacion2 = $serviciosReferencias->traerDocumentacionesPorId(1);
-
-if (mysql_num_rows($resDocumentacionAsesor2) > 0) {
-	$cadRefEstados2 = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor2,0,'refestadodocumentaciones'));
-
-	$iddocumentacionasesores2 = mysql_result($resDocumentacionAsesor2,0,'iddocumentacionasesor');
-
-	$estadoDocumentacion2 = mysql_result($resDocumentacionAsesor2,0,'estadodocumentacion');
-
-	$color2 = mysql_result($resDocumentacionAsesor2,0,'color');
-
-	$span2 = '';
-	switch (mysql_result($resDocumentacionAsesor2,0,'estadodocumentacion')) {
-		case 1:
-			$span2 = 'text-info glyphicon glyphicon-plus-sign';
-		break;
-		case 2:
-			$span2 = 'text-danger glyphicon glyphicon-remove-sign';
-		break;
-		case 3:
-			$span2 = 'text-danger glyphicon glyphicon-remove-sign';
-		break;
-		case 4:
-			$span2 = 'text-danger glyphicon glyphicon-remove-sign';
-		break;
-		case 5:
-			$span2 = 'text-success glyphicon glyphicon-remove-sign';
-		break;
-	}
-} else {
-	$cadRefEstados2 = $serviciosFunciones->devolverSelectBox($resEstados,array(1),'');
-
-	$iddocumentacionasesores2 = 0;
-
-	$estadoDocumentacion2 = 'Falta Cargar';
-
-	$color2 = 'blue';
-
-	$span2 = 'text-info glyphicon glyphicon-plus-sign';
-}
-
-
-$resultado 		= 	$serviciosReferencias->traerPostulantesPorId($id);
-
-$postulante = mysql_result($resultado,0,'nombre').' '.mysql_result($resultado,0,'apellidopaterno').' '.mysql_result($resultado,0,'apellidomaterno');
-
-
-$resGuia = $serviciosReferencias->traerGuiasPorEsquemaEspecial(mysql_result($resultado,0,'refesquemareclutamiento'));
-
-$resEstadoSiguiente = $serviciosReferencias->traerGuiasPorEsquemaSiguiente(mysql_result($resultado,0,'refesquemareclutamiento'), mysql_result($resultado,0,'refestadopostulantes'));
-
-if (mysql_num_rows($resEstadoSiguiente) > 0) {
-	$estadoSiguiente = mysql_result($resEstadoSiguiente,0,'refestadopostulantes');
-} else {
-	$estadoSiguiente = 1;
-}
-
-$path  = '../../archivos/postulantes/'.$id;
-
-if (!file_exists($path)) {
-	mkdir($path, 0777);
-}
-
-/**** son 10 documentaciones */
-$pathINEf  = '../../archivos/postulantes/'.$id.'/inef';
-
-if (!file_exists($pathINEf)) {
-	mkdir($pathINEf, 0777);
-}
-
-$filesINEf = array_diff(scandir($pathINEf), array('.', '..'));
-
-/****************************************************************/
-
-$pathINEd  = '../../archivos/postulantes/'.$id.'/ined';
-
-if (!file_exists($pathINEd)) {
-	mkdir($pathINEd, 0777);
-}
-
-$filesINEd = array_diff(scandir($pathINEd), array('.', '..'));
-
-/****************************************************************/
-
-$pathAN  = '../../archivos/postulantes/'.$id.'/actanacimiento';
-
-if (!file_exists($pathAN)) {
-	mkdir($pathAN, 0777);
-}
-
-$filesAN = array_diff(scandir($pathAN), array('.', '..'));
-
-/****************************************************************/
-
-$pathCURP  = '../../archivos/postulantes/'.$id.'/curp';
-
-if (!file_exists($pathCURP)) {
-	mkdir($pathCURP, 0777);
-}
-
-$filesCURP = array_diff(scandir($pathCURP), array('.', '..'));
-
-/****************************************************************/
-
-$pathRFC  = '../../archivos/postulantes/'.$id.'/rfc';
-
-if (!file_exists($pathRFC)) {
-	mkdir($pathRFC, 0777);
-}
-
-$filesRFC = array_diff(scandir($pathRFC), array('.', '..'));
-
-/****************************************************************/
-
-$pathNSS  = '../../archivos/postulantes/'.$id.'/nss';
-
-if (!file_exists($pathNSS)) {
-	mkdir($pathNSS, 0777);
-}
-
-$filesNSS = array_diff(scandir($pathNSS), array('.', '..'));
-
-/****************************************************************/
-
-$pathCE  = '../../archivos/postulantes/'.$id.'/comprobanteestudio';
-
-if (!file_exists($pathCE)) {
-	mkdir($pathCE, 0777);
-}
-
-$filesCE = array_diff(scandir($pathCE), array('.', '..'));
-
-/****************************************************************/
-
-$pathCD  = '../../archivos/postulantes/'.$id.'/comprobantedomicilio';
-
-if (!file_exists($pathCD)) {
-	mkdir($pathCD, 0777);
-}
-
-$filesCD = array_diff(scandir($pathCD), array('.', '..'));
-
-/****************************************************************/
-
-$pathCV  = '../../archivos/postulantes/'.$id.'/cv';
-
-if (!file_exists($pathCV)) {
-	mkdir($pathCV, 0777);
-}
-
-$filesCV = array_diff(scandir($pathCV), array('.', '..'));
-
-/****************************************************************/
-
-$pathInfonavit  = '../../archivos/postulantes/'.$id.'/infonavit';
-
-if (!file_exists($pathInfonavit)) {
-	mkdir($pathInfonavit, 0777);
-}
-
-$filesInfonavit = array_diff(scandir($pathInfonavit), array('.', '..'));
-
-//////////////////////////////////////////////  FIN de los opciones //////////////////////////
-
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorPostulanteDocumentacionCompleta($id,7);
-
-$puedeAvanzar = $serviciosReferencias->permiteAvanzarDocumentacionI($id);
-$permitePresentar = $serviciosReferencias->permitePresentarDocumentacionI($id);
-
-if (mysql_result($resultado,0,'rfc') == '') {
-	$alertaRFC = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el RFC!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=7"><b>AQUI</b></a></div>';
-} else {
-	$alertaRFC = '';
-}
-
-if (mysql_result($resultado,0,'curp') == '') {
-	$alertaCURP = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el CURP!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=6"><b>AQUI</b></a></div>';
-} else {
-	$alertaCURP = '';
-}
-
-if (mysql_result($resultado,0,'ine') == '') {
-	$alertaINE = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el INE!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=3"><b>AQUI</b></a></div>';
-} else {
-	$alertaINE = '';
-}
-
-if (mysql_result($resultado,0,'nss') == '') {
-	$alertaNSS = '<div class="alert bg-orange"><i class="material-icons">warning</i> Falta cargar el Nro de Seguro Social!!!. Para cargarlo haga click <a style="color: white;" href="subirdocumentacioni.php?id='.$id.'&documentacion=8"><b>AQUI</b></a></div>';
-} else {
-	$alertaNSS = '';
-}
 
 ?>
 
@@ -542,77 +239,6 @@ if (mysql_result($resultado,0,'nss') == '') {
 
 	<div class="container-fluid">
 
-
-		<div class="row clearfix">
-			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="card ">
-						<div class="header bg-blue">
-							<h2>
-								DOCUMENTACIONES
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-									<ul class="dropdown-menu pull-right">
-
-									</ul>
-								</li>
-							</ul>
-						</div>
-						<div class="body table-responsive">
-							<div class="row">
-									<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-bottom: 10px;">
-										<div class="alert alert-info">
-											<p><b>Importante!</b> Recuerde que debe completar toda la documentacion para poder continuar con el Proceso de Reclutamieno</p>
-										</div>
-
-										<?php echo $alertaINE; ?>
-										<?php echo $alertaCURP; ?>
-										<?php echo $alertaRFC; ?>
-										<?php echo $alertaNSS; ?>
-
-										<?php if ($permitePresentar == true) { ?>
-											<button type="button" class="btn bg-amber waves-effect btnPresentar">
-												<i class="material-icons">done_all</i>
-												<span>PRESENTAR DOCUMENTACION</span>
-											</button>
-
-										<?php } ?>
-									</div>
-									<?php
-									$noHabilitaCambio = '';
-									while ($row = mysql_fetch_array($resDocumentaciones)) {
-
-										if (($row['idestadodocumentacion'] == 5) || ($row['idestadodocumentacion'] == 6) || ($row['idestadodocumentacion'] == 7)) {
-											$noHabilitaCambio .= $row['iddocumentacion'].',';
-										}
-									?>
-									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-										<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
-											<div class="icon">
-												<i class="material-icons">face</i>
-											</div>
-											<div class="content">
-												<div class="text"><?php echo $row['documentacion']; ?></div>
-												<div class="number"><?php echo $row['estadodocumentacion']; ?></div>
-											</div>
-										</div>
-									</div>
-								<?php }
-								if (strlen($noHabilitaCambio) > 0) {
-									$noHabilitaCambio = substr($noHabilitaCambio,0,-1);
-								}
-								?>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div> <!-- fin del container documentaciones -->
-
 		<div class="row clearfix">
 			<div class="row">
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -633,8 +259,7 @@ if (mysql_result($resultado,0,'nss') == '') {
 							</ul>
 						</div>
 						<div class="body table-responsive">
-							<?php echo $alertaEdad; ?>
-							<?php echo $alertaEscolaridad; ?>
+			
 							<form class="form" id="sign_in" role="form">
 								<div class="row">
 									<?php echo $frmUnidadNegocios; ?>
@@ -648,131 +273,7 @@ if (mysql_result($resultado,0,'nss') == '') {
 				</div>
 			</div> <!-- fin del container entrevistas -->
 
-		<div class="row clearfix">
-			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="card ">
-						<div class="header bg-blue">
-							<h2>
-								ENTREVISTAS
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-									<ul class="dropdown-menu pull-right">
 
-									</ul>
-								</li>
-							</ul>
-						</div>
-						<div class="body table-responsive">
-							<form class="form" id="formCountry">
-
-
-
-								<div class="row" style="padding: 5px 20px;">
-
-									<table id="example" class="display table " style="width:100%">
-										<thead>
-											<tr>
-												<th>Entrevistador</th>
-												<th>Fecha</th>
-												<th>Domicilio</th>
-												<th>Codigo Postal</th>
-												<th>Estado</th>
-												<th>Est.Entrevista</th>
-											</tr>
-										</thead>
-										<tfoot>
-											<tr>
-												<th>Entrevistador</th>
-												<th>Fecha</th>
-												<th>Domicilio</th>
-												<th>Codigo Postal</th>
-												<th>Estado</th>
-												<th>Est.Entrevista</th>
-											</tr>
-										</tfoot>
-									</table>
-								</div>
-							</form>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div> <!-- fin del container entrevistas -->
-
-			<div class="row clearfix subirImagen">
-				<div class="row">
-					<div class="col-xs-6 col-md-6 col-lg-6">
-						<a href="javascript:void(0);" class="thumbnail timagen1">
-							<img class="img-responsive">
-						</a>
-						<div id="example1"></div>
-					</div>
-					<div class="col-xs-6 col-md-6 col-lg-6">
-						<a href="javascript:void(0);" class="thumbnail timagen2">
-							<img class="img-responsive2">
-						</a>
-						<div id="example2"></div>
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-						<div class="card">
-							<div class="header">
-								<h2>
-									SIAP
-								</h2>
-								<ul class="header-dropdown m-r--5">
-									<li class="dropdown">
-										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-											<i class="material-icons">more_vert</i>
-										</a>
-									</li>
-								</ul>
-							</div>
-							<div class="body">
-								<div class="row">
-									<div class="alert bg-<?php echo $color1; ?>">
-										<h4>
-											Estado: <b><?php echo $estadoDocumentacion1; ?></b>
-										</h4>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-						<div class="card">
-							<div class="header">
-								<h2>
-									PRUEBA VERITA INBURSA
-								</h2>
-								<ul class="header-dropdown m-r--5">
-									<li class="dropdown">
-										<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-											<i class="material-icons">more_vert</i>
-										</a>
-									</li>
-								</ul>
-							</div>
-							<div class="body">
-								<div class="row">
-									<div class="alert bg-<?php echo $color2; ?>">
-										<h4>
-											Estado: <b><?php echo $estadoDocumentacion2; ?></b>
-										</h4>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div> <!-- fin del container veritas -->
 
 
 

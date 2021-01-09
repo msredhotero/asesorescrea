@@ -23,6 +23,7 @@ if (isset($_SESSION['usua_sahilices'])) {
       header('Location: error.php');
    }
 
+
    $token = $_GET['token'];
 
    $_SESSION['token_ac'] = $token;
@@ -31,7 +32,27 @@ if (isset($_SESSION['usua_sahilices'])) {
 
    //die(var_dump($token));
    if (mysql_num_rows($resultado)>0) {
-      header('Location: dashboard/'.mysql_result($resultado,0,'accion'));
+      
+      $resUsuario = $serviciosUsuario->traerUsuarioIdAutoLogin(mysql_result($resultado,0,'refusuarios'));
+      if (mysql_result($resUsuario,0,'refroles') == $_SESSION['idroll_sahilices']) {
+         header('Location: dashboard/'.mysql_result($resultado,0,'accion'));
+      } else {
+
+         $_SESSION['idcliente_sahilices'] = mysql_result($resultado,0,'refclientes');
+
+         $_SESSION['token_ac'] = $token;
+
+         $_SESSION['usua_sahilices'] = mysql_result($resUsuario,0,'email');
+         $_SESSION['nombre_sahilices'] = mysql_result($resUsuario,0,'nombrecompleto');
+         $_SESSION['usuaid_sahilices'] = mysql_result($resUsuario,0,0);
+         $_SESSION['email_sahilices'] = mysql_result($resUsuario,0,'email');
+         $_SESSION['idroll_sahilices'] = mysql_result($resUsuario,0,'refroles');
+         $_SESSION['refroll_sahilices'] = mysql_result($resUsuario,0,'descripcion');
+
+         header('Location: dashboard/'.mysql_result($resultado,0,'accion'));
+      }
+
+
    } else {
       header('Location: error.php');
    }
@@ -41,11 +62,15 @@ if (isset($_SESSION['usua_sahilices'])) {
 
    $error = false;
 
+
+
    if (isset($_GET['token'])) {
       $token           = $_GET['token'];
    } else {
       header('Location: error.php');
    }
+
+
 
    $resultado = $serviciosReferencias->traerTokenasesoresPorTokenActivo($token);
 

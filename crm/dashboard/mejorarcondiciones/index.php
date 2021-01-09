@@ -55,8 +55,8 @@ $modificar = "modificarMejorarcondiciones";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbmejorarcondiciones";
 
-$lblCambio	 	= array('refclientes','refproductos');
-$lblreemplazo	= array('Clientes','Selecciona el producto en cuestion');
+$lblCambio	 	= array('refclientes','refasesores');
+$lblreemplazo	= array('Clientes','Asesor');
 
 if ($_SESSION['idroll_sahilices'] == 16) {
 	$resVar1 = $serviciosReferencias->traerClientesPorUsuario($_SESSION['usuaid_sahilices']);
@@ -80,7 +80,8 @@ if ($_SESSION['idroll_sahilices'] == 16) {
 
 	$puedeCargar = 0;
 	$lblExcedio = '';
-	
+
+
 	$resVar1 = $serviciosReferencias->traerClientes();
 	$cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(3,4,2),' ');
 
@@ -88,11 +89,21 @@ if ($_SESSION['idroll_sahilices'] == 16) {
 
 }
 
-$resVar2 = $serviciosReferencias->traerProductosPorIdCompletaPorSeguros();
+if ($_SESSION['idroll_sahilices'] == 7) {
+	$puedeCargar = 1;
+	$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
+	$idasesor = mysql_result($resVar5,0,'idasesor');
+
+	$resVar1 = $serviciosReferencias->traerClientesasesoresPorAsesorNuevo($idasesor);
+	$cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(3,4,2),' ');
+} else {
+	$idasesor = 25;
+}
+$resVar2 = $serviciosReferencias->traerAsesoresPorId($idasesor);
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(1),' ');
 
 $refdescripcion = array(0=>$cadRef1,1=>$cadRef2);
-$refCampo 	=  array('refclientes','refproductos');
+$refCampo 	=  array('refclientes','refasesores');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -284,25 +295,29 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 								</div>
 							<?php }  ?>
 
-								<?php if ($_SESSION['idroll_sahilices'] != 16) { ?>
+								<?php if (($_SESSION['idroll_sahilices'] != 16) && ($_SESSION['idroll_sahilices'] != 7)) { ?>
 								<div class="row" style="padding: 5px 20px;">
 
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
 												<th>Clientes</th>
-												<th>Productos</th>
 												<th>Observaciones</th>
 												<th>Fecha Generado</th>
+												<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
+												<th>Asesor</th>
+												<?php } ?>
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
 												<th>Clientes</th>
-												<th>Productos</th>
 												<th>Observaciones</th>
 												<th>Fecha Generado</th>
+												<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
+												<th>Asesor</th>
+												<?php } ?>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -346,7 +361,15 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 		var idTabla = 0;
 
-		$('.frmContrefclientes').hide();
+		$('.frmContrefasesores').hide();
+		<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
+
+			$('.frmContrefclientes').hide();
+		<?php } else { ?>
+
+			$('.frmContrefclientes').show();
+		<?php } ?>
+
 		$('#observaciones').attr("placeholder", "Ingrese las observaciones necesarias");
 
 		<?php if ($puedeCargar == 1) { ?>

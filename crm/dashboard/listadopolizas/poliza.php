@@ -45,7 +45,15 @@ $plural = "Listado Polizas";
 
 $id = $_GET['id'];
 
-$resultados = $serviciosReferencias->traerVentasPorUsuarioVentaCompleto($_SESSION['usuaid_sahilices'],$id);
+if ($_SESSION['idroll_sahilices'] == 7) {
+	$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
+	$idasesor = mysql_result($resVar5,0,'idasesor');
+
+	$resultados = $serviciosReferencias->traerVentasPorAsesorVentaCompleto($idasesor,$id);
+} else {
+	$resultados = $serviciosReferencias->traerVentasPorUsuarioVentaCompleto($_SESSION['usuaid_sahilices'],$id);
+}
+
 
 if (mysql_num_rows($resultados)<=0) {
 	header('Location: index.php');

@@ -1562,7 +1562,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 								timer: 4000,
 								showConfirmButton: false
 						});
-						
+
 					} else {
 						if (data.errorinsert) {
 							swal({

@@ -94,7 +94,7 @@ function enviarCorreosEtapas( $etapa, $id) {
 
 function login($usuario,$pass) {
 
-	$sqlusu = "select * from dbusuarios where email = '".$usuario."'";
+	$sqlusu = "select * from dbusuarios where email = '".$usuario."' and refroles <> 19";
 
 	$error = '';
 
@@ -524,7 +524,9 @@ function insertarUsuario($usuario,$password,$refroles,$email,$nombrecompleto) {
 				'".($email)."',
 				'".($nombrecompleto)."',
             '1')";
-	if ($this->existeUsuario($email) == true) {
+
+
+	if (($refroles != 19) && ($this->existeUsuario($email) == true)) {
 		return "Ya existe el usuario";
 	}
 	$res = $this->query($sql,1);

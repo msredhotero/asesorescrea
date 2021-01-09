@@ -2512,18 +2512,18 @@ return $res;
 
    /* PARA Mejorarcondiciones */
 
-   function insertarMejorarcondiciones($refclientes,$refproductos,$fechacrea,$fechamodi,$observaciones) {
-      $sql = "insert into dbmejorarcondiciones(idmejorarcondicion,refclientes,refproductos,fechacrea,fechamodi,observaciones)
-      values ('',".$refclientes.",".$refproductos.",'".$fechacrea."','".$fechamodi."','".$observaciones."')";
+   function insertarMejorarcondiciones($refclientes,$refasesores,$fechacrea,$fechamodi,$observaciones) {
+      $sql = "insert into dbmejorarcondiciones(idmejorarcondicion,refclientes,refasesores,fechacrea,fechamodi,observaciones)
+      values ('',".$refclientes.",".$refasesores.",'".$fechacrea."','".$fechamodi."','".$observaciones."')";
       $res = $this->query($sql,1);
       return $res;
    }
 
 
-   function modificarMejorarcondiciones($id,$refclientes,$refproductos,$fechacrea,$fechamodi,$observaciones) {
+   function modificarMejorarcondiciones($id,$refclientes,$refasesores,$fechacrea,$fechamodi,$observaciones) {
       $sql = "update dbmejorarcondiciones
       set
-      refclientes = ".$refclientes.",refproductos = ".$refproductos.",fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',observaciones = '".$observaciones."'
+      refclientes = ".$refclientes.",refasesores = ".$refasesores.",fechacrea = '".$fechacrea."',fechamodi = '".$fechamodi."',observaciones = '".$observaciones."'
       where idmejorarcondicion =".$id;
       $res = $this->query($sql,0);
       return $res;
@@ -2541,7 +2541,7 @@ return $res;
       $sql = "select
       m.idmejorarcondicion,
       m.refclientes,
-      m.refproductos,
+      m.refasesores,
       m.fechacrea,
       m.fechamodi,
       m.observaciones
@@ -2563,15 +2563,14 @@ return $res;
       $sql = "select
       m.idmejorarcondicion,
       concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
-      pro.producto,
       m.observaciones,
       m.fechacrea,
+      concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
       m.fechamodi,
-      m.refproductos,
       m.refclientes
       from dbmejorarcondiciones m
       inner join dbclientes cli ON cli.idcliente =m.refclientes
-      inner join tbproductos pro ON pro.idproducto = m.refproductos
+      inner join dbasesores ase on ase.idasesor = m.refasesores
       ".$where."
       ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
@@ -2582,7 +2581,7 @@ return $res;
 
 
    function traerMejorarcondicionesPorId($id) {
-      $sql = "select idmejorarcondicion,refclientes,refproductos,fechacrea,fechamodi,observaciones from dbmejorarcondiciones where idmejorarcondicion =".$id;
+      $sql = "select idmejorarcondicion,refclientes,refasesores,fechacrea,fechamodi,observaciones from dbmejorarcondiciones where idmejorarcondicion =".$id;
       $res = $this->query($sql,0);
       return $res;
    }
@@ -7471,6 +7470,47 @@ return $res;
 	}
 
 
+   function traerVentasPorAsesorVentaCompleto($idasesor,$idventa) {
+		$sql = "select
+		v.idventa,v.refcotizaciones,v.refestadoventa,v.primaneta,
+		v.primatotal,v.fechacrea,v.fechamodi,v.usuariocrea,
+		v.usuariomodi,v.nropoliza,v.fechavencimientopoliza,
+		v.foliotys,v.foliointerno,
+		c.refclientes,
+		c.refproductos,
+      p.producto,
+      tc.tipocobranza,
+      (case when c.tieneasegurado = '1' then concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) else  concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) end) as asegurado,
+      (case when v.fechavencimientopoliza > now() then 'green' else 'red' end) as color,
+      pv.idperiodicidadventa , v.refproductosaux, v.refventas, v.version, v.refmotivorechazopoliza,
+      v.observaciones , v.vigenciadesde
+		from dbventas v
+      inner join dbperiodicidadventas pv on pv.refventas = v.idventa
+      inner join tbtipocobranza tc on tc.idtipocobranza = pv.reftipocobranza
+		inner join dbcotizaciones c ON c.idcotizacion = v.refcotizaciones
+      inner join dbclientes cli ON cli.idcliente = c.refclientes
+      inner join tbproductos p on p.idproducto = c.refproductos
+      left join dbasegurados ase ON ase.idasegurado = c.refasegurados
+      left join dbasegurados ben ON ase.idasegurado = c.refbeneficiarios
+      inner join dbdocumentacionventas dv on dv.refventas = v.idventa and dv.refdocumentaciones = 35
+      left join dbperiodicidadventasdetalle pvd on pvd.refperiodicidadventas = pv.idperiodicidadventa
+		where c.refasesores =".$idasesor." and v.idventa = ".$idventa."
+      group by v.idventa,v.refcotizaciones,v.refestadoventa,v.primaneta,
+		v.primatotal,v.fechacrea,v.fechamodi,v.usuariocrea,
+		v.usuariomodi,v.nropoliza,v.fechavencimientopoliza,
+		v.foliotys,v.foliointerno,
+		c.refclientes,
+		c.refproductos,
+      p.producto,
+      tc.tipocobranza,
+      c.tieneasegurado,ase.apellidopaterno, ase.apellidomaterno, ase.nombre,cli.apellidopaterno, cli.apellidomaterno, cli.nombre,
+      v.fechavencimientopoliza,pv.idperiodicidadventa
+      order by v.fechavencimientopoliza desc";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
 	/* Fin */
 	/* /* Fin de la Tabla: dbventas*/
 
@@ -9255,8 +9295,38 @@ return $res;
       (case when c.reftipopersonas = 1 then concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) else concat(c.razonsocial, ' - ', c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) end) as nombrecompleto
 		from dbclientesasesores c
 		inner join dbclientes cl ON cl.idcliente = c.refclientes
-		inner join dbasesores ase on ase.refusuarios = c.refasesores
+		inner join dbasesores ase on ase.idasesor = c.refasesores
 		where ase.refusuarios = ".$refasesor;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+   function traerClientesasesoresPorAsesorNuevo($refasesor) {
+		$sql = "select
+      cl.idcliente,
+		c.refclientes,
+		cl.nombre,
+		cl.apellidopaterno,
+		cl.apellidomaterno,
+		cl.razonsocial,
+		cl.domicilio,
+		cl.email,
+		cl.rfc,
+		cl.ine,
+		cl.reftipopersonas,
+		cl.telefonofijo,
+		cl.telefonocelular,
+		c.refasesores,
+      cl.genero,
+      cl.refestadocivil,
+      cl.reftipoidentificacion,
+      cl.nroidentificacion,
+      (case when c.reftipopersonas = 1 then concat(cl.apellidopaterno, ' ', cl.apellidomaterno, ' ', cl.nombre) else concat(cl.razonsocial, ' - ', cl.apellidopaterno, ' ', cl.apellidomaterno, ' ', cl.nombre) end) as nombrecompleto
+		from dbclientesasesores c
+		inner join dbclientes cl ON cl.idcliente = c.refclientes
+		inner join dbasesores ase on ase.idasesor = c.refasesores
+		where ase.idasesor = ".$refasesor;
 		$res = $this->query($sql,0);
 		return $res;
 	}

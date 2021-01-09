@@ -131,7 +131,7 @@ if (mysql_num_rows($resPagos) > 0) {
 	$archivos = '';
 	$type = '';
 
-	$resPagos = $serviciosReferencias->insertarPagos(12,$id,$precio,$serviciosReferencias->GUID(),'Pago por transferencia bancaria',$refcuentasbancarias,$conciliado,$archivos,$type,date('Y-m-d H:i:s'),$_SESSION['nombre_sahilices'],1,'Foncerrada Y Javelly',$lblCliente,'');
+	$resPagos = $serviciosReferencias->insertarPagos(12,$id,$precio,$serviciosReferencias->GUID(),'Pago por transferencia bancaria',$refcuentasbancarias,$conciliado,$archivos,$type,date('Y-m-d H:i:s'),$_SESSION['nombre_sahilices'],1,'Foncerrada Y Javelly',$lblCliente,'','0');
 
 	$idpago = mysql_result($resPagos,0,0);
 
@@ -330,7 +330,7 @@ if ($refEstadoCotizacion == 22) {
 												</h4>
 											</div>
 
-											
+
 
 
 										</div>

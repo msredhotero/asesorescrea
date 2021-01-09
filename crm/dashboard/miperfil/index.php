@@ -70,11 +70,7 @@ if (mysql_num_rows($resultadoB) > 0) {
 }
 
 if (mysql_num_rows($resultado)<= 0) {
-	echo "<script>
-	alert('Asesor cargado directamente sin expediente !!!');
-	window.location = '../index.php';
-	</script>
-	";
+	header('Location: perfil.php?id='.$idasesor);
 }
 if (mysql_result($resultado,0,'refestadopostulantes') == 9) {
 	header('Location: ../index.php');

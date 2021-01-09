@@ -2054,7 +2054,7 @@ $id = 0;
 		//$id = $row[$indiceID];
 		// forma local utf8_decode
 		for ($i=$empieza;$i<=$termina;$i++) {
-			array_push($arAux, utf8_decode($row[$i]));
+			array_push($arAux, ($row[$i]));
 		}
 
 		if (($tabla == 'postulantes') || ($tabla == 'ventas') || ($tabla == 'ventasiniciadas') || ($tabla == 'postulanteshistorico') || ($tabla == 'asesores') || ($tabla == 'asociadostemporales') || ($tabla == 'asociados') || ($tabla == 'clientes') || ($tabla == 'cuestionario') || ($tabla == 'preguntascuestionario') || ($tabla == 'respuestascuestionario')) {
