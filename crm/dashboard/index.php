@@ -1087,7 +1087,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 								<div class"row imgVenta button-container-img">
 									<img src="../imagenes/ventaenlinea_bck.jpg" width="100%"/>
-									<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.5em;" onclick="window.location='ventaenlinea/'">ENVIAR LIGA AL AGENTE</button>
+									<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.5em;" onclick="window.location='ventaenlinea/'">ENVIAR LIGA AL CLIENTE</button>
 								</div>
 								<div class"row imgCotiza button-container-img" style="margin-top:20px;">
 									<img src="../imagenes/cotiza_bck.jpg" width="100%"/>
