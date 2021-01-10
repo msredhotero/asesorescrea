@@ -305,7 +305,7 @@ if ($refEstadoCotizacion == 22) {
 								 <div class="bs-wizard-info text-center">CARGA TUS DOCUMENTOS</div>
 							 </div>
 
-							 <div class="col-xs-6 bs-wizard-step complete">
+							 <div class="col-xs-6 bs-wizard-step">
 								 <div class="text-center bs-wizard-stepnum">Paso 2</div>
 								 <div class="progress">
 									 <div class="progress-bar"></div>
