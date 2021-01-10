@@ -170,10 +170,11 @@ $resTransaccion = $serviciosComercio->insertarComerciofin($EM_Response,$EM_Total
 $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcotizacion);
 $precioTotal = mysql_result($resCotizaciones,0,'primatotal');
 $lblCliente = mysql_result($resCotizaciones,0,'clientesolo');
+$idcliente = mysql_result($resCotizaciones,0,'refclientes');
 
 // nuevo para el rol de cliente temporal
-$token = $_SESSION['token_ac'];
-$resultadoToken = $serviciosReferencias->traerTokenasesoresPorTokenActivo($token);
+//$token = $_SESSION['token_ac'];
+$resultadoToken = $serviciosReferencias->traerTokenasesoresPorCliente($idcliente);
 
 $idusuariocliente  = mysql_result($resultadoToken,0,'refusuarios');
 
@@ -206,7 +207,7 @@ if (!isset($_SESSION['usua_sahilices']))
 
 	/******* fin  **************************************************************/
 
-
+	$token = $_SESSION['token_ac'];
 	if ($error == 0) {
 		// modifico el estado a aprobado
 		$resModificarEstado = $serviciosComercio->modificarComercioInicioEstado($token,2);

@@ -509,8 +509,7 @@ $esFinancieraCrea = 0;
 								<a href="javascript:void(0);" class="list-group-item active">
 								Método de Pago
 								</a>
-								<a href="javascript:void(0);" class="list-group-item">Tipo Cobranza: <?php echo mysql_result($resAux,0,'tipocobranza'); ?></a>
-								<a href="javascript:void(0);" class="list-group-item">Tipo Pago: <?php echo mysql_result($resAux,0,'tipoperiodicidad'); ?></a>
+								
 							<?php
 								if (mysql_result($resAux,0,'reftipocobranza') == 1) {
 									if (mysql_result($resAux,0,'tipotarjeta') == 1) {

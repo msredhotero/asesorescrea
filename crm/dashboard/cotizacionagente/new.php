@@ -1338,7 +1338,7 @@ if (count($contratentaDatosCompletos) > 0) {
 
 
 									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:block">
-										<label class="form-label">RFC <span style="color:red;">*</span>  </label>
+										<label class="form-label">RFC </label>
 										<div class="form-group input-group">
 											<div class="form-line">
 												<input type="text" class="form-control" id="rfcBNF" name="rfc" maxlength="13" required />
