@@ -303,11 +303,11 @@ $resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcotizacion
 			               <li class="list-inline-item"><img src="../../imagenes/mastercard.png" width="90" height="63"></li>
 
 			            </ul>
-			            <!--<form action="8407825_asesorescrea.php" method="post" id="formFin">-->
+			            <form action="8407825_asesorescrea.php" method="post" id="formFin">
 							<?php if ($reftipoproductorama == 12) { ?>
-								<form action="https://www.procom.prosa.com.mx/eMerch2/8418704_OperMedicaVrim.jsp" method="post" id="formFin">
+								<!--<form action="https://www.procom.prosa.com.mx/eMerch2/8418704_OperMedicaVrim.jsp" method="post" id="formFin">-->
 							<?php } else { ?>
-								<form action="https://www.procom.prosa.com.mx/eMerch2/8407825_SegInbursa.jsp" method="post" id="formFin">
+								<!--<form action="https://www.procom.prosa.com.mx/eMerch2/8407825_SegInbursa.jsp" method="post" id="formFin">-->
 							<?php } ?>
 
 			               <input type="hidden" name="total" value="<?php echo $comtotal; ?>">

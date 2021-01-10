@@ -34,7 +34,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 
 
-
+/*
 $EM_Response= $_POST["EM_Response"];
 $EM_Total= $_POST["EM_Total"];
 $EM_OrderID= $_POST["EM_OrderID"];
@@ -45,11 +45,11 @@ $EM_RefNum= $_POST["EM_RefNum"];
 $EM_Auth= $_POST["EM_Auth"];
 $EM_Digest= $_POST["EM_Digest"];
 
-
+*/
 
 $redireccionar = array('error'=> 0, 'url' => '');
 
-/*
+
 switch (trim(str_replace(' ','',$_POST['cc_number']))) {
 	case '5062541600005232':
 		$EM_Response= 'approved';
@@ -102,7 +102,7 @@ $EM_Term= $_POST["term"];
 
 $EM_Digest= $_POST["digest"];
 
-*/
+
 
 
 //$newdigest  = sha1($_POST["EM_Total"].$_POST["EM_OrderID"].$_POST["EM_Merchant"].$_POST["EM_Store"].$_POST["EM_Term"].$_POST["EM_RefNum"]+"-"+$_POST["EM_Auth"]);
