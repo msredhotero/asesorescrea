@@ -20,6 +20,43 @@ $res = $this->query($sql,1);
 return $res;
 }
 
+function copiaTokenDeToken($token, $tokenNuevo) {
+
+   $fecha_actual = date("d-m-Y");
+   //sumo 30 días
+   $vigencia = date("Y-m-d",strtotime($fecha_actual."+ 30 days"));
+
+   $sql = "INSERT INTO dbtokenasesores
+            (idtokenasesor,
+            token,
+            refasesores,
+            refclientes,
+            generousuario,
+            fechacrea,
+            vigencia,
+            activo,
+            accion,
+            tipoaccion,
+            refestados,
+            refusuarios)
+            SELECT '',
+                "."'".$tokenNuevo."'".",
+                refasesores,
+                refclientes,
+                generousuario,
+                now(),
+                "."'".$vigencia."'".",
+                '1',
+                'cotizacionagente/new.php?producto=46',
+                '2',
+                1,
+                refusuarios
+            FROM dbtokenasesores where token = '".$token."'";
+
+   $res = $this->query($sql,1);
+   return $res;
+}
+
 
 function modificarTokenasesores($id,$token,$refasesores,$refclientes,$generousuario,$fechacrea,$vigencia,$activo,$accion,$tipoaccion,$refestados,$refusuarios) {
 $sql = "update dbtokenasesores

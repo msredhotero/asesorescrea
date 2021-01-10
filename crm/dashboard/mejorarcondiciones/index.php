@@ -58,13 +58,14 @@ $tabla 			= "dbmejorarcondiciones";
 $lblCambio	 	= array('refclientes','refasesores');
 $lblreemplazo	= array('Clientes','Asesor');
 
-if ($_SESSION['idroll_sahilices'] == 16) {
-	$resVar1 = $serviciosReferencias->traerClientesPorUsuario($_SESSION['usuaid_sahilices']);
+if ($_SESSION['idroll_sahilices'] == 19) {
+	$resultadoToken = $serviciosReferencias->traerTokenasesoresPorTokenActivo($_SESSION['token_ac']);
+	$resVar1 = $serviciosReferencias->traerClientesPorId(mysql_result($resultadoToken,0,'refclientes'));
+	$idcliente = mysql_result($resultadoToken,0,'refclientes');
+
 	$cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(3,4,2),' ');
 
-	$resCliente = $serviciosReferencias->traerClientesPorUsuario($_SESSION['usuaid_sahilices']);
-
-	$cantidad = $serviciosReferencias->traerMejorarcondicionesPorClienteEnElDia(mysql_result($resCliente,0,0));
+	$cantidad = $serviciosReferencias->traerMejorarcondicionesPorClienteEnElDia($idcliente);
 
 	//die(var_dump($cantidad));
 
@@ -77,17 +78,38 @@ if ($_SESSION['idroll_sahilices'] == 16) {
 	}
 
 } else {
+	if ($_SESSION['idroll_sahilices'] == 16) {
+		$resVar1 = $serviciosReferencias->traerClientesPorUsuario($_SESSION['usuaid_sahilices']);
+		$cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(3,4,2),' ');
 
-	$puedeCargar = 0;
-	$lblExcedio = '';
+		$resCliente = $serviciosReferencias->traerClientesPorUsuario($_SESSION['usuaid_sahilices']);
+
+		$cantidad = $serviciosReferencias->traerMejorarcondicionesPorClienteEnElDia(mysql_result($resCliente,0,0));
+
+		//die(var_dump($cantidad));
+
+		if ($cantidad > 2) {
+			$puedeCargar = 0;
+			$lblExcedio = '<h4><i class="material-icons">report</i> <span>Ya excedio el limite diario para subir polizas.</span></h4>';
+		} else {
+			$puedeCargar = 1;
+			$lblExcedio = '';
+		}
+
+	} else {
+
+		$puedeCargar = 0;
+		$lblExcedio = '';
 
 
-	$resVar1 = $serviciosReferencias->traerClientes();
-	$cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(3,4,2),' ');
+		$resVar1 = $serviciosReferencias->traerClientes();
+		$cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(3,4,2),' ');
 
-	$cantidad = 1;
+		$cantidad = 1;
 
+	}
 }
+
 
 if ($_SESSION['idroll_sahilices'] == 7) {
 	$puedeCargar = 1;
@@ -353,7 +375,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 								</div>
 							<?php }  ?>
 
-								<?php if (($_SESSION['idroll_sahilices'] != 16) && ($_SESSION['idroll_sahilices'] != 7)) { ?>
+								<?php if (($_SESSION['idroll_sahilices'] != 16) && ($_SESSION['idroll_sahilices'] != 7) && ($_SESSION['idroll_sahilices'] != 19)) { ?>
 								<div class="row" style="padding: 5px 20px;">
 
 									<table id="example" class="display table " style="width:100%">

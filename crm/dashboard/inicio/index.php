@@ -173,7 +173,18 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						<div class="body table-responsive">
 							<form class="form" id="formCountry">
 
-								<h3>Bienvenido al CRM de Asesores Crea</h3>
+								<div class"row imgVenta button-container-img">
+									<img src="../../imagenes/ventaenlinea_bck.jpg" width="100%"/>
+									<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.5em;" onclick="window.location='ventaenlinea.php'">COMPRAR EN LINEA</button>
+								</div>
+								<div class"row imgCotiza button-container-img" style="margin-top:20px;">
+									<img src="../../imagenes/cotiza_bck.jpg" width="100%"/>
+									<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.5em;" onclick="window.location='solicitar.php'">SOLICITAR INFORMACIÓN</button>
+								</div>
+								<div class"row imgMejopra button-container-img" style="margin-top:20px;">
+									<img src="../../imagenes/mejoratuscondiciones_bck.jpg" width="100%"/>
+									<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.5em;" onclick="window.location='../mejorarcondiciones/'">MEJORAR POLIZA</button>
+								</div>
 
 								<hr>
 
