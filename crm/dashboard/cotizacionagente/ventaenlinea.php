@@ -246,6 +246,10 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 								<h3 style="color: #C6AC83;font-size: 36px;line-height: 42px; text-align:center;">Nuestro Paquete de Protección incluye los siguientes beneficios:</h3>
 							</div>
 
+							<div class="row" style="margin-top:40px; text-align:center;">
+								<button type="button" class="btn bg-blue waves-effect btnCotizar" style="padding:40px 80px; font-size:22px;">CONTRATAR PLAN ANUAL POR <?php echo $lblPrecio; ?></button>
+							</div>
+
 							<div class="row" style="margin-top:40px;">
 								<div class="col-xs-6">
 									<h4 style="color: #C6AC83;font-size: 36px;line-height: 42px;">Enfermedades Graves</h4>
