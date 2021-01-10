@@ -5314,7 +5314,7 @@ function validarCuestionario($serviciosReferencias) {
          // para cuando es un cliente temporario, modifico la url para ingresar.
          if (isset($_SESSION['token_ac'])) {
             $resToken = $serviciosReferencias->traerTokenasesoresPorToken($_SESSION['token_ac']);
-            $modAccion = $serviciosReferencias->modificarTokenasesoresAccion($_SESSION['token_ac'],mysql_result($resToken,0,'accion')."&id=".$res);
+            $modAccion = $serviciosReferencias->modificarTokenasesoresAccion($_SESSION['token_ac'],"cotizacionagente/new.php?producto=46&id=".$res);
          }
 
 
