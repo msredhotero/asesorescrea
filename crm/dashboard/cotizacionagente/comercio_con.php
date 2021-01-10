@@ -171,7 +171,11 @@ $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcoti
 $precioTotal = mysql_result($resCotizaciones,0,'primatotal');
 $lblCliente = mysql_result($resCotizaciones,0,'clientesolo');
 
-$idusuariocliente  = mysql_result($resCotizaciones,0,'idusuariocliente');
+// nuevo para el rol de cliente temporal
+$token = $_SESSION['token_ac'];
+$resultadoToken = $serviciosReferencias->traerTokenasesoresPorTokenActivo($token);
+
+$idusuariocliente  = mysql_result($resultadoToken,0,'refusuarios');
 
 $idProducto = mysql_result($resCotizaciones,0,'refproductos');
 
@@ -197,8 +201,8 @@ if (!isset($_SESSION['usua_sahilices']))
 	$redireccionar['url'] = '../../error.php';
 } else {
 
-	$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../venta/');
-	$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Venta",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+	$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cotizacionagente/');
+	$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Cotizaciones Recibidas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 	/******* fin  **************************************************************/
 

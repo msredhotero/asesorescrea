@@ -319,7 +319,7 @@ $resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcotizacion
 			               <input type="hidden" name="term" value="<?php echo $comterm; ?>">
 			               <input type="hidden" name="digest" value="<?php echo $comdigest; ?>">
 			               <input type="hidden" name="return_target" value="">
-			               <input type="hidden" name="urlBack" value="https://asesorescrea.com/desarrollo/crm/dashboard/venta/comercio_con.php">
+			               <input type="hidden" name="urlBack" value="https://asesorescrea.com/desarrollo/crm/dashboard/cotizacionagente/comercio_con.php">
 								<div class="row">
 								<div class="col-xs-3"></div>
 			               <div class="col-xs-6">
