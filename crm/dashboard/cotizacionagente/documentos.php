@@ -393,6 +393,8 @@ if ($consolicitud == 1) {
 	$puedeContinuar = 1;
 }
 
+
+
 ?>
 
 <!DOCTYPE html>
@@ -555,6 +557,11 @@ if ($consolicitud == 1) {
 								<div class="bs-wizard-info text-center"><i class="material-icons">done</i> PASO 1 - CARGA TUS DOCUMENTOS</div>
 								<hr>
 							<?php } ?>
+
+								<?php
+									// marco como finalizado el proceso de cotizacion del token
+									$resModToken = $serviciosReferencias->modificarTokenasesoresEstado($_SESSION['token_ac'],2);
+								?>
 
 								<div class="text-center">
 									<h1 class="display-4"> ¡Muchas Gracias!</h1>
