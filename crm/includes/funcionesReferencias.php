@@ -59,11 +59,46 @@ return $res;
 
 
 function eliminarTokenasesores($id) {
-$sql = "delete from dbtokenasesores where idtokenasesor =".$id;
+$sql = "delete from dbtokenasesores where token = '".$id."'";
 $res = $this->query($sql,0);
 return $res;
 }
 
+
+function traerTokenasesoresajax($length, $start, $busqueda,$colSort,$colSortDir, $idasesor) {
+
+   $where = '';
+
+   $busqueda = str_replace("'","",$busqueda);
+   if ($busqueda != '') {
+      $where = " and concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or (case when t.tipoaccion = '1' then 'Pago de Recibo' else 'Cotizacion' end) like '%".$busqueda."%' or (case when t.refestados = 1 then 'Iniciado' else 'Completo' end) like '%".$busqueda."%' or concat('http://localhost/asesorescrea_nuevo.git/trunk/crm/',t.accion) like '%".$busqueda."%'";
+   }
+
+   //http://localhost/asesorescrea_nuevo.git/trunk/crm/dashboard/
+   //https://asesorescrea.com/desarrollo/crm/dashboard/
+   $sql = "select
+   t.token,
+   concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+   (case when t.tipoaccion = '1' then 'Pago de Recibo' else 'Cotizacion' end) as tipoaccion,
+   concat('https://asesorescrea.com/desarrollo/crm/dashboard/',t.accion) as accion,
+   t.fechacrea,
+   (case when t.refestados = 1 then 'Iniciado' else 'Completo' end) as estado,
+   t.vigencia,
+   t.activo,
+   t.refestados,
+   t.refasesores,
+   t.refclientes,
+   t.generousuario,
+   t.refusuarios
+   from dbtokenasesores t
+   inner join dbclientes cli ON cli.idcliente = t.refclientes
+   where t.refasesores = ".$idasesor." ".$where."
+   ORDER BY ".$colSort." ".$colSortDir." ";
+   $limit = "limit ".$start.",".$length;
+
+   $res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+   return $res;
+}
 
 function traerTokenasesores() {
 $sql = "select

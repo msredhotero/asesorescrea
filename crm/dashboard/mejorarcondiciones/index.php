@@ -240,7 +240,65 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									<div class="col-lg-12 col-md-12">
 										<form class="formulario frmNuevo" role="form" id="sign_in">
 										<div class="row">
-											<?php echo $frmUnidadNegocios; ?>
+											<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
+												<!-- para el cliente -->
+												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContnombre" style="display:block">
+													<label class="form-label">Nombre   <span style="color:red;">*</span></label>
+													<div class="form-group input-group">
+														<div class="form-line">
+															<input type="text" class="form-control" id="nombre" name="nombre" required="" aria-required="true">
+
+														</div>
+													</div>
+												</div>
+
+												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContapellidopaterno" style="display:block">
+													<label class="form-label">Apellido Paterno   <span style="color:red;">*</span></label>
+													<div class="form-group input-group">
+														<div class="form-line">
+															<input type="text" class="form-control" id="apellidopaterno" name="apellidopaterno" required="" aria-required="true">
+
+														</div>
+													</div>
+												</div>
+
+												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContapellidomaterno" style="display:block">
+													<label class="form-label">Apellido Materno   <span style="color:red;">*</span></label>
+													<div class="form-group input-group">
+														<div class="form-line">
+															<input type="text" class="form-control" id="apellidomaterno" name="apellidomaterno" required="" aria-required="true">
+
+														</div>
+													</div>
+												</div>
+
+												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+													<label class="form-label">Email  <span style="color:red;">*</span></label>
+													<div class="form-group input-group">
+														<div class="form-line">
+															<input type="email" class="form-control" id="email" name="email">
+
+														</div>
+													</div>
+												</div>
+
+												<div class="col-xs-12 frmContobservaciones" style="display:block">
+												<label for="observaciones" class="control-label" style="text-align:left">Observaciones </label>
+													<div class="form-group">
+														<div class="form-line">
+															<textarea rows="2" class="form-control no-resize" id="observaciones" name="observaciones" placeholder="Ingrese las observaciones necesarias"></textarea>
+														</div>
+													</div>
+												</div>
+												<input type="hidden" id="tipo" name="tipo" value="1"/>
+												<input type="hidden" id="accion" name="accion" value="insertarMejorarcondiciones"/>
+												<input type="hidden" id="refasesores" name="refasesores" value="<?php echo $idasesor; ?>"/>
+
+											<?php } else { ?>
+												<?php echo $frmUnidadNegocios; ?>
+												<input type="hidden" id="tipo" name="tipo" value="0"/>
+											<?php } ?>
+
 										</div>
 
 										<div class="row" style="padding:20px 50px; ">
@@ -428,21 +486,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		<?php } ?>
 
 
-
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '315px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
-
-		});
-
-
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
@@ -517,10 +560,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 									showConfirmButton: false
 							});
 
-
-
-
-
 						} else {
 							idTabla = data.dato;
 							$('#idmejora').val(data.dato);
@@ -528,6 +567,11 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 							$('#submit-files').click();
 
 							table.ajax.reload();
+
+							$('#apellidopaterno').val('');
+							$('#apellidomaterno').val('');
+							$('#nombre').val('');
+							$('#email').val('');
 
 						}
 					},

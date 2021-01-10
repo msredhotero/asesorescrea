@@ -39,14 +39,13 @@ if (!(isset($token))) {
 
 $resultadoToken = $serviciosReferencias->traerTokenasesoresPorTokenActivo($token);
 
-
-
 $url_real = substr($_SERVER['REQUEST_URI'],strpos($_SERVER['REQUEST_URI'],'dashboard/')+10);
 
-//die(var_dump(mysql_result($resultadoToken,0,'accion')));
+if (mysql_result($resultadoToken,0,'accion') != 'cotizacionagente/ventaenlinea.php') {
 
-if ($url_real !== mysql_result($resultadoToken,0,'accion')) {
-	header('Location: ../index.php');
+	if ($url_real !== mysql_result($resultadoToken,0,'accion')) {
+		header('Location: ../index.php');
+	}
 }
 
 
@@ -57,12 +56,8 @@ $rIdCliente = mysql_result($rCliente,0,0);
 
 $rTipoPersona = mysql_result($rCliente,0,'reftipopersonas');
 
-
-if (isset($_GET['producto'])) {
-	$rIdProducto = $_GET['producto'];
-} else {
-	header('Location: index.php');
-}
+// siempre el paquete de crea
+$rIdProducto = 46;
 
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
@@ -474,10 +469,6 @@ if (isset($_GET['id'])) {
 } else {
 
 	$id = 0;
-
-	if (!(isset($_GET['producto']))) {
-		header('Location: ../index.php');
-	}
 
 	$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta($rIdProducto);
 

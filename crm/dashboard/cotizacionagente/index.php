@@ -199,6 +199,7 @@ $resultado = $serviciosReferencias->traerTokenasesoresPorClienteActivoTipo($idcl
 											<?php
 
 												while ($row = mysql_fetch_array($resultado)) {
+													$url_id = '0';
 													if (strpos($row['accion'],"&id=") !== false) {
 														$varCount1 = (integer)strpos($row['accion'],'&');
 														$varCount2 =  (integer)strpos($row['accion'],'producto=')+9;
@@ -207,12 +208,19 @@ $resultado = $serviciosReferencias->traerTokenasesoresPorClienteActivoTipo($idcl
 														//die(var_dump($url_id));
 
 													} else {
+
 														$url_id = substr($row['accion'],strpos($row['accion'],'producto=')+9);
 													}
 
-													$res = $serviciosReferencias->traerProductosPorId($url_id);
 
-													$producto = mysql_result($res,0,'producto');
+													$res = $serviciosReferencias->traerProductosPorId((integer)$url_id);
+
+													if (mysql_num_rows($res)>0) {
+														$producto = mysql_result($res,0,'producto');
+													} else {
+														$producto = 'Paquete Crea En Linea';
+													}
+
 											?>
 											<tr>
 												<td><?php echo $row['descripcion']; ?></td>

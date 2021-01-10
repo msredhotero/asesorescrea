@@ -230,56 +230,47 @@ $cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ')
 										<form class="formulario frmNuevo" role="form" id="sign_in">
 										<div class="row">
 											<!-- para el cliente -->
-											<div class="col-xs-6">
-												<label class="form-label">Seleccione al Cliente</label>
-												<hr>
+											<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContnombre" style="display:block">
+												<label class="form-label">Nombre   <span style="color:red;">*</span></label>
 												<div class="form-group input-group">
 													<div class="form-line">
-														<div class="contFrmExisteCliente" style="margin-top:15px;">
-															<button type="button" class="btn bg-light-blue waves-effect btnCE">
-				  												EXISTE EN LA BASE DE DATOS
-				  											</button>
-				  											<button type="button" class="btn bg-light-green waves-effect btnCN">
-				  												CLIENTE NUEVO
-				  											</button>
-														</div>
+														<input type="text" class="form-control" id="nombre" name="nombre" required="" aria-required="true">
 
-	                                       <div class="form-line escondido3">
-
-															<h4 class='lblBusquedaNombreCliente'>Busqueda por Nombre Completo</h4>
-															<input id="lstjugadores" style="width:75%;" />
-
-															<select style="margin-top:10px;" class="form-control" id="refclientes" name="refclientes" required readonly="readonly">
-																<option value=''>-- Seleccionar --</option>
-															</select>
-
-
-															<div id="selction-ajax" style="margin-top: 10px; display:none;">
-															</div>
-															<input type="hidden" name="reftipopersonasaux" id="reftipopersonasaux" value="1" />
-
-
-	                                       </div>
 													</div>
 												</div>
 											</div>
 
-											<!-- para los productos -->
-											<div class="col-xs-6">
-												<div class="row">
-													<label class="form-label">Seleccione el Producto</label>
-													<hr>
-													<div class="form-group input-group">
-														<div class="form-line">
-															<select style="margin-top:10px;" class="form-control" id="refproductos" name="refproductos" required>
-																<?php echo $cadRef1; ?>
-															</select>
-														</div>
+											<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContapellidopaterno" style="display:block">
+												<label class="form-label">Apellido Paterno   <span style="color:red;">*</span></label>
+												<div class="form-group input-group">
+													<div class="form-line">
+														<input type="text" class="form-control" id="apellidopaterno" name="apellidopaterno" required="" aria-required="true">
+
 													</div>
 												</div>
-
-
 											</div>
+
+											<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContapellidomaterno" style="display:block">
+												<label class="form-label">Apellido Materno   <span style="color:red;">*</span></label>
+												<div class="form-group input-group">
+													<div class="form-line">
+														<input type="text" class="form-control" id="apellidomaterno" name="apellidomaterno" required="" aria-required="true">
+
+													</div>
+												</div>
+											</div>
+
+											<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+												<label class="form-label">Email  <span style="color:red;">*</span></label>
+												<div class="form-group input-group">
+													<div class="form-line">
+														<input type="email" class="form-control" id="email" name="email">
+
+													</div>
+												</div>
+											</div>
+
+
 										</div>
 
 										<hr>
@@ -302,6 +293,34 @@ $cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ')
 
 									</div>
 
+								</div>
+
+								<div class="row">
+									<div class="row" style="padding: 5px 20px;">
+
+										<table id="example" class="display table " style="width:100%">
+											<thead>
+												<tr>
+													<th>Clientes</th>
+													<th>Evento</th>
+													<th>URL</th>
+													<th>Fecha Crea</th>
+													<th>Estado</th>
+													<th>Acciones</th>
+												</tr>
+											</thead>
+											<tfoot>
+												<tr>
+													<th>Clientes</th>
+													<th>Evento</th>
+													<th>URL</th>
+													<th>Fecha Crea</th>
+													<th>Estado</th>
+													<th>Acciones</th>
+												</tr>
+											</tfoot>
+										</table>
+									</div>
 								</div>
 
 
@@ -341,6 +360,30 @@ $cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ')
 	<input type="hidden" id="accion" name="accion" value="<?php echo 'insertarClientes'; ?>"/>
 </form>
 
+
+<!-- ELIMINAR -->
+	<form class="formulario" role="form" id="sign_in">
+		<div class="modal fade" id="lgmEliminar" tabindex="-1" role="dialog">
+			 <div class="modal-dialog modal-lg" role="document">
+				  <div class="modal-content">
+						<div class="modal-header">
+							 <h4 class="modal-title" id="largeModalLabel">ELIMINAR EL REGISTRO</h4>
+						</div>
+						<div class="modal-body">
+									 <p>¿Esta seguro que desea eliminar el registro?</p>
+									 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
+						</div>
+						<div class="modal-footer">
+							 <button type="button" class="btn btn-danger waves-effect eliminar">ELIMINAR</button>
+							 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+						</div>
+				  </div>
+			 </div>
+		</div>
+		<input type="hidden" id="accion" name="accion" value="eliminarTokenasesores"/>
+		<input type="hidden" name="ideliminar" id="ideliminar" value="0">
+	</form>
+
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
@@ -365,8 +408,108 @@ $cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ')
 
 	$(document).ready(function(){
 
+		function frmAjaxEliminar(id) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'eliminarTokenasesores', id: id},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data == '') {
+						swal({
+								title: "Respuesta",
+								text: "Registro Eliminado con exito!!",
+								type: "success",
+								timer: 1500,
+								showConfirmButton: false
+						});
+						$('#lgmEliminar').modal('toggle');
+						table.ajax.reload();
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data,
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+
+		}
+
+		$('.eliminar').click(function() {
+			frmAjaxEliminar($('#ideliminar').val());
+		});
+
+		$("#example").on("click",'.btnEliminar', function(){
+			idTable =  $(this).attr("id");
+			$('#ideliminar').val(idTable);
+			$('#lgmEliminar').modal();
+		});//fin del boton eliminar
+
+		var table = $('#example').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=tokenasesores&idasesor=<?php echo $idasesor; ?>",
+			"language": {
+				"emptyTable":     "No hay datos cargados",
+				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "Mostrar _MENU_ filas",
+				"loadingRecords": "Cargando...",
+				"processing":     "Procesando...",
+				"search":         "Buscar:",
+				"zeroRecords":    "No se encontraron resultados",
+				"paginate": {
+					"first":      "Primero",
+					"last":       "Ultimo",
+					"next":       "Siguiente",
+					"previous":   "Anterior"
+				},
+				"aria": {
+					"sortAscending":  ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			}
+		});
+
 		$('.btnGenerarEnviar').click(function() {
-			traerEnviarCotizadorAlCliente();
+			if (($('#nombre').val() == '') || ($('#apellidopaterno').val() == '') || ($('#apellidomaterno').val() == '') || ($('#email').val() == '')) {
+				swal({
+					title: "Error",
+					text: 'Debe completar todos los campos',
+					type: "error",
+					timer: 2000,
+					showConfirmButton: false
+				});
+			} else {
+				traerEnviarCotizadorAlCliente();
+			}
+
 		});
 
 		function traerEnviarCotizadorAlCliente() {
@@ -378,8 +521,10 @@ $cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ')
 				data: {
 					accion: 'enviarCotizadorAlCliente',
 					idasesor: <?php echo $idasesor; ?>,
-					idcliente: $('#refclientes').val(),
-					idreferencia: $('#refproductos').val(),
+					apellidopaterno: $('#apellidopaterno').val(),
+					apellidomaterno: $('#apellidomaterno').val(),
+					nombre: $('#nombre').val(),
+					email: $('#email').val(),
 					tipoaccion: '2'
 				},
 				//mientras enviamos el archivo
@@ -391,20 +536,26 @@ $cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ')
 
 					if (data.error == false) {
 						swal({
-								title: "Respuesta",
-								text: 'Se genero correctamente la liga',
-								type: "success",
-								timer: 2000,
-								showConfirmButton: false
+							title: "Respuesta",
+							text: 'Se genero correctamente la liga',
+							type: "success",
+							timer: 2000,
+							showConfirmButton: false
 						});
 						$('#url').val(data.url);
+
+						$('#apellidopaterno').val('');
+						$('#apellidomaterno').val('');
+						$('#nombre').val('');
+						$('#email').val('');
+
 					} else {
 						swal({
-								title: "Respuesta",
-								text: data.mensaje,
-								type: "error",
-								timer: 2000,
-								showConfirmButton: false
+							title: "Respuesta",
+							text: data.mensaje,
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
 						});
 
 					}
@@ -425,7 +576,7 @@ $cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ')
 
 		}
 
-		$('.btnGenerar').hide();
+
 		var options2 = {
 			url: "../../json/jsbuscarclientes.php",
 

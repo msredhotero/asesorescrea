@@ -69,6 +69,22 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 }
 
 switch ($tabla) {
+	case 'tokenasesores':
+		$idasesor = $_GET['idasesor'];
+		$datos = $serviciosReferencias->traerTokenasesoresajax($length, $start, $busqueda,$colSort,$colSortDir,$idasesor);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array('btnEliminar');
+		$class = array('bg-red');
+		$icon = array('remove');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 5;
+	break;
 	case 'misclientes':
 		$idasesor = $_GET['idasesor'];
 		$datos = $serviciosReferencias->traerClientesasesoresajax($length, $start, $busqueda,$colSort,$colSortDir,$idasesor);

@@ -119,7 +119,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 	}
 
 } else {
-
+	$idasesor = 25;
 	//// SI EL ROL ES DEL GERENTE REGIONAL
 	if ($_SESSION['idroll_sahilices'] == 3) {
 		$singular = "Entrev. Oportnidad";

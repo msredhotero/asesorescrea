@@ -1083,7 +1083,7 @@ switch ($accion) {
    break;
 
    case 'insertarMejorarcondiciones':
-      insertarMejorarcondiciones($serviciosReferencias);
+      insertarMejorarcondiciones($serviciosReferencias, $serviciosValidador);
    break;
 
    case 'traerAseguradosPorCliente':
@@ -1326,63 +1326,221 @@ switch ($accion) {
    case 'enviarCotizadorAlCliente':
       enviarCotizadorAlCliente($serviciosReferencias, $serviciosUsuarios, $serviciosValidador);
    break;
+   case 'eliminarTokenasesores':
+      eliminarTokenasesores($serviciosReferencias);
+   break;
 
 }
 /* FinFinFin */
 
+function eliminarTokenasesores($serviciosReferencias) {
+   $id = $_POST['id'];
+   $res = $serviciosReferencias->eliminarTokenasesores($id);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
 function enviarCotizadorAlCliente($serviciosReferencias, $serviciosUsuarios, $serviciosValidador) {
-   $idcliente = $_POST['idcliente'];
+   session_start();
+
+   $apellidopaterno = $_POST['apellidopaterno'];
+   $apellidomaterno = $_POST['apellidomaterno'];
+   $nombre = $_POST['nombre'];
+   $email = $_POST['email'];
    $idasesor = $_POST['idasesor'];
-   $idreferencia = $_POST['idreferencia'];
+   // 46 paquete crea en linea
+   $idreferencia = 46;
    $tipoaccion = $_POST['tipoaccion'];
 
-   $resCliente = $serviciosReferencias->traerClientesPorId($idcliente);
+   $resAsesores = $serviciosReferencias->traerAsesoresPorId($idasesor);
 
-   if ((mysql_result($resCliente,0,'email') != '') || ($serviciosValidador->validaEmail( mysql_result($resCliente,0,'email')))) {
-      $resV['error'] = false;
+   $apAsesor = mysql_result($resAsesores,0,'apellidopaterno');
+   $amAsesor = mysql_result($resAsesores,0,'apellidomaterno');
+   $nAsesor = mysql_result($resAsesores,0,'nombre');
 
-      if ($tipoaccion == '2') {
-         $accion = "cotizacionagente/new.php?producto=".$idreferencia;
-      }
-      if ($tipoaccion == '1') {
-         $accion = "pagorecibo/metodopago.php?id=".$idreferencia;
-      }
+   $resV['error'] = false;
 
-      $token = $serviciosReferencias->GUID();
-      $generousuario = 1;
-      $fechacrea = date('Y-m-d H:i:s');
-      $fecha_actual = date("d-m-Y");
-      //sumo 30 días
-      $vigencia = date("Y-m-d",strtotime($fecha_actual."+ 30 days"));
-      $activo = '1';
 
-      $refestados = 1;
+   if (isset($_POST['idcliente'])) {
+      $idreferencia = $_POST['idreferencia'];
+      $idcliente = $_POST['idcliente'];
 
-      $nombre = mysql_result($resCliente,0,'nombre');
-      $apellidopaterno  = mysql_result($resCliente,0,'apellidopaterno');
-      $apellidomaterno  = mysql_result($resCliente,0,'apellidomaterno');
-      $email  = mysql_result($resCliente,0,'email');
+      $resCliente = $serviciosReferencias->traerClientesPorId($idcliente);
+      if ((mysql_result($resCliente,0,'email') != '') || ($serviciosValidador->validaEmail( mysql_result($resCliente,0,'email')))) {
 
-      $password = $serviciosReferencias->GUID();
 
-      $refusuarios = $serviciosUsuarios->insertarUsuario($nombre,$password,19,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
+         if ($tipoaccion == '2') {
+            $accion = "cotizacionagente/new.php?producto=".$idreferencia;
+         }
+         if ($tipoaccion == '1') {
+            $accion = "pagorecibo/metodopago.php?id=".$idreferencia;
+         }
 
-      $res = $serviciosReferencias->insertarTokenasesores($token,$idasesor,$idcliente,$generousuario,$fechacrea,$vigencia,$activo,$accion,$tipoaccion,$refestados,$refusuarios);
+         $token = $serviciosReferencias->GUID();
+         $generousuario = 1;
+         $fechacrea = date('Y-m-d H:i:s');
+         $fecha_actual = date("d-m-Y");
+         //sumo 30 días
+         $vigencia = date("Y-m-d",strtotime($fecha_actual."+ 30 days"));
+         $activo = '1';
 
-      if ($res) {
-         $resV['error'] = false;
-         //$resV['url'] = 'https://asesorescrea.com/desarrollo/crm/token.php?token='.$token;
-         $resV['url'] = 'http://localhost/asesorescrea_nuevo.git/trunk/crm/token.php?token='.$token;
+         $refestados = 1;
+
+         $nombre = mysql_result($resCliente,0,'nombre');
+         $apellidopaterno  = mysql_result($resCliente,0,'apellidopaterno');
+         $apellidomaterno  = mysql_result($resCliente,0,'apellidomaterno');
+         $email  = mysql_result($resCliente,0,'email');
+
+         $password = $serviciosReferencias->GUID();
+
+         $refusuarios = $serviciosUsuarios->insertarUsuario($nombre,$password,19,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
+
+         $res = $serviciosReferencias->insertarTokenasesores($token,$idasesor,$idcliente,$generousuario,$fechacrea,$vigencia,$activo,$accion,$tipoaccion,$refestados,$refusuarios);
+
+         if ($res) {
+            $resV['error'] = false;
+            $resV['url'] = 'https://asesorescrea.com/desarrollo/crm/token.php?token='.$token;
+            //$resV['url'] = 'http://localhost/asesorescrea_nuevo.git/trunk/crm/token.php?token='.$token;
+
+            $cuerpo = '';
+
+            $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+            $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+            $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+            $cuerpo .= "
+            <style>
+               body { font-family: 'Lato', sans-serif; }
+               header { font-family: 'Prata', serif; }
+            </style>";
+
+            $cuerpo .= '<body>';
+
+            $cuerpo .= '<h3>Estimado, '.$nombre.'</h3><p>';
+
+
+
+            $cuerpo .= '<p>Tu agente '.$apAsesor.' '.$amAsesor.' '.$nAsesor.' te recomienda la subscripción del siguiente producto.</p>';
+
+            $cuerpo .= '<a href="'.'https://asesorescrea.com/desarrollo/crm/token.php?token='.$token.'"><img src="https://asesorescrea.com/desarrollo/crm/imagenes/ventaenlinea_bck.jpg" alt="ASESORESCREA" width="100%"></a>';
+
+
+
+            $cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
+
+            $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+            $cuerpo .= '</body>';
+
+
+
+            $retorno = $serviciosReferencias->enviarEmail($email,utf8_decode('Proceso de Cotización'),utf8_decode($cuerpo));
+         } else {
+            $resV['error'] = true;
+            $resV['mensaje'] = 'Se genero un error al crear la liga, contactese con el administrador';
+         }
+
       } else {
          $resV['error'] = true;
-         $resV['mensaje'] = 'Se genero un error al crear la liga, contactese con el administrador';
+         $resV['mensaje'] = 'El cliente no posee un email o es invalido, verificar';
       }
-
    } else {
-      $resV['error'] = true;
-      $resV['mensaje'] = 'El cliente no posee un email o es invalido, verificar';
-   }
 
+
+      if ($serviciosValidador->validaEmail( $email)) {
+         $res = $serviciosReferencias->insertarClientes(1,$nombre,$apellidopaterno,$apellidomaterno,'','','','',$email,'','', '',0,date('Y-m-d H:i:s'),date('Y-m-d H-i-s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],'','','',0,'','','','','','','','','','',0,0,'');
+
+         if ((integer)$res > 0) {
+            if ($_SESSION['idroll_sahilices'] == 7) {
+
+               $resClienteAsedor = $serviciosReferencias->insertarClientesasesores($res,$idasesor,$apellidopaterno,$apellidomaterno,$nombre,'','',$email,'','',1,'','',0,0,0,'');
+            }
+
+
+            if ($tipoaccion == '2') {
+               $accion = "cotizacionagente/new.php?producto=".$idreferencia;
+            }
+
+            $token = $serviciosReferencias->GUID();
+            $generousuario = 1;
+            $fechacrea = date('Y-m-d H:i:s');
+            $fecha_actual = date("d-m-Y");
+            //sumo 30 días
+            $vigencia = date("Y-m-d",strtotime($fecha_actual."+ 30 days"));
+            $activo = '1';
+
+            $refestados = 1;
+
+            $password = $serviciosReferencias->GUID();
+
+            $refusuarios = $serviciosUsuarios->insertarUsuario($nombre,$password,19,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,1);
+
+            $res = $serviciosReferencias->insertarTokenasesores($token,$idasesor,$res,$generousuario,$fechacrea,$vigencia,$activo,$accion,$tipoaccion,$refestados,$refusuarios);
+
+            if ($res) {
+               $resV['error'] = false;
+               $resV['url'] = 'https://asesorescrea.com/desarrollo/crm/token.php?token='.$token;
+               //$resV['url'] = 'http://localhost/asesorescrea_nuevo.git/trunk/crm/token.php?token='.$token;
+
+               $cuerpo = '';
+
+               $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+               $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+               $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+               $cuerpo .= "
+               <style>
+               	body { font-family: 'Lato', sans-serif; }
+               	header { font-family: 'Prata', serif; }
+               </style>";
+
+               $cuerpo .= '<body>';
+
+               $cuerpo .= '<h3>Estimado, '.$nombre.'</h3><p>';
+
+
+
+               $cuerpo .= '<p>Tu agente '.$apAsesor.' '.$amAsesor.' '.$nAsesor.' te recomienda la subscripción del siguiente producto.</p>';
+
+               $cuerpo .= '<a href="'.'https://asesorescrea.com/desarrollo/crm/token.php?token='.$token.'"><img src="https://asesorescrea.com/desarrollo/crm/imagenes/ventaenlinea_bck.jpg" alt="ASESORESCREA" width="100%"></a>';
+
+
+
+            	$cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
+
+               $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+               $cuerpo .= '</body>';
+
+
+
+               $retorno = $serviciosReferencias->enviarEmail($email,utf8_decode('Proceso de Cotización'),utf8_decode($cuerpo));
+
+
+            } else {
+               $resV['error'] = true;
+               $resV['mensaje'] = 'Se genero un error al crear la liga, contactese con el administrador';
+            }
+
+
+         } else {
+            $resV['error'] = true;
+            $resV['mensaje'] = 'Se genero un error al intentar generar el nuevo cliente, verifique con la administracion.';
+         }
+
+      } else {
+         $resV['error'] = true;
+         $resV['mensaje'] = 'El cliente no posee un email o es invalido, verificar';
+      }
+   }
 
 
 
@@ -4289,21 +4447,54 @@ function traerAseguradosPorId($serviciosReferencias, $serviciosFunciones) {
 }
 
 
-function insertarMejorarcondiciones($serviciosReferencias) {
-   $refclientes = $_POST['refclientes'];
+function insertarMejorarcondiciones($serviciosReferencias, $serviciosValidador) {
+   session_start();
+   $tipo = $_POST['tipo'];
    $refasesores = $_POST['refasesores'];
-   $fechacrea = date('Y-m-d H:i:s');
-   $fechamodi = date('Y-m-d H:i:s');
    $observaciones = $_POST['observaciones'];
-   $res = $serviciosReferencias->insertarMejorarcondiciones($refclientes,$refasesores,$fechacrea,$fechamodi,$observaciones);
 
-   if ((integer)$res > 0) {
-      $resV['error'] = false;
-      $resV['dato'] = $res;
+   $resV['error'] = false;
+   if ($tipo == '1') {
+      $apellidopaterno = $_POST['apellidopaterno'];
+      $apellidomaterno = $_POST['apellidomaterno'];
+      $nombre = $_POST['nombre'];
+      $email = $_POST['email'];
+
+      if ($serviciosValidador->validaEmail( $email)) {
+         $refclientes = $serviciosReferencias->insertarClientes(1,$nombre,$apellidopaterno,$apellidomaterno,'','','','',$email,'','', '',0,date('Y-m-d H:i:s'),date('Y-m-d H-i-s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],'','','',0,'','','','','','','','','','',0,0,'');
+
+         if ((integer)$refclientes > 0) {
+            if ($_SESSION['idroll_sahilices'] == 7) {
+
+               $resClienteAsedor = $serviciosReferencias->insertarClientesasesores($refclientes,$refasesores,$apellidopaterno,$apellidomaterno,$nombre,'','',$email,'','',1,'','',0,0,0,'');
+            }
+         } else {
+            $resV['error'] = true;
+            $resV['msgerror'] = 'Se genero un error al crear el nuevo cliente, por favor verifique con la administracion';
+         }
+      }
    } else {
-      $resV['error'] = true;
-      $resV['msgerror'] = 'Hubo un error al insertar datos';
+      $refclientes = $_POST['refclientes'];
    }
+
+
+   if ($resV['error'] == false) {
+
+
+      $fechacrea = date('Y-m-d H:i:s');
+      $fechamodi = date('Y-m-d H:i:s');
+
+      $res = $serviciosReferencias->insertarMejorarcondiciones($refclientes,$refasesores,$fechacrea,$fechamodi,$observaciones);
+
+      if ((integer)$res > 0) {
+         $resV['error'] = false;
+         $resV['dato'] = $res;
+      } else {
+         $resV['error'] = true;
+         $resV['msgerror'] = 'Hubo un error al insertar datos';
+      }
+   }
+
 
    header('Content-type: application/json');
    echo json_encode($resV);
