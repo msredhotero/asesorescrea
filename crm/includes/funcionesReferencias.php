@@ -71,7 +71,7 @@ function traerTokenasesoresajax($length, $start, $busqueda,$colSort,$colSortDir,
 
    $busqueda = str_replace("'","",$busqueda);
    if ($busqueda != '') {
-      $where = " and concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or (case when t.tipoaccion = '1' then 'Pago de Recibo' else 'Cotizacion' end) like '%".$busqueda."%' or (case when t.refestados = 1 then 'Iniciado' else 'Completo' end) like '%".$busqueda."%' or concat('http://localhost/asesorescrea_nuevo.git/trunk/crm/',t.accion) like '%".$busqueda."%'";
+      $where = " and concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or (case when t.tipoaccion = '1' then 'Pago de Recibo' else 'Cotizacion' end) like '%".$busqueda."%' or (case when t.refestados = 1 then 'Iniciado' else 'Completo' end) like '%".$busqueda."%' or concat('https://asesorescrea.com/desarrollo/crm/token.php?token=',t.token) like '%".$busqueda."%'";
    }
 
    //http://localhost/asesorescrea_nuevo.git/trunk/crm/dashboard/
@@ -80,7 +80,7 @@ function traerTokenasesoresajax($length, $start, $busqueda,$colSort,$colSortDir,
    t.token,
    concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
    (case when t.tipoaccion = '1' then 'Pago de Recibo' else 'Cotizacion' end) as tipoaccion,
-   concat('https://asesorescrea.com/desarrollo/crm/dashboard/',t.accion) as accion,
+   concat('https://asesorescrea.com/desarrollo/crm/token.php?token=',t.token) as accion,
    t.fechacrea,
    (case when t.refestados = 1 then 'Iniciado' else 'Completo' end) as estado,
    t.vigencia,
