@@ -1633,6 +1633,12 @@ if (count($contratentaDatosCompletos) > 0) {
 
 					$('.contCuestionarioPersonasContratante').html(data.datos.cuestionario);
 
+					$('#wizard_with_validation .tscurp').attr('maxlength','18');
+					$('#wizard_with_validation .tscurp').attr('minlength','18');
+
+					$('#wizard_with_validation .tstelefonofijo').inputmask('999 9999999', { placeholder: '___ _______' });
+					$('#wizard_with_validation .tstelefonocelular').inputmask('999 9999999', { placeholder: '___ _______' });
+
 					$('#wizard_with_validation .tsfechanacimiento').pickadate({
 						format: 'yyyy-mm-dd',
 						labelMonthNext: 'Siguiente mes',

@@ -1669,6 +1669,12 @@ if (count($contratentaDatosCompletos) > 0) {
 						weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
 					});
 
+					$('#wizard_with_validation .tscurp').attr('maxlength','18');
+					$('#wizard_with_validation .tscurp').attr('minlength','18');
+
+					$('#wizard_with_validation .tstelefonofijo').inputmask('999 9999999', { placeholder: '___ _______' });
+					$('#wizard_with_validation .tstelefonocelular').inputmask('999 9999999', { placeholder: '___ _______' });
+
 
 					$("#wizard_with_validation .tsmunicipio").prop('readonly',true);
 					$("#wizard_with_validation .tsestado").prop('readonly',true);
