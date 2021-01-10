@@ -1098,15 +1098,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 									<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.5em;" onclick="window.location='mejorarcondiciones/'">ADJUNTAR POLIZA</button>
 								</div>
 
-								<div class="row">
-									<div class="form-group input-group" style="martin-top:20px;">
-										<button type="button" class="btn btn-lg btn-block bg-blue btnCargarPagoRecibo">CARGAR PAGO RECIBO</button>
-										<div class="form-line">
-											<label class="form-label">URL:</label>
-											<input type="text" readonly name="url" id="url" class="form-control"/>
-										</div>
-									</div>
-								</div>
+								
 
 
 
