@@ -549,6 +549,8 @@ $cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ')
 						$('#nombre').val('');
 						$('#email').val('');
 
+						table.ajax.reload();
+
 					} else {
 						swal({
 							title: "Respuesta",

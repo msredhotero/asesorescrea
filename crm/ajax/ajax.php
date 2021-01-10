@@ -1374,7 +1374,7 @@ function enviarCotizadorAlCliente($serviciosReferencias, $serviciosUsuarios, $se
 
 
          if ($tipoaccion == '2') {
-            $accion = "cotizacionagente/new.php?producto=".$idreferencia;
+            $accion = "cotizacionagente/ventaenlinea.php";
          }
          if ($tipoaccion == '1') {
             $accion = "pagorecibo/metodopago.php?id=".$idreferencia;
@@ -1464,7 +1464,7 @@ function enviarCotizadorAlCliente($serviciosReferencias, $serviciosUsuarios, $se
 
 
             if ($tipoaccion == '2') {
-               $accion = "cotizacionagente/new.php?producto=".$idreferencia;
+               $accion = "cotizacionagente/ventaenlinea.php";
             }
 
             $token = $serviciosReferencias->GUID();
