@@ -178,7 +178,7 @@ if ($refEstadoCotizacion == 22) {
 		$puedeSubirArchivos = 0;
 	}
 } else {
-	return header('Location: ../cotizacionesvigentes/new.php?id='.$id);
+	return header('Location: ../cotizacionagente/new.php?id='.$id);
 
 }
 
