@@ -333,7 +333,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<div class="card">
 													<div class="header bg-cyan" style="background-color: #C6AC83 !important; ">
 														<h2 style="color: #1c2a47 !important;">
-															CARGA TUS POLIZAS AQUI (MAX. 3)
+															CARGA LA POLIZA QUE BUSCAS MEJORAR
 														</h2>
 														<ul class="header-dropdown m-r--5">
 															<li class="dropdown">
