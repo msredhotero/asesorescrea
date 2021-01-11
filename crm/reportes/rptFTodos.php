@@ -33,6 +33,7 @@ $metodopago = $serviciosReferencias->traerMetodopagoPorCotizacionCompleto($id);
 
 $idCliente = mysql_result($resCotizacion,0,'refclientes');
 
+
 $pdf = new FPDF();
 
 $pdfi = new FPDI();
@@ -1074,12 +1075,18 @@ while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
 
 }
 
+$municipioCliente = mysql_result($resCliente,0,'municipio');
+$estadoCliente = mysql_result($resCliente,0,'estado');
+
 $resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(7);
 while ($row = mysql_fetch_array($resReferenciasFijo)) {
    $pdf->SetXY($row['x'], $row['y']);
    switch ($row['default']) {
       case 'fecha':
          $pdf->Write(0, date('d/m/Y'));
+      break;
+      case 'lugar y fecha de solicitud':
+         $pdf->Write(0, $municipioCliente.' '.$estadoCliente);
       break;
       default:
          $pdf->Write(0, $row['default']);

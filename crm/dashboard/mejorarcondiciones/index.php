@@ -257,6 +257,10 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						</div>
 						<div class="body table-responsive">
 
+							<div class="row">
+								<img src="../../imagenes/header_mejoracondiciones.jpg" width="100%"/>
+							</div>
+
 								<?php if ($puedeCargar == 1) { ?>
 								<div class="row">
 									<div class="col-lg-12 col-md-12">

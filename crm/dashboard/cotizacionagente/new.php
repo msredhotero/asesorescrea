@@ -1341,17 +1341,17 @@ if (count($contratentaDatosCompletos) > 0) {
 										<label class="form-label">RFC </label>
 										<div class="form-group input-group">
 											<div class="form-line">
-												<input type="text" class="form-control" id="rfcBNF" name="rfc" maxlength="13" required />
+												<input type="text" class="form-control" id="rfcBNF" name="rfc" maxlength="13" />
 											</div>
 										</div>
 									</div>
 
 									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmConttipoidentificacion" style="display:block">
-										<label class="form-label">Tipo Identificación <span style="color:red;">*</span>  </label>
+										<label class="form-label">Tipo Identificación  </label>
 										<div class="form-group input-group">
 											<div class="form-line">
-												<select class="form-control" id="reftipoidentificacionBNF" name="reftipoidentificacion"  required >
-													<option value="">-- Seleccionar --</option>
+												<select class="form-control" id="reftipoidentificacionBNF" name="reftipoidentificacion" >
+													<option value="0">-- Seleccionar --</option>
 													<option value="1">INE</option>
 													<option value="2">Pasaporte</option>
 												</select>
@@ -1360,10 +1360,10 @@ if (count($contratentaDatosCompletos) > 0) {
 									</div>
 
 									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContidentificacion" style="display:block">
-										<label class="form-label">No. Identificación <span style="color:red;">*</span>  </label>
+										<label class="form-label">No. Identificación </label>
 										<div class="form-group input-group">
 											<div class="form-line">
-												<input type="text" class="form-control" id="identificacionBNF" name="nroidentificacion" maxlength="13" required />
+												<input type="text" class="form-control" id="identificacionBNF" name="nroidentificacion" maxlength="13" />
 											</div>
 										</div>
 									</div>

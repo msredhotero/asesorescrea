@@ -1408,8 +1408,6 @@ function enviarCotizadorAlCliente($serviciosReferencias, $serviciosUsuarios, $se
 
             $cuerpo = '';
 
-            $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
-
             $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
 
             $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
@@ -1426,11 +1424,12 @@ function enviarCotizadorAlCliente($serviciosReferencias, $serviciosUsuarios, $se
 
 
 
-            $cuerpo .= '<p>Tu agente '.$apAsesor.' '.$amAsesor.' '.$nAsesor.' te recomienda la subscripción del siguiente producto.</p>';
+            $cuerpo .= '<p>Tu agente <b>'.$apAsesor.' '.$amAsesor.' '.$nAsesor.'</b> te recomienda la subscripción del siguiente producto.</p>';
+
 
             $cuerpo .= '<a href="'.'https://asesorescrea.com/desarrollo/crm/token.php?token='.$token.'"><img src="https://asesorescrea.com/desarrollo/crm/imagenes/ventaenlinea_bck.jpg" alt="ASESORESCREA" width="100%"></a>';
 
-
+            $cuerpo .= '<p>De click en la imagen para saber mós.</p>';
 
             $cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
 
