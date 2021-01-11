@@ -251,7 +251,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 							</div>
 
 							<div class="row" style="margin-top:40px;">
-								<div class="col-xs-6">
+								<div class="col-xs-12 col-md-6">
 									<h4 style="color: #C6AC83;font-size: 36px;line-height: 42px;">Enfermedades Graves</h4>
 									<h4><b>Pagaremos 300 mil pesos en caso de que seas diagnosticado con cualquiera de las siguientes enfermedades graves:</b></h4>
 									<ul style="font-size:20px !important;">
@@ -265,17 +265,17 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 									</ul>
 								</div>
-								<div class="col-xs-6">
+								<div class="col-xs-12 col-md-6">
 									<img src="../../imagenes/infarto__.jpg" width="100%"/>
 								</div>
 
 							</div>
 
 							<div class="row" style="margin-top:40px;">
-								<div class="col-xs-6">
+								<div class="col-xs-12 col-md-6">
 									<img src="../../imagenes/doctor.jpg" width="100%"/>
 								</div>
-								<div class="col-xs-6">
+								<div class="col-xs-12 col-md-6">
 									<h4 style="color: #C6AC83;font-size: 36px;line-height: 42px;">Beneficios VRIM</h4>
 
 									<ul style="font-size:20px !important;">
@@ -292,7 +292,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 							</div>
 
 							<div class="row" style="margin-top:40px; text-align:center;">
-								<button type="button" class="btn bg-blue waves-effect btnCotizar" style="padding:40px 80px; font-size:22px;">CONTRATAR PLAN ANUAL POR <?php echo $lblPrecio; ?></button>
+								<button type="button" class="btn bg-blue waves-effect btnCotizar" style="padding:40px 80px; font-size:100%;">CONTRATAR PLAN ANUAL POR <?php echo $lblPrecio; ?></button>
 							</div>
 
 						</div>

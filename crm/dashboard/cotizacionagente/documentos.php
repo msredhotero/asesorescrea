@@ -569,8 +569,8 @@ if ($consolicitud == 1) {
 								</div>
 
 								<div class="row">
-									<div class="col-xs-3"></div>
-									<div class="col-xs-6">
+									<div class="col-xs-12 col-md-3"></div>
+									<div class="col-xs-12 col-md-6">
 										<button type="button" class="btn btn-lg btn-block btn-success" style="font-size:1.2em;">
 											<i class="material-icons" style="font-size:1.2em;">done</i>
 											<span>PROCESO FINALIZADO CORRECTAMENTE</span>
@@ -578,7 +578,7 @@ if ($consolicitud == 1) {
 
 
 									</div>
-									<div class="col-xs-3"></div>
+									<div class="col-xs-12 col-md-3"></div>
 								</div>
 
 							<?php } else { ?>
