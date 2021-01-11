@@ -331,8 +331,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										<div class="row">
 											<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 												<div class="card">
-													<div class="header bg-cyan">
-														<h2>
+													<div class="header bg-cyan" style="background-color: #C6AC83 !important; ">
+														<h2 style="color: #1c2a47 !important;">
 															CARGA TUS POLIZAS AQUI (MAX. 3)
 														</h2>
 														<ul class="header-dropdown m-r--5">
@@ -343,9 +343,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 															</li>
 														</ul>
 													</div>
-													<div class="body contArchivos">
+													<div class="body contArchivos" style="background-color: #1c2a47 !important; ">
 
-														<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+														<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data"  style="background-color: #1c2a47 !important; color: #C6AC83 !important; border-style: dashed !important; border-color: white !important;">
 															<div class="dz-message">
 																<div class="drag-icon-cph">
 																	<i class="material-icons">touch_app</i>
