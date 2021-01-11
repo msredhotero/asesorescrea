@@ -188,11 +188,17 @@ $consolicitud = mysql_result($resProducto,0,'consolicitud');
 
 $resUsuario = $serviciosUsuario->traerUsuarioId($idusuariocliente);
 
+
+$emailUsuario = mysql_result($resUsuario,0,'email');
+$passwordUsuario = mysql_result($resUsuario,0,'password');
+
 // solo para
 if (!isset($_SESSION['usua_sahilices']))
 {
-	$resLogin = $serviciosUsuario->login(mysql_result($resUsuario,0,'email'),mysql_result($resUsuario,0,'password'));
+	$resLogin = $serviciosUsuario->loginNuevo($emailUsuario,$passwordUsuario);
 }
+
+
 
 
 if (!isset($_SESSION['usua_sahilices']))

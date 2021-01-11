@@ -173,6 +173,89 @@ function login($usuario,$pass) {
 
 }
 
+
+
+function loginNuevo($usuario,$pass) {
+
+	$sqlusu = "select * from dbusuarios where email = '".$usuario."' and refroles = 19";
+
+	$error = '';
+
+	if (trim($usuario) != '' and trim($pass) != '') {
+
+	$respusu = $this->query($sqlusu,0);
+
+	if (mysql_num_rows($respusu) > 0) {
+
+
+		$idUsua = mysql_result($respusu,0,0);
+		$sqlpass = "SELECT
+                   u.nombrecompleto,
+                   u.email,
+                   u.usuario,
+                   r.descripcion,
+                   r.idrol,
+                   coalesce(tk.token,'') as token
+               FROM
+                   dbusuarios u
+                       INNER JOIN
+                   tbroles r ON r.idrol = u.refroles
+                     left join dbtokenasesores tk on tk.refusuarios = u.idusuario
+               WHERE
+                   password = '".$pass."' AND u.activo = 1
+                       AND idusuario = ".$idUsua;
+
+
+		$resppass = $this->query($sqlpass,0);
+
+		if (mysql_num_rows($resppass) > 0) {
+			$error = '';
+			} else {
+				$error = 'Usuario o Password incorrecto';
+			}
+
+		}
+		else
+
+		{
+			$error = 'Usuario o Password incorrecto';
+		}
+
+		if ($error == '') {
+			//die(var_dump($error));
+			session_start();
+
+         if (mysql_result($resppass,0,4) == 16) {
+            $resCliente = $this->traerClientesPorUsuario($idUsua);
+
+            $_SESSION['idcliente_sahilices'] = mysql_result($resCliente,0,0);
+         }
+			$_SESSION['usua_sahilices'] = $usuario;
+			$_SESSION['nombre_sahilices'] = mysql_result($resppass,0,0);
+			$_SESSION['usuaid_sahilices'] = $idUsua;
+			$_SESSION['email_sahilices'] = mysql_result($resppass,0,1);
+			$_SESSION['idroll_sahilices'] = mysql_result($resppass,0,4);
+			$_SESSION['refroll_sahilices'] = mysql_result($resppass,0,3);
+         if (mysql_result($resppass,0,4) == 19) {
+            $_SESSION['token_ac'] = mysql_result($resppass,0,5);
+         } else {
+            $_SESSION['token_ac'] = $this->GUID();
+         }
+
+
+
+			return 1;
+		}
+
+	}	else {
+		$error = 'Usuario y Password son campos obligatorios';
+	}
+
+
+	return $error;
+
+}
+
 function loginFacebook($usuario) {
 
 	$sqlusu = "select concat(apellido,' ',nombre),email,direccion,refroll from se_usuarios where email = '".$usuario."'";
