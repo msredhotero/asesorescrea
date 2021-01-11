@@ -175,9 +175,9 @@ function login($usuario,$pass) {
 
 
 
-function loginNuevo($usuario,$pass) {
+function loginNuevo($usuario,$pass,$idusuariocliente) {
 
-	$sqlusu = "select * from dbusuarios where email = '".$usuario."' and refroles = 19";
+	$sqlusu = "select * from dbusuarios where email = '".$usuario."' and refroles = 19 and idusuario = ".$idusuariocliente." limit 1";
 
 	$error = '';
 
