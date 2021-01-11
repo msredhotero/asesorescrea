@@ -214,14 +214,6 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 								</div>
 							</div>
 
-							<div class="row">
-								<h3 style="color: #C6AC83;font-size: 36px;line-height: 42px; text-align:center;">Solictar Información</h3>
-							</div>
-
-							<div class="row">
-								<h5><b>* haga click para enviar<b/></h3>
-							</div>
-
 							<div class="row" style="margin-top:40px;">
 								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 									<div class="info-box-3 bg-blue btnCursor hover-zoom-effect btnEmailEnviarSeguro" id="VIDA" data-tipo="1">
@@ -278,7 +270,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 											<i class="material-icons">info</i>
 										</div>
 										<div class="content">
-											<div class="text">Seguro</div>
+											<div class="text">Servicio</div>
 											<div class="number">CRÉDITO HIPOTECARIO</div>
 										</div>
 									</div>
@@ -289,7 +281,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 											<i class="material-icons">info</i>
 										</div>
 										<div class="content">
-											<div class="text">Seguro</div>
+											<div class="text">Servicio</div>
 											<div class="number">CUENTA DE AHORRO</div>
 										</div>
 									</div>
@@ -300,7 +292,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 											<i class="material-icons">info</i>
 										</div>
 										<div class="content">
-											<div class="text">Seguro</div>
+											<div class="text">Servicio</div>
 											<div class="number">TARJETA DE CRÉDITO</div>
 										</div>
 									</div>
@@ -335,17 +327,21 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 	<div class="modal-dialog modal-lg" role="document">
 		 <div class="modal-content">
 			  <div class="modal-header">
-					<h4 class="modal-title" id="largeModalLabel">SOLICITAR INFORMACION <span id="lblMasInformacion"></span></h4>
+				  	<?php if ($existeCelular == 1) { ?>
+					<h4 class="modal-title" id="largeModalLabel">EN BREVE NOS PONDREMOS EN CONTACTO CONTIGO AL SIGUIENTE DE TELÉFONO<span id="lblMasInformacion"></span></h4>
+					<?php }  else { ?>
+						<h4 class="modal-title" id="largeModalLabel">POR FAVOR INGRESA UN NÚMERO DE TELÉFONO PARA PONERNOS EN CONTACTO CONTIGO<span id="lblMasInformacion"></span></h4>
+						<?php }  ?>
 			  </div>
 			  <div class="modal-body">
-				  <h5>Gracias por confiar en la mejor</h5>
+
 				  <?php if ($existeCelular == 1) { ?>
-					  <p>En breve se pondrá en con Teléfono de cliente, si quieren más información sobre algún producto de la página debe de validar su numero de celular registrado , "te vamos a contactar a este número <span id="lblcel"><?php echo $lblTelefonoCelular; ?></span>" o editar el número.</p>
+
 					  <label class="label-form">Editar Nro de Teléfono Celular</label>
 					  <input class="form-control" name="celphone" id="celphone" value="<?php echo $lblTelefonoCelular; ?>" />
 					  <button type="button" class="btn btn-success waves-effect btnModificarTelMovilCliente"><i class="material-icons">edit</i><span>EDITAR</span></button>
 				  <?php }  else { ?>
-					  <p>En breve se pondrá en con Teléfono de cliente, si quieren más información sobre algún producto de la página debe de validar si tiene celular registrado. Ingresa número de teléfono y valida tu codigo</p>
+
 						  <label class="label-form">Ingresar Nro de Teléfono Celular</label>
 						  <input class="form-control" name="celphone" id="celphone" value="" />
 						  <button type="button" class="btn btn-success waves-effect btnModificarTelMovilCliente"><i class="material-icons">add_circle</i><span>AGREGAR</span></button>
