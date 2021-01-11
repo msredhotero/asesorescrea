@@ -270,7 +270,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 											<i class="material-icons">info</i>
 										</div>
 										<div class="content">
-											<div class="text">Servicio</div>
+											<div class="text"> </div>
 											<div class="number">CRÉDITO HIPOTECARIO</div>
 										</div>
 									</div>
@@ -281,7 +281,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 											<i class="material-icons">info</i>
 										</div>
 										<div class="content">
-											<div class="text">Servicio</div>
+											<div class="text"> </div>
 											<div class="number">CUENTA DE AHORRO</div>
 										</div>
 									</div>
@@ -292,7 +292,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 											<i class="material-icons">info</i>
 										</div>
 										<div class="content">
-											<div class="text">Servicio</div>
+											<div class="text"> </div>
 											<div class="number">TARJETA DE CRÉDITO</div>
 										</div>
 									</div>
@@ -303,7 +303,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 											<i class="material-icons">info</i>
 										</div>
 										<div class="content">
-											<div class="text">Servicio</div>
+											<div class="text"> </div>
 											<div class="number">CRÉDITO TELMEX</div>
 										</div>
 									</div>
