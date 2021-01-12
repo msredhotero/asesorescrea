@@ -58,7 +58,12 @@ if ($busqueda != '') {
 		} else {
 			while ($row = mysql_fetch_array($resTraerClientes)) {
 
-				array_push($ar,array('id'=>$row['idcliente'], 'nombrecompleto'=> 'Nombre Completo: '.$row['nombrecompleto'].' - Razon social: '.$row['razonsocial'], 'idclienteinbursa'=>$row['idclienteinbursa'], 'reftipopersonas' => $row['reftipopersonas']));
+				if ($row['reftipopersonas'] == 1) {
+					array_push($ar,array('id'=>$row['idcliente'], 'nombrecompleto'=> 'Nombre Completo: '.$row['nombrecompleto'], 'idclienteinbursa'=>$row['idclienteinbursa'], 'reftipopersonas' => $row['reftipopersonas']));
+				} else {
+					array_push($ar,array('id'=>$row['idcliente'], 'nombrecompleto'=> 'Razon social: '.$row['razonsocial'], 'idclienteinbursa'=>$row['idclienteinbursa'], 'reftipopersonas' => $row['reftipopersonas']));
+				}
+
 			}
 		}
 
