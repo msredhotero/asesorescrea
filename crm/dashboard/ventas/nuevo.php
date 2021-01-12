@@ -264,7 +264,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 								<div class="row">
 									<div class="row" style="padding: 5px 20px; margin-bottom:25px !important;">
-										<h4 class='lblBusquedaNombreCliente'>Busqueda por Nombre Completo</h4>
+										<h4 class='lblBusquedaNombreCliente'>Busqueda por Nombre Completo o Razon Social</h4>
 
 										<input id="lstjugadores" style="width:75%;" />
 									</div>
