@@ -5859,7 +5859,7 @@ function traerDocumentacionPorVentaDocumentacion($serviciosReferencias) {
    $resV['datos'] = '';
    $resV['error'] = false;
 
-   if (($iddocumentacion == 35) || ($iddocumentacion == 147) || ($iddocumentacion == 148)) {
+   if (($iddocumentacion == 35) || ($iddocumentacion == 147) || ($iddocumentacion == 148) || ($iddocumentacion == 153) || ($iddocumentacion == 154)) {
       $resFoto = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($idventa,$iddocumentacion);
       $carpetaDetalle = 'ventas';
    } else {

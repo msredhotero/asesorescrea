@@ -61,6 +61,16 @@ if (!isset($_SESSION['usua_sahilices']))
 			$resImagen = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id,$iddocumentacion);
 			$carpetaOpcion = 'ventas';
 		break;
+		case 153:
+			$resultado 		= 	$serviciosReferencias->traerVentasPorId($id);
+			$resImagen = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id,$iddocumentacion);
+			$carpetaOpcion = 'ventas';
+		break;
+		case 154:
+			$resultado 		= 	$serviciosReferencias->traerVentasPorId($id);
+			$resImagen = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id,$iddocumentacion);
+			$carpetaOpcion = 'ventas';
+		break;
 		default:
 			$resultado 		= 	$serviciosReferencias->traerPeriodicidadventasdetallePorId($id);
 			$resImagen = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionDetalle($id,$iddocumentacion);
@@ -131,7 +141,7 @@ if (!isset($_SESSION['usua_sahilices']))
 
 		}
 
-		if (($iddocumentacion == 35) || ($iddocumentacion == 147) || ($iddocumentacion == 148)) {
+		if (($iddocumentacion == 35) || ($iddocumentacion == 147) || ($iddocumentacion == 148) || ($iddocumentacion == 153) || ($iddocumentacion == 154)) {
 			$resEliminar = $serviciosReferencias->eliminarDocumentacionventasPorVentaDocumentacion($id,$iddocumentacion);
 
 			$resInsertar = $serviciosReferencias->insertarDocumentacionventas($id,$iddocumentacion,$newname,$type,$refestadodocumentacion,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],0);

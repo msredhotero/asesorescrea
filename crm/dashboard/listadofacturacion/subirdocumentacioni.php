@@ -162,7 +162,7 @@ if (isset($_GET['iddocumentacion'])) {
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
-if (($iddocumentacion == 35) || ($iddocumentacion == 147) || ($iddocumentacion == 148)) {
+if (($iddocumentacion == 35) || ($iddocumentacion == 147) || ($iddocumentacion == 148) || ($iddocumentacion == 153) || ($iddocumentacion == 154)) {
 	$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($idventa, $iddocumentacion);
 } else {
 	$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionDetalle($id, $iddocumentacion);

@@ -59,6 +59,16 @@ if (!isset($_SESSION['usua_sahilices']))
 			$resImagen = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id,$iddocumentacion);
 			$carpetaOpcion = 'ventas';
 		break;
+		case 153:
+			$resultado 		= 	$serviciosReferencias->traerVentasPorId($id);
+			$resImagen = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id,$iddocumentacion);
+			$carpetaOpcion = 'ventas';
+		break;
+		case 154:
+			$resultado 		= 	$serviciosReferencias->traerVentasPorId($id);
+			$resImagen = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id,$iddocumentacion);
+			$carpetaOpcion = 'ventas';
+		break;
 		default:
 			$resultado 		= 	$serviciosReferencias->traerPeriodicidadventasdetallePorId($id);
 			$resImagen = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionDetalle($id,$iddocumentacion);

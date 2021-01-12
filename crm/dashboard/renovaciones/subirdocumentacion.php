@@ -153,7 +153,7 @@ switch ($iddocumentacion) {
 	break;
 }
 
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($idventa,'35,147,148');
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompleta($idventa,'35,147,148,153,154');
 
 ?>
 

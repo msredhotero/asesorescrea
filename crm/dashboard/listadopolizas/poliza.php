@@ -64,6 +64,9 @@ $resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorV
 $resDocumentacionReciboExistenteXML = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, 147);
 $resDocumentacionReciboExistentePDF = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, 148);
 
+$resDocumentacionReciboExistenteCLAUSULAS = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, 153);
+$resDocumentacionReciboExistenteEXPEDIENTE = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, 154);
+
 if (mysql_num_rows($resDocumentacionReciboExistenteXML)>0) {
 	$archivosXML = "../../archivos/ventas/".$id.'/'.mysql_result($resDocumentacionReciboExistenteXML,0,'carpeta').'/'.mysql_result($resDocumentacionReciboExistenteXML,0,'archivo');
 } else {
