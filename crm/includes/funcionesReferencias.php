@@ -1675,7 +1675,7 @@ return $res;
 
    /* PARA Tokens */
    function generarNIP() {
-      return rand(1, 999999);
+      return rand(100000, 999999);
    }
 
    function insertarTokens($refcotizaciones,$reftipo,$token,$fechacreac,$refestadotoken,$vigenciafin) {
@@ -17054,8 +17054,13 @@ return $res;
          $sql .= " where concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) like '%".$busqueda."%' and tip.idtipopersona = ".$tipopersona."
    		order by concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre)";
       } else {
-         $sql .= " where c.razonsocial like '%".$busqueda."%' and tip.idtipopersona = ".$tipopersona."
-   		order by c.razonsocial";
+         if ($tipopersona == 2) {
+            $sql .= " where c.razonsocial like '%".$busqueda."%' and tip.idtipopersona = ".$tipopersona."
+      		order by c.razonsocial";
+         } else {
+            $sql .= " where (concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre) like '%".$busqueda."%') or (c.razonsocial like '%".$busqueda."%')
+      		order by concat(c.apellidopaterno, ' ', c.apellidomaterno, ' ', c.nombre),c.razonsocial";
+         }
       }
 
 		$res = $this->query($sql,0);

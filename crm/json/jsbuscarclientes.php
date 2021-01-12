@@ -50,10 +50,18 @@ if ($busqueda != '') {
 			array_push($ar,array('id'=>$row['idcliente'], 'nombrecompleto'=> $row['nombrecompleto'], 'idclienteinbursa'=>$row['idclienteinbursa'], 'reftipopersonas' => $row['reftipopersonas']));
 		}
 	} else {
-		while ($row = mysql_fetch_array($resTraerClientes)) {
+		if ($tipopersona == 2) {
+			while ($row = mysql_fetch_array($resTraerClientes)) {
 
-			array_push($ar,array('id'=>$row['idcliente'], 'nombrecompleto'=> $row['razonsocial'], 'idclienteinbursa'=>$row['idclienteinbursa'], 'reftipopersonas' => $row['reftipopersonas']));
+				array_push($ar,array('id'=>$row['idcliente'], 'nombrecompleto'=> $row['razonsocial'], 'idclienteinbursa'=>$row['idclienteinbursa'], 'reftipopersonas' => $row['reftipopersonas']));
+			}
+		} else {
+			while ($row = mysql_fetch_array($resTraerClientes)) {
+
+				array_push($ar,array('id'=>$row['idcliente'], 'nombrecompleto'=> 'Nombre Completo: '.$row['nombrecompleto'].' - Razon social: '.$row['razonsocial'], 'idclienteinbursa'=>$row['idclienteinbursa'], 'reftipopersonas' => $row['reftipopersonas']));
+			}
 		}
+
 	}
 
 

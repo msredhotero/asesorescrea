@@ -166,10 +166,15 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 	<link rel="stylesheet" href="../../css/materialDateTimePicker.css">
 
+	<!-- CSS file -->
+	<link rel="stylesheet" href="../../css/easy-autocomplete.min.css">
+	<!-- Additional CSS Themes file - not required-->
+	<link rel="stylesheet" href="../../css/easy-autocomplete.themes.min.css">
+
 	<style>
 		.alert > i{ vertical-align: middle !important; }
 
-		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
+		.easy-autocomplete-container { width: 500px; z-index:999999 !important; }
 		.tscodigopostal { width: 400px; }
 
 		.ui-autocomplete { position: absolute; cursor: default;z-index:30 !important;}
@@ -257,7 +262,12 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 						<div class="body table-responsive">
 							<form class="formulario frmNuevo" role="form" id="sign_in">
 
-								<div class="row" style="padding: 5px 20px;">
+								<div class="row">
+									<div class="row" style="padding: 5px 20px; margin-bottom:25px !important;">
+										<h4 class='lblBusquedaNombreCliente'>Busqueda por Nombre Completo</h4>
+
+										<input id="lstjugadores" style="width:75%;" />
+									</div>
 									<?php echo $frmUnidadNegocios; ?>
 									<div class="row">
 										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContnropoliza" style="display:block">
@@ -547,6 +557,52 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 <script>
 	$(document).ready(function(){
+
+
+		var options = {
+			url: "../../json/jsbuscarclientes.php",
+
+			getValue: function(element) {
+				return element.nombrecompleto;
+			},
+
+			ajaxSettings: {
+		        dataType: "json",
+		        method: "POST",
+		        data: {
+		            busqueda: $("#lstjugadores").val()
+		        }
+		    },
+
+		    preparePostData: function (data) {
+		        data.busqueda = $("#lstjugadores").val();
+				  data.idasesor = 0;
+				  data.tipopersona = 0;
+		        return data;
+		    },
+
+			list: {
+			   maxNumberOfElements: 15,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $("#lstjugadores").getSelectedItemData().id;
+
+					$('#refclientes').val(value);
+
+					//traerClientescarteraPorCliente(value);
+				}/*,
+				onHideListEvent: function() {
+					$('.clienteSelect').html('');
+					$('#selction-ajax').hide();
+					$('#refclientes').html('');
+				}*/
+			},
+			theme: "square"
+		};
+
+		$("#lstjugadores").easyAutocomplete(options);
 
 		$('.btnVolver').click(function() {
 			$(location).attr('href','index.php');
