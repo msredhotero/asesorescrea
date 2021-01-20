@@ -243,6 +243,21 @@ if (!isset($_SESSION['usua_sahilices']))
 
 		}
 
+		/// creo el documento pdf
+		// creo el archivo grande
+		// pregunto rpimero si existe.
+		$pathSolcitud  = '../../archivos/solicitudes/cotizaciones/'.$idcotizacion;
+
+		if (!file_exists($pathSolcitud)) {
+			mkdir($pathSolcitud, 0777);
+		}
+
+		$filesSolicitud = array_diff(scandir($pathSolcitud), array('.', '..'));
+		if (count($filesSolicitud) < 1) {
+			//die(var_dump(__DIR__));
+			require ('../../reportes/rptFTodos.php');
+		}
+
 
 	} else {
 		$resModificarEstado = $serviciosComercio->modificarComercioInicioEstado($token,$idestado);

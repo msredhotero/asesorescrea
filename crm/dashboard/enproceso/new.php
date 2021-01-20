@@ -1461,6 +1461,8 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 
 						if ((data.datos.cuestionario.indexOf("Altura") > 0) || (data.datos.cuestionario.indexOf("Peso") > 0) || (data.datos.cuestionario.indexOf("Talla") > 0) || (data.datos.cuestionario.indexOf("Estatura") > 0)) {
 							$('.contRangers').show();
+						} else {
+							$('.contRangers').hide();
 						}
 
 
@@ -1968,10 +1970,30 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 				$('#lgmNuevo2').modal();
 				$('#lgmNuevo2 .frmContrazonsocial').hide();
 
+				$('.frmContapellidomaterno label span').remove();
+				$('.frmContapellidopaterno label span').remove();
+				$('.frmContnombre label span').remove();
+
+				$('.frmContapellidomaterno label').append('<span style="color:red;">*</span>');
+				$('.frmContapellidopaterno label').append('<span style="color:red;">*</span>');
+				$('.frmContnombre label').append('<span style="color:red;">*</span>');
+
 			}
 			if ($('#wizard_with_validation #reftipopersonasaux').val() == 2) {
 				$('#lgmNuevo2').modal();
 				$('#lgmNuevo2 .frmContrazonsocial').show();
+
+				$('.frmContapellidomaterno label span').remove();
+				$('.frmContapellidopaterno label span').remove();
+				$('.frmContnombre label span').remove();
+
+				$('#apellidopaterno-error').remove();
+				$('#apellidomaterno-error').remove();
+				$('#nombre-error').remove();
+
+				$("#nombre").prop('required',false);
+				$("#apellidopaterno").prop('required',false);
+				$("#apellidomaterno").prop('required',false);
 			}
 			$('#wizard_with_validation .btnCE').css("opacity", 0.2);
 			$('#wizard_with_validation .btnCN').css("opacity", 1);

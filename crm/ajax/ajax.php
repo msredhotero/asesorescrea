@@ -1329,9 +1329,46 @@ switch ($accion) {
    case 'eliminarTokenasesores':
       eliminarTokenasesores($serviciosReferencias);
    break;
+   case 'prueba':
+      prueba($serviciosReferencias);
+   break;
 
 }
 /* FinFinFin */
+
+function prueba($serviciosReferencias) {
+   $archivo = $_POST['archivo'];
+
+   if ($archivo == '') {
+      $resV['error'] = true;
+      $resV['mensaje'] = 'no hay archivos';
+   } else {
+      $resV['error'] = false;
+      $resV['mensaje'] = 'entro';
+
+      $gestor = fopen('base64pdf.txt', 'w');
+      fwrite($gestor, $archivo);
+      fclose($gestor);
+
+      $pdf_base64 = "base64pdf.txt";
+      //Get File content from txt file
+      $pdf_base64_handler = fopen($pdf_base64,'r');
+      $pdf_content = fread ($pdf_base64_handler,filesize($pdf_base64));
+      fclose ($pdf_base64_handler);
+      //Decode pdf content
+      $pdf_decoded = base64_decode ($pdf_content);
+      //Write data back to pdf file
+      $pdf = fopen ('test1.pdf','w');
+      fwrite ($pdf,$pdf_decoded);
+      //close output file
+      fclose ($pdf);
+   }
+
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function eliminarTokenasesores($serviciosReferencias) {
    $id = $_POST['id'];
@@ -2260,7 +2297,7 @@ function avisarInbursa($serviciosReferencias, $serviciosUsuarios) {
 
    $url = "cobranza/subirdocumentacioni.php?id=".$id;
    $token = $serviciosReferencias->GUID();
-   $resAutoLogin = $serviciosReferencias->insertarAutologin(56,$token,$url,'0');
+   $resAutoLogin = $serviciosReferencias->insertarAutologin(168,$token,$url,'0');
 
    $resAvisar = $serviciosReferencias->avisarVentaPago($id,'1');
 
@@ -2295,7 +2332,7 @@ function avisarInbursa($serviciosReferencias, $serviciosUsuarios) {
    $cuerpo .= '</body>';
 
    // por ahora corregir email
-   $email = 'msredhotero@gmail.com';
+   $email = 'mcasarrubiass@inbursa.com';
 
    $retorno = $serviciosReferencias->enviarEmail($email,'Se genero un pago, poliza: '.$nropoliza,utf8_decode($cuerpo));
 
@@ -2758,7 +2795,7 @@ function insertarFirmarcontratos($serviciosReferencias) {
 
          /***** api para la firma *****/
          $url = 'https://qafirma.signaturainnovacionesjuridicas.com/api/firmasimple/crear';
-         $archivo = '../reportes/F20926AC.pdf';
+         $archivo = '../archivos/solicitudes/cotizaciones/'.$refcotizaciones.'/FSOLICITUDAC.pdf';
          $sha256 = hash_file('sha256', $archivo);
 
          $ch = curl_init();

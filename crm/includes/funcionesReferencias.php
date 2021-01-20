@@ -4975,7 +4975,7 @@ return $res;
 						p.idperiodicidadventadetalle,
 						concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
 						ve.nropoliza,
-						p.fechapago,
+						p.fechavencimiento,
 						cli.numerocliente,
 						cli.idclienteinbursa,
 						p.nrorecibo,
@@ -5031,7 +5031,7 @@ return $res;
 						p.idperiodicidadventadetalle,
 						concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
 						ve.nropoliza,
-						p.fechapago,
+						p.fechavencimiento,
 						cli.numerocliente,
 						cli.idclienteinbursa,
 						p.nrorecibo,
@@ -5106,7 +5106,7 @@ return $res;
 						p.idperiodicidadventadetalle,
 						concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
 						ve.nropoliza,
-						p.fechapago,
+						p.fechavencimiento,
 						cli.numerocliente,
 						cli.idclienteinbursa,
 						p.nrorecibo,
@@ -5165,7 +5165,7 @@ return $res;
 						p.idperiodicidadventadetalle,
 						concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
 						ve.nropoliza,
-						p.fechapago,
+						p.fechavencimiento,
 						cli.numerocliente,
 						cli.idclienteinbursa,
 						p.nrorecibo,
@@ -5227,7 +5227,7 @@ return $res;
             		p.idperiodicidadventadetalle,
             		concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
             		ve.nropoliza,
-            		p.fechapago,
+            		p.fechavencimiento,
             		cli.numerocliente,
             		cli.idclienteinbursa,
             		p.nrorecibo,
@@ -7415,6 +7415,25 @@ return $res;
       inner join dbasesores ase on ase.idasesor = c.refasesores
       inner join tbproductos p on p.idproducto = c.refproductos
 		where v.idventa =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+   function traerFirmasDigitales() {
+		$sql = "select
+		c.idcotizacion,
+      concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as clientecompleto,
+      p.producto,
+      c.fechacrea,
+      c.folio
+		from dbcotizaciones c
+      inner join dbclientes cli ON cli.idcliente = c.refclientes
+      inner join tbproductos p on p.idproducto = c.refproductos
+      left join dbasegurados ase ON ase.idasegurado = c.refasegurados
+      left join dbasegurados ben ON ase.idasegurado = c.refbeneficiarios
+      inner join dbventas v on v.refcotizaciones = c.idcotizacion and v.version = 1.0
+      order by c.fechacrea desc";
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -9783,7 +9802,7 @@ return $res;
 		# Defina el número de e-mails que desea enviar por periodo. Si es 0, el proceso por lotes
 		# se deshabilita y los mensajes son enviados tan rápido como sea posible.
 	   if ($referencia == '') {
-	      $referencia = 'consultas@asesorescrea.com';
+	      $referencia = 'consulta@asesorescrea.com';
 	   }
 	   # Defina el número de e-mails que desea enviar por periodo. Si es 0, el proceso por lotes
 	   # se deshabilita y los mensajes son enviados tan rápido como sea posible.
@@ -9797,7 +9816,7 @@ return $res;
 	   $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 
 	   //dirección del remitente
-	   $headers .= utf8_decode("From: ASESORES CREA <consultas@asesorescrea.com>\r\n");
+	   $headers .= utf8_decode("From: ASESORES CREA <consulta@asesorescrea.com>\r\n");
 
 		mail($destinatario,$asunto,$cuerpo,$headers);
 	}

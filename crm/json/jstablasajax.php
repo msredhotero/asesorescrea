@@ -627,9 +627,16 @@ switch ($tabla) {
 			$class = array('bg-blue');
 			$icon = array('unarchive');
 		} else {
-			$label = array('btnModificar','btnRecibo');
-			$class = array('btn-warning','bg-blue');
-			$icon = array('edit','unarchive');
+			if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 18)) {
+				$label = array('');
+				$class = array('');
+				$icon = array('');
+			} else {
+				$label = array('btnModificar','btnRecibo');
+				$class = array('btn-warning','bg-blue');
+				$icon = array('edit','unarchive');
+			}
+
 		}
 
 

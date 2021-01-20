@@ -1989,6 +1989,8 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 						if ((data.datos.cuestionario.indexOf("Altura") > 0) || (data.datos.cuestionario.indexOf("Peso") > 0) || (data.datos.cuestionario.indexOf("Talla") > 0) || (data.datos.cuestionario.indexOf("Estatura") > 0)) {
 							$('.contRangers').show();
+						} else {
+							$('.contRangers').hide();
 						}
 
 						<?php if (isset($_GET['id'])) { ?>
