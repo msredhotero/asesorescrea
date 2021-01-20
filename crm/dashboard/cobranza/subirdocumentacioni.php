@@ -679,7 +679,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 						</div>
 						<div class="content">
 							<div class="text">DAR CLICK PARA CONCLUIR</div>
-							<div class="number">CONCLUIR PROCESO</div>
+							<div class="number" style="font-size:1.2em !important;">CONCLUIR PROCESO</div>
 						</div>
 					</div>
 				</div>
