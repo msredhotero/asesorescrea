@@ -2156,7 +2156,8 @@ function enviarFacturaAlCliente($serviciosReferencias) {
 
    $cuerpo .= '</body>';
 
-
+   //desarrollo
+   $email = 'msredhotero@gmail.com';
 
    $retorno = $serviciosReferencias->enviarEmail($email,'Factura Poliza Nro: '.$nropoliza,utf8_decode($cuerpo));
 
