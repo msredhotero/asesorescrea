@@ -69,7 +69,7 @@ if (mysql_num_rows($resComercio)>0) {
 	$pdf->SetXY(10, 24);
 	$pdf->Write(0, "Colonia Jardines del Pedregal");
 	$pdf->SetXY(10, 28);
-	$pdf->Write(0, "Código Postal 04500");
+	$pdf->Write(0, utf8_decode("Código Postal 04500"));
 	$pdf->SetXY(10, 32);
 	$pdf->Write(0, "(55) 5135.0259 - Email: consulta@asesorescrea.com");
 

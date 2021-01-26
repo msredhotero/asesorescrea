@@ -605,6 +605,20 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 										<hr>
 
 										<?php if ($_SESSION['usuaid_sahilices'] == 201) { ?>
+
+										<div class"row imgVenta button-container-img">
+											<img src="../imagenes/ventaenlinea_bck2.jpg" width="100%"/>
+											<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.3em;" onclick="window.location='ventaenlinea.php'">COMPRAR EN LINEA</button>
+										</div>
+										<div class"row imgCotiza button-container-img" style="margin-top:20px;">
+											<img src="../imagenes/cotiza_bck2.jpg" width="100%"/>
+											<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.3em;" onclick="window.location='solicitar.php'">SOLICITAR INFORMACIÓN</button>
+										</div>
+										<div class"row imgMejopra button-container-img" style="margin-top:20px;">
+											<img src="../imagenes/mejoratuscondiciones_bck2.jpg" width="100%"/>
+											<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.3em;" onclick="window.location='mejorarcondiciones/'">MEJORAR POLIZA</button>
+										</div>	
+
 										<div class="row">
 											<div class="col-xs-4">
 									         <div class="card">
@@ -694,52 +708,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 									         </div>
 										   </div>
 
-											<div class="col-xs-4">
-									        <div class="card mb-4 box-shadow">
-									          <div class="header bg-blue">
-									            <h4 class="my-0 font-weight-normal">Cotizar un producto Nuevo</h4>
-									          </div>
-									          <div class="body table-responsive">
-
-
- 										            <button type="button" class="btn btn-lg btn-block bg-cyan" onclick="window.location='cotizacionesvigentes/new.php?producto=30'">Cotizar mi seguro de auto en línea</button>
- 														<hr>
-														<h4>Solicito asesoría personalizada para cotizar un seguro de: </h4>
-														<button type="button" class="btn btn-lg btn-block bg-indigo btnEmailEnviarSeguro" id="VIDA" data-tipo="1">VIDA</button>
-														<button type="button" class="btn btn-lg btn-block bg-indigo btnEmailEnviarSeguro" id="Autos" data-tipo="2">Autos</button>
-														<button type="button" class="btn btn-lg btn-block bg-indigo btnEmailEnviarSeguro" id="GastosMedicos" data-tipo="3">Gastos Médicos</button>
-														<button type="button" class="btn btn-lg btn-block bg-indigo btnEmailEnviarSeguro" id="ProteccionHogar" data-tipo="4">Protección Hogar</button>
- 														<hr>
-														<h4>Solicito apoyo en la gestión en la apertura de: </h4>
-														<button type="button" class="btn btn-lg btn-block bg-blue-grey btnEmailEnviarSeguro" id="Creditohipotecario" data-tipo="5">Crédito hipotecario</button>
-														<button type="button" class="btn btn-lg btn-block bg-blue-grey btnEmailEnviarSeguro" id="Cuentadeahorro" data-tipo="6">Cuenta de ahorro</button>
-														<button type="button" class="btn btn-lg btn-block bg-blue-grey btnEmailEnviarSeguro" id="TarjetadeCredito" data-tipo="7">Tarjeta de Crédito</button>
-														<button type="button" class="btn btn-lg btn-block bg-blue-grey btnEmailEnviarSeguro" id="CreditoTelmex" data-tipo="8">Crédito Telmex</button>
- 														<hr>
-
-									          </div>
-									        </div>
-										  </div>
-										  <div class="col-xs-4">
-									        <div class="card mb-4 box-shadow">
-									          <div class="header bg-blue">
-									            <h4 class="my-0 font-weight-normal">Mejora tus condiciones</h4>
-									          </div>
-									          <div class="body table-responsive">
-
-									            <h4>Beneficios de suscribir tu póliza en Asesores CREA</h4>
-									            <ul class="list-unstyled mt-3 mb-4">
-									              <li>1.- Te asesoramos sin costo sobre las condiciones que actualmente tienes contratada.</li>
-									              <li>2.- Contamos con un area de siniestros 24/7, para apoyarte en cualquier eventualidad.</li>
-									              <li>3.- Ofrecemos el mejor costo posible.</li>
-									            </ul>
-													<h5>Adjunta tu póliza actual</h5>
-													<h5>Revisamos tus condiciones</h5>
-													<h5>Mejoramos tu póliza</h5>
-									            <button type="button" class="btn btn-lg btn-block bg-orange" onclick="window.location='mejorarcondiciones/'">MEJORAR CONDICIONES</button>
-									          </div>
-									        </div>
-									      </div>
+											
 
 
 										</div>
