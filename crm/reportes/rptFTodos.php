@@ -1086,7 +1086,7 @@ while ($row = mysql_fetch_array($resReferenciasFijo)) {
          $pdf->Write(0, date('d/m/Y'));
       break;
       case 'lugar y fecha de solicitud':
-         $pdf->Write(0, $municipioCliente.' '.$estadoCliente);
+         $pdf->Write(0, utf8_decode($municipioCliente).' '.utf8_decode($estadoCliente));
       break;
       default:
          $pdf->Write(0, $row['default']);
