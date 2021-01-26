@@ -275,6 +275,17 @@ if (!isset($_SESSION['usua_sahilices']))
 
 	//die(var_dump($redireccionar));
 
+	$pathSolcitud  = '../../archivos/solicitudes/cotizaciones/'.$idcotizacion;
+
+	if (!file_exists($pathSolcitud)) {
+		mkdir($pathSolcitud, 0777);
+	}
+
+	$filesSolicitud = array_diff(scandir($pathSolcitud), array('.', '..'));
+	if (count($filesSolicitud) < 1) {
+		//die(var_dump(__DIR__));
+		require ('../../reportes/rptFTodos.php');
+	}
 
 ?>
 

@@ -213,9 +213,9 @@ if (isset($_GET['id'])) {
 
 
 
-	$documentacionesadicionales = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
-	$documentacionesadicionales2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
-	$documentacionesadicionales3 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
+	$documentacionesadicionales = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'82,83,84,85,86');
+	$documentacionesadicionales2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'82,83,84,85,86');
+	$documentacionesadicionales3 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'82,83,84,85,86');
 
 	if (isset($_GET['iddocumentaciona'])) {
 		$iddocumentacion2 = $_GET['iddocumentaciona'];
@@ -1015,7 +1015,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 											</div>
 										</div>
 
-										<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcoberturaactual" style="display:block">
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcoberturaactual" style="display:block">
 
 											<div class="form-group input-group">
 												<label class="form-label">Aseguradora con quien esta suscrita la póliza</label>

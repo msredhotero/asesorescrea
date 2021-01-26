@@ -60,6 +60,10 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
+$resAsesores = $serviciosReferencias->traerAsesores();
+$cadRef33 = '<option value="">-- Seleccionar --</option>';
+$cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' ');
+
 ?>
 
 <!DOCTYPE html>
@@ -198,6 +202,20 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 										</div>
 									</div>
 								</div>
+
+							<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 14) || ($_SESSION['idroll_sahilices'] == 15)) { ?>
+								<div class="row">
+									<div class="col-lg-12 col-md-12">
+										<?php echo $serviciosFunciones->addInput('3,3,3,6','text','fechadesde_filtro','fechadesde_filtro','datepicker', 'Fecha Desde'); ?>
+										<?php echo $serviciosFunciones->addInput('3,3,3,6','text','fechahasta_filtro','fechadesde_filtro','datepicker', 'Fecha Hasta'); ?>
+										<?php echo $serviciosFunciones->addInput('3,3,3,6','select','agente_filtro','agente_filtro','', 'Agente','',$cadRef33); ?>
+
+									</div>
+									<div class="col-lg-12 col-md-12">
+										<button type="button" class="btn bg-red" id="filtrar">Filtrar</button>
+									</div>
+								</div>
+							<?php } ?>
 
 
 								<div class="row contIniciada" style="padding: 5px 20px;">
@@ -491,6 +509,40 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 <script>
 	$(document).ready(function(){
 
+		$('#fechadesde_filtro').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		});
+
+		$('#fechahasta_filtro').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		});
+
 		$('.frmContrefmotivorechazopoliza').hide();
 
 		$('.contHistorico').hide();
@@ -544,6 +596,16 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=ventas",
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+				/* Add some extra data to the sender */
+				aoData.push( { "name": "start", "value": $('#fechadesde_filtro').val(), } );
+				aoData.push( { "name": "end", "value": $('#fechahasta_filtro').val(), } );
+				aoData.push( { "name": "agente", "value": $('#agente_filtro').val(), } );
+				$.getJSON( sSource, aoData, function (json) {
+				/* Do whatever additional processing you want on the callback, then tell DataTables */
+				fnCallback(json)
+				} );
+			},
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -573,6 +635,16 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=ventasiniciadas",
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+				/* Add some extra data to the sender */
+				aoData.push( { "name": "start", "value": $('#fechadesde_filtro').val(), } );
+				aoData.push( { "name": "end", "value": $('#fechahasta_filtro').val(), } );
+				aoData.push( { "name": "agente", "value": $('#agente_filtro').val(), } );
+				$.getJSON( sSource, aoData, function (json) {
+				/* Do whatever additional processing you want on the callback, then tell DataTables */
+				fnCallback(json)
+				} );
+			},
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -602,6 +674,16 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=ventashistorico",
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+				/* Add some extra data to the sender */
+				aoData.push( { "name": "start", "value": $('#fechadesde_filtro').val(), } );
+				aoData.push( { "name": "end", "value": $('#fechahasta_filtro').val(), } );
+				aoData.push( { "name": "agente", "value": $('#agente_filtro').val(), } );
+				$.getJSON( sSource, aoData, function (json) {
+				/* Do whatever additional processing you want on the callback, then tell DataTables */
+				fnCallback(json)
+				} );
+			},
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -626,6 +708,12 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 				}
 			}
 		});
+
+		$('#filtrar').click( function() {
+			table.draw();
+			table5.draw();
+			table6.draw();
+		} );
 
 
 		var table2 = $('#example2').DataTable({

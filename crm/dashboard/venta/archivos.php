@@ -327,6 +327,22 @@ if (($refEstadoCotizacion == 20)) {
 $resClientes = $serviciosReferencias->traerClientesPorId($idCliente);
 
 
+/// creo el documento pdf
+// creo el archivo grande
+// pregunto rpimero si existe.
+$pathSolcitud  = '../../archivos/solicitudes/cotizaciones/'.$id;
+
+if (!file_exists($pathSolcitud)) {
+	mkdir($pathSolcitud, 0777);
+}
+
+$filesSolicitud = array_diff(scandir($pathSolcitud), array('.', '..'));
+if (count($filesSolicitud) < 1) {
+	//die(var_dump(__DIR__));
+	require ('../../reportes/rptFTodos.php');
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -359,6 +375,9 @@ $resClientes = $serviciosReferencias->traerClientesPorId($idCliente);
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.bootstrap.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.jqueryui.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.css">
+
+	<script src="https://unpkg.com/pdf-lib@1.4.0"></script>
+	<script src="https://unpkg.com/downloadjs@1.4.7"></script>
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
@@ -423,6 +442,7 @@ $resClientes = $serviciosReferencias->traerClientesPorId($idCliente);
 		            <h4 class="my-0 font-weight-normal">Resumen del Pedido: <?php echo mysql_result($resultado,0,'producto'); ?></h4>
 		          </div>
 		          <div class="body table-responsive">
+						<input type="hidden" name="merge_solicitud" id="merge_solicitud" value="" />
 						 <div class="text-center">
 							 <!-- <h1 class="display-4">Adjunta los archivos solicitados</h1> -->
 
@@ -751,7 +771,75 @@ $resClientes = $serviciosReferencias->traerClientesPorId($idCliente);
 
 
 <script>
+	const { PDFDocument } = PDFLib
 	$(document).ready(function(){
+
+		<?php
+
+			if ($cargados == $i) { ?>
+			async function copyPages() {
+				const url1 = '<?php echo '../../archivos/solicitudes/cotizaciones/'.$id.'/FSOLICITUDAC.pdf'; ?>'
+
+				const firstDonorPdfBytes = await fetch(url1).then(res => res.arrayBuffer())
+
+				const pdfA = await PDFDocument.load(firstDonorPdfBytes);
+
+				const pdfDoc = await PDFDocument.create();
+
+				const copiedPagesA = await pdfDoc.copyPages(pdfA, pdfA.getPageIndices());
+		      copiedPagesA.forEach((page) => pdfDoc.addPage(page));
+
+			<?php
+				$documentacionesrequeridas = $serviciosReferencias->traerDocumentacionPorClienteDocumentacionCompletaIn($idCliente,'3,4');
+				$ii = 1;
+				while ($rowD = mysql_fetch_array($documentacionesrequeridas)) {
+					$ii += (integer)1;
+					if (strpos( strtolower($rowD['type']),"pdf") !== false) {
+						echo "const url".$ii." = '".'../../archivos/clientes/'.$idCliente.'/'.$rowD['carpeta'].'/'.$rowD['archivo']."'\n";
+
+						echo "const firstDonorPdfBytes".$ii." = await fetch(url".$ii.").then(res => res.arrayBuffer())\n";
+						echo "const pdfA".$ii." = await PDFDocument.load(firstDonorPdfBytes".$ii.")\n";
+
+						echo "const copiedPagesA".$ii." = await pdfDoc.copyPages(pdfA".$ii.", pdfA".$ii.".getPageIndices());
+				      copiedPagesA".$ii.".forEach((page) => pdfDoc.addPage(page));\n";
+
+					} else {
+
+						if (strpos( strtolower($rowD['type']),"png") !== false) {
+
+						} else {
+							echo "const jpgUrl".$ii." = '".'../../archivos/clientes/'.$idCliente.'/'.$rowD['carpeta'].'/'.$rowD['archivo']."'\n";
+
+							echo "const jpgImageBytes".$ii." = await fetch(jpgUrl".$ii.").then((res) => res.arrayBuffer())\n";
+
+							echo "const jpgImage".$ii." = await pdfDoc.embedJpg(jpgImageBytes".$ii.")\n";
+
+							echo "const jpgDims".$ii." = jpgImage".$ii.".scale(0.5)\n";
+
+					      echo "const page = pdfDoc.addPage()\n";
+
+							echo "page.drawImage(jpgImage".$ii.", {
+					         x: page.getWidth() / 2 - jpgDims".$ii.".width / 2,
+					         y: page.getHeight() / 2 - jpgDims".$ii.".height / 2 + 100,
+					         width: jpgDims".$ii.".width,
+					         height: jpgDims".$ii.".height,
+					      })\n";
+
+
+						}
+
+					}
+
+				}
+
+		?>
+				const pdfBytes = await pdfDoc.save()
+
+				const pdfDataUri = await pdfDoc.saveAsBase64();
+				document.getElementById('merge_solicitud').value = await pdfDataUri;
+			}
+			copyPages()
+		<?php } ?>
 
 		function traerImagen(contenedorpdf, contenedor) {
 			$.ajax({
@@ -887,7 +975,18 @@ $resClientes = $serviciosReferencias->traerClientesPorId($idCliente);
 
 		$('#btnConfirmar3').click(function() {
 			if (($('#reftipoidentificacion').val() != 0) && ($('#nroidentificacion').val().length > 6)) {
-				ineCargadoCotizacion();
+				if ($('#merge_solicitud').val() == '') {
+					swal({
+							title: "Respuesta",
+							text: 'Por favor ingrese espere unos segundos y vuelva a intentarlo',
+							type: "error",
+							timer: 2500,
+							showConfirmButton: false
+					});
+				} else {
+					ineCargadoCotizacion();
+				}
+
 			} else {
 
 				swal({
@@ -911,7 +1010,8 @@ $resClientes = $serviciosReferencias->traerClientesPorId($idCliente);
 					accion: 'ineCargadoCotizacion',
 					id: <?php echo $id; ?>,
 					reftipoidentificacion: $('#reftipoidentificacion').val(),
-					nroidentificacion: $('#nroidentificacion').val()
+					nroidentificacion: $('#nroidentificacion').val(),
+					merge_solicitud: $('#merge_solicitud').val()
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){

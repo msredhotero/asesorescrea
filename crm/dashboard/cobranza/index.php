@@ -226,7 +226,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 											<tr>
 												<th>Cliente</th>
 												<th>Nro Poliza</th>
-												<th>Fecha Pago</th>
+												<th>Fecha Vencimiento</th>
 												<th>Nro Cliente</th>
 												<th>Id Cliente Inbursa</th>
 												<th>Nro Recibo</th>
@@ -239,7 +239,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 											<tr>
 												<th>Cliente</th>
 												<th>Nro Poliza</th>
-												<th>Fecha Pago</th>
+												<th>Fecha Vencimiento</th>
 												<th>Nro Cliente</th>
 												<th>Id Cliente Inbursa</th>
 												<th>Nro Recibo</th>
@@ -259,7 +259,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 											<tr>
 												<th>Cliente</th>
 												<th>Nro Poliza</th>
-												<th>Fecha Pago</th>
+												<th>Fecha Vencimiento</th>
 												<th>Nro Cliente</th>
 												<th>Id Cliente Inbursa</th>
 												<th>Nro Recibo</th>
@@ -272,7 +272,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 											<tr>
 												<th>Cliente</th>
 												<th>Nro Poliza</th>
-												<th>Fecha Pago</th>
+												<th>Fecha Vencimiento</th>
 												<th>Nro Cliente</th>
 												<th>Id Cliente Inbursa</th>
 												<th>Nro Recibo</th>
@@ -289,7 +289,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 											<tr>
 												<th>Cliente</th>
 												<th>Nro Poliza</th>
-												<th>Fecha Pago</th>
+												<th>Fecha Vencimiento</th>
 												<th>Nro Cliente</th>
 												<th>Id Cliente Inbursa</th>
 												<th>Nro Recibo</th>
@@ -302,7 +302,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 											<tr>
 												<th>Cliente</th>
 												<th>Nro Poliza</th>
-												<th>Fecha Pago</th>
+												<th>Fecha Vencimiento</th>
 												<th>Nro Cliente</th>
 												<th>Id Cliente Inbursa</th>
 												<th>Nro Recibo</th>
@@ -322,7 +322,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 												<tr>
 													<th>Cliente</th>
 													<th>Nro Poliza</th>
-													<th>Fecha Pago</th>
+													<th>Fecha Vencimiento</th>
 													<th>Nro Cliente</th>
 													<th>Id Cliente Inbursa</th>
 													<th>Nro Recibo</th>
@@ -335,7 +335,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 												<tr>
 													<th>Cliente</th>
 													<th>Nro Poliza</th>
-													<th>Fecha Pago</th>
+													<th>Fecha Vencimiento</th>
 													<th>Nro Cliente</th>
 													<th>Id Cliente Inbursa</th>
 													<th>Nro Recibo</th>
@@ -671,6 +671,8 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 						$('.frmAjaxModificar .frmContfechamodi').hide();
 						$('.frmAjaxModificar .frmContrefformapago').hide();
 						$('.frmAjaxModificar .frmContfechapagoreal').hide();
+
+						$('.frmAjaxModificar .frmContfechapago').hide();
 
 						$('.frmAjaxModificar #primaneta').number( true, 2 ,'.','');
 						$('.frmAjaxModificar #montototal').number( true, 2,'.','' );

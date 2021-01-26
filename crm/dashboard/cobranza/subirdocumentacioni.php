@@ -381,16 +381,24 @@ switch ($_SESSION['idroll_sahilices']) {
 		$puedeBorrar = 0;
 	break;
 	case 17:
-		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '40,41');
-		$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '40,41');
+		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '38,40,41');
+		$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '38,40,41');
 		$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionDetalle($id, 39);
 		$puedeBorrar = 0;
+
+		IF ($iddocumentacion == 38) {
+			$puedeCargarDocumentaciones = 0;
+		}
 	break;
 	case 18:
-		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '40,41');
-		$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '40,41');
+		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '38,40,41');
+		$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '38,40,41');
 		$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionDetalle($id, 39);
 		$puedeBorrar = 0;
+
+		IF ($iddocumentacion == 38) {
+			$puedeCargarDocumentaciones = 0;
+		}
 	break;
 	default:
 
@@ -481,7 +489,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 
 		while ($rowPV = mysql_fetch_array($resPV)) {
 			if ($idproductoventa == $rowPV['idproducto']) {
-				$lblProducto .= ' <li class="list-group-item"><b>'.$rowPV['producto'].' $ '.$rowPV['primatotal'].' (Aplicar)<b/></li>';
+				$lblProducto .= ' <li class="list-group-item">'.'<b>'.$rowPV['producto'].' $ '.$rowPV['primatotal'].' (Aplicar)'.'</b>'.'</li>';
 			} else {
 				$lblProducto .= ' <li class="list-group-item"> '.$rowPV['producto'].' $ '.$rowPV['primatotal'].'</li>';
 			}
@@ -753,6 +761,32 @@ if (mysql_num_rows($resPaquete) > 0) {
 							</div>
 
 							<form class="forrmm" role="form" id="sign_in">
+
+								<?php if ($puedeBorrar == 1) { ?>
+								<div class="row">
+									<div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 frmContfechapagorecibo" >
+										<label for="fechapagorecibo" class="control-label" style="text-align:left">Fecha Pago del Recibo</label>
+										<div class="form-group input-group">
+											<span class="input-group-addon">
+												<i class="material-icons">date_range</i>
+											</span>
+										   <div class="form-line">
+												<input readonly="readonly" style="width:200px;" type="text" class="datepicker form-control" id="fechapagorecibo" name="fechapagorecibo" />
+
+
+										   </div>
+										</div>
+
+									</div>
+									<div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 frmContguardar" >
+										<button type="button" class="btn bg-blue waves-effect btnGuardarFechaPago">
+											<i class="material-icons">save</i>
+											<span>GUARDAR</span>
+										</button>
+									</div>
+								</div>
+								<?php } ?>
+
 								<div class="row">
 									<?php if ($monto > $montoPagado) { ?>
 										<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
@@ -761,6 +795,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 										</button>
 									<?php } ?>
 								</div>
+
 								<div class="row">
 									<table id="example" class="display table  dataTable" style="width: 100%;" role="grid" aria-describedby="example_info">
 										<thead>
@@ -1305,10 +1340,14 @@ if (mysql_num_rows($resPaquete) > 0) {
 
 
 		$('.btnModificar').click(function() {
-			modificarVentaUnicaDocumentacion($('#<?php echo $campo; ?>').val());
+			modificarVentaUnicaDocumentacion('<?php echo $campo; ?>',$('#<?php echo $campo; ?>').val());
 		});
 
-		function modificarVentaUnicaDocumentacion(valor) {
+		$('.btnGuardarFechaPago').click(function() {
+			modificarVentaUnicaDocumentacion('fechapago',$('#fechapagorecibo').val());
+		});
+
+		function modificarVentaUnicaDocumentacion(campo,valor) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
@@ -1317,7 +1356,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 				data: {
 					accion: 'modificarVentaUnicaDocumentacion',
 					idventa: <?php echo $id; ?>,
-					campo: '<?php echo $campo; ?>',
+					campo: campo,
 					valor: valor
 				},
 				//mientras enviamos el archivo
@@ -1328,7 +1367,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 				success: function(data){
 
 					if (data.error == false) {
-						swal("Ok!", 'Se guardo correctamente el <?php echo $campo; ?>', "success");
+						swal("Ok!", 'Se guardo correctamente el ' + campo, "success");
 
 					} else {
 						swal("Error!", data.leyenda, "warning");
@@ -1343,6 +1382,59 @@ if (mysql_num_rows($resPaquete) > 0) {
 				}
 			});
 		}
+
+
+		function traerVentaUnicaDocumentacion(campo,contenedor) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'traerVentaUnicaDocumentacion',
+					id: <?php echo $id; ?>,
+					campo: campo
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error == false) {
+						$('#'+contenedor).val(data.valor);
+
+					} else {
+						$('#'+contenedor).val('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
+
+		traerVentaUnicaDocumentacion('fechapago','fechapagorecibo');
+
+		$('#fechapagorecibo').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		});
 
 		<?php while ($rowD = mysql_fetch_array($resDocumentacionesAux)) { ?>
 		$('.btnDocumentacion<?php echo $rowD['iddocumentacion']; ?>').click(function() {

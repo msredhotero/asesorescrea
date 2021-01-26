@@ -183,7 +183,7 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4)
 
 
 
-//die(var_dump($pertenceaVRIM));
+//die(var_dump($puedeConcluir));
 
 $idCotizacion = mysql_result($resVenta,0,'refcotizaciones');
 
@@ -337,6 +337,7 @@ switch ($iddocumentacion) {
 	break;
 }
 
+
 switch ($_SESSION['idroll_sahilices']) {
 	case 16:
 
@@ -352,16 +353,23 @@ switch ($_SESSION['idroll_sahilices']) {
 		$puedeBorrar = 0;
 	break;
 	case 17:
-		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '40,41');
-		$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '40,41');
+		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '38,40,41');
+		$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '38,40,41');
 		$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionDetalle($id, 39);
 		$puedeBorrar = 0;
+		IF ($iddocumentacion == 38) {
+			$puedeCargarDocumentaciones = 0;
+		}
 	break;
 	case 18:
-		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '40,41');
-		$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '40,41');
+		$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '38,40,41');
+		$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionCompletaDetalle($id, '38,40,41');
 		$resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacionDetalle($id, 39);
 		$puedeBorrar = 0;
+
+		IF ($iddocumentacion == 38) {
+			$puedeCargarDocumentaciones = 0;
+		}
 	break;
 	default:
 
@@ -439,8 +447,6 @@ $formularioAr = array();
 
 $lblProducto = '';
 
-$pertenceaVRIM = 0;
-
 //die(var_dump($idCotizacion));
 if (mysql_num_rows($resPaquete) > 0) {
 	$lblProducto = '<li class="list-group-item">'.mysql_result($resCotizacion,0,'producto').' $ '.mysql_result($resCotizacion,0,'primatotal').'</li>';
@@ -449,7 +455,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 
 	while ($rowPV = mysql_fetch_array($resPV)) {
 		if ($idproductoventa == $rowPV['idproducto']) {
-			$lblProducto .= ' <li class="list-group-item"><b>'.$rowPV['producto'].' $ '.$rowPV['primatotal'].' (Aplicar)<b/></li>';
+			$lblProducto .= ' <li class="list-group-item">'.'<b>'.$rowPV['producto'].' $ '.$rowPV['primatotal'].' (Aplicar)'.'</b>'.'</li>';
 		} else {
 			$lblProducto .= ' <li class="list-group-item"> '.$rowPV['producto'].' $ '.$rowPV['primatotal'].'</li>';
 		}
@@ -467,6 +473,8 @@ if (mysql_num_rows($resPaquete) > 0) {
 ////*** fin discriminar los productos *****///
 
 //die(var_dump($puedeCargarDocumentaciones));
+
+//die(var_dump($pertenceaVRIM));
 ?>
 
 <!DOCTYPE html>
@@ -611,6 +619,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 						<li class="list-group-item active">COMPROBANTE DE PAGO <?php echo $lblEstadoComprobante; ?></li>
 						<li><div id="example2"></div></li>
 					</ul>
+
 				</div>
 
 			</div>
@@ -652,19 +661,21 @@ if (mysql_num_rows($resPaquete) > 0) {
 					</div>
 				</div>
 			<?php } else { ?>
-				<?php if (($pertenceaVRIM == 1) && ($puedeConcluir == 1) && ($_SESSION['idroll_sahilices'] == 17)) { ?>
+
+				<?php if (($pertenceaVRIM == 2) && ($puedeConcluir == 1) && ($_SESSION['idroll_sahilices'] == 17)) { ?>
 				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 					<div class="info-box-3 bg-teal hover-zoom-effect btnCursor concluirProceso">
 						<div class="icon">
 							<i class="material-icons">done_all</i>
 						</div>
 						<div class="content">
-							<div class="text">DAR CLICK PARA CONCLUIR</div>
-							<div class="number">CONCLUIR PROCESO</div>
+							<div class="text">HABILITAR CARGA COBRANZA VRIM</div>
+							<div class="number">PAGADO</div>
 						</div>
 					</div>
 				</div>
-				<?php } ?>
+			<?php }  ?>
+
 			<?php } ?>
 
 			</div>

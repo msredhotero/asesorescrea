@@ -3547,7 +3547,7 @@ return $res;
                      $cadValorRespuesta = '';
                   }
 
-                  $cadInput .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+                  $cadInput .= '<div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 frmContrespuesta" style="display:block">
 
                      <div class="form-group input-group">
                         <div class="demo-radio-button">
@@ -4967,13 +4967,13 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or p.nrorecibo like '%".$busqueda."%')";
+			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.razonsocial like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or p.nrorecibo like '%".$busqueda."%')";
 		}
 
 
 		$sql = "select
 						p.idperiodicidadventadetalle,
-						concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+						(case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
 						ve.nropoliza,
 						p.fechavencimiento,
 						cli.numerocliente,
@@ -4985,7 +4985,6 @@ return $res;
 						p.porcentajecomision,
 						p.montocomision,
 						p.fechapago,
-						p.fechavencimiento,
 						est.estadopago,
 						p.nrorecibo,
 						ea.estadoasesor,
@@ -5098,13 +5097,13 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or p.nrorecibo like '%".$busqueda."%' or est.estadopago like '%".$busqueda."%')";
+			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.razonsocial like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or p.nrorecibo like '%".$busqueda."%' or est.estadopago like '%".$busqueda."%')";
 		}
 
 
 		$sql = "select
 						p.idperiodicidadventadetalle,
-						concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+						(case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
 						ve.nropoliza,
 						p.fechavencimiento,
 						cli.numerocliente,
@@ -5422,15 +5421,15 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or p.nrorecibo like '%".$busqueda."%')";
+			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.razonsocial like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or p.nrorecibo like '%".$busqueda."%')";
 		}
 
 
 		$sql = "select
 						p.idperiodicidadventadetalle,
-						concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+						(case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
 						ve.nropoliza,
-						p.fechapago,
+						p.fechavencimiento,
 						cli.numerocliente,
 						cli.idclienteinbursa,
 						p.nrorecibo,
@@ -5483,7 +5482,7 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or p.nrorecibo like '%".$busqueda."%')";
+			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.razonsocial like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or p.nrorecibo like '%".$busqueda."%')";
 		}
 
       $cadRR = '';
@@ -5494,9 +5493,9 @@ return $res;
 
 		$sql = "select
 						p.idperiodicidadventadetalle,
-						concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+						(case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
 						ve.nropoliza,
-						p.fechapago,
+						p.fechavencimiento,
 						cli.numerocliente,
 						cli.idclienteinbursa,
 						p.nrorecibo,
@@ -5520,9 +5519,18 @@ return $res;
 		inner join dbperiodicidadventas per ON per.idperiodicidadventa = p.refperiodicidadventas
       inner join dbperiodicidadventaspagos pg on pg.refperiodicidadventasdetalle = p.idperiodicidadventadetalle and pg.avisoinbursa = '1'
 		inner join dbventas ve ON ve.idventa = per.refventas
-      inner join dbcotizaciones co on co.idcotizacion = ve.refcotizaciones
-         inner join
-   	tbproductos pp on (case when ve.refproductosaux = 0 then pp.idproducto = co.refproductos else pp.idproducto = ve.refproductosaux end)
+      inner join dbcotizaciones co on co.idcotizacion = ve.refcotizaciones";
+
+      if ($_SESSION['idroll_sahilices'] == 17) {
+         $sql .= " inner join
+   	tbproductos pp on pp.idproducto = ve.refproductosaux ";
+      } else {
+         $sql .= " inner join
+   	tbproductos pp on (case when ve.refproductosaux = 0 then pp.idproducto = co.refproductos else pp.idproducto = ve.refproductosaux end) ";
+      }
+
+
+      $sql .= "
    		inner join
    	tbtipoproductorama tr on tr.idtipoproductorama = pp.reftipoproductorama and tr.idtipoproductorama = 12
       inner join dbclientes cli on cli.idcliente = co.refclientes
@@ -6202,6 +6210,12 @@ return $res;
 
 	function traerPeriodicidadventasdetallePorId($id) {
 		$sql = "select idperiodicidadventadetalle,refperiodicidadventas,montototal,primaneta,porcentajecomision,montocomision,fechapago,fechavencimiento,refestadopago,usuariocrea,usuariomodi,fechacrea,fechamodi,nrorecibo,fechapagoreal,refformapago from dbperiodicidadventasdetalle where idperiodicidadventadetalle =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function traerVentaUnicaDocumentacion($campo,$id) {
+		$sql = "select ".$campo." from dbperiodicidadventasdetalle where idperiodicidadventadetalle =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -7001,7 +7015,7 @@ return $res;
 	}
 
 
-   function traerVentasIniciadasajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial) {
+   function traerVentasIniciadasajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,$agente) {
 		$where = '';
 
 		$roles = '';
@@ -7011,6 +7025,24 @@ return $res;
 	   } else {
 	      $roles = '';
 	   }
+
+      $cadFecha = '';
+		if ($min != '' && $max != '') {
+			$cadFecha = " and c.fechacrea between '".$min."' and '".$max."' ";
+		} else {
+			if ($min != '' && $max == '') {
+				$cadFecha = " and c.fechacrea >= '".$min."' ";
+			} else {
+				if ($min == '' && $max != '') {
+					$cadFecha = " and c.fechacrea <= '".$max."' ";
+				}
+			}
+		}
+
+		$cadAgente = '';
+		if ($agente != '') {
+			$cadAgente = " and ase.idasesor =".$agente.' ';
+		}
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
@@ -7064,7 +7096,7 @@ return $res;
       inner join dbventas v on v.refcotizaciones = vf.refcotizaciones and v.version = vf.version and v.refproductosaux = vf.refproductosaux
       left join dbrenovaciones rn ON rn.refventas = v.idventa
 
-		where v.refestadoventa = 6 and (rn.idrenovacion is null or (CURDATE() > v.vigenciadesde and rn.idrenovacion is not null)) ".$where."
+		where v.refestadoventa = 6 and (rn.idrenovacion is null or (CURDATE() > v.vigenciadesde and rn.idrenovacion is not null)) ".$where.$cadFecha.$cadAgente."
 
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
@@ -7150,7 +7182,7 @@ return $res;
 	}
 
 
-   function traerVentasHistoricoajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial) {
+   function traerVentasHistoricoajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,$agente) {
 		$where = '';
 
 		$roles = '';
@@ -7160,6 +7192,24 @@ return $res;
 	   } else {
 	      $roles = '';
 	   }
+
+      $cadFecha = '';
+		if ($min != '' && $max != '') {
+			$cadFecha = " and c.fechacrea between '".$min."' and '".$max."' ";
+		} else {
+			if ($min != '' && $max == '') {
+				$cadFecha = " and c.fechacrea >= '".$min."' ";
+			} else {
+				if ($min == '' && $max != '') {
+					$cadFecha = " and c.fechacrea <= '".$max."' ";
+				}
+			}
+		}
+
+		$cadAgente = '';
+		if ($agente != '') {
+			$cadAgente = " and ase.idasesor =".$agente.' ';
+		}
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
@@ -7212,7 +7262,7 @@ return $res;
       inner join dbventas v on v.refcotizaciones = vf.refcotizaciones and v.version = vf.version and v.refproductosaux = vf.refproductosaux
       inner join tbestadoventa ev on ev.idestadoventa = v.refestadoventa
 
-		where v.refestadoventa in (2,3,4,5) ".$where."
+		where v.refestadoventa in (2,3,4,5) ".$where.$cadFecha.$cadAgente."
 
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
@@ -7224,7 +7274,7 @@ return $res;
 	}
 
 
-	function traerVentasajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial) {
+	function traerVentasajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,$agente) {
 		$where = '';
 
 		$roles = '';
@@ -7234,6 +7284,24 @@ return $res;
 	   } else {
 	      $roles = '';
 	   }
+
+      $cadFecha = '';
+		if ($min != '' && $max != '') {
+			$cadFecha = " and c.fechacrea between '".$min."' and '".$max."' ";
+		} else {
+			if ($min != '' && $max == '') {
+				$cadFecha = " and c.fechacrea >= '".$min."' ";
+			} else {
+				if ($min == '' && $max != '') {
+					$cadFecha = " and c.fechacrea <= '".$max."' ";
+				}
+			}
+		}
+
+		$cadAgente = '';
+		if ($agente != '') {
+			$cadAgente = " and ase.idasesor =".$agente.' ';
+		}
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
@@ -7295,7 +7363,7 @@ return $res;
             inner join tbtipocobranza tcc on tcc.idtipocobranza = pv.reftipocobranza
               INNER JOIN
           dbperiodicidadventasdetalle pvd ON pvd.refperiodicidadventas = pv.idperiodicidadventa
-      where v.refestadoventa = 1 ".$where."
+      where v.refestadoventa = 1 ".$where.$cadFecha.$cadAgente."
       GROUP BY v.idventa , cli.apellidopaterno , cli.apellidomaterno , cli.nombre , v.refproductosaux , pro.producto , ase.apellidopaterno , ase.apellidomaterno ,
       ase.nombre , aso.apellidopaterno , aso.apellidomaterno , aso.nombre , v.primaneta , v.primatotal , v.foliotys , v.fechavencimientopoliza , v.nropoliza ,
       est.estadocotizacion , v.foliointerno , c.refclientes , c.refproductos , c.refasesores , c.refasociados , c.refestadocotizaciones , c.observaciones ,
@@ -7392,7 +7460,7 @@ return $res;
       inner join tbproductos p on p.idproducto = v.refproductosaux
       where v.idventa not in (select rn.nuevaventa from dbventas v
       inner join dbrenovaciones rn on rn.refventas = v.idventa
-      where v.refcotizaciones =".$id.") and v.refcotizaciones = ".$id;
+      where v.refcotizaciones =".$id.") and v.refcotizaciones = ".$id." order by 1 desc";
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -10087,7 +10155,11 @@ return $res;
  		return $res;
 	}
 
-   function traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($idcotizacion,$tipodocumentacion) {
+   function traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($idcotizacion,$tipodocumentacion,$notin = '') {
+
+      if ($notin != '') {
+         $cadNotIn = $notin;
+      }
 		$sql = "SELECT
 					    d.iddocumentacion,
 					    d.documentacion,

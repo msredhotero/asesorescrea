@@ -1332,9 +1332,31 @@ switch ($accion) {
    case 'prueba':
       prueba($serviciosReferencias);
    break;
+   case 'traerVentaUnicaDocumentacion':
+      traerVentaUnicaDocumentacion($serviciosReferencias);
+   break;
 
 }
 /* FinFinFin */
+
+function traerVentaUnicaDocumentacion($serviciosReferencias) {
+   $campo = $_POST['campo'];
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->traerVentaUnicaDocumentacion($campo, $id);
+
+   if (mysql_num_rows($res) > 0) {
+      $resV['error'] = false;
+      $resV['valor'] = mysql_result($res,0,0);
+   } else {
+      $resV['error'] = true;
+
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
 
 function prueba($serviciosReferencias) {
    $archivo = $_POST['archivo'];
@@ -3042,39 +3064,75 @@ function ineCargadoCotizacion($serviciosReferencias) {
    $reftipoidentificacion = $_POST['reftipoidentificacion'];
    $nroidentificacion = $_POST['nroidentificacion'];
 
-   $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+   $resV['error'] = false;
 
-   $idProducto = mysql_result($resCotizaciones,0,'refproductos');
+   if (isset($_POST['merge_solicitud'])) {
 
-   $resProducto = $serviciosReferencias->traerProductosPorId($idProducto);
+      $archivo = $_POST['merge_solicitud'];
 
-   $consolicitud = mysql_result($resProducto,0,'consolicitud');
+      if ($archivo == '') {
+         $resV['error'] = true;
+         $resV['mensaje'] = 'no hay archivos';
+      } else {
+         $resV['error'] = false;
+         $resV['mensaje'] = 'entro';
 
-   if ($consolicitud == '1') {
-      $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',21,$_SESSION['usua_sahilices']);
-   } else {
-      if (isset($_SESSION['token_ac'])) {
-         $resModToken = $serviciosReferencias->modificarTokenasesoresEstado($_SESSION['token_ac'],2);
+         $gestor = fopen('base64pdf.txt', 'w');
+         fwrite($gestor, $archivo);
+         fclose($gestor);
+
+         $pdf_base64 = "base64pdf.txt";
+         //Get File content from txt file
+         $pdf_base64_handler = fopen($pdf_base64,'r');
+         $pdf_content = fread ($pdf_base64_handler,filesize($pdf_base64));
+         fclose ($pdf_base64_handler);
+         //Decode pdf content
+         $pdf_decoded = base64_decode ($pdf_content);
+         //Write data back to pdf file
+         $pdf = fopen ('../archivos/solicitudes/cotizaciones/'.$id.'/FSOLICITUDAC.pdf','w');
+         fwrite ($pdf,$pdf_decoded);
+         //close output file
+         fclose ($pdf);
       }
-      $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',12,$_SESSION['usua_sahilices']);
-
-      $resEstado2 = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',4,$_SESSION['usua_sahilices']);
+   } else {
+      $resV['error'] = false;
    }
 
+   if ($resV['error'] == false) {
+      $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+
+      $idProducto = mysql_result($resCotizaciones,0,'refproductos');
+
+      $resProducto = $serviciosReferencias->traerProductosPorId($idProducto);
+
+      $consolicitud = mysql_result($resProducto,0,'consolicitud');
+
+      if ($consolicitud == '1') {
+         $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',21,$_SESSION['usua_sahilices']);
+      } else {
+         if (isset($_SESSION['token_ac'])) {
+            $resModToken = $serviciosReferencias->modificarTokenasesoresEstado($_SESSION['token_ac'],2);
+         }
+         $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',12,$_SESSION['usua_sahilices']);
+
+         $resEstado2 = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',4,$_SESSION['usua_sahilices']);
+      }
 
 
 
-   $idcliente = mysql_result($resCotizaciones,0,'refclientes');
 
-   $resTI = $serviciosReferencias->modificarClienteUnicaDocumentacion($idcliente, 'reftipoidentificacion', $reftipoidentificacion);
-   $resI = $serviciosReferencias->modificarClienteUnicaDocumentacion($idcliente, 'nroidentificacion', $nroidentificacion);
+      $idcliente = mysql_result($resCotizaciones,0,'refclientes');
 
-   if ($resEstado) {
-      $resV['error'] = false;
+      $resTI = $serviciosReferencias->modificarClienteUnicaDocumentacion($idcliente, 'reftipoidentificacion', $reftipoidentificacion);
+      $resI = $serviciosReferencias->modificarClienteUnicaDocumentacion($idcliente, 'nroidentificacion', $nroidentificacion);
 
-   } else {
-      $resV['error'] = true;
-      $resV['mensaje'] = 'Se genero un error al modificar los datos, vuelva a intentarlo';
+      if ($resEstado) {
+         $resV['error'] = false;
+
+      } else {
+         $resV['error'] = true;
+         $resV['mensaje'] = 'Se genero un error al modificar los datos, vuelva a intentarlo';
+      }
    }
 
    header('Content-type: application/json');
@@ -5394,23 +5452,29 @@ function cuestionario($serviciosReferencias) {
 
          if ($valor['leyenda'] != '') {
            $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-6" style="display:block; float:left;">
               <h4><span>'.($valor['pregunta']).'</span> <i class="material-icons" style="color:grey;" data-toggle="tooltip" data-placement="top" title="'.($valor['leyenda']).'">help</i></h4>
               <input type="hidden" value="'.$valor['idpregunta'].'" name="rulesPregunta'.$valor['idpregunta'].'" id="rulesPregunta'.$valor['idpregunta'].'"/>
-           </div>';
+            </div>
+           ';
+           //</div>
          } else {
            $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-6" style="display:block; float:left;">
               <h4>'.($valor['pregunta']).'</h4>
               <input type="hidden" value="'.$valor['idpregunta'].'" name="rulesPregunta'.$valor['idpregunta'].'" id="rulesPregunta'.$valor['idpregunta'].'"/>
-           </div>';
+            </div>
+           ';
+           //</div>
          }
 
-         $cad .= ($valor['respuestas']);
+         $cad .= '<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 right" style="display:block; float:right;">'.($valor['respuestas']).'</div>';
 
          /*$cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
             <h4>Pregunta</h4>
          </div>';
          $cad .= 'Respuesta';*/
-         $cad .= '</div>';
+         $cad .= '</div></div>';
 
       }
       //echo die(var_dump($res['rules']));

@@ -511,7 +511,8 @@ if (mysql_result($resProductos,0,'reftipoproductorama') == 12) {
 		$('.frmAjaxNuevo #montocomision').number( true, 2,'.','' );
 		$('.frmAjaxNuevo #porcentajecomision').number( true, 2,'.','' );
 
-		$('.frmAjaxNuevo #fechapago').val('<?php echo $fechapago; ?>');
+		$('.frmAjaxNuevo .frmContfechapago').hide();
+		$('.frmAjaxNuevo #fechapago').val('');
 		$('.frmAjaxNuevo #fechavencimiento').val('<?php echo $fechavencimiento; ?>');
 
 		$('.frmAjaxNuevo #primaneta').val('<?php echo $primaneta; ?>');

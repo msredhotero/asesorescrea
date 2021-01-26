@@ -668,7 +668,12 @@ switch ($tabla) {
 
 	case 'cobranzavrim':
 
-		$estados = $_GET['estados'];
+		if ($_SESSION['idroll_sahilices'] == 17) {
+			$estados = '2,8';
+		} else {
+			$estados = $_GET['estados'];
+		}
+
 
 		$datos = $serviciosReferencias->traerCobranzaVRIMajax($length, $start, $busqueda,$colSort,$colSortDir,$estados);
 
@@ -858,6 +863,10 @@ switch ($tabla) {
 
 	case 'ventas':
 
+		$min = $_GET['start'];
+		$max = $_GET['end'];
+		$agente = $_GET['agente'];
+
 		if ($_SESSION['idroll_sahilices'] == 7) {
 
 			$datos = $serviciosReferencias->traerVentasajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
@@ -872,7 +881,7 @@ switch ($tabla) {
 
 			$responsableComercial = $_GET['sSearch_0'];
 
-			$datos = $serviciosReferencias->traerVentasajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial);
+			$datos = $serviciosReferencias->traerVentasajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,$agente);
 
 			$resAjax = $datos[0];
 			$res = $datos[1];
@@ -923,6 +932,10 @@ switch ($tabla) {
 
 	case 'ventasiniciadas':
 
+		$min = $_GET['start'];
+		$max = $_GET['end'];
+		$agente = $_GET['agente'];
+
 		if ($_SESSION['idroll_sahilices'] == 7) {
 
 			$datos = $serviciosReferencias->traerVentasajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
@@ -937,7 +950,7 @@ switch ($tabla) {
 
 			$responsableComercial = $_GET['sSearch_0'];
 
-			$datos = $serviciosReferencias->traerVentasIniciadasajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial);
+			$datos = $serviciosReferencias->traerVentasIniciadasajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,$agente);
 
 			$resAjax = $datos[0];
 			$res = $datos[1];
@@ -956,6 +969,10 @@ switch ($tabla) {
 
 	case 'ventashistorico':
 
+		$min = $_GET['start'];
+		$max = $_GET['end'];
+		$agente = $_GET['agente'];
+
 		if ($_SESSION['idroll_sahilices'] == 7) {
 
 			$datos = $serviciosReferencias->traerVentasajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
@@ -970,7 +987,7 @@ switch ($tabla) {
 
 			$responsableComercial = $_GET['sSearch_0'];
 
-			$datos = $serviciosReferencias->traerVentasHistoricoajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial);
+			$datos = $serviciosReferencias->traerVentasHistoricoajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,$agente);
 
 			$resAjax = $datos[0];
 			$res = $datos[1];

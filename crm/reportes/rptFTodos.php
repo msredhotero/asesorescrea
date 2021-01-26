@@ -1203,7 +1203,7 @@ while ($row = mysql_fetch_array($resReferencias)) {
 /////////////////////////////////// INE //////////////////////////////////////////////
 $documentacionesrequeridas = $serviciosReferencias->traerDocumentacionPorClienteDocumentacionCompletaIn($idCliente,'3,4');
 
-
+/*
 while ($rowD = mysql_fetch_array($documentacionesrequeridas)) {
    $pdf->AddPage();
 
@@ -1236,7 +1236,7 @@ while ($rowD = mysql_fetch_array($documentacionesrequeridas)) {
 
 
 }
-
+*/
 
 ////////////////////////////// FIN DEL INE //////////////////////////////////////////
 

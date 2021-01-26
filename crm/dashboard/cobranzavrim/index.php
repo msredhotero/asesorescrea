@@ -179,7 +179,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 												<span>PENDIENTES DE PAGO</span>
 											</button>
 										<?php } else {  ?>
-											<?php if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 18)) { ?>
+											<?php if ($_SESSION['idroll_sahilices'] == 18) { ?>
 											<button type="button" class="btn bg-green waves-effect btnHistorico">
 												<i class="material-icons">history</i>
 												<span>PAGO DIRECTO</span>
@@ -192,6 +192,18 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 												<i class="material-icons">assignment_late</i>
 												<span>DEVOLUCIONES</span>
 											</button>
+
+										<?php } else {  ?>
+											<?php if ($_SESSION['idroll_sahilices'] == 17) { ?>
+												<button type="button" class="btn bg-teal waves-effect btnHistoricoAux">
+													<i class="material-icons">check_circle</i>
+													<span>PAGO DE INBURSA</span>
+												</button>
+												<button type="button" class="btn bg-red waves-effect btnDevueltos">
+													<i class="material-icons">assignment_late</i>
+													<span>DEVOLUCIONES</span>
+												</button>
+
 
 
 										<?php } else { ?>
@@ -214,7 +226,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 												<span>PENDIENTES DE VALIDAR</span>
 											</button>
 
-										<?php } } ?>
+										<?php } } } ?>
 
 
 										</div>
@@ -230,7 +242,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 											<tr>
 												<th>Cliente</th>
 												<th>Nro Poliza</th>
-												<th>Fecha Pago</th>
+												<th>Fecha Vencimiento</th>
 												<th>Nro Cliente</th>
 												<th>Id Cliente Inbursa</th>
 												<th>Nro Recibo</th>
@@ -243,7 +255,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 											<tr>
 												<th>Cliente</th>
 												<th>Nro Poliza</th>
-												<th>Fecha Pago</th>
+												<th>Fecha Vencimiento</th>
 												<th>Nro Cliente</th>
 												<th>Id Cliente Inbursa</th>
 												<th>Nro Recibo</th>
@@ -263,7 +275,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 											<tr>
 												<th>Cliente</th>
 												<th>Nro Poliza</th>
-												<th>Fecha Pago</th>
+												<th>Fecha Vencimiento</th>
 												<th>Nro Cliente</th>
 												<th>Id Cliente Inbursa</th>
 												<th>Nro Recibo</th>
@@ -276,7 +288,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 											<tr>
 												<th>Cliente</th>
 												<th>Nro Poliza</th>
-												<th>Fecha Pago</th>
+												<th>Fecha Vencimiento</th>
 												<th>Nro Cliente</th>
 												<th>Id Cliente Inbursa</th>
 												<th>Nro Recibo</th>
@@ -294,7 +306,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 											<tr>
 												<th>Cliente</th>
 												<th>Nro Poliza</th>
-												<th>Fecha Pago</th>
+												<th>Fecha Vencimiento</th>
 												<th>Nro Cliente</th>
 												<th>Id Cliente Inbursa</th>
 												<th>Nro Recibo</th>
@@ -307,7 +319,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 											<tr>
 												<th>Cliente</th>
 												<th>Nro Poliza</th>
-												<th>Fecha Pago</th>
+												<th>Fecha Vencimiento</th>
 												<th>Nro Cliente</th>
 												<th>Id Cliente Inbursa</th>
 												<th>Nro Recibo</th>
@@ -324,7 +336,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 											<tr>
 												<th>Cliente</th>
 												<th>Nro Poliza</th>
-												<th>Fecha Pago</th>
+												<th>Fecha Vencimiento</th>
 												<th>Nro Cliente</th>
 												<th>Id Cliente Inbursa</th>
 												<th>Nro Recibo</th>
@@ -337,7 +349,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 											<tr>
 												<th>Cliente</th>
 												<th>Nro Poliza</th>
-												<th>Fecha Pago</th>
+												<th>Fecha Vencimiento</th>
 												<th>Nro Cliente</th>
 												<th>Id Cliente Inbursa</th>
 												<th>Nro Recibo</th>
@@ -357,7 +369,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 												<tr>
 													<th>Cliente</th>
 													<th>Nro Poliza</th>
-													<th>Fecha Pago</th>
+													<th>Fecha Vencimiento</th>
 													<th>Nro Cliente</th>
 													<th>Id Cliente Inbursa</th>
 													<th>Nro Recibo</th>
@@ -370,7 +382,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 												<tr>
 													<th>Cliente</th>
 													<th>Nro Poliza</th>
-													<th>Fecha Pago</th>
+													<th>Fecha Vencimiento</th>
 													<th>Nro Cliente</th>
 													<th>Id Cliente Inbursa</th>
 													<th>Nro Recibo</th>
@@ -479,19 +491,33 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 			});
 		});
 
-		<?php if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 18)) { ?>
+		$('.contPagadosAux').hide();
+
+		<?php if ($_SESSION['idroll_sahilices'] == 18) { ?>
 			$('.contDevueltos').hide();
 			$('.contActuales').hide();
 
 		<?php } else {  ?>
 
+			<?php if ($_SESSION['idroll_sahilices'] == 17) { ?>
+				$('.contDevueltos').hide();
+				$('.contActuales').hide();
+
+				$('.contActuales').hide();
+				$('.contPagados').hide();
+				$('.contDevueltos').hide();
+				$('.contValidar').hide();
+				$('.contPagadosAux').show();
+
+			<?php } else {  ?>
+
 			$('.contDevueltos').hide();
 			$('.contPagados').hide();
 			$('.contPagadosAux').hide();
 
-		<?php } ?>
+		<?php } } ?>
 
-		$('.contPagadosAux').hide();
+
 
 		$('.contValidar').hide();
 
@@ -760,6 +786,8 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 						$('.frmAjaxModificar #montototal').number( true, 2,'.','' );
 						$('.frmAjaxModificar #montocomision').number( true, 2,'.','' );
 						$('.frmAjaxModificar #porcentajecomision').number( true, 2,'.','' );
+
+						$('.frmAjaxModificar .frmContfechapago').hide();
 
 						$('.frmAjaxModificar #fechapago').pickadate({
 							format: 'yyyy-mm-dd',
