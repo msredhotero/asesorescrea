@@ -2,10 +2,10 @@
 
 
 
-include ('../includes/funciones.php');
-include ('../includes/funcionesUsuarios.php');
-include ('../includes/funcionesHTML.php');
-include ('../includes/funcionesReferencias.php');
+include ('../../includes/funciones.php');
+include ('../../includes/funcionesUsuarios.php');
+include ('../../includes/funcionesHTML.php');
+include ('../../includes/funcionesReferencias.php');
 
 $serviciosFunciones = new Servicios();
 $serviciosUsuario 	= new ServiciosUsuarios();
