@@ -5453,7 +5453,7 @@ function cuestionario($serviciosReferencias) {
          if ($valor['leyenda'] != '') {
            $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
             <div class="col-lg-8 col-md-8 col-sm-8 col-xs-6" style="display:block; float:left;">
-              <h4><span>'.($valor['pregunta']).'</span> <i class="material-icons" style="color:grey;" data-toggle="tooltip" data-placement="top" title="'.($valor['leyenda']).'">help</i></h4>
+              <h5><span>'.($valor['pregunta']).'</span> <i class="material-icons" style="color:grey;" data-toggle="tooltip" data-placement="top" title="'.($valor['leyenda']).'">help</i></h5>
               <input type="hidden" value="'.$valor['idpregunta'].'" name="rulesPregunta'.$valor['idpregunta'].'" id="rulesPregunta'.$valor['idpregunta'].'"/>
             </div>
            ';
@@ -5461,7 +5461,7 @@ function cuestionario($serviciosReferencias) {
          } else {
            $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
             <div class="col-lg-8 col-md-8 col-sm-8 col-xs-6" style="display:block; float:left;">
-              <h4>'.($valor['pregunta']).'</h4>
+              <h5>'.($valor['pregunta']).'</h5>
               <input type="hidden" value="'.$valor['idpregunta'].'" name="rulesPregunta'.$valor['idpregunta'].'" id="rulesPregunta'.$valor['idpregunta'].'"/>
             </div>
            ';
