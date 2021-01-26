@@ -10666,7 +10666,7 @@ return $res;
 		inner join tbtipoproductorama tp ON tp.idtipoproductorama = p.reftipoproductorama
       inner join tbtipoproducto t on t.idtipoproducto = tp.reftipoproducto
       left join tbtipopersonas tpp ON tpp.idtipopersona = p.reftipoproductorama
-		where p.producto = '%".$nombre."%' and p.activo = '1'
+		where p.producto like '%".$nombre."%' and p.activo = '1'
 		order by 1";
 		$res = $this->query($sql,0);
 		return $res;

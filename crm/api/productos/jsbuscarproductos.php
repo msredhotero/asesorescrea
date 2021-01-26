@@ -14,6 +14,7 @@ if ((isset($_GET['ventaenlinea'])) && ($_GET['ventaenlinea'] == '1')) {
 		$resProductos = $serviciosReferencias->traerProductosCotizaEnLinea();
 	} else {
 		if ((isset($_GET['nombre'])) && ($_GET['nombre'] != '')) {
+			//die(var_dump($_GET['nombre']));
 			$resProductos = $serviciosReferencias->traerProductosPorNombreCompleta($_GET['nombre']);
 		} else {
 			if ((isset($_GET['id'])) && ($_GET['id'] != '') && ($_GET['id'] > 0)) {
