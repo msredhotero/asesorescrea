@@ -825,13 +825,13 @@ if (count($filesSolicitud) < 1) {
 
 							echo "const jpgImage".$ii." = await pdfDoc.embedJpg(jpgImageBytes".$ii.")\n";
 
-							echo "const jpgDims".$ii." = jpgImage".$ii.".scale(0.5)\n";
+							echo "const jpgDims".$ii." = jpgImage".$ii.".scale(0.35)\n";
 
-					      echo "const page = pdfDoc.addPage()\n";
+					      echo "const page".$ii." = pdfDoc.addPage()\n";
 
-							echo "page.drawImage(jpgImage".$ii.", {
-					         x: page.getWidth() / 2 - jpgDims".$ii.".width / 2,
-					         y: page.getHeight() / 2 - jpgDims".$ii.".height / 2 + 100,
+							echo "page".$ii.".drawImage(jpgImage".$ii.", {
+					         x: page".$ii.".getWidth() / 2 - jpgDims".$ii.".width / 2,
+					         y: page".$ii.".getHeight() / 2 - jpgDims".$ii.".height / 2 + 100,
 					         width: jpgDims".$ii.".width,
 					         height: jpgDims".$ii.".height,
 					      })\n";

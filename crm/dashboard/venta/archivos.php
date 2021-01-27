@@ -814,7 +814,7 @@ if (count($filesSolicitud) < 1) {
 
 							echo "const jpgImage".$ii." = await pdfDoc.embedJpg(jpgImageBytes".$ii.")\n";
 
-							echo "const jpgDims".$ii." = jpgImage".$ii.".scale(0.5)\n";
+							echo "const jpgDims".$ii." = jpgImage".$ii.".scale(0.35)\n";
 
 					      echo "const page".$ii." = pdfDoc.addPage()\n";
 

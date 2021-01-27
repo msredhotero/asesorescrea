@@ -2849,9 +2849,6 @@ function insertarFirmarcontratos($serviciosReferencias) {
       			mkdir('../archivos/firmas/cotizaciones/'.$refcotizaciones.'/', 0777);
       		}
 
-            if (!file_exists('../archivos/firmas/cotizaciones/'.$refcotizaciones.'/'.$sha256.'/')) {
-      			mkdir('../archivos/firmas/cotizaciones/'.$refcotizaciones.'/'.$sha256.'/', 0777);
-      		}
 
             $result = trim($result,'"');
 
@@ -2863,7 +2860,7 @@ function insertarFirmarcontratos($serviciosReferencias) {
 
             $xml = $textoXML;
 
-            $gestor = fopen('../archivos/firmas/cotizaciones/'.$refcotizaciones.'/'.$sha256.'/firma.xml', 'w');
+            $gestor = fopen('../archivos/firmas/cotizaciones/'.$refcotizaciones.'/firma.xml', 'w');
          	fwrite($gestor, $textoXML);
          	fclose($gestor);
 
