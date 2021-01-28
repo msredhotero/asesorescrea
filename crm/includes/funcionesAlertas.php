@@ -44,11 +44,11 @@ class serviciosAlertas
                   DATEDIFF(p.fechavencimiento, CURDATE()) AS dias,
                   pp.producto,
                   cli.nombre as nombrecliente,
-                  usu.email as emailcliente,
+                  coalesce( usu.email,usua.email) as emailcliente,
                   ase.nombre as nombreasesor,
                   usua.email as emailasesor,
                   ve.nropoliza,
-                  usu.idusuario as idusuariocliente,
+                  coalesce( usu.idusuario,usua.idusuario) as idusuariocliente,
                   usua.idusuario as idusuarioasesor,
                   ve.idventa,
                   ase.claveasesor,
@@ -68,7 +68,7 @@ class serviciosAlertas
                   dbusuarios usu on usu.idusuario = cli.refusuarios
                inner join
                   dbasesores ase on ase.idasesor = co.refasesores
-               inner join
+               left join
                   dbusuarios usua on usua.idusuario = ase.refusuarios
                INNER JOIN
                   tbproductos pp ON (CASE
