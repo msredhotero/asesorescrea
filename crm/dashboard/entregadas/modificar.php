@@ -178,6 +178,9 @@ switch (mysql_result($resultado,0,'cobertura')) {
 	case 'No lo se':
 		$cadRef7 = "<option value='Si'>Si</option><option value='No'>No</option><option value='No lo se' selected>No lo se</option>";
 	break;
+	default:
+		$cadRef7 = "<option value='Si'>Si</option><option value='No'>No</option><option value='No lo se' selected>No lo se</option>";
+	break;
 }
 
 //die(var_dump($ordenPosible));
@@ -187,6 +190,9 @@ switch (mysql_result($resultado,0,'presentacotizacion')) {
 		$cadRef8 = "<option value='Si' selected>Si</option><option value='No'>No</option>";
 	break;
 	case 'No':
+		$cadRef8 = "<option value='Si'>Si</option><option value='No' selected>No</option>";
+	break;
+	default:
 		$cadRef8 = "<option value='Si'>Si</option><option value='No' selected>No</option>";
 	break;
 }
@@ -801,6 +807,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 					});
 					$('#lgmModificarEstado').modal('toggle');
 					table.ajax.reload();
+					location.reload();
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -869,7 +876,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 
 		$('.btnAbandonada').click(function() {
 
-			$('.lblModiEstado').html('ACEPTADA');
+			$('.lblModiEstado').html('ACEPTAR');
 			$('.modificarEstadoCotizacionRechazo').html('ACEPTADA');
 
 			$('.modificarEstadoCotizacionRechazo').addClass('bg-green');

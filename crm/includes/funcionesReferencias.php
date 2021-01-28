@@ -6780,7 +6780,7 @@ return $res;
 		return $res;
 	}
 
-   function traerVentasRenovacionesHistoricoajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial) {
+   function traerVentasRenovacionesHistoricoajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$idasesor) {
 		$where = '';
 
 		$roles = '';
@@ -6791,13 +6791,14 @@ return $res;
 	      $roles = '';
 	   }
 
+      $cadAsesor = '';
+      if ($idasesor != '') {
+         $cadAsesor = " and ase.idasesor = ".$idasesor." ";
+      }
+
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
 			$where = " and ".$roles." (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or (case when v.refproductosaux > 0 then proa.producto else pro.producto end) like '%".$busqueda."%' or concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%' or v.nropoliza like '%".$busqueda."%')";
-		} else {
-			if ($responsableComercial != '') {
-	         $where = " and ase.refusuarios = ".$responsableComercial." ";
-	      }
 		}
 
 
@@ -6843,7 +6844,7 @@ return $res;
       inner join dbventas v on v.refcotizaciones = vf.refcotizaciones and v.version = vf.version and v.refproductosaux = vf.refproductosaux
       inner join dbrenovaciones rn on rn.refventas = v.idventa
 
-		where v.refestadoventa in (1,2,3,4,5) ".$where."
+		where v.refestadoventa in (1,2,3,4,5) ".$where.$cadAsesor."
 
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
@@ -6855,7 +6856,7 @@ return $res;
 	}
 
 
-   function traerVentasRenovacionesPendientesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial) {
+   function traerVentasRenovacionesPendientesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$idasesor) {
 		$where = '';
 
 		$roles = '';
@@ -6866,13 +6867,14 @@ return $res;
 	      $roles = '';
 	   }
 
+      $cadAsesor = '';
+      if ($idasesor != '') {
+         $cadAsesor = " and ase.idasesor = ".$idasesor." ";
+      }
+
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
 			$where = " and ".$roles." (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or (case when v.refproductosaux > 0 then proa.producto else pro.producto end) like '%".$busqueda."%' or concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%' or v.nropoliza like '%".$busqueda."%')";
-		} else {
-			if ($responsableComercial != '') {
-	         $where = " and ase.refusuarios = ".$responsableComercial." ";
-	      }
 		}
 
 
@@ -6918,7 +6920,7 @@ return $res;
       inner join dbventas v on v.refcotizaciones = vf.refcotizaciones and v.version = vf.version and v.refproductosaux = vf.refproductosaux
       left join dbrenovaciones rn ON rn.refventas = v.idventa
 
-		where v.refestadoventa = 1 and rn.idrenovacion is null and DATEDIFF(v.fechavencimientopoliza,CURDATE()) <= 29 ".$where."
+		where v.refestadoventa = 1 and rn.idrenovacion is null and DATEDIFF(v.fechavencimientopoliza,CURDATE()) <= 29 ".$where.$cadAsesor."
 
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
@@ -6929,7 +6931,7 @@ return $res;
 		return $res;
 	}
 
-   function traerVentasRenovacionesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$refusuario='') {
+   function traerVentasRenovacionesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$refusuario='',$idasesor) {
 		$where = '';
 
 		$roles = '';
@@ -6951,19 +6953,20 @@ return $res;
          $joinPoliza = '';
 	   }
 
+      $cadAsesor = '';
+      if ($idasesor != '') {
+         $cadAsesor = " and ase.idasesor = ".$idasesor." ";
+      }
+
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
 			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or (case when v.refproductosaux > 0 then proa.producto else pro.producto end) like '%".$busqueda."%' or concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%' or v.nropoliza like '%".$busqueda."%')";
-		} else {
-			if ($responsableComercial != '') {
-	         $where = " and ase.refusuarios = ".$responsableComercial." ";
-	      }
 		}
 
 
 		$sql = "select
 		v.idventa,
-		concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+		(case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
 		(case when v.refproductosaux > 0 then proa.producto else pro.producto end) as producto,
 		concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
 		concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
@@ -7003,7 +7006,7 @@ return $res;
       inner join dbventas v on v.refcotizaciones = vf.refcotizaciones and v.version = vf.version and v.refproductosaux = vf.refproductosaux
       inner join dbrenovaciones rn ON rn.nuevaventa = v.idventa
       ".$joinPoliza."
-		where v.refestadoventa = 6 and v.vigenciadesde > CURDATE() ".$roles.$rolesUsuario." ".$where."
+		where v.refestadoventa = 6 and v.vigenciadesde > CURDATE() ".$roles.$rolesUsuario." ".$where.$cadAsesor."
 
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
@@ -7503,6 +7506,60 @@ return $res;
       inner join dbventas v on v.refcotizaciones = c.idcotizacion and v.version = 1.0
       order by c.fechacrea desc";
 		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function traerVentasPorAsesorCompletoAjax($length, $start, $busqueda,$colSort,$colSortDir,$asesor,$idcliente,$min,$max) {
+
+		if ($idcliente != '') {
+			$cadCliente = " and cli.idcliente = ".$idcliente." ";
+		} else {
+			$cadCliente = '';
+		}
+
+      $cadFecha = '';
+		if ($min != '' && $max != '') {
+			$cadFecha = " and v.fechavencimientopoliza between '".$min."' and '".$max."'";
+		} else {
+			if ($min != '' && $max == '') {
+				$cadFecha = " and v.fechavencimientopoliza >= '".$min."'";
+			} else {
+				if ($min == '' && $max != '') {
+					$cadFecha = " and v.fechavencimientopoliza <= '".$max."'";
+				}
+			}
+		}
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or cli.razonsocial like '%".$busqueda."%' or v.nropoliza like '%".$busqueda."%'  )";
+		}
+
+
+		$sql = "select
+		v.idventa,
+      v.nropoliza,
+      (case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
+      v.fechavencimientopoliza,
+      p.producto
+		from dbventas v
+      inner join dbperiodicidadventas pv on pv.refventas = v.idventa
+      inner join tbtipocobranza tc on tc.idtipocobranza = pv.reftipocobranza
+		inner join dbcotizaciones c ON c.idcotizacion = v.refcotizaciones
+      inner join dbclientes cli ON cli.idcliente = c.refclientes
+      inner join tbproductos p on (case when v.refproductosaux = 0 then p.idproducto = c.refproductos else v.refproductosaux = p.idproducto end)
+      left join dbasegurados ase ON ase.idasegurado = c.refasegurados
+      left join dbasegurados ben ON ase.idasegurado = c.refbeneficiarios
+      inner join dbdocumentacionventas dv on dv.refventas = v.idventa and dv.refdocumentaciones = 35
+		where c.refasesores =".$asesor.$cadCliente.$cadFecha."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;
 	}
 

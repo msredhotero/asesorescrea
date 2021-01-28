@@ -49,6 +49,10 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 	$idasesor = mysql_result($resVar5,0,'idasesor');
 
 	$resultados = $serviciosReferencias->traerVentasPorAsesorCompleto($idasesor);
+
+	$resAsesores = $serviciosReferencias->traerClientesasesoresPorAsesorNuevo($idasesor);
+	$cadRef33 = '<option value="">-- Seleccionar --</option>';
+	$cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(18),' ');
 } else {
 	$resultados = $serviciosReferencias->traerVentasPorUsuarioCompleto($_SESSION['usuaid_sahilices']);
 }
@@ -64,6 +68,10 @@ $lblCambio	 	= array('primaneta','primatotal','porcentajecomision','montocomisio
 $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','Fecha Vencimiento de la Poliza','Nro Poliza','Estado Venta');
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
+
+
+
+
 
 ?>
 
@@ -172,7 +180,21 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 						</div>
 						<div class="body table-responsive">
 
-							<table id="example" class="display table  dataTable" style="width: 100%;" role="grid" aria-describedby="example_info">
+							<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 14) || ($_SESSION['idroll_sahilices'] == 15) || ($_SESSION['idroll_sahilices'] == 7)) { ?>
+								<div class="row">
+									<div class="col-lg-12 col-md-12">
+										<?php echo $serviciosFunciones->addInput('3,3,3,6','text','fechadesde_filtro','fechadesde_filtro','datepicker', 'Fecha Desde'); ?>
+										<?php echo $serviciosFunciones->addInput('3,3,3,6','text','fechahasta_filtro','fechadesde_filtro','datepicker', 'Fecha Hasta'); ?>
+										<?php echo $serviciosFunciones->addInput('3,3,3,6','select','cliente_filtro','cliente_filtro','', 'Clientes','',$cadRef33); ?>
+
+									</div>
+									<div class="col-lg-12 col-md-12">
+										<button type="button" class="btn bg-red" id="filtrar">Filtrar</button>
+									</div>
+								</div>
+							<?php } ?>
+
+							<table id="example" class="display table dataTable" style="width: 100%;" role="grid" aria-describedby="example_info">
 								<thead>
 									<th>No Poliza</th>
 									<th>Asegurado</th>
@@ -180,34 +202,14 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 									<th>Producto</th>
 									<th>Acciones</th>
 								</thead>
-								<tbody>
-							<?php
-								$i = 0;
-								while ($row = mysql_fetch_array($resultados)) {
-									$i += 1;
-							?>
+								<tfoot>
+									<th>No Poliza</th>
+									<th>Asegurado</th>
+									<th>Vencimiento</th>
+									<th>Producto</th>
+									<th>Acciones</th>
+								</tfoot>
 
-								<tr>
-									<td><?php echo strtoupper($row['nropoliza']); ?></td>
-									<td><?php echo strtoupper($row['asegurado']); ?></td>
-									<td><?php echo strtoupper($row['fechavencimientopoliza']); ?></td>
-									<td><?php echo strtoupper($row['producto']); ?></td>
-									<td>
-										<button type="button" id="<?php echo $row['idventa']; ?>" class="btn btn-block btn-primary waves-effect btnPoliza">
-											<i class="material-icons">print</i>
-											<span>POLIZA</span>
-										</button>
-									</td>
-								</tr>
-
-							<?php } ?>
-							<?php if ($i == 0) { ?>
-								<tr>
-									<td colspan="5"><b>Actualmente no tiene Polizas cargadas</b></td>
-								</tr>
-
-							<?php } ?>
-								<tbody>
 							</table>
 						</div>
 					</div>
@@ -243,8 +245,85 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 <script>
 	$(document).ready(function(){
 
+		$('#fechadesde_filtro').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		});
 
-		$(".btnPoliza").click( function(){
+		$('#fechahasta_filtro').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		});
+
+		var table = $('#example').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=listadopolizas",
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+				/* Add some extra data to the sender */
+				aoData.push( { "name": "start", "value": $('#fechadesde_filtro').val(), } );
+				aoData.push( { "name": "end", "value": $('#fechahasta_filtro').val(), } );
+				aoData.push( { "name": "idcliente", "value": $('#cliente_filtro').val(), } );
+				$.getJSON( sSource, aoData, function (json) {
+				/* Do whatever additional processing you want on the callback, then tell DataTables */
+				fnCallback(json)
+				} );
+			},
+			"language": {
+				"emptyTable":     "No hay datos cargados",
+				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "Mostrar _MENU_ filas",
+				"loadingRecords": "Cargando...",
+				"processing":     "Procesando...",
+				"search":         "Buscar:",
+				"zeroRecords":    "No se encontraron resultados",
+				"paginate": {
+					"first":      "Primero",
+					"last":       "Ultimo",
+					"next":       "Siguiente",
+					"previous":   "Anterior"
+				},
+				"aria": {
+					"sortAscending":  ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			}
+		});
+
+		$('#filtrar').click( function() {
+			table.draw();
+
+		} );
+
+		$("#example").on("click",'.btnPoliza', function(){
 			idTable =  $(this).attr("id");
 			$(location).attr('href','poliza.php?id=' + idTable);
 

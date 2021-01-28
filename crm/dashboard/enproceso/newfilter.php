@@ -435,12 +435,14 @@ if (isset($_GET['id'])) {
 		$documentacionNombre2 = '';
 	}
 
-	$idasesor = 25;
+	$idasesor = $refAsesores;
 
 // fin de cuando ya graba el producto
 } else {
 
 	$id = 0;
+
+	header('Location: new.php');
 
 	$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta($rIdProducto);
 
@@ -3440,6 +3442,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 				beforeSend: function () {
 					$("." + contenedor + " img").attr("src",'');
 					$('#contExcel').attr("src",'');
+					$('#contExcel').hide();
 
 				},
 				success:  function (response) {
@@ -3455,6 +3458,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 							if ((cadena.indexOf("officedocument") > -1) || (cadena.indexOf("sheet") > -1)) {
 								$('#'+contenedorpdf).hide();
 								$("."+contenedor).hide();
+								$('#contExcel').show();
 
 								$('#contExcel').attr("src", "https://docs.google.com/gview?url=" + response.datos.imagen.replace('../../', 'https://asesorescrea.com/desarrollo/crm/') + '&embedded=true');
 

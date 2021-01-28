@@ -69,6 +69,35 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 }
 
 switch ($tabla) {
+	case 'listadopolizas':
+
+		$min = $_GET['start'];
+		$max = $_GET['end'];
+
+
+		if ($_SESSION['idroll_sahilices'] == 7) {
+			$idcliente = $_GET['idcliente'];
+
+			$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
+			$idasesor = mysql_result($resVar5,0,'idasesor');
+
+			$datos = $serviciosReferencias->traerVentasPorAsesorCompletoAjax($length, $start, $busqueda,$colSort,$colSortDir,$idasesor,$idcliente,$min,$max);
+		} else {
+			$datos = $serviciosReferencias->traerVentasPorUsuarioCompletoAjax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+		}
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array('btnPoliza');
+		$class = array('bg-blue');
+		$icon = array('file_download');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 4;
+	break;
 	case 'tokenasesores':
 		$idasesor = $_GET['idasesor'];
 		$datos = $serviciosReferencias->traerTokenasesoresajax($length, $start, $busqueda,$colSort,$colSortDir,$idasesor);
@@ -1008,7 +1037,7 @@ switch ($tabla) {
 
 		if ($_SESSION['idroll_sahilices'] == 16) {
 
-			$datos = $serviciosReferencias->traerVentasRenovacionesajax($length, $start, $busqueda,$colSort,$colSortDir,'',$_SESSION['usuaid_sahilices']);
+			$datos = $serviciosReferencias->traerVentasRenovacionesajax($length, $start, $busqueda,$colSort,$colSortDir,'',$_SESSION['usuaid_sahilices'],'');
 
 			$resAjax = $datos[0];
 			$res = $datos[1];
@@ -1018,16 +1047,34 @@ switch ($tabla) {
 			$icon = array('print');
 		} else {
 
-			$responsableComercial = $_GET['sSearch_0'];
+			if ($_SESSION['idroll_sahilices'] == 7) {
 
-			$datos = $serviciosReferencias->traerVentasRenovacionesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,'');
+				$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
+				$idasesor = mysql_result($resVar5,0,'idasesor');
 
-			$resAjax = $datos[0];
-			$res = $datos[1];
+				$datos = $serviciosReferencias->traerVentasRenovacionesajax($length, $start, $busqueda,$colSort,$colSortDir,'','',$idasesor);
 
-			$label = array('btnModificar','btnVer','btnEnviar','btnEliminar');
-			$class = array('bg-amber','bg-green','bg-yellow','bg-red');
-			$icon = array('create','search','send','delete');
+				$resAjax = $datos[0];
+				$res = $datos[1];
+
+				$label = array();
+				$class = array();
+				$icon = array();
+
+			} else {
+				$responsableComercial = $_GET['sSearch_0'];
+
+				$datos = $serviciosReferencias->traerVentasRenovacionesajax($length, $start, $busqueda,$colSort,$colSortDir,'','','');
+
+				$resAjax = $datos[0];
+				$res = $datos[1];
+
+				$label = array('btnModificar','btnVer','btnEnviar','btnEliminar');
+				$class = array('bg-amber','bg-green','bg-yellow','bg-red');
+				$icon = array('create','search','send','delete');
+			}
+
+
 
 		}
 
@@ -1041,19 +1088,22 @@ switch ($tabla) {
 
 		if ($_SESSION['idroll_sahilices'] == 7) {
 
-			$datos = $serviciosReferencias->traerVentasajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+			$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
+			$idasesor = mysql_result($resVar5,0,'idasesor');
+
+			$datos = $serviciosReferencias->traerVentasRenovacionesPendientesajax($length, $start, $busqueda,$colSort,$colSortDir,'','',$idasesor);
 
 			$resAjax = $datos[0];
 			$res = $datos[1];
 
-			$label = array('btnModificar','btnEliminar');
-			$class = array('bg-amber','bg-red');
-			$icon = array('create','delete');
+			$label = array();
+			$class = array();
+			$icon = array();
 		} else {
 
 			$responsableComercial = $_GET['sSearch_0'];
 
-			$datos = $serviciosReferencias->traerVentasRenovacionesPendientesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial);
+			$datos = $serviciosReferencias->traerVentasRenovacionesPendientesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,'');
 
 			$resAjax = $datos[0];
 			$res = $datos[1];
@@ -1074,7 +1124,10 @@ switch ($tabla) {
 
 		if ($_SESSION['idroll_sahilices'] == 7) {
 
-			$datos = $serviciosReferencias->traerVentasajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+			$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
+			$idasesor = mysql_result($resVar5,0,'idasesor');
+
+			$datos = $serviciosReferencias->traerVentasRenovacionesajax($length, $start, $busqueda,$colSort,$colSortDir,'','',$idasesor);
 
 			$resAjax = $datos[0];
 			$res = $datos[1];
@@ -1086,7 +1139,7 @@ switch ($tabla) {
 
 			$responsableComercial = $_GET['sSearch_0'];
 
-			$datos = $serviciosReferencias->traerVentasRenovacionesHistoricoajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial);
+			$datos = $serviciosReferencias->traerVentasRenovacionesHistoricoajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,'');
 
 			$resAjax = $datos[0];
 			$res = $datos[1];
@@ -1144,7 +1197,12 @@ switch ($tabla) {
 				$class = array('bg-amber');
 				$icon = array('create');
 				$whereEstado = ' c.refestados in (3) ';
-				$termina = 7;
+				if ($_SESSION['idroll_sahilices'] == 7) {
+					$termina = 6;
+				} else {
+					$termina = 6;
+				}
+
 				$filtroNuevo = '';
 			break;
 			case 4:
