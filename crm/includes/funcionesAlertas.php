@@ -207,7 +207,7 @@ class serviciosAlertas
 
          $cuerpoAux .= '</body>';
 
-         $retorno = $this->enviarEmail($email,$mensaje,utf8_decode( str_replace('********',$row['producto'],$cuerpo.$cuerpoAux)));
+         //$retorno = $this->enviarEmail($email,$mensaje,utf8_decode( str_replace('********',$row['producto'],$cuerpo.$cuerpoAux)));
 
          $resI = $this->insertarAlertas($reftipoalerta,serviciosAlertas::REF_TABLA,$row['idperiodicidadventadetalle'],$email,$mensaje,'1');
 
@@ -358,7 +358,7 @@ class serviciosAlertas
 
          $cuerpoAux .= '</body>';
 
-         $retorno = $this->enviarEmail($email,$mensaje,utf8_decode( str_replace('********',$row['producto'],$cuerpo.$cuerpoAux)));
+         //$retorno = $this->enviarEmail($email,$mensaje,utf8_decode( str_replace('********',$row['producto'],$cuerpo.$cuerpoAux)));
 
          $resI = $this->insertarAlertas($reftipoalerta,serviciosAlertas::REF_TABLA,$row['idperiodicidadventadetalle'],$email,$mensaje,'1');
 
@@ -439,7 +439,7 @@ class serviciosAlertas
 		# Defina el número de e-mails que desea enviar por periodo. Si es 0, el proceso por lotes
 		# se deshabilita y los mensajes son enviados tan rápido como sea posible.
 	   if ($referencia == '') {
-	      $referencia = 'consultas@asesorescrea.com';
+	      $referencia = 'consulta@asesorescrea.com';
 	   }
 	   # Defina el número de e-mails que desea enviar por periodo. Si es 0, el proceso por lotes
 	   # se deshabilita y los mensajes son enviados tan rápido como sea posible.
@@ -453,7 +453,7 @@ class serviciosAlertas
 	   $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 
 	   //dirección del remitente
-	   $headers .= utf8_decode("From: ASESORES CREA <consultas@asesorescrea.com>\r\n");
+	   $headers .= utf8_decode("From: ASESORES CREA <consulta@asesorescrea.com>\r\n");
 
 		mail($destinatario,$asunto,$cuerpo,$headers);
 	}

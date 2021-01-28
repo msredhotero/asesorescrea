@@ -7545,7 +7545,7 @@ return $res;
       v.fechavencimientopoliza,
       p.producto
 		from dbventas v
-      
+
 		inner join dbcotizaciones c ON c.idcotizacion = v.refcotizaciones
       inner join dbclientes cli ON cli.idcliente = c.refclientes
       inner join tbproductos p on (case when v.refproductosaux = 0 then p.idproducto = c.refproductos else v.refproductosaux = p.idproducto end)
@@ -9930,7 +9930,7 @@ return $res;
 	   }
 	   # Defina el número de e-mails que desea enviar por periodo. Si es 0, el proceso por lotes
 	   # se deshabilita y los mensajes son enviados tan rápido como sea posible.
-	   define("MAILQUEUE_BATCH_SIZE",0);
+	   //define("MAILQUEUE_BATCH_SIZE",0);
 
 	   //para el envío en formato HTML
 	   //$headers = "MIME-Version: 1.0\r\n";
