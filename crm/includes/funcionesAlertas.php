@@ -28,7 +28,7 @@ class serviciosAlertas
 
       $cadOtroEstado = '(4,5)';
       if ($marca == 1) {
-         $cadOtroEstado = '(3)';
+         $cadOtroEstado = '(3,4,5)';
          $cadIsNull = '';
       }
 

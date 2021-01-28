@@ -7552,7 +7552,7 @@ return $res;
       left join dbasegurados ase ON ase.idasegurado = c.refasegurados
       left join dbasegurados ben ON ase.idasegurado = c.refbeneficiarios
       inner join dbdocumentacionventas dv on dv.refventas = v.idventa and dv.refdocumentaciones = 35
-		where c.refasesores =".$asesor.$cadCliente.$cadFecha."
+		where c.refasesores =".$asesor.$where.$cadCliente.$cadFecha."
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
 
