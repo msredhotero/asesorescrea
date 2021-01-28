@@ -50,7 +50,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 	$resultados = $serviciosReferencias->traerVentasPorAsesorCompleto($idasesor);
 
-	$resAsesores = $serviciosReferencias->traerClientesasesoresPorAsesorNuevo($idasesor);
+	$resAsesores = $serviciosReferencias->traerClientesasesoresPorAsesorNuevoGroupBy($idasesor);
 	$cadRef33 = '<option value="">-- Seleccionar --</option>';
 	$cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(18),' ');
 } else {

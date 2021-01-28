@@ -9546,6 +9546,55 @@ return $res;
 		return $res;
 	}
 
+   function traerClientesasesoresPorAsesorNuevoGroupBy($refasesor) {
+		$sql = "select
+      cl.idcliente,
+		c.refclientes,
+		cl.nombre,
+		cl.apellidopaterno,
+		cl.apellidomaterno,
+		cl.razonsocial,
+		cl.domicilio,
+		cl.email,
+		cl.rfc,
+		cl.ine,
+		cl.reftipopersonas,
+		cl.telefonofijo,
+		cl.telefonocelular,
+		c.refasesores,
+      cl.genero,
+      cl.refestadocivil,
+      cl.reftipoidentificacion,
+      cl.nroidentificacion,
+      (case when c.reftipopersonas = 1 then concat(cl.apellidopaterno, ' ', cl.apellidomaterno, ' ', cl.nombre) else concat(cl.razonsocial, ' - ', cl.apellidopaterno, ' ', cl.apellidomaterno, ' ', cl.nombre) end) as nombrecompleto
+		from dbclientesasesores c
+		inner join dbclientes cl ON cl.idcliente = c.refclientes
+		inner join dbasesores ase on ase.idasesor = c.refasesores
+		where ase.idasesor = ".$refasesor."
+      group by
+      cl.idcliente,
+		c.refclientes,
+		cl.nombre,
+		cl.apellidopaterno,
+		cl.apellidomaterno,
+		cl.razonsocial,
+		cl.domicilio,
+		cl.email,
+		cl.rfc,
+		cl.ine,
+		cl.reftipopersonas,
+		cl.telefonofijo,
+		cl.telefonocelular,
+		c.refasesores,
+      cl.genero,
+      cl.refestadocivil,
+      cl.reftipoidentificacion,
+      cl.nroidentificacion
+      order by (case when c.reftipopersonas = 1 then concat(cl.apellidopaterno, ' ', cl.apellidomaterno, ' ', cl.nombre) else concat(cl.razonsocial, ' - ', cl.apellidopaterno, ' ', cl.apellidomaterno, ' ', cl.nombre) end)";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
    function traerClientesasesoresPorAsesorTipoPersona($refasesor,$tipopersona) {
 		$sql = "select
 		cl.idcliente,
