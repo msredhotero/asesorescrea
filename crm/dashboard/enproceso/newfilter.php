@@ -709,16 +709,9 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 										<input type="hidden" name="actualizacliente" id="actualizacliente" value="0" />
 										<input type="hidden" name="lead" id="lead" value="-1" />
 
-										<input type="hidden" id="existeprimaobjetivo" name="existeprimaobjetivo" value="0">
-										<input type="hidden" id="primaobjetivo" name="primaobjetivo" value="0">
+
 										<input type="hidden" id="cobertura" name="cobertura" value="0">
 										<input type="hidden" id="reasegurodirecto" name="reasegurodirecto" value="0">
-										<input type="hidden" id="tiponegocio" name="tiponegocio" value="0">
-										<input type="hidden" id="fechavencimiento" name="fechavencimiento" value="0000-00-00">
-										<input type="hidden" id="fecharenovacion" name="fecharenovacion" value="0000-00-00">
-										<input type="hidden" id="presentacotizacion" name="presentacotizacion" value="0">
-										<input type="hidden" id="coberturaactual" name="coberturaactual" value="0">
-										<input type="hidden" id="observaciones" name="observaciones" value="Venta en linea">
 
                               <h3>PRODUCTO</h3>
                                  <fieldset>
@@ -1005,7 +998,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 											</span>
 											  <div class="form-line">
 
-													<input style="width:200px;" type="text" class="datepicker form-control" id="fechavencimiento" name="fechavencimiento" value="<?php echo $fechavencimiento; ?>" />
+													<input style="width:200px;" type="text" class="form-control" id="fechavencimiento" name="fechavencimiento" value="" />
 
 											  </div>
 											</div>
@@ -2867,6 +2860,15 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 				$('#lgmNuevoBNF').modal();
 			}
 
+		});
+
+
+		$('#wizard_with_validation #fechavencimiento').bootstrapMaterialDatePicker({
+			format: 'YYYY-MM-DD',
+			lang : 'es',
+			clearButton: true,
+			weekStart: 1,
+			time: false
 		});
 
 
