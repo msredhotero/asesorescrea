@@ -937,6 +937,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 									<h3>INFORMACIÓN DEL NEGOCIO</h3>
 									<fieldset>
+										<div class="row">
 										<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
 											<div class="form-group form-float">
 												<label class="form-label" style="margin-top:20px;">Existe Prima Objetivo</label>
@@ -960,19 +961,9 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 											  </div>
 											</div>
 										</div>
-
-										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcobertura" style="display:none;">
-											<div class="form-group form-float">
-												<label class="form-label" style="margin-top:20px;">Cobertura Requiere Reaseguro</label>
-												<div class="form-line">
-
-													<select style="margin-top:10px;" class="form-control" id="cobertura" name="cobertura" required>
-														<?php echo $cadRef7b; ?>
-													</select>
-
-												</div>
-											</div>
 										</div>
+
+										<div class="row">
 										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcobertura" style="display:block">
 											<input type="hidden" class="form-control" id="reasegurodirecto" name="reasegurodirecto">
 
@@ -1000,6 +991,9 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 												</div>
 											</div>
 										</div>
+										</div>
+
+										<div class="row">
 										<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContfechavencimiento" style="display:block">
 											<b>Fecha de Vencimiento póliza Actual</b>
 											<div class="input-group">
@@ -1029,7 +1023,9 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 											<input style="width:200px;" type="hidden" class="form-control" id="fecharenovacion" name="fecharenovacion" />
 										</div>
+										</div>
 
+										<div class="row">
 										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContobservaciones" style="display:block">
 											<label class="form-label">Observaciones </label>
 											<div class="form-group input-group">
@@ -1038,6 +1034,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 												</div>
 											</div>
+										</div>
 										</div>
 
 										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContadjuntos" style="display:block">
@@ -3459,7 +3456,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 								$('#'+contenedorpdf).hide();
 								$("."+contenedor).hide();
 
-								$('#contExcel').attr("src", "http://docs.google.com/gview?url=" + response.datos.imagen.replace('../../', 'https://asesorescrea.com/desarrollo/crm/') + '&embedded=true');
+								$('#contExcel').attr("src", "https://docs.google.com/gview?url=" + response.datos.imagen.replace('../../', 'https://asesorescrea.com/desarrollo/crm/') + '&embedded=true');
 
 							} else {
 								$("." + contenedor + " img").attr("src",response.datos.imagen);
