@@ -961,7 +961,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 											</div>
 										</div>
 
-										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcobertura" style="display:block">
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcobertura" style="display:none;">
 											<div class="form-group form-float">
 												<label class="form-label" style="margin-top:20px;">Cobertura Requiere Reaseguro</label>
 												<div class="form-line">
@@ -3458,7 +3458,8 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 							if ((cadena.indexOf("officedocument") > -1) || (cadena.indexOf("sheet") > -1)) {
 								$('#'+contenedorpdf).hide();
 								$("."+contenedor).hide();
-								$('#contExcel').attr("src", response.datos.imagen + '&embedded=true');
+
+								$('#contExcel').attr("src", "http://docs.google.com/gview?url=" + response.datos.imagen.replace('../../', 'https://asesorescrea.com/desarrollo/crm/') + '&embedded=true');
 
 							} else {
 								$("." + contenedor + " img").attr("src",response.datos.imagen);
