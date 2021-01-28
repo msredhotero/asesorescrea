@@ -64,7 +64,7 @@ class serviciosAlertas
                   dbcotizaciones co ON co.idcotizacion = ve.refcotizaciones
                inner join
                   dbclientes cli on cli.idcliente = co.refclientes
-               inner join
+               left join
                   dbusuarios usu on usu.idusuario = cli.refusuarios
                inner join
                   dbasesores ase on ase.idasesor = co.refasesores
