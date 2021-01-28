@@ -10158,8 +10158,11 @@ return $res;
    function traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($idcotizacion,$tipodocumentacion,$notin = '') {
 
       if ($notin != '') {
-         $cadNotIn = $notin;
+         $cadNotIn = ' and d.iddocumentacion not in ('.$notin.') ';
+      } else {
+         $cadNotIn = '';
       }
+
 		$sql = "SELECT
 					    d.iddocumentacion,
 					    d.documentacion,
@@ -10178,7 +10181,7 @@ return $res;
 					        LEFT JOIN
 					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
 					where d.reftipodocumentaciones in (".$tipodocumentacion.") and refprocesocotizacion = 1
-                     and d.activo='1'
+                     and d.activo='1' ".$cadNotIn."
 					order by 1";
 		$res = $this->query($sql,0);
  		return $res;
