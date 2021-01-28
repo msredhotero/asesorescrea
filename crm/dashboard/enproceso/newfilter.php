@@ -1082,6 +1082,8 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 																	<img class="img-responsive">
 																</a>
 																<div id="example12"></div>
+																<iframe id="contExcel" src="" style="width:600px; height:450px;" frameborder="0"></iframe>
+
 															</div>
 															<div class="row">
 																<div class="alert bg-<?php echo $color2; ?>">
@@ -3440,6 +3442,8 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 				type:  'post',
 				beforeSend: function () {
 					$("." + contenedor + " img").attr("src",'');
+					$('#contExcel').attr("src",'');
+
 				},
 				success:  function (response) {
 					var cadena = response.datos.type.toLowerCase();
@@ -3451,9 +3455,17 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 							$("."+contenedor).hide();
 
 						} else {
-							$("." + contenedor + " img").attr("src",response.datos.imagen);
-							$("."+contenedor).show();
-							$('#'+contenedorpdf).hide();
+							if ((cadena.indexOf("officedocument") > -1) || (cadena.indexOf("sheet") > -1)) {
+								$('#'+contenedorpdf).hide();
+								$("."+contenedor).hide();
+								$('#contExcel').attr("src", response.datos.imagen + '&embedded=true');
+
+							} else {
+								$("." + contenedor + " img").attr("src",response.datos.imagen);
+								$("."+contenedor).show();
+								$('#'+contenedorpdf).hide();
+							}
+
 						}
 					}
 
@@ -3481,7 +3493,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 		Dropzone.options.frmFileUpload2 = {
 			maxFilesize: 30,
-			acceptedFiles: ".jpg,.jpeg,.pdf",
+			acceptedFiles: ".jpg,.jpeg,.pdf,.xls,.xlsx,.csv",
 			accept: function(file, done) {
 				done();
 			},
