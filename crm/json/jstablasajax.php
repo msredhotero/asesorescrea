@@ -601,9 +601,16 @@ switch ($tabla) {
 			$class = array('bg-blue','bg-green');
 			$icon = array('unarchive','attach_money');
 		} else {
-			$label = array('btnModificar','btnRecibo');
-			$class = array('btn-warning','bg-blue');
-			$icon = array('edit','unarchive');
+			if ($_SESSION['idroll_sahilices'] == 7) {
+				$label = array('btnRecibo');
+				$class = array('bg-blue');
+				$icon = array('unarchive');
+			} else {
+				$label = array('btnModificar','btnRecibo');
+				$class = array('btn-warning','bg-blue');
+				$icon = array('edit','unarchive');
+			}
+
 		}
 
 

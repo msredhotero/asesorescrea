@@ -94,9 +94,15 @@
 			$resEliminar = $serviciosReferencias->eliminarDocumentacionventasPorVentaDocumentacionDetalle($id,$iddocumentacion);
 
 			if ($_SESSION['idroll_sahilices'] != 16) {
-				$refestadodocumentacion = 5;
+
+				if ($_SESSION['idroll_sahilices'] == 7) {
+					$refestadodocumentacion = 1;
+				} else {
+					$refestadodocumentacion = 5;
+				}
 			} else {
 				$refestadodocumentacion = 1;
+
 			}
 			$resInsertar = $serviciosReferencias->insertarDocumentacionventas(0,$iddocumentacion,$newname,$type,$refestadodocumentacion,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],$id);
 

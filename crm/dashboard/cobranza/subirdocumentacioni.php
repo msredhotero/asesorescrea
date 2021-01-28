@@ -49,7 +49,7 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
-
+$urlArchivo = '';
 
 $idventa = mysql_result($resultado,0,'refventas');
 
@@ -507,6 +507,10 @@ if (mysql_num_rows($resPaquete) > 0) {
 
 ////*** fin discriminar los productos *****///
 
+if (($_SESSION['idroll_sahilices'] == 7) && ($iddocumentacion == 39)) {
+	$puedeCargarDocumentaciones = 1;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -788,7 +792,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 								<?php } ?>
 
 								<div class="row">
-									<?php if ($monto > $montoPagado) { ?>
+									<?php if (($monto > $montoPagado)) { ?>
 										<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
 											<i class="material-icons">add</i>
 											<span>CARGAR PAGO</span>
@@ -833,10 +837,19 @@ if (mysql_num_rows($resPaquete) > 0) {
 								</div>
 
 								<div class="modal-footer">
-
+									<?php
+								if (($_SESSION['idroll_sahilices'] == 7) && ($iddocumentacion == 39) && ($estadoDocumentacion == 'Aceptada')) {
+									?>
 									<button type="button" class="btn bg-amber waves-effect btnAvisar" id="<?php echo $id; ?>">
 										AVISAR PAGO A INBURSA
 									</button>
+								<?php } ?>
+								<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
+									<button type="button" class="btn bg-amber waves-effect btnAvisar" id="<?php echo $id; ?>">
+										AVISAR PAGO A INBURSA
+									</button>
+								<?php } ?>
+
 									<button type="button" class="btn bg-defualt waves-effect btnVolver">
 			 							VOLVER
 		 							</button>
