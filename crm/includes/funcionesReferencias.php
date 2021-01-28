@@ -7545,8 +7545,7 @@ return $res;
       v.fechavencimientopoliza,
       p.producto
 		from dbventas v
-      inner join dbperiodicidadventas pv on pv.refventas = v.idventa
-      inner join tbtipocobranza tc on tc.idtipocobranza = pv.reftipocobranza
+      
 		inner join dbcotizaciones c ON c.idcotizacion = v.refcotizaciones
       inner join dbclientes cli ON cli.idcliente = c.refclientes
       inner join tbproductos p on (case when v.refproductosaux = 0 then p.idproducto = c.refproductos else v.refproductosaux = p.idproducto end)
