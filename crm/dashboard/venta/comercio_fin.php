@@ -1,6 +1,8 @@
 <?php
 
 
+$DESARROLLO = 0;
+
 session_start();
 
 if (!isset($_SESSION['usua_sahilices']))
@@ -303,12 +305,18 @@ $resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcotizacion
 			               <li class="list-inline-item"><img src="../../imagenes/mastercard.png" width="90" height="63"></li>
 
 			            </ul>
-			            <!--<form action="8407825_asesorescrea.php" method="post" id="formFin">-->
-							<?php if ($reftipoproductorama == 12) { ?>
+
+			            <?php if ($DESARROLLO == 0) { ?>
+			            	<?php if ($reftipoproductorama == 12) { ?>
 								<form action="https://www.procom.prosa.com.mx/eMerch2/8418704_OperMedicaVrim.jsp" method="post" id="formFin">
 							<?php } else { ?>
 								<form action="https://www.procom.prosa.com.mx/eMerch2/8407825_SegInbursa.jsp" method="post" id="formFin">
 							<?php } ?>
+			            <?php } else { ?>
+			            	<form action="8407825_asesorescrea.php" method="post" id="formFin">
+			            <?php } ?>
+			            
+							
 
 			               <input type="hidden" name="total" value="<?php echo $comtotal; ?>">
 			               <input type="hidden" name="currency" value="<?php echo $comcurrency; ?>">
@@ -320,6 +328,9 @@ $resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcotizacion
 			               <input type="hidden" name="digest" value="<?php echo $comdigest; ?>">
 			               <input type="hidden" name="return_target" value="">
 			               <input type="hidden" name="urlBack" value="https://asesorescrea.com/desarrollo/crm/dashboard/venta/comercio_con.php">
+
+
+
 								<div class="row">
 								<div class="col-xs-3"></div>
 			               <div class="col-xs-6">

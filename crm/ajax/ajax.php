@@ -2817,7 +2817,7 @@ function insertarFirmarcontratos($serviciosReferencias) {
          $nip = mysql_result($resNIP,0,'token');
 
          /***** api para la firma *****/
-         $url = 'https://qafirma.signaturainnovacionesjuridicas.com/api/firmasimple/crear';
+         $url = 'https://crea.signaturainnovacionesjuridicas.com/api/firmasimple/crear';
          $archivo = '../archivos/solicitudes/cotizaciones/'.$refcotizaciones.'/FSOLICITUDAC.pdf';
          $sha256 = hash_file('sha256', $archivo);
 
@@ -2871,29 +2871,36 @@ function insertarFirmarcontratos($serviciosReferencias) {
 
          /***** fin api **************/
 
-         $usuario = $nombrecompleto;
-         $fechacrea = date('Y-m-d H:i:s');
-         $fechamodi = date('Y-m-d H:i:s');
-         $vigdesde = date('Y-m-d H:i:s');
-         $vighasta = date('Y-m-d H:i:s');
+         if (isset($xml)) {
+            $usuario = $nombrecompleto;
+            $fechacrea = date('Y-m-d H:i:s');
+            $fechamodi = date('Y-m-d H:i:s');
+            $vigdesde = date('Y-m-d H:i:s');
+            $vighasta = date('Y-m-d H:i:s');
 
-         $res = $serviciosReferencias->insertarFirmarcontratos($refcotizaciones,$folio,$nip,$usuario,$sha256,$refestadofirma,$fechacrea,$fechamodi,$vigdesde,$vighasta,$xml);
+            $res = $serviciosReferencias->insertarFirmarcontratos($refcotizaciones,$folio,$nip,$usuario,$sha256,$refestadofirma,$fechacrea,$fechamodi,$vigdesde,$vighasta,$xml);
 
-         if ($refestadofirma == 1) {
-            if ((integer)$res > 0) {
-               $resV['error'] = false;
+            if ($refestadofirma == 1) {
+               if ((integer)$res > 0) {
+                  $resV['error'] = false;
 
-               $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($refcotizaciones,'refestadocotizaciones',12,$_SESSION['usua_sahilices']);
+                  $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($refcotizaciones,'refestadocotizaciones',12,$_SESSION['usua_sahilices']);
 
-               $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($refcotizaciones,'refestados',4,$_SESSION['usua_sahilices']);
+                  $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($refcotizaciones,'refestados',4,$_SESSION['usua_sahilices']);
+               } else {
+                  $resV['error'] = true;
+                  $resV['mensaje'] = 'Se genero un error al modificar los datos, vuelva a intentarlo '.$res;
+               }
             } else {
                $resV['error'] = true;
-               $resV['mensaje'] = 'Se genero un error al modificar los datos, vuelva a intentarlo '.$res;
+               $resV['mensaje'] = 'Se genero un inconveniente con la firma, por favor vuelva a intentarlo en unos minutos';
             }
          } else {
             $resV['error'] = true;
             $resV['mensaje'] = 'Se genero un inconveniente con la firma, por favor vuelva a intentarlo en unos minutos';
          }
+
+         
       }
 
 

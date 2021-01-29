@@ -405,6 +405,10 @@ if ($refEstadoCotizacion == 22) {
 
 
 					 <?php } ?>
+					 <button type="button" class="btn btn-lg btn-block btn-primary" id="btnCambiar" style="font-size:1.5em;">
+						<i class="material-icons" style="font-size:1.5em;">cached</i>
+						<span>Cambiar Metodo de Pago</span>
+					</button>
 					 <br>
 					 <br>
 		        </div>
@@ -444,6 +448,37 @@ if ($refEstadoCotizacion == 22) {
 
 <script>
 	$(document).ready(function(){
+
+		$('#btnCambiar').click(function(e){
+
+			$.ajax({
+				data:  {
+					id: <?php echo $id; ?>,
+					accion: 'cambiarMetodoDePago'
+				},
+				url:   '../../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+					$("#btnConfirmar").hide();
+					$("#btnCambiar").hide();
+				},
+				success:  function (response) {
+
+
+					if (response.error) {
+
+						$("#btnConfirmar").show();
+						$("#btnCambiar").show();
+					} else {
+
+						$(location).attr('href',response.url);
+					}
+
+
+
+				}
+			});
+		});
 
 		var options = {
 		    height: "400px",

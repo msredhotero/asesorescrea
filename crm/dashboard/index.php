@@ -608,7 +608,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 										<div class"row imgVenta button-container-img">
 											<img src="../imagenes/ventaenlinea_bck2.jpg" width="100%"/>
-											<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.3em;" onclick="window.location='ventaenlinea.php'">COMPRAR EN LINEA</button>
+											<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.3em;" onclick="window.location='venta/new.php?producto=46'">COMPRAR EN LINEA</button>
 										</div>
 										<div class"row imgCotiza button-container-img" style="margin-top:20px;">
 											<img src="../imagenes/cotiza_bck2.jpg" width="100%"/>
@@ -619,99 +619,8 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 											<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.3em;" onclick="window.location='mejorarcondiciones/'">MEJORAR POLIZA</button>
 										</div>	
 
-										<div class="row">
-											<div class="col-xs-4">
-									         <div class="card">
-										         <div class="header bg-blue">
-										            <h4 class="my-0 font-weight-normal">Comprar en Línea</h4>
-										         </div>
-									         	<div class="body table-responsive">
-													<?php
-														$acumPrecio = 0;
-														while ($rowV = mysql_fetch_array($resProductosVenta)) {
 
-															$resProductosPaquete = $serviciosReferencias->traerPaquetedetallesPorPaquete($rowV['idproducto']);
-
-															$lblPrecio = '';
-
-															if (mysql_num_rows($resProductosPaquete) > 0) {
-
-																if ($edad == 0) {
-																	$lblPrecio = '$9<small class="text-muted">/por día</small>
-																	<p><small class="text-muted">* depende la edad</small></p>';
-																} else {
-																	while ($rowP = mysql_fetch_array($resProductosPaquete)) {
-
-																		$existeCotizacionParaProducto = $serviciosReferencias->traerValoredadPorProductoEdad($rowP['refproductos'],$edad);
-
-																		if (mysql_num_rows($existeCotizacionParaProducto)>0) {
-																			//die(var_dump($rowP['refproductos']));
-																			if ($rowP['unicomonto'] == '1') {
-																				$acumPrecio += $rowP['valor'];
-																			} else {
-																				$acumPrecio += mysql_result($existeCotizacionParaProducto,0,'valor');
-																			}
-
-																		} else {
-																			$lblPrecio = '$9<small class="text-muted">/por día</small>
-																			<p><small class="text-muted">* depende la edad</small></p>';
-																			break;
-																		}
-
-																		$lblPrecio = '$'.$acumPrecio.'<small class="text-muted">/por año</small>';
-																	}
-																}
-															} else {
-																if ($edad == 0) {
-																	$existeCotizacionParaProducto = $serviciosReferencias->traerValoredadPorProductoEdad($rowV['idproducto'],$edad);
-
-																	if (mysql_num_rows($existeCotizacionParaProducto)>0) {
-																		$precioReal = mysql_result($existeCotizacionParaProducto,0,'valor');
-
-																		$lblPrecio = '$'.$precioReal.'<small class="text-muted">/por año</small>';
-																	} else {
-																		$precioReal = $rowV['precio'] / 12;
-
-																		$lblPrecio = '$'.$precioReal.'<small class="text-muted">/por mes</small>
-																		<p><small class="text-muted">* depende la edad</small></p>';
-																	}
-
-
-																} else {
-																	$existeCotizacionParaProducto = $serviciosReferencias->traerValoredadPorProductoEdad($rowV['idproducto'],$edad);
-
-																	if (mysql_num_rows($existeCotizacionParaProducto)>0) {
-																		$precioReal = mysql_result($existeCotizacionParaProducto,0,'valor');
-
-																		$lblPrecio = '$'.$precioReal.'<small class="text-muted">/por año</small>';
-																	} else {
-																		$precioReal = $rowV['precio'] / 12;
-
-																		$lblPrecio = '$'.$precioReal.'<small class="text-muted">/por mes</small>
-																		<p><small class="text-muted">* depende la edad</small></p>';
-																	}
-																}
-															}
-
-
-
-
-
-													?>
-										            <h1 class="card-title pricing-card-title"><?php echo $lblPrecio; ?></h1>
-										            <h4><?php echo $rowV['producto']; ?></h4>
-										            <?php echo $rowV['detalle']; ?>
-										            <button type="button" class="btn btn-lg btn-block btn-success" onclick="window.location='venta/new.php?producto=<?php echo $rowV['idproducto']; ?>'">COMPRAR</button>
-														<hr>
-													<?php } ?>
-									            </div>
-									         </div>
-										   </div>
-
-											
-
-
-										</div>
+										
 										<hr>
 									<?php } ?>
 
