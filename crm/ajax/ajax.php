@@ -2900,7 +2900,7 @@ function insertarFirmarcontratos($serviciosReferencias) {
             $resV['mensaje'] = 'Se genero un inconveniente con la firma, por favor vuelva a intentarlo en unos minutos';
          }
 
-         
+
       }
 
 
@@ -3673,6 +3673,9 @@ function enviarCotizacion($serviciosReferencias, $serviciosUsuarios, $serviciosM
 
          // modifico la cotizacion a la primer estado
          $resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',8,$_SESSION['usua_sahilices']);
+
+         // modifico la fecha en que se envio la cotizacion al cliente o al agente 01/02/2021
+         $resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($id,'fechapropuesta',date('Y-m-d'),$_SESSION['usua_sahilices']);
 
 
 

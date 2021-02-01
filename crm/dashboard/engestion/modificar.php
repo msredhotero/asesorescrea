@@ -104,7 +104,7 @@ switch ($orden) {
 		$lblOrden = 'Aceptado';
 	break;
 	case 4:
-		$ordenPosible = 0;
+		$ordenPosible = 4;
 		$ordenRechazo = 0;
 		$lblOrden = 'Finalizado Rechazado';
 	break;
@@ -134,7 +134,7 @@ switch ($orden) {
 
 $ordenPosible = 0;
 if ($_SESSION['idroll_sahilices'] == 7) {
-	if ($orden >= 3) {
+	if ($orden >= 11) {
 		$ordenPosible = 0;
 		$ordenRechazo = 0;
 		$lblOrden = 'Finalizado';
@@ -173,7 +173,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 }
 
 if ($_SESSION['idroll_sahilices'] == 7) {
-	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId($ordenPosible);
+	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId(4);
 	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$idestado);
 } else {
 
@@ -328,60 +328,62 @@ while ($rowD = mysql_fetch_array($documentacionesadicionales3)) {
 
 $cadArCliente = '';
 
+if ($_SESSION['idroll_sahilices'] != 7) {
 
-while ($rowD = mysql_fetch_array($resDocumentacionesCliente)) {
-	$cadArCliente .= '<li>
-		 <span>'.substr($rowD['documentacion'],0,18).'</span>
-		 <div class="switch">
-			  <label class="btn bg-'.($rowD['color'] == '' ? 'grey' : $rowD['color']).' btnC'.str_replace(' ','',$rowD['documentacion']).'" style="margin-top:-6px; margin-right:5px;">'.$rowD['estadodocumentacion'].'</label>
-		 </div>
-	</li>';
+
+	while ($rowD = mysql_fetch_array($resDocumentacionesCliente)) {
+		$cadArCliente .= '<li>
+			 <span>'.substr($rowD['documentacion'],0,18).'</span>
+			 <div class="switch">
+				  <label class="btn bg-'.($rowD['color'] == '' ? 'grey' : $rowD['color']).' btnC'.str_replace(' ','',$rowD['documentacion']).'" style="margin-top:-6px; margin-right:5px;">'.$rowD['estadodocumentacion'].'</label>
+			 </div>
+		</li>';
+	}
 }
 
+	$rightsidebar = '<ul class="nav nav-tabs tab-nav-right" role="tablist">
+	                <li role="presentation" class="active"><a href="#skins" data-toggle="tab">CLIENTE</a></li>
+	                <li role="presentation"><a href="#settings" data-toggle="tab">DOCUMENTACIONES</a></li>
+	            </ul>
+	            <div class="tab-content">
+	                <div role="tabpanel" class="tab-pane fade in active in active" id="skins">
+	                    <ul class="demo-choose-skin">
+	                        <li>
+	                            <div class="'.($vigenciasCliente['errorVCD'] == 'true' ? 'red' : 'green').'"></div>
+	                            <span>Comp. de Domicilio: '.($vigenciasCliente['vcd']).'</span>
+	                        </li>
+	                        <li>
+										<div class="'.($vigenciasCliente['errorVRFC'] == 'true' ? 'red' : 'green').'"></div>
+										<span>Emision RFC: '.($vigenciasCliente['vrfc']).'</span>
+	                        </li>
+									<li>
+										<div class="'.($vigenciasCliente['errorVINE'] == 'true' ? 'red' : 'green').'"></div>
+										<span>Venc. INE: '.($vigenciasCliente['vine']).'</span>
+	                        </li>
+	                    </ul>
+	                </div>
+	                <div role="tabpanel" class="tab-pane fade" id="settings">
+	                    <div class="demo-settings">
+	                        <p>PRODUCTOS</p>
+	                        <ul class="setting-list">
+	                           '.$cadArProd.'
+	                        </ul>
+									<p>EMISION</p>
+	                        <ul class="setting-list">
+	                           '.$cadArProdE.'
+	                        </ul>
+	                        <p>CLIENTES</p>
+	                        <ul class="setting-list">
+	                           '.$cadArCliente.'
+	                        </ul>
 
-$rightsidebar = '<ul class="nav nav-tabs tab-nav-right" role="tablist">
-                <li role="presentation" class="active"><a href="#skins" data-toggle="tab">CLIENTE</a></li>
-                <li role="presentation"><a href="#settings" data-toggle="tab">DOCUMENTACIONES</a></li>
-            </ul>
-            <div class="tab-content">
-                <div role="tabpanel" class="tab-pane fade in active in active" id="skins">
-                    <ul class="demo-choose-skin">
-                        <li>
-                            <div class="'.($vigenciasCliente['errorVCD'] == 'true' ? 'red' : 'green').'"></div>
-                            <span>Comp. de Domicilio: '.($vigenciasCliente['vcd']).'</span>
-                        </li>
-                        <li>
-									<div class="'.($vigenciasCliente['errorVRFC'] == 'true' ? 'red' : 'green').'"></div>
-									<span>Emision RFC: '.($vigenciasCliente['vrfc']).'</span>
-                        </li>
-								<li>
-									<div class="'.($vigenciasCliente['errorVINE'] == 'true' ? 'red' : 'green').'"></div>
-									<span>Venc. INE: '.($vigenciasCliente['vine']).'</span>
-                        </li>
-                    </ul>
-                </div>
-                <div role="tabpanel" class="tab-pane fade" id="settings">
-                    <div class="demo-settings">
-                        <p>PRODUCTOS</p>
-                        <ul class="setting-list">
-                           '.$cadArProd.'
-                        </ul>
-								<p>EMISION</p>
-                        <ul class="setting-list">
-                           '.$cadArProdE.'
-                        </ul>
-                        <p>CLIENTES</p>
-                        <ul class="setting-list">
-                           '.$cadArCliente.'
-                        </ul>
-
-								<p>ADICIONALES</p>
-                        <ul class="setting-list">
-                           '.$cadArCotizacion.'
-                        </ul>
-                    </div>
-                </div>
-            </div>';
+									<p>ADICIONALES</p>
+	                        <ul class="setting-list">
+	                           '.$cadArCotizacion.'
+	                        </ul>
+	                    </div>
+	                </div>
+	            </div>';
 
 $lblModal ='';
 $modalVigencias = 0;
@@ -445,6 +447,9 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 		.alert > i{ vertical-align: middle !important; }
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		#codigopostal { width: 400px; }
+		.setting-list li .switch label:hover {
+			color: white !important;
+		}
 
 	</style>
 
@@ -528,7 +533,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 									<?php echo $frmUnidadNegocios; ?>
 									<input type="hidden" id="estadoactual" name="estadoactual" value=""/>
 								</div>
-								<div class="row">
+								<div class="row" style="display:none;">
 									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContidclienteinbursa" style="display:block">
 										<label class="form-label">ID Cliente Inbursa </label>
 										<div class="form-group input-group">
@@ -548,6 +553,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 										</div>
 									</div>
 								</div>
+								<?php if (mysql_num_rows($cuestionario)>0) { ?>
 								<div class="row" style="padding: 5px 20px;">
 									<table class="display table table-border" style="border:1px solid #333;">
 										<thead>
@@ -596,6 +602,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 										</tbody>
 									</table>
 								</div>
+							<?php } ?>
 
 								<div class="row">
 									<p>Acciones</p>
@@ -721,7 +728,16 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 <script>
 	$(document).ready(function(){
 
+		$('#primaneta').number( true, 2 ,'.','');
+		$('#primatotal').number( true, 2 ,'.','');
+		$('#primaobjetivo').number( true, 2 ,'.','');
 
+		$('#version').prop('readonly',true);
+		$('#folio').prop('readonly',true);
+
+		<?php if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16)) { ?>
+		$('.frmContrefestadocotizaciones').hide();
+		<?php } ?>
 
 		$('.btnModificarBitacora').click(function() {
 			modificarCotizacionesPorCampoCompleto();
@@ -858,9 +874,11 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 		$('.frmConttieneasegurado').hide();
 		$('.frmContrefasegurados').hide();
 		$('.frmContrefbeneficiarios').hide();
-		$('.frmContversion').hide();
+
 		$('.frmContrefcotizaciones').hide();
 		$('.frmContrefestados').hide();
+
+		$('.frmContrefasesores').hide();
 
 		$('.btnLstEnviar').click(function() {
 			$('#lgmENVIAR').modal();
