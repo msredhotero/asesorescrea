@@ -61,8 +61,8 @@ $resVenta = $serviciosReferencias->traerVentasPorCotizacion($id);
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbventas";
 
-$lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','refestadoventa','refproductosaux','vigenciadesde');
-$lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Estado Poliza','Producto Especifico','Vigencia Desde');
+$lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','refestadoventa','refproductosaux','vigenciadesde','fechaemision');
+$lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Estado Poliza','Producto Especifico','Vigencia Desde','Fecha de Emision');
 
 
 $resVar = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
@@ -374,7 +374,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 
 		$('.frmContfoliointerno').hide();
 		$('.frmContrefmotivorechazopoliza').hide();
-		
+
 
 
 		$('.btnArchivos').click(function() {

@@ -6679,9 +6679,16 @@ return $res;
    }
 
 
-	function insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$refventas,$version,$observaciones='',$vigenciadesde) {
-		$sql = "insert into dbventas(idventa,refcotizaciones,refestadoventa,primaneta,primatotal,fechavencimientopoliza,nropoliza,fechacrea,fechamodi,usuariocrea,usuariomodi,foliotys,foliointerno,refproductosaux, refventas, version, observaciones,vigenciadesde)
-		values ('',".$refcotizaciones.",".$refestadoventa.",".$primaneta.",".$primatotal.",'".$fechavencimientopoliza."','".$nropoliza."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."','".$foliotys."','".$foliointerno."',".$refproductosaux.",".$refventas.",".$version.",'".$observaciones."','".$vigenciadesde."')";
+	function insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$refventas,$version,$observaciones='',$vigenciadesde,$fechaemision='') {
+
+      if ($fechaemision == '') {
+         $sql = "insert into dbventas(idventa,refcotizaciones,refestadoventa,primaneta,primatotal,fechavencimientopoliza,nropoliza,fechacrea,fechamodi,usuariocrea,usuariomodi,foliotys,foliointerno,refproductosaux, refventas, version, observaciones,vigenciadesde,fechaemision)
+   		values ('',".$refcotizaciones.",".$refestadoventa.",".$primaneta.",".$primatotal.",'".$fechavencimientopoliza."','".$nropoliza."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."','".$foliotys."','".$foliointerno."',".$refproductosaux.",".$refventas.",".$version.",'".$observaciones."','".$vigenciadesde."',NULL)";
+      } else {
+         $sql = "insert into dbventas(idventa,refcotizaciones,refestadoventa,primaneta,primatotal,fechavencimientopoliza,nropoliza,fechacrea,fechamodi,usuariocrea,usuariomodi,foliotys,foliointerno,refproductosaux, refventas, version, observaciones,vigenciadesde,fechaemision)
+   		values ('',".$refcotizaciones.",".$refestadoventa.",".$primaneta.",".$primatotal.",'".$fechavencimientopoliza."','".$nropoliza."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."','".$foliotys."','".$foliointerno."',".$refproductosaux.",".$refventas.",".$version.",'".$observaciones."','".$vigenciadesde."','".$fechaemision."')";
+      }
+
 
       //die(var_dump($sql));
 		$res = $this->query($sql,1);
@@ -10260,12 +10267,20 @@ return $res;
  		return $res;
 	}
 
-   function traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($idcotizacion,$tipodocumentacion,$notin = '') {
+   function traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($idcotizacion,$tipodocumentacion,$notin='', $in='' ) {
 
       if ($notin != '') {
          $cadNotIn = ' and d.iddocumentacion not in ('.$notin.') ';
       } else {
          $cadNotIn = '';
+      }
+
+
+
+      if ($in != '') {
+         $cadIn = ' and d.iddocumentacion in ('.$in.') ';
+      } else {
+         $cadIn = '';
       }
 
 		$sql = "SELECT
@@ -10277,7 +10292,8 @@ return $res;
 					    da.type,
 					    coalesce( ed.estadodocumentacion, 'Falta') as estadodocumentacion,
 						 ed.color,
-					    ed.idestadodocumentacion
+					    ed.idestadodocumentacion,
+                   d.carpeta
 					FROM
 					    dbdocumentaciones d
 					        LEFT JOIN
@@ -10286,8 +10302,9 @@ return $res;
 					        LEFT JOIN
 					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
 					where d.reftipodocumentaciones in (".$tipodocumentacion.") and refprocesocotizacion = 1
-                     and d.activo='1' ".$cadNotIn."
+                     and d.activo='1' ".$cadNotIn.$cadIn."
 					order by 1";
+
 		$res = $this->query($sql,0);
  		return $res;
 	}

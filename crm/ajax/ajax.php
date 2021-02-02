@@ -1719,6 +1719,8 @@ function insertarVentasCompleto($serviciosReferencias) {
    $foliointerno = $serviciosReferencias->generaFolioInterno();
    $vigenciadesde = $_POST['vigenciadesde'];
 
+   $fechaemision = $_POST['fechaemision'];
+
    $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo);
 
    if ((integer)$res > 0) {
@@ -1738,7 +1740,7 @@ function insertarVentasCompleto($serviciosReferencias) {
       $refbeneficiarios = $_POST['refbeneficiarios'];
       $resModificarBEN = $serviciosReferencias->modificarCotizacionesBeneficiario($res,$refbeneficiarios);
 
-      $resVenta = $serviciosReferencias->insertarVentas($res,6,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,0,0,1,$observaciones='',$vigenciadesde);
+      $resVenta = $serviciosReferencias->insertarVentas($res,6,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,0,0,1,$observaciones='',$vigenciadesde,$fechaemision);
 
       // inserto la cartera de productos del cliente
       $resIC = $serviciosReferencias->insertarClientescartera($refclientes,$refproductos,$vigenciadesde,'','1');
@@ -2658,9 +2660,9 @@ function insertarVentas($serviciosReferencias) {
    }
    */
 
+   $fechaemision = $_POST['fechaemision'];
 
-
-   $res = $serviciosReferencias->insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux, $refventas,$version, $observaciones,$vigenciadesde);
+   $res = $serviciosReferencias->insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux, $refventas,$version, $observaciones,$vigenciadesde,$fechaemision);
 
    if ((integer)$res > 0) {
 
@@ -6310,8 +6312,10 @@ function modificarVentas($serviciosReferencias) {
 
    $vigenciadesde = $_POST['vigenciadesde'];
 
+   $fechaemision = $_POST['fechaemision'];
+
    if ($error == '') {
-      $res = $serviciosReferencias->modificarVentas($id,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechamodi,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$refventas,$version,$refmotivorechazopoliza,$observaciones,$vigenciadesde);
+      $res = $serviciosReferencias->modificarVentas($id,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechamodi,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$refventas,$version,$refmotivorechazopoliza,$observaciones,$vigenciadesde,$fechaemision);
 
       if ($res == true) {
          echo '';
@@ -9688,8 +9692,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
       case 'dbventas':
          $resultado = $serviciosReferencias->traerVentasPorId($id);
 
-         $lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','refproductosaux','vigenciadesde');
-         $lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Producto Especifico','Vigencia Desde');
+         $lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','refproductosaux','vigenciadesde','fechaemision');
+         $lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Producto Especifico','Vigencia Desde','Fecha de Emision');
 
          $modificar = "modificarVentas";
          $idTabla = "idventa";

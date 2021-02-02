@@ -270,9 +270,11 @@ if (mysql_result($resProducto,0,'reftipodocumentaciones') == '') {
 	$refdoctipo = mysql_result($resProducto,0,'reftipodocumentaciones');
 }
 
-$documentacionesadicionales = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
-$documentacionesadicionales2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
-$documentacionesadicionales3 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
+if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16)) {
+	$documentacionesadicionales = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'82,83,84,85,86');
+	$documentacionesadicionales2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'82,83,84,85,86');
+	$documentacionesadicionales3 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'82,83,84,85,86');
+}
 
 $documentacionesrequeridas = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
 $documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
@@ -366,15 +368,15 @@ if ($_SESSION['idroll_sahilices'] != 7) {
 	                    <div class="demo-settings">
 	                        <p>PRODUCTOS</p>
 	                        <ul class="setting-list">
-	                           '.$cadArProd.'
+	                           '.($cadArProd == '' ? '<p>(No existe documentacion)</p>' : $cadArProd).'
 	                        </ul>
 									<p>EMISION</p>
 	                        <ul class="setting-list">
-	                           '.$cadArProdE.'
+	                           '.($cadArProdE == '' ? '<p>(No existe documentacion)</p>' : $cadArProdE).'
 	                        </ul>
 	                        <p>CLIENTES</p>
 	                        <ul class="setting-list">
-	                           '.$cadArCliente.'
+	                           '.($cadArCliente == '' ? '<p>(No existe documentacion)</p>' : $cadArCliente).'
 	                        </ul>
 
 									<p>ADICIONALES</p>
@@ -401,6 +403,12 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 	$lblModal .= '<h5>* Tiene vencido el INE, por favor, solicitelo nuevamente. Fecha de Emision: '.$vigenciasCliente['vine'].'</h5><br>';
 	$modalVigencias = 1;
 }
+
+
+$resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'','82,83,84,85,86');
+
+
+
 
 ?>
 
@@ -525,6 +533,13 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 							</ul>
 						</div>
 						<div class="body table-responsive">
+							<?php
+							while ($rowCI = mysql_fetch_array($resCotizacionInbursa) ) {
+								if ($rowCI['archivo'] != '') { ?>
+									<button type="button" style="margin-left:5px;"onclick="window.open('../../archivos/cotizaciones/<?php echo $id; ?>/<?php echo $rowCI['carpeta']; ?>/<?php echo $rowCI['archivo']; ?>','_blank')" class="btn bg-green waves-effect"><i class="material-icons">unarchive</i><?php echo $rowCI['documentacion']; ?></button>
+							<?php	}
+							}
+							?>
 							<form class="formulario frmNuevo" role="form" id="sign_in">
 
 
@@ -1163,13 +1178,23 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 			minDate : new Date()
 		});
 
-		$('#fechavencimiento').bootstrapMaterialDatePicker({
-			format: 'YYYY/MM/DD',
-			lang : 'es',
-			clearButton: true,
-			weekStart: 1,
-			time: false,
-			minDate : new Date()
+
+
+		$('#fechavencimiento').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
 		});
 
 

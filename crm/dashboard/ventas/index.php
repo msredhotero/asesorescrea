@@ -55,8 +55,8 @@ $modificar = "modificarVentas";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbventas";
 
-$lblCambio	 	= array('primaneta','primatotal','porcentajecomision','montocomision','fechavencimientopoliza','nropoliza','refestadoventa');
-$lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','Fecha Vencimiento de la Poliza','Nro Poliza','Estado Venta');
+$lblCambio	 	= array('primaneta','primatotal','porcentajecomision','montocomision','fechavencimientopoliza','nropoliza','refestadoventa','fechaemision');
+$lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','Fecha Vencimiento de la Poliza','Nro Poliza','Estado Venta','Fecha de Emision');
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
@@ -883,6 +883,23 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 
 						$('.frmContrefventas').hide();
 						$('#version').prop('readonly',true);
+
+						$('#fechaemision').pickadate({
+							format: 'yyyy-mm-dd',
+							labelMonthNext: 'Siguiente mes',
+							labelMonthPrev: 'Previo mes',
+							labelMonthSelect: 'Selecciona el mes del año',
+							labelYearSelect: 'Selecciona el año',
+							selectMonths: true,
+							selectYears: 100,
+							today: 'Hoy',
+							clear: 'Borrar',
+							close: 'Cerrar',
+							monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+							monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+							weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+							weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+					   });
 
 						$('#fechavencimientopoliza').pickadate({
 							format: 'yyyy-mm-dd',

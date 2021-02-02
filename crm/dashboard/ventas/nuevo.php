@@ -294,7 +294,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 									</div>
 
 									<div class="row">
-										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContvigenciadesde" style="display:block">
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 frmContvigenciadesde" style="display:block">
 											<label for="vigenciadesde" class="control-label" style="text-align:left">Vigencia Desde </label>
 											<div class="form-group input-group">
 
@@ -309,7 +309,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 	                              </div>
                               </div>
 
-										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContfechavencimientopoliza" style="display:block">
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 frmContfechavencimientopoliza" style="display:block">
 											<label for="fechavencimientopoliza" class="control-label" style="text-align:left">Fecha Vencimiento Poliza </label>
 											<div class="form-group input-group">
 
@@ -319,6 +319,22 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 	                                 <div class="form-line">
 
 											   	<input readonly="" style="width:200px;" type="text" class="datepicker form-control" id="fechavencimientopoliza" name="fechavencimientopoliza">
+
+	                                 </div>
+	                              </div>
+                              </div>
+
+
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 frmContfechaemision" style="display:block">
+											<label for="fechavencimientopoliza" class="control-label" style="text-align:left">Fecha Emision Poliza </label>
+											<div class="form-group input-group">
+
+												<span class="input-group-addon">
+													<i class="material-icons">date_range</i>
+												</span>
+	                                 <div class="form-line">
+
+											   	<input readonly="" style="width:200px;" type="text" class="datepicker form-control" id="fechaemision" name="fechaemision">
 
 	                                 </div>
 	                              </div>
