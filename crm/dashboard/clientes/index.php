@@ -467,10 +467,10 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 		$('#telefonofijo').inputmask('999 9999999', { placeholder: '___ _______' });
 		$('#telefonocelular').inputmask('999 9999999', { placeholder: '___ _______' });
 
-		$('#fechacrea').val('20/02/2020');
-		$('#fechamodi').val('20/02/2020');
-		$('#usuariocrea').val('20/02/2020');
-		$('#usuariomodi').val('20/02/2020');
+		$('.frmNuevo #fechacrea').val('<?php echo date('Y-m-d'); ?>');
+		$('.frmNuevo #fechamodi').val('<?php echo date('Y-m-d'); ?>');
+		$('.frmNuevo #usuariocrea').val('<?php echo $_SESSION['usua_sahilices']; ?>');
+		$('.frmNuevo #usuariomodi').val('<?php echo $_SESSION['usua_sahilices']; ?>');
 
 
 		$('.frmContnumerocliente').hide();
@@ -687,6 +687,11 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 						$('.frmAjaxModificar .frmContapellidomaterno label span').remove();
 						$('.frmAjaxModificar .frmContapellidopaterno label span').remove();
 						$('.frmAjaxModificar .frmContnombre label span').remove();
+
+						$('.frmAjaxModificar #fechacrea').val('<?php echo date('Y-m-d'); ?>');
+						$('.frmAjaxModificar #fechamodi').val('<?php echo date('Y-m-d'); ?>');
+						$('.frmAjaxModificar #usuariocrea').val('<?php echo $_SESSION['usua_sahilices']; ?>');
+						$('.frmAjaxModificar #usuariomodi').val('<?php echo $_SESSION['usua_sahilices']; ?>');
 
 						$(".frmAjaxModificar #codigopostal2").easyAutocomplete(optionsMod);
 
