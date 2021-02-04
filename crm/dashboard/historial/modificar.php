@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../engestion/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../historial/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"En Gestion",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Historial",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -51,6 +51,11 @@ $modificar = "modificarCotizaciones";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
+if (isset($_GET['habilitacambio'])) {
+	$habilitacambio = 1;
+} else {
+	$habilitacambio = 0;
+}
 
 $id = $_GET['id'];
 $resultado = $serviciosReferencias->traerCotizacionesPorId($id);
@@ -87,6 +92,8 @@ $resEstados = $serviciosReferencias->traerEstadocotizacionesPorId($idestado);
 $orden = mysql_result($resEstados,0,'orden');
 $ordenAux = $orden;
 
+//die(var_dump($orden));
+
 switch ($orden) {
 	case 1:
 		$ordenPosible = 2;
@@ -104,7 +111,7 @@ switch ($orden) {
 		$lblOrden = 'Aceptado';
 	break;
 	case 4:
-		$ordenPosible = 4;
+		$ordenPosible = 0;
 		$ordenRechazo = 0;
 		$lblOrden = 'Finalizado Rechazado';
 	break;
@@ -129,12 +136,11 @@ switch ($orden) {
 		$ordenPosible = 2;
 		$ordenRechazo = 0;
 		$lblOrden = 'En proceso';
-	break;
+		break;
 }
 
-$ordenPosible = 0;
 if ($_SESSION['idroll_sahilices'] == 7) {
-	if ($orden >= 11) {
+	if ($orden >= 3) {
 		$ordenPosible = 0;
 		$ordenRechazo = 0;
 		$lblOrden = 'Finalizado';
@@ -169,17 +175,19 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 	$resVar5	= $serviciosReferencias->traerAsesores();
 	$cadRef5 = $serviciosFunciones->devolverSelectBoxActivo($resVar5,array(2,3,4),' ',mysql_result($resultado,0,'refasesores'));
 
-	$resGuia = $serviciosReferencias->traerEstadocotizacionesPorIn('1,2,3,4,5');
+	$resGuia = $serviciosReferencias->traerEstadocotizacionesPorIn('1,2,3,4,5,26,27');
 }
 
 if ($_SESSION['idroll_sahilices'] == 7) {
-	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId(4);
+	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId($ordenPosible);
 	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$idestado);
 } else {
 
-	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorIn('1,4,8,10,12,13');
+	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorIn('1,4,8,10,12,13,26,27');
 	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$idestado);
 }
+
+
 
 
 switch (mysql_result($resultado,0,'cobertura')) {
@@ -209,7 +217,6 @@ switch (mysql_result($resultado,0,'presentacotizacion')) {
 	default:
 		$cadRef8 = "<option value='Si'>Si</option><option value='No' selected>No</option>";
 	break;
-
 }
 
 switch (mysql_result($resultado,0,'tiponegocio')) {
@@ -243,8 +250,9 @@ switch (mysql_result($resultado,0,'existeprimaobjetivo')) {
 $resVar10	= $serviciosReferencias->traerAseguradora();
 $cadRef10 = $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',mysql_result($resultado,0,'coberturaactual'));
 
-$refEtapa = $serviciosReferencias->traerEtapacotizacion();
-$cadEtapa = $serviciosFunciones->devolverSelectBoxActivo($refEtapa,array(1),'',mysql_result($resultado,0,'refestados'));
+$resVarEtapa = $serviciosReferencias->traerEtapacotizacion();
+$cadEtapa = $serviciosFunciones->devolverSelectBoxActivo($resVarEtapa,array(1),'',mysql_result($resultado,0,'coberturaactual'));
+
 
 $refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadRef7,7=>$cadRef8,8=>$cadRef9,9=>$cadRef10,10=>$cadRef11,11=>$cadEtapa);
 $refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones','cobertura','presentacotizacion','tiponegocio','coberturaactual','existeprimaobjetivo','refestados');
@@ -270,15 +278,9 @@ if (mysql_result($resProducto,0,'reftipodocumentaciones') == '') {
 	$refdoctipo = mysql_result($resProducto,0,'reftipodocumentaciones');
 }
 
-if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16)) {
-	$documentacionesadicionales = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'82,83,84,85,86');
-	$documentacionesadicionales2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'82,83,84,85,86');
-	$documentacionesadicionales3 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'82,83,84,85,86');
-} else {
-	$documentacionesadicionales = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
-	$documentacionesadicionales2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
-	$documentacionesadicionales3 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
-}
+$documentacionesadicionales = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
+$documentacionesadicionales2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
+$documentacionesadicionales3 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
 
 $documentacionesrequeridas = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
 $documentacionesrequeridas2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
@@ -334,62 +336,60 @@ while ($rowD = mysql_fetch_array($documentacionesadicionales3)) {
 
 $cadArCliente = '';
 
-if ($_SESSION['idroll_sahilices'] != 7) {
 
-
-	while ($rowD = mysql_fetch_array($resDocumentacionesCliente)) {
-		$cadArCliente .= '<li>
-			 <span>'.substr($rowD['documentacion'],0,18).'</span>
-			 <div class="switch">
-				  <label class="btn bg-'.($rowD['color'] == '' ? 'grey' : $rowD['color']).' btnC'.str_replace(' ','',$rowD['documentacion']).'" style="margin-top:-6px; margin-right:5px;">'.$rowD['estadodocumentacion'].'</label>
-			 </div>
-		</li>';
-	}
+while ($rowD = mysql_fetch_array($resDocumentacionesCliente)) {
+	$cadArCliente .= '<li>
+		 <span>'.substr($rowD['documentacion'],0,18).'</span>
+		 <div class="switch">
+			  <label class="btn bg-'.($rowD['color'] == '' ? 'grey' : $rowD['color']).' btnC'.str_replace(' ','',$rowD['documentacion']).'" style="margin-top:-6px; margin-right:5px;">'.$rowD['estadodocumentacion'].'</label>
+		 </div>
+	</li>';
 }
 
-	$rightsidebar = '<ul class="nav nav-tabs tab-nav-right" role="tablist">
-	                <li role="presentation" class="active"><a href="#skins" data-toggle="tab">CLIENTE</a></li>
-	                <li role="presentation"><a href="#settings" data-toggle="tab">DOCUMENTACIONES</a></li>
-	            </ul>
-	            <div class="tab-content">
-	                <div role="tabpanel" class="tab-pane fade in active in active" id="skins">
-	                    <ul class="demo-choose-skin">
-	                        <li>
-	                            <div class="'.($vigenciasCliente['errorVCD'] == 'true' ? 'red' : 'green').'"></div>
-	                            <span>Comp. de Domicilio: '.($vigenciasCliente['vcd']).'</span>
-	                        </li>
-	                        <li>
-										<div class="'.($vigenciasCliente['errorVRFC'] == 'true' ? 'red' : 'green').'"></div>
-										<span>Emision RFC: '.($vigenciasCliente['vrfc']).'</span>
-	                        </li>
-									<li>
-										<div class="'.($vigenciasCliente['errorVINE'] == 'true' ? 'red' : 'green').'"></div>
-										<span>Venc. INE: '.($vigenciasCliente['vine']).'</span>
-	                        </li>
-	                    </ul>
-	                </div>
-	                <div role="tabpanel" class="tab-pane fade" id="settings">
-	                    <div class="demo-settings">
-	                        <p>PRODUCTOS</p>
-	                        <ul class="setting-list">
-	                           '.($cadArProd == '' ? '<p>(No existe documentacion)</p>' : $cadArProd).'
-	                        </ul>
-									<p>EMISION</p>
-	                        <ul class="setting-list">
-	                           '.($cadArProdE == '' ? '<p>(No existe documentacion)</p>' : $cadArProdE).'
-	                        </ul>
-	                        <p>CLIENTES</p>
-	                        <ul class="setting-list">
-	                           '.($cadArCliente == '' ? '<p>(No existe documentacion)</p>' : $cadArCliente).'
-	                        </ul>
 
-									<p>ADICIONALES</p>
-	                        <ul class="setting-list">
-	                           '.$cadArCotizacion.'
-	                        </ul>
-	                    </div>
-	                </div>
-	            </div>';
+$rightsidebar = '<ul class="nav nav-tabs tab-nav-right" role="tablist">
+                <li role="presentation" class="active"><a href="#skins" data-toggle="tab">CLIENTE</a></li>
+                <li role="presentation"><a href="#settings" data-toggle="tab">DOCUMENTACIONES</a></li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active in active" id="skins">
+                    <ul class="demo-choose-skin">
+                        <li>
+                            <div class="'.($vigenciasCliente['errorVCD'] == 'true' ? 'red' : 'green').'"></div>
+                            <span>Comp. de Domicilio: '.($vigenciasCliente['vcd']).'</span>
+                        </li>
+                        <li>
+									<div class="'.($vigenciasCliente['errorVRFC'] == 'true' ? 'red' : 'green').'"></div>
+									<span>Emision RFC: '.($vigenciasCliente['vrfc']).'</span>
+                        </li>
+								<li>
+									<div class="'.($vigenciasCliente['errorVINE'] == 'true' ? 'red' : 'green').'"></div>
+									<span>Venc. INE: '.($vigenciasCliente['vine']).'</span>
+                        </li>
+                    </ul>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="settings">
+                    <div class="demo-settings">
+                        <p>PRODUCTOS</p>
+                        <ul class="setting-list">
+                           '.$cadArProd.'
+                        </ul>
+								<p>EMISION</p>
+                        <ul class="setting-list">
+                           '.$cadArProdE.'
+                        </ul>
+                        <p>CLIENTES</p>
+                        <ul class="setting-list">
+                           '.$cadArCliente.'
+                        </ul>
+
+								<p>ADICIONALES</p>
+                        <ul class="setting-list">
+                           '.$cadArCotizacion.'
+                        </ul>
+                    </div>
+                </div>
+            </div>';
 
 $lblModal ='';
 $modalVigencias = 0;
@@ -408,8 +408,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 	$modalVigencias = 1;
 }
 
-
-
+$habilitacambio = 1;
 
 ?>
 
@@ -456,9 +455,6 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 		.alert > i{ vertical-align: middle !important; }
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		#codigopostal { width: 400px; }
-		.setting-list li .switch label:hover {
-			color: white !important;
-		}
 
 	</style>
 
@@ -512,14 +508,11 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 
 			<div class="row">
 
-
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
 								MODIFICAR <?php echo strtoupper($plural); ?> <button type="button" class="btn bg-cyan waves-effect btnLstDocumentaciones"><i class="material-icons">unarchive</i><span class="js-right-sidebar" data-close="true">DOCUMENTACIONES</span></button>
-								<?php if ($_SESSION['idroll_sahilices'] != 7) { ?><button type="button" class="btn bg-green waves-effect btnLstEnviar"><i class="material-icons">send</i><span>ENVIAR COTIZACION A CLIENTE</span></button>
-								<?php } ?>
 
 							</h2>
 							<ul class="header-dropdown m-r--5">
@@ -534,16 +527,18 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 							</ul>
 						</div>
 						<div class="body table-responsive">
-
 							<form class="formulario frmNuevo" role="form" id="sign_in">
 
 
 								<div class="row" style="padding: 5px 20px;">
 
 									<?php echo $frmUnidadNegocios; ?>
+
 									<input type="hidden" id="estadoactual" name="estadoactual" value=""/>
+
+
 								</div>
-								<div class="row" style="display:none;">
+								<div class="row">
 									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContidclienteinbursa" style="display:block">
 										<label class="form-label">ID Cliente Inbursa </label>
 										<div class="form-group input-group">
@@ -613,30 +608,15 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 									</table>
 								</div>
 							<?php } ?>
-
 								<div class="row">
 									<p>Acciones</p>
 									<div class="modal-footer">
 										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-									<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
-										<?php if (($idestado == 4 )) { ?>
-											<button id="4" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>
-
-											<button type="button" class="btn bg-orange waves-effect btnAbandonada">ABANDONADA</button>
-											<button type="button" class="btn bg-amber waves-effect btnDenegada">DENEGADA POR INBURSA</button>
-											<button type="button" class="btn bg-deep-orange waves-effect btnInsuficiente">PRIMA DE REFERENCIA INSUFICIENTE</button>
-										<?php } ?>
-									<?php }  else { ?>
-											<button type="button" class="btn btn-success waves-effect btnModificarBitacora">MODIFICAR BITACORA</button>
-									<?php } ?>
-
+											<button type="submit" class="btn btn-warning waves-effect btnModificar">Modificar</button>
 
 										</div>
 				               </div>
 								</div>
-
-
-
 
 							</form>
 							</div>
@@ -738,72 +718,9 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 <script>
 	$(document).ready(function(){
 
-		$('#primaneta').number( true, 2 ,'.','');
-		$('#primatotal').number( true, 2 ,'.','');
-		$('#primaobjetivo').number( true, 2 ,'.','');
-
-		$('#version').prop('readonly',true);
-		$('#folio').prop('readonly',true);
-
-		<?php if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16)) { ?>
-		$('.frmContrefestadocotizaciones').hide();
-		$('.frmContarticulo').hide();
-		$('.frmContot').hide();
-		<?php } ?>
-
-		$('.btnModificarBitacora').click(function() {
-			modificarCotizacionesPorCampoCompleto();
-		});
-
 		$('.modificarEstadoCotizacionRechazo').click(function() {
-			if ($('#estadomodificarestadorechazo').val() == '10') {
-				ajustarCotizacion();
-			} else {
-				modificarCotizacionesPorCampo();
-			}
-
+			modificarCotizacionesPorCampo();
 		});
-
-		function ajustarCotizacion() {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {
-					accion: 'ajustarCotizacion',
-					id: $('#idmodificarestadorechazo').val(),
-					idestado: $('#estadomodificarestadorechazo').val()
-				},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-					swal({
-							title: "Respuesta",
-							text: data.mensaje,
-							type: data.tipo,
-							timer: 1500,
-							showConfirmButton: false
-					});
-					$('#lgmModificarEstado').modal('toggle');
-					location.reload();
-				},
-				//si ha ocurrido un error
-				error: function(){
-					swal({
-							title: "Respuesta",
-							text: 'Actualice la pagina',
-							type: "error",
-							timer: 2000,
-							showConfirmButton: false
-					});
-
-				}
-			});
-		}
 
 		function modificarCotizacionesPorCampo() {
 			$.ajax({
@@ -830,59 +747,10 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 							showConfirmButton: false
 					});
 					$('#lgmModificarEstado').modal('toggle');
-					location.reload();
-				},
-				//si ha ocurrido un error
-				error: function(){
-					swal({
-							title: "Respuesta",
-							text: 'Actualice la pagina',
-							type: "error",
-							timer: 2000,
-							showConfirmButton: false
-					});
-
-				}
-			});
-		}
-
-		function modificarCotizacionesPorCampoCompleto() {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {
-					accion: 'modificarCotizacionesPorCampoCompleto',
-					id: <?php echo $id; ?>,
-					campo: 'bitacoraagente',
-					valor: $('#bitacoraagente').val()
-				},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data == '') {
-						swal({
-							title: "Respuesta",
-							text: 'Se guardo correctamente la bitacora',
-							type: "success",
-							timer: 1800,
-							showConfirmButton: false
-						});
-					} else {
-						swal({
-							title: "Respuesta",
-							text: data,
-							type: "error",
-							timer: 2000,
-							showConfirmButton: false
-						});
-
-					}
+					table.ajax.reload();
+					table2.ajax.reload();
+					table3.ajax.reload();
+					table4.ajax.reload();
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -910,8 +778,8 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 
 		$('.btnDenegada').click(function() {
 
-			$('.lblModiEstado').html('DENEGADA POR INBURSA');
-			$('.modificarEstadoCotizacionRechazo').html('DENEGADA POR INBURSA');
+			$('.lblModiEstado').html('BASURA');
+			$('.modificarEstadoCotizacionRechazo').html('BASURA');
 			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
 			$('#estadomodificarestadorechazo').val(6);
 			$('#lgmModificarEstado').modal();
@@ -921,8 +789,8 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 
 		$('.btnInsuficiente').click(function() {
 
-			$('.lblModiEstado').html('PRIMA DE REFERENCIA INSUFICIENTE');
-			$('.modificarEstadoCotizacionRechazo').html('PRIMA DE REFERENCIA INSUFICIENTE');
+			$('.lblModiEstado').html('BASURA');
+			$('.modificarEstadoCotizacionRechazo').html('BASURA');
 			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
 			$('#estadomodificarestadorechazo').val(7);
 			$('#lgmModificarEstado').modal();
@@ -932,11 +800,11 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 		$('.frmConttieneasegurado').hide();
 		$('.frmContrefasegurados').hide();
 		$('.frmContrefbeneficiarios').hide();
-
+		$('.frmContversion').hide();
 		$('.frmContrefcotizaciones').hide();
-		$('.frmContrefestados').hide();
 
-		$('.frmContrefasesores').hide();
+
+		$('.frmContrefestados').hide();
 
 		$('.btnLstEnviar').click(function() {
 			$('#lgmENVIAR').modal();
@@ -970,8 +838,6 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 								timer: 1000,
 								showConfirmButton: false
 						});
-
-						$(location).attr('href','../entregadas/index.php');
 					} else {
 						swal({
 								title: "Respuesta",
@@ -1163,7 +1029,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 
 
 		$('.frmContrefusuarios').hide();
-		/*$('.frmContrefestadocotizaciones').hide();*/
+		$('.frmContrefestadocotizaciones').hide();
 
 
 
@@ -1221,23 +1087,13 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 			minDate : new Date()
 		});
 
-
-
-		$('#fechavencimiento').pickadate({
-			format: 'yyyy-mm-dd',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 100,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		$('#fechavencimiento').bootstrapMaterialDatePicker({
+			format: 'YYYY/MM/DD',
+			lang : 'es',
+			clearButton: true,
+			weekStart: 1,
+			time: false,
+			minDate : new Date()
 		});
 
 
@@ -1463,18 +1319,15 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 			frmAjaxEliminarDefinitivo($('#ideliminarDefinitivo').val());
 		});
 
-		$(".btnModificar").click( function(){
-
-			idTable =  $(this).attr("id");
-
-			$('.btnContinuar').click();
-		});//fin del boton modificar
-
 		$("#example").on("click",'.btnVer', function(){
 			idTable =  $(this).attr("id");
 			$(location).attr('href','ver.php?id=' + idTable);
 
 		});//fin del boton modificar
+
+		$('.btnHabilitaCambios').click(function() {
+			$(location).attr('href','modificar.php?id=<?php echo $id; ?>&habilitacambio=1');
+		});
 
 		function refrescar(){
 	    //Actualiza la página
@@ -1578,10 +1431,11 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 		});
 	});
 
-
+		<?php
+		if ($idestado != 4) {
+		?>
 		$('.frmNuevo').submit(function(e){
-			//$('#refestadocotizaciones').val(4);
-			//$('#refestados').val(2);
+
 			e.preventDefault();
 			if ($('#sign_in')[0].checkValidity()) {
 				//información del formulario
@@ -1629,6 +1483,9 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 			}
 		});
 
+		<?php
+		}
+		?>
 
 
 		$('.frmModificar').submit(function(e){
@@ -1689,6 +1546,11 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 				});
 			}
 		});
+
+		<?php if (($_SESSION['idroll_sahilices'] != 7) && ($habilitacambio == 1)) { ?>
+			//$('.frmContrefestados').show();
+			$('.frmContrefestadocotizaciones').show();
+		<?php } ?>
 	});
 </script>
 

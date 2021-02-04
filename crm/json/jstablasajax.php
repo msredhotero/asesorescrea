@@ -1218,11 +1218,11 @@ switch ($tabla) {
 					$class = array();
 					$icon = array();
 					$whereEstado = ' c.refestados in (4) ';
-					$termina = 5;
+					$termina = 6;
 				} else {
-					$label = array();
-					$class = array();
-					$icon = array();
+					$label = array('btnModificar');
+					$class = array('bg-amber');
+					$icon = array('create');
 					$whereEstado = ' c.refestados in (4) ';
 					$termina = 6;
 				}
@@ -1230,12 +1230,17 @@ switch ($tabla) {
 				$filtroNuevo = '';
 			break;
 			case 5:
-				$label = array('btnCrear');
-				$class = array('bg-green');
-				$icon = array('check_circle');
-				$whereEstado = ' c.refestados in (4) ';
-				$termina = 7;
-				$filtroNuevo = 'enlinea';
+				$label = array('btnModificar');
+				$class = array('bg-amber');
+				$icon = array('create');
+				$whereEstado = ' c.refestados in (5) ';
+				if ($_SESSION['idroll_sahilices'] == 7) {
+					$termina = 6;
+				} else {
+					$termina = 6;
+				}
+
+				$filtroNuevo = '';
 			break;
 			case 6:
 				$label = array('btnCrear');
@@ -1251,7 +1256,7 @@ switch ($tabla) {
 				$icon = array('check_circle');
 				$whereEstado = ' c.refestados in (4) ';
 				$termina = 7;
-				$filtroNuevo = 'poroficina';
+				$filtroNuevo = 'enlinea';
 			break;
 			case 10:
 				if ($_SESSION['idroll_sahilices'] == 7) {
@@ -1281,7 +1286,10 @@ switch ($tabla) {
 
 		if ($_SESSION['idroll_sahilices'] == 7) {
 
-			$datos = $serviciosReferencias->traerCotizacionesajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices'],$whereEstado,$filtroNuevo);
+			$resAsesores = $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
+			$idasesor = mysql_result($resAsesores,0,'idasesor');
+
+			$datos = $serviciosReferencias->traerCotizacionesajaxPorAsesor($length, $start, $busqueda,$colSort,$colSortDir,$idasesor,$whereEstado,$filtroNuevo);
 
 			$resAjax = $datos[0];
 			$res = $datos[1];

@@ -24,22 +24,28 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../engestion/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../clientes/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
+
 if ($_SESSION['idroll_sahilices'] == 10) {
 	$idusuario = $_SESSION['usuaid_sahilices'];
-	$resultado 		= 	$serviciosReferencias->traerCotizacionesPorUsuario($idusuario);
+	$resultadoC 		= 	$serviciosReferencias->traerCotizacionesPorUsuario($idusuario);
+	$idcotizacion = mysql_result($resultadoC,0,0);
 } else {
-	$id = $_GET['id'];
-	$resultado 		= 	$serviciosReferencias->traerCotizacionesPorId($id);
+	$idcotizacion = $_GET['id'];
+	$resultadoC 		= 	$serviciosReferencias->traerCotizacionesPorId($idcotizacion);
 }
 
 
+$id = mysql_result($resultadoC,0,'refclientes');
+$resultado 		= 	$serviciosReferencias->traerClientesPorId($id);
+
+
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"En Gestion",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Clientes",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -49,8 +55,6 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 
 
-$id = mysql_result($resultado,0,'idcotizacion');
-
 $iddocumentacion = $_GET['documentacion'];
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
@@ -58,46 +62,79 @@ $singular = "Documentación I";
 
 $plural = "Documentaciones I";
 
-$eliminar = "eliminarCotizaciones";
+$eliminar = "eliminarPostulantes";
 
-$insertar = "insertarCotizaciones";
+$insertar = "insertarPostulantes";
 
-$modificar = "modificarCotizaciones";
+$modificar = "modificarPostulantes";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 
-$resCliente = $serviciosReferencias->traerClientesPorId(mysql_result($resultado,0,'refclientes'));
-
-$cliente = mysql_result($resCliente,0,'nombre').' '.mysql_result($resCliente,0,'apellidopaterno').' '.mysql_result($resCliente,0,'apellidomaterno');
+$postulante = mysql_result($resultado,0,'nombre').' '.mysql_result($resultado,0,'apellidopaterno').' '.mysql_result($resultado,0,'apellidomaterno');
 
 
-$path  = '../../archivos/cotizaciones/'.$id;
+$path  = '../../archivos/clientes/'.$id;
 
 if (!file_exists($path)) {
 	mkdir($path, 0777);
 }
 
+/**** son 10 documentaciones */
+$pathINEf  = '../../archivos/clientes/'.$id.'/inef';
+
+if (!file_exists($pathINEf)) {
+	mkdir($pathINEf, 0777);
+}
+
+$filesINEf = array_diff(scandir($pathINEf), array('.', '..'));
+
+/****************************************************************/
+
+$pathINEd  = '../../archivos/clientes/'.$id.'/ined';
+
+if (!file_exists($pathINEd)) {
+	mkdir($pathINEd, 0777);
+}
+
+$filesINEd = array_diff(scandir($pathINEd), array('.', '..'));
+
+/****************************************************************/
+
+$pathCD  = '../../archivos/clientes/'.$id.'/comprobantedomicilio';
+
+if (!file_exists($pathCD)) {
+	mkdir($pathCD, 0777);
+}
+
+$filesCD = array_diff(scandir($pathCD), array('.', '..'));
+
+/****************************************************************/
+
+$pathRC  = '../../archivos/clientes/'.$id.'/mercantil';
+
+if (!file_exists($pathRC)) {
+	mkdir($pathRC, 0777);
+}
+
+$filesRC = array_diff(scandir($pathRC), array('.', '..'));
+
+
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacion($id, $iddocumentacion);
+$resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorClienteDocumentacion($id, $iddocumentacion);
 
 $resDocumentacion = $serviciosReferencias->traerDocumentacionesPorId($iddocumentacion);
-
 
 $resEstados = $serviciosReferencias->traerEstadodocumentaciones();
 
 if (mysql_num_rows($resDocumentacionAsesor) > 0) {
-
-	if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21)) {
-		$resEstados = $serviciosReferencias->traerEstadodocumentacionesPorId(mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'));
-	}
 	$cadRefEstados = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'));
 
-	$iddocumentacionasociado = mysql_result($resDocumentacionAsesor,0,'iddocumentacioncotizacion');
+	$iddocumentacionasociado = mysql_result($resDocumentacionAsesor,0,'iddocumentacioncliente');
 
 	$estadoDocumentacion = mysql_result($resDocumentacionAsesor,0,'estadodocumentacion');
 
@@ -121,8 +158,6 @@ if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 			$span = 'text-success glyphicon glyphicon-remove-sign';
 		break;
 	}
-
-	$idestadodocumentacion = mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones');
 } else {
 	$cadRefEstados = $serviciosFunciones->devolverSelectBox($resEstados,array(1),'');
 
@@ -133,30 +168,81 @@ if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 	$color = 'blue';
 
 	$span = 'text-info glyphicon glyphicon-plus-sign';
-
-	$idestadodocumentacion = 1;
 }
 
+
+$input2 = '';
+$boton2 = '';
+$leyenda2 = '';
+$campo2 = '';
+
+$input3 = '';
+$boton3 = '';
+$leyenda3 = '';
+$campo3 = '';
+
 switch ($iddocumentacion) {
-	case 35:
+	case 3:
 		// code...
-		$dato = mysql_result($resultado,0,'nropoliza');
+		$dato = mysql_result($resultado,0,'ine');
+		$dato2 = mysql_result($resultado,0,'vencimientoine');
 
-		$input = '<input type="text" name="nropoliza" maxlength="13" id="nropoliza" class="form-control" value="'.$dato.'"/> ';
+		$input = '<input type="text" name="ine" maxlength="13" id="ine" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
-		$leyenda = 'Cargue el Nro de Poliza';
-		$campo = 'nropoliza';
+		$leyenda = 'Cargue el Nro de INE';
+		$campo = 'ine';
+
+		$input2 = '<input type="text" maxlength="25" name="vencimientoine" id="vencimientoine" class="form-control" value="'.$dato2.'"/> ';
+		$boton2 = '<button type="button" class="btn btn-primary waves-effect btnModificar2">GUARDAR</button>';
+		$leyenda2 = 'Cargue el Vencimiento del INE';
+		$campo2 = 'vencimientoine';
 	break;
-	case 36:
+	case 4:
 		// code...
-		$dato = mysql_result($resultado,0,'nrorecibo');
+		$dato = mysql_result($resultado,0,'ine');
+		$dato2 = mysql_result($resultado,0,'vencimientoine');
 
-		$input = '<input type="text" name="nrorecibo" maxlength="20" id="nrorecibo" class="form-control" value="'.$dato.'"/> ';
+		$input = '<input type="text" name="ine" maxlength="13" id="ine" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
-		$leyenda = 'Cargue el Nro de Recibo';
-		$campo = 'nrorecibo';
-	break;
+		$leyenda = 'Cargue el Nro de INE';
+		$campo = 'ine';
 
+		$input2 = '<input type="text" maxlength="25" name="vencimientoine" id="vencimientoine" class="form-control" value="'.$dato2.'"/> ';
+		$boton2 = '<button type="button" class="btn btn-primary waves-effect btnModificar2">GUARDAR</button>';
+		$leyenda2 = 'Cargue el Vencimiento del INE';
+		$campo2 = 'vencimientoine';
+	break;
+	case 7:
+		// code...
+		$dato = mysql_result($resultado,0,'rfc');
+		$dato2 = mysql_result($resultado,0,'emisionrfc');
+
+		$input = '<input type="text" name="rfc" maxlength="13" id="rfc" class="form-control" value="'.$dato.'"/> ';
+		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
+		$leyenda = 'Cargue el RFC';
+		$campo = 'rfc';
+
+		$input2 = '<input type="text" maxlength="25" name="emisionrfc" id="emisionrfc" class="form-control" value="'.$dato2.'"/> ';
+		$boton2 = '<button type="button" class="btn btn-primary waves-effect btnModificar2">GUARDAR</button>';
+		$leyenda2 = 'Cargue la emision del RFC';
+		$campo2 = 'emisionrfc';
+	break;
+	case 10:
+		// code...
+		$dato = mysql_result($resultado,0,'domicilio');
+		$dato2 = mysql_result($resultado,0,'emisioncomprobantedomicilio');
+
+		$input = '<input type="text" name="domicilio" maxlength="250" id="domicilio" class="form-control" value="'.$dato.'"/> ';
+		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
+		$leyenda = 'Cargue el Domicilio';
+		$campo = 'domicilio';
+
+		$input2 = '<input type="text" maxlength="25" name="emisioncomprobantedomicilio" id="emisioncomprobantedomicilio" class="form-control" value="'.$dato2.'"/> ';
+		$boton2 = '<button type="button" class="btn btn-primary waves-effect btnModificar2">GUARDAR</button>';
+		$leyenda2 = 'Cargue la emision del Comprobante de Domicilio';
+		$campo2 = 'emisioncomprobantedomicilio';
+
+	break;
 
 	default:
 		// code...
@@ -167,12 +253,7 @@ switch ($iddocumentacion) {
 	break;
 }
 
-if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16)) {
-	$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'82,83,84,85,86');
-} else {
-	$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompleta($id);
-}
-
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorClienteDocumentacionCompleta($id);
 
 ?>
 
@@ -312,7 +393,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 			</div>
 
 			<div class="row">
-				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
@@ -357,30 +438,37 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 										</div>
 									</div>
 								</div>
-							</form>
 
-							<?php if (($idestadodocumentacion != 5)) { ?>
-							<div class="row">
+								<?php if (isset($campo2) && $campo2 != '') { ?>
+									<div class="row" style="padding: 5px 20px;">
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+											<label class="form-label"><?php echo $leyenda2; ?></label>
+											<div class="form-group input-group">
+												<div class="form-line">
+													<?php echo $input2; ?>
 
-								<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
-									<div class="dz-message">
-										<div class="drag-icon-cph">
-											<i class="material-icons">touch_app</i>
+												</div>
+											</div>
 										</div>
-										<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+											<label class="form-label"> </label>
+											<div class="form-group input-group">
+												<div class="form-line">
+													<?php echo $boton2; ?>
+
+												</div>
+											</div>
+										</div>
 									</div>
-									<div class="fallback">
-										<input name="file" type="file" id="archivos" />
-										<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
-									</div>
-								</form>
-							</div>
-							<?php } ?>
+								<?php } ?>
+							</form>
 						</div>
 					</div>
 				</div>
+			</div> <!-- fin del card -->
 
-				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+			<div class="row">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card">
 						<div class="header bg-blue">
 							<h2>
@@ -432,7 +520,38 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 				</div>
 			</div>
 
-
+			<div class="row">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<div class="card">
+						<div class="header bg-blue">
+							<h2>
+								CARGA/MODIFIQUE LA DOCUMENTACIÓN <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?> AQUI
+							</h2>
+							<ul class="header-dropdown m-r--5">
+								<li class="dropdown">
+									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+										<i class="material-icons">more_vert</i>
+									</a>
+								</li>
+							</ul>
+						</div>
+						<div class="body">
+							<form action="subircli.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+								<div class="dz-message">
+									<div class="drag-icon-cph">
+										<i class="material-icons">touch_app</i>
+									</div>
+									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+								</div>
+								<div class="fallback">
+									<input name="file" type="file" id="archivos" />
+									<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </section>
@@ -494,36 +613,86 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
-			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=" + idTable;
+			url = "subirdocumentacionic.php?id=<?php echo $idcotizacion; ?>&documentacion=" + idTable;
 			$(location).attr('href',url);
 		});
 
 		$('.btnModificar').click(function() {
-			modificarCotizacionUnicaDocumentacion($('#<?php echo $campo; ?>').val());
+			modificarClienteUnicaDocumentacion($('#<?php echo $campo; ?>').val(),'<?php echo $campo; ?>');
 		});
 
-		<?php if (mysql_result($resultado,0,'refestadocotizaciones') == 1) { ?>
-		$('.btnVolver').click(function() {
-			url = "new.php?id=" + <?php echo $id; ?>;
-			$(location).attr('href',url);
-		});
-		<?php } else { ?>
-		$('.btnVolver').click(function() {
-			url = "modificar.php?id=" + <?php echo $id; ?>;
-			$(location).attr('href',url);
+		<?php if (isset($campo2)) { ?>
+		$('.btnModificar2').click(function() {
+			modificarClienteUnicaDocumentacion($('#<?php echo $campo2; ?>').val(),'<?php echo $campo2; ?>');
 		});
 		<?php } ?>
 
-		function modificarCotizacionUnicaDocumentacion(valor) {
+		$('.btnVolver').click(function() {
+			url = "modificar.php?id=" + <?php echo $idcotizacion; ?>;
+			$(location).attr('href',url);
+		});
+
+		$('#emisioncomprobantedomicilio').pickadate({
+ 			format: 'yyyy-mm-dd',
+ 			labelMonthNext: 'Siguiente mes',
+ 			labelMonthPrev: 'Previo mes',
+ 			labelMonthSelect: 'Selecciona el mes del año',
+ 			labelYearSelect: 'Selecciona el año',
+ 			selectMonths: true,
+ 			selectYears: 5,
+ 			today: 'Hoy',
+ 			clear: 'Borrar',
+ 			close: 'Cerrar',
+ 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+ 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+ 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+ 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+ 		});
+
+		$('#emisionrfc').pickadate({
+ 			format: 'yyyy-mm-dd',
+ 			labelMonthNext: 'Siguiente mes',
+ 			labelMonthPrev: 'Previo mes',
+ 			labelMonthSelect: 'Selecciona el mes del año',
+ 			labelYearSelect: 'Selecciona el año',
+ 			selectMonths: true,
+ 			selectYears: 5,
+ 			today: 'Hoy',
+ 			clear: 'Borrar',
+ 			close: 'Cerrar',
+ 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+ 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+ 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+ 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+ 		});
+
+		$('#vencimientoine').pickadate({
+ 			format: 'yyyy-mm-dd',
+ 			labelMonthNext: 'Siguiente mes',
+ 			labelMonthPrev: 'Previo mes',
+ 			labelMonthSelect: 'Selecciona el mes del año',
+ 			labelYearSelect: 'Selecciona el año',
+ 			selectMonths: true,
+ 			selectYears: 40,
+ 			today: 'Hoy',
+ 			clear: 'Borrar',
+ 			close: 'Cerrar',
+ 			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+ 			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+ 			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+ 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+ 		});
+
+		function modificarClienteUnicaDocumentacion(valor, campo) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
 				data: {
-					accion: 'modificarCotizacionUnicaDocumentacionCot',
-					idcotizacion: <?php echo $id; ?>,
-					campo: '<?php echo $campo; ?>',
+					accion: 'modificarClienteUnicaDocumentacion',
+					idasociado: <?php echo $id; ?>,
+					campo: campo,
 					valor: valor
 				},
 				//mientras enviamos el archivo
@@ -551,18 +720,18 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 		}
 
 		$('.guardarEstado').click(function() {
-			modificarEstadoDocumentacionCotizaciones($('#refestados').val());
+			modificarEstadoDocumentacionClientes($('#refestados').val());
 		});
 
-		function modificarEstadoDocumentacionCotizaciones(idestado) {
+		function modificarEstadoDocumentacionClientes(idestado) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
 				data: {
-					accion: 'modificarEstadoDocumentacionCotizaciones',
-					iddocumentacioncotizacion: <?php echo $iddocumentacionasociado; ?>,
+					accion: 'modificarEstadoDocumentacionClientes',
+					iddocumentacioncliente: <?php echo $iddocumentacionasociado; ?>,
 					idestado: idestado
 				},
 				//mientras enviamos el archivo
@@ -575,7 +744,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 					if (data.error == false) {
 						swal("Ok!", 'Se modifico correctamente el estado de la documentación <?php echo $campo; ?>', "success");
 						$('.guardarEstado').show();
-						//location.reload();
+						location.reload();
 					} else {
 						swal("Error!", data.leyenda, "warning");
 
@@ -592,9 +761,9 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 
 		function traerImagen(contenedorpdf, contenedor) {
 			$.ajax({
-				data:  {idcotizacion: <?php echo $id; ?>,
+				data:  {idcliente: <?php echo $id; ?>,
 						iddocumentacion: <?php echo $iddocumentacion; ?>,
-						accion: 'traerDocumentacionPorCotizacionDocumentacion'},
+						accion: 'traerDocumentacionPorClienteDocumentacion'},
 				url:   '../../ajax/ajax.php',
 				type:  'post',
 				beforeSend: function () {
@@ -653,8 +822,6 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 					swal("Correcto!", resp.replace("1", ""), "success");
 					$('.btnGuardar').show();
 					$('.infoPlanilla').hide();
-					$('#<?php echo $iddocumentacion; ?>').addClass('bg-blue');
-					$('#<?php echo $iddocumentacion; ?> .number').html('Cargada');
 					//location.reload();
 				});
 
@@ -665,16 +832,14 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 		};
 
 
-		<?php if (($idestadodocumentacion != 5)) { ?>
+
 		var myDropzone = new Dropzone("#archivos", {
 			params: {
 				 idasociado: <?php echo $id; ?>,
 				 iddocumentacion: <?php echo $iddocumentacion; ?>
 			},
-			url: 'subir.php'
+			url: 'subircli.php'
 		});
-
-		<?php } ?>
 
 
 
@@ -699,7 +864,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 				type: 'POST',
 				// Form data
 				//datos del formulario
-				data: {accion: 'eliminarDocumentacionCotizacion',idcotizacion: <?php echo $id; ?>, iddocumentacion: <?php echo $iddocumentacion; ?>},
+				data: {accion: 'eliminarDocumentacionAsociado',idasociado: <?php echo $id; ?>, iddocumentacion: <?php echo $iddocumentacion; ?>},
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('.btnEliminar').hide();
@@ -710,8 +875,6 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 					if (data.error == false) {
 						swal("Ok!", data.leyenda , "success");
 						traerImagen('example1','timagen1');
-
-						//location.reload();
 
 					} else {
 						swal("Error!", data.leyenda, "warning");
@@ -750,6 +913,12 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 
 	});
 </script>
+
+
+
+
+
+
 
 
 </body>

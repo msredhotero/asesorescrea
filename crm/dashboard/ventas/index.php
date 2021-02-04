@@ -720,7 +720,7 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 			"bProcessing": true,
 			"bServerSide": true,
 			"order": [[ 5, "desc" ]],
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizaciones&estado=5",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizaciones&estado=7",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",

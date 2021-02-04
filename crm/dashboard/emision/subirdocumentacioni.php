@@ -24,7 +24,7 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../engestion/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../entregadas/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
@@ -39,7 +39,7 @@ if ($_SESSION['idroll_sahilices'] == 10) {
 
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"En Gestion",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Entregadas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -88,13 +88,15 @@ $resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorCotizacion
 $resDocumentacion = $serviciosReferencias->traerDocumentacionesPorId($iddocumentacion);
 
 
+
 $resEstados = $serviciosReferencias->traerEstadodocumentaciones();
 
 if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 
-	if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21)) {
+	if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16)) {
 		$resEstados = $serviciosReferencias->traerEstadodocumentacionesPorId(mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'));
 	}
+
 	$cadRefEstados = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'));
 
 	$iddocumentacionasociado = mysql_result($resDocumentacionAsesor,0,'iddocumentacioncotizacion');
@@ -172,7 +174,6 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 } else {
 	$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompleta($id);
 }
-
 
 ?>
 
@@ -360,21 +361,18 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 							</form>
 
 							<?php if (($idestadodocumentacion != 5)) { ?>
-							<div class="row">
-
-								<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
-									<div class="dz-message">
-										<div class="drag-icon-cph">
-											<i class="material-icons">touch_app</i>
-										</div>
-										<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+							<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+								<div class="dz-message">
+									<div class="drag-icon-cph">
+										<i class="material-icons">touch_app</i>
 									</div>
-									<div class="fallback">
-										<input name="file" type="file" id="archivos" />
-										<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
-									</div>
-								</form>
-							</div>
+									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+								</div>
+								<div class="fallback">
+									<input name="file" type="file" id="archivos" />
+									<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
+								</div>
+							</form>
 							<?php } ?>
 						</div>
 					</div>
@@ -395,17 +393,16 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 							</ul>
 						</div>
 						<div class="body">
-							<div class="row">
-								<button type="button" class="btn bg-red waves-effect btnEliminar">
-									<i class="material-icons">remove</i>
-									<span>ELIMINAR</span>
-								</button>
-							</div>
+
 							<div class="row">
 								<a href="javascript:void(0);" class="thumbnail timagen1">
 									<img class="img-responsive">
 								</a>
 								<div id="example1"></div>
+								<div id="contExcel" style="margin:15px;">
+									<button type="button" class="btn btn-lg btn-success btnVerArchivo" style="margin-left:0px;"><i class="material-icons">search</i>VER ARCHIVO</button>
+									<input type="hidden" id="verarchivo" name="verarchivo" value=""/>
+								</div>
 							</div>
 							<div class="row">
 								<div class="alert bg-<?php echo $color; ?>">
@@ -431,6 +428,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 					</div>
 				</div>
 			</div>
+
 
 
 		</div>
@@ -491,6 +489,10 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 <script>
 
 	$(document).ready(function(){
+
+		$('.btnVerArchivo').click(function() {
+			window.open($('#verarchivo').val(),'_blank');
+		});
 
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
@@ -599,6 +601,8 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 				type:  'post',
 				beforeSend: function () {
 					$("." + contenedor + " img").attr("src",'');
+					$('#contExcel').val('');
+					$('#contExcel').hide();
 				},
 				success:  function (response) {
 					var cadena = response.datos.type.toLowerCase();
@@ -610,9 +614,17 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 							$("."+contenedor).hide();
 
 						} else {
-							$("." + contenedor + " img").attr("src",response.datos.imagen);
-							$("."+contenedor).show();
-							$('#'+contenedorpdf).hide();
+							if ((cadena.indexOf("officedocument") > -1) || (cadena.indexOf("sheet") > -1)) {
+								$('#'+contenedorpdf).hide();
+								$("."+contenedor).hide();
+								$('#contExcel').show();
+								$('#verarchivo').val(response.datos.imagen);
+							} else {
+								$("." + contenedor + " img").attr("src",response.datos.imagen);
+								$("."+contenedor).show();
+								$('#'+contenedorpdf).hide();
+							}
+
 						}
 					}
 
@@ -638,7 +650,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 
 		Dropzone.options.frmFileUpload = {
 			maxFilesize: 30,
-			acceptedFiles: ".jpg,.jpeg,.pdf",
+			acceptedFiles: ".jpg,.jpeg,.pdf,.csv,.xls,.xlsx",
 			accept: function(file, done) {
 				done();
 			},

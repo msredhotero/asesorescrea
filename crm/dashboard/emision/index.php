@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../historial/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../emision/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Historial",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Emision",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -171,7 +171,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								HISTORIAL <?php echo strtoupper($plural); ?>
+								EMISION
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -191,43 +191,23 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
-											<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
 												<th>Cliente</th>
 												<th>Producto</th>
 												<th>Asesor</th>
 												<th>Asociado</th>
 												<th>Fecha</th>
 												<th>Estado</th>
-
-											<?php } else { ?>
-												<th>Cliente</th>
-												<th>Producto</th>
-												<th>Asesor</th>
-												<th>Asociado</th>
-												<th>Fecha</th>
-												<th>Estado</th>
-											<?php } ?>
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
-												<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
-													<th>Cliente</th>
-													<th>Producto</th>
-													<th>Asesor</th>
-													<th>Asociado</th>
-													<th>Fecha</th>
-													<th>Estado</th>
-
-												<?php } else { ?>
-													<th>Cliente</th>
-													<th>Producto</th>
-													<th>Asesor</th>
-													<th>Asociado</th>
-													<th>Fecha</th>
-													<th>Estado</th>
-												<?php } ?>
+												<th>Cliente</th>
+												<th>Producto</th>
+												<th>Asesor</th>
+												<th>Asociado</th>
+												<th>Fecha</th>
+												<th>Estado</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -417,7 +397,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			"bProcessing": true,
 			"bServerSide": true,
 			"order": [[ 5, "desc" ]],
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizaciones&estado=4",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=cotizaciones&estado=5",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",

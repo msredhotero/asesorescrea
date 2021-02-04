@@ -24,7 +24,7 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../engestion/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../enproceso/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
@@ -39,7 +39,7 @@ if ($_SESSION['idroll_sahilices'] == 10) {
 
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"En Gestion",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"En Proceso",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -87,14 +87,9 @@ $resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorCotizacion
 
 $resDocumentacion = $serviciosReferencias->traerDocumentacionesPorId($iddocumentacion);
 
-
 $resEstados = $serviciosReferencias->traerEstadodocumentaciones();
 
 if (mysql_num_rows($resDocumentacionAsesor) > 0) {
-
-	if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21)) {
-		$resEstados = $serviciosReferencias->traerEstadodocumentacionesPorId(mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'));
-	}
 	$cadRefEstados = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'));
 
 	$iddocumentacionasociado = mysql_result($resDocumentacionAsesor,0,'iddocumentacioncotizacion');
@@ -167,12 +162,7 @@ switch ($iddocumentacion) {
 	break;
 }
 
-if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16)) {
-	$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'82,83,84,85,86');
-} else {
-	$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompleta($id);
-}
-
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($id,mysql_result($resDocumentacion,0,'reftipodocumentaciones'));
 
 ?>
 
@@ -312,7 +302,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 			</div>
 
 			<div class="row">
-				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
@@ -358,29 +348,13 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 									</div>
 								</div>
 							</form>
-
-							<?php if (($idestadodocumentacion != 5)) { ?>
-							<div class="row">
-
-								<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
-									<div class="dz-message">
-										<div class="drag-icon-cph">
-											<i class="material-icons">touch_app</i>
-										</div>
-										<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
-									</div>
-									<div class="fallback">
-										<input name="file" type="file" id="archivos" />
-										<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
-									</div>
-								</form>
-							</div>
-							<?php } ?>
 						</div>
 					</div>
 				</div>
+			</div> <!-- fin del card -->
 
-				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+			<div class="row">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card">
 						<div class="header bg-blue">
 							<h2>
@@ -428,11 +402,43 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 								</div>
 
 							</div>
+						</div>
+					</div>
+				</div>
+			<?php if ($idestadodocumentacion != 5) { ?>
+			<div class="row">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<div class="card">
+						<div class="header bg-blue">
+							<h2>
+								CARGA/MODIFIQUE LA DOCUMENTACIÓN <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?> AQUI
+							</h2>
+							<ul class="header-dropdown m-r--5">
+								<li class="dropdown">
+									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+										<i class="material-icons">more_vert</i>
+									</a>
+								</li>
+							</ul>
+						</div>
+						<div class="body">
+							<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+								<div class="dz-message">
+									<div class="drag-icon-cph">
+										<i class="material-icons">touch_app</i>
+									</div>
+									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+								</div>
+								<div class="fallback">
+									<input name="file" type="file" id="archivos" />
+									<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
+								</div>
+							</form>
+						</div>
 					</div>
 				</div>
 			</div>
-
-
+			<?php } ?>
 		</div>
 	</div>
 </section>
@@ -494,7 +500,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
-			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=" + idTable;
+			url = "subirdocumentacionie.php?id=<?php echo $id; ?>&documentacion=" + idTable;
 			$(location).attr('href',url);
 		});
 
@@ -521,7 +527,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 				// Form data
 				//datos del formulario
 				data: {
-					accion: 'modificarCotizacionUnicaDocumentacionCot',
+					accion: 'modificarCotizacionUnicaDocumentacion',
 					idcotizacion: <?php echo $id; ?>,
 					campo: '<?php echo $campo; ?>',
 					valor: valor
@@ -673,7 +679,6 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 			},
 			url: 'subir.php'
 		});
-
 		<?php } ?>
 
 

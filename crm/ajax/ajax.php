@@ -1335,9 +1335,51 @@ switch ($accion) {
    case 'traerVentaUnicaDocumentacion':
       traerVentaUnicaDocumentacion($serviciosReferencias);
    break;
+   case 'ajustarCotizacion':
+      ajustarCotizacion($serviciosReferencias);
+   break;
+   case 'aceptarCotizacionInbursa':
+      aceptarCotizacionInbursa($serviciosReferencias);
+   break;
+   case 'modificarCotizacionUnicaDocumentacionCot':
+      modificarCotizacionUnicaDocumentacionCot($serviciosReferencias);
+   break;
 
 }
 /* FinFinFin */
+
+function aceptarCotizacionInbursa($serviciosReferencias) {
+   $id = $_POST['id'];
+   $idcotizacion = $_POST['idcotizacion'];
+
+   $res = $serviciosReferencias->aceptarCotizacionInbursa($idcotizacion,$id);
+
+   if ($res) {
+      $resV['error'] = false;
+
+   } else {
+      $resV['error'] = true;
+
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function ajustarCotizacion($serviciosReferencias) {
+   session_start();
+
+   $id = $_POST['id'];
+   $idestado = $_POST['idestado'];
+
+   $fechacrea = date('Y-m-d H:i:s');
+   $usuariocrea = $_SESSION['usua_sahilices'];
+
+   $resMM = $serviciosReferencias->ajustarCotizacion($id, $fechacrea,$fechacrea,$usuariocrea,$usuariocrea);
+
+   header('Content-type: application/json');
+   echo json_encode($resMM);
+}
 
 function traerVentaUnicaDocumentacion($serviciosReferencias) {
    $campo = $_POST['campo'];
@@ -2674,6 +2716,11 @@ function insertarVentas($serviciosReferencias) {
       // inserto la cartera de productos del cliente
       $resIC = $serviciosReferencias->insertarClientescartera($refclientes,$refproductos,$vigenciadesde,'','1');
 
+      //modifico el estado de la cotizacion en caso de que no sea aceptado.
+      if (mysql_result($resCotizaciones,0,'refestadocotizaciones') != 12) {
+         $resModCot = $serviciosReferencias->modificarCotizacionesPorCampo($refcotizaciones,'refestadocotizaciones',12,$usuariocrea);
+      }
+
       if ($origen == 1) {
          $resMetodoPago = $serviciosReferencias->traerMetodopagoPorCotizacion($refcotizaciones);
 
@@ -3682,8 +3729,17 @@ function enviarCotizacion($serviciosReferencias, $serviciosUsuarios, $serviciosM
 
 
       } else {
-         $resV['error'] = true;
-         $resV['mensaje'] = 'El cliente aun no tiene un usuario generado';
+         $resV['error'] = false;
+         $resV['mensaje'] = 'El cliente aun no tiene un usuario generado, se modifico el estado de la cotizacion a Entregada';
+
+         // modifico la cotizacion a la primer etapa
+         $resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',3,$_SESSION['usua_sahilices']);
+
+         // modifico la cotizacion a la primer estado
+         $resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',8,$_SESSION['usua_sahilices']);
+
+         // modifico la fecha en que se envio la cotizacion al cliente o al agente 01/02/2021
+         $resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($id,'fechapropuesta',date('Y-m-d'),$_SESSION['usua_sahilices']);
       }
 
    } else {
@@ -7186,6 +7242,27 @@ function traerEntrevistaoportunidadesPorOportunidad($serviciosReferencias) {
 }
 
 
+function modificarCotizacionUnicaDocumentacionCot($serviciosReferencias) {
+   $idcotizacion = $_POST['idcotizacion'];
+   $campo = $_POST['campo'];
+   $valor = $_POST['valor'];
+
+   $res = $serviciosReferencias->modificarCotizacionUnicaDocumentacionCot($idcotizacion, $campo, $valor);
+
+   if ($res == true) {
+      $resV['leyenda'] = '';
+      $resV['error'] = false;
+   } else {
+      $resV['leyenda'] = 'Hubo un error al modificar datos';
+      $resV['error'] = true;
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
+
+
 function modificarCotizacionUnicaDocumentacion($serviciosReferencias) {
    $idcotizacion = $_POST['idcotizacion'];
    $campo = $_POST['campo'];
@@ -7556,6 +7633,8 @@ function modificarCotizaciones($serviciosReferencias) {
       }
    } else {
       $foliointerno = '';
+
+      $resAutEstCot = $serviciosReferencias->modificaEstadoCotizacionAutomatico($id, $refestadocotizaciones, $usuariomodi);
    }
 
    if ($refestadocotizaciones == 4) {

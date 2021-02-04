@@ -240,6 +240,9 @@ if (isset($_GET['id'])) {
 		case 'No lo se':
 			$cadRef7b = "<option value='Si'>Si</option><option value='No'>No</option><option value='No lo se' selected>No lo se</option>";
 		break;
+		default:
+			$cadRef7b = "<option value='Si'>Si</option><option value='No'>No</option><option value='No lo se' selected>No lo se</option>";
+		break;
 	}
 
 	//die(var_dump($ordenPosible));
@@ -249,6 +252,9 @@ if (isset($_GET['id'])) {
 			$cadRef8b = "<option value='Si' selected>Si</option><option value='No'>No</option>";
 		break;
 		case 'No':
+			$cadRef8b = "<option value='Si'>Si</option><option value='No' selected>No</option>";
+		break;
+		default:
 			$cadRef8b = "<option value='Si'>Si</option><option value='No' selected>No</option>";
 		break;
 	}
@@ -1074,7 +1080,10 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 																	<img class="img-responsive">
 																</a>
 																<div id="example12"></div>
-																<iframe id="contExcel" src="" style="width:600px; height:450px;" frameborder="0"></iframe>
+																<div id="contExcel" style="margin:15px;">
+																	<button type="button" class="btn btn-lg btn-success btnVerArchivo" style="margin-left:0px;"><i class="material-icons">search</i>VER ARCHIVO</button>
+																	<input type="hidden" id="verarchivo" name="verarchivo" value=""/>
+																</div>
 
 															</div>
 															<div class="row">
@@ -3434,6 +3443,10 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 			});
 		}
 
+		$('.btnVerArchivo').click(function() {
+			window.open($('#verarchivo').val(),'_blank');
+		});
+
 		function traerImagen2(contenedorpdf, contenedor) {
 			$.ajax({
 				data:  {idcotizacion: <?php echo $id; ?>,
@@ -3443,7 +3456,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 				type:  'post',
 				beforeSend: function () {
 					$("." + contenedor + " img").attr("src",'');
-					$('#contExcel').attr("src",'');
+					$('#contExcel').val('');
 					$('#contExcel').hide();
 
 				},
@@ -3462,7 +3475,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 								$("."+contenedor).hide();
 								$('#contExcel').show();
 
-								$('#contExcel').attr("src", "https://docs.google.com/gview?url=" + response.datos.imagen.replace('../../', 'https://asesorescrea.com/desarrollo/crm/') + '&embedded=true');
+								$('#verarchivo').val(response.datos.imagen);
 
 							} else {
 								$("." + contenedor + " img").attr("src",response.datos.imagen);
