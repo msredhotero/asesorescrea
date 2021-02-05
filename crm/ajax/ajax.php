@@ -896,6 +896,9 @@ switch ($accion) {
    case 'eliminarVentas':
       eliminarVentas($serviciosReferencias);
    break;
+   case 'eliminarVentasDefinitivo':
+      eliminarVentasDefinitivo($serviciosReferencias);
+   break;
 
    case 'insertarPeriodicidadventas':
       insertarPeriodicidadventas($serviciosReferencias);
@@ -6391,6 +6394,19 @@ function eliminarVentas($serviciosReferencias) {
    $motivorechazo = $_POST['motivorechazo'];
 
    $res = $serviciosReferencias->cancelarVentas($id,$estadoventa,$observaciones,$motivorechazo);
+
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
+
+function eliminarVentasDefinitivo($serviciosReferencias) {
+   $id = $_POST['id'];
+
+
+   $res = $serviciosReferencias->eliminarVentasDefinitivo($id);
 
    if ($res == true) {
       echo '';

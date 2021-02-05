@@ -43,7 +43,7 @@ $singular = "Poliza";
 
 $plural = "Polizas";
 
-$eliminar = "eliminarVentas";
+$eliminar = "eliminarVentasDefinitivo";
 
 $insertar = "insertarVentas";
 
@@ -974,6 +974,8 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 						});
 						$('#lgmEliminar').modal('toggle');
 						table.ajax.reload();
+						table5.ajax.reload();
+				
 					} else {
 						swal({
 								title: "Respuesta",

@@ -6404,6 +6404,13 @@ return $res;
 	}
 
 
+   function eliminarPeriodicidadventasPorVentas($id) {
+      $sql = "delete from dbperiodicidadventas where refventas =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
 	function traerPeriodicidadventas() {
 		$sql = "select
 		p.idperiodicidadventa,
@@ -6768,6 +6775,16 @@ return $res;
 		$res = $this->query($sql,0);
 		return $res;
 	}
+
+   function eliminarVentasDefinitivo($id) {
+
+      $resEliminarPeriodicidad = $this->eliminarPeriodicidadventasPorVentas($id);
+
+
+      $sql = "delete from dbventas where idventa =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
 
 
 	function traerVentas() {
