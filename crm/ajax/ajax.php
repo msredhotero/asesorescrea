@@ -11149,6 +11149,7 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
 
          $reforigenreclutamiento = $_POST['reforigenreclutamiento'];
 
+         //$resActivacion lo saco por pedido de rosa, 08/02/2021
 
          if ($afore == '1') {
             //$refestadopostulantes = 9; // lo saco por orden de javier 19/12/2019
@@ -11157,11 +11158,11 @@ function insertarPostulantes($serviciosReferencias, $serviciosUsuarios) {
 
             // envio email de confirmacion para validar cuenta de email. Correr a la noche un CRON
             // para dar de baja los usuarios basura
-            $resActivacion = $serviciosUsuarios->confirmarEmail($email, $password,$apellido, $nombre, $refusuarios);
+            //$resActivacion = $serviciosUsuarios->confirmarEmail($email, $password,$apellido, $nombre, $refusuarios);
          } else {
             // envio email de confirmacion para validar cuenta de email. Correr a la noche un CRON
             // para dar de baja los usuarios basura
-            $resActivacion = $serviciosUsuarios->confirmarEmail($email, $password,$apellido, $nombre, $refusuarios);
+            //$resActivacion = $serviciosUsuarios->confirmarEmail($email, $password,$apellido, $nombre, $refusuarios);
             //die(var_dump($resActivacion));
          }
 
