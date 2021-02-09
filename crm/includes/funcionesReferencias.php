@@ -6178,6 +6178,15 @@ return $res;
 		return $res;
 	}
 
+   function eliminarPeriodicidadventasdetallePorVenta($id) {
+      $sql = "delete dp from dbperiodicidadventasdetalle dp
+            inner join dbperiodicidadventas pv ON pv.idperiodicidadventa = dp.refperiodicidadventas
+            inner join dbventas ve ON ve.idventa = pv.refventas 
+            where pv.refventas =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
    function eliminarPeriodicidadventasdetalleEndoso($id,$version) {
 		$sql = "update dbperiodicidadventasdetalle dp
             inner join dbperiodicidadventas pv ON pv.idperiodicidadventa = dp.refperiodicidadventas
@@ -6777,6 +6786,8 @@ return $res;
 	}
 
    function eliminarVentasDefinitivo($id) {
+
+      $resEliminarCobros = $this->eliminarPeriodicidadventasdetallePorVenta($id);
 
       $resEliminarPeriodicidad = $this->eliminarPeriodicidadventasPorVentas($id);
 
