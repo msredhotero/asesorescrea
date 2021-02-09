@@ -68,7 +68,8 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 }
 
 if (mysql_num_rows($resVar2) > 0) {
-	$cadRef2 = $serviciosFunciones->devolverSelectBox($resVar2,array(19),' ');
+	$cadRef2 = "<option value=''>-- Seleccionar --</option>";
+	$cadRef2 .= $serviciosFunciones->devolverSelectBox($resVar2,array(19),' ');
 } else {
 	$cadRef2 = "<option value='0'>-- No cargo ningun cliente aun --</option>";
 }
@@ -96,7 +97,8 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 } else {
 	$resVar5	= $serviciosReferencias->traerAsesores();
-	$cadRef5 = $serviciosFunciones->devolverSelectBox($resVar5,array(3,4,2),' ');
+	$cadRef5 = "<option value=''>-- Seleccionar --</option>";
+	$cadRef5 .= $serviciosFunciones->devolverSelectBox($resVar5,array(3,4,2),' ');
 }
 
 
