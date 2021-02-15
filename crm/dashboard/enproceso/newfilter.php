@@ -632,6 +632,10 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 			z-index:1 !important;
 		}
 
+		.estiloPregunta {
+		   margin-bottom: 0px !important;
+		}
+
 		@media (min-width: 1200px) {
 		   .modal-xlg {
 		      width: 90%;

@@ -5588,23 +5588,23 @@ function cuestionario($serviciosReferencias) {
 
          if ($valor['leyenda'] != '') {
            $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
-            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-6" style="display:block; float:left;">
-              <h5><span>'.($valor['pregunta']).'</span> <i class="material-icons" style="color:grey;" data-toggle="tooltip" data-placement="top" title="'.($valor['leyenda']).'">help</i></h5>
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-6 estiloPregunta" style="display:block; float:left;">
+              <p><span>'.($valor['pregunta']).'</span> <i class="material-icons" style="color:grey;" data-toggle="tooltip" data-placement="top" title="'.($valor['leyenda']).'">help</i></p>
               <input type="hidden" value="'.$valor['idpregunta'].'" name="rulesPregunta'.$valor['idpregunta'].'" id="rulesPregunta'.$valor['idpregunta'].'"/>
             </div>
            ';
            //</div>
          } else {
            $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
-            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-6" style="display:block; float:left;">
-              <h5>'.($valor['pregunta']).'</h5>
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-6 estiloPregunta" style="display:block; float:left;">
+              <p>'.($valor['pregunta']).'</p>
               <input type="hidden" value="'.$valor['idpregunta'].'" name="rulesPregunta'.$valor['idpregunta'].'" id="rulesPregunta'.$valor['idpregunta'].'"/>
             </div>
            ';
            //</div>
          }
 
-         $cad .= '<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 right" style="display:block; float:right;">'.($valor['respuestas']).'</div>';
+         $cad .= '<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 right estiloPregunta" style="display:block; float:right;">'.($valor['respuestas']).'</div>';
 
          /*$cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
             <h4>Pregunta</h4>

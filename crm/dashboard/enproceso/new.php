@@ -565,6 +565,15 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 			z-index:1 !important;
 		}
 
+		.estiloPregunta {
+		   margin-bottom: 0px !important;
+		}
+
+		.estiloPregunta .frmContrespuesta {
+		   margin-bottom: 0px !important;
+		}
+
+
 	</style>
 
 
