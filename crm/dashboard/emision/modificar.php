@@ -229,7 +229,8 @@ switch (mysql_result($resultado,0,'existeprimaobjetivo')) {
 }
 
 $resVar10	= $serviciosReferencias->traerAseguradora();
-$cadRef10 = $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',mysql_result($resultado,0,'coberturaactual'));
+$cadRef10 = '<option value="0">-- Seleccionar --</option>';
+$cadRef10 .= $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',mysql_result($resultado,0,'coberturaactual'));
 
 $resVar10m	= $serviciosReferencias->traerAseguradora();
 //$cadMotivosRechazos = $serviciosFunciones->devolverSelectBox($resVar10m,array(1),'');
@@ -530,18 +531,20 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 							$cadCotizacionParaAceptar = '';
 							$exiteAceptada = 0;
 
-							if ($_SESSION['usuaid_sahilices'] == 154) {
+
 							while ($rowCI = mysql_fetch_array($resCotizacionInbursa) ) {
 
 								if ((strtoupper( $rowCI['documentacion']) == 'OT') || (strtoupper( $rowCI['documentacion']) == 'ARTICULO')) {
+									if ($rowCI['archivo'] != '') {
 									$exiteAceptada += 1;
 
 								?>
 								<button type="button" style="margin-left:5px;" onclick="window.open('../../archivos/cotizaciones/<?php echo $id; ?>/<?php echo $rowCI['carpeta']; ?>/<?php echo $rowCI['archivo']; ?>','_blank')" class="btn bg-<?php echo $rowCI['color']; ?> waves-effect"><i class="material-icons">unarchive</i><?php echo $rowCI['documentacion']; ?></button>
 							<?php
 									}
+									}
 								}
-							}
+
 							?>
 								</div>
 

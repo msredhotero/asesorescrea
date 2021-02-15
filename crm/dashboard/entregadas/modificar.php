@@ -229,7 +229,8 @@ switch (mysql_result($resultado,0,'existeprimaobjetivo')) {
 }
 
 $resVar10	= $serviciosReferencias->traerAseguradora();
-$cadRef10 = $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',mysql_result($resultado,0,'coberturaactual'));
+$cadRef10 = '<option value="0">-- Seleccionar --</option>';
+$cadRef10 .= $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',mysql_result($resultado,0,'coberturaactual'));
 
 $resVar10m	= $serviciosReferencias->traerAseguradora();
 //$cadMotivosRechazos = $serviciosFunciones->devolverSelectBox($resVar10m,array(1),'');
