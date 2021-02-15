@@ -11,12 +11,12 @@ function conexion() {
 	$username = "u115752684_desa";
 	$password = "@Chivas11";
 
-	/*
+/*
 	$hostname = "localhost";
 	$database = "u115752684_asesores";
 	$username = "root";
 	$password = "";
-	*/
+*/
 
 
 
