@@ -7687,6 +7687,11 @@ return $res;
       left join dbasegurados ase ON ase.idasegurado = c.refasegurados
       left join dbasegurados ben ON ase.idasegurado = c.refbeneficiarios
       inner join dbventas v on v.refcotizaciones = c.idcotizacion and v.version = 1.0
+      group by c.idcotizacion,
+      cli.apellidopaterno, cli.apellidomaterno, cli.nombre,
+      p.producto,
+      c.fechacrea,
+      c.folio
       order by c.fechacrea desc";
 		$res = $this->query($sql,0);
 		return $res;

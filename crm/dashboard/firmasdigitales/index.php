@@ -218,7 +218,8 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 										if ($filesFirmasCarpeta > 0) {
 											//die(var_dump($filesFirmasCarpeta));
 
-											$filesFirmas = array_diff(scandir($pathFirmas.'/'.$filesFirmasCarpeta[2]), array('.', '..'));
+											//$filesFirmas = array_diff(scandir($pathFirmas.'/'.$filesFirmasCarpeta[2]), array('.', '..'));
+											$filesFirmas = array_diff(scandir($pathFirmas), array('.', '..'));
 										}
 
 										//die(var_dump($filesFirmas));
