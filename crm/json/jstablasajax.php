@@ -1229,6 +1229,12 @@ switch ($tabla) {
 					$termina = 6;
 				}
 
+				if (($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22)) {
+					$label = array();
+					$class = array();
+					$icon = array();
+				}
+
 				$filtroNuevo = '';
 			break;
 			case 5:
@@ -1241,6 +1247,14 @@ switch ($tabla) {
 				} else {
 					$termina = 6;
 				}
+
+				/*
+				if (($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22)) {
+					$label = array();
+					$class = array();
+					$icon = array();
+				}
+				*/
 
 				$filtroNuevo = '';
 			break;

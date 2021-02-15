@@ -11947,6 +11947,18 @@ return $res;
 
 
 	function traerCotizacionesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$whereEstado,$filtroNuevo='') {
+
+      $cadRolPorRama = '';
+      if ($_SESSION['idroll_sahilices'] == 20) {
+         $cadRolPorRama = ' and tr.idtipoproductorama = 8 ';
+      }
+      if ($_SESSION['idroll_sahilices'] == 21) {
+         $cadRolPorRama = ' and tr.idtipoproductorama = 7 ';
+      }
+      if ($_SESSION['idroll_sahilices'] == 22) {
+         $cadRolPorRama = ' and tr.idtipoproductorama = 8 ';
+      }
+
 		$where = '';
 
       $cadFiltroNuevo = '';
@@ -12017,7 +12029,7 @@ return $res;
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
 		inner join tbproductos pro ON pro.idproducto = c.refproductos
-
+      inner join tbtipoproductorama tr on tr.idtipoproductorama = pro.reftipoproductorama ".$cadRolPorRama."
 		inner join dbasesores ase ON ase.idasesor = c.refasesores
       ".$cadFiltroNuevo."
 		left join dbusuarios us ON us.idusuario = c.refusuarios
