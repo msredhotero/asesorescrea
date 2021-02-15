@@ -193,7 +193,7 @@ switch (mysql_result($resultado,0,'cobertura')) {
 		$cadRef7 = "<option value='Si'>Si</option><option value='No'>No</option><option value='No lo se' selected>No lo se</option>";
 	break;
 	default:
-		$cadRef7 = "<option value='Si'>Si</option><option value='No'>No</option><option value='No lo se' selected>No lo se</option>";
+		$cadRef7 = "<option value=''>-- Seleccionar --</option><option value='Si'>Si</option><option value='No'>No</option><option value='No lo se'>No lo se</option>";
 	break;
 }
 
@@ -207,7 +207,7 @@ switch (mysql_result($resultado,0,'presentacotizacion')) {
 		$cadRef8 = "<option value='Si'>Si</option><option value='No' selected>No</option>";
 	break;
 	default:
-		$cadRef8 = "<option value='Si'>Si</option><option value='No' selected>No</option>";
+		$cadRef8 = "<option value=''>-- Seleccionar --</option><option value='Si'>Si</option><option value='No'>No</option>";
 	break;
 
 }
@@ -223,7 +223,7 @@ switch (mysql_result($resultado,0,'tiponegocio')) {
 		$cadRef9 = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente' selected>Renovación póliza con otro agente</option>";
 	break;
 	default:
-		$cadRef9 = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
+		$cadRef9 = "<option value=''>-- Seleccionar --</option><option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
 	break;
 }
 
@@ -236,12 +236,13 @@ switch (mysql_result($resultado,0,'existeprimaobjetivo')) {
 		$cadRef11 = "<option value='1'>Si</option><option value='0' selected>No</option>";
 	break;
 	default:
-		$cadRef11 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+		$cadRef11 = "<option value=''>-- Seleccionar --</option><option value='1'>Si</option><option value='0' selected>No</option>";
 	break;
 }
 
 $resVar10	= $serviciosReferencias->traerAseguradora();
-$cadRef10 = $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',mysql_result($resultado,0,'coberturaactual'));
+$cadRef10 = "<option value=''>-- Seleccionar --</option>";
+$cadRef10 .= $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',mysql_result($resultado,0,'coberturaactual'));
 
 $refEtapa = $serviciosReferencias->traerEtapacotizacion();
 $cadEtapa = $serviciosFunciones->devolverSelectBoxActivo($refEtapa,array(1),'',mysql_result($resultado,0,'refestados'));
@@ -745,7 +746,12 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 		$('#version').prop('readonly',true);
 		$('#folio').prop('readonly',true);
 
-		<?php if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16)) { ?>
+		$('.frmContcobertura').hide();
+		$('.frmContrefasociados').hide();
+		$('.frmContot').hide();
+		$('.frmContarticulo').hide();
+
+		<?php if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22) || ($_SESSION['idroll_sahilices'] == 23)) { ?>
 		$('.frmContrefestadocotizaciones').hide();
 		$('.frmContarticulo').hide();
 		$('.frmContot').hide();

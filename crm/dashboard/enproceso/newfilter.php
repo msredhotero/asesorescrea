@@ -3361,7 +3361,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 		Dropzone.options.frmFileUpload = {
 			maxFilesize: 30,
-			acceptedFiles: ".jpg,.jpeg,.pdf",
+			acceptedFiles: ".jpg,.jpeg,.pdf,.xls,.xlsx,.csv",
 			accept: function(file, done) {
 				done();
 			},
