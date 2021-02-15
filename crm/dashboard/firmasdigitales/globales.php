@@ -98,7 +98,8 @@ if ($tipo == 2) {
 
 			$carpeta = $filesFirmasCarpeta[2];
 
-			$filesFirmas = array_diff(scandir($pathFirmas.'/'.$filesFirmasCarpeta[2]), array('.', '..'));
+			$filesFirmas = array_diff(scandir($pathFirmas), array('.', '..'));
+			
 
 			if ($filesFirmas > 0) {
 				$file = $filesFirmas[2];
