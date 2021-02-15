@@ -349,11 +349,34 @@ if ($_SESSION['idroll_sahilices'] != 7) {
 }
 
 	$rightsidebar = '<ul class="nav nav-tabs tab-nav-right" role="tablist">
-	                <li role="presentation" class="active"><a href="#skins" data-toggle="tab">CLIENTE</a></li>
-	                <li role="presentation"><a href="#settings" data-toggle="tab">DOCUMENTACIONES</a></li>
+						<li role="presentation" class="active"><a href="#settings" data-toggle="tab">DOCUMENTACIONES</a></li>
+						 <li role="presentation"><a href="#skins" data-toggle="tab">CLIENTE</a></li>
+
 	            </ul>
 	            <div class="tab-content">
-	                <div role="tabpanel" class="tab-pane fade in active in active" id="skins">
+						<div role="tabpanel" class="tab-pane fade in active in active" id="settings">
+							 <div class="demo-settings">
+								  <p>PRODUCTOS</p>
+								  <ul class="setting-list">
+									  '.($cadArProd == '' ? '<p>(No existe documentacion)</p>' : $cadArProd).'
+								  </ul>
+								  <p>EMISION</p>
+								  <ul class="setting-list">
+									  '.($cadArProdE == '' ? '<p>(No existe documentacion)</p>' : $cadArProdE).'
+								  </ul>
+								  <p>CLIENTES</p>
+								  <ul class="setting-list">
+									  '.($cadArCliente == '' ? '<p>(No existe documentacion)</p>' : $cadArCliente).'
+								  </ul>
+
+								  <p>ADICIONALES</p>
+								  <ul class="setting-list">
+									  '.$cadArCotizacion.'
+								  </ul>
+							 </div>
+						</div>
+
+	                <div role="tabpanel" class="tab-pane fade" id="skins">
 	                    <ul class="demo-choose-skin">
 	                        <li>
 	                            <div class="'.($vigenciasCliente['errorVCD'] == 'true' ? 'red' : 'green').'"></div>
@@ -369,27 +392,7 @@ if ($_SESSION['idroll_sahilices'] != 7) {
 	                        </li>
 	                    </ul>
 	                </div>
-	                <div role="tabpanel" class="tab-pane fade" id="settings">
-	                    <div class="demo-settings">
-	                        <p>PRODUCTOS</p>
-	                        <ul class="setting-list">
-	                           '.($cadArProd == '' ? '<p>(No existe documentacion)</p>' : $cadArProd).'
-	                        </ul>
-									<p>EMISION</p>
-	                        <ul class="setting-list">
-	                           '.($cadArProdE == '' ? '<p>(No existe documentacion)</p>' : $cadArProdE).'
-	                        </ul>
-	                        <p>CLIENTES</p>
-	                        <ul class="setting-list">
-	                           '.($cadArCliente == '' ? '<p>(No existe documentacion)</p>' : $cadArCliente).'
-	                        </ul>
 
-									<p>ADICIONALES</p>
-	                        <ul class="setting-list">
-	                           '.$cadArCotizacion.'
-	                        </ul>
-	                    </div>
-	                </div>
 	            </div>';
 
 $lblModal ='';
