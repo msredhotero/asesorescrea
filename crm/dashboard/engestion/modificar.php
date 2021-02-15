@@ -753,6 +753,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 		$('.frmContversion').hide();
 		$('.frmContprimaneta').hide();
 		$('.frmContprimatotal').hide();
+		$('.frmContfolio').hide();
 
 		<?php if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22) || ($_SESSION['idroll_sahilices'] == 23)) { ?>
 		$('.frmContrefestadocotizaciones').hide();
