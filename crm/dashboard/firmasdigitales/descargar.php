@@ -14,7 +14,7 @@ if (!isset($_SESSION['usua_sahilices']))
 		$carpeta = $_GET['c'];
       $ikey = $_GET['ikey'];
        $fileName = basename($_GET['file']);
-       $filePath = "../../archivos/firmas/cotizaciones/".$ikey.'/'.$carpeta.'/'.$_GET['file'];
+       $filePath = "../../archivos/firmas/cotizaciones/".$ikey.'/'.$_GET['file'];
 
        //die(var_dump($filePath));
        if(!empty($fileName) && file_exists($filePath)){
