@@ -367,7 +367,7 @@ $resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcotizacion
 			            	<?php if ($reftipoproductorama == 12) { ?>
 								<form action="https://www.procom.prosa.com.mx/eMerchant/8418704_OperMedicaVrim.jsp" method="post" id="formFin">
 							<?php } else { ?>
-								<form action="https://www.procom.prosa.com.mx/eMerchant/8407825_SegInbursa.jsp" method="post" id="formFin">
+								<form action="https://www.procom.prosa.com.mx/eMerch2/8407825_SegInbursa.jsp" method="post" id="formFin">
 							<?php } ?>
 			            <?php } else { ?>
 			            	<form action="8407825_asesorescrea.php" method="post" id="formFin">
