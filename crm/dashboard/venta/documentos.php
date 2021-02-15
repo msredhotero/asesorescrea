@@ -363,8 +363,9 @@ if ($consolicitud == 1) {
 
 	$puedeContinuar = 0;
 
-	$resFirma = $serviciosReferencias->traerFirmarcontratosPorCotizacion($id);
+	$resFirma = $serviciosReferencias->traerFirmarcontratosPorCotizacionAprobada($id);
 	if (mysql_num_rows($resFirma) > 0) {
+
 		$existeFirma = 1;
 		$refestadofirma = mysql_result($resFirma,0,'refestadofirma');
 		if ($refestadofirma == 1) {
@@ -372,14 +373,19 @@ if ($consolicitud == 1) {
 		} else {
 			$puedeContinuar = 0;
 		}
+		
 	} else {
 		$existeFirma = 0;
 	}
+
+
 
 	// fin de if de con solicitud
 } else {
 	$puedeContinuar = 1;
 }
+
+
 
 ?>
 

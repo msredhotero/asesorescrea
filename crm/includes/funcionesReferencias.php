@@ -1808,6 +1808,12 @@ return $res;
       return $res;
    }
 
+   function traerFirmarcontratosPorCotizacionAprobada($id) {
+      $sql = "select idfirmarcontrato,refcotizaciones,folio,nip,usuario,sha256,refestadofirma,fechacrea,fechamodi,vigdesde,vighasta from dbfirmarcontratos where refestadofirma=1 and refcotizaciones =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
    function traerFirmarcontratosPorNIP($nip) {
       $sql = "select idfirmarcontrato,refcotizaciones,folio,nip,usuario,sha256,refestadofirma,fechacrea,fechamodi,vigdesde,vighasta from dbfirmarcontratos where nip ='".$nip."'";
       $res = $this->query($sql,0);
