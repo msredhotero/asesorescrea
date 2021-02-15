@@ -421,7 +421,7 @@ if (!isset($_SESSION['usua_sahilices']))
 					            	<?php if ($reftipoproductorama == 12) { ?>
 										<form action="https://www.procom.prosa.com.mx/eMerchant/8418704_OperMedicaVrim.jsp" method="post" id="formFin">
 									<?php } else { ?>
-										<form action="https://www.procom.prosa.com.mx/eMerchant/8407825_SegInbursa.jsp" method="post" id="formFin">
+										<form action="https://www.procom.prosa.com.mx/eMerch2/8407825_SegInbursa.jsp" method="post" id="formFin">
 									<?php } ?>
 					            <?php } else { ?>
 					            	<form action="8407825_asesorescrea.php" method="post" id="formFin">
@@ -442,7 +442,7 @@ if (!isset($_SESSION['usua_sahilices']))
 					               <div class="col-xs-5">
 											<button type="submit" class="btn btn-lg btn-block btn-success" id="btnConfirmar" style="font-size:1.5em;">
 												<i class="material-icons" style="font-size:1.5em;">credit_card</i>
-												<span>Intenter Nuevamente</span>
+												<span>Intentar Nuevamente</span>
 											</button>
 										</div>
 										<div class="col-xs-5">
