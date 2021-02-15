@@ -1347,9 +1347,75 @@ switch ($accion) {
    case 'modificarCotizacionUnicaDocumentacionCot':
       modificarCotizacionUnicaDocumentacionCot($serviciosReferencias);
    break;
+   case 'verificarCondicionDelPagoEnLinea':
+      verificarCondicionDelPagoEnLinea($serviciosReferencias);
+   break;
+   case 'endosarPolizarAgente':
+      endosarPolizarAgente($serviciosReferencias);
+   break;
+   case 'aceptarPolizarAgente':
+      aceptarPolizarAgente($serviciosReferencias);
+   break;
 
 }
 /* FinFinFin */
+
+function aceptarPolizarAgente($serviciosReferencias) {
+   session_start();
+
+   $id = $_POST['id'];
+
+   $resMod = $serviciosReferencias->modificarVentasUnicaDocumentacion($id,'refestadoventa',1);
+
+   $resMM['error'] = false;
+
+   header('Content-type: application/json');
+   echo json_encode($resMM);
+}
+
+function endosarPolizarAgente($serviciosReferencias) {
+   session_start();
+
+   $id = $_POST['id'];
+
+   $resVenta = $serviciosReferencias->traerVentasPorIdCompleto($id);
+
+   $idcotizacion = mysql_result($resVenta,0,'refcotizaciones');
+
+   $resMod = $serviciosReferencias->eliminarVentasDefinitivo($id);
+
+   $fechacrea = date('Y-m-d H:i:s');
+   $usuariocrea = $_SESSION['usua_sahilices'];
+
+   //modifico la cotizacion anterior a historial
+   $resMod2 = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestados',5,$usuariocrea);
+
+   //modifico la cotizacion anterior a historial
+   $resMod3 = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestadocotizaciones',26,$usuariocrea);
+
+   $resMM['error'] = false;
+
+   header('Content-type: application/json');
+   echo json_encode($resMM);
+
+
+}
+
+function verificarCondicionDelPagoEnLinea($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->verificarCondicionDelPagoEnLinea($id);
+   $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+   $idestadocotizacion = mysql_result($resCotizaciones,0,'refestadocotizaciones');
+
+   $urlSwicth = $serviciosReferencias->switchCotizacion($idestadocotizacion,1,$id);
+
+   $resV['error'] = $res['error'];
+   $resV['url'] = $res['url'];
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function aceptarCotizacionInbursa($serviciosReferencias) {
    $id = $_POST['id'];
@@ -2568,7 +2634,7 @@ function verificarFirmasPendientes($serviciosReferencias) {
    if (mysql_num_rows($resNIP) > 0) {
 
       $ch = curl_init();
-   	$url = 'https://qafirma.signaturainnovacionesjuridicas.com/api/documentos/pendientes?CURPoRFC=TOMG730101MDFLZM00';
+   	$url = 'https://crea.signaturainnovacionesjuridicas.com/api/documentos/pendientes?CURPoRFC=TOMG730101MDFLZM00';
    	curl_setopt($ch, CURLOPT_URL, $url);
    	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
    	//set the content type to application/json
@@ -2611,7 +2677,7 @@ function verificarFirmasPendientes($serviciosReferencias) {
          $vighasta = date('Y-m-d H:i:s');
 
          $folio = 'TOMG730101MDFLZM00';
-         $nip = 'https://qafirma.signaturainnovacionesjuridicas.com/firmar/TOMG730101MDFLZM00';
+         $nip = 'https://crea.signaturainnovacionesjuridicas.com/firmar/TOMG730101MDFLZM00';
          $sha256 = 'firmae';
          $xml = 'nada';
 

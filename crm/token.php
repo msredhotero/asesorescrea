@@ -32,7 +32,7 @@ if (isset($_SESSION['usua_sahilices'])) {
 
    //die(var_dump($token));
    if (mysql_num_rows($resultado)>0) {
-      
+
       $resUsuario = $serviciosUsuario->traerUsuarioIdAutoLogin(mysql_result($resultado,0,'refusuarios'));
       if (mysql_result($resUsuario,0,'refroles') == $_SESSION['idroll_sahilices']) {
          header('Location: dashboard/'.mysql_result($resultado,0,'accion'));
@@ -187,7 +187,7 @@ if (isset($_SESSION['usua_sahilices'])) {
 <body class="login-page">
     <div class="login-box">
         <div class="logo" style="border: 1px solid #8c6f40; background-color:#c6ac83; padding:10px 10px; color: #1c2a47;">
-			   <h4 style="color:#1c2a47 ; text-align:center;">Activación</h4>
+			   
 				<a href="javascript:void(0);" style="color:#1c2a47 ;"><b>Asesores CREA</b></a>
 
             <small style="color:#1c2a47 ;"><b>Fácil y Seguro (Afore, Banca y Seguro)</b></small>

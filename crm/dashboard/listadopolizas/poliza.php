@@ -49,7 +49,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 	$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
 	$idasesor = mysql_result($resVar5,0,'idasesor');
 
-	$resultados = $serviciosReferencias->traerVentasPorAsesorVentaCompleto($idasesor,$id);
+	$resultados = $serviciosReferencias->traerVentasPorAsesorVentaFundamental($idasesor,$id);
 } else {
 	$resultados = $serviciosReferencias->traerVentasPorUsuarioVentaCompleto($_SESSION['usuaid_sahilices'],$id);
 }
@@ -58,6 +58,8 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 if (mysql_num_rows($resultados)<=0) {
 	header('Location: index.php');
 }
+
+$idestado = mysql_result($resultados,0,'refestadoventa');
 
 $resDocumentacionReciboExistente = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, 35);
 
@@ -198,6 +200,16 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 							<i class="material-icons">arrow_back</i>
 							<span>VOLVER</span>
 						</button>
+						<?php if ($idestado == 6) { ?>
+							<button type="button" class="btn btn-success waves-effect btnAceptar" style="margin-bottom:15px;">
+								<i class="material-icons">done</i>
+								<span>ACEPTAR</span>
+							</button>
+							<button type="button" class="btn btn-danger waves-effect btnEndoso" style="margin-bottom:15px;">
+								<i class="material-icons">remove</i>
+								<span>ENDOSO</span>
+							</button>
+						<?php } ?>
 
 						<div id="example2"></div>
 					</div>
@@ -209,6 +221,42 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 </section>
 
 
+
+<div class="modal fade" id="lgmEliminar" tabindex="-1" role="dialog">
+	 <div class="modal-dialog modal-lg" role="document">
+		  <div class="modal-content">
+				<div class="modal-header bg-red">
+					 <h4 class="modal-title" id="largeModalLabel">GENERAR ENDOSO</h4>
+				</div>
+				<div class="modal-body">
+							 <p>¿Esta seguro que desea enviar a ENDOSO la poliza?</p>
+							 <small>* La poliza se eliminará y se volverá al proceso de emisión.</small>
+				</div>
+				<div class="modal-footer">
+					 <button type="button" class="btn btn-danger waves-effect eliminar">GENERAR ENDOSO</button>
+					 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+				</div>
+		  </div>
+	 </div>
+</div>
+
+
+<div class="modal fade" id="lgmAceptar" tabindex="-1" role="dialog">
+	 <div class="modal-dialog modal-lg" role="document">
+		  <div class="modal-content">
+				<div class="modal-header bg-green">
+					 <h4 class="modal-title" id="largeModalLabel">ACEPTAR</h4>
+				</div>
+				<div class="modal-body">
+							 <p>¿Esta seguro que desea ACEPTAR la poliza?</p>
+				</div>
+				<div class="modal-footer">
+					 <button type="button" class="btn btn-success waves-effect modalAceptar">ACEPTAR</button>
+					 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+				</div>
+		  </div>
+	 </div>
+</div>
 
 
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
@@ -235,6 +283,132 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 
 <script>
 	$(document).ready(function(){
+
+		function frmAjaxEliminar() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'endosarPolizarAgente',
+					id: <?php echo $id; ?>
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error == false) {
+						swal({
+								title: "Respuesta",
+								text: "Registro Modificado con exito!!",
+								type: "success",
+								timer: 1500,
+								showConfirmButton: false
+						});
+						$('#lgmEliminar').modal('toggle');
+						$(location).attr('href','index.php');
+
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data.mensaje,
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+
+		}
+
+		$('.btnEndoso').click(function() {
+			$('#lgmEliminar').modal();
+		});//fin del boton eliminar
+
+		$('.eliminar').click(function() {
+			frmAjaxEliminar();
+		});
+
+
+		function frmAjaxAceptar() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'aceptarPolizarAgente',
+					id: <?php echo $id; ?>
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error == false) {
+						swal({
+								title: "Respuesta",
+								text: "Registro Modificado con exito!!",
+								type: "success",
+								timer: 1500,
+								showConfirmButton: false
+						});
+						$('#lgmAceptar').modal('toggle');
+						$(location).attr('href','index.php');
+
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data.mensaje,
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+
+		}
+
+		$('.modalAceptar').click(function() {
+			frmAjaxAceptar();
+		});
+
+
+		$('.btnAceptar').click(function() {
+			$('#lgmAceptar').modal();
+		});//fin del boton eliminar
 
 		PDFObject.embed('<?php echo $archivos; ?>', "#example2");
 

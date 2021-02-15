@@ -296,7 +296,7 @@ if ($consolicitud == 1) {
 				//die(var_dump($b64Doc));
 
 				$ch = curl_init();
-				$url = 'https://qafirma.signaturainnovacionesjuridicas.com/api/documentos/crear/';
+				$url = 'https://crea.signaturainnovacionesjuridicas.com/api/documentos/crear/';
 				curl_setopt($ch, CURLOPT_URL, $url);
 				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 

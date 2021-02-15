@@ -529,6 +529,8 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 							<?php
 							$cadCotizacionParaAceptar = '';
 							$exiteAceptada = 0;
+
+							if ($_SESSION['usuaid_sahilices'] == 154) {
 							while ($rowCI = mysql_fetch_array($resCotizacionInbursa) ) {
 
 								if ((strtoupper( $rowCI['documentacion']) == 'OT') || (strtoupper( $rowCI['documentacion']) == 'ARTICULO')) {
@@ -537,6 +539,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 								?>
 								<button type="button" style="margin-left:5px;" onclick="window.open('../../archivos/cotizaciones/<?php echo $id; ?>/<?php echo $rowCI['carpeta']; ?>/<?php echo $rowCI['archivo']; ?>','_blank')" class="btn bg-<?php echo $rowCI['color']; ?> waves-effect"><i class="material-icons">unarchive</i><?php echo $rowCI['documentacion']; ?></button>
 							<?php
+									}
 								}
 							}
 							?>
@@ -626,7 +629,12 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 									<div class="modal-footer">
 										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 											<button type="button" class="btn btn-info waves-effect">ESTADO: <?php echo mysql_result($resEstados,0,'estadocotizacion'); ?></button>
-											<?php if (($idestado == 26) && ($exiteAceptada == 2) && (mysql_result($resultado,0,'ot') != '') && (mysql_result($resultado,0,'articulo') != '')) { ?>
+
+											<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 14) || ($_SESSION['idroll_sahilices'] == 15) || ($_SESSION['idroll_sahilices'] == 3)) { ?>
+											<button id="<?php echo $idestado; ?>" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>
+											<?php } ?>
+
+											<?php if ((($idestado == 26) && ($exiteAceptada == 2) && (mysql_result($resultado,0,'ot') != '') && (mysql_result($resultado,0,'articulo') != '') && ($_SESSION['usuaid_sahilices'] == 154)) || ($_SESSION['usuaid_sahilices'] != 154) && ($idestado == 26)) { ?>
 											<button type="button" class="btn bg-green waves-effect btnAbandonada">FINALIZAR</button>
 											<?php } ?>
 

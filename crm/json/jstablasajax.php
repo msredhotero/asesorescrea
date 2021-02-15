@@ -74,6 +74,8 @@ switch ($tabla) {
 		$min = $_GET['start'];
 		$max = $_GET['end'];
 
+		$estado = $_GET['estado'];
+
 
 		if ($_SESSION['idroll_sahilices'] == 7) {
 			$idcliente = $_GET['idcliente'];
@@ -81,9 +83,9 @@ switch ($tabla) {
 			$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
 			$idasesor = mysql_result($resVar5,0,'idasesor');
 
-			$datos = $serviciosReferencias->traerVentasPorAsesorCompletoAjax($length, $start, $busqueda,$colSort,$colSortDir,$idasesor,$idcliente,$min,$max);
+			$datos = $serviciosReferencias->traerVentasPorAsesorCompletoAjax($length, $start, $busqueda,$colSort,$colSortDir,$idasesor,$idcliente,$min,$max,$estado);
 		} else {
-			$datos = $serviciosReferencias->traerVentasPorUsuarioCompletoAjax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+			$datos = $serviciosReferencias->traerVentasPorUsuarioCompletoAjax($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices'],$min,$max);
 		}
 
 		$resAjax = $datos[0];

@@ -179,6 +179,28 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 							</ul>
 						</div>
 						<div class="body table-responsive">
+							<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
+							<div class="row">
+								<div class="col-lg-12 col-md-12">
+									<div class="button-demo">
+
+										<button type="button" class="btn bg-light-blue waves-effect btnValidacion">
+											<i class="material-icons">alarm</i>
+											<span>PARA VALIDAR</span>
+										</button>
+										<button type="button" class="btn bg-blue waves-effect btnActivas">
+											<i class="material-icons">timeline</i>
+											<span>ACTIVAS</span>
+										</button>
+										<button type="button" class="btn bg-grey waves-effect btnHistorico">
+											<i class="material-icons">history</i>
+											<span>HISTORICO</span>
+										</button>
+
+									</div>
+								</div>
+							</div>
+							<?php } ?>
 
 							<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 14) || ($_SESSION['idroll_sahilices'] == 15) || ($_SESSION['idroll_sahilices'] == 7)) { ?>
 								<div class="row">
@@ -194,23 +216,75 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 								</div>
 							<?php } ?>
 
-							<table id="example" class="display table dataTable" style="width: 100%;" role="grid" aria-describedby="example_info">
-								<thead>
-									<th>No Poliza</th>
-									<th>Asegurado</th>
-									<th>Vencimiento</th>
-									<th>Producto</th>
-									<th>Acciones</th>
-								</thead>
-								<tfoot>
-									<th>No Poliza</th>
-									<th>Asegurado</th>
-									<th>Vencimiento</th>
-									<th>Producto</th>
-									<th>Acciones</th>
-								</tfoot>
 
-							</table>
+
+							<div class="row contActivas">
+								<h4 style="text-align:center;">Activas</h4>
+								<hr>
+								<table id="example" class="display table dataTable" style="width: 100%;" role="grid" aria-describedby="example_info">
+									<thead>
+										<th>No Poliza</th>
+										<th>Asegurado</th>
+										<th>Vencimiento</th>
+										<th>Producto</th>
+										<th>Acciones</th>
+									</thead>
+									<tfoot>
+										<th>No Poliza</th>
+										<th>Asegurado</th>
+										<th>Vencimiento</th>
+										<th>Producto</th>
+										<th>Acciones</th>
+									</tfoot>
+
+								</table>
+							</div>
+
+							<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
+							<div class="row contValidacion">
+								<h4 style="text-align:center;">Validación</h4>
+								<hr>
+								<table id="example2" class="display table dataTable" style="width: 100%;" role="grid" aria-describedby="example_info">
+									<thead>
+										<th>No Poliza</th>
+										<th>Asegurado</th>
+										<th>Vencimiento</th>
+										<th>Producto</th>
+										<th>Acciones</th>
+									</thead>
+									<tfoot>
+										<th>No Poliza</th>
+										<th>Asegurado</th>
+										<th>Vencimiento</th>
+										<th>Producto</th>
+										<th>Acciones</th>
+									</tfoot>
+
+								</table>
+							</div>
+
+							<div class="row contHistorico">
+								<h4 style="text-align:center;">Historico</h4>
+								<hr>
+								<table id="example3" class="display table dataTable" style="width: 100%;" role="grid" aria-describedby="example_info">
+									<thead>
+										<th>No Poliza</th>
+										<th>Asegurado</th>
+										<th>Vencimiento</th>
+										<th>Producto</th>
+										<th>Acciones</th>
+									</thead>
+									<tfoot>
+										<th>No Poliza</th>
+										<th>Asegurado</th>
+										<th>Vencimiento</th>
+										<th>Producto</th>
+										<th>Acciones</th>
+									</tfoot>
+
+								</table>
+							</div>
+						<?php } ?>
 						</div>
 					</div>
 				</div>
@@ -244,6 +318,27 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 
 <script>
 	$(document).ready(function(){
+
+		$('.contHistorico').hide();
+		$('.contValidacion').hide();
+
+		$('.btnActivas').click( function() {
+			$('.contHistorico').hide();
+			$('.contValidacion').hide();
+			$('.contActivas').show();
+		});
+
+		$('.btnValidacion').click( function() {
+			$('.contHistorico').hide();
+			$('.contValidacion').show();
+			$('.contActivas').hide();
+		});
+
+		$('.btnHistorico').click( function() {
+			$('.contHistorico').show();
+			$('.contValidacion').hide();
+			$('.contActivas').hide();
+		});
 
 		$('#fechadesde_filtro').pickadate({
 			format: 'yyyy-mm-dd',
@@ -282,7 +377,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=listadopolizas",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=listadopolizas&estado=1",
 			"fnServerData": function ( sSource, aoData, fnCallback ) {
 				/* Add some extra data to the sender */
 				aoData.push( { "name": "start", "value": $('#fechadesde_filtro').val(), } );
@@ -318,12 +413,108 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 			}
 		});
 
+		<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
+		var table2 = $('#example2').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=listadopolizas&estado=2",
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+				/* Add some extra data to the sender */
+				aoData.push( { "name": "start", "value": $('#fechadesde_filtro').val(), } );
+				aoData.push( { "name": "end", "value": $('#fechahasta_filtro').val(), } );
+				aoData.push( { "name": "idcliente", "value": $('#cliente_filtro').val(), } );
+				$.getJSON( sSource, aoData, function (json) {
+				/* Do whatever additional processing you want on the callback, then tell DataTables */
+				fnCallback(json)
+				} );
+			},
+			"language": {
+				"emptyTable":     "No hay datos cargados",
+				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "Mostrar _MENU_ filas",
+				"loadingRecords": "Cargando...",
+				"processing":     "Procesando...",
+				"search":         "Buscar:",
+				"zeroRecords":    "No se encontraron resultados",
+				"paginate": {
+					"first":      "Primero",
+					"last":       "Ultimo",
+					"next":       "Siguiente",
+					"previous":   "Anterior"
+				},
+				"aria": {
+					"sortAscending":  ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			}
+		});
+
+
+		var table3 = $('#example3').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=listadopolizas&estado=3",
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+				/* Add some extra data to the sender */
+				aoData.push( { "name": "start", "value": $('#fechadesde_filtro').val(), } );
+				aoData.push( { "name": "end", "value": $('#fechahasta_filtro').val(), } );
+				aoData.push( { "name": "idcliente", "value": $('#cliente_filtro').val(), } );
+				$.getJSON( sSource, aoData, function (json) {
+				/* Do whatever additional processing you want on the callback, then tell DataTables */
+				fnCallback(json)
+				} );
+			},
+			"language": {
+				"emptyTable":     "No hay datos cargados",
+				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "Mostrar _MENU_ filas",
+				"loadingRecords": "Cargando...",
+				"processing":     "Procesando...",
+				"search":         "Buscar:",
+				"zeroRecords":    "No se encontraron resultados",
+				"paginate": {
+					"first":      "Primero",
+					"last":       "Ultimo",
+					"next":       "Siguiente",
+					"previous":   "Anterior"
+				},
+				"aria": {
+					"sortAscending":  ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			}
+		});
+
+		<?php } ?>
+
 		$('#filtrar').click( function() {
 			table.draw();
+			table2.draw();
+			table3.draw();
 
 		} );
 
 		$("#example").on("click",'.btnPoliza', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','poliza.php?id=' + idTable);
+
+		});//fin del boton modificar
+
+		$("#example2").on("click",'.btnPoliza', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','poliza.php?id=' + idTable);
+
+		});//fin del boton modificar
+
+		$("#example3").on("click",'.btnPoliza', function(){
 			idTable =  $(this).attr("id");
 			$(location).attr('href','poliza.php?id=' + idTable);
 

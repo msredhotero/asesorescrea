@@ -1,6 +1,8 @@
 <?php
 
 
+$DESARROLLO = 0;
+
 	include ('../../includes/funciones.php');
 	include ('../../includes/funcionesUsuarios.php');
 	include ('../../includes/funcionesHTML.php');
@@ -35,78 +37,86 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 
 
-$EM_Response= $_POST["EM_Response"];
-$EM_Total= $_POST["EM_Total"];
-$EM_OrderID= $_POST["EM_OrderID"];
-$EM_Merchant= $_POST["EM_Merchant"];
-$EM_Store= $_POST["EM_Store"];
-$EM_Term= $_POST["EM_Term"];
-$EM_RefNum= $_POST["EM_RefNum"];
-$EM_Auth= $_POST["EM_Auth"];
-$EM_Digest= $_POST["EM_Digest"];
+
+if ($DESARROLLO == 0) {
+
+	$EM_Response= $_POST["EM_Response"];
+	$EM_Total= $_POST["EM_Total"];
+	$EM_OrderID= $_POST["EM_OrderID"];
+	$EM_Merchant= $_POST["EM_Merchant"];
+	$EM_Store= $_POST["EM_Store"];
+	$EM_Term= $_POST["EM_Term"];
+	$EM_RefNum= $_POST["EM_RefNum"];
+	$EM_Auth= $_POST["EM_Auth"];
+	$EM_Digest= $_POST["EM_Digest"];
+
+	$newdigest  = sha1($_POST["EM_Total"].$_POST["EM_OrderID"].$_POST["EM_Merchant"].$_POST["EM_Store"].$_POST["EM_Term"].$_POST["EM_RefNum"]+"-"+$_POST["EM_Auth"]);
+
+
+} else {
+
+
+
+
+
+	switch (trim(str_replace(' ','',$_POST['cc_number']))) {
+		case '5062541600005232':
+			$EM_Response= 'approved';
+			$EM_RefNum= '123456789123';
+			$EM_Auth= '123456';
+		break;
+		case '5105105105105100':
+			$EM_Response= 'Incorrect Information is provided.';
+			$EM_RefNum= '123456789123';
+			$EM_Auth= '000000';
+		break;
+		case '5555555555554444':
+			$EM_Response= 'denied';
+			$EM_RefNum= '123456789123';
+			$EM_Auth= '000000';
+		break;
+		case '4111111111111111':
+			$EM_Response= 'Duplicated transaction';
+			$EM_RefNum= '123456789123';
+			$EM_Auth= '000000';
+		break;
+		default:
+			$EM_Response= 'approved';
+			$EM_RefNum= '123456789123';
+			$EM_Auth= '123456';
+		break;
+
+	}
+
+
+
+	if (!(isset($_POST["EM_RefNum"]))) {
+		$EM_RefNum= '123456789123';
+	} else {
+		$EM_RefNum= $_POST["EM_RefNum"];
+	}
+
+	if (!(isset($_POST["EM_Auth"]))) {
+		$EM_Auth= '123456';
+	} else {
+		$EM_Auth= $_POST["EM_RefNum"];
+	}
+
+	$EM_Total= $_POST["total"];
+	$EM_OrderID= $_POST["order_id"];
+	$EM_Merchant= $_POST["merchant"];
+	$EM_Store= $_POST["store"];
+	$EM_Term= $_POST["term"];
+
+	$EM_Digest= $_POST["digest"];
+
+
+	$newdigest  = sha1($_POST["total"].$_POST["order_id"].$_POST["merchant"].$_POST["store"].$_POST["term"].$EM_RefNum+"-"+$EM_Auth);
+}
 
 
 
 $redireccionar = array('error'=> 0, 'url' => '');
-
-/*
-switch (trim(str_replace(' ','',$_POST['cc_number']))) {
-	case '5062541600005232':
-		$EM_Response= 'approved';
-		$EM_RefNum= '123456789123';
-		$EM_Auth= '123456';
-	break;
-	case '5105105105105100':
-		$EM_Response= 'Incorrect Information is provided.';
-		$EM_RefNum= '123456789123';
-		$EM_Auth= '000000';
-	break;
-	case '5555555555554444':
-		$EM_Response= 'denied';
-		$EM_RefNum= '123456789123';
-		$EM_Auth= '000000';
-	break;
-	case '4111111111111111':
-		$EM_Response= 'Duplicated transaction';
-		$EM_RefNum= '123456789123';
-		$EM_Auth= '000000';
-	break;
-	default:
-		$EM_Response= 'approved';
-		$EM_RefNum= '123456789123';
-		$EM_Auth= '123456';
-	break;
-
-}
-
-
-
-if (!(isset($_POST["EM_RefNum"]))) {
-	$EM_RefNum= '123456789123';
-} else {
-	$EM_RefNum= $_POST["EM_RefNum"];
-}
-
-if (!(isset($_POST["EM_Auth"]))) {
-	$EM_Auth= '123456';
-} else {
-	$EM_Auth= $_POST["EM_RefNum"];
-}
-
-
-$EM_Total= $_POST["total"];
-$EM_OrderID= $_POST["order_id"];
-$EM_Merchant= $_POST["merchant"];
-$EM_Store= $_POST["store"];
-$EM_Term= $_POST["term"];
-
-$EM_Digest= $_POST["digest"];
-
-*/
-
-
-$newdigest  = sha1($_POST["EM_Total"].$_POST["EM_OrderID"].$_POST["EM_Merchant"].$_POST["EM_Store"].$_POST["EM_Term"].$_POST["EM_RefNum"]+"-"+$_POST["EM_Auth"]);
-//$newdigest  = sha1($_POST["total"].$_POST["order_id"].$_POST["merchant"].$_POST["store"].$_POST["term"].$EM_RefNum+"-"+$EM_Auth);
 
 //die(var_dump($EM_OrderID));
 
@@ -417,11 +427,16 @@ if (!isset($_SESSION['usua_sahilices']))
 
 								<?php if ($instanciaDelError != 3) { ?>
 
-									<?php if ($reftipoproductorama == 12) { ?>
-										<form action="https://www.procom.prosa.com.mx/eMerch2/8418704_OperMedicaVrim.jsp" method="post" id="formFin">
+									<?php if ($DESARROLLO == 0) { ?>
+					            	<?php if ($reftipoproductorama == 12) { ?>
+										<form action="https://www.procom.prosa.com.mx/eMerchant/8418704_OperMedicaVrim.jsp" method="post" id="formFin">
 									<?php } else { ?>
-										<form action="https://www.procom.prosa.com.mx/eMerch2/8407825_SegInbursa.jsp" method="post" id="formFin">
+										<form action="https://www.procom.prosa.com.mx/eMerchant/8407825_SegInbursa.jsp" method="post" id="formFin">
 									<?php } ?>
+					            <?php } else { ?>
+					            	<form action="8407825_asesorescrea.php" method="post" id="formFin">
+					            <?php } ?>
+
 					               <input type="hidden" name="total" value="<?php echo $EM_Total; ?>">
 					               <input type="hidden" name="currency" value="<?php echo '484'; ?>">
 					               <input type="hidden" name="address" value="<?php echo ''; ?>">

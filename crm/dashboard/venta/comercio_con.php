@@ -51,7 +51,7 @@ if ($DESARROLLO == 0) {
 	$newdigest  = sha1($_POST["EM_Total"].$_POST["EM_OrderID"].$_POST["EM_Merchant"].$_POST["EM_Store"].$_POST["EM_Term"].$_POST["EM_RefNum"]+"-"+$_POST["EM_Auth"]);
 
 
-} else { 
+} else {
 
 
 
@@ -417,11 +417,15 @@ if (!isset($_SESSION['usua_sahilices']))
 
 								<?php if ($instanciaDelError != 3) { ?>
 
-									<?php if ($reftipoproductorama == 12) { ?>
-										<form action="https://www.procom.prosa.com.mx/eMerch2/8418704_OperMedicaVrim.jsp" method="post" id="formFin">
+									<?php if ($DESARROLLO == 0) { ?>
+					            	<?php if ($reftipoproductorama == 12) { ?>
+										<form action="https://www.procom.prosa.com.mx/eMerchant/8418704_OperMedicaVrim.jsp" method="post" id="formFin">
 									<?php } else { ?>
-										<form action="https://www.procom.prosa.com.mx/eMerch2/8407825_SegInbursa.jsp" method="post" id="formFin">
+										<form action="https://www.procom.prosa.com.mx/eMerchant/8407825_SegInbursa.jsp" method="post" id="formFin">
 									<?php } ?>
+					            <?php } else { ?>
+					            	<form action="8407825_asesorescrea.php" method="post" id="formFin">
+					            <?php } ?>
 					               <input type="hidden" name="total" value="<?php echo $EM_Total; ?>">
 					               <input type="hidden" name="currency" value="<?php echo '484'; ?>">
 					               <input type="hidden" name="address" value="<?php echo ''; ?>">

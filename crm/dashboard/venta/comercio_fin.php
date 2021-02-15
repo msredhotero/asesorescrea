@@ -78,6 +78,8 @@ $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcoti
 
 $idCliente = mysql_result($resCotizaciones,0,'refclientes');
 
+$lblCliente = mysql_result($resCotizaciones,0,'clientesolo');
+
 $idProducto = mysql_result($resCotizaciones,0,'refproductos');
 
 $resProducto = $serviciosReferencias->traerProductosPorId($idProducto);
@@ -87,6 +89,8 @@ $idcuestionario = mysql_result($resProducto,0,'refcuestionarios');
 $detalleProducto = mysql_result($resProducto,0,'detalle');
 
 $reftipoproductorama = mysql_result($resProducto,0,'reftipoproductorama');
+
+$idestadocotizacion = mysql_result($resCotizaciones,0,'refestadocotizaciones');
 
 if (mysql_result($resCotizaciones,0,'tieneasegurado') == '1') {
 	$resDatosSencibles = $serviciosReferencias->necesitoPreguntaSencibleAsegurado(mysql_result($resCotizaciones,0,'refasegurados'),$idcuestionario);
@@ -172,14 +176,67 @@ $comdigest=sha1($commerchant.$comstore.$comterm.$comtotal.$comcurrency.$comorder
 
 $existeComercio = $serviciosComercio->traerComercioinicioPorOrderId($comorder_id);
 
+$existeComercioAceptado = $serviciosComercio->traerComercioinicioPorOrderIdAceptadas($comorder_id);
+
 //die(var_dump($existeComercio));
+
+if (mysql_num_rows($existeComercioAceptado) > 0) {
+	if ($idestadocotizacion == 19) {
+
+
+		// modifico el estado a aprobado
+		$resModificarEstado = $serviciosComercio->modificarComercioInicioEstado(mysql_result($existeComercioAceptado,0,'token'),2);
+
+		$nroComprobante = $serviciosComercio->generaNroRecibo();
+
+		$resNroRecibo = $serviciosComercio->modificarComercioInicioNroRecibo($token,$nroComprobante);
+
+		// verifico el origen de la transaccion para saber que tabla modificar
+		if ($reforigencomercio == 7) {
+
+			$resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestados',1,$_SESSION['usua_sahilices']);
+
+			$resModificarPM = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestadocotizaciones',20,$_SESSION['usua_sahilices']);
+
+			// obstengo el lead que se genero en venta en linea
+			$resLead = $serviciosReferencias->traerLeadPorCotizacion($idcotizacion);
+
+			// se viene de ahi lo marco como vendido el estado del mismo
+			if (mysql_num_rows($resLead)>0) {
+				$resModificarLead = $serviciosReferencias->modificarLeadCotizacion(mysql_result($resLead,0,0),$idcotizacion,5);
+			}
+
+
+
+			///////////////// creo el pago para luego conciliarlo /////////////////////////////////
+			$destino = 'Pago Online Venta Producto en Linea';
+			$refcuentasbancarias = 0;
+			$conciliado = '0';
+			$fechacrea = date('Y-m-d H:i:s');
+			$usuariocrea = $_SESSION['usua_sahilices'];
+			$archivos = 'ReciboPago.pdf';
+			$type = 'pdf';
+			$refestado = 1;
+			$resPago = $serviciosReferencias->insertarPagos(12,$idcotizacion,$comtotal,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,5,'Inbursa',$lblCliente,$nroComprobante,'0');
+
+			///////////////// fin del pago /////////////////////////////////
+
+			// verifico el estado del swicth y redirijo
+			$urlSwicth = $serviciosReferencias->switchCotizacion($idestadocotizacion,1,$idcotizacion);
+			header('Location: '.$urlSwicth);
+
+		}
+	}
+}
 
 if (mysql_num_rows($existeComercio) > 0) {
 	$rComercioInicio = $serviciosComercio->traerComercioinicioPorOrderId($comorder_id);
 
 	$resEstadoTransaccion = mysql_result($rComercioInicio,0,'refestadotransaccion');
 
-	if (($resEstadoTransaccion == 5) || ($resEstadoTransaccion == 2)|| ($resEstadoTransaccion == 6)) {
+	// la transaccion fue duplicada, hay que preguntar a prosa si el pago se acredito
+	if ($resEstadoTransaccion == 5) {
+
 		header('Location: error.php');
 	}
 } else {
@@ -308,15 +365,15 @@ $resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcotizacion
 
 			            <?php if ($DESARROLLO == 0) { ?>
 			            	<?php if ($reftipoproductorama == 12) { ?>
-								<form action="https://www.procom.prosa.com.mx/eMerch2/8418704_OperMedicaVrim.jsp" method="post" id="formFin">
+								<form action="https://www.procom.prosa.com.mx/eMerchant/8418704_OperMedicaVrim.jsp" method="post" id="formFin">
 							<?php } else { ?>
-								<form action="https://www.procom.prosa.com.mx/eMerch2/8407825_SegInbursa.jsp" method="post" id="formFin">
+								<form action="https://www.procom.prosa.com.mx/eMerchant/8407825_SegInbursa.jsp" method="post" id="formFin">
 							<?php } ?>
 			            <?php } else { ?>
 			            	<form action="8407825_asesorescrea.php" method="post" id="formFin">
 			            <?php } ?>
-			            
-							
+
+
 
 			               <input type="hidden" name="total" value="<?php echo $comtotal; ?>">
 			               <input type="hidden" name="currency" value="<?php echo $comcurrency; ?>">
@@ -334,7 +391,7 @@ $resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcotizacion
 								<div class="row">
 								<div class="col-xs-3"></div>
 			               <div class="col-xs-6">
-									<button type="submit" class="btn btn-lg btn-block btn-success" id="btnConfirmar" style="font-size:1.5em;">
+									<button type="button" class="btn btn-lg btn-block btn-success" id="btnConfirmar" style="font-size:1.5em;">
 										<i class="material-icons" style="font-size:1.5em;">verified_user</i>
 										<span>Adquirir AHORA</span>
 									</button>
@@ -382,22 +439,41 @@ $resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcotizacion
 
 		btnConfirmar.click(function(e) {
 
-			$( "#formPago" ).submit();
+			verificarCondicionDelPagoEnLinea();
+			//$( "#formPago" ).submit();
 		});
 
+		function verificarCondicionDelPagoEnLinea() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'verificarCondicionDelPagoEnLinea',
+					id: <?php echo $idcotizacion; ?>},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					btnConfirmar.hide();
+				},
+				//una vez finalizado correctamente
+				success: function(data){
 
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '315px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
+					if (data.error == false) {
+						$( "#formFin" ).submit();
+					} else {
+						$(location).attr('href',data.url);
+					}
+					btnConfirmar.show();
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
 
-		});
 
 
 		var table = $('#example').DataTable({

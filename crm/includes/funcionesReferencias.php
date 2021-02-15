@@ -9,260 +9,354 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
-function modificaEstadoCotizacionAutomatico($idcotizacion, $idestado, $usuario) {
+   function switchCotizacion($idestado, $tipo, $id) {
+      $url = '';
 
-   $id = $idcotizacion;
-   $idestado = $idestado;
+      //1 'venta' , 2 'cotizacionagente' , 3 'cobranza'
+      if ($tipo == 1) {
+         switch ($idestado) {
+            case 19:
+               $url = 'comercio_fin.php?id='.$id;
+            break;
+            case 20:
+               $url = 'archivos.php?id='.$id;
+            break;
+            case 19:
+               $url = 'documentos.php?id='.$id;
+            break;
+            case 22:
+               $url = 'comprobantepago.php?id='.$id;
+            break;
+         }
+      }
 
-   // trai los valores del estado a modificar
-   $resEstado = $this->traerEstadocotizacionesPorId($idestado);
+      if ($tipo == 2) {
+         switch ($idestado) {
+            case 19:
+               $url = 'comercio_fin.php?id='.$id;
+            break;
+            case 20:
+               $url = 'archivos.php?id='.$id;
+            break;
+            case 19:
+               $url = 'documentos.php?id='.$id;
+            break;
+            case 22:
+               $url = 'comprobantepago.php?id='.$id;
+            break;
+         }
+      }
 
-   // verifico si me genera un cambio automatico y si finaliza
-   if ((mysql_result($resEstado,0,'generaestado') > 0) && (mysql_result($resEstado,0,'finaliza') == '1')) {
-      // obtengo la nueva etapa
-      $resEstadoNuevo = $this->traerEstadocotizacionesPorId(mysql_result($resEstado,0,'generaestado'));
+      if ($tipo == 3) {
+         switch ($idestado) {
+            case 19:
+               $url = 'comercio_fin.php?id='.$id;
+            break;
+            case 20:
+               $url = 'archivos.php?id='.$id;
+            break;
+            case 19:
+               $url = 'documentos.php?id='.$id;
+            break;
+            case 22:
+               $url = 'comprobantepago.php?id='.$id;
+            break;
+         }
+      }
 
-      // modifico el estado de la cotizacion
-      $resModEstadoCot = $this->modificarCotizacionesPorCampo($id,'refestadocotizaciones',mysql_result($resEstado,0,'generaestado'), $usuario);
+      return $url;
+   }
 
-      // modifico la etapa
-      $resModEstadoEtapa = $this->modificarCotizacionesPorCampo($id,'refestados',mysql_result($resEstadoNuevo,0,'refetapacotizacion'), $usuario);
+   function traerComercioinicioPorReferencia($idtabla, $tabla, $idnombre, $id) {
+      $sql = "select c.idcomercioinicio,c.token,c.comtotal,c.comcurrency,c.comaddres,c.comorderid,c.commerchant,c.comstore,c.comterm,c.comdigest,c.urlback,c.reforigencomercio,c.refestadotransaccion,c.refafiliados,c.fechacrea,c.usuariocrea,c.vigencia,c.observaciones,c.fechamodi,c.usuariomodi,c.nrocomprobante,c.reftabla,c.idreferencia from dbcomercioinicio c
+      inner join ".$tabla." v on v.".$idnombre." = c.idreferencia
+		where c.reftabla = ".$idtabla." and c.idreferencia = ".$id;
 
-      $mensaje = 'SE MODIFICO CORRECTAMENTE';
-   } else {
-      if  (mysql_result($resEstado,0,'renueva') == '1') {
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function verificarCondicionDelPagoEnLinea($id) {
+
+      $res = $this->traerCotizacionesPorIdCompleto($id);
+
+      $idestado = mysql_result($res,0,'refestadocotizaciones');
+
+      // estado 19, en proceso de pago
+      if ($idestado == 19) {
+
+         // busco el inicio del comercio
+         $resCI = $this->traerComercioinicioPorReferencia(12, 'dbcotizaciones', 'idcotizacion', $id);
+         // si existe, veo su estado
+         if (mysql_num_rows($resCI) > 0) {
+            // estado 2 pagado
+            if (mysql_result($resCI,0,'refestadotransaccion') == 2) {
+               return array('error'=>true,'url'=>'comercio_fin.php?id='.$id);
+            } else {
+               return array('error'=>false,'url'=>'comercio_fin.php?id='.$id);
+            }
+         }
+         return array('error'=>true,'url'=>'comercio_fin.php?id='.$id);
+      } else {
+         $urlSwicth = $this->switchCotizacion($idestado,1,$id);
+         return array('error'=>true,'url'=>$$urlSwicth);
+      }
+   }
+
+   function modificaEstadoCotizacionAutomatico($idcotizacion, $idestado, $usuario) {
+
+      $id = $idcotizacion;
+      $idestado = $idestado;
+
+      // trai los valores del estado a modificar
+      $resEstado = $this->traerEstadocotizacionesPorId($idestado);
+
+      // verifico si me genera un cambio automatico y si finaliza
+      if ((mysql_result($resEstado,0,'generaestado') > 0) && (mysql_result($resEstado,0,'finaliza') == '1')) {
+         // obtengo la nueva etapa
+         $resEstadoNuevo = $this->traerEstadocotizacionesPorId(mysql_result($resEstado,0,'generaestado'));
+
          // modifico el estado de la cotizacion
-         $resModEstadoCot = $this->modificarCotizacionesPorCampo($id,'refestadocotizaciones',$idestado, $usuario);
+         $resModEstadoCot = $this->modificarCotizacionesPorCampo($id,'refestadocotizaciones',mysql_result($resEstado,0,'generaestado'), $usuario);
 
          // modifico la etapa
-         $resModEstadoEtapa = $this->modificarCotizacionesPorCampo($id,'refestados',mysql_result($resEstado,0,'refetapacotizacion'), $usuario);
+         $resModEstadoEtapa = $this->modificarCotizacionesPorCampo($id,'refestados',mysql_result($resEstadoNuevo,0,'refetapacotizacion'), $usuario);
 
          $mensaje = 'SE MODIFICO CORRECTAMENTE';
       } else {
-         // modifico la etapa
-         $resModEstadoEtapa = $this->modificarCotizacionesPorCampo($id,'refestados',mysql_result($resEstado,0,'refetapacotizacion'), $usuario);
+         if  (mysql_result($resEstado,0,'renueva') == '1') {
+            // modifico el estado de la cotizacion
+            $resModEstadoCot = $this->modificarCotizacionesPorCampo($id,'refestadocotizaciones',$idestado, $usuario);
 
-         $mensaje = 'SE MODIFICO CORRECTAMENTE';
+            // modifico la etapa
+            $resModEstadoEtapa = $this->modificarCotizacionesPorCampo($id,'refestados',mysql_result($resEstado,0,'refetapacotizacion'), $usuario);
+
+            $mensaje = 'SE MODIFICO CORRECTAMENTE';
+         } else {
+            // modifico la etapa
+            $resModEstadoEtapa = $this->modificarCotizacionesPorCampo($id,'refestados',mysql_result($resEstado,0,'refetapacotizacion'), $usuario);
+
+            $mensaje = 'SE MODIFICO CORRECTAMENTE';
+         }
+
       }
 
+
+      if ($resModEstadoEtapa) {
+         $resV['error'] = false;
+         $resV['mensaje'] = $mensaje;
+         $resV['tipo'] = 'success';
+      } else {
+         $resV['error'] = true;
+         $resV['mensaje'] = 'Se genero un error por favor vuelva a intentarlo';
+         $resV['tipo'] = 'danger';
+      }
+
+
+      return $resV;
+
+   }
+
+   /* PARA Tokenasesores */
+
+   function insertarTokenasesores($token,$refasesores,$refclientes,$generousuario,$fechacrea,$vigencia,$activo,$accion,$tipoaccion,$refestados,$refusuarios) {
+      $sql = "insert into dbtokenasesores(idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios)
+      values ('','".$token."',".$refasesores.",".$refclientes.",'".$generousuario."','".$fechacrea."','".$vigencia."','".$activo."','".$accion."','".$tipoaccion."',".$refestados.",".$refusuarios.")";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+   function copiaTokenDeToken($token, $tokenNuevo) {
+
+      $fecha_actual = date("d-m-Y");
+      //sumo 30 días
+      $vigencia = date("Y-m-d",strtotime($fecha_actual."+ 30 days"));
+
+      $sql = "INSERT INTO dbtokenasesores
+               (idtokenasesor,
+               token,
+               refasesores,
+               refclientes,
+               generousuario,
+               fechacrea,
+               vigencia,
+               activo,
+               accion,
+               tipoaccion,
+               refestados,
+               refusuarios)
+               SELECT '',
+                   "."'".$tokenNuevo."'".",
+                   refasesores,
+                   refclientes,
+                   generousuario,
+                   now(),
+                   "."'".$vigencia."'".",
+                   '1',
+                   'cotizacionagente/new.php?producto=46',
+                   '2',
+                   1,
+                   refusuarios
+               FROM dbtokenasesores where token = '".$token."'";
+
+      $res = $this->query($sql,1);
+      return $res;
    }
 
 
-   if ($resModEstadoEtapa) {
-      $resV['error'] = false;
-      $resV['mensaje'] = $mensaje;
-      $resV['tipo'] = 'success';
-   } else {
-      $resV['error'] = true;
-      $resV['mensaje'] = 'Se genero un error por favor vuelva a intentarlo';
-      $resV['tipo'] = 'danger';
+   function modificarTokenasesores($id,$token,$refasesores,$refclientes,$generousuario,$fechacrea,$vigencia,$activo,$accion,$tipoaccion,$refestados,$refusuarios) {
+      $sql = "update dbtokenasesores
+      set
+      token = '".$token."',refasesores = ".$refasesores.",refclientes = ".$refclientes.",generousuario = '".$generousuario."',fechacrea = '".$fechacrea."',vigencia = '".$vigencia."',activo = '".$activo."',accion = '".$accion."',tipoaccion = '".$tipoaccion."',refestados = ".$refestados.",refusuarios = ".$refusuarios."
+      where idtokenasesor =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function modificarTokenasesoresParcial($token,$refusuarios) {
+      $sql = "update dbtokenasesores
+      set
+      generousuario = '1',activo = '0',refusuarios = ".$refusuarios."
+      where token = '".$token."'";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function modificarTokenasesoresEstado($token,$refestados) {
+      $sql = "update dbtokenasesores
+      set
+      refestados = ".$refestados."
+      where token = '".$token."'";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function modificarTokenasesoresAccion($token,$accion) {
+      $sql = "update dbtokenasesores
+      set
+      accion = '".$accion."'
+      where token = '".$token."'";
+      $res = $this->query($sql,0);
+      return $res;
    }
 
 
-   return $resV;
-
-}
-
-/* PARA Tokenasesores */
-
-function insertarTokenasesores($token,$refasesores,$refclientes,$generousuario,$fechacrea,$vigencia,$activo,$accion,$tipoaccion,$refestados,$refusuarios) {
-$sql = "insert into dbtokenasesores(idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios)
-values ('','".$token."',".$refasesores.",".$refclientes.",'".$generousuario."','".$fechacrea."','".$vigencia."','".$activo."','".$accion."','".$tipoaccion."',".$refestados.",".$refusuarios.")";
-$res = $this->query($sql,1);
-return $res;
-}
-
-function copiaTokenDeToken($token, $tokenNuevo) {
-
-   $fecha_actual = date("d-m-Y");
-   //sumo 30 días
-   $vigencia = date("Y-m-d",strtotime($fecha_actual."+ 30 days"));
-
-   $sql = "INSERT INTO dbtokenasesores
-            (idtokenasesor,
-            token,
-            refasesores,
-            refclientes,
-            generousuario,
-            fechacrea,
-            vigencia,
-            activo,
-            accion,
-            tipoaccion,
-            refestados,
-            refusuarios)
-            SELECT '',
-                "."'".$tokenNuevo."'".",
-                refasesores,
-                refclientes,
-                generousuario,
-                now(),
-                "."'".$vigencia."'".",
-                '1',
-                'cotizacionagente/new.php?producto=46',
-                '2',
-                1,
-                refusuarios
-            FROM dbtokenasesores where token = '".$token."'";
-
-   $res = $this->query($sql,1);
-   return $res;
-}
-
-
-function modificarTokenasesores($id,$token,$refasesores,$refclientes,$generousuario,$fechacrea,$vigencia,$activo,$accion,$tipoaccion,$refestados,$refusuarios) {
-$sql = "update dbtokenasesores
-set
-token = '".$token."',refasesores = ".$refasesores.",refclientes = ".$refclientes.",generousuario = '".$generousuario."',fechacrea = '".$fechacrea."',vigencia = '".$vigencia."',activo = '".$activo."',accion = '".$accion."',tipoaccion = '".$tipoaccion."',refestados = ".$refestados.",refusuarios = ".$refusuarios."
-where idtokenasesor =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-function modificarTokenasesoresParcial($token,$refusuarios) {
-$sql = "update dbtokenasesores
-set
-generousuario = '1',activo = '0',refusuarios = ".$refusuarios."
-where token = '".$token."'";
-$res = $this->query($sql,0);
-return $res;
-}
-
-function modificarTokenasesoresEstado($token,$refestados) {
-$sql = "update dbtokenasesores
-set
-refestados = ".$refestados."
-where token = '".$token."'";
-$res = $this->query($sql,0);
-return $res;
-}
-
-function modificarTokenasesoresAccion($token,$accion) {
-$sql = "update dbtokenasesores
-set
-accion = '".$accion."'
-where token = '".$token."'";
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function eliminarTokenasesores($id) {
-$sql = "delete from dbtokenasesores where token = '".$id."'";
-$res = $this->query($sql,0);
-return $res;
-}
-
-
-function traerTokenasesoresajax($length, $start, $busqueda,$colSort,$colSortDir, $idasesor) {
-
-   $where = '';
-
-   $busqueda = str_replace("'","",$busqueda);
-   if ($busqueda != '') {
-      $where = " and concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or (case when t.tipoaccion = '1' then 'Pago de Recibo' else 'Cotizacion' end) like '%".$busqueda."%' or (case when t.refestados = 1 then 'Iniciado' else 'Completo' end) like '%".$busqueda."%' or concat('https://asesorescrea.com/desarrollo/crm/token.php?token=',t.token) like '%".$busqueda."%'";
+   function eliminarTokenasesores($id) {
+      $sql = "delete from dbtokenasesores where token = '".$id."'";
+      $res = $this->query($sql,0);
+      return $res;
    }
 
-   //http://localhost/asesorescrea_nuevo.git/trunk/crm/dashboard/
-   //https://asesorescrea.com/desarrollo/crm/dashboard/
-   $sql = "select
-   t.token,
-   concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
-   (case when t.tipoaccion = '1' then 'Pago de Recibo' else 'Cotizacion' end) as tipoaccion,
-   concat('https://asesorescrea.com/desarrollo/crm/token.php?token=',t.token) as accion,
-   t.fechacrea,
-   (case when t.refestados = 1 then 'Iniciado' else 'Completo' end) as estado,
-   t.vigencia,
-   t.activo,
-   t.refestados,
-   t.refasesores,
-   t.refclientes,
-   t.generousuario,
-   t.refusuarios
-   from dbtokenasesores t
-   inner join dbclientes cli ON cli.idcliente = t.refclientes
-   where t.refasesores = ".$idasesor." ".$where."
-   ORDER BY ".$colSort." ".$colSortDir." ";
-   $limit = "limit ".$start.",".$length;
 
-   $res = array($this->query($sql.$limit,0) , $this->query($sql,0));
-   return $res;
-}
+   function traerTokenasesoresajax($length, $start, $busqueda,$colSort,$colSortDir, $idasesor) {
 
-function traerTokenasesores() {
-$sql = "select
-t.idtokenasesor,
-t.token,
-t.refasesores,
-t.refclientes,
-t.generousuario,
-t.fechacrea,
-t.vigencia,
-t.activo,
-t.accion,
-t.tipoaccion,
-t.refestados,
-t.refusuarios
-from dbtokenasesores t
-order by 1";
-$res = $this->query($sql,0);
-return $res;
-}
+      $where = '';
 
+      $busqueda = str_replace("'","",$busqueda);
+      if ($busqueda != '') {
+         $where = " and concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or (case when t.tipoaccion = '1' then 'Pago de Recibo' else 'Cotizacion' end) like '%".$busqueda."%' or (case when t.refestados = 1 then 'Iniciado' else 'Completo' end) like '%".$busqueda."%' or concat('https://asesorescrea.com/desarrollo/crm/token.php?token=',t.token) like '%".$busqueda."%'";
+      }
 
-function traerTokenasesoresPorId($id) {
-$sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios from dbtokenasesores where idtokenasesor =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
+      //http://localhost/asesorescrea_nuevo.git/trunk/crm/dashboard/
+      //https://asesorescrea.com/desarrollo/crm/dashboard/
+      $sql = "select
+      t.token,
+      concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+      (case when t.tipoaccion = '1' then 'Pago de Recibo' else 'Cotizacion' end) as tipoaccion,
+      concat('https://asesorescrea.com/desarrollo/crm/token.php?token=',t.token) as accion,
+      t.fechacrea,
+      (case when t.refestados = 1 then 'Iniciado' else 'Completo' end) as estado,
+      t.vigencia,
+      t.activo,
+      t.refestados,
+      t.refasesores,
+      t.refclientes,
+      t.generousuario,
+      t.refusuarios
+      from dbtokenasesores t
+      inner join dbclientes cli ON cli.idcliente = t.refclientes
+      where t.refasesores = ".$idasesor." ".$where."
+      ORDER BY ".$colSort." ".$colSortDir." ";
+      $limit = "limit ".$start.",".$length;
 
-function traerTokenasesoresPorToken($token) {
-$sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios from dbtokenasesores where token = '".$token."'";
-$res = $this->query($sql,0);
-return $res;
-}
-
-function traerTokenasesoresPorTokenActivo($token) {
-$sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios from dbtokenasesores where token = '".$token."' and now() <= vigencia ";
-$res = $this->query($sql,0);
-return $res;
-}
-
-function traerTokenasesoresPorAsesor($id) {
-$sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios from dbtokenasesores where refasesores =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-function traerTokenasesoresPorCliente($id) {
-$sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios from dbtokenasesores where refclientes =".$id;
-$res = $this->query($sql,0);
-return $res;
-}
-
-function traerTokenasesoresPorClienteActivoTipo($id,$tipo) {
-$sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,
-vigencia,activo,accion,tipoaccion,refestados,refusuarios , (case when tipoaccion = '1' then 'Pagar Recibo' else 'Cotizacion' end) descripcion
-from dbtokenasesores where refclientes =".$id." and tipoaccion ='".$tipo."'";
-$res = $this->query($sql,0);
-return $res;
-}
-
-function existeTokenAsesores($refasesores,$refclientes) {
-   $sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios from dbtokenasesores where refclientes =".$refclientes." and refasesores =".$refasesores." and generousuario = '1'";
-
-   $res = $this->query($sql,0);
-
-   if (mysql_num_rows($res) > 0) {
-      return mysql_result($res,0,'refusuarios');
+      $res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+      return $res;
    }
 
-   return 0;
-}
+   function traerTokenasesores() {
+      $sql = "select
+      t.idtokenasesor,
+      t.token,
+      t.refasesores,
+      t.refclientes,
+      t.generousuario,
+      t.fechacrea,
+      t.vigencia,
+      t.activo,
+      t.accion,
+      t.tipoaccion,
+      t.refestados,
+      t.refusuarios
+      from dbtokenasesores t
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
 
 
-/* Fin */
-/* /* Fin de la Tabla: dbtokenasesores*/
+   function traerTokenasesoresPorId($id) {
+      $sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios from dbtokenasesores where idtokenasesor =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerTokenasesoresPorToken($token) {
+      $sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios from dbtokenasesores where token = '".$token."'";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerTokenasesoresPorTokenActivo($token) {
+      $sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios from dbtokenasesores where token = '".$token."' and now() <= vigencia ";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerTokenasesoresPorAsesor($id) {
+      $sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios from dbtokenasesores where refasesores =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerTokenasesoresPorCliente($id) {
+      $sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios from dbtokenasesores where refclientes =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerTokenasesoresPorClienteActivoTipo($id,$tipo) {
+      $sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,
+      vigencia,activo,accion,tipoaccion,refestados,refusuarios , (case when tipoaccion = '1' then 'Pagar Recibo' else 'Cotizacion' end) descripcion
+      from dbtokenasesores where refclientes =".$id." and tipoaccion ='".$tipo."'";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function existeTokenAsesores($refasesores,$refclientes) {
+      $sql = "select idtokenasesor,token,refasesores,refclientes,generousuario,fechacrea,vigencia,activo,accion,tipoaccion,refestados,refusuarios from dbtokenasesores where refclientes =".$refclientes." and refasesores =".$refasesores." and generousuario = '1'";
+
+      $res = $this->query($sql,0);
+
+      if (mysql_num_rows($res) > 0) {
+         return mysql_result($res,0,'refusuarios');
+      }
+
+      return 0;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: dbtokenasesores*/
 
 
 
@@ -6181,7 +6275,7 @@ return $res;
    function eliminarPeriodicidadventasdetallePorVenta($id) {
       $sql = "delete dp from dbperiodicidadventasdetalle dp
             inner join dbperiodicidadventas pv ON pv.idperiodicidadventa = dp.refperiodicidadventas
-            inner join dbventas ve ON ve.idventa = pv.refventas 
+            inner join dbventas ve ON ve.idventa = pv.refventas
             where pv.refventas =".$id;
       $res = $this->query($sql,0);
       return $res;
@@ -7592,7 +7686,72 @@ return $res;
 		return $res;
 	}
 
-   function traerVentasPorAsesorCompletoAjax($length, $start, $busqueda,$colSort,$colSortDir,$asesor,$idcliente,$min,$max) {
+
+   function traerVentasPorUsuarioCompletoAjax($length, $start, $busqueda,$colSort,$colSortDir,$idusuario,$min,$max) {
+
+      $resCliente = $this->traerClientesPorUsuarioCompleto($idusuario);
+
+		$idcliente = mysql_result($resCliente,0,0);
+
+      $cadFecha = '';
+		if ($min != '' && $max != '') {
+			$cadFecha = " and v.fechavencimientopoliza between '".$min."' and '".$max."'";
+		} else {
+			if ($min != '' && $max == '') {
+				$cadFecha = " and v.fechavencimientopoliza >= '".$min."'";
+			} else {
+				if ($min == '' && $max != '') {
+					$cadFecha = " and v.fechavencimientopoliza <= '".$max."'";
+				}
+			}
+		}
+
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or cli.razonsocial like '%".$busqueda."%' or v.nropoliza like '%".$busqueda."%'  )";
+		}
+
+
+		$sql = "select
+		v.idventa,
+      v.nropoliza,
+      (case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
+      v.fechavencimientopoliza,
+      p.producto
+		from dbventas v
+
+		inner join dbcotizaciones c ON c.idcotizacion = v.refcotizaciones
+      inner join dbclientes cli ON cli.idcliente = c.refclientes
+      inner join tbproductos p on (case when v.refproductosaux = 0 then p.idproducto = c.refproductos else v.refproductosaux = p.idproducto end)
+      left join dbasegurados ase ON ase.idasegurado = c.refasegurados
+      left join dbasegurados ben ON ase.idasegurado = c.refbeneficiarios
+      inner join dbdocumentacionventas dv on dv.refventas = v.idventa and dv.refdocumentaciones = 35
+		where cli.idcliente =".$idcliente.$where.$cadFecha."
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+   function traerVentasPorAsesorCompletoAjax($length, $start, $busqueda,$colSort,$colSortDir,$asesor,$idcliente,$min,$max,$estado) {
+
+      $cadEstado = '';
+      switch ($estado) {
+         case 1:
+            $cadEstado = ' and v.refestadoventa in (1,2) ';
+         break;
+         case 2:
+            $cadEstado = ' and v.refestadoventa = 6 ';
+         break;
+         case 3:
+            $cadEstado = ' and v.refestadoventa in (3,4,5,6,7,8) ';
+         break;
+      }
 
 		if ($idcliente != '') {
 			$cadCliente = " and cli.idcliente = ".$idcliente." ";
@@ -7635,7 +7794,7 @@ return $res;
       left join dbasegurados ase ON ase.idasegurado = c.refasegurados
       left join dbasegurados ben ON ase.idasegurado = c.refbeneficiarios
       inner join dbdocumentacionventas dv on dv.refventas = v.idventa and dv.refdocumentaciones = 35
-		where c.refasesores =".$asesor.$where.$cadCliente.$cadFecha."
+		where c.refasesores =".$asesor.$where.$cadCliente.$cadFecha.$cadEstado."
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
 
@@ -7803,6 +7962,42 @@ return $res;
       tc.tipocobranza,
       c.tieneasegurado,ase.apellidopaterno, ase.apellidomaterno, ase.nombre,cli.apellidopaterno, cli.apellidomaterno, cli.nombre,
       v.fechavencimientopoliza,pv.idperiodicidadventa
+      order by v.fechavencimientopoliza desc";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
+   function traerVentasPorAsesorVentaFundamental($idasesor,$idventa) {
+		$sql = "select
+		v.idventa,v.refcotizaciones,v.refestadoventa,v.primaneta,
+		v.primatotal,v.fechacrea,v.fechamodi,v.usuariocrea,
+		v.usuariomodi,v.nropoliza,v.fechavencimientopoliza,
+		v.foliotys,v.foliointerno,
+		c.refclientes,
+		c.refproductos,
+      p.producto,
+      (case when c.tieneasegurado = '1' then concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) else  concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) end) as asegurado,
+      (case when v.fechavencimientopoliza > now() then 'green' else 'red' end) as color,
+      v.refproductosaux, v.refventas, v.version, v.refmotivorechazopoliza,
+      v.observaciones , v.vigenciadesde
+		from dbventas v
+		inner join dbcotizaciones c ON c.idcotizacion = v.refcotizaciones
+      inner join dbclientes cli ON cli.idcliente = c.refclientes
+      inner join tbproductos p on p.idproducto = c.refproductos
+      left join dbasegurados ase ON ase.idasegurado = c.refasegurados
+      left join dbasegurados ben ON ase.idasegurado = c.refbeneficiarios
+      inner join dbdocumentacionventas dv on dv.refventas = v.idventa and dv.refdocumentaciones = 35
+		where c.refasesores =".$idasesor." and v.idventa = ".$idventa."
+      group by v.idventa,v.refcotizaciones,v.refestadoventa,v.primaneta,
+		v.primatotal,v.fechacrea,v.fechamodi,v.usuariocrea,
+		v.usuariomodi,v.nropoliza,v.fechavencimientopoliza,
+		v.foliotys,v.foliointerno,
+		c.refclientes,
+		c.refproductos,
+      p.producto,
+      c.tieneasegurado,ase.apellidopaterno, ase.apellidomaterno, ase.nombre,cli.apellidopaterno, cli.apellidomaterno, cli.nombre,
+      v.fechavencimientopoliza
       order by v.fechavencimientopoliza desc";
 		$res = $this->query($sql,0);
 		return $res;
@@ -11764,6 +11959,8 @@ return $res;
 
       }
 
+      $whereSinVenta = '';
+
 		$roles = '';
 
 	   if ($responsableComercial != '') {
@@ -11785,7 +11982,7 @@ return $res;
 		$sql = "select
 		c.idcotizacion,
 		(case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
-		(case when paq.idpaquete is null then pro.producto else concat(pro.producto,' - ',prop.producto) end) as producto,
+		pro.producto,
 		concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
 		concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
       c.fechamodi,
@@ -11809,25 +12006,13 @@ return $res;
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
 		inner join tbproductos pro ON pro.idproducto = c.refproductos
-      LEFT JOIN
-      dbpaquetes paq ON paq.refproductos = pro.idproducto
-         LEFT JOIN
-      dbpaquetedetalles paqd ON paqd.refpaquetes = paq.idpaquete
-   		left join
-   	tbproductos prop on prop.idproducto = paqd.refproductos
+
 		inner join dbasesores ase ON ase.idasesor = c.refasesores
       ".$cadFiltroNuevo."
 		left join dbusuarios us ON us.idusuario = c.refusuarios
 		left join dbasociados aso ON aso.idasociado = c.refasociados
 		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
-		left join dbventas v on (CASE
-        WHEN
-            v.refproductosaux > 0
-        THEN
-            v.refcotizaciones = c.idcotizacion
-                AND v.refproductosaux = paqd.refproductos
-        ELSE v.refcotizaciones = c.idcotizacion
-    END)
+
 		where ".$whereEstado.$where." ".$whereSinVenta."
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
@@ -11976,7 +12161,6 @@ return $res;
 		left join dbusuarios us ON us.idusuario = c.refusuarios
 		left join dbasociados aso ON aso.idasociado = c.refasociados
 		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
-		left join dbventas v on v.refcotizaciones = c.idcotizacion
 		where ".$whereEstado." and ase.idasesor = ".$idasesor." ".$where."
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
