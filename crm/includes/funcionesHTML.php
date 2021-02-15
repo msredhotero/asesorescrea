@@ -281,6 +281,8 @@ function menu($usuario,$titulo,$rol,$empresa) {
 			$sql = "select idmenu,url,icono, nombre, permiso from predio_menu where permiso like '%".$rol."%' and grupo = 99 order by orden";
 		}
 
+		//die(var_dump($sql));
+
 		$res = $this->query($sql,0);
 
 		$cadmenuCotizacion = '';
@@ -346,7 +348,7 @@ function menu($usuario,$titulo,$rol,$empresa) {
 		$cant = 1;
 		while ($row = mysql_fetch_array($res)) {
 
-			if ($cant == 3) {
+			if ($cant == 2) {
 				$cadmenu .= $cadmenuCotizacion;
 			}
 			if ($titulo == $row['nombre']) {
