@@ -128,6 +128,11 @@
 			$res = $serviciosNotificaciones->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url);
 			/*** fin de la notificacion ****/
 
+			$email = 'msredhotero@gmail.com';
+			$idusuario = 262;
+			$documentacion = mysql_result($resDocumentacion,0,'documentacion');
+			$email = $serviciosReferencias->enviarEmailModificacionCotizacion($id,$email, $idusuario, $url, $documentacion);
+
 			if ($pos === false) {
 				$image = new \Gumlet\ImageResize($imagen_subida);
 				$image->scale(50);
