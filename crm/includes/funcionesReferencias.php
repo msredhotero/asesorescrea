@@ -11,10 +11,10 @@ class ServiciosReferencias {
 
    function enviarEmailModificacionCotizacion($id,$email, $idusuario, $url, $documentacion) {
 
-      $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+      $resCotizaciones = $this->traerCotizacionesPorIdCompleto($id);
 
-      $token = $serviciosReferencias->GUID();
-      $resAutoLogin = $serviciosReferencias->insertarAutologin($idusuario,$token,$url,'0');
+      $token = $this->GUID();
+      $resAutoLogin = $this->insertarAutologin($idusuario,$token,$url,'0');
       ////// fin ////////////////////////////
 
       $asunto = 'Se modificar/cargo una documentacion ('.$documentacion.'), cotizacion: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
@@ -44,7 +44,7 @@ class ServiciosReferencias {
 
 
 
-      $exito = $serviciosUsuarios->enviarEmail($destinatario,$asunto,$cuerpo);
+      $exito = $this->enviarEmail($destinatario,$asunto,$cuerpo);
 
       echo '';
    }
