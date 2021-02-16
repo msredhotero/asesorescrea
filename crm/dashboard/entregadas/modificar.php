@@ -631,8 +631,10 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 											<?php if ($exiteAceptada == 1) { ?>
 											<button type="button" class="btn bg-green waves-effect btnAbandonada">Aceptada</button>
 											<?php } ?>
+											if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 3)) {
 											<button type="button" class="btn bg-amber waves-effect btnDenegada">En Ajuste</button>
 											<button type="button" class="btn bg-red waves-effect btnInsuficiente">Rechazada</button>
+											<?php } ?>
 
 										<?php } else {
 											if ($_SESSION['idroll_sahilices'] != 7) {
@@ -999,8 +1001,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 					});
 					$('#lgmModificarEstado').modal('toggle');
 					table.ajax.reload();
-					location.reload();
-				},
+					location.reload();$(location).attr('href','index.php');
 				//si ha ocurrido un error
 				error: function(){
 					swal({

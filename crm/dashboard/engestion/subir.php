@@ -128,6 +128,7 @@
 			$res = $serviciosNotificaciones->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url);
 			/*** fin de la notificacion ****/
 
+			// aca va el usuario de inbursa en cuestion
 			$email = 'msredhotero@gmail.com';
 			$idusuario = 261;
 			$documentacion = mysql_result($resDocumentacion,0,'documentacion');
