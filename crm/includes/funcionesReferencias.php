@@ -35,7 +35,7 @@ class ServiciosReferencias {
 
       $cuerpo .= '<body>';
 
-      $cuerpo .= 'Se modificar/cargo una documentacion ('.$documentacion.'), cotizacion: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
+      $cuerpo .= 'Se modifico/cargo una documentacion ('.$documentacion.'), cotizacion: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
 
       $cuerpo .= '</body>';
 

@@ -119,9 +119,9 @@
 			$estilo = 'bg-light-blue';
 			$fecha = date('Y-m-d H:i:s');
 			if (mysql_result($resDocumentacion,0,'reftipodocumentaciones') == 3) {
-				$url = "cotizaciones/subirdocumentacioni.php?id=".$id."&documentacion=".$iddocumentacion;
+				$url = "engestion/subirdocumentacioni.php?id=".$id."&documentacion=".$iddocumentacion;
 			} else {
-				$url = "cotizaciones/subirdocumentacionip.php?id=".$id."&documentacion=".$iddocumentacion;
+				$url = "engestion/subirdocumentacionip.php?id=".$id."&documentacion=".$iddocumentacion;
 			}
 
 
