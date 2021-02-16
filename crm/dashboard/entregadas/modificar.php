@@ -1000,7 +1000,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 					$('#lgmModificarEstado').modal('toggle');
 					table.ajax.reload();
 					$(location).attr('href','index.php');
-				}
+				},
 				//si ha ocurrido un error
 				error: function(){
 					swal({
