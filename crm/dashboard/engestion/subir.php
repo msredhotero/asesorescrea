@@ -129,7 +129,7 @@
 			/*** fin de la notificacion ****/
 
 			$email = 'msredhotero@gmail.com';
-			$idusuario = 262;
+			$idusuario = 261;
 			$documentacion = mysql_result($resDocumentacion,0,'documentacion');
 			$email = $serviciosReferencias->enviarEmailModificacionCotizacion($id,$email, $idusuario, $url, $documentacion);
 
