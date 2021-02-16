@@ -9,6 +9,46 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+   function enviarEmailModificacionCotizacion($id,$email, $idusuario, $url, $documentacion) {
+
+      $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+
+      $token = $serviciosReferencias->GUID();
+      $resAutoLogin = $serviciosReferencias->insertarAutologin($idusuario,$token,$url,'0');
+      ////// fin ////////////////////////////
+
+      $asunto = 'Se modificar/cargo una documentacion ('.$documentacion.'), cotizacion: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
+
+      $cuerpo = '';
+
+      $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+      $cuerpo .= "
+      <style>
+      	body { font-family: 'Lato', sans-serif; }
+      	header { font-family: 'Prata', serif; }
+      </style>";
+
+      $cuerpo .= '<body>';
+
+      $cuerpo .= 'Se modificar/cargo una documentacion ('.$documentacion.'), cotizacion: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
+
+      $cuerpo .= '</body>';
+
+
+      $cuerpo .= '<p>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</p>';
+
+
+
+      $exito = $serviciosUsuarios->enviarEmail($destinatario,$asunto,$cuerpo);
+
+      echo '';
+   }
+
    function switchCotizacion($idestado, $tipo, $id) {
       $url = '';
 
