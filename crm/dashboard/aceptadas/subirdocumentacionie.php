@@ -24,7 +24,7 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../engestion/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../aceptadas/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
@@ -39,7 +39,7 @@ if ($_SESSION['idroll_sahilices'] == 10) {
 
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"En Gestion",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Aceptadas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -87,14 +87,9 @@ $resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorCotizacion
 
 $resDocumentacion = $serviciosReferencias->traerDocumentacionesPorId($iddocumentacion);
 
-
 $resEstados = $serviciosReferencias->traerEstadodocumentaciones();
 
 if (mysql_num_rows($resDocumentacionAsesor) > 0) {
-
-	if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21)) {
-		$resEstados = $serviciosReferencias->traerEstadodocumentacionesPorId(mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'));
-	}
 	$cadRefEstados = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'));
 
 	$iddocumentacionasociado = mysql_result($resDocumentacionAsesor,0,'iddocumentacioncotizacion');
@@ -137,6 +132,31 @@ if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 	$idestadodocumentacion = 1;
 }
 
+$input = '';
+$boton = '';
+$leyenda = '';
+$campo = '';
+
+switch (strtoupper( mysql_result($resDocumentacion,0,'documentacion'))) {
+	case 'OT':
+
+		$dato = mysql_result($resultado,0,'ot');
+
+		$input = '<input type="text" name="ot" maxlength="40" id="ot" class="form-control" value="'.$dato.'"/> ';
+		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
+		$leyenda = 'Cargue la OT';
+		$campo = 'ot';
+	break;
+	case 'ARTICULO':
+		$dato = mysql_result($resultado,0,'articulo');
+
+		$input = '<input type="text" name="articulo" maxlength="100" id="articulo" class="form-control" value="'.$dato.'"/> ';
+		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
+		$leyenda = 'Cargue el Articulo';
+		$campo = 'articulo';
+	break;
+
+}
 switch ($iddocumentacion) {
 	case 35:
 		// code...
@@ -157,22 +177,9 @@ switch ($iddocumentacion) {
 		$campo = 'nrorecibo';
 	break;
 
-
-	default:
-		// code...
-		$input = '';
-		$boton = '';
-		$leyenda = '';
-		$campo = '';
-	break;
 }
 
-if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16)) {
-	$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'82,83,84,85,86');
-} else {
-	$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'82,83,84,85,86');
-}
-
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($id,mysql_result($resDocumentacion,0,'reftipodocumentaciones'));
 
 ?>
 
@@ -242,10 +249,6 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 			cursor: pointer;
 		}
 
-		.cssActive {
-			border: 3px solid #ffd900 !important;
-		}
-
 	</style>
 
 
@@ -298,17 +301,11 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 
 			<div class="row">
 				<?php
-				$activaLbl = '';
 				while ($row = mysql_fetch_array($resDocumentaciones)) {
-					if ($row['iddocumentacion'] == $iddocumentacion) {
-						$activaLbl = ' cssActive ';
-					} else {
-						$activaLbl = '';
-					}
 
 				?>
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-						<div class="info-box-3 bg-<?php echo $row['color'].$activaLbl; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
+						<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
 							<div class="icon">
 								<i class="material-icons">face</i>
 							</div>
@@ -370,21 +367,18 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 							</form>
 
 							<?php if (($idestadodocumentacion != 5)) { ?>
-							<div class="row">
-
-								<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
-									<div class="dz-message">
-										<div class="drag-icon-cph">
-											<i class="material-icons">touch_app</i>
-										</div>
-										<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+							<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+								<div class="dz-message">
+									<div class="drag-icon-cph">
+										<i class="material-icons">touch_app</i>
 									</div>
-									<div class="fallback">
-										<input name="file" type="file" id="archivos" />
-										<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
-									</div>
-								</form>
-							</div>
+									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+								</div>
+								<div class="fallback">
+									<input name="file" type="file" id="archivos" />
+									<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
+								</div>
+							</form>
 							<?php } ?>
 						</div>
 					</div>
@@ -445,6 +439,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 					</div>
 				</div>
 			</div>
+
 
 
 		</div>
@@ -508,7 +503,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
-			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=" + idTable;
+			url = "subirdocumentacionie.php?id=<?php echo $id; ?>&documentacion=" + idTable;
 			$(location).attr('href',url);
 		});
 
@@ -630,14 +625,13 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 								$('#'+contenedorpdf).hide();
 								$("."+contenedor).hide();
 								$('#contExcel').show();
-
 								$('#verarchivo').val(response.datos.imagen);
-
 							} else {
 								$("." + contenedor + " img").attr("src",response.datos.imagen);
 								$("."+contenedor).show();
 								$('#'+contenedorpdf).hide();
 							}
+
 						}
 					}
 
@@ -659,15 +653,11 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 
 		traerImagen('example1','timagen1');
 
-		$('.btnVerArchivo').click(function() {
-			window.open($('#verarchivo').val(),'_blank');
-		});
-
 		Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
 
 		Dropzone.options.frmFileUpload = {
 			maxFilesize: 30,
-			acceptedFiles: ".jpg,.jpeg,.pdf,.xls,.xlsx,.csv",
+			acceptedFiles: ".jpg,.jpeg,.pdf",
 			accept: function(file, done) {
 				done();
 			},
@@ -702,7 +692,6 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 			},
 			url: 'subir.php'
 		});
-
 		<?php } ?>
 
 

@@ -196,14 +196,31 @@ if (isset($_GET['id'])) {
 	$verifarCargaPrincipal = 0;
 	$conCargados = 0;
 
+	$cadDocumentacionesGaleriaProductoObligatorias = '';
+	$cadDocumentacionesGaleriaProductoNoObligatorias = '';
+
+	$iA = 0;
 	while ($rowDD = mysql_fetch_array($documentacionesrequeridas4)) {
+		$iA += 1;
 		if ($rowDD['obligatoria'] == '1') {
 			$iDoc += 1;
+
+			$cadDocumentacionesGaleriaProductoObligatorias .= '<div class="form-group form-float">
+				<button type="button" class="btn bg-'.$rowDD['color'].' waves-effect btn'.str_replace(' ','',$rowDD['documentacion']).'"><i class="material-icons">unarchive</i><span>'.$rowDD['documentacion'].'</span></button>
+				<input type="text" readonly="readonly" name="archivo'.$iA.'" id="archivo'.$iA.'" value="'.$rowDD['archivo'].'" required/>
+			</div>';
+		} else {
+			$cadDocumentacionesGaleriaProductoNoObligatorias .= '<div class="form-group form-float">
+				<button type="button" class="btn bg-'.$rowDD['color'].' waves-effect btn'.str_replace(' ','',$rowDD['documentacion']).'"><i class="material-icons">unarchive</i><span>'.$rowDD['documentacion'].'</span></button>
+				<input type="text" readonly="readonly" name="archivo'.$iA.'" id="archivo'.$iA.'" value="'.$rowDD['archivo'].'" />
+			</div>';
 		}
 
 		if (($rowDD['archivo'] != '') && ($rowDD['obligatoria'] == '1')) {
 			$conCargados += 1;
 		}
+
+
 	}
 
 	if ($conCargados >= $iDoc) {
@@ -827,12 +844,25 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 										?>
 										<h3>GALERIA PRODUCTO</h3>
                               <fieldset>
+											<div class="col-xs-4">
 											<?php if ($documentacionNombre != '') { ?>
-												<p>Archivos que debera cargar para continuar</p>
+
+												<?php if ($cadDocumentacionesGaleriaProductoObligatorias != '') { ?>
+												<p>Archivos obligatorios que deberá cargar para continuar</p>
+
+												<?php echo $cadDocumentacionesGaleriaProductoObligatorias; ?>
+												<hr>
+												<?php } ?>
+												<?php if ($cadDocumentacionesGaleriaProductoNoObligatorias != '') { ?>
+												<p>Archivos opcionales</p>
+												<?php echo $cadDocumentacionesGaleriaProductoNoObligatorias; ?>
+												<hr>
+												<?php } ?>
+
 											<?php } else { ?>
 												<p>No existen archivos solicitados para cargar</p>
 											<?php } ?>
-											<div class="col-xs-4">
+											</div>
 											<?php
 
 												while ($rowD = mysql_fetch_array($documentacionesrequeridas)) {
@@ -842,16 +872,11 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 													}
 											?>
 
-											<div class="form-group form-float">
-												<button type="button" class="btn bg-<?php echo $rowD['color']; ?> waves-effect btn<?php echo str_replace(' ','',$rowD['documentacion']); ?>"><i class="material-icons">unarchive</i><span><?php echo $rowD['documentacion']; ?></span></button>
-												<input type="text" readonly="readonly" name="archivo<?php echo $i; ?>" id="archivo<?php echo $i; ?>" value="<?php echo $rowD['archivo']; ?>" required/>
-											</div>
-
 											<?php
 												}
 
 											?>
-											</div>
+
 											<div class="col-xs-8">
 												<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 													<div class="card">
@@ -879,6 +904,10 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 																	<img class="img-responsive">
 																</a>
 																<div id="example1"></div>
+																<div id="contExcel1" style="margin:15px;">
+																	<button type="button" class="btn btn-lg btn-success btnVerArchivo1" style="margin-left:0px;"><i class="material-icons">search</i>VER ARCHIVO</button>
+																	<input type="hidden" id="verarchivo1" name="verarchivo1" value=""/>
+																</div>
 															</div>
 															<div class="row">
 																<div class="alert bg-<?php echo $color; ?>">
@@ -3322,6 +3351,8 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 				type:  'post',
 				beforeSend: function () {
 					$("." + contenedor + " img").attr("src",'');
+					$('#contExcel1').val('');
+					$('#contExcel1').hide();
 				},
 				success:  function (response) {
 					var cadena = response.datos.type.toLowerCase();
@@ -3333,9 +3364,19 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 							$("."+contenedor).hide();
 
 						} else {
-							$("." + contenedor + " img").attr("src",response.datos.imagen);
-							$("."+contenedor).show();
-							$('#'+contenedorpdf).hide();
+
+							if ((cadena.indexOf("officedocument") > -1) || (cadena.indexOf("sheet") > -1)) {
+								$('#'+contenedorpdf).hide();
+								$("."+contenedor).hide();
+								$('#contExcel1').show();
+
+								$('#verarchivo1').val(response.datos.imagen);
+
+							} else {
+								$("." + contenedor + " img").attr("src",response.datos.imagen);
+								$("."+contenedor).show();
+								$('#'+contenedorpdf).hide();
+							}
 						}
 					}
 
@@ -3449,6 +3490,10 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 		$('.btnVerArchivo').click(function() {
 			window.open($('#verarchivo').val(),'_blank');
+		});
+
+		$('.btnVerArchivo1').click(function() {
+			window.open($('#verarchivo1').val(),'_blank');
 		});
 
 		function traerImagen2(contenedorpdf, contenedor) {

@@ -10594,7 +10594,7 @@ return $res;
 					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
 					where d.reftipodocumentaciones in (".$tipodocumentacion.") and refprocesocotizacion = 1
                      and d.activo='1' ".$cadNotIn.$cadIn."
-					order by 1";
+					order by d.obligatoria, d.orden";
 
 		$res = $this->query($sql,0);
  		return $res;
@@ -10815,7 +10815,7 @@ return $res;
       dc.archivo,dc.refestadodocumentaciones,d.carpeta, dc.type, dc.refdocumentaciones
       from dbdocumentacioncotizaciones dc
       inner join dbcotizaciones co on co.idcotizacion = dc.refcotizaciones
-      inner join dbdocumentaciones d on d.iddocumentacion = dc.refdocumentaciones and d.reftipodocumentaciones = 3
+      inner join dbdocumentaciones d on d.iddocumentacion = dc.refdocumentaciones
       where co.idcotizacion =".$id." and d.iddocumentacion not in (82,83,84,85,86)";
 		$res = $this->query($sql,0);
 		return $res;
@@ -11712,6 +11712,9 @@ return $res;
       $version = $this->generarVersionCotizacion($idcotizacion);
       $folio = $this->generaFolioInternoCotizaciones();
 
+      $fechacrea = date('Y-m-d H:i:s');
+      $fechamodi = date('Y-m-d H:i:s');
+
       $sql = "INSERT INTO `dbcotizaciones`
                   (`idcotizacion`,`refclientes`,
                   `refproductos`,`refasesores`,
@@ -11736,7 +11739,7 @@ return $res;
                       `refproductos`,
                       `refasesores`,
                       `refasociados`,
-                      10,
+                      4,
                       `cobertura`,
                       `reasegurodirecto`,
                       `tiponegocio`,
@@ -11759,7 +11762,7 @@ return $res;
                       '".$folio."',
                       ".$version.",
                       ".$idcotizacion.",
-                      3,
+                      2,
                       `primaneta`,
                       `primatotal`,
                       `bitacoracrea`,
@@ -11785,6 +11788,10 @@ return $res;
 
             $dir_origen = '../archivos/cotizaciones/'.$idcotizacion.'/'.$rowAr['carpeta'].'/';
             $dir_destino = '../archivos/cotizaciones/'.$res.'/'.$rowAr['carpeta'].'/';
+
+            if (!file_exists('../archivos/cotizaciones/'.$res.'/')) {
+      			mkdir('../archivos/cotizaciones/'.$res.'/', 0777);
+      		}
 
             if (!file_exists($dir_destino)) {
       			mkdir($dir_destino, 0777);

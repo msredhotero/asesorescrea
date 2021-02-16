@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../entregadas/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../rechazadas/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Entregadas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Rechazadas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -164,12 +164,14 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 }
 
 
+$idestado = 11;
+
 if ($_SESSION['idroll_sahilices'] == 7) {
 	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId($idestado);
 	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$idestado);
 } else {
 
-	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorIn('1,4,8,10,12,13');
+	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorIn('1,4,8,10,12,13,11');
 	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$idestado);
 }
 
@@ -489,11 +491,6 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 								<?php } ?>
 
-								<?php
-								//($idestado == 8) || ver con javier
-								if ( ($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21)) { ?>
-									<button type="button" class="btn bg-green waves-effect btnLstEnviar"><i class="material-icons">send</i><span>ENVIAR COTIZACION A CLIENTE</span></button>
-								<?php } ?>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -532,16 +529,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 							}
 							?>
 								</div>
-								<?php if ($cadCotizacionParaAceptar != '') { ?>
-								<div class="col-sm-4 col-xs-12">
-									<label class="label-form">Elija la cotizacion para aceptar</label>
-									<select class="form-control" id="aceptarCotizacion" name="aceptarCotizacion">
-										<option value="0">-- Ninguna --</option>
-										<?php echo $cadCotizacionParaAceptar; ?>
-									</select>
-									<button type="button" style="margin-left:5px;" class="btn bg-green waves-effect btnaceptarCotizacion"><i class="material-icons">unarchive</i>ACEPTAR</button>
-								</div>
-								<?php } ?>
+
 							</div>
 							<form class="formulario frmNuevo" role="form" id="sign_in">
 
@@ -636,15 +624,16 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 										<?php } else {
 											if ($_SESSION['idroll_sahilices'] != 7) {
-												if ($idestado <= 11) {
+												if (mysql_result($resultado,0,'refestadocotizaciones') == 11) {
 											?>
 											<button id="<?php echo $idestado; ?>" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>
 											<?php if ($exiteAceptada == 1) { ?>
 											<button type="button" class="btn bg-green waves-effect btnAbandonada">Aceptada</button>
 											<?php } ?>
+											<button type="button" class="btn bg-amber waves-effect btnDenegada">En Ajuste</button>
 											<button type="button" class="btn bg-red waves-effect btnRechazadaDefinitivamente">Rechazada Definitivamente</button>
 										<?php } else { ?>
-											<button id="<?php echo $idestado; ?>" type="button" class="btn waves-effect btnContinuar"><?php echo mysql_result($resEstados,0,'estadocotizacion'); ?></button>
+											
 										<?php
 										}
 										} ?>

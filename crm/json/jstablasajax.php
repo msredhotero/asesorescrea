@@ -1205,7 +1205,7 @@ switch ($tabla) {
 				$label = array('btnModificar');
 				$class = array('bg-amber');
 				$icon = array('create');
-				$whereEstado = ' c.refestados in (3) ';
+				$whereEstado = ' c.refestados in (3) and c.refestadocotizaciones not in (11) ';
 				if ($_SESSION['idroll_sahilices'] == 7) {
 					$termina = 6;
 				} else {
@@ -1219,13 +1219,13 @@ switch ($tabla) {
 					$label = array();
 					$class = array();
 					$icon = array();
-					$whereEstado = ' c.refestados in (4) ';
+					$whereEstado = ' c.refestados in (4) and c.refestadocotizaciones not in (27) ';
 					$termina = 6;
 				} else {
 					$label = array('btnModificar');
 					$class = array('bg-amber');
 					$icon = array('create');
-					$whereEstado = ' c.refestados in (4) ';
+					$whereEstado = ' c.refestados in (4) and c.refestadocotizaciones not in (27) ';
 					$termina = 6;
 				}
 
@@ -1241,7 +1241,7 @@ switch ($tabla) {
 				$label = array('btnModificar');
 				$class = array('bg-amber');
 				$icon = array('create');
-				$whereEstado = ' c.refestados in (5) ';
+				$whereEstado = ' c.refestados in (4) and c.refestadocotizaciones in (27) ';
 				if ($_SESSION['idroll_sahilices'] == 7) {
 					$termina = 6;
 				} else {
@@ -1289,6 +1289,40 @@ switch ($tabla) {
 				$termina = 5;
 
 				$filtroNuevo = ' and ';
+			break;
+			case 11:
+				$label = array('btnModificar');
+				$class = array('bg-amber');
+				$icon = array('create');
+				$whereEstado = ' c.refestados in (3) and c.refestadocotizaciones in (11) ';
+				if ($_SESSION['idroll_sahilices'] == 7) {
+					$termina = 6;
+				} else {
+					$termina = 6;
+				}
+
+				$filtroNuevo = '';
+			break;
+			case 12:
+				$label = array('btnModificar');
+				$class = array('bg-amber');
+				$icon = array('create');
+				$whereEstado = ' c.refestados in (5) and c.refestadocotizaciones in (26) ';
+				if ($_SESSION['idroll_sahilices'] == 7) {
+					$termina = 6;
+				} else {
+					$termina = 6;
+				}
+
+				/*
+				if (($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22)) {
+					$label = array();
+					$class = array();
+					$icon = array();
+				}
+				*/
+
+				$filtroNuevo = '';
 			break;
 			default:
 				$label = array();

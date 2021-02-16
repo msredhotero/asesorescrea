@@ -278,7 +278,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 } else {
 	$documentacionesadicionales = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
 	$documentacionesadicionales2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
-	$documentacionesadicionales3 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
+	$documentacionesadicionales3 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'82,83,84,85,86');
 }
 
 $documentacionesrequeridas = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
@@ -347,10 +347,30 @@ if ($_SESSION['idroll_sahilices'] != 7) {
 		</li>';
 	}
 }
+//<li role="presentation"><a href="#skins" data-toggle="tab">CLIENTE</a></li>
 
+/*
+<div role="tabpanel" class="tab-pane fade" id="skins">
+	 <ul class="demo-choose-skin">
+		  <li>
+			   <div class="'.($vigenciasCliente['errorVCD'] == 'true' ? 'red' : 'green').'"></div>
+			   <span>Comp. de Domicilio: '.($vigenciasCliente['vcd']).'</span>
+		  </li>
+		  <li>
+			  <div class="'.($vigenciasCliente['errorVRFC'] == 'true' ? 'red' : 'green').'"></div>
+			  <span>Emision RFC: '.($vigenciasCliente['vrfc']).'</span>
+		  </li>
+		  <li>
+			  <div class="'.($vigenciasCliente['errorVINE'] == 'true' ? 'red' : 'green').'"></div>
+			  <span>Venc. INE: '.($vigenciasCliente['vine']).'</span>
+		  </li>
+	 </ul>
+</div>
+
+*/
 	$rightsidebar = '<ul class="nav nav-tabs tab-nav-right" role="tablist">
 						<li role="presentation" class="active"><a href="#settings" data-toggle="tab">DOCUMENTACIONES</a></li>
-						 <li role="presentation"><a href="#skins" data-toggle="tab">CLIENTE</a></li>
+
 
 	            </ul>
 	            <div class="tab-content">
@@ -360,14 +380,6 @@ if ($_SESSION['idroll_sahilices'] != 7) {
 								  <ul class="setting-list">
 									  '.($cadArProd == '' ? '<p>(No existe documentacion)</p>' : $cadArProd).'
 								  </ul>
-								  <p>EMISION</p>
-								  <ul class="setting-list">
-									  '.($cadArProdE == '' ? '<p>(No existe documentacion)</p>' : $cadArProdE).'
-								  </ul>
-								  <p>CLIENTES</p>
-								  <ul class="setting-list">
-									  '.($cadArCliente == '' ? '<p>(No existe documentacion)</p>' : $cadArCliente).'
-								  </ul>
 
 								  <p>ADICIONALES</p>
 								  <ul class="setting-list">
@@ -376,22 +388,7 @@ if ($_SESSION['idroll_sahilices'] != 7) {
 							 </div>
 						</div>
 
-	                <div role="tabpanel" class="tab-pane fade" id="skins">
-	                    <ul class="demo-choose-skin">
-	                        <li>
-	                            <div class="'.($vigenciasCliente['errorVCD'] == 'true' ? 'red' : 'green').'"></div>
-	                            <span>Comp. de Domicilio: '.($vigenciasCliente['vcd']).'</span>
-	                        </li>
-	                        <li>
-										<div class="'.($vigenciasCliente['errorVRFC'] == 'true' ? 'red' : 'green').'"></div>
-										<span>Emision RFC: '.($vigenciasCliente['vrfc']).'</span>
-	                        </li>
-									<li>
-										<div class="'.($vigenciasCliente['errorVINE'] == 'true' ? 'red' : 'green').'"></div>
-										<span>Venc. INE: '.($vigenciasCliente['vine']).'</span>
-	                        </li>
-	                    </ul>
-	                </div>
+
 
 	            </div>';
 
@@ -521,8 +518,10 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								MODIFICAR <?php echo strtoupper($plural); ?> <button type="button" class="btn bg-cyan waves-effect btnLstDocumentaciones"><i class="material-icons">unarchive</i><span class="js-right-sidebar" data-close="true">DOCUMENTACIONES</span></button>
-								<?php if ($_SESSION['idroll_sahilices'] != 7) { ?><button type="button" class="btn bg-green waves-effect btnLstEnviar"><i class="material-icons">send</i><span>ENVIAR COTIZACION A CLIENTE</span></button>
+								MODIFICAR <?php echo strtoupper($plural); ?> <button type="button" class="btn bg-cyan waves-effect btnLstDocumentaciones"><i class="material-icons">unarchive</i><span class="js-right-sidebar" data-close="true">VISUALIZAR DOCUMENTOS</span></button>
+								<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
+								<button type="button" class="btn bg-brown waves-effect btnAdjuntar"><i class="material-icons">unarchive</i><span>ADJUNTAR COTIZACIONES</span></button>
+
 								<?php } ?>
 
 							</h2>
@@ -624,11 +623,19 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 									<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
 										<?php if (($idestado == 4 )) { ?>
+											<?php
+											if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11)) {
+											?>
 											<button id="4" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>
+
 
 											<button type="button" class="btn bg-orange waves-effect btnAbandonada">ABANDONADA</button>
 											<button type="button" class="btn bg-amber waves-effect btnDenegada">DENEGADA POR INBURSA</button>
 											<button type="button" class="btn bg-deep-orange waves-effect btnInsuficiente">PRIMA DE REFERENCIA INSUFICIENTE</button>
+										<?php } else { ?>
+											<button type="button" class="btn bg-amber waves-effect btnDenegada">CONDICIONES FUERA DE POLITICAS</button>
+											<button type="button" class="btn bg-deep-orange waves-effect btnInsuficiente">PRIMA DE REFERENCIA INSUFICIENTE</button>
+										<?php } ?>
 										<?php } ?>
 									<?php }  else { ?>
 											<button type="button" class="btn btn-success waves-effect btnModificarBitacora">MODIFICAR BITACORA</button>
@@ -1102,6 +1109,11 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 			});
 
 		}
+
+		$('.btnAdjuntar').click(function() {
+			url = "adjuntarcotizaciones.php?id=<?php echo $id; ?>";
+			$(location).attr('href',url);
+		});
 
 		<?php
 

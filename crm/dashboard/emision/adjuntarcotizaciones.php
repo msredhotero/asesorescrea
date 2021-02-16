@@ -24,7 +24,7 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../engestion/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../emision/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
@@ -39,7 +39,7 @@ if ($_SESSION['idroll_sahilices'] == 10) {
 
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"En Gestion",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Emision",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -47,11 +47,29 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
+$resProducto = $serviciosReferencias->traerProductosPorId(mysql_result($resultado,0,'refproductos'));
 
+$refdoctipo = mysql_result($resProducto,0,'reftipodocumentaciones');
 
 $id = mysql_result($resultado,0,'idcotizacion');
 
-$iddocumentacion = $_GET['documentacion'];
+$refDoc = '3,'.$refdoctipo;
+
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($id, $refDoc);
+$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($id,$refDoc);
+
+
+if (!(isset($_GET['documentacion']))) {
+	if (mysql_num_rows($resDocumentacionesAux)>0) {
+		$iddocumentacion = mysql_result($resDocumentacionesAux,0,'iddocumentacion');
+	} else {
+		$iddocumentacion = 0;
+	}
+
+} else {
+	$iddocumentacion = $_GET['documentacion'];
+}
+
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
 $singular = "Documentación I";
@@ -87,14 +105,12 @@ $resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorCotizacion
 
 $resDocumentacion = $serviciosReferencias->traerDocumentacionesPorId($iddocumentacion);
 
-
 $resEstados = $serviciosReferencias->traerEstadodocumentaciones();
 
 if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 
-	if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21)) {
-		$resEstados = $serviciosReferencias->traerEstadodocumentacionesPorId(mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'));
-	}
+	$lblNombreDocumentacion = mysql_result($resDocumentacion,0,'documentacion');
+
 	$cadRefEstados = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'));
 
 	$iddocumentacionasociado = mysql_result($resDocumentacionAsesor,0,'iddocumentacioncotizacion');
@@ -124,6 +140,8 @@ if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 
 	$idestadodocumentacion = mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones');
 } else {
+	$lblNombreDocumentacion = '';
+
 	$cadRefEstados = $serviciosFunciones->devolverSelectBox($resEstados,array(1),'');
 
 	$iddocumentacionasociado = 0;
@@ -165,12 +183,6 @@ switch ($iddocumentacion) {
 		$leyenda = '';
 		$campo = '';
 	break;
-}
-
-if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16)) {
-	$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'82,83,84,85,86');
-} else {
-	$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'82,83,84,85,86');
 }
 
 
@@ -219,7 +231,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 		.alert > i{ vertical-align: middle !important; }
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		#codigopostal { width: 400px; }
-		.pdfobject-container { height: 30rem; border: 1rem solid rgba(0,0,0,.1); }
+		.pdfobject-container { height: 50rem; border: 1rem solid rgba(0,0,0,.1); }
 
 		  .thumbnail2 {
 		    display: block;
@@ -238,7 +250,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 			background-color: #1b2646;
 		}
 
-		.btnDocumentacion {
+		.btnDocumentacion, .btnAbandonada {
 			cursor: pointer;
 		}
 
@@ -299,13 +311,26 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 			<div class="row">
 				<?php
 				$activaLbl = '';
+				$puedeEnviar = 0;
+				$archivosObligatorios = 0;
+				$archivosCargadosObligatorios = 0;
 				while ($row = mysql_fetch_array($resDocumentaciones)) {
 					if ($row['iddocumentacion'] == $iddocumentacion) {
 						$activaLbl = ' cssActive ';
 					} else {
 						$activaLbl = '';
 					}
+					if ($row['archivo'] != '') {
+						$puedeEnviar = 1;
+					}
 
+					if ($row['obligatoria'] == '1') {
+						$archivosObligatorios += 1;
+					}
+
+					if (($row['archivo'] != '') && ($row['obligatoria'] == '1')) {
+						$archivosCargadosObligatorios += 1;
+					}
 				?>
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box-3 bg-<?php echo $row['color'].$activaLbl; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
@@ -319,6 +344,21 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 						</div>
 					</div>
 				<?php }  ?>
+				<?php if (($_SESSION['idroll_sahilices']==1)||($_SESSION['idroll_sahilices']==4)||($_SESSION['idroll_sahilices']==11)||($_SESSION['idroll_sahilices']==3)) { ?>
+				<?php if ($archivosCargadosObligatorios == $archivosObligatorios) { ?>
+					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+						<div class="info-box-3 bg-green hover-zoom-effect btnAbandonada">
+							<div class="icon">
+								<i class="material-icons">done_all</i>
+							</div>
+							<div class="content">
+								<div class="text">Finalizar Proceso</div>
+								<div class="number">FINALIZAR</div>
+							</div>
+						</div>
+					</div>
+				<?php } ?>
+				<?php } ?>
 			</div>
 
 			<div class="row">
@@ -326,7 +366,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								DOCUMENTACION - <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?>
+								DOCUMENTACION - <?php echo $lblNombreDocumentacion; ?>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -369,7 +409,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 								</div>
 							</form>
 
-							<?php if (($idestadodocumentacion != 5)) { ?>
+							<?php if (($_SESSION['idroll_sahilices']==1)||($_SESSION['idroll_sahilices']==4)||($_SESSION['idroll_sahilices']==11)||($_SESSION['idroll_sahilices']==3)) { ?>
 							<div class="row">
 
 								<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
@@ -474,6 +514,86 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 	</form>
 
 
+
+
+	<div class="modal fade" id="lgmModificarEstado" tabindex="-1" role="dialog">
+		 <div class="modal-dialog modal-lg" role="document">
+			  <div class="modal-content">
+					<div class="modal-header bg-blue">
+						 <h4 class="modal-title" id="largeModalLabel">MODIFICAR ESTADO DE LA COTIZACION</h4>
+					</div>
+					<div class="modal-body">
+					 <h3>¿Esta seguro que desea <span class="lblModiEstado"></span> la cotizacion?</h3>
+
+					 <div class="row contFrmRechazoDefinitivo">
+	 					<h4>Por favor ingrese los motivos del rechazo, para poderte afrocer un mejor servicio!!</h4>
+	 					<div class="row">
+		 					<div class="col-xs-6">
+								<div class="form-group input-group">
+									<label class="label-form">Motivo</label>
+			 						<select class="form-control" id="motivo" name="motivo">
+			 							<option value="Precio">Precio</option>
+			 							<option value="Mal Servicio">Mal Servicio</option>
+			 							<option value="Otro">Otro</option>
+			 						</select>
+			 					</div>
+							</div>
+						</div>
+						<div class="contMotivosPrecio">
+
+							<div class="row">
+								<div class="col-xs-3">
+									<div class="form-group input-group">
+										<label class="label-form">No se compartió información</label>
+				 						<select class="form-control" id="nocompartioinformacion" name="nocompartioinformacion">
+				 							<option value="1">Si</option>
+				 							<option value="0">No</option>
+				 						</select>
+									</div>
+			 					</div>
+
+			 					<div class="col-xs-3">
+									<div class="form-group input-group">
+										<label class="label-form">Prima total Inbursa</label>
+				 						<input type="text" class="form-control" id="primatotalinbursa" name="primatotalinbursa" />
+									</div>
+			 					</div>
+								<div class="col-xs-3">
+									<div class="form-group input-group">
+										<label class="label-form">Prima total Competencia</label>
+				 						<input type="text" class="form-control" id="primatotalcompetencia" name="primatotalcompetencia" />
+									</div>
+			 					</div>
+								<div class="col-xs-3">
+									<div class="form-group input-group">
+										<label class="label-form">Aseguradora que se queda negocio</label>
+				 						<select class="form-control" id="aseguradora" name="aseguradora">
+											<?php while ($rowA = mysql_fetch_array($resVar10m)) {
+												echo '<option value="'.$rowA['razonsocial'].'">'.$rowA['razonsocial'].'</option>';
+											}
+											?>
+											<option value="Otra">Otra</option>
+				 						</select>
+									</div>
+			 					</div>
+							</div>
+						</div>
+	 					<hr>
+	 					<p>Puedes contactarnos en el Tel fijo: <b><span style="color:#5DC1FD;">55 51 35 02 59</span></b></p>
+	 					<p>Correo: <a href="mailto:ventas@asesorescrea.com" style="color:#5DC1FD !important;"><b>ventas@asesorescrea.com</b></a></p>
+	 				</div>
+					</div>
+					<div class="modal-footer">
+						 <button type="button" class="btn waves-effect modificarEstadoCotizacionRechazo"></button>
+						 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+					</div>
+			  </div>
+		 </div>
+	</div>
+	<input type="hidden" name="idmodificarestadorechazo" id="idmodificarestadorechazo" value="0">
+	<input type="hidden" name="estadomodificarestadorechazo" id="estadomodificarestadorechazo" value="0">
+
+
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
@@ -506,9 +626,141 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 
 	$(document).ready(function(){
 
+		$('.modificarEstadoCotizacionRechazo').click(function() {
+			if ($('#estadomodificarestadorechazo').val() == 13) {
+				modificarCotizacionesPorCampoRechazoDefinitivo();
+			} else {
+				if ($('#estadomodificarestadorechazo').val() == 10) {
+					ajustarCotizacion();
+
+				} else {
+					modificarCotizacionesPorCampo();
+
+				}
+			}
+
+		});
+
+		function modificarCotizacionesPorCampo() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificarCotizacionesPorCampo',
+					id: $('#idmodificarestadorechazo').val(),
+					idestado: $('#estadomodificarestadorechazo').val()
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					swal({
+							title: "Respuesta",
+							text: data.mensaje,
+							type: data.tipo,
+							timer: 1500,
+							showConfirmButton: false
+					});
+					$('#lgmModificarEstado').modal('toggle');
+
+					$(location).attr('href','index.php');
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
+		$('.btnAbandonada').click(function() {
+
+			$('.lblModiEstado').html('enviar a emisión');
+			$('.modificarEstadoCotizacionRechazo').html('ENVIAR');
+
+			$('.modificarEstadoCotizacionRechazo').addClass('bg-green');
+			$('.modificarEstadoCotizacionRechazo').removeClass('bg-amber');
+			$('.modificarEstadoCotizacionRechazo').removeClass('bg-red');
+
+			$('.contFrmRechazoDefinitivo').hide();
+
+			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
+			$('#estadomodificarestadorechazo').val(12);
+			$('#lgmModificarEstado').modal();
+
+		});//fin del boton eliminar
+
+		$('.btnLstEnviar').click(function() {
+			$('#lgmENVIAR').modal();
+		});
+
+		$('.btnEnviarCotizacionCliente').click(function() {
+			enviarCotizacion();
+		});
+
+		function enviarCotizacion() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'enviarCotizacion',
+					id: <?php echo $id; ?>
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					if (data.error == false) {
+						swal({
+								title: "Respuesta",
+								text: data.mensaje,
+								type: "success",
+								timer: 1000,
+								showConfirmButton: false
+						});
+
+						$(location).attr('href','index.php');
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data.mensaje,
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
-			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=" + idTable;
+			url = "adjuntarcotizaciones.php?id=<?php echo $id; ?>&documentacion=" + idTable;
 			$(location).attr('href',url);
 		});
 
@@ -535,7 +787,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 				// Form data
 				//datos del formulario
 				data: {
-					accion: 'modificarCotizacionUnicaDocumentacionCot',
+					accion: 'modificarCotizacionUnicaDocumentacion',
 					idcotizacion: <?php echo $id; ?>,
 					campo: '<?php echo $campo; ?>',
 					valor: valor
@@ -684,7 +936,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 					$('.infoPlanilla').hide();
 					$('#<?php echo $iddocumentacion; ?>').addClass('bg-blue');
 					$('#<?php echo $iddocumentacion; ?> .number').html('Cargada');
-					//location.reload();
+					location.reload();
 				});
 
 				this.on('error', function( file, resp ){
@@ -702,7 +954,6 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 			},
 			url: 'subir.php'
 		});
-
 		<?php } ?>
 
 

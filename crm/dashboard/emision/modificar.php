@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../entregadas/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../emision/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Entregadas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Emision",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -165,11 +165,11 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 
 if ($_SESSION['idroll_sahilices'] == 7) {
-	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId(4);
+	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId(mysql_result($resultado,0,'refestadocotizaciones'));
 	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$idestado);
 } else {
 
-	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorIn('1,4,8,10,12,13');
+	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorIn('1,4,8,10,12,13,26,27');
 	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$idestado);
 }
 
@@ -340,39 +340,16 @@ if ($_SESSION['idroll_sahilices'] != 7) {
 
 
 $rightsidebar = '<ul class="nav nav-tabs tab-nav-right" role="tablist">
-                <li role="presentation" class="active"><a href="#skins" data-toggle="tab">CLIENTE</a></li>
-                <li role="presentation"><a href="#settings" data-toggle="tab">DOCUMENTACIONES</a></li>
+
+                <li role="presentation" class="active"><a href="#settings" data-toggle="tab">DOCUMENTACIONES</a></li>
             </ul>
             <div class="tab-content">
-                <div role="tabpanel" class="tab-pane fade in active in active" id="skins">
-                    <ul class="demo-choose-skin">
-                        <li>
-                            <div class="'.($vigenciasCliente['errorVCD'] == 'true' ? 'red' : 'green').'"></div>
-                            <span>Comp. de Domicilio: '.($vigenciasCliente['vcd']).'</span>
-                        </li>
-                        <li>
-									<div class="'.($vigenciasCliente['errorVRFC'] == 'true' ? 'red' : 'green').'"></div>
-									<span>Emision RFC: '.($vigenciasCliente['vrfc']).'</span>
-                        </li>
-								<li>
-									<div class="'.($vigenciasCliente['errorVINE'] == 'true' ? 'red' : 'green').'"></div>
-									<span>Venc. INE: '.($vigenciasCliente['vine']).'</span>
-                        </li>
-                    </ul>
-                </div>
-                <div role="tabpanel" class="tab-pane fade" id="settings">
+
+                <div role="tabpanel" class="tab-pane fade in active" id="settings">
                     <div class="demo-settings">
                         <p>PRODUCTOS</p>
 								<ul class="setting-list">
 									'.($cadArProd == '' ? '<p>(No existe documentacion)</p>' : $cadArProd).'
-								</ul>
-								<p>EMISION</p>
-								<ul class="setting-list">
-									'.($cadArProdE == '' ? '<p>(No existe documentacion)</p>' : $cadArProdE).'
-								</ul>
-								<p>CLIENTES</p>
-								<ul class="setting-list">
-									'.($cadArCliente == '' ? '<p>(No existe documentacion)</p>' : $cadArCliente).'
 								</ul>
 
 								<p>ADICIONALES</p>
@@ -400,7 +377,11 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 	$modalVigencias = 1;
 }
 
-$resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($id,5);
+$refDoc = '3,'.$refdoctipo;
+
+$resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($id, $refDoc);
+
+//$resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($id,5);
 
 
 ?>
@@ -506,12 +487,13 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								MODIFICAR <?php echo strtoupper($plural); ?> <button type="button" class="btn bg-cyan waves-effect btnLstDocumentaciones"><i class="material-icons">unarchive</i><span class="js-right-sidebar" data-close="true">DOCUMENTACIONES</span></button>
-								<?php
-								//($idestado == 8) || ver con javier
-								if ( ($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21)) { ?>
-									<button type="button" class="btn bg-green waves-effect btnLstEnviar"><i class="material-icons">send</i><span>ENVIAR COTIZACION A CLIENTE</span></button>
-								<?php } ?>
+								MODIFICAR <?php echo strtoupper($plural); ?> <button type="button" class="btn bg-cyan waves-effect btnLstDocumentaciones"><i class="material-icons">unarchive</i><span class="js-right-sidebar" data-close="true">VISUALIZAR DOCUMENTOS</span></button>
+
+
+								<button type="button" class="btn bg-brown waves-effect btnAdjuntar"><i class="material-icons">unarchive</i><span>ADJUNTAR DOCUMENTOS PARA EMITIR</span></button>
+
+
+
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -534,14 +516,14 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 							while ($rowCI = mysql_fetch_array($resCotizacionInbursa) ) {
 
-								if ((strtoupper( $rowCI['documentacion']) == 'OT') || (strtoupper( $rowCI['documentacion']) == 'ARTICULO')) {
+
 									if ($rowCI['archivo'] != '') {
 									$exiteAceptada += 1;
 
 								?>
 								<button type="button" style="margin-left:5px;" onclick="window.open('../../archivos/cotizaciones/<?php echo $id; ?>/<?php echo $rowCI['carpeta']; ?>/<?php echo $rowCI['archivo']; ?>','_blank')" class="btn bg-<?php echo $rowCI['color']; ?> waves-effect"><i class="material-icons">unarchive</i><?php echo $rowCI['documentacion']; ?></button>
 							<?php
-									}
+
 									}
 								}
 
@@ -633,13 +615,11 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 											<button type="button" class="btn btn-info waves-effect">ESTADO: <?php echo mysql_result($resEstados,0,'estadocotizacion'); ?></button>
 
-											<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 14) || ($_SESSION['idroll_sahilices'] == 15) || ($_SESSION['idroll_sahilices'] == 3)) { ?>
+											<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 14) || ($_SESSION['idroll_sahilices'] == 15) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22) || ($_SESSION['idroll_sahilices'] == 23)) { ?>
 											<button id="<?php echo $idestado; ?>" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>
 											<?php } ?>
 
-											<?php if ((($idestado == 26) && ($exiteAceptada == 2) && (mysql_result($resultado,0,'ot') != '') && (mysql_result($resultado,0,'articulo') != '') && ($_SESSION['usuaid_sahilices'] == 154)) || ($_SESSION['usuaid_sahilices'] != 154) && ($idestado == 26)) { ?>
-											<button type="button" class="btn bg-green waves-effect btnAbandonada">FINALIZAR</button>
-											<?php } ?>
+											
 
 
 										</div>
@@ -806,6 +786,11 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 <script>
 	$(document).ready(function(){
 
+		$('.btnAdjuntar').click(function() {
+			url = "adjuntarcotizaciones.php?id=<?php echo $id; ?>";
+			$(location).attr('href',url);
+		});
+
 		$('.btnaceptarCotizacion').click(function() {
 			aceptarCotizacionInbursa();
 		});
@@ -870,10 +855,18 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 			}
 		});
 
-		<?php if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16)) { ?>
+		$('.frmContcobertura').hide();
+		$('.frmContrefasociados').hide();
+
+		$('.frmContarticulo').hide();
+		$('.frmContversion').hide();
+
+		$('.frmContfolio').hide();
+
+		<?php if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22) || ($_SESSION['idroll_sahilices'] == 23)) { ?>
 		$('.frmContrefestadocotizaciones').hide();
-		$('#ot').prop('readonly',true);
-		$('#articulo').prop('readonly',true);
+		$('.frmContarticulo').hide();
+
 		<?php } ?>
 
 		$('#primaneta').number( true, 2 ,'.','');
@@ -1056,7 +1049,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 			$('.contFrmRechazoDefinitivo').hide();
 
 			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
-			$('#estadomodificarestadorechazo').val(27);
+			$('#estadomodificarestadorechazo').val(12);
 			$('#lgmModificarEstado').modal();
 
 		});//fin del boton eliminar

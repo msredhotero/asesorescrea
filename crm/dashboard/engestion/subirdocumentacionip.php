@@ -209,7 +209,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 		.alert > i{ vertical-align: middle !important; }
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		#codigopostal { width: 400px; }
-		.pdfobject-container { height: 40rem; border: 1rem solid rgba(0,0,0,.1); }
+		.pdfobject-container { height: 50rem; border: 1rem solid rgba(0,0,0,.1); }
 
 		  .thumbnail2 {
 		    display: block;
@@ -230,6 +230,10 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 
 		.btnDocumentacion {
 			cursor: pointer;
+		}
+
+		.cssActive {
+			border: 3px solid #ffd900 !important;
 		}
 
 	</style>
@@ -284,11 +288,16 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 
 			<div class="row">
 				<?php
+				$activaLbl = '';
 				while ($row = mysql_fetch_array($resDocumentaciones)) {
-
+					if ($row['iddocumentacion'] == $iddocumentacion) {
+						$activaLbl = ' cssActive ';
+					} else {
+						$activaLbl = '';
+					}
 				?>
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-						<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
+						<div class="info-box-3 bg-<?php echo $row['color'].$activaLbl; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
 							<div class="icon">
 								<i class="material-icons">face</i>
 							</div>
@@ -302,7 +311,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 			</div>
 
 			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
@@ -348,13 +357,29 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 									</div>
 								</div>
 							</form>
+
+							<?php if (($idestadodocumentacion != 5)) { ?>
+							<div class="row">
+
+								<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+									<div class="dz-message">
+										<div class="drag-icon-cph">
+											<i class="material-icons">touch_app</i>
+										</div>
+										<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+									</div>
+									<div class="fallback">
+										<input name="file" type="file" id="archivos" />
+										<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
+									</div>
+								</form>
+							</div>
+							<?php } ?>
 						</div>
 					</div>
 				</div>
-			</div> <!-- fin del card -->
 
-			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card">
 						<div class="header bg-blue">
 							<h2>
@@ -380,6 +405,10 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 									<img class="img-responsive">
 								</a>
 								<div id="example1"></div>
+								<div id="contExcel" style="margin:15px;">
+									<button type="button" class="btn btn-lg btn-success btnVerArchivo" style="margin-left:0px;"><i class="material-icons">search</i>VER ARCHIVO</button>
+									<input type="hidden" id="verarchivo" name="verarchivo" value=""/>
+								</div>
 							</div>
 							<div class="row">
 								<div class="alert bg-<?php echo $color; ?>">
@@ -402,43 +431,11 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 								</div>
 
 							</div>
-						</div>
-					</div>
-				</div>
-			<?php if ($idestadodocumentacion != 5) { ?>
-			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="card">
-						<div class="header bg-blue">
-							<h2>
-								CARGA/MODIFIQUE LA DOCUMENTACIÓN <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?> AQUI
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div class="body">
-							<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
-								<div class="dz-message">
-									<div class="drag-icon-cph">
-										<i class="material-icons">touch_app</i>
-									</div>
-									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
-								</div>
-								<div class="fallback">
-									<input name="file" type="file" id="archivos" />
-									<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
-								</div>
-							</form>
-						</div>
 					</div>
 				</div>
 			</div>
-			<?php } ?>
+
+
 		</div>
 	</div>
 </section>
@@ -605,6 +602,8 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 				type:  'post',
 				beforeSend: function () {
 					$("." + contenedor + " img").attr("src",'');
+					$('#contExcel').val('');
+					$('#contExcel').hide();
 				},
 				success:  function (response) {
 					var cadena = response.datos.type.toLowerCase();
@@ -616,9 +615,18 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 							$("."+contenedor).hide();
 
 						} else {
-							$("." + contenedor + " img").attr("src",response.datos.imagen);
-							$("."+contenedor).show();
-							$('#'+contenedorpdf).hide();
+							if ((cadena.indexOf("officedocument") > -1) || (cadena.indexOf("sheet") > -1)) {
+								$('#'+contenedorpdf).hide();
+								$("."+contenedor).hide();
+								$('#contExcel').show();
+
+								$('#verarchivo').val(response.datos.imagen);
+
+							} else {
+								$("." + contenedor + " img").attr("src",response.datos.imagen);
+								$("."+contenedor).show();
+								$('#'+contenedorpdf).hide();
+							}
 						}
 					}
 
@@ -640,11 +648,15 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 
 		traerImagen('example1','timagen1');
 
+		$('.btnVerArchivo').click(function() {
+			window.open($('#verarchivo').val(),'_blank');
+		});
+
 		Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
 
 		Dropzone.options.frmFileUpload = {
 			maxFilesize: 30,
-			acceptedFiles: ".jpg,.jpeg,.pdf",
+			acceptedFiles: ".jpg,.jpeg,.pdf,.xls,.xlsx,.csv",
 			accept: function(file, done) {
 				done();
 			},

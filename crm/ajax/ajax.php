@@ -3616,8 +3616,15 @@ function modificarCotizacionesPorCampo($serviciosReferencias) {
 
          $mensaje = 'SE MODIFICO CORRECTAMENTE';
       } else {
+
+         if ($idestado == 12) {
+            // modifico el estado de la cotizacion
+            $resModEstadoCot = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',$idestado, $_SESSION['usua_sahilices']);
+         }
+
          // modifico la etapa
          $resModEstadoEtapa = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',mysql_result($resEstado,0,'refetapacotizacion'), $_SESSION['usua_sahilices']);
+
 
          $mensaje = 'SE MODIFICO CORRECTAMENTE';
       }
@@ -7732,6 +7739,10 @@ function modificarCotizaciones($serviciosReferencias) {
       }
    }
    */
+
+   if (isset($_POST['ot'])) {
+      $resModificarOT = $serviciosReferencias->modificarCotizacionesPorCampo($id,'ot',$_POST['ot'],$usuariomodi);
+   }
 
 
    $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$bitacoracrea,$bitacorainbursa,$bitacoraagente,$existeprimaobjetivo,$primaobjetivo);

@@ -51,7 +51,12 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 $id = mysql_result($resultado,0,'idcotizacion');
 
-$iddocumentacion = $_GET['documentacion'];
+if (!(isset($_GET['documentacion']))) {
+	$iddocumentacion = 82;
+} else {
+	$iddocumentacion = $_GET['documentacion'];
+}
+
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
 $singular = "Documentación I";
@@ -87,14 +92,9 @@ $resDocumentacionAsesor = $serviciosReferencias->traerDocumentacionPorCotizacion
 
 $resDocumentacion = $serviciosReferencias->traerDocumentacionesPorId($iddocumentacion);
 
-
 $resEstados = $serviciosReferencias->traerEstadodocumentaciones();
 
 if (mysql_num_rows($resDocumentacionAsesor) > 0) {
-
-	if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21)) {
-		$resEstados = $serviciosReferencias->traerEstadodocumentacionesPorId(mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'));
-	}
 	$cadRefEstados = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'', mysql_result($resDocumentacionAsesor,0,'refestadodocumentaciones'));
 
 	$iddocumentacionasociado = mysql_result($resDocumentacionAsesor,0,'iddocumentacioncotizacion');
@@ -167,12 +167,7 @@ switch ($iddocumentacion) {
 	break;
 }
 
-if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16)) {
-	$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'82,83,84,85,86');
-} else {
-	$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'82,83,84,85,86');
-}
-
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,mysql_result($resDocumentacion,0,'reftipodocumentaciones'),'','82,83,84,85,86');
 
 ?>
 
@@ -219,7 +214,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 		.alert > i{ vertical-align: middle !important; }
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		#codigopostal { width: 400px; }
-		.pdfobject-container { height: 30rem; border: 1rem solid rgba(0,0,0,.1); }
+		.pdfobject-container { height: 50rem; border: 1rem solid rgba(0,0,0,.1); }
 
 		  .thumbnail2 {
 		    display: block;
@@ -238,7 +233,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 			background-color: #1b2646;
 		}
 
-		.btnDocumentacion {
+		.btnDocumentacion, .btnLstEnviar {
 			cursor: pointer;
 		}
 
@@ -299,13 +294,16 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 			<div class="row">
 				<?php
 				$activaLbl = '';
+				$puedeEnviar = 0;
 				while ($row = mysql_fetch_array($resDocumentaciones)) {
 					if ($row['iddocumentacion'] == $iddocumentacion) {
 						$activaLbl = ' cssActive ';
 					} else {
 						$activaLbl = '';
 					}
-
+					if ($row['archivo'] != '') {
+						$puedeEnviar = 1;
+					}
 				?>
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box-3 bg-<?php echo $row['color'].$activaLbl; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
@@ -319,6 +317,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 						</div>
 					</div>
 				<?php }  ?>
+
 			</div>
 
 			<div class="row">
@@ -474,6 +473,28 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 	</form>
 
 
+
+	<div class="modal fade" id="lgmENVIAR" tabindex="-1" role="dialog">
+		 <div class="modal-dialog modal-lg" role="document">
+			  <div class="modal-content">
+					<div class="modal-header bg-green">
+						<h4>IMPORTANTE</h4>
+					</div>
+					<div class="modal-body">
+					<div class="row">
+						<h4>Las cotizaciones cargadas en los apartados "Cotizacion 1" o "Cotizacion 2" o "Cotizacion 3" o "Cotizacion 4" o "Cotizacion 5", serán enviadas al Agente/Cliente</h4>
+					</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-success waves-effect btnEnviarCotizacionCliente" data-dismiss="modal">ENVIAR</button>
+						<button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+					</div>
+
+			  </div>
+		 </div>
+	</div>
+
+
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
@@ -506,9 +527,67 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 
 	$(document).ready(function(){
 
+		$('.btnLstEnviar').click(function() {
+			$('#lgmENVIAR').modal();
+		});
+
+		$('.btnEnviarCotizacionCliente').click(function() {
+			enviarCotizacion();
+		});
+
+		function enviarCotizacion() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'enviarCotizacion',
+					id: <?php echo $id; ?>
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					if (data.error == false) {
+						swal({
+								title: "Respuesta",
+								text: data.mensaje,
+								type: "success",
+								timer: 1000,
+								showConfirmButton: false
+						});
+
+						$(location).attr('href','index.php');
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data.mensaje,
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
-			url = "subirdocumentacioni.php?id=<?php echo $id; ?>&documentacion=" + idTable;
+			url = "adjuntarcotizaciones.php?id=<?php echo $id; ?>&documentacion=" + idTable;
 			$(location).attr('href',url);
 		});
 
@@ -535,7 +614,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 				// Form data
 				//datos del formulario
 				data: {
-					accion: 'modificarCotizacionUnicaDocumentacionCot',
+					accion: 'modificarCotizacionUnicaDocumentacion',
 					idcotizacion: <?php echo $id; ?>,
 					campo: '<?php echo $campo; ?>',
 					valor: valor
@@ -702,7 +781,6 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 			},
 			url: 'subir.php'
 		});
-
 		<?php } ?>
 
 
