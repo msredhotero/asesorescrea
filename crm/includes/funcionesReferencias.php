@@ -44,7 +44,7 @@ class ServiciosReferencias {
 
 
 
-      $exito = $this->enviarEmail($destinatario,$asunto,$cuerpo);
+      $exito = $this->enviarEmail($email,$asunto,$cuerpo);
 
       echo '';
    }
