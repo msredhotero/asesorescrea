@@ -489,11 +489,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 								<?php } ?>
 
-								<?php
-								//($idestado == 8) || ver con javier
-								if ( ($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21)) { ?>
-									<button type="button" class="btn bg-green waves-effect btnLstEnviar"><i class="material-icons">send</i><span>ENVIAR COTIZACION A CLIENTE</span></button>
-								<?php } ?>
+								
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
