@@ -9,6 +9,182 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+
+   /* PARA Eventos */
+
+
+   function insertarEventos($ico,$nombre,$ponderacion,$tiempo,$refevento,$reftabla,$idreferencia) {
+      $sql = "insert into tbeventos(idevento,ico,nombre,ponderacion,tiempo,refevento,reftabla,idreferencia)
+      values ('','".$ico."','".$nombre."',".$ponderacion.",".$tiempo.",".$refevento.",".$reftabla.",".$idreferencia.")";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarEventos($id,$ico,$nombre,$ponderacion,$tiempo,$refevento,$reftabla,$idreferencia) {
+      $sql = "update tbeventos
+      set
+      ico = '".$ico."',nombre = '".$nombre."',ponderacion = ".$ponderacion.",tiempo = ".$tiempo.",refevento = ".$refevento.",reftabla = ".$reftabla.",idreferencia = ".$idreferencia."
+      where idevento =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarEventos($id) {
+      $sql = "delete from tbeventos where idevento =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerEventos() {
+      $sql = "select
+      e.idevento,
+      e.ico,
+      e.nombre,
+      e.ponderacion,
+      e.tiempo,
+      e.refevento,
+      e.reftabla,
+      e.idreferencia
+      from tbeventos e
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerEventosPorId($id) {
+      $sql = "select idevento,ico,nombre,ponderacion,tiempo,refevento,reftabla,idreferencia from tbeventos where idevento =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerEventosPorReferencia($idtabla, $tabla, $idnombre, $id) {
+      $sql = "select c.idevento,c.ico,c.nombre,c.ponderacion,c.tiempo,c.refevento,c.reftabla,c.idreferencia 
+      from tbeventos c
+      inner join ".$tabla." v on v.".$idnombre." = c.idreferencia
+		where c.reftabla = ".$idtabla." and c.idreferencia = ".$id;
+
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: tbeventos*/
+   /* PARA Trazabilidad */
+
+
+   function insertarTrazabilidad($reftabla,$idreferencia,$fechacrea,$refevento,$usuariocrea,$idreferenciaaux1,$idreferenciaaux2,$idreferenciaaux3,$dato,$url) {
+      $sql = "insert into dbtrazabilidad(idtrazabilidad,reftabla,idreferencia,fechacrea,refevento,usuariocrea,idreferenciaaux1,idreferenciaaux2,idreferenciaaux3,dato,url)
+      values ('',".$reftabla.",".$idreferencia.",'".$fechacrea."',".$refevento.",'".$usuariocrea."',".$idreferenciaaux1.",".$idreferenciaaux2.",".$idreferenciaaux3.",'".$dato."','".$url."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarTrazabilidad($id,$reftabla,$idreferencia,$fechacrea,$refevento,$usuariocrea,$idreferenciaaux1,$idreferenciaaux2,$idreferenciaaux3,$dato,$url) {
+      $sql = "update dbtrazabilidad
+      set
+      reftabla = ".$reftabla.",idreferencia = ".$idreferencia.",fechacrea = '".$fechacrea."',refevento = ".$refevento.",usuariocrea = '".$usuariocrea."',idreferenciaaux1 = ".$idreferenciaaux1.",idreferenciaaux2 = ".$idreferenciaaux2.",idreferenciaaux3 = ".$idreferenciaaux3.",dato = '".$dato."',url = '".$url."'
+      where idtrazabilidad =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarTrazabilidad($id) {
+      $sql = "delete from dbtrazabilidad where idtrazabilidad =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerTrazabilidad() {
+      $sql = "select
+      t.idtrazabilidad,
+      t.reftabla,
+      t.idreferencia,
+      t.fechacrea,
+      t.refevento,
+      t.usuariocrea,
+      t.idreferenciaaux1,
+      t.idreferenciaaux2,
+      t.idreferenciaaux3,
+      t.dato,
+      t.url
+      from dbtrazabilidad t
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerTrazabilidadPorId($id) {
+      $sql = "select idtrazabilidad,reftabla,idreferencia,fechacrea,refevento,usuariocrea,idreferenciaaux1,idreferenciaaux2,idreferenciaaux3,dato,url from dbtrazabilidad where idtrazabilidad =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: dbtrazabilidad*/
+
+   /* PARA Contactosperfiles */
+
+   function insertarContactosperfiles($refroles,$refusuarios,$email,$nombrecompleto,$telefono) {
+      $sql = "insert into dbcontactosperfiles(idcontactoperfil,refroles,refusuarios,email,nombrecompleto,telefono)
+      values ('',".$refroles.",".$refusuarios.",'".$email."','".$nombrecompleto."','".$telefono."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarContactosperfiles($id,$refroles,$refusuarios,$email,$nombrecompleto,$telefono) {
+      $sql = "update dbcontactosperfiles
+      set
+      refroles = ".$refroles.",refusuarios = ".$refusuarios.",email = '".$email."',nombrecompleto = '".$nombrecompleto."',telefono = '".$telefono."'
+      where idcontactoperfil =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarContactosperfiles($id) {
+      $sql = "delete from dbcontactosperfiles where idcontactoperfil =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerContactosperfiles() {
+      $sql = "select
+      c.idcontactoperfil,
+      c.refroles,
+      c.refusuarios,
+      c.email,
+      c.nombrecompleto,
+      c.telefono
+      from dbcontactosperfiles c
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerContactosperfilesPorId($id) {
+      $sql = "select idcontactoperfil,refroles,refusuarios,email,nombrecompleto,telefono from dbcontactosperfiles where idcontactoperfil =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: dbcontactosperfiles*/
+
    function enviarEmailModificacionCotizacion($id,$email, $idusuario, $url, $documentacion) {
 
       $resCotizaciones = $this->traerCotizacionesPorIdCompleto($id);
@@ -7726,7 +7902,7 @@ return $res;
       inner join tbproductos p on p.idproducto = c.refproductos
       left join dbasegurados ase ON ase.idasegurado = c.refasegurados
       left join dbasegurados ben ON ase.idasegurado = c.refbeneficiarios
-      inner join dbventas v on v.refcotizaciones = c.idcotizacion and v.version = 1.0
+      left join dbventas v on v.refcotizaciones = c.idcotizacion and v.version = 1.0
       group by c.idcotizacion,
       cli.apellidopaterno, cli.apellidomaterno, cli.nombre,
       p.producto,
