@@ -1357,8 +1357,197 @@ switch ($accion) {
       aceptarPolizarAgente($serviciosReferencias);
    break;
 
+   case 'insertarContactosperfiles':
+      insertarContactosperfiles($serviciosReferencias);
+   break;
+   case 'modificarContactosperfiles':
+      modificarContactosperfiles($serviciosReferencias);
+   break;
+   case 'eliminarContactosperfiles':
+      eliminarContactosperfiles($serviciosReferencias);
+   break;
+   case 'insertarTrazabilidad':
+      insertarTrazabilidad($serviciosReferencias);
+   break;
+   case 'modificarTrazabilidad':
+      modificarTrazabilidad($serviciosReferencias);
+   break;
+   case 'eliminarTrazabilidad':
+      eliminarTrazabilidad($serviciosReferencias);
+   break;
+
+   case 'insertarEventos':
+      insertarEventos($serviciosReferencias);
+   break;
+   case 'modificarEventos':
+      modificarEventos($serviciosReferencias);
+   break;
+   case 'eliminarEventos':
+      eliminarEventos($serviciosReferencias);
+   break;
+
+   case 'trazabilidadCotizacion':
+      trazabilidadCotizacion($serviciosReferencias);
+   break;
+
 }
 /* FinFinFin */
+
+function trazabilidadCotizacion($serviciosReferencias) {
+   session_start();
+
+   $id = $_POST['id'];
+   $idestado = $_POST['idestado'];
+   $fechacrea = date('Y-m-d H:i:s');
+   $usuariocrea = $_SESSION['usua_sahilices'];
+   $idreferenciaaux1 = 0;
+   $idreferenciaaux2 = 0;
+   $idreferenciaaux3 = 0;
+
+   $resEvento = $serviciosReferencias->traerEventosPorReferencia(16, 'tbestadocotizaciones', 'idestadocotizacion', $idestado);
+
+   if (mysql_num_rows($resEvento)>0) {
+      //el evento esta cargado
+      $refevento = mysql_result($resEvento,0,0);
+   } else {
+      $refevento = $idestado;
+   }
+
+   $res = $serviciosReferencias->insertarTrazabilidad(12,$id,$fechacrea,$refevento,$usuariocrea,$idreferenciaaux1,$idreferenciaaux2,$idreferenciaaux3,$dato,$url);
+
+}
+
+function insertarEventos($serviciosReferencias) {
+   $ico = $_POST['ico'];
+   $nombre = $_POST['nombre'];
+   $ponderacion = $_POST['ponderacion'];
+   $tiempo = $_POST['tiempo'];
+   $refevento = $_POST['refevento'];
+   $res = $serviciosReferencias->insertarEventos($ico,$nombre,$ponderacion,$tiempo,$refevento);
+   if ((integer)$res > 0) {
+   echo '';
+   } else {
+   echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarEventos($serviciosReferencias) {
+   $id = $_POST['id'];
+   $ico = $_POST['ico'];
+   $nombre = $_POST['nombre'];
+   $ponderacion = $_POST['ponderacion'];
+   $tiempo = $_POST['tiempo'];
+   $refevento = $_POST['refevento'];
+   $res = $serviciosReferencias->modificarEventos($id,$ico,$nombre,$ponderacion,$tiempo,$refevento);
+   if ($res == true) {
+   echo '';
+   } else {
+   echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarEventos($serviciosReferencias) {
+   $id = $_POST['id'];
+   $res = $serviciosReferencias->eliminarEventos($id);
+   if ($res == true) {
+   echo '';
+   } else {
+   echo 'Hubo un error al eliminar datos';
+   }
+}
+
+function insertarTrazabilidad($serviciosReferencias) {
+   $reftabla = $_POST['reftabla'];
+   $idreferencia = $_POST['idreferencia'];
+   $fechacrea = $_POST['fechacrea'];
+   $refevento = $_POST['refevento'];
+   $usuariocrea = $_POST['usuariocrea'];
+   $idreferenciaaux1 = $_POST['idreferenciaaux1'];
+   $idreferenciaaux2 = $_POST['idreferenciaaux2'];
+   $idreferenciaaux3 = $_POST['idreferenciaaux3'];
+   $dato = $_POST['dato'];
+   $url = $_POST['url'];
+
+   $res = $serviciosReferencias->insertarTrazabilidad($reftabla,$idreferencia,$fechacrea,$refevento,$usuariocrea,$idreferenciaaux1,$idreferenciaaux2,$idreferenciaaux3,$dato,$url);
+
+   if ((integer)$res > 0) {
+   echo '';
+   } else {
+   echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarTrazabilidad($serviciosReferencias) {
+   $id = $_POST['id'];
+   $reftabla = $_POST['reftabla'];
+   $idreferencia = $_POST['idreferencia'];
+   $fechacrea = $_POST['fechacrea'];
+   $refevento = $_POST['refevento'];
+   $usuariocrea = $_POST['usuariocrea'];
+   $idreferenciaaux1 = $_POST['idreferenciaaux1'];
+   $idreferenciaaux2 = $_POST['idreferenciaaux2'];
+   $idreferenciaaux3 = $_POST['idreferenciaaux3'];
+   $dato = $_POST['dato'];
+   $url = $_POST['url'];
+
+   $res = $serviciosReferencias->modificarTrazabilidad($id,$reftabla,$idreferencia,$fechacrea,$refevento,$usuariocrea,$idreferenciaaux1,$idreferenciaaux2,$idreferenciaaux3,$dato,$url);
+
+   if ($res == true) {
+   echo '';
+   } else {
+   echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarTrazabilidad($serviciosReferencias) {
+   $id = $_POST['id'];
+   $res = $serviciosReferencias->eliminarTrazabilidad($id);
+   if ($res == true) {
+   echo '';
+   } else {
+   echo 'Hubo un error al eliminar datos';
+   }
+}
+
+
+function insertarContactosperfiles($serviciosReferencias) {
+   $refroles = $_POST['refroles'];
+   $refusuarios = $_POST['refusuarios'];
+   $email = $_POST['email'];
+   $nombrecompleto = $_POST['nombrecompleto'];
+   $telefono = $_POST['telefono'];
+   $res = $serviciosReferencias->insertarContactosperfiles($refroles,$refusuarios,$email,$nombrecompleto,$telefono);
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarContactosperfiles($serviciosReferencias) {
+   $id = $_POST['id'];
+   $refroles = $_POST['refroles'];
+   $refusuarios = $_POST['refusuarios'];
+   $email = $_POST['email'];
+   $nombrecompleto = $_POST['nombrecompleto'];
+   $telefono = $_POST['telefono'];
+   $res = $serviciosReferencias->modificarContactosperfiles($id,$refroles,$refusuarios,$email,$nombrecompleto,$telefono);
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarContactosperfiles($serviciosReferencias) {
+   $id = $_POST['id'];
+   $res = $serviciosReferencias->eliminarContactosperfiles($id);
+   if ($res == true) {
+      echo '';
+   } else {
+      echo 'Hubo un error al eliminar datos';
+   }
+}
 
 function aceptarPolizarAgente($serviciosReferencias) {
    session_start();
@@ -5504,7 +5693,6 @@ function validarCuestionario($serviciosReferencias) {
 
       $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo);
 
-      $sqlC = $serviciosReferencias->insertarCotizacionesSQL($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo);
 
       if ((integer)$res > 0) {
 
@@ -5555,13 +5743,13 @@ function validarCuestionario($serviciosReferencias) {
             $modAccion = $serviciosReferencias->modificarTokenasesoresAccion($_SESSION['token_ac'],"cotizacionagente/new.php?producto=46&id=".$res);
          }
 
-
+         //trazabilidad 1
 
          $resV['idcotizacion']= $res;
       } else {
          $resV['errorinsert'] = true;
          // acordate de sacar el sqlc
-         $resV['mensaje'] = 'Ocurrio un error al insertar los datos, intente nuevamente '.$sqlC;
+         $resV['mensaje'] = 'Ocurrio un error al insertar los datos, intente nuevamente ';
 
       }
    }
@@ -7698,8 +7886,6 @@ function modificarCotizaciones($serviciosReferencias) {
 
 
    if ($refestadocotizaciones == 12) {
-
-
 
       // modifico la cotizacion a la ultima etapa
       $resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',4,$usuariomodi);

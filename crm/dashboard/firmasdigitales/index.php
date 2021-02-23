@@ -188,6 +188,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 									<th>Producto</th>
 									<th>Folio</th>
 									<th>Fecha</th>
+									<th>Nro Poliza</th>
 									<th>Acciones</th>
 								</thead>
 								<tbody>
@@ -233,6 +234,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 									<td><?php echo strtoupper($row['producto']); ?></td>
 									<td><?php echo strtoupper($row['folio']); ?></td>
 									<td><?php echo strtoupper($row['fechacrea']); ?></td>
+									<td><?php echo strtoupper($row['nropoliza']); ?></td>
 									<td>
 										<?php if ($filesSolicitud > 0) { ?>
 										<button type="button" id="<?php echo $row['idcotizacion']; ?>" class="btn btn-primary waves-effect btnSolicitud">
@@ -292,6 +294,32 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 <script>
 	$(document).ready(function(){
 
+		$('#example').dataTable({
+		"order": [[ 0, "asc" ]],
+		"language": {
+			"emptyTable":     "No hay datos cargados",
+			"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+			"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+			"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+			"infoPostFix":    "",
+			"thousands":      ",",
+			"lengthMenu":     "Mostrar _MENU_ filas",
+			"loadingRecords": "Cargando...",
+			"processing":     "Procesando...",
+			"search":         "Buscar:",
+			"zeroRecords":    "No se encontraron resultados",
+			"paginate": {
+				"first":      "Primero",
+				"last":       "Ultimo",
+				"next":       "Siguiente",
+				"previous":   "Anterior"
+			},
+			"aria": {
+				"sortAscending":  ": activate to sort column ascending",
+				"sortDescending": ": activate to sort column descending"
+			}
+		  }
+	} );
 		$("#example").on("click",'.btnSolicitud', function(){
 			idTable =  $(this).attr("id");
 			url = "globales.php?id=" + idTable + "&tipo=1";

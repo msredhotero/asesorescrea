@@ -158,10 +158,7 @@ if (mysql_num_rows($resMetodoPago)>0) {
 	}
 
 	$filesSolicitud = array_diff(scandir($pathSolcitud), array('.', '..'));
-	if (count($filesSolicitud) < 1) {
-		//die(var_dump(__DIR__));
-		require ('../../reportes/rptFTodos.php');
-	}
+	
 } else {
 	$existeMetodoPago = 0;
 }

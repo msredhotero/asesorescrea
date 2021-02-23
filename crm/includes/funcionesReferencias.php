@@ -7896,13 +7896,14 @@ return $res;
       concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as clientecompleto,
       p.producto,
       c.fechacrea,
-      c.folio
+      c.folio,
+      v.nropoliza
 		from dbcotizaciones c
       inner join dbclientes cli ON cli.idcliente = c.refclientes
       inner join tbproductos p on p.idproducto = c.refproductos
       left join dbasegurados ase ON ase.idasegurado = c.refasegurados
       left join dbasegurados ben ON ase.idasegurado = c.refbeneficiarios
-      left join dbventas v on v.refcotizaciones = c.idcotizacion and v.version = 1.0
+      inner join dbventas v on v.refcotizaciones = c.idcotizacion and v.version = 1.0
       group by c.idcotizacion,
       cli.apellidopaterno, cli.apellidomaterno, cli.nombre,
       p.producto,
