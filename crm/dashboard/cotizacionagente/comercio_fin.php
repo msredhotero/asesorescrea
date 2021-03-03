@@ -390,6 +390,10 @@ $resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcotizacion
 										<i class="material-icons" style="font-size:1.5em;">verified_user</i>
 										<span>Adquirir AHORA</span>
 									</button>
+									<button type="button" class="btn btn-lg btn-block btn-primary" id="btnCambiar" style="font-size:1.5em;">
+										<i class="material-icons" style="font-size:1.5em;">cached</i>
+										<span>Cambiar Metodo de Pago</span>
+									</button>
 								</div>
 								<div class="col-xs-3"></div>
 								</div>
@@ -429,6 +433,38 @@ $resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($idcotizacion
 
 <script>
 	$(document).ready(function(){
+
+
+		$('#btnCambiar').click(function(e){
+
+			$.ajax({
+				data:  {
+					id: <?php echo $idcotizacion; ?>,
+					accion: 'cambiarMetodoDePago'
+				},
+				url:   '../../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+					$("#btnConfirmar").hide();
+					$("#btnCambiar").hide();
+				},
+				success:  function (response) {
+
+
+					if (response.error) {
+
+						$("#btnConfirmar").show();
+						$("#btnCambiar").show();
+					} else {
+
+						$(location).attr('href',response.url);
+					}
+
+
+
+				}
+			});
+		});
 
 		var btnConfirmar = $('#btnConfirmar');
 
