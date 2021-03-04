@@ -489,6 +489,8 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 								<?php } ?>
 
+								<button type="button" class="btn btn-info waves-effect btnTrazabilidad" data-cotizacion="<?php echo $id; ?>"><i class="material-icons">show_chart</i><span>TRAZABILIDAD</span></button>
+
 
 							</h2>
 							<ul class="header-dropdown m-r--5">
