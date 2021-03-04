@@ -99,7 +99,7 @@ if ($id == 0) {
 		.alert > i{ vertical-align: middle !important; }
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		#codigopostal { width: 400px; }
-      .lblPolizasActivas, .lblPrimaNeta, .lblPrimaTotal  { font-size:0.8em !important;}
+   
 
 	</style>
 
@@ -163,7 +163,7 @@ if ($id == 0) {
 
 						</div>
 						<div class="body table-responsive">
-							
+
 							<button type="button" class="btn btn-info waves-effect btnVolverFiltro" data-ir="modificar" data-referencia="<?php echo $id; ?>"><i class="material-icons">reply</i><span>VOLVER</span></button>
 
                      <div class="row" style="padding: 5px 20px;">
