@@ -128,6 +128,9 @@
 			$res = $serviciosNotificaciones->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url);
 			/*** fin de la notificacion ****/
 
+			//trazabilidad 4
+			$resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id,$fecha,4,$_SESSION['usua_sahilices'],0,0,0,mysql_result($resDocumentacion,0,'documentacion'),'');
+
 			if ($pos === false) {
 				$image = new \Gumlet\ImageResize($imagen_subida);
 				$image->scale(50);

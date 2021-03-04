@@ -62,7 +62,7 @@ class ServiciosReferencias {
    }
 
    function traerEventosPorReferencia($idtabla, $tabla, $idnombre, $id) {
-      $sql = "select c.idevento,c.ico,c.nombre,c.ponderacion,c.tiempo,c.refevento,c.reftabla,c.idreferencia 
+      $sql = "select c.idevento,c.ico,c.nombre,c.ponderacion,c.tiempo,c.refevento,c.reftabla,c.idreferencia
       from tbeventos c
       inner join ".$tabla." v on v.".$idnombre." = c.idreferencia
 		where c.reftabla = ".$idtabla." and c.idreferencia = ".$id;
@@ -82,6 +82,11 @@ class ServiciosReferencias {
       $sql = "insert into dbtrazabilidad(idtrazabilidad,reftabla,idreferencia,fechacrea,refevento,usuariocrea,idreferenciaaux1,idreferenciaaux2,idreferenciaaux3,dato,url)
       values ('',".$reftabla.",".$idreferencia.",'".$fechacrea."',".$refevento.",'".$usuariocrea."',".$idreferenciaaux1.",".$idreferenciaaux2.",".$idreferenciaaux3.",'".$dato."','".$url."')";
       $res = $this->query($sql,1);
+
+      if (((integer)$res > 0) && ($reftabla==12)) {
+         $resMensaje = $this->enviarEmailModificacionCotizacion($idreferencia,$dato);
+      }
+
       return $res;
    }
 
@@ -117,6 +122,29 @@ class ServiciosReferencias {
       t.dato,
       t.url
       from dbtrazabilidad t
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerTrazabilidadPorCotizacion($id) {
+      $sql = "select
+      t.idtrazabilidad,
+      t.reftabla,
+      t.idreferencia,
+      t.fechacrea,
+      t.refevento,
+      t.usuariocrea,
+      t.idreferenciaaux1,
+      t.idreferenciaaux2,
+      t.idreferenciaaux3,
+      t.dato,
+      t.url,
+      tt.ico,
+      tt.nombre
+      from dbtrazabilidad t
+      inner join tbeventos tt on tt.idevento = t.refevento
+      where t.reftabla=12 and t.idreferencia = ".$id."
       order by 1";
       $res = $this->query($sql,0);
       return $res;
@@ -175,6 +203,22 @@ class ServiciosReferencias {
    }
 
 
+   function traerContactosperfilesPorRol($idrol) {
+      $sql = "select
+      c.idcontactoperfil,
+      c.refroles,
+      c.refusuarios,
+      c.email,
+      c.nombrecompleto,
+      c.telefono
+      from dbcontactosperfiles c
+      where c.refroles = ".$idrol."
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
    function traerContactosperfilesPorId($id) {
       $sql = "select idcontactoperfil,refroles,refusuarios,email,nombrecompleto,telefono from dbcontactosperfiles where idcontactoperfil =".$id;
       $res = $this->query($sql,0);
@@ -185,44 +229,111 @@ class ServiciosReferencias {
    /* Fin */
    /* /* Fin de la Tabla: dbcontactosperfiles*/
 
-   function enviarEmailModificacionCotizacion($id,$email, $idusuario, $url, $documentacion) {
+   function devolverRamaProductoPorRol($idrol) {
+      $idramaproducto = 0;
+      switch ($idrol) {
+         case 20:
+            $idramaproducto = 8;
+         break;
+         case 21:
+            $idramaproducto = 7;
+         break;
+
+      }
+
+      return $idramaproducto;
+   }
+
+   function devolverRolPorRamaProducto($idramaproducto) {
+      $idrol = 0;
+      switch ($idramaproducto) {
+         case 8:
+            $idrol = 20;
+         break;
+         case 7:
+            $idrol = 21;
+         break;
+
+      }
+
+      return $idrol;
+   }
+
+
+   function traerUsuariosPorRoles($idrol) {
+      $sql = "select u.email, u.idusuario from dbusuarios u where u.refroles =".$idrol;
+      $res = $this->query($sql,0);
+
+      return $res;
+   }
+
+   function enviarEmailModificacionCotizacion($id,$dato) {
 
       $resCotizaciones = $this->traerCotizacionesPorIdCompleto($id);
 
-      $token = $this->GUID();
-      $resAutoLogin = $this->insertarAutologin($idusuario,$token,$url,'0');
+      //determino el producto para avisar a quien corresponda, por ahora solo para los roles de areas tecnicas y sus contactos
+      $reftipoproductorama = mysql_result($resCotizaciones,0,'reftipoproductorama');
+
+      $idrol = $this->devolverRolPorRamaProducto($reftipoproductorama);
+
+      $resUsuarios = $this->traerUsuariosPorRoles($idrol);
+      $resContactos = $this->traerContactosperfilesPorRol($idrol);
+
+      $cadDestino = '';
+
+      while ($rowU = mysql_fetch_array($resUsuarios)) {
+         $pos = strpos($cadDestino, $rowU['email']);
+         if (($rowU['email'] != '') && ($pos === false)) {
+            $cadDestino .= $rowU['email'].', ';
+         }
+      }
+
+      while ($rowC = mysql_fetch_array($resUsuarios)) {
+         $pos = strpos($cadDestino, $rowC['email']);
+         if (($rowC['email'] != '') && ($pos === false)) {
+            $cadDestino .= $rowC['email'].', ';
+         }
+      }
+
+
+
       ////// fin ////////////////////////////
 
-      $asunto = 'Se modificar/cargo una documentacion ('.$documentacion.'), cotizacion: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
+      if ($cadDestino != '') {
 
-      $cuerpo = '';
-
-      $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
-
-      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
-
-      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
-
-      $cuerpo .= "
-      <style>
-      	body { font-family: 'Lato', sans-serif; }
-      	header { font-family: 'Prata', serif; }
-      </style>";
-
-      $cuerpo .= '<body>';
-
-      $cuerpo .= 'Se modifico/cargo una documentacion ('.$documentacion.'), cotizacion: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
-
-      $cuerpo .= '</body>';
+         $gestor = fopen('logemails'.date('Y_m_d').'.txt', 'w');
+         fwrite($gestor, $cadDestino.' '.date('Y-m-d H:i:s'));
+         fclose($gestor);
 
 
-      $cuerpo .= '<p>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</p>';
+         $asunto = 'Alerta Cotización, cotizacion: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
+
+         $cuerpo = '';
+
+         $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+         $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+         $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+         $cuerpo .= "
+         <style>
+         	body { font-family: 'Lato', sans-serif; }
+         	header { font-family: 'Prata', serif; }
+         </style>";
+
+         $cuerpo .= '<body>';
+
+         $cuerpo .= $dato;
+
+         $cuerpo .= '</body>';
 
 
+         $exito = $this->enviarEmail(substr($cadDestino,-2),$asunto,$cuerpo);
 
-      $exito = $this->enviarEmail($email,$asunto,$cuerpo);
+         echo '';
+      }
 
-      echo '';
    }
 
    function switchCotizacion($idestado, $tipo, $id) {
@@ -11994,6 +12105,9 @@ return $res;
 
       if ((integer)$res > 0) {
 
+         //trazabilidad 1
+         $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$res,$fechacrea,1,$usuariocrea,0,0,0,'Se genero una cotización nueva a partir de un ajuste','');
+
          if (!file_exists('../archivos/cotizaciones/'.$res)) {
    			mkdir('../archivos/cotizaciones/'.$res, 0777);
    		}
@@ -12028,6 +12142,10 @@ return $res;
 
          //modifico la cotizacion anterior a historial
          $resMod = $this->modificarCotizacionesPorCampo($idcotizacion,'refestadocotizaciones',10,$usuariomodi);
+
+
+         //trazabilidad de finalidad de la cotizacion en ajuste
+         $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$idcotizacion,$fechacrea,15,$usuariocrea,0,0,0,'Cotización finalizada en ajuste','');
 
 
          $resV['error'] = false;
@@ -12517,7 +12635,9 @@ return $res;
 	      c.tieneasegurado, c.refasegurados, c.refbeneficiarios, ec.estadocotizacion          ,c.folio,c.version,c.refcotizaciones, c.refestados, est.estado, est.color,c.primaneta,c.primatotal,
          pro.reftipodocumentaciones, cli.telefonocelular, cli.email, ase.email as emailasesor,
          ase.claveasesor, cli.refusuarios as idusuariocliente, ase.refusuarios as idusuarioasesor,
-         ase.envioalcliente, pro.consolicitud, c.ot, c.articulo
+         ase.envioalcliente, pro.consolicitud, c.ot, c.articulo,
+         concat(ase.apellidopaterno, ' ', ase.nombre) as asesorsolo,
+         pro.reftipoproductorama
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join dbasesores ase ON ase.idasesor = c.refasesores

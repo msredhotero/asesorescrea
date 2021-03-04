@@ -24,7 +24,7 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../enproceso/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../historial/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
@@ -39,7 +39,7 @@ if ($_SESSION['idroll_sahilices'] == 10) {
 
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"En Proceso",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Historial",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -132,6 +132,31 @@ if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 	$idestadodocumentacion = 1;
 }
 
+$input = '';
+$boton = '';
+$leyenda = '';
+$campo = '';
+
+switch (strtoupper( mysql_result($resDocumentacion,0,'documentacion'))) {
+	case 'OT':
+
+		$dato = mysql_result($resultado,0,'ot');
+
+		$input = '<input type="text" name="ot" maxlength="40" id="ot" class="form-control" value="'.$dato.'"/> ';
+		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
+		$leyenda = 'Cargue la OT';
+		$campo = 'ot';
+	break;
+	case 'ARTICULO':
+		$dato = mysql_result($resultado,0,'articulo');
+
+		$input = '<input type="text" name="articulo" maxlength="100" id="articulo" class="form-control" value="'.$dato.'"/> ';
+		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
+		$leyenda = 'Cargue el Articulo';
+		$campo = 'articulo';
+	break;
+
+}
 switch ($iddocumentacion) {
 	case 35:
 		// code...
@@ -152,14 +177,6 @@ switch ($iddocumentacion) {
 		$campo = 'nrorecibo';
 	break;
 
-
-	default:
-		// code...
-		$input = '';
-		$boton = '';
-		$leyenda = '';
-		$campo = '';
-	break;
 }
 
 $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($id,mysql_result($resDocumentacion,0,'reftipodocumentaciones'));
@@ -232,6 +249,10 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 			cursor: pointer;
 		}
 
+		.cssActive {
+			border: 3px solid #ffd900 !important;
+		}
+
 	</style>
 
 
@@ -284,11 +305,17 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 
 			<div class="row">
 				<?php
+				$activaLbl = '';
 				while ($row = mysql_fetch_array($resDocumentaciones)) {
+					if ($row['iddocumentacion'] == $iddocumentacion) {
+						$activaLbl = ' cssActive ';
+					} else {
+						$activaLbl = '';
+					}
 
 				?>
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-						<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
+						<div class="info-box-3 bg-<?php echo $row['color'].$activaLbl; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
 							<div class="icon">
 								<i class="material-icons">face</i>
 							</div>
@@ -302,7 +329,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 			</div>
 
 			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
@@ -348,13 +375,26 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 									</div>
 								</div>
 							</form>
+
+							<?php if (($idestadodocumentacion != 5)) { ?>
+							<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+								<div class="dz-message">
+									<div class="drag-icon-cph">
+										<i class="material-icons">touch_app</i>
+									</div>
+									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+								</div>
+								<div class="fallback">
+									<input name="file" type="file" id="archivos" />
+									<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
+								</div>
+							</form>
+							<?php } ?>
 						</div>
 					</div>
 				</div>
-			</div> <!-- fin del card -->
 
-			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card">
 						<div class="header bg-blue">
 							<h2>
@@ -380,6 +420,10 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 									<img class="img-responsive">
 								</a>
 								<div id="example1"></div>
+								<div id="contExcel" style="margin:15px;">
+									<button type="button" class="btn btn-lg btn-success btnVerArchivo" style="margin-left:0px;"><i class="material-icons">search</i>VER ARCHIVO</button>
+									<input type="hidden" id="verarchivo" name="verarchivo" value=""/>
+								</div>
 							</div>
 							<div class="row">
 								<div class="alert bg-<?php echo $color; ?>">
@@ -402,43 +446,12 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 								</div>
 
 							</div>
-						</div>
-					</div>
-				</div>
-			<?php if ($idestadodocumentacion != 5) { ?>
-			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="card">
-						<div class="header bg-blue">
-							<h2>
-								CARGA/MODIFIQUE LA DOCUMENTACIÓN <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?> AQUI
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div class="body">
-							<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
-								<div class="dz-message">
-									<div class="drag-icon-cph">
-										<i class="material-icons">touch_app</i>
-									</div>
-									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
-								</div>
-								<div class="fallback">
-									<input name="file" type="file" id="archivos" />
-									<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
-								</div>
-							</form>
-						</div>
 					</div>
 				</div>
 			</div>
-			<?php } ?>
+
+
+
 		</div>
 	</div>
 </section>
@@ -527,7 +540,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 				// Form data
 				//datos del formulario
 				data: {
-					accion: 'modificarCotizacionUnicaDocumentacion',
+					accion: 'modificarCotizacionUnicaDocumentacionCot',
 					idcotizacion: <?php echo $id; ?>,
 					campo: '<?php echo $campo; ?>',
 					valor: valor
@@ -605,6 +618,8 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 				type:  'post',
 				beforeSend: function () {
 					$("." + contenedor + " img").attr("src",'');
+					$('#contExcel').val('');
+					$('#contExcel').hide();
 				},
 				success:  function (response) {
 					var cadena = response.datos.type.toLowerCase();
@@ -616,9 +631,17 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 							$("."+contenedor).hide();
 
 						} else {
-							$("." + contenedor + " img").attr("src",response.datos.imagen);
-							$("."+contenedor).show();
-							$('#'+contenedorpdf).hide();
+							if ((cadena.indexOf("officedocument") > -1) || (cadena.indexOf("sheet") > -1)) {
+								$('#'+contenedorpdf).hide();
+								$("."+contenedor).hide();
+								$('#contExcel').show();
+								$('#verarchivo').val(response.datos.imagen);
+							} else {
+								$("." + contenedor + " img").attr("src",response.datos.imagen);
+								$("."+contenedor).show();
+								$('#'+contenedorpdf).hide();
+							}
+
 						}
 					}
 

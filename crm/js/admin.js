@@ -485,6 +485,19 @@ $('.maximizar').click(function() {
 });
 
 
+$('.btnTrazabilidad').click(function () {
+   var idcotizacion = $('.btnTrazabilidad').data('cotizacion');
+   url = "trazabilidad.php?id=" + idcotizacion;
+   $(location).attr('href',url);
+});
+
+$('.btnVolverFiltro').click(function () {
+   var referencia = $('.btnVolverFiltro').data('referencia');
+   var ir = $('.btnVolverFiltro').data('ir');
+   url = ir + ".php?id=" + referencia;
+   $(location).attr('href',url);
+});
+
 
 $('.btnVerNotificaciones').click(function () {
    var altura = $('.lstNotificaciones').data('altura');

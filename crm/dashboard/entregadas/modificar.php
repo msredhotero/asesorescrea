@@ -489,7 +489,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 								<?php } ?>
 
-								
+
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -814,6 +814,38 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 <script>
 	$(document).ready(function(){
 
+		function trazabilidad(id,idestado,dato,url) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'trazabilidadCotizacion',
+					id: id,
+					idestado: idestado,
+					dato: dato,
+					url: url
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+					});
+				}
+			});
+		}
+
 		$('.btnAdjuntar').click(function() {
 			url = "adjuntarcotizaciones.php?id=<?php echo $id; ?>";
 			$(location).attr('href',url);
@@ -845,7 +877,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
-
+					trazabilidad(<?php echo $id; ?>,9,'Se acepta la cotizacion: ' + $('#aceptarCotizacion option:selected').html(),'');
 				},
 				//una vez finalizado correctamente
 				success: function(data){

@@ -521,6 +521,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 								MODIFICAR <?php echo strtoupper($plural); ?> <button type="button" class="btn bg-cyan waves-effect btnLstDocumentaciones"><i class="material-icons">unarchive</i><span class="js-right-sidebar" data-close="true">VISUALIZAR DOCUMENTOS</span></button>
 								<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
 								<button type="button" class="btn bg-brown waves-effect btnAdjuntar"><i class="material-icons">unarchive</i><span>ADJUNTAR COTIZACIONES</span></button>
+								<button type="button" class="btn btn-info waves-effect btnTrazabilidad" data-cotizacion="<?php echo $id; ?>"><i class="material-icons">show_chart</i><span>TRAZABILIDAD</span></button>
 
 								<?php } ?>
 

@@ -13,12 +13,14 @@ include ('../includes/funcionesHTML.php');
 include ('../includes/funciones.php');
 include ('../includes/funcionesReferencias.php');
 include ('../includes/base.php');
+include ('../includes/funcionesTotales.php');
 
 $serviciosUsuario = new ServiciosUsuarios();
 $serviciosHTML = new ServiciosHTML();
 $serviciosFunciones = new Servicios();
 $serviciosReferencias 	= new ServiciosReferencias();
 $baseHTML = new BaseHTML();
+$serviciosTotales = new ServiciosTotales();
 
 $fecha = date('Y-m-d');
 
@@ -453,6 +455,20 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 		/********************* fin ********************************************/
 	}
 
+if ($_SESSION['idroll_sahilices'] == 7) {
+	$resTotalPolizasActivas = $serviciosTotales->devolverTotalPolizasActivas($idasesor,0);
+	$resTotalCobranzaPendiente = $serviciosTotales->devolverCobranzaPendiente($idasesor,0);
+} else {
+	if (($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22)) {
+		$resTotalPolizasActivas = $serviciosTotales->devolverTotalPolizasActivas(0,$_SESSION['idroll_sahilices']);
+		$resTotalCobranzaPendiente = $serviciosTotales->devolverCobranzaPendiente(0,$_SESSION['idroll_sahilices']);
+	} else {
+		$resTotalPolizasActivas = $serviciosTotales->devolverTotalPolizasActivas(0,0);
+		$resTotalCobranzaPendiente = $serviciosTotales->devolverCobranzaPendiente(0,0);
+	}
+}
+
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -579,7 +595,62 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 		<div class="container-fluid">
 			<!-- Widgets -->
 			<div class="row clearfix">
-				<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
+				<?php if (($_SESSION['idroll_sahilices'] != 7) && ($_SESSION['idroll_sahilices'] != 16)) { ?>
+
+					<div class="row">
+						<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+							<div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+								<div class="info-box bg-green hover-expand-effect">
+									<div class="icon">
+										<i class="material-icons">assignment</i>
+									</div>
+									<div class="content">
+										<div class="text">POLIZAS ACTIVAS</div>
+										<div class="number"><span class="lblPolizasActivas"><?php echo $resTotalPolizasActivas['polizas']; ?></span></div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+								<div class="info-box bg-blue hover-expand-effect">
+									<div class="icon">
+										<i class="material-icons">attach_money</i>
+									</div>
+									<div class="content">
+										<div class="text">PRIMA NETA</div>
+										<div class="number"><span class="lblPrimaNeta"><?php echo number_format($resTotalPolizasActivas['primaneta'],2,',','.'); ?></span></div>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+								<div class="info-box bg-light-blue hover-expand-effect">
+									<div class="icon">
+										<i class="material-icons">attach_money</i>
+									</div>
+									<div class="content">
+										<div class="text">PRIMA TOTAL</div>
+										<div class="number"><span class="lblPrimaTotal"><?php echo number_format($resTotalPolizasActivas['primatotal'],2,',','.'); ?></span></div>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+								<div class="info-box bg-deep-orange hover-expand-effect">
+									<div class="icon">
+										<i class="material-icons">alarm_add</i>
+									</div>
+									<div class="content">
+										<div class="text">COBRANZA PENDIENTE</div>
+										<div class="number"><span class="lblCobranzaPendiente"><?php echo $resTotalCobranzaPendiente; ?></span></div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
 
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="card ">
@@ -617,10 +688,10 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 										<div class"row imgMejopra button-container-img" style="margin-top:20px;">
 											<img src="../imagenes/mejoratuscondiciones_bck2.jpg" width="100%"/>
 											<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.3em;" onclick="window.location='mejorarcondiciones/'">MEJORAR POLIZA</button>
-										</div>	
+										</div>
 
 
-										
+
 										<hr>
 									<?php } ?>
 
@@ -632,7 +703,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 									<?php }  else { ?>
 									<h3>Bienvenido al CRM de Asesores Crea</h3>
 
-									<p>Aqui usted encontrara avisos importantes sobre su estado en el Proceso de Reclutamiento</p>
+
 									<?php } ?>
 								</form>
 							</div>
@@ -976,7 +1047,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 									<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.5em;" onclick="window.location='mejorarcondiciones/'">ADJUNTAR POLIZA</button>
 								</div>
 
-								
+
 
 
 

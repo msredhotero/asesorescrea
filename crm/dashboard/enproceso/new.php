@@ -1305,6 +1305,38 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 <script>
 	$(document).ready(function(){
 
+		function trazabilidad(id,idestado,dato,url) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'trazabilidadCotizacion',
+					id: id,
+					idestado: idestado,
+					dato: dato,
+					url: url
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+					});
+				}
+			});
+		}
+
 		$(".frmNuevo2 #rfc").attr('maxlength','13');
 		$(".frmNuevo2 #rfc").attr('minlength','13');
 		$(".frmNuevo2 #curp").attr('maxlength','18');

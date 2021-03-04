@@ -336,7 +336,7 @@ while ($rowD = mysql_fetch_array($documentacionesadicionales3)) {
 
 $cadArCliente = '';
 
-
+/*
 while ($rowD = mysql_fetch_array($resDocumentacionesCliente)) {
 	$cadArCliente .= '<li>
 		 <span>'.substr($rowD['documentacion'],0,18).'</span>
@@ -345,30 +345,15 @@ while ($rowD = mysql_fetch_array($resDocumentacionesCliente)) {
 		 </div>
 	</li>';
 }
-
+*/
 
 $rightsidebar = '<ul class="nav nav-tabs tab-nav-right" role="tablist">
-                <li role="presentation" class="active"><a href="#skins" data-toggle="tab">CLIENTE</a></li>
-                <li role="presentation"><a href="#settings" data-toggle="tab">DOCUMENTACIONES</a></li>
+					<li role="presentation" class="active"><a href="#settings" data-toggle="tab">DOCUMENTACIONES</a></li>
+
             </ul>
             <div class="tab-content">
-                <div role="tabpanel" class="tab-pane fade in active in active" id="skins">
-                    <ul class="demo-choose-skin">
-                        <li>
-                            <div class="'.($vigenciasCliente['errorVCD'] == 'true' ? 'red' : 'green').'"></div>
-                            <span>Comp. de Domicilio: '.($vigenciasCliente['vcd']).'</span>
-                        </li>
-                        <li>
-									<div class="'.($vigenciasCliente['errorVRFC'] == 'true' ? 'red' : 'green').'"></div>
-									<span>Emision RFC: '.($vigenciasCliente['vrfc']).'</span>
-                        </li>
-								<li>
-									<div class="'.($vigenciasCliente['errorVINE'] == 'true' ? 'red' : 'green').'"></div>
-									<span>Venc. INE: '.($vigenciasCliente['vine']).'</span>
-                        </li>
-                    </ul>
-                </div>
-                <div role="tabpanel" class="tab-pane fade" id="settings">
+
+                <div role="tabpanel" class="tab-pane fade in active" id="settings">
                     <div class="demo-settings">
                         <p>PRODUCTOS</p>
                         <ul class="setting-list">
@@ -377,10 +362,6 @@ $rightsidebar = '<ul class="nav nav-tabs tab-nav-right" role="tablist">
 								<p>EMISION</p>
                         <ul class="setting-list">
                            '.$cadArProdE.'
-                        </ul>
-                        <p>CLIENTES</p>
-                        <ul class="setting-list">
-                           '.$cadArCliente.'
                         </ul>
 
 								<p>ADICIONALES</p>
@@ -513,6 +494,8 @@ $habilitacambio = 1;
 						<div class="header bg-blue">
 							<h2>
 								MODIFICAR <?php echo strtoupper($plural); ?> <button type="button" class="btn bg-cyan waves-effect btnLstDocumentaciones"><i class="material-icons">unarchive</i><span class="js-right-sidebar" data-close="true">DOCUMENTACIONES</span></button>
+
+								<button type="button" class="btn btn-info waves-effect btnTrazabilidad" data-cotizacion="<?php echo $id; ?>"><i class="material-icons">show_chart</i><span>TRAZABILIDAD</span></button>
 
 							</h2>
 							<ul class="header-dropdown m-r--5">

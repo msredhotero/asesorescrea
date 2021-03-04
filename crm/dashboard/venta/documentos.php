@@ -330,11 +330,16 @@ if ($consolicitud == 1) {
 				// aca va la url que me genero para firmar
 			   $token = $nuevoToken;
 
+
+			   
+
 			   $fechacreac = date('Y-m-d H:i:s');
 			   $nuevafecha = strtotime ( '+48 hour' , strtotime ( $fechacreac ) ) ;
 
 			   $refestadotoken = 1;
 			   $vigenciafin = $nuevafecha;
+
+
 
 				if ($token != '') {
 					$res = $serviciosReferencias->insertarTokens($id,$reftipo,$token,$fechacreac,$refestadotoken,$vigenciafin);
@@ -817,12 +822,12 @@ if ($consolicitud == 1) {
 
 		<?php if ($tipoFirma == 3) { ?>
 		<?php if ($puedeContinuar == 0) { ?>
-			verificarFirmasPendientes();
+			//verificarFirmasPendientes();
 		<?php } ?>
 		<?php } ?>
 
 		$('#btnConfirmarFEV').click(function() {
-			verificarFirmasPendientes();
+			//verificarFirmasPendientes();
 		});
 
 		$('#btnReiniciar').click(function() {

@@ -119,14 +119,17 @@
 			$estilo = 'bg-light-blue';
 			$fecha = date('Y-m-d H:i:s');
 			if (mysql_result($resDocumentacion,0,'reftipodocumentaciones') == 3) {
-				$url = "cotizaciones/subirdocumentacioni.php?id=".$id."&documentacion=".$iddocumentacion;
+				$url = "aceptadas/subirdocumentacioni.php?id=".$id."&documentacion=".$iddocumentacion;
 			} else {
-				$url = "cotizaciones/subirdocumentacionip.php?id=".$id."&documentacion=".$iddocumentacion;
+				$url = "aceptadas/subirdocumentacionip.php?id=".$id."&documentacion=".$iddocumentacion;
 			}
 
 
 			$res = $serviciosNotificaciones->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url);
 			/*** fin de la notificacion ****/
+
+			//trazabilidad 30 - Entrega de Documentos para Emision
+	      $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id,date('Y-m-d H:i:s'),30,$_SESSION['usua_sahilices'],0,0,0,mysql_result($resDocumentacion,0,'documentacion'),'');
 
 			if ($pos === false) {
 				$image = new \Gumlet\ImageResize($imagen_subida);

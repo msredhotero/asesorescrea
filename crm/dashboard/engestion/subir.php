@@ -128,11 +128,8 @@
 			$res = $serviciosNotificaciones->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url);
 			/*** fin de la notificacion ****/
 
-			// aca va el usuario de inbursa en cuestion
-			$email = 'msredhotero@gmail.com';
-			$idusuario = 261;
-			$documentacion = mysql_result($resDocumentacion,0,'documentacion');
-			$email = $serviciosReferencias->enviarEmailModificacionCotizacion($id,$email, $idusuario, $url, $documentacion);
+			//trazabilidad 31 - Carga-Modificacion de Documentos
+	      $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id,date('Y-m-d H:i:s'),31,$_SESSION['usua_sahilices'],0,0,0,mysql_result($resDocumentacion,0,'documentacion'),'');
 
 			if ($pos === false) {
 				$image = new \Gumlet\ImageResize($imagen_subida);

@@ -239,7 +239,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								POLIZA - <?php echo $frm['producto']; ?> - Precio: MX $ <?php echo $frm['monto']; ?>
+								POLIZA - <?php echo $frm['producto']; ?><?php if ($frm['monto']>0) {?> - Precio: MX $ <?php echo $frm['monto']; ?><?php } ?>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">

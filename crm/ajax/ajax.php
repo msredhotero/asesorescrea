@@ -1400,6 +1400,8 @@ function trazabilidadCotizacion($serviciosReferencias) {
    $idestado = $_POST['idestado'];
    $fechacrea = date('Y-m-d H:i:s');
    $usuariocrea = $_SESSION['usua_sahilices'];
+   $dato = $_POST['dato'];
+   $url = $_POST['url'];
    $idreferenciaaux1 = 0;
    $idreferenciaaux2 = 0;
    $idreferenciaaux3 = 0;
@@ -1409,11 +1411,27 @@ function trazabilidadCotizacion($serviciosReferencias) {
    if (mysql_num_rows($resEvento)>0) {
       //el evento esta cargado
       $refevento = mysql_result($resEvento,0,0);
+      if ($dato == '') {
+         $dato = mysql_result($resEvento,0,2);
+      }
+
    } else {
       $refevento = $idestado;
    }
 
    $res = $serviciosReferencias->insertarTrazabilidad(12,$id,$fechacrea,$refevento,$usuariocrea,$idreferenciaaux1,$idreferenciaaux2,$idreferenciaaux3,$dato,$url);
+
+   if ((integer)$res > 0) {
+      $resMM['error'] = false;
+      $resMM['mensaje'] = 'Se cargo correctamente';
+   } else {
+      $resMM['error'] = true;
+      $resMM['mensaje'] = 'Hubo un error al insertar datos';
+
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resMM);
 
 }
 
@@ -1634,6 +1652,20 @@ function ajustarCotizacion($serviciosReferencias) {
    $usuariocrea = $_SESSION['usua_sahilices'];
 
    $resMM = $serviciosReferencias->ajustarCotizacion($id, $fechacrea,$fechacrea,$usuariocrea,$usuariocrea);
+
+   $resEvento = $serviciosReferencias->traerEventosPorReferencia(16, 'tbestadocotizaciones', 'idestadocotizacion', $idestado);
+
+   if (mysql_num_rows($resEvento)>0) {
+      //el evento esta cargado
+      $refevento = mysql_result($resEvento,0,0);
+      $dato = 'Cotización En Ajuste';
+   } else {
+      $refevento = $idestado;
+      $dato = '';
+   }
+
+   //trazabilidad cotizacion en ajuste
+   $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id,$fechacrea,$refevento,$_SESSION['usua_sahilices'],0,0,0,$dato,'');
 
    header('Content-type: application/json');
    echo json_encode($resMM);
@@ -2986,6 +3018,10 @@ function insertarVentas($serviciosReferencias) {
             $resMP = $serviciosReferencias->insertarPeriodicidadventasPorMetodoPago($res,mysql_result($resMetodoPago,0,0));
          }
       }
+
+      //trazabilidad finaliza la cotizacion en una poliza
+      $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$refcotizaciones,$fechacrea,12,$usuariocrea,0,0,0,'Cotización Aceptada - Poliza/Nro Tarjeta: '.$nropoliza,'');
+
       echo '';
    } else {
       echo 'Hubo un error al insertar datos';
@@ -3779,6 +3815,9 @@ function modificarCotizacionesPorCampo($serviciosReferencias) {
    session_start();
    $id = $_POST['id'];
    $idestado = $_POST['idestado'];
+   $fechacrea = date('Y-m-d H:i:s');
+
+   $idestadotrazabilidad = $idestado;
 
    // trai los valores del estado a modificar
    $resEstado = $serviciosReferencias->traerEstadocotizacionesPorId($idestado);
@@ -3794,6 +3833,9 @@ function modificarCotizacionesPorCampo($serviciosReferencias) {
       // modifico la etapa
       $resModEstadoEtapa = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',mysql_result($resEstadoNuevo,0,'refetapacotizacion'), $_SESSION['usua_sahilices']);
 
+      //cargo el estado generado
+      $idestadotrazabilidad = mysql_result($resEstado,0,'generaestado');
+
       $mensaje = 'SE MODIFICO CORRECTAMENTE';
    } else {
       if  (mysql_result($resEstado,0,'renueva') == '1') {
@@ -3802,6 +3844,7 @@ function modificarCotizacionesPorCampo($serviciosReferencias) {
 
          // modifico la etapa
          $resModEstadoEtapa = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',mysql_result($resEstado,0,'refetapacotizacion'), $_SESSION['usua_sahilices']);
+
 
          $mensaje = 'SE MODIFICO CORRECTAMENTE';
       } else {
@@ -3814,11 +3857,25 @@ function modificarCotizacionesPorCampo($serviciosReferencias) {
          // modifico la etapa
          $resModEstadoEtapa = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',mysql_result($resEstado,0,'refetapacotizacion'), $_SESSION['usua_sahilices']);
 
-
          $mensaje = 'SE MODIFICO CORRECTAMENTE';
       }
 
    }
+
+
+   $resEvento = $serviciosReferencias->traerEventosPorReferencia(16, 'tbestadocotizaciones', 'idestadocotizacion', $idestadotrazabilidad);
+
+   if (mysql_num_rows($resEvento)>0) {
+      //el evento esta cargado
+      $refevento = mysql_result($resEvento,0,0);
+      $dato = 'Modificacion de datos';
+   } else {
+      $refevento = $idestadotrazabilidad;
+      $dato = '';
+   }
+
+   //trazabilidad modificar estado
+   $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id,$fechacrea,$refevento,$_SESSION['usua_sahilices'],0,0,0,$dato,'');
 
 
    if ($resModEstadoEtapa) {
@@ -3864,6 +3921,8 @@ function modificarCotizacionesPorCampoRechazoDefinitivo($serviciosReferencias) {
       // trai los valores del estado a modificar
       $resEstado = $serviciosReferencias->traerEstadocotizacionesPorId($idestado);
 
+      $idestadotrazabilidad = $idestado;
+
       // verifico si me genera un cambio automatico y si finaliza
       if ((mysql_result($resEstado,0,'generaestado') > 0) && (mysql_result($resEstado,0,'finaliza') == '1')) {
          // obtengo la nueva etapa
@@ -3874,6 +3933,9 @@ function modificarCotizacionesPorCampoRechazoDefinitivo($serviciosReferencias) {
 
          // modifico la etapa
          $resModEstadoEtapa = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestados',mysql_result($resEstadoNuevo,0,'refetapacotizacion'), $_SESSION['usua_sahilices']);
+
+         //cargo el estado generado
+         $idestadotrazabilidad = mysql_result($resEstado,0,'generaestado');
 
          $mensaje = 'SE MODIFICO CORRECTAMENTE';
       } else {
@@ -3899,6 +3961,20 @@ function modificarCotizacionesPorCampoRechazoDefinitivo($serviciosReferencias) {
       }
 
       $res = $serviciosReferencias->insertarMotivorechazocotizaciones($id,$motivo,$nocompartioinformacion,$primatotalinbursa,$primatotalcompetencia,$aseguradora);
+
+      $resEvento = $serviciosReferencias->traerEventosPorReferencia(16, 'tbestadocotizaciones', 'idestadocotizacion', $idestadotrazabilidad);
+
+      if (mysql_num_rows($resEvento)>0) {
+         //el evento esta cargado
+         $refevento = mysql_result($resEvento,0,0);
+         $dato = 'Motivo del Rechazo: '.$motivo;
+      } else {
+         $refevento = $idestadotrazabilidad;
+         $dato = '';
+      }
+
+      //trazabilidad modificar estado
+      $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id,$fechacrea,$refevento,$_SESSION['usua_sahilices'],0,0,0,$dato,'');
 
 
       if ($resModEstadoEtapa) {
@@ -5744,6 +5820,7 @@ function validarCuestionario($serviciosReferencias) {
          }
 
          //trazabilidad 1
+         $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$res,$fechacrea,1,$usuariocrea,0,0,0,'','');
 
          $resV['idcotizacion']= $res;
       } else {
@@ -7944,6 +8021,20 @@ function modificarCotizaciones($serviciosReferencias) {
       if (isset($_POST['primatotal'])) {
          $resModificarPT = $serviciosReferencias->modificarCotizacionesPorCampo($id,'primatotal',$_POST['primatotal'],$usuariomodi);
       }
+
+
+      $resEvento = $serviciosReferencias->traerEventosPorReferencia(16, 'tbestadocotizaciones', 'idestadocotizacion', $refestadocotizaciones);
+
+      if (mysql_num_rows($resEvento)>0) {
+         //el evento esta cargado
+         $refevento = mysql_result($resEvento,0,0);
+         $dato = 'Modificacion de datos';
+      } else {
+         $refevento = $refestadocotizaciones;
+         $dato = '';
+      }
+      //trazabilidad dependen el estado
+      $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id,$fechamodi,$refevento,$usuariomodi,0,0,0,$dato,'');
 
       echo '';
    } else {

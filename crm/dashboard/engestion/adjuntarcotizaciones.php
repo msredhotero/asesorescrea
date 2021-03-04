@@ -539,6 +539,39 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 
 	$(document).ready(function(){
 
+
+		function trazabilidad(id,idestado,dato,url) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'trazabilidadCotizacion',
+					id: id,
+					idestado: idestado,
+					dato: dato,
+					url: url
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+					});
+				}
+			});
+		}
+
 		$('.btnLstEnviar').click(function() {
 			$('#lgmENVIAR').modal();
 		});
@@ -559,7 +592,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
-
+					trazabilidad(<?php echo $id; ?>,8,'Se entrega cotizacion','');
 				},
 				//una vez finalizado correctamente
 				success: function(data){

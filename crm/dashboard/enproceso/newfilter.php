@@ -58,6 +58,10 @@ if (isset($_GET['id'])) {
 	$id = $_GET['id'];
 	$resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
+	if (mysql_num_rows($resultado)<=0) {
+		header('Location: index.php');
+	}
+
 	$refCliente = mysql_result($resultado,0,'refclientes');
 	$rIdCliente = mysql_result($resultado,0,'refclientes');
 	$refAsesores = mysql_result($resultado,0,'refasesores');
@@ -972,29 +976,38 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 									<h3>INFORMACIÓN DEL NEGOCIO</h3>
 									<fieldset>
 										<div class="row">
-										<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
-											<div class="form-group form-float">
-												<label class="form-label" style="margin-top:20px;">Existe Prima Objetivo</label>
-												<div class="form-line">
-
-													<select style="margin-top:10px;" class="form-control" id="existeprimaobjetivo" name="existeprimaobjetivo" required>
-														<?php echo $cadRef11b; ?>
-													</select>
-
+											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContot" style="display:block">
+												<div class="form-group form-float">
+													<label class="form-label" style="margin-top:20px;">Si existe una OT (Orden de Trabajo)</label>
+													<div class="form-line">
+														<input type="text" class="form-control" id="ot" name="ot" />
+													</div>
 												</div>
 											</div>
-										</div>
-										<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContprimaobjetivo" style="display:block">
-											<div class="form-group form-float">
-												<label class="form-label" style="margin-top:30px;">Prima Objetivo</label>
-											  <div class="form-line">
+											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
+												<div class="form-group form-float">
+													<label class="form-label" style="margin-top:10px;">Existe Prima Objetivo</label>
+													<div class="form-line">
 
-													<input style="width:200px;" type="text" class="form-control" id="primaobjetivo" name="primaobjetivo" value="<?php echo $primaobjetivo; ?>" />
+														<select style="margin-top:10px;" class="form-control" id="existeprimaobjetivo" name="existeprimaobjetivo" required>
+															<?php echo $cadRef11b; ?>
+														</select>
 
-
-											  </div>
+													</div>
+												</div>
 											</div>
-										</div>
+											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContprimaobjetivo" style="display:block">
+												<div class="form-group form-float">
+													<label class="form-label" style="margin-top:20px;">Prima Objetivo</label>
+												  <div class="form-line">
+
+														<input style="width:200px;" type="text" class="form-control" id="primaobjetivo" name="primaobjetivo" value="<?php echo $primaobjetivo; ?>" />
+
+
+												  </div>
+												</div>
+											</div>
+
 										</div>
 
 										<div class="row">
@@ -1627,7 +1640,37 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 <script>
 	$(document).ready(function(){
 
-
+		function trazabilidad(id,idestado,dato,url) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'trazabilidadCotizacion',
+					id: id,
+					idestado: idestado,
+					dato: dato,
+					url: url
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+					});
+				}
+			});
+		}
 
 
 
