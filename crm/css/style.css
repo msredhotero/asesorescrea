@@ -23,7 +23,7 @@
    border: 3px solid #ffd900 !important;
 }
 
-.lblPolizasActivas, .lblPrimaNeta, .lblPrimaTotal  { font-size:0.8em !important;}
+.lblPolizasActivas, .lblPrimaNeta, .lblPrimaTotal, .lblCobranzaPendiente  { font-size: calc(0.8em + 1vw) !important;}
 
 .estiloPregunta {
    margin-bottom: 0px !important;
