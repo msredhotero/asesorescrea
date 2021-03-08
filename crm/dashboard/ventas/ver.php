@@ -226,6 +226,12 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 											<span>CONTACTOS</span>
 										</button>
 										<?php } ?>
+										<?php if ((mysql_result($resultado,0,'refestadoventa') == 6) && (mysql_num_rows($resPeriodicidad)>0)) { ?>
+										<button type="button" class="btn bg-black waves-effect btnActivar">
+											<i class="material-icons">done_all</i>
+											<span>ACTIVAR</span>
+										</button>
+										<?php } ?>
 									</div>
 								</div>
 
@@ -267,6 +273,27 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 		</form>
 
 
+		<div class="modal fade" id="lgmENVIAR" tabindex="-1" role="dialog">
+			 <div class="modal-dialog modal-lg" role="document">
+				  <div class="modal-content">
+						<div class="modal-header bg-green">
+							<h4>IMPORTANTE</h4>
+						</div>
+						<div class="modal-body">
+						<div class="row">
+							<h4>¿Estas seguro que quieres ACTIVAR la poliza?.</h4>
+						</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-success waves-effect btnActivarPoliza" data-dismiss="modal">ACTIVAR</button>
+							<button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+						</div>
+
+				  </div>
+			 </div>
+		</div>
+
+
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
@@ -289,6 +316,63 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 
 <script>
 	$(document).ready(function(){
+
+		$('.btnActivar').click(function() {
+			$('#lgmENVIAR').modal();
+		});
+
+		$('.btnActivarPoliza').click(function() {
+			aceptarPolizarAgente();
+		});
+
+		function aceptarPolizarAgente() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'aceptarPolizarAgente',
+					id: <?php echo $id; ?>
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					if (data.error == false) {
+						swal({
+								title: "Respuesta",
+								text: data.mensaje,
+								type: "success",
+								timer: 1000,
+								showConfirmButton: false
+						});
+
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data.mensaje,
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
 
 		$('.btnVolver').click(function() {
 			url = "index.php";

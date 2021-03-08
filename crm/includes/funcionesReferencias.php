@@ -10,6 +10,165 @@ date_default_timezone_set('America/Mexico_City');
 class ServiciosReferencias {
 
 
+   function traerCobrosTransferenciasPorAsesorAjax($length, $start, $busqueda,$colSort,$colSortDir,$idasesor) {
+      $where = '';
+
+      $cadAsesor = ' and ase.idasesor = '.$idasesor.' ';
+
+      $busqueda = str_replace("'","",$busqueda);
+      if ($busqueda != '') {
+         $where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or ve.nropoliza like '%".$busqueda."%' or cli.razonsocial like '%".$busqueda."%' or cli.numerocliente like '%".$busqueda."%' or cli.idclienteinbursa like '%".$busqueda."%' or p.nrorecibo like '%".$busqueda."%')";
+      }
+
+
+      $sql = "select
+                  p.idperiodicidadventadetalle,
+                  (case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
+                  ve.nropoliza,
+                  p.fechavencimiento,
+                  p.nrorecibo,
+                  est.estadopago,
+                  p.montototal,
+                  p.primaneta,
+                  p.porcentajecomision,
+                  p.montocomision,
+                  p.fechapago,
+                  est.estadopago,
+                  ea.estadoasesor,
+                  p.refestadopago,
+                  p.usuariocrea,
+                  p.usuariomodi,
+                  p.fechacrea,
+                  p.fechamodi,
+                  p.refperiodicidadventas
+      from dbperiodicidadventasdetalle p
+      inner join dbperiodicidadventas per ON per.idperiodicidadventa = p.refperiodicidadventas
+      inner join dbventas ve ON ve.idventa = per.refventas
+        inner join dbcotizaciones co on co.idcotizacion = ve.refcotizaciones
+        inner join dbclientes cli on cli.idcliente = co.refclientes
+        inner join dbasesores ase on ase.idasesor = co.refasesores
+        inner join tbestadoasesor ea on ea.idestadoasesor = ase.refestadoasesor
+      inner join tbtipoperiodicidad tp ON tp.idtipoperiodicidad = per.reftipoperiodicidad
+      inner join tbtipocobranza ti ON ti.idtipocobranza = per.reftipocobranza
+      inner join tbestadopago est ON est.idestadopago = p.refestadopago
+
+        where p.refestadopago in (1,3) ".$cadAsesor.$where."
+      ORDER BY ".$colSort." ".$colSortDir." ";
+      $limit = "limit ".$start.",".$length;
+
+      //die(var_dump($sql));
+
+      $res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+      return $res;
+   }
+
+
+/* PARA Transferencias */
+
+function insertarTransferencias($nrotransferencia,$monto,$fechatransaccion,$fechacrea,$usuariocrea,$observaciones) {
+$sql = "insert into dbtransferencias(idtransferencia,nrotransferencia,monto,fechatransaccion,fechacrea,usuariocrea,observaciones)
+values ('','".$nrotransferencia."',".$monto.",'".$fechatransaccion."','".$fechacrea."','".$usuariocrea."','".$observaciones."')";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarTransferencias($id,$nrotransferencia,$monto,$fechatransaccion,$fechacrea,$usuariocrea,$observaciones) {
+$sql = "update dbtransferencias
+set
+nrotransferencia = '".$nrotransferencia."',monto = ".$monto.",fechatransaccion = '".$fechatransaccion."',fechacrea = '".$fechacrea."',usuariocrea = '".$usuariocrea."',observaciones = '".$observaciones."'
+where idtransferencia =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarTransferencias($id) {
+$sql = "delete from dbtransferencias where idtransferencia =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerTransferencias() {
+$sql = "select
+t.idtransferencia,
+t.nrotransferencia,
+t.monto,
+t.fechatransaccion,
+t.fechacrea,
+t.usuariocrea,
+t.observaciones
+from dbtransferencias t
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerTransferenciasPorId($id) {
+$sql = "select idtransferencia,nrotransferencia,monto,fechatransaccion,fechacrea,usuariocrea,observaciones from dbtransferencias where idtransferencia =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+/* Fin */
+/* /* Fin de la Tabla: dbtransferencias*/
+
+
+
+/* PARA Transferenciarecibos */
+
+function insertarTransferenciarecibos($reftransferencias,$refrecibos,$monto,$completo) {
+$sql = "insert into dbtransferenciarecibos(idtransferenciarecibo,reftransferencias,refrecibos,monto,completo)
+values ('',".$reftransferencias.",".$refrecibos.",".$monto.",'".$completo."')";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarTransferenciarecibos($id,$reftransferencias,$refrecibos,$monto,$completo) {
+$sql = "update dbtransferenciarecibos
+set
+reftransferencias = ".$reftransferencias.",refrecibos = ".$refrecibos.",monto = ".$monto.",completo = '".$completo."'
+where idtransferenciarecibo =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarTransferenciarecibos($id) {
+$sql = "delete from dbtransferenciarecibos where idtransferenciarecibo =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerTransferenciarecibos() {
+$sql = "select
+t.idtransferenciarecibo,
+t.reftransferencias,
+t.refrecibos,
+t.monto,
+t.completo
+from dbtransferenciarecibos t
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerTransferenciarecibosPorId($id) {
+$sql = "select idtransferenciarecibo,reftransferencias,refrecibos,monto,completo from dbtransferenciarecibos where idtransferenciarecibo =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+/* Fin */
+/* /* Fin de la Tabla: dbtransferenciarecibos*/
+
    /* PARA Eventos */
 
 
@@ -216,6 +375,52 @@ class ServiciosReferencias {
       order by 1";
       $res = $this->query($sql,0);
       return $res;
+   }
+
+   function traerContactosperfilesPorUsuario($idusuario) {
+      $sql = "select
+      c.idcontactoperfil,
+      c.refroles,
+      c.refusuarios,
+      c.email,
+      c.nombrecompleto,
+      c.telefono
+      from dbcontactosperfiles c
+      where c.refusuarios = ".$idusuario."
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerContactosUsuarioAjax($length, $start, $busqueda,$colSort,$colSortDir, $refrol,$idusuario) {
+
+      $where = '';
+
+      $busqueda = str_replace("'","",$busqueda);
+      if ($busqueda != '') {
+         $where = " and c.email like '%".$busqueda."%' or c.nombrecompleto like '%".$busqueda."%' or c.telefono like '%".$busqueda."%'";
+      }
+
+
+      $sql = "select
+      c.idcontactoperfil,
+      r.descripcion as rol,
+      u.nombrecompleto as usuario,
+      c.email,
+      c.nombrecompleto,
+      c.telefono,
+      c.refroles,
+      c.refusuarios
+      from dbcontactosperfiles c
+      left join tbroles r on r.idrol = c.refroles
+      left join dbusuarios u on u.idusuario = c.refusuarios
+      where (c.refroles = ".$refrol." or c.refusuarios = ".$idusuario.") ".$where."
+      ORDER BY ".$colSort." ".$colSortDir." ";
+      $limit = "limit ".$start.",".$length;
+
+      $res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+      return $res;
+
    }
 
 
@@ -4445,7 +4650,7 @@ return $res;
 
                               <div class="form-group input-group">
                                  <div class="form-line">
-                                    <input type="text" autocomplete="off" class="form-control" id="respuesta'.$row['idpreguntacuestionario'].'" value="'.$cadValorRespuesta.'" name="respuesta'.$row['idpreguntacuestionario'].'" >
+                                    <input type="text" autocomplete="off" class="form-control ts'.$row['campo'].'" id="respuesta'.$row['idpreguntacuestionario'].'" value="'.$cadValorRespuesta.'" name="respuesta'.$row['idpreguntacuestionario'].'" >
 
                                  </div>
                               </div>
@@ -7874,7 +8079,7 @@ return $res;
               INNER JOIN
           tbtipoperiodicidad tp ON tp.idtipoperiodicidad = pv.reftipoperiodicidad
             inner join tbtipocobranza tcc on tcc.idtipocobranza = pv.reftipocobranza
-              INNER JOIN
+              left JOIN
           dbperiodicidadventasdetalle pvd ON pvd.refperiodicidadventas = pv.idperiodicidadventa
       where v.refestadoventa = 1 ".$where.$cadFecha.$cadAgente."
       GROUP BY v.idventa , cli.apellidopaterno , cli.apellidomaterno , cli.nombre , v.refproductosaux , pro.producto , ase.apellidopaterno , ase.apellidomaterno ,
@@ -7882,11 +8087,12 @@ return $res;
       est.estadocotizacion , v.foliointerno , c.refclientes , c.refproductos , c.refasesores , c.refasociados , c.refestadocotizaciones , c.observaciones ,
       c.fechacrea , c.fechamodi , c.usuariocrea , c.usuariomodi , c.refusuarios , tp.meses, v.refestadoventa
 
-      having (case when max(v.version) > 1 then 13 else COUNT(pvd.idperiodicidadventadetalle) end) >= 1
+
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
       //tp.meses
 		//die(var_dump($sql));
+      //having (case when max(v.version) > 1 then 13 else COUNT(pvd.idperiodicidadventadetalle) end) >= 1
 
 		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
 		return $res;

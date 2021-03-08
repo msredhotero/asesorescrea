@@ -919,6 +919,9 @@ switch ($accion) {
    case 'eliminarPeriodicidadventasdetalle':
       eliminarPeriodicidadventasdetalle($serviciosReferencias);
    break;
+   case 'traerPeriodicidadventasdetallePorId':
+      traerPeriodicidadventasdetallePorId($serviciosReferencias);
+   break;
 
    case 'traerTipoproductoramaPorTipoProducto':
       traerTipoproductoramaPorTipoProducto($serviciosReferencias, $serviciosFunciones);
@@ -1390,8 +1393,240 @@ switch ($accion) {
       trazabilidadCotizacion($serviciosReferencias);
    break;
 
+   case 'insertarTransferencias':
+      insertarTransferencias($serviciosReferencias);
+   break;
+   case 'modificarTransferencias':
+      modificarTransferencias($serviciosReferencias);
+   break;
+   case 'eliminarTransferencias':
+      eliminarTransferencias($serviciosReferencias);
+   break;
+
+   case 'insertarTransferenciarecibos':
+      insertarTransferenciarecibos($serviciosReferencias);
+   break;
+   case 'modificarTransferenciarecibos':
+      modificarTransferenciarecibos($serviciosReferencias);
+   break;
+   case 'eliminarTransferenciarecibos':
+      eliminarTransferenciarecibos($serviciosReferencias);
+   break;
+   case 'buscarCURP':
+      buscarCURP($serviciosValidador);
+   break;
+
+
 }
 /* FinFinFin */
+
+function buscarCURP($serviciosValidador) {
+
+   $resV['error'] = false;
+
+   $arDatos = array();
+
+   if ((isset($_POST['curp']))) {
+      $curp = $_POST['curp'];
+
+      if (strlen($curp) == 18) {
+         $validarER = $serviciosValidador->validarCurp($curp);
+
+         if ($validarER) {
+            //hasta aca esta todo ok
+
+            $ch = curl_init();
+            $url = 'https://crea.signaturainnovacionesjuridicas.com/api/consultas/renapo?curp='.$curp;
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            //set the content type to application/json
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+
+            //return response instead of outputting
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            //execute the POST request
+            $result = curl_exec($ch);
+            curl_close($ch);
+
+            if (!is_string($result) || !strlen($result)) {
+               $resV['error'] = true;
+               $resV['mensaje'] = 'El CURP es incorrecto';
+
+            } else {
+
+               $arFirmaFiel = json_decode($result, true);
+
+               if ($arFirmaFiel['apellidoPaterno'] == null) {
+                  $resV['error'] = true;
+                  $resV['mensaje'] = 'CURP no encontrado';
+               } else {
+                  $apellidoPaterno  = $arFirmaFiel['apellidoPaterno'];
+                  $apellidoMaterno  = $arFirmaFiel['apellidoMaterno'];
+                  $nombres          = $arFirmaFiel['nombres'];
+                  $nombreCompleto   = $arFirmaFiel['nombreCompleto'];
+                  $sexo             = $arFirmaFiel['sexo'];
+                  $nacionalidad     = $arFirmaFiel['nacionalidad'];
+                  $fechaNacimiento  = $arFirmaFiel['fechaNacimiento'];
+                  $cveEntidadNac    = $arFirmaFiel['cveEntidadNac'];
+
+                  array_push($arDatos,
+                     array(
+                        'apellidoPaterno'=>$apellidoPaterno,
+                        'apellidoMaterno'=>$apellidoMaterno,
+                        'nombres'=>$nombres,
+                        'nombreCompleto'=>$nombreCompleto,
+                        'sexo'=>$sexo,
+                        'nacionalidad'=>$nacionalidad,
+                        'fechaNacimiento'=> ($fechaNacimiento == '' ? '0000-00-00' : date('Y-m-d', strtotime(str_replace('/', '-', $fechaNacimiento)))),
+                        'cveEntidadNac'=>$cveEntidadNac,
+                     )
+                  );
+
+                  $resV['datos'] = $arDatos;
+               }
+
+
+            }
+         } else {
+            $resV['error'] = true;
+            $resV['mensaje'] = 'El formato del CURP es incorrecto';
+         }
+      } else {
+         $resV['error'] = true;
+         $resV['mensaje'] = 'El CURP debe contener 18 caracteres alfanumericos';
+      }
+   } else {
+   	$resV['error'] = true;
+      $resV['mensaje'] = 'Debe ingresar 18 caracteres';
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function traerPeriodicidadventasdetallePorId($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->traerPeriodicidadventasdetallePorIdCompleto($id);
+
+   $ar = array();
+
+   $resV['error'] = true;
+
+   while ($row = mysql_fetch_array($res)) {
+      array_push($ar, array(
+         'nropoliza'=>$row['nropoliza'],
+         'nrorecibo' => $row['nrorecibo'],
+         'monto'=> $row['montototal'],
+         'id' => $row['idperiodicidadventadetalle']
+      ));
+      $resV['error'] = false;
+   }
+
+   $resV['datos'] = $ar;
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
+
+function insertarTransferenciarecibos($serviciosReferencias) {
+$reftransferencias = $_POST['reftransferencias'];
+$refrecibos = $_POST['refrecibos'];
+$monto = $_POST['monto'];
+$completo = $_POST['completo'];
+$res = $serviciosReferencias->insertarTransferenciarecibos($reftransferencias,$refrecibos,$monto,$completo);
+if ((integer)$res > 0) {
+echo '';
+} else {
+echo 'Hubo un error al insertar datos';
+}
+}
+function modificarTransferenciarecibos($serviciosReferencias) {
+$id = $_POST['id'];
+$reftransferencias = $_POST['reftransferencias'];
+$refrecibos = $_POST['refrecibos'];
+$monto = $_POST['monto'];
+$completo = $_POST['completo'];
+$res = $serviciosReferencias->modificarTransferenciarecibos($id,$reftransferencias,$refrecibos,$monto,$completo);
+if ($res == true) {
+echo '';
+} else {
+echo 'Hubo un error al modificar datos';
+}
+}
+function eliminarTransferenciarecibos($serviciosReferencias) {
+$id = $_POST['id'];
+$res = $serviciosReferencias->eliminarTransferenciarecibos($id);
+if ($res == true) {
+echo '';
+} else {
+echo 'Hubo un error al eliminar datos';
+}
+}
+
+
+function insertarTransferencias($serviciosReferencias) {
+   session_start();
+   $nrotransferencia = $_POST['nrotransferencia'];
+   $monto = $_POST['monto'];
+   $fechatransaccion = $_POST['fechatransaccion'];
+   $fechacrea = date('Y-m-d H:i:s');
+   $usuariocrea = $_SESSION['usua_sahilices'];
+   $observaciones = $_POST['observaciones'];
+
+   $numero = count($_POST);
+	$tags = array_keys($_POST);// obtiene los nombres de las varibles
+	$valores = array_values($_POST);// obtiene los valores de las varibles
+
+   $res = $serviciosReferencias->insertarTransferencias($nrotransferencia,$monto,$fechatransaccion,$fechacrea,$usuariocrea,$observaciones);
+
+   if ((integer)$res > 0) {
+      for($i=0;$i<$numero;$i++){
+         if (strpos($tags[$i],"recibo") !== false) {
+            $idRecibo = str_replace("recibo","",$tags[$i]);
+
+            $completo = '1';
+
+            $resRecibo = $serviciosReferencias->insertarTransferenciarecibos($res,$idRecibo,0,$completo);
+
+            // modifico el estado del recibo a pagado
+            $resMod = $serviciosReferencias->modificarPeriodicidadventasdetalleEstado($idRecibo,5,$usuariocrea,$fechacrea);
+
+         }
+      }
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+
+function modificarTransferencias($serviciosReferencias) {
+$id = $_POST['id'];
+$nrotransferencia = $_POST['nrotransferencia'];
+$monto = $_POST['monto'];
+$fechatransaccion = $_POST['fechatransaccion'];
+$fechacrea = $_POST['fechacrea'];
+$usuariocrea = $_POST['usuariocrea'];
+$observaciones = $_POST['observaciones'];
+$res = $serviciosReferencias->modificarTransferencias($id,$nrotransferencia,$monto,$fechatransaccion,$fechacrea,$usuariocrea,$observaciones);
+if ($res == true) {
+echo '';
+} else {
+echo 'Hubo un error al modificar datos';
+}
+}
+function eliminarTransferencias($serviciosReferencias) {
+$id = $_POST['id'];
+$res = $serviciosReferencias->eliminarTransferencias($id);
+if ($res == true) {
+echo '';
+} else {
+echo 'Hubo un error al eliminar datos';
+}
+}
 
 function trazabilidadCotizacion($serviciosReferencias) {
    session_start();
@@ -5922,11 +6157,16 @@ function cuestionarioPersonas($serviciosReferencias) {
       $resV['error'] = false;
       $resV['sigue'] = true;
 
+      $lblPregunta = '';
       foreach ($resAux as $valor) {
+         $lblPregunta = $valor['pregunta'];
+         if ($valor['pregunta'] == 'refestadocivil') {
+            $lblPregunta = 'Estado Civil';
+         }
          $resV['sigue'] = false;
          $cad .= $valor['divRow'];
          $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
-            <h4>'.$valor['pregunta'].'</h4>
+            <h4>'.$lblPregunta.'</h4>
          </div>';
          $cad .= $valor['respuestas'];
          $cad .= '</div>';
@@ -9651,6 +9891,37 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+      case 'dbcontactosperfiles':
+         $resultado = $serviciosReferencias->traerContactosperfilesPorId( $id);
+
+         $modificar = "modificarContactosperfiles";
+         $idTabla = "idcontactoperfil";
+
+
+         $lblCambio	 	= array('refroles','refusuarios','nombrecompleto');
+         $lblreemplazo	= array('Perfil','Usuario','Nombre Completo');
+
+
+         $resVar1 = $serviciosReferencias->traerRolesPorId(mysql_result($resultado,0,'refroles'));
+         if (mysql_num_rows($resVar1)>0) {
+            $cadVar1 = $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
+         } else {
+            $cadVar1 = '<option value="0">-- Seleccionar --</option>';
+         }
+
+
+
+         $resVar2 = $serviciosReferencias->traerUsuariosPorId(mysql_result($resultado,0,'refusuarios'));
+         if (mysql_num_rows($resVar2)>0) {
+            $cadVar2 = $serviciosFunciones->devolverSelectBox($resVar2,array(5),'');
+         } else {
+            $cadVar2 = '<option value="0">-- Seleccionar --</option>';
+         }
+
+
+         $refdescripcion = array(0=>$cadVar1,1=>$cadVar2);
+         $refCampo 	=  array('refroles','refusuarios');
+      break;
       case 'dbventacontactos':
          $resultado = $serviciosReferencias->traerVentacontactosPorId( $id);
 

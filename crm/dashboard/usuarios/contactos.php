@@ -42,15 +42,15 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Perfil Web";
+$singular = "Contacto";
 
-$plural = "Perfil Web";
+$plural = "Contactos";
 
-$eliminar = "eliminarPerfilasesores";
+$eliminar = "eliminarContactosperfiles";
 
-$insertar = "insertarPerfilasesores";
+$insertar = "insertarContactosperfiles";
 
-$modificar = "modificarPerfilasesores";
+$modificar = "modificarContactosperfiles";
 
 //////////////////////// Fin opciones ////////////////////////////////////////////////
 
@@ -58,34 +58,27 @@ $id = $_GET['id'];
 
 $resultado = $serviciosReferencias->traerUsuariosPorId($id);
 
-$resInformacion = $serviciosReferencias->traerPerfilasesoresPorTablaReferencia(9, 'dbusuarios', 'idusuario', $id);
-
-if (mysql_num_rows($resInformacion) <= 0) {
-	$idInformacion = $serviciosReferencias->insertarPerfilasesores(9,$id,'','','','','','1');
-	$resInformacion = $serviciosReferencias->traerPerfilasesoresPorId($idInformacion);
-} else {
-	$idInformacion = mysql_result($resInformacion,0,'idperfilasesor');
-}
 
 //$resasdasd = $serviciosReferencias->migrarPostulante($id,'marcosborrar');
 //die(var_dump($resasdasd));
 
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
-$tabla 			= "dbperfilasesores";
+$tabla 			= "dbcontactosperfiles";
 
-$lblCambio	 	= array('urllinkedin','urlfacebook','urlinstagram');
-$lblreemplazo	= array('URL Linkedin','URL Facebook','URL Instagram');
+$lblCambio	 	= array('refroles','refusuarios','nombrecompleto');
+$lblreemplazo	= array('Perfil','Usuario','Nombre Completo');
 
-if (mysql_result($resInformacion,0,'visible') == '1') {
-	$cadRef5 = "<option value='1' selected>Si</option><option value='0'>No</option>";
-} else {
-	$cadRef5 = "<option value='1'>Si</option><option value='0' selected>No</option>";
-}
+$resVar1 = $serviciosReferencias->traerRolesPorId(mysql_result($resultado,0,'refroles'));
+$cadVar1 = '<option value="0">-- Seleccionar --</option>';
+$cadVar1 .= $serviciosFunciones->devolverSelectBox($resVar1,array(1),'');
 
-$refdescripcion = array(0=>$cadRef5);
-$refCampo 	=  array('visible');
+$cadVar2 = '<option value="0">-- Seleccionar --</option>';
+$cadVar2 .= '<option value="'.mysql_result($resultado,0,0).'">'.mysql_result($resultado,0,'nombrecompleto').'-</option>';
 
-$frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($idInformacion,'idperfilasesor',$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+$refdescripcion = array(0=>$cadVar1,1=>$cadVar2);
+$refCampo 	=  array('refroles','refusuarios');
+
+$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
@@ -204,11 +197,13 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($idInformacion,'
 		<div class="row clearfix">
 
 			<div class="row">
+
+
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
-							<h2 style="color:white;">
-								<?php echo strtoupper($plural).": ".mysql_result($resultado,0,'nombrecompleto'); ?>
+							<h2>
+								<?php echo strtoupper($plural); ?>
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -222,134 +217,105 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($idInformacion,'
 							</ul>
 						</div>
 						<div class="body table-responsive">
-							<form class="form" id="sign_in" role="form">
+							<form class="form" id="formCountry">
 
-								<div class="row frmAjaxModificar">
-									<?php echo $frmUnidadNegocios; ?>
-								</div>
-								<div class="button-demo">
-									<button type="submit" class="btn bg-light-blue waves-effect modificarDomicilio">
-										<i class="material-icons">save</i>
-										<span>GUARDAR</span>
-									</button>
-								</div>
-
-							</form>
-
-							<div class="row clearfix subirImagen">
 								<div class="row">
-									<div class="col-xs-6 col-md-6 col-lg-6">
-										<h4>IMAGEN DE PERFIL</h4>
-										<a href="javascript:void(0);" class="thumbnail timagen1">
-											<img class="img-responsive">
-										</a>
-										<div id="example1"></div>
+									<div class="col-lg-12 col-md-12">
+										<div class="button-demo">
+											<button type="button" class="btn bg-light-green waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
+												<i class="material-icons">add</i>
+												<span>NUEVO</span>
+											</button>
+											<button type="button" class="btn btn-info waves-effect btnVolverFiltro" data-ir="index" data-referencia="0"><i class="material-icons">reply</i><span>VOLVER</span></button>
 
-
-
-									</div>
-									<div class="col-xs-6 col-md-6 col-lg-6">
-										<h4>FIRMA</h4>
-										<a href="javascript:void(0);" class="thumbnail timagen2">
-											<img class="img-responsive2">
-										</a>
-										<div id="example2"></div>
-
+										</div>
 									</div>
 								</div>
 
-							</div> <!-- fin del container veritas -->
-						</div>
-					</div>
-				</div>
-			</div>
+								<div class="row" style="padding: 5px 20px;">
 
-			<div class="row">
-
-				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-
-					<div class="card">
-						<div class="header">
-							<h2>
-								CARGA/MODIFIQUE LA IMAGEN DE PERFIL
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-
-								</li>
-							</ul>
-						</div>
-						<div class="body">
-
-							<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
-							<form action="subirinformacion.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
-								<div class="dz-message">
-									<div class="drag-icon-cph">
-										<i class="material-icons">touch_app</i>
-									</div>
-									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
-
-								</div>
-								<div class="fallback">
-
-									<input name="file" type="file" id="archivos" />
-									<input type="hidden" id="idinformacion" name="idinformacion" value="<?php echo $idInformacion; ?>" />
-
-
+									<table id="example" class="display table " style="width:100%">
+										<thead>
+											<tr>
+												<th>Perfil</th>
+												<th>Usuario</th>
+												<th>Nombre Completo</th>
+												<th>Email</th>
+												<th>Telefono</th>
+												<th>Acciones</th>
+											</tr>
+										</thead>
+										<tfoot>
+											<tr>
+												<th>Perfil</th>
+												<th>Usuario</th>
+												<th>Nombre Completo</th>
+												<th>Email</th>
+												<th>Telefono</th>
+												<th>Acciones</th>
+											</tr>
+										</tfoot>
+									</table>
 								</div>
 							</form>
-							<?php } ?>
+							</div>
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-					<div class="card">
-						<div class="header">
-							<h2>
-								CARGA/MODIFIQUE LA FIRMA
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-
-								</li>
-							</ul>
-						</div>
-						<div class="body">
 
 
-							<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
-							<form action="subirinformacion.php" id="frmFileUpload2" class="dropzone" method="post" enctype="multipart/form-data">
-								<div class="dz-message">
-									<div class="drag-icon-cph">
-										<i class="material-icons">touch_app</i>
-									</div>
-									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
-
-								</div>
-								<div class="fallback">
-
-									<input name="file" type="file" id="archivos2" />
-									<input type="hidden" id="idinformacion" name="idinformacion" value="<?php echo $idInformacion; ?>" />
-
-
-
-								</div>
-							</form>
-							<?php } ?>
-						</div>
-					</div>
-				</div>
-			</div>
 		</div>
 	</div>
 </section>
 
+
+
+<!-- NUEVO -->
+	<form class="formulario frmNuevo" role="form" id="sign_in">
+	   <div class="modal fade" id="lgmNuevo" tabindex="-1" role="dialog">
+	       <div class="modal-dialog modal-lg" role="document">
+	           <div class="modal-content">
+	               <div class="modal-header">
+	                   <h4 class="modal-title" id="largeModalLabel">CREAR <?php echo strtoupper($singular); ?></h4>
+	               </div>
+	               <div class="modal-body">
+							<div class="row">
+								<?php echo $frmUnidadNegocios; ?>
+							</div>
+
+	               </div>
+	               <div class="modal-footer">
+	                   <button type="submit" class="btn btn-primary waves-effect nuevo">GUARDAR</button>
+	                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+	               </div>
+	           </div>
+	       </div>
+	   </div>
+		<input type="hidden" id="accion" name="accion" value="<?php echo $insertar; ?>"/>
+	</form>
+
+	<!-- MODIFICAR -->
+		<form class="formulario frmModificar" role="form" id="sign_in">
+		   <div class="modal fade" id="lgmModificar" tabindex="-1" role="dialog">
+		       <div class="modal-dialog modal-lg" role="document">
+		           <div class="modal-content">
+		               <div class="modal-header">
+		                   <h4 class="modal-title" id="largeModalLabel">MODIFICAR <?php echo strtoupper($singular); ?></h4>
+		               </div>
+		               <div class="modal-body">
+								<div class="row frmAjaxModificar">
+
+								</div>
+		               </div>
+		               <div class="modal-footer">
+		                   <button type="submit" class="btn btn-warning waves-effect modificar">MODIFICAR</button>
+		                   <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+		               </div>
+		           </div>
+		       </div>
+		   </div>
+			<input type="hidden" id="accion" name="accion" value="<?php echo $modificar; ?>"/>
+		</form>
 
 
 	<!-- ELIMINAR -->
@@ -374,7 +340,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($idInformacion,'
 			<input type="hidden" id="accion" name="accion" value="<?php echo $eliminar; ?>"/>
 			<input type="hidden" name="ideliminar" id="ideliminar" value="0">
 		</form>
-
 
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
@@ -404,342 +369,257 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaModificar($idInformacion,'
 <script>
 	$(document).ready(function(){
 
-		function traerImagen(contenedorpdf, contenedor, imagen) {
-			$.ajax({
-				data:  {idperfilasesor: <?php echo $idInformacion; ?>,
-						imagen: imagen,
-						accion: 'traerPerfilasesoresPorIdImagenCompleto'},
-				url:   '../../ajax/ajax.php',
-				type:  'post',
-				beforeSend: function () {
 
-				},
-				success:  function (response) {
-					var cadena = response.datos.type.toLowerCase();
-
-					if (response.datos.type != '') {
-						if (cadena.indexOf("pdf") > -1) {
-							PDFObject.embed(response.datos.imagen, "#"+contenedorpdf);
-							$('#'+contenedorpdf).show();
-							$("."+contenedor).hide();
-
-						} else {
-							$("." + contenedor + " img").attr("src",response.datos.imagen);
-							$("."+contenedor).show();
-							$('#'+contenedorpdf).hide();
+				var table = $('#example').DataTable({
+					"bProcessing": true,
+					"bServerSide": true,
+					"sAjaxSource": "../../json/jstablasajax.php?tabla=contactosroles&refrol=<?php echo mysql_result($resultado,0,'refroles'); ?>&idusuario=<?php echo $id; ?>",
+					"language": {
+						"emptyTable":     "No hay datos cargados",
+						"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+						"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+						"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+						"infoPostFix":    "",
+						"thousands":      ",",
+						"lengthMenu":     "Mostrar _MENU_ filas",
+						"loadingRecords": "Cargando...",
+						"processing":     "Procesando...",
+						"search":         "Buscar:",
+						"zeroRecords":    "No se encontraron resultados",
+						"paginate": {
+							"first":      "Primero",
+							"last":       "Ultimo",
+							"next":       "Siguiente",
+							"previous":   "Anterior"
+						},
+						"aria": {
+							"sortAscending":  ": activate to sort column ascending",
+							"sortDescending": ": activate to sort column descending"
 						}
 					}
-
-					if (response.error) {
-						$('.btnContinuar').hide();
-					} else {
-						$('.btnContinuar').show();
-					}
-
-
-
-				}
-			});
-		}
-
-		traerImagen('example1','timagen1',1);
-		traerImagen('example2','timagen2',2);
-
-		<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) { ?>
-		Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
-
-		Dropzone.options.frmFileUpload = {
-			maxFilesize: 10,
-			acceptedFiles: ".jpg,.jpeg",
-			accept: function(file, done) {
-				done();
-			},
-			init: function() {
-				this.on("sending", function(file, xhr, formData){
-						formData.append("idinformacion", '<?php echo $idInformacion; ?>');
-						formData.append("iddocumentacion", '88');
-				});
-				this.on('success', function( file, resp ){
-					traerImagen('example1','timagen1',1);
-					$('.lblPlanilla').hide();
-					swal("Correcto!", resp.replace("1", ""), "success");
-
 				});
 
-				this.on('error', function( file, resp ){
-					swal("Error!", resp.replace("1", ""), "warning");
+				$("#sign_in").submit(function(e){
+					e.preventDefault();
 				});
-			}
-		};
 
 
-		Dropzone.options.frmFileUpload2 = {
-				maxFilesize: 10,
-				acceptedFiles: ".jpg,.jpeg",
-				accept: function(file, done) {
-					done();
-				},
-				init: function() {
-					this.on("sending", function(file, xhr, formData){
-						formData.append("idinformacion", '<?php echo $idInformacion; ?>');
-						formData.append("iddocumentacion", '89');
-		         });
-					this.on('success', function( file, resp ){
-						traerImagen('example2','timagen2',2);
-						$('.lblComplemento').hide();
-						swal("Correcto!", resp.replace("1", ""), "success");
+				function frmAjaxModificar(id) {
+					$.ajax({
+						url: '../../ajax/ajax.php',
+						type: 'POST',
+						// Form data
+						//datos del formulario
+						data: {accion: 'frmAjaxModificar',tabla: '<?php echo $tabla; ?>', id: id},
+						//mientras enviamos el archivo
+						beforeSend: function(){
+							$('.frmAjaxModificar').html('');
+						},
+						//una vez finalizado correctamente
+						success: function(data){
 
-					});
+							if (data != '') {
+								$('.frmAjaxModificar').html(data);
+							} else {
+								swal("Error!", data, "warning");
 
-					this.on('error', function( file, resp ){
-						swal("Error!", resp.replace("1", ""), "warning");
-					});
-				}
-			};
-
-
-
-		var myDropzone = new Dropzone("#archivos", {
-			params: {
-				idinformacion: <?php echo $idInformacion; ?>,
-				iddocumentacion: 88
-			},
-			url: 'subirinformacion.php'
-		});
-
-		var myDropzone2 = new Dropzone("#archivos2", {
-				params: {
-					idinformacion: <?php echo $idInformacion; ?>,
-					iddocumentacion: 89
-		      },
-				url: 'subirinformacion.php'
-			});
-		<?php } ?>
-
-		$('.frmContreftabla').hide();
-		$('.frmContidreferencia').hide();
-
-		$("#sign_in").submit(function(e){
-			e.preventDefault();
-		});
-
-
-		function frmAjaxModificar(id) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {accion: 'frmAjaxModificar',tabla: '<?php echo $tabla; ?>', id: id},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-					$('.frmAjaxModificar').html('');
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data != '') {
-						$('.frmAjaxModificar').html(data);
-
-					} else {
-						swal("Error!", data, "warning");
-
-						$("#load").html('');
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
-
-		}
-
-
-		function frmAjaxEliminar(id) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {accion: '<?php echo $eliminar; ?>', id: id},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data == '') {
-						swal({
-								title: "Respuesta",
-								text: "Registro Eliminado con exito!!",
-								type: "success",
-								timer: 1500,
-								showConfirmButton: false
-						});
-						$('#lgmEliminar').modal('toggle');
-						table.ajax.reload();
-					} else {
-						swal({
-								title: "Respuesta",
-								text: data,
-								type: "error",
-								timer: 2000,
-								showConfirmButton: false
-						});
-
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					swal({
-							title: "Respuesta",
-							text: 'Actualice la pagina',
-							type: "error",
-							timer: 2000,
-							showConfirmButton: false
+								$("#load").html('');
+							}
+						},
+						//si ha ocurrido un error
+						error: function(){
+							$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+							$("#load").html('');
+						}
 					});
 
 				}
-			});
-
-		}
 
 
+				function frmAjaxEliminar(id) {
+					$.ajax({
+						url: '../../ajax/ajax.php',
+						type: 'POST',
+						// Form data
+						//datos del formulario
+						data: {accion: '<?php echo $eliminar; ?>', id: id},
+						//mientras enviamos el archivo
+						beforeSend: function(){
 
+						},
+						//una vez finalizado correctamente
+						success: function(data){
 
-		$("#example").on("click",'.btnEliminar', function(){
-			idTable =  $(this).attr("id");
-			$('#ideliminar').val(idTable);
-			$('#lgmEliminar').modal();
-		});//fin del boton eliminar
+							if (data == '') {
+								swal({
+										title: "Respuesta",
+										text: "Registro Eliminado con exito!!",
+										type: "success",
+										timer: 1500,
+										showConfirmButton: false
+								});
+								$('#lgmEliminar').modal('toggle');
+								table.ajax.reload();
+							} else {
+								swal({
+										title: "Respuesta",
+										text: data,
+										type: "error",
+										timer: 2000,
+										showConfirmButton: false
+								});
 
-		$('.eliminar').click(function() {
-			frmAjaxEliminar($('#ideliminar').val());
-		});
-
-		$("#example").on("click",'.btnModificar', function(){
-			idTable =  $(this).attr("id");
-			frmAjaxModificar(idTable);
-			$('#lgmModificar').modal();
-		});//fin del boton modificar
-
-
-		$('.nuevo').click(function(){
-
-			//información del formulario
-			var formData = new FormData($(".formulario")[0]);
-			var message = "";
-			//hacemos la petición ajax
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: formData,
-				//necesario para subir archivos via ajax
-				cache: false,
-				contentType: false,
-				processData: false,
-				//mientras enviamos el archivo
-				beforeSend: function(){
-
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data == '') {
-						swal({
-								title: "Respuesta",
-								text: "Registro Creado con exito!!",
-								type: "success",
-								timer: 1500,
-								showConfirmButton: false
-						});
-
-						$('#lgmNuevo').modal('hide');
-
-						table.ajax.reload();
-					} else {
-						swal({
-								title: "Respuesta",
-								text: data,
-								type: "error",
-								timer: 2500,
-								showConfirmButton: false
-						});
-
-
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
-		});
-
-
-		$('.form').submit(function(e){
-
-			e.preventDefault();
-			if ($('.form')[0].checkValidity()) {
-
-
-				//información del formulario
-				var formData = new FormData($(".form")[0]);
-				var message = "";
-				//hacemos la petición ajax
-				$.ajax({
-					url: '../../ajax/ajax.php',
-					type: 'POST',
-					// Form data
-					//datos del formulario
-					data: formData,
-					//necesario para subir archivos via ajax
-					cache: false,
-					contentType: false,
-					processData: false,
-					//mientras enviamos el archivo
-					beforeSend: function(){
-
-					},
-					//una vez finalizado correctamente
-					success: function(data){
-
-						if (data == '') {
+							}
+						},
+						//si ha ocurrido un error
+						error: function(){
 							swal({
 									title: "Respuesta",
-									text: "Registro Modificado con exito!!",
-									type: "success",
-									timer: 1500,
-									showConfirmButton: false
-							});
-
-
-						} else {
-							swal({
-									title: "Respuesta",
-									text: data,
+									text: 'Actualice la pagina',
 									type: "error",
-									timer: 2500,
+									timer: 2000,
 									showConfirmButton: false
 							});
 
-
 						}
-					},
-					//si ha ocurrido un error
-					error: function(){
-						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-						$("#load").html('');
+					});
+
+				}
+
+				$("#example").on("click",'.btnEliminar', function(){
+					idTable =  $(this).attr("id");
+					$('#ideliminar').val(idTable);
+					$('#lgmEliminar').modal();
+				});//fin del boton eliminar
+
+				$('.eliminar').click(function() {
+					frmAjaxEliminar($('#ideliminar').val());
+				});
+
+				$("#example").on("click",'.btnModificar', function(){
+					idTable =  $(this).attr("id");
+					frmAjaxModificar(idTable);
+					$('#lgmModificar').modal();
+				});//fin del boton modificar
+
+
+				$('.frmNuevo').submit(function(e){
+
+					e.preventDefault();
+					if ($('#sign_in')[0].checkValidity()) {
+						//información del formulario
+						var formData = new FormData($(".formulario")[0]);
+						var message = "";
+						//hacemos la petición ajax
+						$.ajax({
+							url: '../../ajax/ajax.php',
+							type: 'POST',
+							// Form data
+							//datos del formulario
+							data: formData,
+							//necesario para subir archivos via ajax
+							cache: false,
+							contentType: false,
+							processData: false,
+							//mientras enviamos el archivo
+							beforeSend: function(){
+
+							},
+							//una vez finalizado correctamente
+							success: function(data){
+
+								if (data == '') {
+									swal({
+											title: "Respuesta",
+											text: "Registro Creado con exito!!",
+											type: "success",
+											timer: 1500,
+											showConfirmButton: false
+									});
+
+									$('#lgmNuevo').modal('hide');
+									$('#unidadnegocio').val('');
+									table.ajax.reload();
+								} else {
+									swal({
+											title: "Respuesta",
+											text: data,
+											type: "error",
+											timer: 2500,
+											showConfirmButton: false
+									});
+
+
+								}
+							},
+							//si ha ocurrido un error
+							error: function(){
+								$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+								$("#load").html('');
+							}
+						});
 					}
 				});
-			}
-		});
+
+
+				$('.frmModificar').submit(function(e){
+
+					e.preventDefault();
+					if ($('.frmModificar')[0].checkValidity()) {
+
+						//información del formulario
+						var formData = new FormData($(".formulario")[1]);
+						var message = "";
+						//hacemos la petición ajax
+						$.ajax({
+							url: '../../ajax/ajax.php',
+							type: 'POST',
+							// Form data
+							//datos del formulario
+							data: formData,
+							//necesario para subir archivos via ajax
+							cache: false,
+							contentType: false,
+							processData: false,
+							//mientras enviamos el archivo
+							beforeSend: function(){
+
+							},
+							//una vez finalizado correctamente
+							success: function(data){
+
+								if (data == '') {
+									swal({
+											title: "Respuesta",
+											text: "Registro Modificado con exito!!",
+											type: "success",
+											timer: 1500,
+											showConfirmButton: false
+									});
+
+									$('#lgmModificar').modal('hide');
+									table.ajax.reload();
+								} else {
+									swal({
+											title: "Respuesta",
+											text: data,
+											type: "error",
+											timer: 2500,
+											showConfirmButton: false
+									});
+
+
+								}
+							},
+							//si ha ocurrido un error
+							error: function(){
+								$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+								$("#load").html('');
+							}
+						});
+					}
+				});
+
 	});
 </script>
 

@@ -52,29 +52,34 @@ if ((isset($_GET['curp']))) {
 
             $arFirmaFiel = json_decode($result, true);
 
-            $apellidoPaterno  = $arFirmaFiel['apellidoPaterno'];
-            $apellidoMaterno  = $arFirmaFiel['apellidoMaterno'];
-            $nombres          = $arFirmaFiel['nombres'];
-            $nombreCompleto   = $arFirmaFiel['nombreCompleto'];
-            $sexo             = $arFirmaFiel['sexo'];
-            $nacionalidad     = $arFirmaFiel['nacionalidad'];
-            $fechaNacimiento  = $arFirmaFiel['fechaNacimiento'];
-            $cveEntidadNac    = $arFirmaFiel['cveEntidadNac'];
+            if ($arFirmaFiel['apellidoPaterno'] == 'null') {
+               $resV['error'] = true;
+               $resV['mensaje'] = 'CURP no encontrado';
+            } else {
+               $apellidoPaterno  = $arFirmaFiel['apellidoPaterno'];
+               $apellidoMaterno  = $arFirmaFiel['apellidoMaterno'];
+               $nombres          = $arFirmaFiel['nombres'];
+               $nombreCompleto   = $arFirmaFiel['nombreCompleto'];
+               $sexo             = $arFirmaFiel['sexo'];
+               $nacionalidad     = $arFirmaFiel['nacionalidad'];
+               $fechaNacimiento  = $arFirmaFiel['fechaNacimiento'];
+               $cveEntidadNac    = $arFirmaFiel['cveEntidadNac'];
 
-            array_push($arDatos,
-               array(
-                  'apellidoPaterno'=>$apellidoPaterno,
-                  'apellidoMaterno'=>$apellidoMaterno,
-                  'nombres'=>$nombres,
-                  'nombreCompleto'=>$nombreCompleto,
-                  'sexo'=>$sexo,
-                  'nacionalidad'=>$nacionalidad,
-                  'fechaNacimiento'=> ($fechaNacimiento == '' ? '0000-00-00' : date('Y-m-d', strtotime(str_replace('/', '-', $fechaNacimiento)))),
-                  'cveEntidadNac'=>$cveEntidadNac,
-               )
-            );
+               array_push($arDatos,
+                  array(
+                     'apellidoPaterno'=>$apellidoPaterno,
+                     'apellidoMaterno'=>$apellidoMaterno,
+                     'nombres'=>$nombres,
+                     'nombreCompleto'=>$nombreCompleto,
+                     'sexo'=>$sexo,
+                     'nacionalidad'=>$nacionalidad,
+                     'fechaNacimiento'=> ($fechaNacimiento == '' ? '0000-00-00' : date('Y-m-d', strtotime(str_replace('/', '-', $fechaNacimiento)))),
+                     'cveEntidadNac'=>$cveEntidadNac,
+                  )
+               );
 
-            $resV['datos'] = $arDatos;
+               $resV['datos'] = $arDatos;
+            }
 
          }
       } else {

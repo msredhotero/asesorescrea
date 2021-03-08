@@ -1908,6 +1908,9 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 					$("#wizard_with_validation .tsrfc").attr('maxlength','13');
 					$("#wizard_with_validation .tsrfc").attr('minlength','13');
 
+					$("#wizard_with_validation .tscurp").attr("minlength", "18");
+					$("#wizard_with_validation .tscurp").attr("maxlength", "18");
+
 
 					$("#wizard_with_validation .tscodigopostal").easyAutocomplete(options);
 
@@ -1984,6 +1987,9 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 						$('.contCuestionarioPersonas').show();
 
 						$('.contCuestionarioPersonas').html(data.datos.cuestionario);
+
+						$("#wizard_with_validation .tscurp").attr("minlength", "18");
+						$("#wizard_with_validation .tscurp").attr("maxlength", "18");
 
 						$('#wizard_with_validation .tsfechanacimiento').pickadate({
 							format: 'yyyy-mm-dd',
@@ -3689,6 +3695,61 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 		}
 
 		$('.contRangers').hide();
+
+
+
+
+
+		$("#wizard_with_validation").on("keyup",'.tscurp', function(){
+			//alert('asd');
+			if ($('#wizard_with_validation .tscurp').val().length == 18 ) {
+				traerCURP($('#wizard_with_validation .tscurp').val());
+			}
+		});
+
+		function traerCURP(curp) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'buscarCURP',
+					curp: curp
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					if (data.error == false) {
+
+						$('#wizard_with_validation .tsfechanacimiento').val(data.datos[0].fechaNacimiento);
+
+					} else {
+						swal({
+							title: "Respuesta",
+							text: data.mensaje,
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+					});
+				}
+			});
+		}
 
 
 	});

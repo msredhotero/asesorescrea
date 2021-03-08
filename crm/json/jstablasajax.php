@@ -69,6 +69,42 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 }
 
 switch ($tabla) {
+	case 'cobrostransferencias':
+		$idasesor = $_GET['idasesor'];
+
+		$datos = $serviciosReferencias->traerCobrosTransferenciasPorAsesorAjax($length, $start, $busqueda,$colSort,$colSortDir,$idasesor);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array('btnCargar');
+		$class = array('bg-green');
+		$icon = array('forward');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 6;
+	break;
+	case 'contactosroles':
+
+		$refrol = $_GET['refrol'];
+		$idusuario = $_GET['idusuario'];
+
+		$datos = $serviciosReferencias->traerContactosUsuarioAjax($length, $start, $busqueda,$colSort,$colSortDir,$refrol,$idusuario);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array('btnModificar','btnEliminar');
+		$class = array('bg-amber','bg-red');
+		$icon = array('create','delete');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 5;
+	break;
 	case 'listadopolizas':
 
 		$min = $_GET['start'];
@@ -2189,9 +2225,9 @@ switch ($tabla) {
 		$resAjax = $datos[0];
 		$res = $datos[1];
 
-		$label = array('btnModificar','btnEliminar','btnInformacion');
-		$class = array('bg-amber','bg-red','bg-teal');
-		$icon = array('create','delete','add_a_photo');
+		$label = array('btnModificar','btnEliminar','btnInformacion','btnContactos');
+		$class = array('bg-amber','bg-red','bg-teal','bg-blue');
+		$icon = array('create','delete','add_a_photo','mail');
 		$indiceID = 0;
 		$empieza = 1;
 		$termina = 6;

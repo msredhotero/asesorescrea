@@ -494,7 +494,12 @@ $('.btnTrazabilidad').click(function () {
 $('.btnVolverFiltro').click(function () {
    var referencia = $('.btnVolverFiltro').data('referencia');
    var ir = $('.btnVolverFiltro').data('ir');
-   url = ir + ".php?id=" + referencia;
+   if (referencia == 0) {
+      url = ir + ".php";
+   } else {
+      url = ir + ".php?id=" + referencia;
+   }
+
    $(location).attr('href',url);
 });
 
