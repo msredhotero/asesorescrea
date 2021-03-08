@@ -215,13 +215,13 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 
 										<?php
 										//buscar el suuario de mas seguros
-										//if ($_SESSION['usuaid_sahilices'] == 25) {
+										if ($_SESSION['usuaid_sahilices'] == 154) {
 										?>
 										<button type="button" class="btn bg-blue-grey waves-effect btnTransferencias btnVolverFiltro" data-ir="transferencia" data-referencia="0">
 											<i class="material-icons">compare_arrows</i>
 											<span>TRANSFERENCIAS</span>
 										</button>
-										<?php //} ?>
+										<?php } ?>
 
 
 										</div>

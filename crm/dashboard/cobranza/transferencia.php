@@ -64,7 +64,8 @@ $refCampo 	=  array();
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
-$idasesor = 25;
+//asesor rosales david
+$idasesor = 31;
 
 ?>
 
