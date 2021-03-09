@@ -98,6 +98,9 @@
 
 		if (move_uploaded_file($templocation, $imagen_subida)) {
 			$pos = strpos( strtolower($type), 'pdf');
+			$posOf = strpos( strtolower($type), 'officedocument');
+			$posShe = strpos( strtolower($type), 'sheet');
+			$posEx = strpos( strtolower($type), 'excel');
 
 			$resEliminar = $serviciosReferencias->eliminarDocumentacioncotizacionesPorCotizacionDocumentacion($id,$iddocumentacion);
 
@@ -119,9 +122,9 @@
 			$estilo = 'bg-light-blue';
 			$fecha = date('Y-m-d H:i:s');
 			if (mysql_result($resDocumentacion,0,'reftipodocumentaciones') == 3) {
-				$url = "cotizaciones/subirdocumentacioni.php?id=".$id."&documentacion=".$iddocumentacion;
+				$url = "entregadas/subirdocumentacioni.php?id=".$id."&documentacion=".$iddocumentacion;
 			} else {
-				$url = "cotizaciones/subirdocumentacionip.php?id=".$id."&documentacion=".$iddocumentacion;
+				$url = "entregadas/subirdocumentacionip.php?id=".$id."&documentacion=".$iddocumentacion;
 			}
 
 
@@ -131,7 +134,7 @@
 			//trazabilidad 30 - Entrega de Documentos para Emision
 	      $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id,$fechamodi,30,$_SESSION['usua_sahilices'],0,0,0,mysql_result($resDocumentacion,0,'documentacion'),'');
 
-			if ($pos === false) {
+			if (($pos === false) && ($posEx === false) && ($posShe === false) && ($posOf === false)) {
 				$image = new \Gumlet\ImageResize($imagen_subida);
 				$image->scale(50);
 				$image->save($imagen_subida);

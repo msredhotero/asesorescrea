@@ -98,6 +98,9 @@
 
 		if (move_uploaded_file($templocation, $imagen_subida)) {
 			$pos = strpos( strtolower($type), 'pdf');
+			$posOf = strpos( strtolower($type), 'officedocument');
+			$posShe = strpos( strtolower($type), 'sheet');
+			$posEx = strpos( strtolower($type), 'excel');
 
 			$resEliminar = $serviciosReferencias->eliminarDocumentacioncotizacionesPorCotizacionDocumentacion($id,$iddocumentacion);
 
@@ -131,11 +134,13 @@
 			//trazabilidad 4
 			//$resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id,$fecha,4,$_SESSION['usua_sahilices'],0,0,0,mysql_result($resDocumentacion,0,'documentacion'),'');
 
-			if ($pos === false) {
+
+			if (($pos === false) && ($posEx === false) && ($posShe === false) && ($posOf === false)) {
 				$image = new \Gumlet\ImageResize($imagen_subida);
 				$image->scale(50);
 				$image->save($imagen_subida);
 			}
+
 
 			// update a la tabla dbplanillasarbitros
 			//$resEstado = $serviciosReferencias->modificarEstadoPostulante($idpostulante,3);
