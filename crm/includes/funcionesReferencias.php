@@ -12312,7 +12312,7 @@ return $res;
       if ((integer)$res > 0) {
 
          //trazabilidad 1
-         $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$res,$fechacrea,1,$usuariocrea,0,0,0,'Se genero una cotización nueva a partir de un ajuste','');
+         $resTZ = $this->insertarTrazabilidad(12,$res,$fechacrea,1,$usuariocrea,0,0,0,'Se genero una cotización nueva a partir de un ajuste','');
 
          if (!file_exists('../archivos/cotizaciones/'.$res)) {
    			mkdir('../archivos/cotizaciones/'.$res, 0777);
