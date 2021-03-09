@@ -254,7 +254,7 @@ return $res;
             $res = $this->query($sql,1);
 
             if (((integer)$res > 0) && ($reftabla==12) && (mysql_result($resEvento,0,'enviaemailagestion') == '1')) {
-               $resMensaje = $this->enviarEmailModificacionCotizacion($idreferencia,$dato,$url);
+               $resMensaje = $this->enviarEmailModificacionCotizacion($idreferencia,mysql_result($resEvento,0,'nombre').' - '.$dato,$url);
             }
          } else {
             $res = 0;
@@ -557,7 +557,7 @@ return $res;
          $cuerpo .= '</body>';
 
 
-         $exito = $this->enviarEmail('msredhotero@gmail.com',$asunto,$cuerpo);
+         $exito = $this->enviarEmail(substr($cadDestino,0,-2),$asunto,$cuerpo);
 
          $gestor = fopen('logemails'.date('Y_m_d_H_i_s').'.txt', 'w');
          fwrite($gestor, $cadDestino.' '.date('Y-m-d H:i:s'));
