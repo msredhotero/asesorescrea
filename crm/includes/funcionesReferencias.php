@@ -564,7 +564,7 @@ return $res;
          $cuerpo .= '</body>';
 
 
-         $exito = $this->enviarEmail(substr($cadDestino,0,-2),$asunto,$cuerpo);
+         $exito = $this->enviarEmail(substr($cadDestino,0,-2), utf8_decode( $asunto),utf8_decode($cuerpo));
 
          $gestor = fopen('logemails'.date('Y_m_d_H_i_s').'.txt', 'w');
          fwrite($gestor, $cadDestino.' '.date('Y-m-d H:i:s'));
