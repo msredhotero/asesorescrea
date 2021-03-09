@@ -601,6 +601,8 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11
 				type:  'post',
 				beforeSend: function () {
 					$("." + contenedor + " img").attr("src",'');
+					$('#contExcel').val('');
+					$('#contExcel').hide();
 				},
 				success:  function (response) {
 					var cadena = response.datos.type.toLowerCase();
@@ -612,9 +614,18 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11
 							$("."+contenedor).hide();
 
 						} else {
-							$("." + contenedor + " img").attr("src",response.datos.imagen);
-							$("."+contenedor).show();
-							$('#'+contenedorpdf).hide();
+							if ((cadena.indexOf("officedocument") > -1) || (cadena.indexOf("sheet") > -1)) {
+								$('#'+contenedorpdf).hide();
+								$("."+contenedor).hide();
+								$('#contExcel').show();
+
+								$('#verarchivo').val(response.datos.imagen);
+
+							} else {
+								$("." + contenedor + " img").attr("src",response.datos.imagen);
+								$("."+contenedor).show();
+								$('#'+contenedorpdf).hide();
+							}
 						}
 					}
 
@@ -666,6 +677,7 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11
 			}
 		};
 
+		$('.btnVerArchivo').hide();
 
 		<?php if (($idestadodocumentacion != 5) && ($puedeCargarDocumentacion==1)) { ?>
 		var myDropzone = new Dropzone("#archivos", {
