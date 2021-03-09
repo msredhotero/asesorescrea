@@ -172,56 +172,62 @@ return $res;
    /* PARA Eventos */
 
 
-   function insertarEventos($ico,$nombre,$ponderacion,$tiempo,$refevento,$reftabla,$idreferencia) {
-      $sql = "insert into tbeventos(idevento,ico,nombre,ponderacion,tiempo,refevento,reftabla,idreferencia)
-      values ('','".$ico."','".$nombre."',".$ponderacion.",".$tiempo.",".$refevento.",".$reftabla.",".$idreferencia.")";
-      $res = $this->query($sql,1);
-      return $res;
+   function insertarEventos($ico,$nombre,$ponderacion,$tiempo,$refevento,$reftabla,$idreferencia,$principal,$enviaemailagestion,$enviaemailaagente,$enviaemailainbursa,$activo) {
+   $sql = "insert into tbeventos(idevento,ico,nombre,ponderacion,tiempo,refevento,reftabla,idreferencia,principal,enviaemailagestion,enviaemailaagente,enviaemailainbursa,activo)
+   values ('','".$ico."','".$nombre."',".$ponderacion.",".$tiempo.",".$refevento.",".$reftabla.",".$idreferencia.",'".$principal."','".$enviaemailagestion."','".$enviaemailaagente."','".$enviaemailainbursa."','".$activo."')";
+   $res = $this->query($sql,1);
+   return $res;
    }
 
 
-   function modificarEventos($id,$ico,$nombre,$ponderacion,$tiempo,$refevento,$reftabla,$idreferencia) {
-      $sql = "update tbeventos
-      set
-      ico = '".$ico."',nombre = '".$nombre."',ponderacion = ".$ponderacion.",tiempo = ".$tiempo.",refevento = ".$refevento.",reftabla = ".$reftabla.",idreferencia = ".$idreferencia."
-      where idevento =".$id;
-      $res = $this->query($sql,0);
-      return $res;
+   function modificarEventos($id,$ico,$nombre,$ponderacion,$tiempo,$refevento,$reftabla,$idreferencia,$principal,$enviaemailagestion,$enviaemailaagente,$enviaemailainbursa,$activo) {
+   $sql = "update tbeventos
+   set
+   ico = '".$ico."',nombre = '".$nombre."',ponderacion = ".$ponderacion.",tiempo = ".$tiempo.",refevento = ".$refevento.",reftabla = ".$reftabla.",idreferencia = ".$idreferencia.",principal = '".$principal."',enviaemailagestion = '".$enviaemailagestion."',enviaemailaagente = '".$enviaemailaagente."',enviaemailainbursa = '".$enviaemailainbursa."',activo = '".$activo."'
+   where idevento =".$id;
+   $res = $this->query($sql,0);
+   return $res;
    }
 
 
    function eliminarEventos($id) {
-      $sql = "delete from tbeventos where idevento =".$id;
-      $res = $this->query($sql,0);
-      return $res;
+   $sql = "delete from tbeventos where idevento =".$id;
+   $res = $this->query($sql,0);
+   return $res;
    }
 
 
    function traerEventos() {
-      $sql = "select
-      e.idevento,
-      e.ico,
-      e.nombre,
-      e.ponderacion,
-      e.tiempo,
-      e.refevento,
-      e.reftabla,
-      e.idreferencia
-      from tbeventos e
-      order by 1";
-      $res = $this->query($sql,0);
-      return $res;
+   $sql = "select
+   e.idevento,
+   e.ico,
+   e.nombre,
+   e.ponderacion,
+   e.tiempo,
+   e.refevento,
+   e.reftabla,
+   e.idreferencia,
+   e.principal,
+   e.enviaemailagestion,
+   e.enviaemailaagente,
+   e.enviaemailainbursa,
+   e.activo
+   from tbeventos e
+   order by 1";
+   $res = $this->query($sql,0);
+   return $res;
    }
 
 
    function traerEventosPorId($id) {
-      $sql = "select idevento,ico,nombre,ponderacion,tiempo,refevento,reftabla,idreferencia from tbeventos where idevento =".$id;
-      $res = $this->query($sql,0);
-      return $res;
+   $sql = "select idevento,ico,nombre,ponderacion,tiempo,refevento,reftabla,idreferencia,principal,enviaemailagestion,enviaemailaagente,enviaemailainbursa,activo from tbeventos where idevento =".$id;
+   $res = $this->query($sql,0);
+   return $res;
    }
 
    function traerEventosPorReferencia($idtabla, $tabla, $idnombre, $id) {
-      $sql = "select c.idevento,c.ico,c.nombre,c.ponderacion,c.tiempo,c.refevento,c.reftabla,c.idreferencia
+      $sql = "select
+         c.idevento,c.ico,c.nombre,c.ponderacion,c.tiempo,c.refevento,c.reftabla,c.idreferencia,c.principal,c.enviaemailagestion,c.enviaemailaagente,c.enviaemailainbursa,c.activo
       from tbeventos c
       inner join ".$tabla." v on v.".$idnombre." = c.idreferencia
 		where c.reftabla = ".$idtabla." and c.idreferencia = ".$id;
@@ -238,13 +244,28 @@ return $res;
 
 
    function insertarTrazabilidad($reftabla,$idreferencia,$fechacrea,$refevento,$usuariocrea,$idreferenciaaux1,$idreferenciaaux2,$idreferenciaaux3,$dato,$url) {
-      $sql = "insert into dbtrazabilidad(idtrazabilidad,reftabla,idreferencia,fechacrea,refevento,usuariocrea,idreferenciaaux1,idreferenciaaux2,idreferenciaaux3,dato,url)
-      values ('',".$reftabla.",".$idreferencia.",'".$fechacrea."',".$refevento.",'".$usuariocrea."',".$idreferenciaaux1.",".$idreferenciaaux2.",".$idreferenciaaux3.",'".$dato."','".$url."')";
-      $res = $this->query($sql,1);
 
-      if (((integer)$res > 0) && ($reftabla==12)) {
-         $resMensaje = $this->enviarEmailModificacionCotizacion($idreferencia,$dato);
+      $resEvento = $this->traerEventosPorId($refevento);
+
+      if (mysql_num_rows($resEvento)>0) {
+         if (mysql_result($resEvento,0,'activo') == '1') {
+            $sql = "insert into dbtrazabilidad(idtrazabilidad,reftabla,idreferencia,fechacrea,refevento,usuariocrea,idreferenciaaux1,idreferenciaaux2,idreferenciaaux3,dato,url)
+            values ('',".$reftabla.",".$idreferencia.",'".$fechacrea."',".$refevento.",'".$usuariocrea."',".$idreferenciaaux1.",".$idreferenciaaux2.",".$idreferenciaaux3.",'".$dato."','".$url."')";
+            $res = $this->query($sql,1);
+
+            if (((integer)$res > 0) && ($reftabla==12) && (mysql_result($resEvento,0,'enviaemailagestion') == '1')) {
+               $resMensaje = $this->enviarEmailModificacionCotizacion($idreferencia,$dato,$url);
+            }
+         } else {
+            $res = 0;
+         }
+      } else {
+         $res = 0;
       }
+
+
+
+
 
       return $res;
    }
@@ -449,6 +470,7 @@ return $res;
       return $idramaproducto;
    }
 
+   // ahora va a depender de la tabla de productos, quien lo gestiona
    function devolverRolPorRamaProducto($idramaproducto) {
       $idrol = 0;
       switch ($idramaproducto) {
@@ -472,7 +494,7 @@ return $res;
       return $res;
    }
 
-   function enviarEmailModificacionCotizacion($id,$dato) {
+   function enviarEmailModificacionCotizacion($id,$dato,$adcional) {
 
       $resCotizaciones = $this->traerCotizacionesPorIdCompleto($id);
 
@@ -500,6 +522,9 @@ return $res;
          }
       }
 
+      if ($adcional != '') {
+         $cadDestino .= $adcional.', ';
+      }
 
 
       ////// fin ////////////////////////////
@@ -12273,7 +12298,7 @@ return $res;
                       `refproductos`,
                       `refasesores`,
                       `refasociados`,
-                      4,
+                      1,
                       `cobertura`,
                       `reasegurodirecto`,
                       `tiponegocio`,
@@ -12296,7 +12321,7 @@ return $res;
                       '".$folio."',
                       ".$version.",
                       ".$idcotizacion.",
-                      2,
+                      1,
                       `primaneta`,
                       `primatotal`,
                       `bitacoracrea`,
@@ -12351,7 +12376,7 @@ return $res;
 
 
          //trazabilidad de finalidad de la cotizacion en ajuste
-         $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$idcotizacion,$fechacrea,15,$usuariocrea,0,0,0,'Cotización finalizada en ajuste','');
+         $resTZ = $this->insertarTrazabilidad(12,$idcotizacion,$fechacrea,15,$usuariocrea,0,0,0,'Cotización finalizada en ajuste','');
 
 
          $resV['error'] = false;
@@ -12556,10 +12581,12 @@ return $res;
 		pro.producto,
 		concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
 		concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
-      c.fechamodi,
+      c.fechacrea,
       est.estadocotizacion,
       c.folio,
       DATEDIFF(CURDATE(),c.fechacrea) as dias,
+      (case when c.version > 0 then 'En Ajuste' else 'Nueva' end) as gestion,
+      tz.fechacrea as fechaevento,
 		c.refclientes,
 		c.refproductos,
 		c.refasesores,
@@ -12582,6 +12609,8 @@ return $res;
       ".$cadFiltroNuevo."
 		left join dbusuarios us ON us.idusuario = c.refusuarios
 		left join dbasociados aso ON aso.idasociado = c.refasociados
+      left join tbeventos ee on ee.reftabla=16 and ee.idreferencia=c.refestadocotizaciones
+      left join dbtrazabilidad tz on tz.refevento = ee.idevento and tz.idreferencia = c.idcotizacion and tz.reftabla=12
 		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
 
 		where ".$whereEstado.$where." ".$whereSinVenta."

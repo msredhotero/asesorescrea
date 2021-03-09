@@ -169,6 +169,13 @@ switch ($iddocumentacion) {
 
 $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,mysql_result($resDocumentacion,0,'reftipodocumentaciones'),'','82,83,84,85,86');
 
+
+$puedeCargarDocumentacion = 0;
+
+if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) {
+	$puedeCargarDocumentacion = 1;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -332,7 +339,9 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 				<?php } ?>
 			</div>
 
+
 			<div class="row">
+				<?php if ($puedeCargarDocumentacion == 1) { ?>
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
@@ -400,6 +409,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 						</div>
 					</div>
 				</div>
+			<?php } ?>
 
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card">

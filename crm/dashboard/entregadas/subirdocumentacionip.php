@@ -164,6 +164,12 @@ switch ($iddocumentacion) {
 
 $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,mysql_result($resDocumentacion,0,'reftipodocumentaciones'));
 
+$puedeCargarDocumentacion = 0;
+
+if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) {
+	$puedeCargarDocumentacion = 1;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -302,7 +308,8 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 			</div>
 
 			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<?php if ($puedeCargarDocumentacion == 1) { ?>
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
@@ -348,13 +355,30 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 									</div>
 								</div>
 							</form>
+
+							<?php if (($idestadodocumentacion != 5)) { ?>
+							<div class="row">
+
+								<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+									<div class="dz-message">
+										<div class="drag-icon-cph">
+											<i class="material-icons">touch_app</i>
+										</div>
+										<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+									</div>
+									<div class="fallback">
+										<input name="file" type="file" id="archivos" />
+										<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
+									</div>
+								</form>
+							</div>
+							<?php } ?>
 						</div>
 					</div>
 				</div>
-			</div> <!-- fin del card -->
+			<?php } ?>
 
-			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card">
 						<div class="header bg-blue">
 							<h2>
@@ -380,6 +404,10 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 									<img class="img-responsive">
 								</a>
 								<div id="example1"></div>
+								<div id="contExcel" style="margin:15px;">
+									<button type="button" class="btn btn-lg btn-success btnVerArchivo" style="margin-left:0px;"><i class="material-icons">search</i>VER ARCHIVO</button>
+									<input type="hidden" id="verarchivo" name="verarchivo" value=""/>
+								</div>
 							</div>
 							<div class="row">
 								<div class="alert bg-<?php echo $color; ?>">
@@ -402,44 +430,13 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 								</div>
 
 							</div>
-						</div>
-					</div>
-				</div>
-			<?php if ($idestadodocumentacion != 5) { ?>
-			<div class="row">
-				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="card">
-						<div class="header bg-blue">
-							<h2>
-								CARGA/MODIFIQUE LA DOCUMENTACIÓN <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?> AQUI
-							</h2>
-							<ul class="header-dropdown m-r--5">
-								<li class="dropdown">
-									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-										<i class="material-icons">more_vert</i>
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div class="body">
-							<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
-								<div class="dz-message">
-									<div class="drag-icon-cph">
-										<i class="material-icons">touch_app</i>
-									</div>
-									<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
-								</div>
-								<div class="fallback">
-									<input name="file" type="file" id="archivos" />
-									<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
-								</div>
-							</form>
-						</div>
 					</div>
 				</div>
 			</div>
-			<?php } ?>
+
+
 		</div>
+
 	</div>
 </section>
 

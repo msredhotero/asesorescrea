@@ -1219,7 +1219,7 @@ switch ($tabla) {
 				$filtroNuevo = $_GET['filtroNuevo'];
 
 				$whereEstado = ' c.refestados in (1) ';
-				$termina = 5;
+				$termina = 9;
 			break;
 			case 2:
 				if ($_SESSION['idroll_sahilices'] == 7) {
@@ -1233,7 +1233,7 @@ switch ($tabla) {
 				}
 
 				$whereEstado = ' c.refestados in (2) ';
-				$termina = 5;
+				$termina = 10;
 
 				$filtroNuevo = '';
 			break;

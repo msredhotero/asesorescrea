@@ -4109,8 +4109,14 @@ function modificarCotizacionesPorCampo($serviciosReferencias) {
       $dato = '';
    }
 
-   //trazabilidad modificar estado
-   $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id,$fechacrea,$refevento,$_SESSION['usua_sahilices'],0,0,0,$dato,'');
+   if (isset($_POST['emailequipo'])) {
+      //trazabilidad modificar estado
+      $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id,$fechacrea,$refevento,$_SESSION['usua_sahilices'],0,0,0,$dato,$_POST['emailequipo']);
+   } else {
+      //trazabilidad modificar estado
+      $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id,$fechacrea,$refevento,$_SESSION['usua_sahilices'],0,0,0,$dato,'');
+   }
+
 
 
    if ($resModEstadoEtapa) {

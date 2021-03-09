@@ -314,6 +314,7 @@ switch ($iddocumentacion) {
 				$puedeEnviar = 0;
 				$archivosObligatorios = 0;
 				$archivosCargadosObligatorios = 0;
+				$lblObligatoria = '';
 				while ($row = mysql_fetch_array($resDocumentaciones)) {
 					if ($row['iddocumentacion'] == $iddocumentacion) {
 						$activaLbl = ' cssActive ';
@@ -326,6 +327,9 @@ switch ($iddocumentacion) {
 
 					if ($row['obligatoria'] == '1') {
 						$archivosObligatorios += 1;
+						$lblObligatoria = ' <span style="color:red;">(*)</span>';
+					} else {
+						$lblObligatoria = '';
 					}
 
 					if (($row['archivo'] != '') && ($row['obligatoria'] == '1')) {
@@ -338,7 +342,7 @@ switch ($iddocumentacion) {
 								<i class="material-icons">face</i>
 							</div>
 							<div class="content">
-								<div class="text"><?php echo $row['documentacion']; ?></div>
+								<div class="text"><?php echo $row['documentacion'].$lblObligatoria; ?></div>
 								<div class="number"><?php echo $row['estadodocumentacion']; ?></div>
 							</div>
 						</div>

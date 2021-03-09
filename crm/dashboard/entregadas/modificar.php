@@ -425,6 +425,8 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		#codigopostal { width: 400px; }
 
+		.pdfobject-container { height: 60rem; border: 1rem solid rgba(0,0,0,.1); }
+
 	</style>
 
 
@@ -510,16 +512,20 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 							<?php
 							$cadCotizacionParaAceptar = '';
 							$exiteAceptada = 0;
+							$cotAceptada = 0;
+							$cotPDF = '';
 							while ($rowCI = mysql_fetch_array($resCotizacionInbursa) ) {
 
 								if ($rowCI['archivo'] != '') {
 
 									if ($rowCI['idestadodocumentacion'] == 5) {
 										$exiteAceptada = 1;
+										$cotAceptada = $rowCI['iddocumentacioncotizacion'];
+										$cotPDF = "../../archivos/cotizaciones/".$id."/".$rowCI['carpeta']."/".$rowCI['archivo'];
 									}
 
 									?>
-									<button type="button" style="margin-left:5px;" onclick="window.open('../../archivos/cotizaciones/<?php echo $id; ?>/<?php echo $rowCI['carpeta']; ?>/<?php echo $rowCI['archivo']; ?>','_blank')" class="btn bg-<?php echo $rowCI['color']; ?> waves-effect"><i class="material-icons">unarchive</i><?php echo $rowCI['documentacion']; ?></button>
+									<button type="button" style="margin-left:5px;" data-imagen="../../archivos/cotizaciones/<?php echo $id; ?>/<?php echo $rowCI['carpeta']; ?>/<?php echo $rowCI['archivo']; ?>" class="btn bg-<?php echo $rowCI['color']; ?> waves-effect btnCotizacion" id="<?php echo $rowCI['iddocumentacioncotizacion']; ?>"><i class="material-icons">unarchive</i><?php echo $rowCI['documentacion']; ?></button>
 
 										<?php
 										$cadCotizacionParaAceptar .= '<option value="'.$rowCI['iddocumentacioncotizacion'].'">'.$rowCI['documentacion'].'</option>'
@@ -530,25 +536,21 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 							}
 							?>
 								</div>
-								<?php if ($cadCotizacionParaAceptar != '') { ?>
-								<div class="col-sm-4 col-xs-12">
-									<label class="label-form">Elija la cotizacion para aceptar</label>
-									<select class="form-control" id="aceptarCotizacion" name="aceptarCotizacion">
-										<option value="0">-- Ninguna --</option>
-										<?php echo $cadCotizacionParaAceptar; ?>
-									</select>
-									<button type="button" style="margin-left:5px;" class="btn bg-green waves-effect btnaceptarCotizacion"><i class="material-icons">unarchive</i>ACEPTAR</button>
-								</div>
-								<?php } ?>
+
 							</div>
 							<form class="formulario frmNuevo" role="form" id="sign_in">
 
 
-								<div class="row" style="padding: 5px 20px;">
+								<div class="row datosFormulario" style="padding: 5px 20px;">
 
 									<?php echo $frmUnidadNegocios; ?>
 									<input type="hidden" id="estadoactual" name="estadoactual" value=""/>
 								</div>
+
+								<div class="row">
+									<div id="example1"></div>
+								</div>
+
 								<div class="row" style="display:none;">
 									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContidclienteinbursa" style="display:block">
 										<label class="form-label">ID Cliente Inbursa </label>
@@ -569,62 +571,13 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 										</div>
 									</div>
 								</div>
-								<?php if (mysql_num_rows($cuestionario)>0) { ?>
-								<div class="row" style="padding: 5px 20px;">
-									<table class="display table table-border" style="border:1px solid #333;">
-										<thead>
-											<th colspan="2">CUESTIONARIO</th>
-										</thead>
-										<tbody>
-											<tr>
-												<th>Pregunta</th>
-												<th>Respuesta</th>
-											</tr>
-									<?php
-									$pregunta = '';
-									$idcuestionario = 0;
 
-									while ($rowC = mysql_fetch_array($cuestionario)) {
-										$idcuestionario = $rowC['idcuestionario'];
-										echo '<tr><td>';
-										if ($pregunta != $rowC['pregunta']) {
-											$pregunta = $rowC['pregunta'];
-											echo $pregunta.'</td>';
-										} else {
-											echo '</td>';
-										}
-									?>
-										<td><h5 style="color:green;">* <?php echo ($rowC['respuesta'] == 'Lo que el ususario ingrese' ? $rowC['respuestavalor'] : $rowC['respuesta']); ?></h5></td>
-									</tr>
-									<?php
-									}
-
-									//die(var_dump($idcuestionario.'-'.$idCliente));
-									$resClienteDatos = $serviciosReferencias->necesitoPreguntaSencible($idCliente,$idcuestionario);
-									$pregunta = '';
-									foreach ($resClienteDatos[0] as $rowCC) {
-										echo '<tr><td>';
-										if ($pregunta != $rowCC['pregunta']) {
-											$pregunta = $rowCC['pregunta'];
-											echo $pregunta.'</td>';
-										} else {
-											echo '</td>';
-										}
-
-									?>
-									<td><h5 style="color:green;">* <?php echo $rowCC['valor']; ?></h5></td>
-								</tr>
-								<?php } ?>
-										</tbody>
-									</table>
-								</div>
-								<?php } ?>
 								<div class="row">
 									<p>Acciones</p>
 									<div class="modal-footer">
 										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 											<?php if ($idestado == 8 ) { ?>
-											<button id="8" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>
+											<!--<button id="8" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>-->
 
 											<?php if ($exiteAceptada == 1) { ?>
 											<button type="button" class="btn bg-green waves-effect btnAbandonada">Aceptada</button>
@@ -640,11 +593,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 											if ($_SESSION['idroll_sahilices'] != 7) {
 												if ($idestado <= 11) {
 											?>
-											<button id="<?php echo $idestado; ?>" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>
-											<?php if ($exiteAceptada == 1) { ?>
-											<button type="button" class="btn bg-green waves-effect btnAbandonada">Aceptada</button>
-											<?php } ?>
-											<button type="button" class="btn bg-red waves-effect btnRechazadaDefinitivamente">Rechazada Definitivamente</button>
+
 										<?php } else { ?>
 											<button id="<?php echo $idestado; ?>" type="button" class="btn waves-effect btnContinuar"><?php echo mysql_result($resEstados,0,'estadocotizacion'); ?></button>
 										<?php
@@ -715,11 +664,20 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 	 <div class="modal-dialog modal-lg" role="document">
 		  <div class="modal-content">
 				<div class="modal-header bg-blue">
-					 <h4 class="modal-title" id="largeModalLabel">MODIFICAR ESTADO DE LA COTIZACION</h4>
+					 <h4 class="modal-title" id="largeModalLabel">MODIFICAR ESTADO DE LA COTIZACIÓN</h4>
 				</div>
 				<div class="modal-body">
-				 <h3>¿Esta seguro que desea <span class="lblModiEstado"></span> la cotizacion?</h3>
+					<h3>¿Esta seguro que desea <span class="lblModiEstado"></span> la cotizacion?</h3>
 
+
+
+				<div class="row contFrmAceptadas">
+					<h4>Una vez ACEPTADA, su cotización estará en el listado de cotizaciones aceptadas, donde deberá cargar la documentación necesaria para la emisión.</h4>
+					<p>Si quiere notificar a alquien de tu equipo de trabajo, escribe el correo electrónico</p>
+					<input type="email" class="form-control" id="emailequipo" name="emailequipo" />
+
+
+				</div>
 				 <div class="row contFrmRechazoDefinitivo">
  					<h4>Por favor ingrese los motivos del rechazo, para poderte afrocer un mejor servicio!!</h4>
  					<div class="row">
@@ -813,8 +771,30 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 <script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
 
+<script src="../../js/pdfobject.min.js"></script>
+
 <script>
 	$(document).ready(function(){
+
+		$('.contFrmAceptadas').hide();
+
+		<?php if ($cotAceptada != 0) { ?>
+			PDFObject.embed("<?php echo $cotPDF; ?>", "#example1");
+		<?php } ?>
+
+		$('.btnCotizacion').click(function() {
+			var contImagen = $(this).data('imagen');
+			var idcot =  $(this).attr('id');
+			PDFObject.embed(contImagen, "#example1");
+			aceptarCotizacionInbursa(idcot);
+		});
+		<?php
+		if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 3)) {
+		?>
+		$('.datosFormulario').hide();
+		<?php } else { ?>
+			$('.datosFormulario').hide();
+		<?php } ?>
 
 		function trazabilidad(id,idestado,dato,url) {
 			$.ajax({
@@ -866,7 +846,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 			aceptarCotizacionInbursa();
 		});
 
-		function aceptarCotizacionInbursa() {
+		function aceptarCotizacionInbursa(id) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
@@ -874,12 +854,12 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 				//datos del formulario
 				data: {
 					accion: 'aceptarCotizacionInbursa',
-					id: $('#aceptarCotizacion').val(),
+					id: id,
 					idcotizacion: <?php echo $id; ?>
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
-					trazabilidad(<?php echo $id; ?>,9,'Se acepta la cotizacion: ' + $('#aceptarCotizacion option:selected').html(),'');
+					
 				},
 				//una vez finalizado correctamente
 				success: function(data){
@@ -991,7 +971,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 					}
 
 					$('#lgmModificarEstado').modal('toggle');
-					location.reload();
+					$(location).attr('href','index.php');
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -1016,7 +996,8 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 				data: {
 					accion: 'modificarCotizacionesPorCampo',
 					id: $('#idmodificarestadorechazo').val(),
-					idestado: $('#estadomodificarestadorechazo').val()
+					idestado: $('#estadomodificarestadorechazo').val(),
+					emailequipo: $('#emailequipo').val()
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
@@ -1105,6 +1086,8 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 			$('.lblModiEstado').html('ACEPTAR');
 			$('.modificarEstadoCotizacionRechazo').html('ACEPTADA');
 
+			$('.contFrmAceptadas').show();
+
 			$('.modificarEstadoCotizacionRechazo').addClass('bg-green');
 			$('.modificarEstadoCotizacionRechazo').removeClass('bg-amber');
 			$('.modificarEstadoCotizacionRechazo').removeClass('bg-red');
@@ -1123,6 +1106,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 			$('.modificarEstadoCotizacionRechazo').html('EN AJUSTE');
 
 			$('.contFrmRechazoDefinitivo').hide();
+			$('.contFrmAceptadas').hide();
 
 			$('.modificarEstadoCotizacionRechazo').removeClass('bg-green');
 			$('.modificarEstadoCotizacionRechazo').addClass('bg-amber');
@@ -1141,6 +1125,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 			$('.modificarEstadoCotizacionRechazo').html('RECHAZADA');
 
 			$('.contFrmRechazoDefinitivo').hide();
+			$('.contFrmAceptadas').hide();
 
 			$('.modificarEstadoCotizacionRechazo').removeClass('bg-green');
 			$('.modificarEstadoCotizacionRechazo').removeClass('bg-amber');
@@ -1158,6 +1143,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 			$('.modificarEstadoCotizacionRechazo').html('RECHAZADA DEFINITIVAMENTE');
 
 			$('.contFrmRechazoDefinitivo').show();
+			$('.contFrmAceptadas').hide();
 
 			$('.modificarEstadoCotizacionRechazo').removeClass('bg-green');
 			$('.modificarEstadoCotizacionRechazo').removeClass('bg-amber');

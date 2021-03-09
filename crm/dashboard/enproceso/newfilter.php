@@ -3414,7 +3414,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 						} else {
 
-							if ((cadena.indexOf("officedocument") > -1) || (cadena.indexOf("sheet") > -1)) {
+							if ((cadena.indexOf("officedocument") > -1) || (cadena.indexOf("sheet") > -1) || (cadena.indexOf("excel") > -1)) {
 								$('#'+contenedorpdf).hide();
 								$("."+contenedor).hide();
 								$('#contExcel1').show();

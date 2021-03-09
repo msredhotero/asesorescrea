@@ -226,6 +226,10 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 												<th>Asesor</th>
 												<th>Asociado</th>
 												<th>Fecha</th>
+												<th></th>
+												<th></th>
+												<th></th>
+												<th>Proceso</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -236,6 +240,10 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 												<th>Asesor</th>
 												<th>Asociado</th>
 												<th>Fecha</th>
+												<th></th>
+												<th></th>
+												<th></th>
+												<th>Proceso</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -493,9 +501,45 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 					"targets": [ 3 ],
 					"visible": false,
 					"searchable": false
+				},
+				{
+					"targets": [ 5 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [ 6 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [ 7 ],
+					"visible": false,
+					"searchable": false
 				}
 
-		  ]<?php } ?>
+
+		  ]<?php } else { ?>
+			  ,"columnDefs": [
+  				{
+  					"targets": [ 5 ],
+  					"visible": false,
+  					"searchable": false
+  				},
+  				{
+  					"targets": [ 6 ],
+  					"visible": false,
+  					"searchable": false
+  				},
+  				{
+  					"targets": [ 7 ],
+  					"visible": false,
+  					"searchable": false
+  				}
+
+
+  		  ]
+			<?php } ?>
 		});
 
 		$('#filtrar').click( function() {

@@ -717,6 +717,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 		 						<select class="form-control" id="motivo" name="motivo">
 		 							<option value="Precio">Precio</option>
 		 							<option value="Mal Servicio">Mal Servicio</option>
+									<option value="Agente no quiso dar retroalimentación">Agente no quiso dar retroalimentación</option>
 		 							<option value="Otro">Otro</option>
 		 						</select>
 		 					</div>
