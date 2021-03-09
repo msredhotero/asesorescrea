@@ -172,7 +172,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 
 $puedeCargarDocumentacion = 0;
 
-if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) {
+if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22)) {
 	$puedeCargarDocumentacion = 1;
 }
 
