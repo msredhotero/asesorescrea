@@ -12747,8 +12747,12 @@ return $res;
 		pro.producto,
 		concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
 		concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
-      c.fechapropuesta,
+      c.fechacrea,
 		est.estadocotizacion,
+      c.refclientes,
+		c.refproductos,
+      (case when c.version > 0 then 'En Ajuste' else 'Nueva' end) as gestion,
+      tz.fechacrea as fechaevento,
 		c.refclientes,
 		c.refproductos,
 		c.refasesores,
@@ -12770,6 +12774,9 @@ return $res;
 		left join dbusuarios us ON us.idusuario = c.refusuarios
 		left join dbasociados aso ON aso.idasociado = c.refasociados
 		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
+      left join tbeventos ee on ee.reftabla=16 and ee.idreferencia=c.refestadocotizaciones
+      left join dbtrazabilidad tz on tz.refevento = ee.idevento and tz.idreferencia = c.idcotizacion and tz.reftabla=12
+
 		where ".$whereEstado." and ase.idasesor = ".$idasesor." ".$where."
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
