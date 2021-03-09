@@ -1033,7 +1033,23 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 						</div>
 						<div class="body table-responsive">
 							<form class="form" id="formFacturas">
-
+								<?php if ($_SESSION['idroll_sahilices'] == 16) { ?>
+									<h3>Hola, <?php echo strtoupper($nombrecompleto); ?></h3>
+									<hr>
+									<div class"row imgVenta button-container-img">
+										<img src="../imagenes/ventaenlinea_bck2.jpg" width="100%"/>
+										<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.3em;" onclick="window.location='venta/new.php?producto=46'">COMPRAR EN LINEA</button>
+									</div>
+									<div class"row imgCotiza button-container-img" style="margin-top:20px;">
+										<img src="../imagenes/cotiza_bck2.jpg" width="100%"/>
+										<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.3em;" onclick="window.location='solicitar.php'">SOLICITAR INFORMACIÓN</button>
+									</div>
+									<div class"row imgMejopra button-container-img" style="margin-top:20px;">
+										<img src="../imagenes/mejoratuscondiciones_bck2.jpg" width="100%"/>
+										<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.3em;" onclick="window.location='mejorarcondiciones/'">MEJORAR POLIZA</button>
+									</div>
+									<?php if ($_SESSION['usuaid_sahilices'] == 201) { ?>
+								<?php } else { ?>
 								<div class"row imgVenta button-container-img">
 									<img src="../imagenes/ventaenlinea_bck.jpg" width="100%"/>
 									<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.5em;" onclick="window.location='ventaenlinea/'">ENVIAR LIGA AL CLIENTE</button>
@@ -1047,7 +1063,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 									<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.5em;" onclick="window.location='mejorarcondiciones/'">ADJUNTAR POLIZA</button>
 								</div>
 
-
+								<?php } ?>
 
 
 
