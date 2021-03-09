@@ -253,7 +253,7 @@ return $res;
             values ('',".$reftabla.",".$idreferencia.",'".$fechacrea."',".$refevento.",'".$usuariocrea."',".$idreferenciaaux1.",".$idreferenciaaux2.",".$idreferenciaaux3.",'".$dato."','".$url."')";
             $res = $this->query($sql,1);
 
-            if (((integer)$res > 0) && ($reftabla==12) && (mysql_result($resEvento,0,'enviaemailagestion') == '1')) {
+            if (((integer)$res > 0) && ($reftabla==12) && ((mysql_result($resEvento,0,'enviaemailagestion') == '1') || ($url != ''))) {
                $resMensaje = $this->enviarEmailModificacionCotizacion($idreferencia,mysql_result($resEvento,0,'nombre').' - '.$dato,$url);
             }
          } else {
@@ -523,7 +523,7 @@ return $res;
       }
 
       if ($adcional != '') {
-         $cadDestino .= $adcional.', ';
+         $cadDestino = $adcional.', ';
       }
 
 
