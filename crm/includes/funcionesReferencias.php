@@ -531,8 +531,9 @@ return $res;
 
       if ($cadDestino != '') {
 
-
-
+         // por ahora nada mas
+         $token = $this->GUID();
+         $resAutoLogin = $this->insertarAutologin(261,$token,'index.php','0');
 
          $asunto = 'Alerta Cotización, cotizacion: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
 
@@ -553,6 +554,8 @@ return $res;
          $cuerpo .= '<body>';
 
          $cuerpo .= $dato;
+
+         $cuerpo .= '<p>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</p>';
 
          $cuerpo .= '</body>';
 
