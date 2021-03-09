@@ -1036,6 +1036,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 								<?php if ($_SESSION['idroll_sahilices'] == 16) { ?>
 									<h3>Hola, <?php echo strtoupper($nombrecompleto); ?></h3>
 									<hr>
+									<?php if ($_SESSION['usuaid_sahilices'] == 201) { ?>
 									<div class"row imgVenta button-container-img">
 										<img src="../imagenes/ventaenlinea_bck2.jpg" width="100%"/>
 										<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.3em;" onclick="window.location='venta/new.php?producto=46'">COMPRAR EN LINEA</button>
@@ -1048,7 +1049,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 										<img src="../imagenes/mejoratuscondiciones_bck2.jpg" width="100%"/>
 										<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.3em;" onclick="window.location='mejorarcondiciones/'">MEJORAR POLIZA</button>
 									</div>
-									<?php if ($_SESSION['usuaid_sahilices'] == 201) { ?>
+									<?php } ?>
 								<?php } else { ?>
 								<div class"row imgVenta button-container-img">
 									<img src="../imagenes/ventaenlinea_bck.jpg" width="100%"/>
