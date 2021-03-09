@@ -119,9 +119,9 @@
 			$estilo = 'bg-light-blue';
 			$fecha = date('Y-m-d H:i:s');
 			if (mysql_result($resDocumentacion,0,'reftipodocumentaciones') == 3) {
-				$url = "cotizaciones/subirdocumentacioni.php?id=".$id."&documentacion=".$iddocumentacion;
+				$url = "enproceso/subirdocumentacioni.php?id=".$id."&documentacion=".$iddocumentacion;
 			} else {
-				$url = "cotizaciones/subirdocumentacionip.php?id=".$id."&documentacion=".$iddocumentacion;
+				$url = "enproceso/subirdocumentacionip.php?id=".$id."&documentacion=".$iddocumentacion;
 			}
 
 
@@ -129,7 +129,7 @@
 			/*** fin de la notificacion ****/
 
 			//trazabilidad 4
-			$resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id,$fecha,4,$_SESSION['usua_sahilices'],0,0,0,mysql_result($resDocumentacion,0,'documentacion'),'');
+			//$resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id,$fecha,4,$_SESSION['usua_sahilices'],0,0,0,mysql_result($resDocumentacion,0,'documentacion'),'');
 
 			if ($pos === false) {
 				$image = new \Gumlet\ImageResize($imagen_subida);
