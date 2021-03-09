@@ -531,9 +531,7 @@ return $res;
 
       if ($cadDestino != '') {
 
-         $gestor = fopen('logemails'.date('Y_m_d').'.txt', 'w');
-         fwrite($gestor, $cadDestino.' '.date('Y-m-d H:i:s'));
-         fclose($gestor);
+
 
 
          $asunto = 'Alerta Cotización, cotizacion: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
@@ -561,7 +559,11 @@ return $res;
 
          $exito = $this->enviarEmail(substr($cadDestino,-2),$asunto,$cuerpo);
 
-         echo '';
+         $gestor = fopen('logemails'.date('Y_m_d').'.txt', 'w');
+         fwrite($gestor, $cadDestino.' '.date('Y-m-d H:i:s'));
+         fclose($gestor);
+
+         return '';
       }
 
    }
