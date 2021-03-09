@@ -339,9 +339,12 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11
 				<?php } ?>
 			</div>
 
-
 			<div class="row">
 				<button type="button" class="btn btn-info waves-effect btnVolverFiltro" data-ir="modificar" data-referencia="<?php echo $id; ?>"><i class="material-icons">reply</i><span>VOLVER</span></button>
+			</div>
+
+			<div class="row">
+
 				<?php if ($puedeCargarDocumentacion == 1) { ?>
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card ">
