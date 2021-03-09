@@ -615,7 +615,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 											<button type="button" class="btn btn-info waves-effect">ESTADO: <?php echo mysql_result($resEstados,0,'estadocotizacion'); ?></button>
 
-											<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 14) || ($_SESSION['idroll_sahilices'] == 15) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22) || ($_SESSION['idroll_sahilices'] == 23)) { ?>
+											<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 14) || ($_SESSION['idroll_sahilices'] == 15) || ($_SESSION['idroll_sahilices'] == 3)) { ?>
 											<button id="<?php echo $idestado; ?>" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>
 											<?php } ?>
 
