@@ -329,7 +329,7 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11
 							</ul>
 						</div>
 						<div class="body table-responsive">
-							
+
 							<form class="form" id="formCountry">
 
 								<div class="row" style="padding: 5px 20px;">
@@ -667,7 +667,7 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11
 		};
 
 
-		<?php if (($idestadodocumentacion != 5)) { ?>
+		<?php if (($idestadodocumentacion != 5) && ($puedeCargarDocumentacion==1)) { ?>
 		var myDropzone = new Dropzone("#archivos", {
 			params: {
 				 idasociado: <?php echo $id; ?>,
