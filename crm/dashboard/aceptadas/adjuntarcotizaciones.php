@@ -185,6 +185,12 @@ switch ($iddocumentacion) {
 	break;
 }
 
+$puedeCargarDocumentacion = 0;
+
+if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 7)) {
+	$puedeCargarDocumentacion = 1;
+}
+
 
 ?>
 
@@ -365,6 +371,13 @@ switch ($iddocumentacion) {
 
 			<div class="row">
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+					<button type="button" class="btn btn-info waves-effect btnVolverFiltro" data-ir="modificar" data-referencia="<?php echo $id; ?>"><i class="material-icons">reply</i><span>VOLVER</span></button>
+				</div>
+			</div>
+
+			<div class="row">
+				<?php if ($puedeCargarDocumentacion == 1) { ?>
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
@@ -382,10 +395,7 @@ switch ($iddocumentacion) {
 							</ul>
 						</div>
 						<div class="body table-responsive">
-							<button type="button" class="btn bg-green waves-effect btnVolver">
-								<i class="material-icons">undo</i>
-								<span>VOLVER</span>
-							</button>
+
 							<form class="form" id="formCountry">
 
 								<div class="row" style="padding: 5px 20px;">
@@ -431,6 +441,7 @@ switch ($iddocumentacion) {
 						</div>
 					</div>
 				</div>
+			<?php } ?>
 
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card">
@@ -948,7 +959,7 @@ switch ($iddocumentacion) {
 		};
 
 
-		<?php if (($idestadodocumentacion != 5)) { ?>
+		<?php if (($idestadodocumentacion != 5) && ($puedeCargarDocumentacion == 1)) { ?>
 		var myDropzone = new Dropzone("#archivos", {
 			params: {
 				 idasociado: <?php echo $id; ?>,
@@ -1016,18 +1027,6 @@ switch ($iddocumentacion) {
 		});
 
 
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '265px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
-
-		});
 
 
 	});
