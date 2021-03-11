@@ -10,6 +10,55 @@ date_default_timezone_set('America/Mexico_City');
 class ServiciosReferencias {
 
 
+   /* PARA Tipomoneda */
+
+   function insertarTipomoneda($tipomoneda) {
+      $sql = "insert into tbtipomoneda(idtipomoneda,tipomoneda)
+      values ('','".$tipomoneda."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarTipomoneda($id,$tipomoneda) {
+      $sql = "update tbtipomoneda
+      set
+      tipomoneda = '".$tipomoneda."'
+      where idtipomoneda =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarTipomoneda($id) {
+      $sql = "delete from tbtipomoneda where idtipomoneda =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerTipomoneda() {
+      $sql = "select
+      t.idtipomoneda,
+      t.tipomoneda
+      from tbtipomoneda t
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerTipomonedaPorId($id) {
+      $sql = "select idtipomoneda,tipomoneda from tbtipomoneda where idtipomoneda =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: tbtipomoneda*/
+
+
    function traerCobrosTransferenciasPorAsesorAjax($length, $start, $busqueda,$colSort,$colSortDir,$idasesor) {
       $where = '';
 
@@ -7409,14 +7458,14 @@ return $res;
    }
 
 
-	function insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$refventas,$version,$observaciones='',$vigenciadesde,$fechaemision='') {
+	function insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$refventas,$version,$observaciones='',$vigenciadesde,$fechaemision='',$reftipomoneda=1) {
 
       if ($fechaemision == '') {
-         $sql = "insert into dbventas(idventa,refcotizaciones,refestadoventa,primaneta,primatotal,fechavencimientopoliza,nropoliza,fechacrea,fechamodi,usuariocrea,usuariomodi,foliotys,foliointerno,refproductosaux, refventas, version, observaciones,vigenciadesde,fechaemision)
-   		values ('',".$refcotizaciones.",".$refestadoventa.",".$primaneta.",".$primatotal.",'".$fechavencimientopoliza."','".$nropoliza."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."','".$foliotys."','".$foliointerno."',".$refproductosaux.",".$refventas.",".$version.",'".$observaciones."','".$vigenciadesde."',NULL)";
+         $sql = "insert into dbventas(idventa,refcotizaciones,refestadoventa,primaneta,primatotal,fechavencimientopoliza,nropoliza,fechacrea,fechamodi,usuariocrea,usuariomodi,foliotys,foliointerno,refproductosaux, refventas, version, observaciones,vigenciadesde,fechaemision,reftipomoneda)
+   		values ('',".$refcotizaciones.",".$refestadoventa.",".$primaneta.",".$primatotal.",'".$fechavencimientopoliza."','".$nropoliza."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."','".$foliotys."','".$foliointerno."',".$refproductosaux.",".$refventas.",".$version.",'".$observaciones."','".$vigenciadesde."',NULL,".$reftipomoneda.")";
       } else {
-         $sql = "insert into dbventas(idventa,refcotizaciones,refestadoventa,primaneta,primatotal,fechavencimientopoliza,nropoliza,fechacrea,fechamodi,usuariocrea,usuariomodi,foliotys,foliointerno,refproductosaux, refventas, version, observaciones,vigenciadesde,fechaemision)
-   		values ('',".$refcotizaciones.",".$refestadoventa.",".$primaneta.",".$primatotal.",'".$fechavencimientopoliza."','".$nropoliza."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."','".$foliotys."','".$foliointerno."',".$refproductosaux.",".$refventas.",".$version.",'".$observaciones."','".$vigenciadesde."','".$fechaemision."')";
+         $sql = "insert into dbventas(idventa,refcotizaciones,refestadoventa,primaneta,primatotal,fechavencimientopoliza,nropoliza,fechacrea,fechamodi,usuariocrea,usuariomodi,foliotys,foliointerno,refproductosaux, refventas, version, observaciones,vigenciadesde,fechaemision,reftipomoneda)
+   		values ('',".$refcotizaciones.",".$refestadoventa.",".$primaneta.",".$primatotal.",'".$fechavencimientopoliza."','".$nropoliza."','".$fechacrea."','".$fechamodi."','".$usuariocrea."','".$usuariomodi."','".$foliotys."','".$foliointerno."',".$refproductosaux.",".$refventas.",".$version.",'".$observaciones."','".$vigenciadesde."','".$fechaemision."',".$reftipomoneda.")";
       }
 
 
@@ -7426,10 +7475,10 @@ return $res;
 	}
 
 
-	function modificarVentas($id,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechamodi,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$refventas,$version,$refmotivorechazopoliza,$observaciones,$vigenciadesde) {
+	function modificarVentas($id,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechamodi,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$refventas,$version,$refmotivorechazopoliza,$observaciones,$vigenciadesde,$reftipomoneda) {
 		$sql = "update dbventas
 		set
-		refcotizaciones = ".$refcotizaciones.",refestadoventa = ".$refestadoventa.",primaneta = ".$primaneta.",primatotal = ".$primatotal.",fechavencimientopoliza = '".$fechavencimientopoliza."',nropoliza = '".$nropoliza."',fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',foliotys = '".$foliotys."',foliointerno = '".$foliointerno."',refproductosaux = ".$refproductosaux.",refventas = ".$refventas.",version = ".$version.",refmotivorechazopoliza = ".$refmotivorechazopoliza.",observaciones = '".$observaciones."',vigenciadesde = '".$vigenciadesde."' where idventa =".$id;
+		refcotizaciones = ".$refcotizaciones.",refestadoventa = ".$refestadoventa.",primaneta = ".$primaneta.",primatotal = ".$primatotal.",fechavencimientopoliza = '".$fechavencimientopoliza."',nropoliza = '".$nropoliza."',fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',foliotys = '".$foliotys."',foliointerno = '".$foliointerno."',refproductosaux = ".$refproductosaux.",refventas = ".$refventas.",version = ".$version.",refmotivorechazopoliza = ".$refmotivorechazopoliza.",observaciones = '".$observaciones."',vigenciadesde = '".$vigenciadesde."',reftipomoneda = ".$reftipomoneda." where idventa =".$id;
 
 		$res = $this->query($sql,0);
 		return $res;
@@ -8189,19 +8238,19 @@ return $res;
 
 
 	function traerVentasPorId($id) {
-		$sql = "select idventa,refcotizaciones,refestadoventa,primaneta,primatotal,fechacrea,fechamodi,usuariocrea,usuariomodi,nropoliza,fechavencimientopoliza,foliotys,foliointerno,refproductosaux,refventas,version,refmotivorechazopoliza,observaciones,vigenciadesde,fechaemision from dbventas where idventa =".$id;
+		$sql = "select idventa,refcotizaciones,refestadoventa,primaneta,primatotal,fechacrea,fechamodi,usuariocrea,usuariomodi,nropoliza,fechavencimientopoliza,foliotys,foliointerno,refproductosaux,refventas,version,refmotivorechazopoliza,observaciones,vigenciadesde,fechaemision,reftipomoneda from dbventas where idventa =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
 	function traerVentasPorCotizacion($id) {
-		$sql = "select idventa,refcotizaciones,refestadoventa,primaneta,primatotal,fechacrea,fechamodi,usuariocrea,usuariomodi,nropoliza,fechavencimientopoliza,foliotys,foliointerno,refproductosaux,refproductosaux,refventas,version,refmotivorechazopoliza,observaciones,vigenciadesde,fechaemision from dbventas where refcotizaciones =".$id;
+		$sql = "select idventa,refcotizaciones,refestadoventa,primaneta,primatotal,fechacrea,fechamodi,usuariocrea,usuariomodi,nropoliza,fechavencimientopoliza,foliotys,foliointerno,refproductosaux,refproductosaux,refventas,version,refmotivorechazopoliza,observaciones,vigenciadesde,fechaemision,reftipomoneda from dbventas where refcotizaciones =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
    function traerVentasPorCotizacionPaquetes($id, $refproductos) {
-		$sql = "select idventa,refcotizaciones,refestadoventa,primaneta,primatotal,fechacrea,fechamodi,usuariocrea,usuariomodi,nropoliza,fechavencimientopoliza,foliotys,foliointerno,refproductosaux,refproductosaux,refventas,version,fechaemision from dbventas where refcotizaciones =".$id." and refproductosaux =".$refproductos;
+		$sql = "select idventa,refcotizaciones,refestadoventa,primaneta,primatotal,fechacrea,fechamodi,usuariocrea,usuariomodi,nropoliza,fechavencimientopoliza,foliotys,foliointerno,refproductosaux,refproductosaux,refventas,version,fechaemision,reftipomoneda from dbventas where refcotizaciones =".$id." and refproductosaux =".$refproductos;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -8229,7 +8278,7 @@ return $res;
       p.producto,
       cli.refusuarios,
       ase.refusuarios as refusuariosasesor,
-      cli.email, ase.email as emialasesor, v.refproductosaux, v.refventas, v.version, v.refmotivorechazopoliza, v.observaciones, v.vigenciadesde, ase.claveasesor, ase.envioalcliente, v.fechaemision
+      cli.email, ase.email as emialasesor, v.refproductosaux, v.refventas, v.version, v.refmotivorechazopoliza, v.observaciones, v.vigenciadesde, ase.claveasesor, ase.envioalcliente, v.fechaemision , v.reftipomoneda
 		from dbventas v
 		inner join dbcotizaciones c ON c.idcotizacion = v.refcotizaciones
       inner join dbclientes cli ON cli.idcliente = c.refclientes
@@ -8397,7 +8446,7 @@ return $res;
       (case when c.tieneasegurado = '1' then concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) else  concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) end) as asegurado,
       (case when v.fechavencimientopoliza > now() then 'green' else 'red' end) as color,
       pv.idperiodicidadventa , v.refproductosaux, v.refventas, v.version, v.refmotivorechazopoliza,
-      v.observaciones , v.vigenciadesde
+      v.observaciones , v.vigenciadesde ,v.fechaemision , v.reftipomoneda
 		from dbventas v
       inner join dbperiodicidadventas pv on pv.refventas = v.idventa
       inner join tbtipocobranza tc on tc.idtipocobranza = pv.reftipocobranza
@@ -8438,7 +8487,7 @@ return $res;
       (case when c.tieneasegurado = '1' then concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) else  concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) end) as asegurado,
       (case when v.fechavencimientopoliza > now() then 'green' else 'red' end) as color,
       pv.idperiodicidadventa , v.refproductosaux, v.refventas, v.version, v.refmotivorechazopoliza,
-      v.observaciones , v.vigenciadesde
+      v.observaciones , v.vigenciadesde , v.fechaemision , v.reftipomoneda
 		from dbventas v
       inner join dbperiodicidadventas pv on pv.refventas = v.idventa
       inner join tbtipocobranza tc on tc.idtipocobranza = pv.reftipocobranza
@@ -8478,7 +8527,7 @@ return $res;
       (case when c.tieneasegurado = '1' then concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) else  concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) end) as asegurado,
       (case when v.fechavencimientopoliza > now() then 'green' else 'red' end) as color,
       pv.idperiodicidadventa , v.refproductosaux, v.refventas, v.version, v.refmotivorechazopoliza,
-      v.observaciones , v.vigenciadesde
+      v.observaciones , v.vigenciadesde , v.fechaemision , v.reftipomoneda
 		from dbventas v
       inner join dbperiodicidadventas pv on pv.refventas = v.idventa
       inner join tbtipocobranza tc on tc.idtipocobranza = pv.reftipocobranza
@@ -8519,7 +8568,7 @@ return $res;
       (case when c.tieneasegurado = '1' then concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) else  concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) end) as asegurado,
       (case when v.fechavencimientopoliza > now() then 'green' else 'red' end) as color,
       pv.idperiodicidadventa , v.refproductosaux, v.refventas, v.version, v.refmotivorechazopoliza,
-      v.observaciones , v.vigenciadesde
+      v.observaciones , v.vigenciadesde, v.fechaemision , v.reftipomoneda
 		from dbventas v
       inner join dbperiodicidadventas pv on pv.refventas = v.idventa
       inner join tbtipocobranza tc on tc.idtipocobranza = pv.reftipocobranza
@@ -8559,7 +8608,7 @@ return $res;
       (case when c.tieneasegurado = '1' then concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) else  concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) end) as asegurado,
       (case when v.fechavencimientopoliza > now() then 'green' else 'red' end) as color,
       v.refproductosaux, v.refventas, v.version, v.refmotivorechazopoliza,
-      v.observaciones , v.vigenciadesde
+      v.observaciones , v.vigenciadesde, v.fechaemision , v.reftipomoneda
 		from dbventas v
 		inner join dbcotizaciones c ON c.idcotizacion = v.refcotizaciones
       inner join dbclientes cli ON cli.idcliente = c.refclientes

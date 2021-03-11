@@ -125,6 +125,9 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 $resEstadoCivil = $serviciosReferencias->traerEstadocivilPorIn('1,2');
 $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,array(1),'');
 
+$resTipoMoneda = $serviciosReferencias->traerTipomoneda();
+$cadTipoMoneda = $serviciosFunciones->devolverSelectBox($resTipoMoneda,array(1),'');
+
 ?>
 
 <!DOCTYPE html>
@@ -271,8 +274,11 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 										<input id="lstjugadores" style="width:75%;" />
 									</div>
 									<?php echo $frmUnidadNegocios; ?>
+
 									<div class="row">
-										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContnropoliza" style="display:block">
+										<?php echo $serviciosFunciones->addInput('4,4,4,6','select','reftipomoneda','reftipomoneda','', 'Tipo Moneda','',$cadTipoMoneda); ?>
+
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 frmContnropoliza" style="display:block">
 											<label class="form-label">Nro Poliza </label>
 											<div class="form-group input-group">
 												<div class="form-line">
@@ -282,7 +288,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 											</div>
 										</div>
 
-										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContfoliotys" style="display:block">
+										<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 frmContfoliotys" style="display:block">
 											<label class="form-label">Folio TYS </label>
 											<div class="form-group input-group">
 												<div class="form-line">

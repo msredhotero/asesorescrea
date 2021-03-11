@@ -61,8 +61,8 @@ $resVenta = $serviciosReferencias->traerVentasPorCotizacion($id);
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbventas";
 
-$lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','refestadoventa','refproductosaux','vigenciadesde','fechaemision');
-$lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Estado Poliza','Producto Especifico','Vigencia Desde','Fecha de Emision');
+$lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','refestadoventa','refproductosaux','vigenciadesde','fechaemision','reftipomoneda');
+$lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Estado Poliza','Producto Especifico','Vigencia Desde','Fecha de Emision','Tipo Moneda');
 
 
 $resVar = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
@@ -71,9 +71,12 @@ $cadRef = $serviciosFunciones->devolverSelectBox($resVar,array(1,2,3),' ');
 $resVar1 = $serviciosReferencias->traerEstadoventaPorId(6);
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resVar1,array(1),' ');
 
+$resTipoMoneda = $serviciosReferencias->traerTipomoneda();
+$cadTipoMoneda = $serviciosFunciones->devolverSelectBox($resTipoMoneda,array(1),'');
 
-$refdescripcion = array(0=>$cadRef,1=>$cadRef2);
-$refCampo 	=  array('refcotizaciones','refestadoventa');
+
+$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadTipoMoneda);
+$refCampo 	=  array('refcotizaciones','refestadoventa','reftipomoneda');
 
 $idproducto = mysql_result($resVar,0,'refproductos');
 
@@ -106,8 +109,8 @@ if (mysql_num_rows($resPaquete) > 0) {
 		$resVar3 = $serviciosReferencias->traerProductosPorId($rowP['refproductos']);
 		$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),' ');
 
-		$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3);
-		$refCampo 	=  array('refcotizaciones','refestadoventa','refproductosaux');
+		$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3,3=>$cadTipoMoneda);
+		$refCampo 	=  array('refcotizaciones','refestadoventa','refproductosaux','reftipomoneda');
 
 		$formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
@@ -128,8 +131,8 @@ if (mysql_num_rows($resPaquete) > 0) {
 	}
 
 	$cadRef3 = "<option value='0'>Mismo de la cotización</option>";
-	$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3);
-	$refCampo 	=  array('refcotizaciones','refestadoventa','refproductosaux');
+	$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3,3=>$cadTipoMoneda);
+	$refCampo 	=  array('refcotizaciones','refestadoventa','refproductosaux','reftipomoneda');
 
 	$formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 

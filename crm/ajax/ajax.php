@@ -2287,6 +2287,7 @@ function insertarVentasCompleto($serviciosReferencias) {
    $vigenciadesde = $_POST['vigenciadesde'];
 
    $fechaemision = $_POST['fechaemision'];
+   $reftipomoneda = $_POST['reftipomoneda'];
 
    $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo);
 
@@ -2307,7 +2308,7 @@ function insertarVentasCompleto($serviciosReferencias) {
       $refbeneficiarios = $_POST['refbeneficiarios'];
       $resModificarBEN = $serviciosReferencias->modificarCotizacionesBeneficiario($res,$refbeneficiarios);
 
-      $resVenta = $serviciosReferencias->insertarVentas($res,6,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,0,0,1,$observaciones='',$vigenciadesde,$fechaemision);
+      $resVenta = $serviciosReferencias->insertarVentas($res,6,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,0,0,1,$observaciones='',$vigenciadesde,$fechaemision,$reftipomoneda);
 
       // inserto la cartera de productos del cliente
       $resIC = $serviciosReferencias->insertarClientescartera($refclientes,$refproductos,$vigenciadesde,'','1');
@@ -3228,8 +3229,9 @@ function insertarVentas($serviciosReferencias) {
    */
 
    $fechaemision = $_POST['fechaemision'];
+   $reftipomoneda = $_POST['reftipomoneda'];
 
-   $res = $serviciosReferencias->insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux, $refventas,$version, $observaciones,$vigenciadesde,$fechaemision);
+   $res = $serviciosReferencias->insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux, $refventas,$version, $observaciones,$vigenciadesde,$fechaemision,$reftipomoneda);
 
    if ((integer)$res > 0) {
 
@@ -6956,9 +6958,10 @@ function modificarVentas($serviciosReferencias) {
    $vigenciadesde = $_POST['vigenciadesde'];
 
    $fechaemision = $_POST['fechaemision'];
+   $reftipomoneda = $_POST['reftipomoneda'];
 
    if ($error == '') {
-      $res = $serviciosReferencias->modificarVentas($id,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechamodi,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$refventas,$version,$refmotivorechazopoliza,$observaciones,$vigenciadesde,$fechaemision);
+      $res = $serviciosReferencias->modificarVentas($id,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechamodi,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$refventas,$version,$refmotivorechazopoliza,$observaciones,$vigenciadesde,$fechaemision,$reftipomoneda);
 
       if ($res == true) {
          echo '';
@@ -10418,8 +10421,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
       case 'dbventas':
          $resultado = $serviciosReferencias->traerVentasPorId($id);
 
-         $lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','refproductosaux','vigenciadesde','fechaemision');
-         $lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Producto Especifico','Vigencia Desde','Fecha de Emision');
+         $lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','refproductosaux','vigenciadesde','fechaemision','reftipomoneda');
+         $lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Producto Especifico','Vigencia Desde','Fecha de Emision','Tipo Moneda');
 
          $modificar = "modificarVentas";
          $idTabla = "idventa";
@@ -10437,9 +10440,12 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
             $cadRef3 = "<option value='0'>Mismo de la cotización</option>";
          }
 
+         $resVar4 = $serviciosReferencias->traerTipomoneda();
+         $cadRef4 = $serviciosFunciones->devolverSelectBoxActivo($resVar4,array(1),' ',mysql_result($resultado,0,'reftipomoneda'));
 
-         $refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3);
-      	$refCampo 	=  array('refcotizaciones','refestadoventa','refproductosaux');
+
+         $refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3, 3=>$cadRef4);
+      	$refCampo 	=  array('refcotizaciones','refestadoventa','refproductosaux','reftipomoneda');
       break;
       case 'dbconstancias':
          $resultado = $serviciosReferencias->traerConstanciasPorId($id);
