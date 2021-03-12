@@ -825,8 +825,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 
 		$('#primaneta').number( true, 2 ,'.','');
 		$('#primatotal').number( true, 2 ,'.','');
-		$('#primaobjetivo').number( true, 2 ,'.','');
-		$('#primaobjetivototal').number( true, 2 ,'.','');
+
 
 		$('#version').prop('readonly',true);
 		$('#folio').prop('readonly',true);
@@ -845,6 +844,9 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 		<?php if (($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22) || ($_SESSION['idroll_sahilices'] == 23)) { ?>
 		$('#primaobjetivo').prop('readonly',true);
 		$('#primaobjetivototal').prop('readonly',true);
+		<?php } else { ?>
+			$('#primaobjetivo').number( true, 2 ,'.','');
+			$('#primaobjetivototal').number( true, 2 ,'.','');
 		<?php } ?>
 
 		<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
