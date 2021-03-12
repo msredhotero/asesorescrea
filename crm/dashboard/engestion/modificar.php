@@ -59,6 +59,8 @@ $cuestionario = $serviciosReferencias->traerCuestionariodetallePorTablaReferenci
 
 $idCliente = mysql_result($resultado,0,'refclientes');
 
+$idAsesor = mysql_result($resultado,0,'refasesores');
+
 $vigenciasCliente = $serviciosReferencias->vigenciasDocumentacionesClientes($idCliente);
 
 if ($id == 0) {
@@ -1651,7 +1653,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 			data: {
 				accion: 'rechazarCotizacionValidacion',
 				id: <?php echo $id; ?>,
-				idagente: <?php echo mysql_result($resultado,0,'refasesores'); ?>,
+				idagente: <?php echo $idAsesor; ?>,
 				bitacoracrea: $('#bitacoracrea').val()
 			},
 			//mientras enviamos el archivo
