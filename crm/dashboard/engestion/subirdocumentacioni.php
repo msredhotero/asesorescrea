@@ -174,6 +174,12 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 }
 
 
+$puedeCargarDocumentacion = 0;
+
+if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 7)) {
+	$puedeCargarDocumentacion = 1;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -323,6 +329,12 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 
 			<div class="row">
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+					<button type="button" class="btn btn-info waves-effect btnVolverFiltro" data-ir="modificar" data-referencia="<?php echo $id; ?>"><i class="material-icons">reply</i><span>VOLVER</span></button>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
@@ -340,10 +352,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 							</ul>
 						</div>
 						<div class="body table-responsive">
-							<button type="button" class="btn bg-green waves-effect btnVolver">
-								<i class="material-icons">undo</i>
-								<span>VOLVER</span>
-							</button>
+
 							<form class="form" id="formCountry">
 
 								<div class="row" style="padding: 5px 20px;">
@@ -389,6 +398,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 						</div>
 					</div>
 				</div>
+				<?php } ?>
 
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<div class="card">
@@ -405,12 +415,14 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 							</ul>
 						</div>
 						<div class="body">
+							<?php if ($puedeCargarDocumentacion == 1) { ?>
 							<div class="row">
 								<button type="button" class="btn bg-red waves-effect btnEliminar">
 									<i class="material-icons">remove</i>
 									<span>ELIMINAR</span>
 								</button>
 							</div>
+							<?php } ?>
 							<div class="row">
 								<a href="javascript:void(0);" class="thumbnail timagen1">
 									<img class="img-responsive">
@@ -427,6 +439,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 										Estado: <b><?php echo $estadoDocumentacion; ?></b>
 									</h4>
 								</div>
+							<?php if ($puedeCargarDocumentacion == 1) { ?>
 								<div class="col-xs-6 col-md-6" style="display:block">
 									<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
 									<div class="input-group col-md-12">
@@ -440,7 +453,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 									<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
 								<?php } ?>
 								</div>
-
+							<?php } ?>
 							</div>
 					</div>
 				</div>
@@ -694,7 +707,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 		};
 
 
-		<?php if (($idestadodocumentacion != 5)) { ?>
+		<?php if (($idestadodocumentacion != 5) && ($puedeCargarDocumentacion == 1)) { ?>
 		var myDropzone = new Dropzone("#archivos", {
 			params: {
 				 idasociado: <?php echo $id; ?>,
@@ -759,20 +772,6 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 
 		$(".body").on("click",'.btnEliminar', function(){
 			$('#lgmEliminar').modal();
-
-		});
-
-
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '265px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
 
 		});
 

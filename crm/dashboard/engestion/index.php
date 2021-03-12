@@ -402,7 +402,6 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 	$(document).ready(function(){
 
 
-
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,

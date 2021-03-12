@@ -178,6 +178,7 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">
+											<?php if (($_SESSION['idroll_sahilices']==1) || ($_SESSION['idroll_sahilices']==3) || ($_SESSION['idroll_sahilices']==4) || ($_SESSION['idroll_sahilices']==11)) { ?>
 											<button type="button" class="btn bg-teal waves-effect btnNuevo" data-toggle="modal" data-target="#lgmNuevo">
 												<i class="material-icons">add</i>
 												<span>CARGAR A PARTIR DE UNA COTIZACION</span>
@@ -186,6 +187,7 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 												<i class="material-icons">add</i>
 												<span>CARGAR DIRECTAMENTE</span>
 											</button>
+										<?php } ?>
 											<button type="button" class="btn bg-light-blue waves-effect btnIniciada">
 												<i class="material-icons">alarm</i>
 												<span>INICIADA</span>
@@ -975,7 +977,7 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 						$('#lgmEliminar').modal('toggle');
 						table.ajax.reload();
 						table5.ajax.reload();
-				
+
 					} else {
 						swal({
 								title: "Respuesta",

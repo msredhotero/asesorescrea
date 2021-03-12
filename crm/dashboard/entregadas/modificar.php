@@ -66,9 +66,9 @@ if ($id == 0) {
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbcotizaciones";
 
-$lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones','fechaemitido','primaneta','primatotal','recibopago','fechapago','nrorecibo','importecomisionagente','importebonopromotor','cobertura','reasegurodirecto','fecharenovacion','fechapropuesta','tiponegocio','presentacotizacion','fechavencimiento','coberturaactual','bitacoracrea','bitacorainbursa','bitacoraagente','existeprimaobjetivo','primaobjetivo');
-$lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor','Cobertura Requiere Reaseguro','Reaseguro Directo con Inbursa o Broker','Fecha renovación o presentación de propueta al cliente','Fecha en que se entrega propuesta','Tipo de negocio para agente','Presenta Cotizacion o Poliza de competencia','Fecha Vencimiento póliza Actual','Aseguradora con quien esta suscrita la póliza','Bitacora CREA','Bitacora Inbursa','Bitacora Agente','Existe Prima Objetivo','Prima Objetivo');
+$lblCambio	 	= $baseHTML->devolverLabelPorTabla($tabla)[0];
 
+$lblreemplazo	= $baseHTML->devolverLabelPorTabla($tabla)[1];
 
 $modificar = "modificarCotizaciones";
 $idTabla = "idcotizacion";
@@ -514,6 +514,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 							$exiteAceptada = 0;
 							$cotAceptada = 0;
 							$cotPDF = '';
+							$lblAceptada = '';
 							while ($rowCI = mysql_fetch_array($resCotizacionInbursa) ) {
 
 								if ($rowCI['archivo'] != '') {
@@ -522,6 +523,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 										$exiteAceptada = 1;
 										$cotAceptada = $rowCI['iddocumentacioncotizacion'];
 										$cotPDF = "../../archivos/cotizaciones/".$id."/".$rowCI['carpeta']."/".$rowCI['archivo'];
+										$lblAceptada = $rowCI['documentacion'];
 									}
 
 									?>
@@ -667,7 +669,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 					 <h4 class="modal-title" id="largeModalLabel">MODIFICAR ESTADO DE LA COTIZACIÓN</h4>
 				</div>
 				<div class="modal-body">
-					<h3>¿Esta seguro que desea <span class="lblModiEstado"></span> la cotizacion?</h3>
+					<h3>¿Esta seguro que desea <span class="lblModiEstado"></span> la cotizacion <?php echo $lblAceptada; ?> ?</h3>
 
 
 
@@ -782,12 +784,17 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 			PDFObject.embed("<?php echo $cotPDF; ?>", "#example1");
 		<?php } ?>
 
+		<?php
+		if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 7)) {
+		?>
 		$('.btnCotizacion').click(function() {
 			var contImagen = $(this).data('imagen');
 			var idcot =  $(this).attr('id');
 			PDFObject.embed(contImagen, "#example1");
 			aceptarCotizacionInbursa(idcot);
 		});
+		<?php } ?>
+
 		<?php
 		if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 3)) {
 		?>
@@ -859,7 +866,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
-					
+
 				},
 				//una vez finalizado correctamente
 				success: function(data){
@@ -915,6 +922,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 		$('#primaneta').number( true, 2 ,'.','');
 		$('#primatotal').number( true, 2 ,'.','');
 		$('#primaobjetivo').number( true, 2 ,'.','');
+		$('#primaobjetivototal').number( true, 2 ,'.','');
 
 		$('#version').prop('readonly',true);
 		$('#folio').prop('readonly',true);

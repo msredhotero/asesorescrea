@@ -484,6 +484,26 @@ $('.maximizar').click(function() {
   }
 });
 
+$('.search-bar').find('input').keypress(function(e) {
+
+   var altura = $('.lstNotificaciones').data('altura');
+
+   var alturaURL = '';
+   if (altura == '') {
+      altura = '../';
+      alturaURL = '';
+   } else {
+      altura = '../../';
+      alturaURL = '../';
+   }
+
+   var code = (e.keyCode ? e.keyCode : e.which);
+   if(code==13){
+
+      $(location).attr('href', alturaURL + 'busqueda/index.php?busqueda='+$(this).val());
+   }
+});
+
 
 $('.btnTrazabilidad').click(function () {
    var idcotizacion = $('.btnTrazabilidad').data('cotizacion');

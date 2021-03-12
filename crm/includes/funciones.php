@@ -155,6 +155,21 @@ class Servicios {
 		return $cad;
 	}
 
+
+	function devolverSelectBoxActivoUnico($datos, $ar, $delimitador, $idSelect) {
+		$cad		= '';
+		while ($rowTT = mysql_fetch_array($datos)) {
+			$contenido	= '';
+			foreach ($ar as $i) {
+				$contenido .= $rowTT[$i].$delimitador;
+			}
+			if ($rowTT[0] == $idSelect) {
+				$cad .= '<option value="'.$rowTT[0].'">'.(substr($contenido,0,strlen($contenido)-strlen($delimitador))).'</option>';
+			}
+		}
+		return $cad;
+	}
+
 	function camposTablaView($cabeceras,$datos,$cantidad) {
 		$cadView = '';
 		$cadRows = '';

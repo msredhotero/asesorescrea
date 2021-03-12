@@ -1345,9 +1345,9 @@ switch ($tabla) {
 				$icon = array('create');
 				$whereEstado = ' c.refestados in (5) and c.refestadocotizaciones in (26) ';
 				if ($_SESSION['idroll_sahilices'] == 7) {
-					$termina = 6;
+					$termina = 10;
 				} else {
-					$termina = 6;
+					$termina = 10;
 				}
 
 				/*

@@ -1153,7 +1153,7 @@ switch ($accion) {
       traerClientesCotizador($serviciosReferencias, $serviciosFunciones);
    break;
    case 'modificarCotizacionesPorCampo':
-      modificarCotizacionesPorCampo($serviciosReferencias);
+      modificarCotizacionesPorCampo($serviciosReferencias,$serviciosUsuarios);
    break;
    case 'modificarCotizacionesPorCampoRechazoDefinitivo':
       modificarCotizacionesPorCampoRechazoDefinitivo($serviciosReferencias);
@@ -1415,10 +1415,67 @@ switch ($accion) {
    case 'buscarCURP':
       buscarCURP($serviciosValidador);
    break;
+   case 'traerDocumentacionPorCotizacionDocumentacionRechazo':
+      traerDocumentacionPorCotizacionDocumentacionRechazo($serviciosReferencias);
+   break;
 
 
 }
 /* FinFinFin */
+
+
+function traerDocumentacionPorCotizacionDocumentacionRechazo($serviciosReferencias) {
+
+   $idcotizacion = $_POST['idcotizacion'];
+
+   $resV['datos'] = '';
+   $resV['error'] = false;
+
+   $imagen = '';
+
+   $path  = '../archivos/rechazos/'.$idcotizacion.'/';
+
+   if (!file_exists($path)) {
+      mkdir('../archivos/rechazos/'.$idcotizacion.'/', 0777);
+   }
+
+   $files = array_diff(scandir($path), array('.', '..'));
+
+   //die(var_dump($files[2]));
+
+   if (count($files) > 0) {
+      /* produccion
+      $imagen = 'https://www.saupureinconsulting.com.ar/aifzn/'.mysql_result($resFoto,0,'archivo').'/'.mysql_result($resFoto,0,'imagen');
+      */
+
+      //desarrollo
+
+
+      $imagen = '../../archivos/rechazos/'.$idcotizacion.'/'.$files[2];
+
+      if (strpos($files[2],"pdf") !== false) {
+         $resV['datos'] = array('imagen' => $imagen, 'type' => 'pdf');
+      } else {
+         $resV['datos'] = array('imagen' => $imagen, 'type' => 'jpg');
+      }
+
+
+      $resV['error'] = false;
+
+
+
+   } else {
+      $imagen = '../../imagenes/sin_img.jpg';
+
+
+      $resV['datos'] = array('imagen' => $imagen, 'type' => 'imagen');
+      $resV['error'] = true;
+   }
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function buscarCURP($serviciosValidador) {
 
@@ -2180,6 +2237,11 @@ function modificarCotizacionesPorCampoCompleto($serviciosReferencias) {
    $campo = $_POST['campo'];
    $valor = $_POST['valor'];
 
+   if (($campo == 'bitacoracrea') || ($campo == 'bitacoraagente') || ($campo == 'bitacorainbursa')) {
+
+      $valor = $valor.' - '.$_SESSION['usua_sahilices'].' '.date('Y-m-d H:i:s').'.\n';
+   }
+
    $res = $serviciosReferencias->modificarCotizacionesPorCampo($id,$campo, $valor, $_SESSION['usua_sahilices']);
 
    if ($res == true) {
@@ -2289,7 +2351,13 @@ function insertarVentasCompleto($serviciosReferencias) {
    $fechaemision = $_POST['fechaemision'];
    $reftipomoneda = $_POST['reftipomoneda'];
 
-   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo);
+   if (isset($_POST['primaobjetivototal'])) {
+      $primaobjetivototal = ($_POST['primaobjetivototal'] == '' ? 0 : $_POST['primaobjetivototal']);
+   } else {
+      $primaobjetivototal = 0;
+   }
+
+   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal);
 
    if ((integer)$res > 0) {
 
@@ -4048,7 +4116,7 @@ function traerInformeDeDocumentaciones($serviciosReferencias) {
    echo json_encode($resV);
 }
 
-function modificarCotizacionesPorCampo($serviciosReferencias) {
+function modificarCotizacionesPorCampo($serviciosReferencias,$serviciosUsuarios) {
    session_start();
    $id = $_POST['id'];
    $idestado = $_POST['idestado'];
@@ -4122,6 +4190,47 @@ function modificarCotizacionesPorCampo($serviciosReferencias) {
 
 
    if ($resModEstadoEtapa) {
+
+      //aviso al agente si el negocio fue rechazado.
+      if (($idestado == 17) || ($idestado == 18) || ($idestado == 28)) {
+         $noenviar = 0;
+
+         $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+
+         if (mysql_num_rows($resCotizaciones) > 0) {
+            $resV['error'] = false;
+
+            // destinatario del email
+            $destinatario = mysql_result($resCotizaciones,0,'emailasesor');
+            // url para ingreso
+            $url = "historial/modificar.php?id=".mysql_result($resCotizaciones,0,0);
+            // usuario
+            $idusuario = mysql_result($resCotizaciones,0,'idusuarioasesor');
+
+            if ($noenviar == 0) {
+               ///// para el auto login ///////////////
+               // usuario 30 fabiola
+
+               $token = $serviciosReferencias->GUID();
+               $resAutoLogin = $serviciosReferencias->insertarAutologin($idusuario,$token,$url,'0');
+               ////// fin ////////////////////////////
+
+               $asunto = 'Se rechazo una cotizacion desde la plataforma, folio: '.mysql_result($resCotizaciones,0,'folio');
+
+               $cuerpo = '';
+
+               $cuerpo .= "<p>El cliente ".mysql_result($resCotizaciones,0,'clientesolo')." - Email: ".mysql_result($resCotizaciones,0,'email')." - Telefono: ".mysql_result($resCotizaciones,0,'telefonocelular')."</p>";
+
+               $cuerpo .= '<p>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</p>';
+
+               $exito = $serviciosUsuarios->enviarEmail($destinatario,$asunto,$cuerpo);
+
+            }
+
+         }
+      }
+
+
       $resV['error'] = false;
       $resV['mensaje'] = $mensaje;
       $resV['tipo'] = 'success';
@@ -6008,9 +6117,16 @@ function validarCuestionario($serviciosReferencias) {
       $existeprimaobjetivo = $_POST['existeprimaobjetivo'];
       $primaobjetivo = ($_POST['primaobjetivo'] == '' ? 0 : $_POST['primaobjetivo']);
 
+      if (isset($_POST['primaobjetivototal'])) {
+         $primaobjetivototal = ($_POST['primaobjetivototal'] == '' ? 0 : $_POST['primaobjetivototal']);
+      } else {
+         $primaobjetivototal = 0;
+      }
 
 
-      $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo);
+
+
+      $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal);
 
 
       if ((integer)$res > 0) {
@@ -8128,7 +8244,13 @@ function insertarCotizaciones($serviciosReferencias) {
    $existeprimaobjetivo = $_POST['existeprimaobjetivo'];
    $primaobjetivo = ($_POST['primaobjetivo'] == '' ? 0 : $_POST['primaobjetivo']);
 
-   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo);
+   if (isset($_POST['primaobjetivototal'])) {
+      $primaobjetivototal = ($_POST['primaobjetivototal'] == '' ? 0 : $_POST['primaobjetivototal']);
+   } else {
+      $primaobjetivototal = 0;
+   }
+
+   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal);
 
    if ((integer)$res > 0) {
 
@@ -8210,6 +8332,12 @@ function modificarCotizaciones($serviciosReferencias) {
    $existeprimaobjetivo = $_POST['existeprimaobjetivo'];
    $primaobjetivo = ($_POST['primaobjetivo'] == '' ? 0 : $_POST['primaobjetivo']);
 
+   if (isset($_POST['primaobjetivototal'])) {
+      $primaobjetivototal = ($_POST['primaobjetivototal'] == '' ? 0 : $_POST['primaobjetivototal']);
+   } else {
+      $primaobjetivototal = 0;
+   }
+
 
    if ($refestadocotizaciones == 12) {
 
@@ -8257,7 +8385,7 @@ function modificarCotizaciones($serviciosReferencias) {
    }
 
 
-   $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$bitacoracrea,$bitacorainbursa,$bitacoraagente,$existeprimaobjetivo,$primaobjetivo);
+   $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$bitacoracrea,$bitacorainbursa,$bitacoraagente,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal);
 
    if ($res == true) {
       if (isset($_POST['refbeneficiarioaux'])) {

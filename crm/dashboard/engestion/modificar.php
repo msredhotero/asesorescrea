@@ -68,9 +68,9 @@ if ($id == 0) {
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbcotizaciones";
 
-$lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones','fechaemitido','primaneta','primatotal','recibopago','fechapago','nrorecibo','importecomisionagente','importebonopromotor','cobertura','reasegurodirecto','fecharenovacion','fechapropuesta','tiponegocio','presentacotizacion','fechavencimiento','coberturaactual','bitacoracrea','bitacorainbursa','bitacoraagente','existeprimaobjetivo','primaobjetivo','refestados');
-$lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor','Cobertura Requiere Reaseguro','Reaseguro Directo con Inbursa o Broker','Fecha renovación o presentación de propueta al cliente','Fecha en que se entrega propuesta','Tipo de negocio para agente','Presenta Cotizacion o Poliza de competencia','Fecha Vencimiento póliza Actual','Aseguradora con quien esta suscrita la póliza','Bitacora CREA','Bitacora Inbursa','Bitacora Agente','Existe Prima Objetivo','Prima Objetivo','Etapa');
+$lblCambio	 	= $baseHTML->devolverLabelPorTabla($tabla)[0];
 
+$lblreemplazo	= $baseHTML->devolverLabelPorTabla($tabla)[1];
 
 $modificar = "modificarCotizaciones";
 $idTabla = "idcotizacion";
@@ -166,7 +166,12 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 	$resGuia = $serviciosReferencias->traerEstadocotizacionesPorIn('1,2');
 } else {
-	$resVar5	= $serviciosReferencias->traerAsesores();
+	if (($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22)) {
+		$resVar5	= $serviciosReferencias->traerAsesoresPorId(mysql_result($resultado,0,'refasesores'));
+	} else {
+		$resVar5	= $serviciosReferencias->traerAsesores();
+	}
+
 	$cadRef5 = $serviciosFunciones->devolverSelectBoxActivo($resVar5,array(2,3,4),' ',mysql_result($resultado,0,'refasesores'));
 
 	$resGuia = $serviciosReferencias->traerEstadocotizacionesPorIn('1,2,3,4,5');
@@ -181,68 +186,104 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$idestado);
 }
 
-
-switch (mysql_result($resultado,0,'cobertura')) {
-	case 'Si':
-		$cadRef7 = "<option value='Si' selected>Si</option><option value='No'>No</option><option value='No lo se'>No lo se</option>";
-	break;
-	case 'No':
-		$cadRef7 = "<option value='Si'>Si</option><option value='No' selected>No</option><option value='No lo se'>No lo se</option>";
-	break;
-	case 'No lo se':
-		$cadRef7 = "<option value='Si'>Si</option><option value='No'>No</option><option value='No lo se' selected>No lo se</option>";
-	break;
-	default:
-		$cadRef7 = "<option value=''>-- Seleccionar --</option><option value='Si'>Si</option><option value='No'>No</option><option value='No lo se'>No lo se</option>";
-	break;
+if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) {
+	switch (mysql_result($resultado,0,'cobertura')) {
+		case 'Si':
+			$cadRef7 = "<option value='Si' selected>Si</option><option value='No'>No</option><option value='No lo se'>No lo se</option>";
+		break;
+		case 'No':
+			$cadRef7 = "<option value='Si'>Si</option><option value='No' selected>No</option><option value='No lo se'>No lo se</option>";
+		break;
+		case 'No lo se':
+			$cadRef7 = "<option value='Si'>Si</option><option value='No'>No</option><option value='No lo se' selected>No lo se</option>";
+		break;
+		default:
+			$cadRef7 = "<option value=''>-- Seleccionar --</option><option value='Si'>Si</option><option value='No'>No</option><option value='No lo se'>No lo se</option>";
+		break;
+	}
+} else {
+	$cadRef7 = "<option value='".mysql_result($resultado,0,'cobertura')."'>".mysql_result($resultado,0,'cobertura')."</option>";
 }
 
 //die(var_dump($ordenPosible));
 
-switch (mysql_result($resultado,0,'presentacotizacion')) {
-	case 'Si':
-		$cadRef8 = "<option value='Si' selected>Si</option><option value='No'>No</option>";
-	break;
-	case 'No':
-		$cadRef8 = "<option value='Si'>Si</option><option value='No' selected>No</option>";
-	break;
-	default:
-		$cadRef8 = "<option value=''>-- Seleccionar --</option><option value='Si'>Si</option><option value='No'>No</option>";
-	break;
-
+if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) {
+	switch (mysql_result($resultado,0,'presentacotizacion')) {
+		case 'Si':
+			$cadRef8 = "<option value='Si' selected>Si</option><option value='No'>No</option>";
+		break;
+		case 'No':
+			$cadRef8 = "<option value='Si'>Si</option><option value='No' selected>No</option>";
+		break;
+		default:
+			$cadRef8 = "<option value=''>-- Seleccionar --</option><option value='Si'>Si</option><option value='No'>No</option>";
+		break;
+	}
+} else {
+	$cadRef8 = "<option value='".mysql_result($resultado,0,'presentacotizacion')."'>".mysql_result($resultado,0,'presentacotizacion')."</option>";
 }
 
-switch (mysql_result($resultado,0,'tiponegocio')) {
-	case 'Negocio nuevo':
-		$cadRef9 = "<option value='Negocio nuevo' selected>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
-	break;
-	case 'Renovación':
-		$cadRef9 = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación' selected>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
-	break;
-	case 'Renovación póliza con otro agente':
-		$cadRef9 = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente' selected>Renovación póliza con otro agente</option>";
-	break;
-	default:
-		$cadRef9 = "<option value=''>-- Seleccionar --</option><option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
-	break;
+
+if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) {
+
+	switch (mysql_result($resultado,0,'tiponegocio')) {
+		case 'Negocio nuevo':
+			$cadRef9 = "<option value='Negocio nuevo' selected>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
+		break;
+		case 'Renovación':
+			$cadRef9 = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación' selected>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
+		break;
+		case 'Renovación póliza con otro agente':
+			$cadRef9 = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente' selected>Renovación póliza con otro agente</option>";
+		break;
+		default:
+			$cadRef9 = "<option value=''>-- Seleccionar --</option><option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
+		break;
+	}
+} else {
+	$cadRef9 = "<option value='".mysql_result($resultado,0,'tiponegocio')."'>".mysql_result($resultado,0,'tiponegocio')."</option>";
 }
 
 $cadRef11 = '';
-switch (mysql_result($resultado,0,'existeprimaobjetivo')) {
-	case '1':
-		$cadRef11 = "<option value='1' selected>Si</option><option value='0'>No</option>";
-	break;
-	case '0':
-		$cadRef11 = "<option value='1'>Si</option><option value='0' selected>No</option>";
-	break;
-	default:
-		$cadRef11 = "<option value=''>-- Seleccionar --</option><option value='1'>Si</option><option value='0' selected>No</option>";
-	break;
+
+if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) {
+	switch (mysql_result($resultado,0,'existeprimaobjetivo')) {
+		case '1':
+			$cadRef11 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+		break;
+		case '0':
+			$cadRef11 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+		break;
+		default:
+			$cadRef11 = "<option value=''>-- Seleccionar --</option><option value='1'>Si</option><option value='0' selected>No</option>";
+		break;
+	}
+} else {
+	switch (mysql_result($resultado,0,'existeprimaobjetivo')) {
+		case '1':
+			$cadRef11 = "<option value='1'>Si</option>";
+		break;
+		case '0':
+			$cadRef11 = "<option value='0'>No</option>";
+		break;
+		default:
+			$cadRef11 = "<option value=''>-- Ninguno --</option>";
+		break;
+	}
 }
 
 $resVar10	= $serviciosReferencias->traerAseguradora();
-$cadRef10 = "<option value=''>-- Seleccionar --</option>";
-$cadRef10 .= $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',mysql_result($resultado,0,'coberturaactual'));
+
+if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) {
+
+	$cadRef10 = "<option value='0'>-- Seleccionar --</option>";
+	$cadRef10 .= $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',mysql_result($resultado,0,'coberturaactual'));
+} else {
+	$cadRef10 = $serviciosFunciones->devolverSelectBoxActivoUnico($resVar10,array(1),'',mysql_result($resultado,0,'coberturaactual'));
+	if ($cadRef10 == '') {
+		$cadRef10 = "<option value='0'>-- Ninguno --</option>";
+	}
+}
 
 $refEtapa = $serviciosReferencias->traerEtapacotizacion();
 $cadEtapa = $serviciosFunciones->devolverSelectBoxActivo($refEtapa,array(1),'',mysql_result($resultado,0,'refestados'));
@@ -635,12 +676,14 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 											<button type="button" class="btn bg-amber waves-effect btnDenegada">DENEGADA POR INBURSA</button>
 											<button type="button" class="btn bg-deep-orange waves-effect btnInsuficiente">PRIMA DE REFERENCIA INSUFICIENTE</button>
 										<?php } else { ?>
-											<button type="button" class="btn bg-amber waves-effect btnDenegada">CONDICIONES FUERA DE POLITICAS</button>
-											<button type="button" class="btn bg-deep-orange waves-effect btnInsuficiente">PRIMA DE REFERENCIA INSUFICIENTE</button>
+											<button type="button" data-bitacora="bitacorainbursa" class="btn btn-success waves-effect btnModificarBitacora">MODIFICAR BITACORA</button>
+
+											<button type="button" class="btn bg-red waves-effect btnMotivos">RECHAZAR</button>
+
 										<?php } ?>
 										<?php } ?>
 									<?php }  else { ?>
-											<button type="button" class="btn btn-success waves-effect btnModificarBitacora">MODIFICAR BITACORA</button>
+											<button type="button" data-bitacora="bitacoraagente" class="btn btn-success waves-effect btnModificarBitacora">MODIFICAR BITACORA</button>
 									<?php } ?>
 
 
@@ -702,6 +745,29 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 	 </div>
 </div>
 
+<div class="modal fade" id="lgmMOTIVOS" tabindex="-1" role="dialog">
+	 <div class="modal-dialog modal-lg" role="document">
+		  <div class="modal-content">
+				<div class="modal-header bg-green">
+					<h4>IMPORTANTE</h4>
+				</div>
+				<div class="modal-body">
+				<div class="row">
+					<h5>Elija los motivos del Rechazo, la cotizacion sera enviada al Historial.</h5>
+				</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" data-rechazo="28" class="btn bg-amber waves-effect btnOtro" data-dismiss="modal">OTRO CONDUCTO</button>
+					<button type="button" data-rechazo="6" class="btn bg-amber waves-effect btnInsuficiente" data-dismiss="modal">PRIMA DE REFERENCIA OBJETIVO</button>
+					<button type="button" data-rechazo="7" class="btn bg-deep-orange waves-effect btnDenegada" data-dismiss="modal">CONDICIONES FUERA DE POLITICA</button>
+					<button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+				</div>
+
+		  </div>
+	 </div>
+</div>
+
+
 
 
 <div class="modal fade" id="lgmModificarEstado" tabindex="-1" role="dialog">
@@ -751,9 +817,14 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 <script>
 	$(document).ready(function(){
 
+		$('.btnMotivos').click(function() {
+			$('#lgmMOTIVOS').modal();
+		});
+
 		$('#primaneta').number( true, 2 ,'.','');
 		$('#primatotal').number( true, 2 ,'.','');
 		$('#primaobjetivo').number( true, 2 ,'.','');
+		$('#primaobjetivototal').number( true, 2 ,'.','');
 
 		$('#version').prop('readonly',true);
 		$('#folio').prop('readonly',true);
@@ -767,6 +838,12 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 		$('.frmContprimatotal').hide();
 		$('.frmContfolio').hide();
 
+		$('.frmContrefasegurados').hide();
+
+		<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
+			$('.frmContrefasesores').hide();
+		<?php } ?>
+
 		<?php if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22) || ($_SESSION['idroll_sahilices'] == 23)) { ?>
 		$('.frmContrefestadocotizaciones').hide();
 		$('.frmContarticulo').hide();
@@ -774,7 +851,8 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 		<?php } ?>
 
 		$('.btnModificarBitacora').click(function() {
-			modificarCotizacionesPorCampoCompleto();
+			var bitacora = $(this).data('bitacora');
+			modificarCotizacionesPorCampoCompleto(bitacora);
 		});
 
 		$('.modificarEstadoCotizacionRechazo').click(function() {
@@ -852,7 +930,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 							showConfirmButton: false
 					});
 					$('#lgmModificarEstado').modal('toggle');
-					location.reload();
+					//location.reload();
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -868,7 +946,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 			});
 		}
 
-		function modificarCotizacionesPorCampoCompleto() {
+		function modificarCotizacionesPorCampoCompleto(bitacora) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
@@ -877,8 +955,8 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 				data: {
 					accion: 'modificarCotizacionesPorCampoCompleto',
 					id: <?php echo $id; ?>,
-					campo: 'bitacoraagente',
-					valor: $('#bitacoraagente').val()
+					campo: bitacora,
+					valor: $('#'+bitacora).val()
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
@@ -932,10 +1010,20 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 
 		$('.btnDenegada').click(function() {
 
-			$('.lblModiEstado').html('DENEGADA POR INBURSA');
-			$('.modificarEstadoCotizacionRechazo').html('DENEGADA POR INBURSA');
+			$('.lblModiEstado').html('CONDICIONES FUERA DE POLITICA');
+			$('.modificarEstadoCotizacionRechazo').html('CONDICIONES FUERA DE POLITICA');
 			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
 			$('#estadomodificarestadorechazo').val(6);
+			$('#lgmModificarEstado').modal();
+
+		});//fin del boton eliminar
+
+		$('.btnOtro').click(function() {
+
+			$('.lblModiEstado').html('OTRO CONDUCTO');
+			$('.modificarEstadoCotizacionRechazo').html('OTRO CONDUCTO');
+			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
+			$('#estadomodificarestadorechazo').val(28);
 			$('#lgmModificarEstado').modal();
 
 		});//fin del boton eliminar
@@ -952,13 +1040,13 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 		});//fin del boton eliminar
 
 		$('.frmConttieneasegurado').hide();
-		$('.frmContrefasegurados').hide();
+
 		$('.frmContrefbeneficiarios').hide();
 
 		$('.frmContrefcotizaciones').hide();
 		$('.frmContrefestados').hide();
 
-		$('.frmContrefasesores').hide();
+
 
 		$('.btnLstEnviar').click(function() {
 			$('#lgmENVIAR').modal();
@@ -1018,7 +1106,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 			});
 		}
 
-		$('.frmContbitacorainbursa').hide();
+		$('.frmContbitacorainbursa').show();
 
 
 		<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>

@@ -311,6 +311,7 @@ if (isset($_GET['id'])) {
 	$primaobjetivo = mysql_result($resultado,0,'primaobjetivo');
 	$fechavencimiento = mysql_result($resultado,0,'fechavencimiento');
 	$observaciones = mysql_result($resultado,0,'observaciones');
+	$primaobjetivototal = mysql_result($resultado,0,'primaobjetivototal');
 
 
 
@@ -498,6 +499,7 @@ if (isset($_GET['id'])) {
 	$primaobjetivo = 0;
 	$fechavencimiento = '';
 	$observaciones = '';
+	$primaobjetivototal = 0;
 
 	$resVar10	= $serviciosReferencias->traerAseguradora();
 	$cadRef10 = $serviciosFunciones->devolverSelectBox($resVar10,array(1),'');
@@ -544,13 +546,9 @@ if (isset($_GET['id'])) {
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbcotizaciones";
 
-$lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones','fechaemitido','primaneta','primatotal','recibopago','fechapago','nrorecibo','importecomisionagente','importebonopromotor','cobertura','reasegurodirecto','fecharenovacion','fechapropuesta','tiponegocio','presentacotizacion','existeprimaobjetivo','primaobjetivo');
-$lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor','Cobertura Requiere Reaseguro','Reaseguro Directo con Inbursa o Broker','Fecha renovación o presentación de propueta al cliente','Fecha en que se entrega propuesta','Tipo de negocio para agente','Presenta Cotizacion o Poliza de competencia','Existe Prima Objetivo','Prima Objetivo');
+$lblCambio	 	= $baseHTML->devolverLabelPorTabla($tabla)[0];
 
-
-
-
-
+$lblreemplazo	= $baseHTML->devolverLabelPorTabla($tabla)[1];
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
@@ -757,7 +755,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
                                        </div>
                                     </div>
-												<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
+												<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContcues" style="display:block">
 													<div class="row contRangers">
 														<div class="col-md-6">
 															<label>Deslice para indicar el Peso del Asegurado (KG)</label>
@@ -998,10 +996,22 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 											</div>
 											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContprimaobjetivo" style="display:block">
 												<div class="form-group form-float">
-													<label class="form-label" style="margin-top:20px;">Prima Objetivo</label>
+													<label class="form-label" style="margin-top:20px;">Prima Objetivo Neta</label>
 												  <div class="form-line">
 
 														<input style="width:200px;" type="text" class="form-control" id="primaobjetivo" name="primaobjetivo" value="<?php echo $primaobjetivo; ?>" />
+
+
+												  </div>
+												</div>
+											</div>
+
+											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContprimaobjetivototal" style="display:block">
+												<div class="form-group form-float">
+													<label class="form-label" style="margin-top:20px;">Prima Objetivo Total</label>
+												  <div class="form-line">
+
+														<input style="width:200px;" type="text" class="form-control" id="primaobjetivototal" name="primaobjetivototal" value="<?php echo $primaobjetivototal; ?>" />
 
 
 												  </div>
@@ -1838,6 +1848,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 		$('.frmContfechavencimiento').hide();
 		$('.frmContcoberturaactual').hide();
 		$('.frmContprimaobjetivo').hide();
+		$('.frmContprimaobjetivototal').hide();
 		$('.frmContemisioncomprobantedomicilio').hide();
 		$('.frmContemisionrfc').hide();
 		$('.frmContvencimientoine').hide();
@@ -2443,13 +2454,17 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 		$("#wizard_with_validation").on("change",'#existeprimaobjetivo', function(){
 			if ($(this).val() == 1) {
 				$('.frmContprimaobjetivo').show();
+				$('.frmContprimaobjetivototal').show();
 
 				$("#primaobjetivo").prop('required',true);
+				$("#primaobjetivototal").prop('required',true);
 
 			} else {
 				$('.frmContprimaobjetivo').hide();
+				$('.frmContprimaobjetivototal').hide();
 
 				$("#primaobjetivo").prop('required',false);
+				$("#primaobjetivototal").prop('required',false);
 
 			}
 		});
@@ -2675,7 +2690,8 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 					bitacorainbursa: '',
 					bitacoraagente: '',
 					existeprimaobjetivo: $('#existeprimaobjetivo').val(),
-					primaobjetivo: $('#primaobjetivo').val()
+					primaobjetivo: $('#primaobjetivo').val(),
+					primaobjetivototal: $('#primaobjetivototal').val()
  				},
  				//mientras enviamos el archivo
  				beforeSend: function(){
@@ -2750,6 +2766,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 					bitacoraagente: '',
 					existeprimaobjetivo: $('#existeprimaobjetivo').val(),
 					primaobjetivo: $('#primaobjetivo').val(),
+					primaobjetivototal: $('#primaobjetivototal').val(),
 					id: <?php echo $id; ?>,
 					estadoactual: 4,
 					fechaemitido: '<?php echo date('Y-m-d'); ?>',
@@ -2815,6 +2832,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 
 		$('#primaobjetivo').number( true, 2 ,'.','');
+		$('#primaobjetivototal').number( true, 2 ,'.','');
 
 		$('.frmContnumerocliente').hide();
 		$('.frmContrefusuarios').hide();
