@@ -842,6 +842,11 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 
 		$('.frmContrefasegurados').hide();
 
+		<?php if (($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22) || ($_SESSION['idroll_sahilices'] == 23)) { ?>
+		$('#primaobjetivo').prop('readonly',true);
+		$('#primaobjetivototal').prop('readonly',true);
+		<?php } ?>
+
 		<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
 			$('.frmContrefasesores').hide();
 		<?php } ?>
