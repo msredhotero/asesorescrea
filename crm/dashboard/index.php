@@ -194,11 +194,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 		$existeCartera = $serviciosReferencias->traerClientescarteraPorCliente(mysql_result($resCliente,0,0));
 
 		/*if (mysql_num_rows($existeCartera)>0) {*/
-		if (1>0) {
-			$resProductosVenta = $serviciosReferencias->traerProductosVentaEnLinea(46);
-		} else {
-			$resProductosVenta = $serviciosReferencias->traerProductosVentaEnLineaPorId(46);
-		}
+		$resProductosVenta = $serviciosReferencias->traerProductosVentaEnLinea(46);
 	}
 
 }
@@ -1037,10 +1033,26 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 									<h3>Hola, <?php echo strtoupper($nombrecompleto); ?></h3>
 									<hr>
 									<?php if ($_SESSION['usuaid_sahilices'] == 201) { ?>
-									<div class"row imgVenta button-container-img">
-										<img src="../imagenes/ventaenlinea_bck2.jpg" width="100%"/>
-										<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.3em;" onclick="window.location='venta/new.php?producto=46'">COMPRAR EN LINEA</button>
+
+									<?php
+									while ($row = mysql_fetch_array($resProductosVenta)) {
+									?>
+									<div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+										<a href="venta/new.php?producto=<?php echo $row['idproducto']; ?>">
+										<div class="info-box bg-green hover-expand-effect">
+											<div class="icon">
+												<i class="material-icons">attach_money</i>
+											</div>
+											<div class="content">
+												<div class="text"><?php echo $row['producto']; ?></div>
+												<div class="number"><span class="lblPolizasActivas">OBTENER</span></div>
+											</div>
+										</div>
+										</a>
 									</div>
+									<?php
+									}
+									?>
 									<div class"row imgCotiza button-container-img" style="margin-top:20px;">
 										<img src="../imagenes/cotiza_bck2.jpg" width="100%"/>
 										<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.3em;" onclick="window.location='solicitar.php'">SOLICITAR INFORMACIÓN</button>
