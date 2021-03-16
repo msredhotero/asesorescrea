@@ -435,7 +435,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 			},
 		   "rowCallback": function( row, data, index ) {
 				//alert(data[4].substring(0,10));
-			  if (datediff(parseDate(data[4].substring(0,10)), parseDate('<?php echo date('Y-m-d'); ?>') )  > 1) {
+			  if (datediff(parseDate(data[4].substring(0,10)), parseDate('<?php echo date('d-m-Y'); ?>') )  > 1) {
 				  $('td', row).css('background-color', '#F62121');
 				  $('td', row).css('color', 'white');
 			  }
