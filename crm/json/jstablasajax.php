@@ -1266,9 +1266,10 @@ switch ($tabla) {
 				}
 
 				if (($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22)) {
-					$label = array();
-					$class = array();
-					$icon = array();
+					$label = array('btnModificar');
+					$class = array('bg-amber');
+					$icon = array('create');
+					$whereEstado = ' c.refestados in (4) and c.refestadocotizaciones not in (27) ';
 				}
 
 				$filtroNuevo = '';

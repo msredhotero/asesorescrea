@@ -290,8 +290,11 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11
 $refEtapa = $serviciosReferencias->traerEtapacotizacion();
 $cadEtapa = $serviciosFunciones->devolverSelectBoxActivo($refEtapa,array(1),'',mysql_result($resultado,0,'refestados'));
 
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadRef7,7=>$cadRef8,8=>$cadRef9,9=>$cadRef10,10=>$cadRef11,11=>$cadEtapa);
-$refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones','cobertura','presentacotizacion','tiponegocio','coberturaactual','existeprimaobjetivo','refestados');
+$resTipoMoneda = $serviciosReferencias->traerTipomonedaPorId(mysql_result($resultado,0,'reftipomoneda'));
+$cadTipoMoneda = $serviciosFunciones->devolverSelectBox($resTipoMoneda,array(1),'');
+
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadRef7,7=>$cadRef8,8=>$cadRef9,9=>$cadRef10,10=>$cadRef11,11=>$cadEtapa,12=>$cadTipoMoneda);
+$refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones','cobertura','presentacotizacion','tiponegocio','coberturaactual','existeprimaobjetivo','refestados','reftipomoneda');
 
 $frmUnidadNegocios = $serviciosFunciones->camposTablaModificar($id, $idTabla,$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -589,6 +592,13 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 								<div class="row" style="padding: 5px 20px;">
 
 									<?php echo $frmUnidadNegocios; ?>
+									<div class="form-group col-md-12 frmContobservaciones" style="display:block">
+										<label for="observaciones" class="control-label" style="text-align:left">Escriba mensaje para la bitacora </label>
+										<div class="input-group col-md-12">
+											<textarea type="text" rows="4" cols="6" class="form-control" id="bitacora" name="bitacora" placeholder="Ingrese el mensaje..."></textarea>
+										</div>
+
+									</div>
 									<input type="hidden" id="estadoactual" name="estadoactual" value=""/>
 								</div>
 								<div class="row" style="display:none;">
@@ -666,6 +676,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 									<p>Acciones</p>
 									<div class="modal-footer">
 										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+											<button type="button" data-bitacora="bitacorainbursa" class="btn btn-success waves-effect btnModificarBitacora">MODIFICAR BITACORA</button>
 									<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
 										<?php if (($idestado == 4 )) { ?>
 											<?php
@@ -678,14 +689,14 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 											<button type="button" class="btn bg-amber waves-effect btnDenegada">DENEGADA POR INBURSA</button>
 											<button type="button" class="btn bg-deep-orange waves-effect btnInsuficiente">PRIMA DE REFERENCIA INSUFICIENTE</button>
 										<?php } else { ?>
-											<button type="button" data-bitacora="bitacorainbursa" class="btn btn-success waves-effect btnModificarBitacora">MODIFICAR BITACORA</button>
+
 
 											<button type="button" class="btn bg-red waves-effect btnMotivos">RECHAZAR</button>
 
 										<?php } ?>
 										<?php } ?>
 									<?php }  else { ?>
-											<button type="button" data-bitacora="bitacoraagente" class="btn btn-success waves-effect btnModificarBitacora">MODIFICAR BITACORA</button>
+
 									<?php } ?>
 
 
@@ -759,8 +770,8 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 				</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" data-rechazo="28" class="btn bg-amber waves-effect btnOtro" data-dismiss="modal">OTRO CONDUCTO</button>
-					<button type="button" data-rechazo="6" class="btn bg-amber waves-effect btnInsuficiente" data-dismiss="modal">PRIMA DE REFERENCIA OBJETIVO</button>
+					<button type="button" data-rechazo="28" class="btn bg-amber waves-effect btnOtro" data-dismiss="modal">OTRO</button>
+					<button type="button" data-rechazo="6" class="btn bg-amber waves-effect btnInsuficiente" data-dismiss="modal">PRIMA DE REFERENCIA INSUFICIENTE</button>
 					<button type="button" data-rechazo="7" class="btn bg-deep-orange waves-effect btnDenegada" data-dismiss="modal">CONDICIONES FUERA DE POLITICA</button>
 					<button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
 				</div>
@@ -781,6 +792,12 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 				<div class="modal-body">
 				 <p>¿Esta seguro que desea <span class="lblModiEstado"></span> la cotizacion?</p>
 				</div>
+				<div class="row contFrmObservaciones">
+					<div class="col-xs-12">
+						<textarea type="text" rows="4" cols="6" class="form-control" id="observacionrechazo" name="observacionrechazo" placeholder="Ingrese la observacion..."></textarea>
+					</div>
+				</div>
+
 				<div class="modal-footer">
 					 <button type="button" class="btn bg-green waves-effect modificarEstadoCotizacionRechazo"></button>
 					 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
@@ -860,8 +877,8 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 		<?php } ?>
 
 		$('.btnModificarBitacora').click(function() {
-			var bitacora = $(this).data('bitacora');
-			modificarCotizacionesPorCampoCompleto(bitacora);
+
+			modificarCotizacionesPorCampoCompleto('bitacoracrea');
 		});
 
 		$('.modificarEstadoCotizacionRechazo').click(function() {
@@ -923,7 +940,8 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 				data: {
 					accion: 'modificarCotizacionesPorCampo',
 					id: $('#idmodificarestadorechazo').val(),
-					idestado: $('#estadomodificarestadorechazo').val()
+					idestado: $('#estadomodificarestadorechazo').val(),
+					observacion: $('#observacionrechazo').val()
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
@@ -965,7 +983,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 					accion: 'modificarCotizacionesPorCampoCompleto',
 					id: <?php echo $id; ?>,
 					campo: bitacora,
-					valor: $('#'+bitacora).val()
+					valor: $('#bitacora').val()
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
@@ -1007,9 +1025,12 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 			});
 		}
 
+		$('.contFrmObservaciones').hide();
+
 		$('.btnAbandonada').click(function() {
 
 			$('.lblModiEstado').html('ABANDONADA');
+			$('.contFrmObservaciones').hide();
 			$('.modificarEstadoCotizacionRechazo').html('ABANDONADA');
 			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
 			$('#estadomodificarestadorechazo').val(5);
@@ -1019,7 +1040,8 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 
 		$('.btnDenegada').click(function() {
 
-			$('.lblModiEstado').html('CONDICIONES FUERA DE POLITICA');
+			$('.lblModiEstado').html('pasar la catizacion a CONDICIONES FUERA DE POLITICA');
+			$('.contFrmObservaciones').show();
 			$('.modificarEstadoCotizacionRechazo').html('CONDICIONES FUERA DE POLITICA');
 			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
 			$('#estadomodificarestadorechazo').val(6);
@@ -1029,8 +1051,9 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 
 		$('.btnOtro').click(function() {
 
-			$('.lblModiEstado').html('OTRO CONDUCTO');
-			$('.modificarEstadoCotizacionRechazo').html('OTRO CONDUCTO');
+			$('.lblModiEstado').html('pasa a OTRO Conducto');
+			$('.contFrmObservaciones').hide();
+			$('.modificarEstadoCotizacionRechazo').html('OTRO');
 			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
 			$('#estadomodificarestadorechazo').val(28);
 			$('#lgmModificarEstado').modal();
@@ -1040,7 +1063,8 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 
 		$('.btnInsuficiente').click(function() {
 
-			$('.lblModiEstado').html('PRIMA DE REFERENCIA INSUFICIENTE');
+			$('.lblModiEstado').html('pasa a PRIMA DE REFERENCIA INSUFICIENTE');
+			$('.contFrmObservaciones').show();
 			$('.modificarEstadoCotizacionRechazo').html('PRIMA DE REFERENCIA INSUFICIENTE');
 			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
 			$('#estadomodificarestadorechazo').val(7);
@@ -1115,18 +1139,11 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 			});
 		}
 
-		$('.frmContbitacorainbursa').show();
+		$('.frmContbitacorainbursa').hide();
+		$('.frmContbitacoraagente').hide();
 
+		$("#bitacoracrea").prop('readonly',true);
 
-		<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
-			$("#bitacoracrea").prop('readonly',true);
-			$("#bitacorainbursa").prop('readonly',true);
-		<?php } ?>
-
-		<?php if ($_SESSION['idroll_sahilices'] == 17) { ?>
-			$("#bitacoracrea").prop('readonly',true);
-			$("#bitacorainbursa").prop('readonly',true);
-		<?php } ?>
 
 
 

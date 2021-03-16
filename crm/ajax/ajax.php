@@ -4,21 +4,23 @@ include ('../includes/funcionesUsuarios.php');
 include ('../includes/funciones.php');
 include ('../includes/funcionesHTML.php');
 include ('../includes/funcionesReferencias.php');
-include ('../includes/funcionesNotificaciones.php');
+//include ('../includes/funcionesNotificaciones.php');
 include ('../includes/funcionesMensajes.php');
 include ('../includes/validadores.php');
 include ('../includes/funcionesPostal.php');
 include ('../includes/funcionesComercio.php');
+include ('../includes/base.php');
 
 $serviciosUsuarios  		= new ServiciosUsuarios();
 $serviciosFunciones 		= new Servicios();
 $serviciosHTML				= new ServiciosHTML();
 $serviciosReferencias		= new ServiciosReferencias();
-$serviciosNotificaciones	= new ServiciosNotificaciones();
+//$baseHTML	= new baseHTML();
 $serviciosMensajes	= new ServiciosMensajes();
 $serviciosValidador        = new serviciosValidador();
 $serviciosPostal        = new serviciosPostal();
 $serviciosComercio      = new serviciosComercio();
+$baseHTML = new BaseHTML();
 
 $accion = $_POST['accion'];
 
@@ -78,7 +80,7 @@ switch ($accion) {
 
 
    case 'frmAjaxModificar':
-      frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $serviciosUsuarios);
+      frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $serviciosUsuarios, $baseHTML);
    break;
    case 'frmAjaxVer':
       frmAjaxVer($serviciosFunciones, $serviciosReferencias, $serviciosUsuarios);
@@ -641,7 +643,7 @@ switch ($accion) {
       insertarOportunidades($serviciosReferencias);
    break;
    case 'modificarOportunidades':
-      modificarOportunidades($serviciosReferencias,$serviciosNotificaciones,$serviciosUsuarios);
+      modificarOportunidades($serviciosReferencias,$baseHTML,$serviciosUsuarios);
    break;
    case 'eliminarOportunidades':
       eliminarOportunidades($serviciosReferencias);
@@ -701,10 +703,10 @@ switch ($accion) {
 
    /****   	notificaciones * *************/
    case 'marcarNotificacion':
-   	marcarNotificacion($serviciosNotificaciones);
+   	marcarNotificacion($baseHTML);
 	break;
    case 'generarNotificacion':
-   	generarNotificacion($serviciosNotificaciones);
+   	generarNotificacion($baseHTML);
 	break;
    /****			fin 				******/
 
@@ -1140,7 +1142,7 @@ switch ($accion) {
       aceptarClienteCotizacion($serviciosReferencias, $serviciosMensajes);
    break;
    case 'generaNotificacion':
-      generaNotificacion($serviciosReferencias, $serviciosMensajes, $serviciosNotificaciones,$serviciosUsuarios);
+      generaNotificacion($serviciosReferencias, $serviciosMensajes, $baseHTML,$serviciosUsuarios);
    break;
 
    case 'rechazaCotizacionCliente':
@@ -2239,7 +2241,15 @@ function modificarCotizacionesPorCampoCompleto($serviciosReferencias) {
 
    if (($campo == 'bitacoracrea') || ($campo == 'bitacoraagente') || ($campo == 'bitacorainbursa')) {
 
-      $valor = $valor.' - '.$_SESSION['usua_sahilices'].' '.date('Y-m-d H:i:s').'.\n';
+      $resCot = $serviciosReferencias->traerCotizacionesPorId($id);
+
+      $valor = mysql_result($resCot,0,'bitacoracrea').' '.$valor.' - '.$_SESSION['usua_sahilices'].' '.date('Y-m-d H:i:s').'.\n';
+
+      if ($_SESSION['idroll_sahilices'] == 7) {
+         $resEnviarEmail = $serviciosReferencias->enviarEmailModificacionCotizacion($id,'Bitacora: '.$valor,'',$enviaEmail=1);
+      } else {
+         $resEnviarEmail = $serviciosReferencias->enviarEmailModificacionCotizacion($id,'Bitacora: '.$valor,$_SESSION['usua_sahilices'],$enviaEmail=1);
+      }
    }
 
    $res = $serviciosReferencias->modificarCotizacionesPorCampo($id,$campo, $valor, $_SESSION['usua_sahilices']);
@@ -2357,7 +2367,13 @@ function insertarVentasCompleto($serviciosReferencias) {
       $primaobjetivototal = 0;
    }
 
-   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal);
+   if (isset($_POST['reftipomoneda'])) {
+      $reftipomoneda = ($_POST['reftipomoneda'] == '' ? 1 : $_POST['reftipomoneda']);
+   } else {
+      $reftipomoneda = 1;
+   }
+
+   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda);
 
    if ((integer)$res > 0) {
 
@@ -4122,6 +4138,12 @@ function modificarCotizacionesPorCampo($serviciosReferencias,$serviciosUsuarios)
    $idestado = $_POST['idestado'];
    $fechacrea = date('Y-m-d H:i:s');
 
+   if (isset($_POST['observacion'])) {
+      $observacion = $_POST['observacion'];
+   } else {
+      $observacion = '';
+   }
+
    $idestadotrazabilidad = $idestado;
 
    // trai los valores del estado a modificar
@@ -4187,7 +4209,15 @@ function modificarCotizacionesPorCampo($serviciosReferencias,$serviciosUsuarios)
       $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id,$fechacrea,$refevento,$_SESSION['usua_sahilices'],0,0,0,$dato,'');
    }
 
+   // para agregar la observacion como un motivo de rechazo
+   if (($idestado == 6) || ($idestado == 7) || ($idestado == 28)) {
+      if ($observacion == '') {
+         $resMR = $serviciosReferencias->insertarMotivorechazocotizaciones($id,mysql_result($resEstado,0,'estadocotizacion'),'0',0,0,0);
+      } else {
+         $resMR = $serviciosReferencias->insertarMotivorechazocotizaciones($id,mysql_result($resEstado,0,'estadocotizacion').' - Observaciones: '.$observacion,'0',0,0,0);
+      }
 
+   }
 
    if ($resModEstadoEtapa) {
 
@@ -4465,7 +4495,7 @@ function rechazaCotizacionCliente($serviciosReferencias) {
 
 }
 
-function generaNotificacion($serviciosReferencias, $serviciosMensajes, $serviciosNotificaciones,$serviciosUsuarios) {
+function generaNotificacion($serviciosReferencias, $serviciosMensajes, $baseHTML,$serviciosUsuarios) {
    $id = $_POST['id'];
    $interes = $_POST['interes'];
 
@@ -4504,7 +4534,7 @@ function generaNotificacion($serviciosReferencias, $serviciosMensajes, $servicio
    $fecha = date('Y-m-d H:i:s');
    $url = "cotizaciones/modificar.php?id=".mysql_result($resCotizaciones,0,0);
 
-   $resNotificaciones = $serviciosNotificaciones->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url);
+   $resNotificaciones = $baseHTML->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url);
 
    ///// para el auto login ///////////////
    // usuario 30 fabiola
@@ -6123,10 +6153,14 @@ function validarCuestionario($serviciosReferencias) {
          $primaobjetivototal = 0;
       }
 
+      if (isset($_POST['reftipomoneda'])) {
+         $reftipomoneda = ($_POST['reftipomoneda'] == '' ? 1 : $_POST['reftipomoneda']);
+      } else {
+         $reftipomoneda = 1;
+      }
 
 
-
-      $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal);
+      $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda);
 
 
       if ((integer)$res > 0) {
@@ -6629,8 +6663,9 @@ function insertarProductos($serviciosReferencias) {
    $consolicitud = $_POST['consolicitud'];
 
    $leyendabeneficiario = $_POST['leyendabeneficiario'];
+   $refgestion = $_POST['refgestion'];
 
-   $res = $serviciosReferencias->insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas,$precio,$detalle,$ventaenlinea,$cotizaenlinea,$beneficiario,$asegurado,$reftipofirma,$reftipoemision,$esdomiciliado,$consolicitud,$leyendabeneficiario);
+   $res = $serviciosReferencias->insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas,$precio,$detalle,$ventaenlinea,$cotizaenlinea,$beneficiario,$asegurado,$reftipofirma,$reftipoemision,$esdomiciliado,$consolicitud,$leyendabeneficiario,$refgestion);
 
    if ((integer)$res > 0) {
       echo '';
@@ -6670,8 +6705,9 @@ function modificarProductos($serviciosReferencias) {
    $consolicitud = $_POST['consolicitud'];
 
    $leyendabeneficiario = $_POST['leyendabeneficiario'];
+   $refgestion = $_POST['refgestion'];
 
-   $res = $serviciosReferencias->modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas,$precio,$detalle,$ventaenlinea,$cotizaenlinea,$beneficiario,$asegurado,$reftipofirma,$reftipoemision,$esdomiciliado,$consolicitud,$leyendabeneficiario);
+   $res = $serviciosReferencias->modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas,$precio,$detalle,$ventaenlinea,$cotizaenlinea,$beneficiario,$asegurado,$reftipofirma,$reftipoemision,$esdomiciliado,$consolicitud,$leyendabeneficiario,$refgestion);
 
    if ($res == true) {
       echo '';
@@ -8250,7 +8286,13 @@ function insertarCotizaciones($serviciosReferencias) {
       $primaobjetivototal = 0;
    }
 
-   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal);
+   if (isset($_POST['reftipomoneda'])) {
+      $reftipomoneda = ($_POST['reftipomoneda'] == '' ? 1 : $_POST['reftipomoneda']);
+   } else {
+      $reftipomoneda = 1;
+   }
+
+   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda);
 
    if ((integer)$res > 0) {
 
@@ -8338,6 +8380,12 @@ function modificarCotizaciones($serviciosReferencias) {
       $primaobjetivototal = 0;
    }
 
+   if (isset($_POST['reftipomoneda'])) {
+      $reftipomoneda = ($_POST['reftipomoneda'] == '' ? 1 : $_POST['reftipomoneda']);
+   } else {
+      $reftipomoneda = 1;
+   }
+
 
    if ($refestadocotizaciones == 12) {
 
@@ -8385,7 +8433,7 @@ function modificarCotizaciones($serviciosReferencias) {
    }
 
 
-   $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$bitacoracrea,$bitacorainbursa,$bitacoraagente,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal);
+   $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$bitacoracrea,$bitacorainbursa,$bitacoraagente,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda);
 
    if ($res == true) {
       if (isset($_POST['refbeneficiarioaux'])) {
@@ -8477,13 +8525,13 @@ function eliminarAlertas($serviciosReferencias) {
 }
 
 /****   	notificaciones * *************/
-function marcarNotificacion($serviciosNotificaciones) {
+function marcarNotificacion($baseHTML) {
 	$id = $_POST['id'];
 
-	$res = $serviciosNotificaciones->marcarNotificacion($id);
+	$res = $baseHTML->marcarNotificacion($id);
 
 	if ($res == true) {
-      $resNotificacion = $serviciosNotificaciones->traerNotificacionesPorId($id);
+      $resNotificacion = $baseHTML->traerNotificacionesPorId($id);
       $resV['mensaje'] = mysql_result($resNotificacion,0,'url');
       $resV['error'] = false;
 	} else {
@@ -8944,7 +8992,7 @@ function insertarOportunidades($serviciosReferencias) {
 
 }
 
-function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones,$serviciosUsuarios) {
+function modificarOportunidades($serviciosReferencias, $baseHTML,$serviciosUsuarios) {
    session_start();
 
    $id = $_POST['id'];
@@ -9013,7 +9061,7 @@ function modificarOportunidades($serviciosReferencias, $serviciosNotificaciones,
       			$fecha = date('Y-m-d H:i:s');
       			$url = "oportunidades/index.php";
 
-      			$res = $serviciosNotificaciones->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url);
+      			$res = $baseHTML->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url);
       			/*** fin de la notificacion ****/
             }
             if ($refestadooportunidad == 2) {
@@ -10019,7 +10067,7 @@ function frmAjaxVer($serviciosFunciones, $serviciosReferencias, $serviciosUsuari
 
 
 
-function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $serviciosUsuarios) {
+function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $serviciosUsuarios, $baseHTML) {
    $tabla = $_POST['tabla'];
    $id = $_POST['id'];
 
@@ -10442,8 +10490,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $modificar = "modificarProductos";
          $idTabla = "idproducto";
 
-         $lblCambio	 	= array('reftipoproductorama','reftipodocumentaciones','puntosporventa','puntosporpesopagado','refcuestionarios','puntosporventarenovado','puntosporpesopagadorenovado','reftipopersonas','ventaenlinea','cotizaenlinea','beneficiario','asegurado','reftipofirma','reftipoemision','esdomiciliado','consolicitud','leyendabeneficiario');
-         $lblreemplazo	= array('Ramo de Producto','Tipo de Documentaciones','Punto x Venta','Puntos x Peso Pagado','Cuestionario','Punto x Venta Renovacion','Puntos x Peso Pagado Renovacion','Tipo Personas','Es de venta en linea','Es para cotizar','Podría tener beneficiario ','Podría tener asegurado distinto al contratante','Firmas','Tipo de Emision','Es Domiciliado','Necesita Firmar Solicitud','Leyenda del Beneficiario');
+         $lblCambio	 	= $baseHTML->devolverLabelPorTabla($tabla)[0];
+         $lblreemplazo	= $baseHTML->devolverLabelPorTabla($tabla)[1];
 
          $resVar1 = $serviciosReferencias->traerTipoproductorama();
          $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(2),'',mysql_result($resultado,0,'reftipoproductorama'));
@@ -10512,8 +10560,11 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
             $cadRef13 = "<option value='1'>Si</option><option value='0' selected>No</option>";
          }
 
-         $refdescripcion = array(0=>$cadRef1,1=>$cadRef4,2=>$cadRef2,3=>$cadRef3,4=>$cadRef5,5=>$cadRef8,6=>$cadRef9,7=>$cadRef99,8=>$cadRef999,9=>$cadRef9999,10=>$cadRef10,11=>$cadRef11,12=>$cadRef12,13=>$cadRef13);
-         $refCampo 	=  array('reftipoproductorama','reftipodocumentaciones','activo','prima','refcuestionarios','reftipopersonas','ventaenlinea','cotizaenlinea','beneficiario','asegurado','reftipofirma','reftipoemision','esdomiciliado','consolicitud');
+         $resRoles = $serviciosReferencias->traerRoles();
+         $cadRoles = $serviciosFunciones->devolverSelectBoxActivo($resRoles,array(1),'',mysql_result($resultado,0,'refgestion'));
+
+         $refdescripcion = array(0=>$cadRef1,1=>$cadRef4,2=>$cadRef2,3=>$cadRef3,4=>$cadRef5,5=>$cadRef8,6=>$cadRef9,7=>$cadRef99,8=>$cadRef999,9=>$cadRef9999,10=>$cadRef10,11=>$cadRef11,12=>$cadRef12,13=>$cadRef13, 14=>$cadRoles);
+         $refCampo 	=  array('reftipoproductorama','reftipodocumentaciones','activo','prima','refcuestionarios','reftipopersonas','ventaenlinea','cotizaenlinea','beneficiario','asegurado','reftipofirma','reftipoemision','esdomiciliado','consolicitud','refgestion');
       break;
 
       case 'dbdocumentaciones':

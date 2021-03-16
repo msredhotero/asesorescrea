@@ -238,8 +238,11 @@ $resVar10m	= $serviciosReferencias->traerAseguradora();
 $resEstadoUnico = $serviciosReferencias->traerEtapacotizacion();
 $cadEstUnico = $serviciosFunciones->devolverSelectBoxActivo($resEstadoUnico,array(1),'',mysql_result($resultado,0,'refestados'));
 
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadRef7,7=>$cadRef8,8=>$cadRef9,9=>$cadRef10,10=>$cadRef11,11=>$cadEstUnico);
-$refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones','cobertura','presentacotizacion','tiponegocio','coberturaactual','existeprimaobjetivo','refestados');
+$resTipoMoneda = $serviciosReferencias->traerTipomonedaPorId(mysql_result($resultado,0,'reftipomoneda'));
+$cadTipoMoneda = $serviciosFunciones->devolverSelectBox($resTipoMoneda,array(1),'');
+
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadRef7,7=>$cadRef8,8=>$cadRef9,9=>$cadRef10,10=>$cadRef11,11=>$cadEstUnico,12=>$cadTipoMoneda);
+$refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones','cobertura','presentacotizacion','tiponegocio','coberturaactual','existeprimaobjetivo','refestados','reftipomoneda');
 
 $frmUnidadNegocios = $serviciosFunciones->camposTablaModificar($id, $idTabla,$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -427,6 +430,13 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 		.pdfobject-container { height: 60rem; border: 1rem solid rgba(0,0,0,.1); }
 
+		.modal-dialog {
+		  width: 80%;
+		  height: 80%;
+		  /*margin: 10px 10px;*/
+		  padding: 0;
+		}
+
 	</style>
 
 
@@ -546,6 +556,14 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 								<div class="row datosFormulario" style="padding: 5px 20px;">
 
 									<?php echo $frmUnidadNegocios; ?>
+
+									<div class="form-group col-md-12 frmContobservaciones" style="display:block">
+										<label for="observaciones" class="control-label" style="text-align:left">Escriba mensaje para la bitacora </label>
+										<div class="input-group col-md-12">
+											<textarea type="text" rows="4" cols="6" class="form-control" id="bitacora" name="bitacora" placeholder="Ingrese el mensaje..."></textarea>
+										</div>
+									</div>
+
 									<input type="hidden" id="estadoactual" name="estadoactual" value=""/>
 								</div>
 
@@ -578,6 +596,8 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 									<p>Acciones</p>
 									<div class="modal-footer">
 										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+											<button type="button" data-bitacora="bitacorainbursa" class="btn btn-success waves-effect btnModificarBitacora">MODIFICAR BITACORA</button>
+
 											<?php if ($idestado == 8 ) { ?>
 											<!--<button id="8" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>-->
 
@@ -669,7 +689,8 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 					 <h4 class="modal-title" id="largeModalLabel">MODIFICAR ESTADO DE LA COTIZACIÓN</h4>
 				</div>
 				<div class="modal-body">
-					<h3>¿Esta seguro que desea <span class="lblModiEstado"></span> la cotizacion <?php echo $lblAceptada; ?> ?</h3>
+					<h3 class="lblOtra">¿Esta seguro que desea <span class="lblModiEstado"></span> la cotizacion <?php echo $lblAceptada; ?> ?</h3>
+					<h3 class="lblAcepta">Eligiste la Cotización: <?php echo $lblAceptada; ?></h3>
 
 
 
@@ -777,6 +798,69 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 <script>
 	$(document).ready(function(){
+
+		$('.frmContbitacorainbursa').hide();
+		$('.frmContbitacoraagente').hide();
+		$("#bitacoracrea").prop('readonly',true);
+
+
+		$('.btnModificarBitacora').click(function() {
+
+			modificarCotizacionesPorCampoCompleto('bitacoracrea');
+		});
+
+
+		function modificarCotizacionesPorCampoCompleto(bitacora) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificarCotizacionesPorCampoCompleto',
+					id: <?php echo $id; ?>,
+					campo: bitacora,
+					valor: $('#bitacora').val()
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data == '') {
+						swal({
+							title: "Respuesta",
+							text: 'Se guardo correctamente la bitacora',
+							type: "success",
+							timer: 1800,
+							showConfirmButton: false
+						});
+					} else {
+						swal({
+							title: "Respuesta",
+							text: data,
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
 
 		$('.contFrmAceptadas').hide();
 
@@ -1091,7 +1175,11 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 		$('.btnAbandonada').click(function() {
 
-			$('.lblModiEstado').html('ACEPTAR');
+			$('.lblModiEstado').html('aceptar');
+			$('.lblAcepta').show();
+			$('.lblOtra').hide();
+
+
 			$('.modificarEstadoCotizacionRechazo').html('ACEPTADA');
 
 			$('.contFrmAceptadas').show();
@@ -1110,7 +1198,9 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 		$('.btnDenegada').click(function() {
 
-			$('.lblModiEstado').html('EN AJUSTE');
+			$('.lblModiEstado').html('pasar a en ajuste');
+			$('.lblAcepta').hide();
+			$('.lblOtra').show();
 			$('.modificarEstadoCotizacionRechazo').html('EN AJUSTE');
 
 			$('.contFrmRechazoDefinitivo').hide();
@@ -1129,7 +1219,9 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 		$('.btnInsuficiente').click(function() {
 
-			$('.lblModiEstado').html('RECHAZADA');
+			$('.lblModiEstado').html('rechazar');
+			$('.lblAcepta').hide();
+			$('.lblOtra').show();
 			$('.modificarEstadoCotizacionRechazo').html('RECHAZADA');
 
 			$('.contFrmRechazoDefinitivo').hide();
@@ -1147,7 +1239,9 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 		$('.btnRechazadaDefinitivamente').click(function() {
 
-			$('.lblModiEstado').html('RECHAZADA DEFINITIVAMENTE');
+			$('.lblModiEstado').html('rechazar definitivamente');
+			$('.lblAcepta').hide();
+			$('.lblOtra').show();
 			$('.modificarEstadoCotizacionRechazo').html('RECHAZADA DEFINITIVAMENTE');
 
 			$('.contFrmRechazoDefinitivo').show();
@@ -1227,19 +1321,6 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 				}
 			});
 		}
-
-		$('.frmContbitacorainbursa').hide();
-
-
-		<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
-			$("#bitacoracrea").prop('readonly',true);
-			$("#bitacorainbursa").prop('readonly',true);
-		<?php } ?>
-
-		<?php if ($_SESSION['idroll_sahilices'] == 17) { ?>
-			$("#bitacoracrea").prop('readonly',true);
-			$("#bitacorainbursa").prop('readonly',true);
-		<?php } ?>
 
 
 

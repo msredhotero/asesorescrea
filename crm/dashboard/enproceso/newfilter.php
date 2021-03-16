@@ -465,6 +465,9 @@ if (isset($_GET['id'])) {
 
 	$idasesor = $refAsesores;
 
+	$resTipoMoneda = $serviciosReferencias->traerTipomoneda();
+	$cadTipoMoneda = $serviciosFunciones->devolverSelectBox($resTipoMoneda,array(1),'');
+
 // fin de cuando ya graba el producto
 } else {
 
@@ -976,7 +979,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 										<div class="row">
 											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContot" style="display:block">
 												<div class="form-group form-float">
-													<label class="form-label" style="margin-top:20px;">Si existe una OT (Orden de Trabajo)</label>
+													<label class="form-label" style="margin-top:20px;">OT (Orden de Trabajo)</label>
 													<div class="form-line">
 														<input type="text" class="form-control" id="ot" name="ot" />
 													</div>
@@ -984,19 +987,19 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 											</div>
 											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContexisteprimaobjetivo" style="display:block">
 												<div class="form-group form-float">
-													<label class="form-label" style="margin-top:10px;">Existe Prima Objetivo</label>
+													<label class="form-label" style="margin-top:20px;">Existe Prima Obj.</label>
 													<div class="form-line">
 
-														<select style="margin-top:10px;" class="form-control" id="existeprimaobjetivo" name="existeprimaobjetivo" required>
+														<select class="form-control" id="existeprimaobjetivo" name="existeprimaobjetivo" required>
 															<?php echo $cadRef11b; ?>
 														</select>
 
 													</div>
 												</div>
 											</div>
-											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContprimaobjetivo" style="display:block">
+											<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContprimaobjetivo" style="display:block">
 												<div class="form-group form-float">
-													<label class="form-label" style="margin-top:20px;">Prima Objetivo Neta</label>
+													<label class="form-label" style="margin-top:20px;">Prima Obj. Neta</label>
 												  <div class="form-line">
 
 														<input style="width:200px;" type="text" class="form-control" id="primaobjetivo" name="primaobjetivo" value="<?php echo $primaobjetivo; ?>" />
@@ -1006,13 +1009,26 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 												</div>
 											</div>
 
-											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContprimaobjetivototal" style="display:block">
+											<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContprimaobjetivototal" style="display:block">
 												<div class="form-group form-float">
-													<label class="form-label" style="margin-top:20px;">Prima Objetivo Total</label>
+													<label class="form-label" style="margin-top:20px;">Prima Obj. Total</label>
 												  <div class="form-line">
 
 														<input style="width:200px;" type="text" class="form-control" id="primaobjetivototal" name="primaobjetivototal" value="<?php echo $primaobjetivototal; ?>" />
 
+
+												  </div>
+												</div>
+											</div>
+
+											<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContreftipomoneda" style="display:block">
+												<div class="form-group form-float">
+													<label class="form-label" style="margin-top:20px;">Moneda</label>
+												  <div class="form-line">
+
+														<select class="form-control" id="reftipomoneda" name="reftipomoneda" required>
+															<?php echo $cadTipoMoneda; ?>
+														</select>
 
 												  </div>
 												</div>
@@ -1849,6 +1865,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 		$('.frmContcoberturaactual').hide();
 		$('.frmContprimaobjetivo').hide();
 		$('.frmContprimaobjetivototal').hide();
+		$('.frmContreftipomoneda').hide();
 		$('.frmContemisioncomprobantedomicilio').hide();
 		$('.frmContemisionrfc').hide();
 		$('.frmContvencimientoine').hide();
@@ -2455,6 +2472,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 			if ($(this).val() == 1) {
 				$('.frmContprimaobjetivo').show();
 				$('.frmContprimaobjetivototal').show();
+				$('.frmContreftipomoneda').show();
 
 				$("#primaobjetivo").prop('required',true);
 				$("#primaobjetivototal").prop('required',true);
@@ -2462,6 +2480,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 			} else {
 				$('.frmContprimaobjetivo').hide();
 				$('.frmContprimaobjetivototal').hide();
+				$('.frmContreftipomoneda').hide();
 
 				$("#primaobjetivo").prop('required',false);
 				$("#primaobjetivototal").prop('required',false);
@@ -2772,7 +2791,8 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 					fechaemitido: '<?php echo date('Y-m-d'); ?>',
 					fechapropuesta: '<?php echo date('Y-m-d'); ?>',
 					foliotys: '',
-					refbeneficiarioaux: $('#refbeneficiarioaux').val()
+					refbeneficiarioaux: $('#refbeneficiarioaux').val(),
+					reftipomoneda: $('#reftipomoneda').val()
  				},
  				//mientras enviamos el archivo
  				beforeSend: function(){

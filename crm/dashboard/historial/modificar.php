@@ -438,6 +438,8 @@ $habilitacambio = 1;
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		#codigopostal { width: 400px; }
 
+		.pdfobject-container { height: 40rem; border: 1rem solid rgba(0,0,0,.1); }
+
 	</style>
 
 
@@ -518,10 +520,15 @@ $habilitacambio = 1;
 
 									<?php echo $frmUnidadNegocios; ?>
 
+
+
 									<input type="hidden" id="estadoactual" name="estadoactual" value=""/>
 
 
 								</div>
+
+
+
 								<div class="row">
 									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContidclienteinbursa" style="display:block">
 										<label class="form-label">ID Cliente Inbursa </label>
@@ -540,6 +547,18 @@ $habilitacambio = 1;
 
 											</div>
 										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<h4>Adjunto del rechazo</h4>
+									<a href="javascript:void(0);" class="thumbnail timagen1">
+										<img class="img-responsive">
+									</a>
+									<div id="example1"></div>
+									<div id="contExcel" style="margin:15px;">
+										<button type="button" class="btn btn-lg btn-success btnVerArchivo" style="margin-left:0px;"><i class="material-icons">search</i>VER ARCHIVO</button>
+										<input type="hidden" id="verarchivo" name="verarchivo" value=""/>
 									</div>
 								</div>
 								<?php if (mysql_num_rows($cuestionario)>0) { ?>
@@ -592,7 +611,7 @@ $habilitacambio = 1;
 									</table>
 								</div>
 							<?php } ?>
-								<div class="row">
+								<div class="row" style="display:none;">
 									<p>Acciones</p>
 									<div class="modal-footer">
 										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -699,8 +718,57 @@ $habilitacambio = 1;
 
 <script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
 
+<script src="../../js/pdfobject.min.js"></script>
+
 <script>
 	$(document).ready(function(){
+
+		function traerImagen(contenedorpdf, contenedor) {
+			$.ajax({
+				data:  {idcotizacion: <?php echo $id; ?>,
+						accion: 'traerDocumentacionPorCotizacionDocumentacionRechazo'},
+				url:   '../../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+					$("." + contenedor + " img").attr("src",'');
+					$('#contExcel').val('');
+					$('#contExcel').hide();
+				},
+				success:  function (response) {
+					var cadena = response.datos.type.toLowerCase();
+
+					if (response.datos.type != '') {
+						if (cadena.indexOf("pdf") > -1) {
+							PDFObject.embed(response.datos.imagen, "#"+contenedorpdf);
+							$('#'+contenedorpdf).show();
+							$("."+contenedor).hide();
+
+						} else {
+							if ((cadena.indexOf("officedocument") > -1) || (cadena.indexOf("sheet") > -1)) {
+								$('#'+contenedorpdf).hide();
+								$("."+contenedor).hide();
+								$('#contExcel').show();
+								$('#verarchivo').val(response.datos.imagen);
+							} else {
+								$("." + contenedor + " img").attr("src",response.datos.imagen);
+								$("."+contenedor).show();
+								$('#'+contenedorpdf).hide();
+							}
+						}
+					}
+					if (response.error) {
+						$('.btnEliminar').hide();
+						$('.guardarEstado').hide();
+					} else {
+
+						$('.btnEliminar').show();
+						$('.guardarEstado').show();
+					}
+				}
+			});
+		}
+
+		traerImagen('example1','timagen1');
 
 		$('.modificarEstadoCotizacionRechazo').click(function() {
 			modificarCotizacionesPorCampo();

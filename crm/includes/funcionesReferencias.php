@@ -580,14 +580,28 @@ return $res;
       return $res;
    }
 
-   function enviarEmailModificacionCotizacion($id,$dato,$adcional) {
+   function existeUsuarioSistema($email) {
+      $sql = "select idusuario from dbusuarios where email = '".$email."' and activo = 1 and refroles not in (16,19)";
+
+      $res = $this->query($sql,0);
+
+      if (mysql_num_rows($res) > 0) {
+         return 1;
+      }
+
+      return 0;
+   }
+
+   function enviarEmailModificacionCotizacion($id,$dato,$adcional,$enviaEmail=1) {
 
       $resCotizaciones = $this->traerCotizacionesPorIdCompleto($id);
 
       //determino el producto para avisar a quien corresponda, por ahora solo para los roles de areas tecnicas y sus contactos
-      $reftipoproductorama = mysql_result($resCotizaciones,0,'reftipoproductorama');
+      $refproductos = mysql_result($resCotizaciones,0,'refproductos');
 
-      $idrol = $this->devolverRolPorRamaProducto($reftipoproductorama);
+      $resProduto = $this->traerProductosPorId($refproductos);
+
+      $idrol = mysql_result($resProduto,0,'refgestion');
 
       $resUsuarios = $this->traerUsuariosPorRoles($idrol);
       $resContactos = $this->traerContactosperfilesPorRol($idrol);
@@ -617,13 +631,13 @@ return $res;
 
       if ($cadDestino != '') {
 
-         if ($adcional == '') {
+         if ($this->existeUsuarioSistema($adcional) == 1) {
             // por ahora nada mas
             $token = $this->GUID();
             $resAutoLogin = $this->insertarAutologin(261,$token,'engestion/modificar.php?id='.$id,'0');
          }
 
-         $asunto = 'Alerta Cotización, cotizacion: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
+         $asunto = 'Alerta Cotización, cotización: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
 
          $cuerpo = '';
 
@@ -649,8 +663,12 @@ return $res;
 
          $cuerpo .= '</body>';
 
+         if ($enviaEmail==1) {
+            $exito = $this->enviarEmail(substr($cadDestino,0,-2), utf8_decode( $asunto),utf8_decode($cuerpo));
+         } else {
+            $exito = $this->enviarEmail(substr($cadDestino,0,-2), utf8_decode( $asunto),utf8_decode($cuerpo));
+         }
 
-         $exito = $this->enviarEmail(substr($cadDestino,0,-2), utf8_decode( $asunto),utf8_decode($cuerpo));
 
          $gestor = fopen('logemails'.date('Y_m_d_H_i_s').'.txt', 'w');
          fwrite($gestor, $cadDestino.' '.date('Y-m-d H:i:s'));
@@ -11597,18 +11615,18 @@ return $res;
 
 
 
-   function insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas,$precio,$detalle,$ventaenlinea,$cotizaenlinea,$beneficiario,$asegurado,$reftipofirma,$reftipoemision,$esdomiciliado,$consolicitud,$leyendabeneficiario) {
-      $sql = "insert into tbproductos(idproducto,producto,prima,reftipoproductorama,reftipodocumentaciones,activo,puntosporventa,puntosporpesopagado,refcuestionarios,puntosporventarenovado,puntosporpesopagadorenovado,reftipopersonas,precio,detalle,ventaenlinea,cotizaenlinea,beneficiario,asegurado,reftipofirma,reftipoemision,esdomiciliado,consolicitud,leyendabeneficiario)
-      values ('','".$producto."','".$prima."',".$reftipoproductorama.",".$reftipodocumentaciones.",'".$activo."',".$puntosporventa.",".$puntosporpesopagado.",".$refcuestionarios.",".$puntosporventarenovado.",".$puntosporpesopagadorenovado.",".$reftipopersonas.",".$precio.",'".$detalle."','".$ventaenlinea."','".$cotizaenlinea."','".$beneficiario."','".$asegurado."',".$reftipofirma.",".$reftipoemision.",'".$esdomiciliado."','".$consolicitud."','".$leyendabeneficiario."')";
+   function insertarProductos($producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas,$precio,$detalle,$ventaenlinea,$cotizaenlinea,$beneficiario,$asegurado,$reftipofirma,$reftipoemision,$esdomiciliado,$consolicitud,$leyendabeneficiario,$refgestion=11) {
+      $sql = "insert into tbproductos(idproducto,producto,prima,reftipoproductorama,reftipodocumentaciones,activo,puntosporventa,puntosporpesopagado,refcuestionarios,puntosporventarenovado,puntosporpesopagadorenovado,reftipopersonas,precio,detalle,ventaenlinea,cotizaenlinea,beneficiario,asegurado,reftipofirma,reftipoemision,esdomiciliado,consolicitud,leyendabeneficiario,refgestion)
+      values ('','".$producto."','".$prima."',".$reftipoproductorama.",".$reftipodocumentaciones.",'".$activo."',".$puntosporventa.",".$puntosporpesopagado.",".$refcuestionarios.",".$puntosporventarenovado.",".$puntosporpesopagadorenovado.",".$reftipopersonas.",".$precio.",'".$detalle."','".$ventaenlinea."','".$cotizaenlinea."','".$beneficiario."','".$asegurado."',".$reftipofirma.",".$reftipoemision.",'".$esdomiciliado."','".$consolicitud."','".$leyendabeneficiario."',".$refgestion.")";
       $res = $this->query($sql,1);
       return $res;
    }
 
 
-   function modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas,$precio,$detalle,$ventaenlinea,$cotizaenlinea,$beneficiario,$asegurado,$reftipofirma,$reftipoemision,$esdomiciliado,$consolicitud,$leyendabeneficiario) {
+   function modificarProductos($id,$producto,$prima,$reftipoproductorama,$reftipodocumentaciones,$puntosporventa,$puntosporpesopagado,$activo,$refcuestionarios,$puntosporventarenovado,$puntosporpesopagadorenovado,$reftipopersonas,$precio,$detalle,$ventaenlinea,$cotizaenlinea,$beneficiario,$asegurado,$reftipofirma,$reftipoemision,$esdomiciliado,$consolicitud,$leyendabeneficiario,$refgestion) {
       $sql = "update tbproductos
       set
-      producto = '".$producto."',prima = '".$prima."',reftipoproductorama = ".$reftipoproductorama.",reftipodocumentaciones = ".$reftipodocumentaciones.",activo = '".$activo."',puntosporventa = ".$puntosporventa.",puntosporpesopagado = ".$puntosporpesopagado.",refcuestionarios = ".$refcuestionarios.",puntosporventarenovado = ".$puntosporventarenovado.",puntosporpesopagadorenovado = ".$puntosporpesopagadorenovado.",reftipopersonas = ".$reftipopersonas.",precio = ".$precio.",detalle = '".$detalle."',ventaenlinea = '".$ventaenlinea."',cotizaenlinea = '".$cotizaenlinea."',beneficiario = '".$beneficiario."',asegurado = '".$asegurado."' ,reftipofirma = ".$reftipofirma." ,reftipoemision = ".$reftipoemision.",esdomiciliado = '".$esdomiciliado."',consolicitud = '".$consolicitud."',leyendabeneficiario = '".$leyendabeneficiario."' where idproducto =".$id;
+      producto = '".$producto."',prima = '".$prima."',reftipoproductorama = ".$reftipoproductorama.",reftipodocumentaciones = ".$reftipodocumentaciones.",activo = '".$activo."',puntosporventa = ".$puntosporventa.",puntosporpesopagado = ".$puntosporpesopagado.",refcuestionarios = ".$refcuestionarios.",puntosporventarenovado = ".$puntosporventarenovado.",puntosporpesopagadorenovado = ".$puntosporpesopagadorenovado.",reftipopersonas = ".$reftipopersonas.",precio = ".$precio.",detalle = '".$detalle."',ventaenlinea = '".$ventaenlinea."',cotizaenlinea = '".$cotizaenlinea."',beneficiario = '".$beneficiario."',asegurado = '".$asegurado."' ,reftipofirma = ".$reftipofirma." ,reftipoemision = ".$reftipoemision.",esdomiciliado = '".$esdomiciliado."',consolicitud = '".$consolicitud."',leyendabeneficiario = '".$leyendabeneficiario."',refgestion = ".$refgestion." where idproducto =".$id;
       $res = $this->query($sql,0);
       return $res;
    }
@@ -11731,7 +11749,8 @@ return $res;
       p.reftipoemision,
       p.esdomiciliado,
       p.consolicitud,
-      p.leyendabeneficiario
+      p.leyendabeneficiario,
+      p.refgestion
 		from tbproductos p
 		inner join tbtipoproductorama tp ON tp.idtipoproductorama = p.reftipoproductorama
       inner join tbtipoproducto t on t.idtipoproducto = tp.reftipoproducto
@@ -11758,7 +11777,8 @@ return $res;
       p.reftipoemision,
       p.esdomiciliado,
       p.consolicitud,
-      p.leyendabeneficiario
+      p.leyendabeneficiario,
+      p.refgestion
 		from tbproductos p
 		inner join tbtipoproductorama tp ON tp.idtipoproductorama = p.reftipoproductorama
       inner join tbtipoproducto t on t.idtipoproducto = tp.reftipoproducto
@@ -11785,7 +11805,8 @@ return $res;
       p.reftipoemision,
       p.esdomiciliado,
       p.consolicitud,
-      p.leyendabeneficiario
+      p.leyendabeneficiario,
+      p.refgestion
 		from tbproductos p
 		inner join tbtipoproductorama tp ON tp.idtipoproductorama = p.reftipoproductorama
       inner join tbtipoproducto t on t.idtipoproducto = tp.reftipoproducto
@@ -11799,7 +11820,7 @@ return $res;
 
    function traerProductosPorId($id) {
       $sql = "select idproducto,producto,prima,reftipoproductorama,reftipodocumentaciones,activo,
-      puntosporventa,puntosporpesopagado,refcuestionarios,puntosporventarenovado,puntosporpesopagadorenovado,reftipopersonas,precio,detalle,ventaenlinea,cotizaenlinea,beneficiario,asegurado,reftipofirma, reftipoemision,esdomiciliado,consolicitud,leyendabeneficiario
+      puntosporventa,puntosporpesopagado,refcuestionarios,puntosporventarenovado,puntosporpesopagadorenovado,reftipopersonas,precio,detalle,ventaenlinea,cotizaenlinea,beneficiario,asegurado,reftipofirma, reftipoemision,esdomiciliado,consolicitud,leyendabeneficiario, refgestion
       from tbproductos where idproducto =".$id;
       $res = $this->query($sql,0);
       return $res;
@@ -12488,25 +12509,25 @@ return $res;
    }
 
 
-	function insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal) {
-		$sql = "insert into dbcotizaciones(idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion,fechaemitido,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,observaciones,fechavencimiento,coberturaactual,existeprimaobjetivo,primaobjetivo,folio,primaobjetivototal)
-		values ('',".$refclientes.",".$refproductos.",".$refasesores.",".$refasociados.",".$refestadocotizaciones.",'".$cobertura."','".$reasegurodirecto."','".$tiponegocio."','".$presentacotizacion."',".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",'".date('Y-m-d H:i:s')."','".date('Y-m-d H:i:s')."','".$usuariocrea."','".$usuariomodi."',".$refusuarios.",'".$observaciones."','".$fechavencimiento."','".$coberturaactual."','".$existeprimaobjetivo."',".$primaobjetivo.",'".$this->generaFolioInternoCotizaciones()."',".$primaobjetivototal.")";
+	function insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda) {
+		$sql = "insert into dbcotizaciones(idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion,fechaemitido,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,observaciones,fechavencimiento,coberturaactual,existeprimaobjetivo,primaobjetivo,folio,primaobjetivototal, reftipomoneda)
+		values ('',".$refclientes.",".$refproductos.",".$refasesores.",".$refasociados.",".$refestadocotizaciones.",'".$cobertura."','".$reasegurodirecto."','".$tiponegocio."','".$presentacotizacion."',".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",'".date('Y-m-d H:i:s')."','".date('Y-m-d H:i:s')."','".$usuariocrea."','".$usuariomodi."',".$refusuarios.",'".$observaciones."','".$fechavencimiento."','".$coberturaactual."','".$existeprimaobjetivo."',".$primaobjetivo.",'".$this->generaFolioInternoCotizaciones()."',".$primaobjetivototal.",".$reftipomoneda.")";
 
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
-   function insertarCotizacionesSQL($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal) {
-		$sql = "insert into dbcotizaciones(idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion,fechaemitido,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,observaciones,fechavencimiento,coberturaactual,existeprimaobjetivo,primaobjetivo,primaobjetivototal)
-		values ('',".$refclientes.",".$refproductos.",".$refasesores.",".$refasociados.",".$refestadocotizaciones.",'".$cobertura."','".$reasegurodirecto."','".$tiponegocio."','".$presentacotizacion."',".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",'".date('Y-m-d H:i:s')."','".date('Y-m-d H:i:s')."','".$usuariocrea."','".$usuariomodi."',".$refusuarios.",'".$observaciones."','".$fechavencimiento."','".$coberturaactual."','".$existeprimaobjetivo."',".$primaobjetivo.",".$primaobjetivototal.")";
+   function insertarCotizacionesSQL($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda) {
+		$sql = "insert into dbcotizaciones(idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion,fechaemitido,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,observaciones,fechavencimiento,coberturaactual,existeprimaobjetivo,primaobjetivo,primaobjetivototal,reftipomoneda)
+		values ('',".$refclientes.",".$refproductos.",".$refasesores.",".$refasociados.",".$refestadocotizaciones.",'".$cobertura."','".$reasegurodirecto."','".$tiponegocio."','".$presentacotizacion."',".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",'".date('Y-m-d H:i:s')."','".date('Y-m-d H:i:s')."','".$usuariocrea."','".$usuariomodi."',".$refusuarios.",'".$observaciones."','".$fechavencimiento."','".$coberturaactual."','".$existeprimaobjetivo."',".$primaobjetivo.",".$primaobjetivototal.",".$reftipomoneda.")";
 
 		return $sql;
 	}
 
-	function modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$bitacoracrea,$bitacorainbursa,$bitacoraagente,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal) {
+	function modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$bitacoracrea,$bitacorainbursa,$bitacoraagente,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda) {
 		$sql = "update dbcotizaciones
 		set
-		refclientes = ".$refclientes.",refproductos = ".$refproductos.",refasesores = ".$refasesores.",refasociados = ".$refasociados.",refestadocotizaciones = ".$refestadocotizaciones.",cobertura = '".$cobertura."',reasegurodirecto = '".$reasegurodirecto."',tiponegocio = '".$tiponegocio."',presentacotizacion = '".$presentacotizacion."',fechapropuesta = ".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",fecharenovacion = ".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",fechaemitido = ".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',refusuarios = ".$refusuarios.",observaciones = '".$observaciones."',fechavencimiento = '".$fechavencimiento."',coberturaactual = '".$coberturaactual."',bitacoracrea = '".$bitacoracrea."',bitacorainbursa = '".$bitacorainbursa."',bitacoraagente = '".$bitacoraagente."',existeprimaobjetivo = '".$existeprimaobjetivo."',primaobjetivo = ".$primaobjetivo.",primaobjetivototal = ".$primaobjetivototal." where idcotizacion =".$id;
+		refclientes = ".$refclientes.",refproductos = ".$refproductos.",refasesores = ".$refasesores.",refasociados = ".$refasociados.",refestadocotizaciones = ".$refestadocotizaciones.",cobertura = '".$cobertura."',reasegurodirecto = '".$reasegurodirecto."',tiponegocio = '".$tiponegocio."',presentacotizacion = '".$presentacotizacion."',fechapropuesta = ".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",fecharenovacion = ".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",fechaemitido = ".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',refusuarios = ".$refusuarios.",observaciones = '".$observaciones."',fechavencimiento = '".$fechavencimiento."',coberturaactual = '".$coberturaactual."',bitacoracrea = '".$bitacoracrea."',bitacorainbursa = '".$bitacorainbursa."',bitacoraagente = '".$bitacoraagente."',existeprimaobjetivo = '".$existeprimaobjetivo."',primaobjetivo = ".$primaobjetivo.",primaobjetivototal = ".$primaobjetivototal.",reftipomoneda = ".$reftipomoneda." where idcotizacion =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -12681,20 +12702,7 @@ return $res;
       c.folio,
       DATEDIFF(CURDATE(),c.fechacrea) as dias,
       (case when c.version > 0 then 'En Ajuste' else 'Nueva' end) as gestion,
-      tz.fechacrea as fechaevento,
-		c.refclientes,
-		c.refproductos,
-		c.refasesores,
-		c.refasociados,
-		c.refestadocotizaciones,
-		c.observaciones,
-		c.fechavencimiento,
-		c.coberturaactual,
-		c.fechacrea,
-
-		c.usuariocrea,
-		c.usuariomodi,
-		c.refusuarios
+      max(DATE_FORMAT(tz.fechacrea, '%d-%m-%Y %H:%i:%s')) as fechaevento
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
@@ -12709,6 +12717,15 @@ return $res;
 		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
 
 		where ".$whereEstado.$where." ".$whereSinVenta."
+      group by c.idcotizacion,
+		cli.reftipopersonas,cli.apellidopaterno, cli.apellidomaterno, cli.nombre,cli.razonsocial,
+		pro.producto,
+		ase.apellidopaterno, ase.apellidomaterno, ase.nombre,
+		aso.apellidopaterno, aso.apellidomaterno, aso.nombre,
+      c.fechacrea,
+      est.estadocotizacion,
+      c.folio,
+      c.version
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
 
@@ -12834,24 +12851,11 @@ return $res;
 		concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
 		concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
       c.fechacrea,
-		est.estadocotizacion,
-      c.refclientes,
-		c.refproductos,
+      est.estadocotizacion,
+      c.folio,
+      DATEDIFF(CURDATE(),c.fechacrea) as dias,
       (case when c.version > 0 then 'En Ajuste' else 'Nueva' end) as gestion,
-      tz.fechacrea as fechaevento,
-		c.refclientes,
-		c.refproductos,
-		c.refasesores,
-		c.refasociados,
-		c.refestadocotizaciones,
-		c.observaciones,
-		c.fechavencimiento,
-		c.coberturaactual,
-		c.fechacrea,
-		c.fechamodi,
-		c.usuariocrea,
-		c.usuariomodi,
-		c.refusuarios
+      max(DATE_FORMAT(tz.fechacrea, '%d-%m-%Y %H:%i:%s')) as fechaevento
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
@@ -12864,6 +12868,15 @@ return $res;
       left join dbtrazabilidad tz on tz.refevento = ee.idevento and tz.idreferencia = c.idcotizacion and tz.reftabla=12
 
 		where ".$whereEstado." and ase.idasesor = ".$idasesor." ".$where."
+      group by c.idcotizacion,
+		cli.reftipopersonas,cli.apellidopaterno, cli.apellidomaterno, cli.nombre,cli.razonsocial,
+		pro.producto,
+		ase.apellidopaterno, ase.apellidomaterno, ase.nombre,
+		aso.apellidopaterno, aso.apellidomaterno, aso.nombre,
+      c.fechacrea,
+      est.estadocotizacion,
+      c.folio,
+      c.version
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
 
@@ -12947,7 +12960,7 @@ return $res;
 
 
 	function traerCotizacionesPorId($id) {
-		$sql = "select idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,observaciones,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,fechaemitido,fechavencimiento,coberturaactual,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion,bitacoracrea,bitacorainbursa,bitacoraagente,existeprimaobjetivo,primaobjetivo,folio,version,refcotizaciones,refestados,primaneta,primatotal,ot,articulo,primaobjetivototal from dbcotizaciones where idcotizacion =".$id;
+		$sql = "select idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,observaciones,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,fechaemitido,fechavencimiento,coberturaactual,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion,bitacoracrea,bitacorainbursa,bitacoraagente,existeprimaobjetivo,primaobjetivo,folio,version,refcotizaciones,refestados,primaneta,primatotal,ot,articulo,primaobjetivototal,reftipomoneda from dbcotizaciones where idcotizacion =".$id;
 
 		$res = $this->query($sql,0);
 		return $res;
@@ -12974,7 +12987,7 @@ return $res;
          ase.claveasesor, cli.refusuarios as idusuariocliente, ase.refusuarios as idusuarioasesor,
          ase.envioalcliente, pro.consolicitud, c.ot, c.articulo,
          concat(ase.apellidopaterno, ' ', ase.nombre) as asesorsolo,
-         pro.reftipoproductorama, c.primaobjetivototal
+         pro.reftipoproductorama, c.primaobjetivototal, c.reftipomoneda
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join dbasesores ase ON ase.idasesor = c.refasesores
@@ -13001,7 +13014,7 @@ return $res;
 		c.presentacotizacion,c.fechapropuesta,c.fecharenovacion,
       c.bitacoracrea,c.bitacorainbursa,c.bitacoraagente,c.existeprimaobjetivo,c.primaobjetivo, pro.precio ,
 	  c.tieneasegurado, c.refasegurados,c.folio,c.version,c.refcotizaciones, c.refestados,
-     c.primaneta,c.primatotal, pro.reftipodocumentaciones, ase.envioalcliente, c.ot, c.articulo, c.primaobjetivototal
+     c.primaneta,c.primatotal, pro.reftipodocumentaciones, ase.envioalcliente, c.ot, c.articulo, c.primaobjetivototal, c.reftipomoneda
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join dbasesores ase ON ase.idasesor = c.refasesores

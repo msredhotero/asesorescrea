@@ -237,8 +237,11 @@ $resVar10m	= $serviciosReferencias->traerAseguradora();
 $resEstadoUnico = $serviciosReferencias->traerEtapacotizacion();
 $cadEstUnico = $serviciosFunciones->devolverSelectBoxActivo($resEstadoUnico,array(1),'',mysql_result($resultado,0,'refestados'));
 
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadRef7,7=>$cadRef8,8=>$cadRef9,9=>$cadRef10,10=>$cadRef11,11=>$cadEstUnico);
-$refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones','cobertura','presentacotizacion','tiponegocio','coberturaactual','existeprimaobjetivo','refestados');
+$resTipoMoneda = $serviciosReferencias->traerTipomonedaPorId(mysql_result($resultado,0,'reftipomoneda'));
+$cadTipoMoneda = $serviciosFunciones->devolverSelectBox($resTipoMoneda,array(1),'');
+
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadRef7,7=>$cadRef8,8=>$cadRef9,9=>$cadRef10,10=>$cadRef11,11=>$cadEstUnico,12=>$cadTipoMoneda);
+$refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones','cobertura','presentacotizacion','tiponegocio','coberturaactual','existeprimaobjetivo','refestados','reftipomoneda');
 
 $frmUnidadNegocios = $serviciosFunciones->camposTablaModificar($id, $idTabla,$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -538,6 +541,13 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 								<div class="row" style="padding: 5px 20px;">
 
 									<?php echo $frmUnidadNegocios; ?>
+									<div class="form-group col-md-12 frmContobservaciones" style="display:block">
+										<label for="observaciones" class="control-label" style="text-align:left">Escriba mensaje para la bitacora </label>
+										<div class="input-group col-md-12">
+											<textarea type="text" rows="4" cols="6" class="form-control" id="bitacora" name="bitacora" placeholder="Ingrese el mensaje..."></textarea>
+										</div>
+									</div>
+
 									<input type="hidden" id="estadoactual" name="estadoactual" value=""/>
 								</div>
 								<div class="row" style="display:none;">
@@ -615,6 +625,8 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 									<div class="modal-footer">
 										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 											<button type="button" class="btn btn-info waves-effect">ESTADO: <?php echo mysql_result($resEstados,0,'estadocotizacion'); ?></button>
+
+											<button type="button" data-bitacora="bitacorainbursa" class="btn btn-success waves-effect btnModificarBitacora">MODIFICAR BITACORA</button>
 
 											<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 14) || ($_SESSION['idroll_sahilices'] == 15) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22) || ($_SESSION['idroll_sahilices'] == 23)) { ?>
 											<button id="<?php echo $idestado; ?>" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>
@@ -786,6 +798,69 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 <script>
 	$(document).ready(function(){
+
+
+		$('.frmContbitacorainbursa').hide();
+		$('.frmContbitacoraagente').hide();
+		$("#bitacoracrea").prop('readonly',true);
+
+		$('.btnModificarBitacora').click(function() {
+
+			modificarCotizacionesPorCampoCompleto('bitacoracrea');
+		});
+
+
+		function modificarCotizacionesPorCampoCompleto(bitacora) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificarCotizacionesPorCampoCompleto',
+					id: <?php echo $id; ?>,
+					campo: bitacora,
+					valor: $('#bitacora').val()
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data == '') {
+						swal({
+							title: "Respuesta",
+							text: 'Se guardo correctamente la bitacora',
+							type: "success",
+							timer: 1800,
+							showConfirmButton: false
+						});
+					} else {
+						swal({
+							title: "Respuesta",
+							text: data,
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
 
 		$('.btnAdjuntar').click(function() {
 			url = "adjuntarcotizaciones.php?id=<?php echo $id; ?>";
@@ -1173,18 +1248,8 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 			});
 		}
 
-		$('.frmContbitacorainbursa').hide();
 
 
-		<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
-			$("#bitacoracrea").prop('readonly',true);
-			$("#bitacorainbursa").prop('readonly',true);
-		<?php } ?>
-
-		<?php if ($_SESSION['idroll_sahilices'] == 17) { ?>
-			$("#bitacoracrea").prop('readonly',true);
-			$("#bitacorainbursa").prop('readonly',true);
-		<?php } ?>
 
 
 
