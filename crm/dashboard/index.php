@@ -1071,10 +1071,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 									<img src="../imagenes/cotiza_bck.jpg" width="100%"/>
 									<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.5em;" onclick="window.location='enproceso/new.php'">SOLICITAR COTIZACION</button>
 								</div>
-								<div class"row imgMejopra button-container-img" style="margin-top:20px;">
-									<img src="../imagenes/mejoratuscondiciones_bck.jpg" width="100%"/>
-									<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.5em;" onclick="window.location='mejorarcondiciones/'">ADJUNTAR POLIZA</button>
-								</div>
+							
 
 								<?php } ?>
 
