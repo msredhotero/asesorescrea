@@ -62,7 +62,7 @@ $lblPrecioSEVI = '';
 $lblPrecioVIDA500 = '';
 
 
-$existeCotizacionParaProductoVRIM = $serviciosReferencias->traerValoredadPorProductoEdad(10,$edad);
+$existeCotizacionParaProductoVRIM = $serviciosReferencias->traerValoredadPorProductoEdad(41,$edad);
 
 if (mysql_num_rows($existeCotizacionParaProductoVRIM)>0) {
    $lblPrecioVRIM = '$'.mysql_result($existeCotizacionParaProductoVRIM,0,'valor');
@@ -70,7 +70,7 @@ if (mysql_num_rows($existeCotizacionParaProductoVRIM)>0) {
    $lblPrecioVRIM = 0;
 }
 
-$existeCotizacionParaProductoSEVI = $serviciosReferencias->traerValoredadPorProductoEdad(4,$edad);
+$existeCotizacionParaProductoSEVI = $serviciosReferencias->traerValoredadPorProductoEdad(28,$edad);
 
 if (mysql_num_rows($existeCotizacionParaProductoSEVI)>0) {
    $lblPrecioSEVI = '$'.mysql_result($existeCotizacionParaProductoSEVI,0,'valor');
@@ -79,7 +79,7 @@ if (mysql_num_rows($existeCotizacionParaProductoSEVI)>0) {
 }
 
 
-$existeCotizacionParaProductoS500 = $serviciosReferencias->traerValoredadPorProductoEdad(12,$edad);
+$existeCotizacionParaProductoS500 = $serviciosReferencias->traerValoredadPorProductoEdad(54,$edad);
 
 if (mysql_num_rows($existeCotizacionParaProductoS500)>0) {
    $lblPrecioVIDA500 = '$'.mysql_result($existeCotizacionParaProductoS500,0,'valor');
@@ -463,19 +463,19 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
       });
 
 		$('#btnCotizarVrim').click(function() {
-			$(location).attr('href','new.php?producto=10');
+			$(location).attr('href','new.php?producto=41');
 		});
 
       $('#btnCotizarSevi').click(function() {
-			$(location).attr('href','new.php?producto=4');
+			$(location).attr('href','new.php?producto=28');
 		});
 
       $('#btnCotizarS500').click(function() {
-			$(location).attr('href','new.php?producto=12');
+			$(location).attr('href','new.php?producto=54');
 		});
 
       $('#btnCotizarRD').click(function() {
-   
+
 			$(location).attr('href','new.php?producto=55');
 		});
 
