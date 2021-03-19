@@ -55,7 +55,7 @@ if ($edad > 60) {
 	$mayoredad = 0;
 }
 
-
+//die(var_dump($edad));
 
 $lblPrecioVRIM = '';
 $lblPrecioSEVI = '';
@@ -67,15 +67,16 @@ $existeCotizacionParaProductoVRIM = $serviciosReferencias->traerValoredadPorProd
 if (mysql_num_rows($existeCotizacionParaProductoVRIM)>0) {
    $lblPrecioVRIM = '$'.mysql_result($existeCotizacionParaProductoVRIM,0,'valor');
 } else {
-   $lblPrecioVRIM = 0;
+   $lblPrecioVRIM = '';
 }
 
 $existeCotizacionParaProductoSEVI = $serviciosReferencias->traerValoredadPorProductoEdad(28,$edad);
 
 if (mysql_num_rows($existeCotizacionParaProductoSEVI)>0) {
+   //die(var_dump(mysql_result($existeCotizacionParaProductoSEVI,0,'valor')));
    $lblPrecioSEVI = '$'.mysql_result($existeCotizacionParaProductoSEVI,0,'valor');
 } else {
-   $lblPrecioSEVI = 0;
+   $lblPrecioSEVI = '';
 }
 
 
@@ -84,7 +85,7 @@ $existeCotizacionParaProductoS500 = $serviciosReferencias->traerValoredadPorProd
 if (mysql_num_rows($existeCotizacionParaProductoS500)>0) {
    $lblPrecioVIDA500 = '$'.mysql_result($existeCotizacionParaProductoS500,0,'valor');
 } else {
-   $lblPrecioVIDA500 = 0;
+   $lblPrecioVIDA500 = '';
 }
 
 
@@ -249,7 +250,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 										<li style="margin-top:10px;">7.- Parálisis o Paraplejía.</li>
 
 									</ul>
-                           <?php if ($lblPrecioSEVI != 0) { ?>
+                           <?php if ($lblPrecioSEVI != '') { ?>
                            <div class="row" style="margin-top:40px; text-align:center;">
       								<button type="button" id="btnCotizarSevi" class="btn bg-blue waves-effect btnCotizarSevi" style="padding:40px 80px; font-size:100%;">CONTRATAR PLAN ANUAL POR <?php echo $lblPrecioSEVI; ?></button>
       							</div>
@@ -279,7 +280,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 										<li style="margin-top:10px;">7.- Descuentos hasta el 50% en laboratorios, hospitales, cirugías, tratamientos dentales y visuales, enfermeras a domicilio, aparatos auditivos y más.</li>
 
 									</ul>
-                           <?php if ($lblPrecioVRIM != 0) { ?>
+                           <?php if ($lblPrecioVRIM != '') { ?>
                            <div class="row" style="margin-top:40px; text-align:center;">
       								<button type="button" id="btnCotizarVrim" class="btn bg-blue waves-effect btnCotizarVrim" style="padding:40px 80px; font-size:100%;">CONTRATAR PLAN ANUAL POR <?php echo $lblPrecioVRIM; ?></button>
       							</div>
@@ -294,7 +295,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 									<h4 style="line-height: 1.5; "><b>Contrata un Seguro de Vida y deja a tus beneficiarios $500,000 en caso de que faltes. También puedes cotizar suma asegurada de $1,000,000 de pesos.</b></h4>
                            <h4 style="line-height: 1.5; "><b>No hay pretexto para no estar asegurado; el trámite es sencillo y sin moverte de tu lugar.</b></h4>
 
-                           <?php if ($lblPrecioVIDA500 != 0) { ?>
+                           <?php if ($lblPrecioVIDA500 != '') { ?>
                            <div class="row" style="margin-top:40px; text-align:center;">
       								<button type="button" id="btnCotizarS500" class="btn bg-blue waves-effect btnCotizarS500" style="padding:40px 80px; font-size:100%;">CONTRATAR PLAN ANUAL POR <?php echo $lblPrecioVIDA500; ?></button>
       							</div>
