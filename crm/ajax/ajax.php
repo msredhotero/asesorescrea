@@ -1600,40 +1600,47 @@ function buscarRFC($serviciosValidador) {
                               $resV['datos'] = $arDatos;
                            }
                         } else {
-                           $apellidoPaterno  = $arFirmaFiel['apellidoPaterno'];
-                           $apellidoMaterno  = $arFirmaFiel['apellidoMaterno'];
-                           $nombres          = $arFirmaFiel['nombres'];
-                           $nombreCompleto   = $arFirmaFiel['nombreCompleto'];
-                           $sexo             = $arFirmaFiel['sexo'];
-                           $nacionalidad     = $arFirmaFiel['nacionalidad'];
-                           $fechaNacimiento  = $arFirmaFiel['fechaNacimiento'];
-                           $cveEntidadNac    = $arFirmaFiel['cveEntidadNac'];
-                           $domicilio        = $arFirmaFiel['domicilio'];
-                           $desTelefono      = $arFirmaFiel['desTelefono'];
-                           $curp             = $arFirmaFiel['curp'];
-                           $correoElectronico= $arFirmaFiel['correoElectronico'];
-                           $numeroInterior   = $arFirmaFiel['numeroInterior'];
-                           $numeroExterior   = $arFirmaFiel['numeroExterior'];
-                           $municipio        = $arFirmaFiel['municipio'];
-                           $entidadFederativa= $arFirmaFiel['entidadFederativa'];
-                           $colonia          = $arFirmaFiel['colonia'];
-                           $codigoPostal     = $arFirmaFiel['codigoPostal'];
-                           $calle            = $arFirmaFiel['calle'];
+                           if (strlen($rfc) == 13) {
+                              $resV['error'] = true;
+                              $resV['mensaje'] = 'El formato del RFC es para una persona fisica';
+                              $resV['aceptado'] = false;
+                           } else {
+                              $apellidoPaterno  = $arFirmaFiel['apellidoPaterno'];
+                              $apellidoMaterno  = $arFirmaFiel['apellidoMaterno'];
+                              $nombres          = $arFirmaFiel['nombres'];
+                              $nombreCompleto   = $arFirmaFiel['nombreCompleto'];
+                              $sexo             = $arFirmaFiel['sexo'];
+                              $nacionalidad     = $arFirmaFiel['nacionalidad'];
+                              $fechaNacimiento  = $arFirmaFiel['fechaNacimiento'];
+                              $cveEntidadNac    = $arFirmaFiel['cveEntidadNac'];
+                              $domicilio        = $arFirmaFiel['domicilio'];
+                              $desTelefono      = $arFirmaFiel['desTelefono'];
+                              $curp             = $arFirmaFiel['curp'];
+                              $correoElectronico= $arFirmaFiel['correoElectronico'];
+                              $numeroInterior   = $arFirmaFiel['numeroInterior'];
+                              $numeroExterior   = $arFirmaFiel['numeroExterior'];
+                              $municipio        = $arFirmaFiel['municipio'];
+                              $entidadFederativa= $arFirmaFiel['entidadFederativa'];
+                              $colonia          = $arFirmaFiel['colonia'];
+                              $codigoPostal     = $arFirmaFiel['codigoPostal'];
+                              $calle            = $arFirmaFiel['calle'];
 
-                           array_push($arDatos,
-                              array(
-                                 'apellidoPaterno'=>$apellidoPaterno,
-                                 'apellidoMaterno'=>$apellidoMaterno,
-                                 'nombres'=>$nombres,
-                                 'nombreCompleto'=>$nombreCompleto,
-                                 'sexo'=>$sexo,
-                                 'nacionalidad'=>$nacionalidad,
-                                 'fechaNacimiento'=> ($fechaNacimiento == '' ? '0000-00-00' : date('Y-m-d', strtotime(str_replace('/', '-', $fechaNacimiento)))),
-                                 'cveEntidadNac'=>$cveEntidadNac,
-                              )
-                           );
+                              array_push($arDatos,
+                                 array(
+                                    'apellidoPaterno'=>$apellidoPaterno,
+                                    'apellidoMaterno'=>$apellidoMaterno,
+                                    'nombres'=>$nombres,
+                                    'nombreCompleto'=>$nombreCompleto,
+                                    'sexo'=>$sexo,
+                                    'nacionalidad'=>$nacionalidad,
+                                    'fechaNacimiento'=> ($fechaNacimiento == '' ? '0000-00-00' : date('Y-m-d', strtotime(str_replace('/', '-', $fechaNacimiento)))),
+                                    'cveEntidadNac'=>$cveEntidadNac,
+                                 )
+                              );
 
-                           $resV['datos'] = $arDatos;
+                              $resV['datos'] = $arDatos;
+                           }
+
                         }
 
                      }
