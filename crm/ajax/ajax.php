@@ -1420,6 +1420,9 @@ switch ($accion) {
    case 'traerDocumentacionPorCotizacionDocumentacionRechazo':
       traerDocumentacionPorCotizacionDocumentacionRechazo($serviciosReferencias);
    break;
+   case 'buscarRFC':
+      buscarRFC($serviciosValidador);
+   break;
 
 
 }
@@ -1479,6 +1482,189 @@ function traerDocumentacionPorCotizacionDocumentacionRechazo($serviciosReferenci
    echo json_encode($resV);
 }
 
+
+function buscarRFC($serviciosValidador) {
+
+   $resV['error'] = false;
+
+   $arDatos = array();
+
+   if (isset($_POST['tipopersona'])) {
+      $tipopersona = $_POST['tipopersona'];
+   } else {
+      $tipopersona = 1;
+   }
+
+   if ((isset($_POST['rfc']))) {
+      $rfc = $_POST['rfc'];
+
+      if ((strlen($rfc) == 13) || (strlen($rfc) == 12)) {
+         $validarER = $serviciosValidador->validarRFC($rfc);
+
+         if ($validarER) {
+            //hasta aca esta todo ok
+
+            $ch = curl_init();
+            $url = 'https://crea.signaturainnovacionesjuridicas.com/api/consultas/sat?rfc='.$rfc;
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            //set the content type to application/json
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+
+            //return response instead of outputting
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            //execute the POST request
+            $result = curl_exec($ch);
+            curl_close($ch);
+
+            if (!is_string($result) || !strlen($result)) {
+               $resV['error'] = true;
+               $resV['mensaje'] = 'El RFC es incorrecto';
+               $resV['aceptado'] = true;
+
+            } else {
+
+               $arFirmaFiel = json_decode($result, true);
+
+               //die(var_dump($arFirmaFiel));
+
+               if ($arFirmaFiel == null) {
+                  $resV['error'] = true;
+                  $resV['mensaje'] = 'El formato del RFC es incorrecto';
+                  $resV['aceptado'] = false;
+               } else {
+                  if (isset($arFirmaFiel['Cause'])) {
+                     $resV['error'] = true;
+                     $resV['mensaje'] = $arFirmaFiel['Detail'];
+                     $resV['aceptado'] = false;
+                  } else {
+                     if ($arFirmaFiel['rfc'] == null) {
+                        $resV['error'] = true;
+                        $resV['mensaje'] = 'RFC inexistente';
+                        $resV['aceptado'] = false;
+                     } else {
+
+                        if ($tipopersona == 1) {
+                           if ($arFirmaFiel['apellidoPaterno'] == null) {
+                              $resV['error'] = true;
+                              $resV['mensaje'] = 'RFC de persona moral';
+                              $resV['aceptado'] = false;
+                           } else {
+                              $apellidoPaterno  = $arFirmaFiel['apellidoPaterno'];
+                              $apellidoMaterno  = $arFirmaFiel['apellidoMaterno'];
+                              $nombres          = $arFirmaFiel['nombres'];
+                              $nombreCompleto   = $arFirmaFiel['nombreCompleto'];
+                              $sexo             = $arFirmaFiel['sexo'];
+                              $nacionalidad     = $arFirmaFiel['nacionalidad'];
+                              $fechaNacimiento  = $arFirmaFiel['fechaNacimiento'];
+                              $cveEntidadNac    = $arFirmaFiel['cveEntidadNac'];
+                              $domicilio        = $arFirmaFiel['domicilio'];
+                              $desTelefono      = $arFirmaFiel['desTelefono'];
+                              $curp             = $arFirmaFiel['curp'];
+                              $correoElectronico= $arFirmaFiel['correoElectronico'];
+                              $numeroInterior   = $arFirmaFiel['numeroInterior'];
+                              $numeroExterior   = $arFirmaFiel['numeroExterior'];
+                              $municipio        = $arFirmaFiel['municipio'];
+                              $entidadFederativa= $arFirmaFiel['entidadFederativa'];
+                              $colonia          = $arFirmaFiel['colonia'];
+                              $codigoPostal     = $arFirmaFiel['codigoPostal'];
+                              $calle            = $arFirmaFiel['calle'];
+                              $rfc              = $arFirmaFiel['rfc'];
+                              $curp             = $arFirmaFiel['curp'];
+
+                              array_push($arDatos,
+                                 array(
+                                    'apellidoPaterno'=>$apellidoPaterno,
+                                    'apellidoMaterno'=>$apellidoMaterno,
+                                    'nombres'=>$nombres,
+                                    'nombreCompleto'=>$nombreCompleto,
+                                    'sexo'=>$sexo,
+                                    'nacionalidad'=>$nacionalidad,
+                                    'fechaNacimiento'=> ($fechaNacimiento == '' ? '0000-00-00' : date('Y-m-d', strtotime(str_replace('/', '-', $fechaNacimiento)))),
+                                    'cveEntidadNac'=>$cveEntidadNac,
+                                    'domicilio'=>$domicilio,
+                                    'desTelefono'=>$desTelefono,
+                                    'numeroInterior'=>$numeroInterior,
+                                    'numeroExterior'=>$numeroExterior,
+                                    'municipio'=>$municipio,
+                                    'entidadFederativa'=>$entidadFederativa,
+                                    'colonia'=>$colonia,
+                                    'codigoPostal'=>$codigoPostal,
+                                    'calle'=>$calle,
+                                    'rfc'=>$rfc,
+                                    'curp'=>$curp,
+                                 )
+                              );
+
+                              $resV['datos'] = $arDatos;
+                           }
+                        } else {
+                           $apellidoPaterno  = $arFirmaFiel['apellidoPaterno'];
+                           $apellidoMaterno  = $arFirmaFiel['apellidoMaterno'];
+                           $nombres          = $arFirmaFiel['nombres'];
+                           $nombreCompleto   = $arFirmaFiel['nombreCompleto'];
+                           $sexo             = $arFirmaFiel['sexo'];
+                           $nacionalidad     = $arFirmaFiel['nacionalidad'];
+                           $fechaNacimiento  = $arFirmaFiel['fechaNacimiento'];
+                           $cveEntidadNac    = $arFirmaFiel['cveEntidadNac'];
+                           $domicilio        = $arFirmaFiel['domicilio'];
+                           $desTelefono      = $arFirmaFiel['desTelefono'];
+                           $curp             = $arFirmaFiel['curp'];
+                           $correoElectronico= $arFirmaFiel['correoElectronico'];
+                           $numeroInterior   = $arFirmaFiel['numeroInterior'];
+                           $numeroExterior   = $arFirmaFiel['numeroExterior'];
+                           $municipio        = $arFirmaFiel['municipio'];
+                           $entidadFederativa= $arFirmaFiel['entidadFederativa'];
+                           $colonia          = $arFirmaFiel['colonia'];
+                           $codigoPostal     = $arFirmaFiel['codigoPostal'];
+                           $calle            = $arFirmaFiel['calle'];
+
+                           array_push($arDatos,
+                              array(
+                                 'apellidoPaterno'=>$apellidoPaterno,
+                                 'apellidoMaterno'=>$apellidoMaterno,
+                                 'nombres'=>$nombres,
+                                 'nombreCompleto'=>$nombreCompleto,
+                                 'sexo'=>$sexo,
+                                 'nacionalidad'=>$nacionalidad,
+                                 'fechaNacimiento'=> ($fechaNacimiento == '' ? '0000-00-00' : date('Y-m-d', strtotime(str_replace('/', '-', $fechaNacimiento)))),
+                                 'cveEntidadNac'=>$cveEntidadNac,
+                              )
+                           );
+
+                           $resV['datos'] = $arDatos;
+                        }
+
+                     }
+
+                  }
+               }
+
+
+
+            }
+         } else {
+            $resV['error'] = true;
+            $resV['mensaje'] = 'El formato del RFC es incorrecto';
+            $resV['aceptado'] = false;
+         }
+      } else {
+         $resV['error'] = true;
+         $resV['mensaje'] = 'El RFC debe contener 12 o 13 caracteres alfanumericos';
+         $resV['aceptado'] = false;
+      }
+   } else {
+   	$resV['error'] = true;
+      $resV['mensaje'] = 'Debe ingresar 12 o 13 caracteres';
+      $resV['aceptado'] = false;
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+
 function buscarCURP($serviciosValidador) {
 
    $resV['error'] = false;
@@ -1511,38 +1697,53 @@ function buscarCURP($serviciosValidador) {
             if (!is_string($result) || !strlen($result)) {
                $resV['error'] = true;
                $resV['mensaje'] = 'El CURP es incorrecto';
+               $resV['aceptado'] = false;
 
             } else {
 
                $arFirmaFiel = json_decode($result, true);
 
-               if ($arFirmaFiel['apellidoPaterno'] == null) {
+               if ($arFirmaFiel == null) {
                   $resV['error'] = true;
-                  $resV['mensaje'] = 'CURP no encontrado';
+                  $resV['mensaje'] = 'El formato del CURP es incorrecto';
+                  $resV['aceptado'] = false;
                } else {
-                  $apellidoPaterno  = $arFirmaFiel['apellidoPaterno'];
-                  $apellidoMaterno  = $arFirmaFiel['apellidoMaterno'];
-                  $nombres          = $arFirmaFiel['nombres'];
-                  $nombreCompleto   = $arFirmaFiel['nombreCompleto'];
-                  $sexo             = $arFirmaFiel['sexo'];
-                  $nacionalidad     = $arFirmaFiel['nacionalidad'];
-                  $fechaNacimiento  = $arFirmaFiel['fechaNacimiento'];
-                  $cveEntidadNac    = $arFirmaFiel['cveEntidadNac'];
+                  if (isset($arFirmaFiel['Cause'])) {
+                     $resV['error'] = true;
+                     $resV['mensaje'] = $arFirmaFiel['Detail'];
+                     $resV['aceptado'] = true;
+                  } else {
+                     if ($arFirmaFiel['curp'] == null) {
+                        $resV['error'] = true;
+                        $resV['mensaje'] = 'CURP inexistente';
+                        $resV['aceptado'] = true;
+                     } else {
 
-                  array_push($arDatos,
-                     array(
-                        'apellidoPaterno'=>$apellidoPaterno,
-                        'apellidoMaterno'=>$apellidoMaterno,
-                        'nombres'=>$nombres,
-                        'nombreCompleto'=>$nombreCompleto,
-                        'sexo'=>$sexo,
-                        'nacionalidad'=>$nacionalidad,
-                        'fechaNacimiento'=> ($fechaNacimiento == '' ? '0000-00-00' : date('Y-m-d', strtotime(str_replace('/', '-', $fechaNacimiento)))),
-                        'cveEntidadNac'=>$cveEntidadNac,
-                     )
-                  );
+                        $apellidoPaterno  = $arFirmaFiel['apellidoPaterno'];
+                        $apellidoMaterno  = $arFirmaFiel['apellidoMaterno'];
+                        $nombres          = $arFirmaFiel['nombres'];
+                        $nombreCompleto   = $arFirmaFiel['nombreCompleto'];
+                        $sexo             = $arFirmaFiel['sexo'];
+                        $nacionalidad     = $arFirmaFiel['nacionalidad'];
+                        $fechaNacimiento  = $arFirmaFiel['fechaNacimiento'];
+                        $cveEntidadNac    = $arFirmaFiel['cveEntidadNac'];
 
-                  $resV['datos'] = $arDatos;
+                        array_push($arDatos,
+                           array(
+                              'apellidoPaterno'=>$apellidoPaterno,
+                              'apellidoMaterno'=>$apellidoMaterno,
+                              'nombres'=>$nombres,
+                              'nombreCompleto'=>$nombreCompleto,
+                              'sexo'=>$sexo,
+                              'nacionalidad'=>$nacionalidad,
+                              'fechaNacimiento'=> ($fechaNacimiento == '' ? '0000-00-00' : date('Y-m-d', strtotime(str_replace('/', '-', $fechaNacimiento)))),
+                              'cveEntidadNac'=>$cveEntidadNac,
+                           )
+                        );
+
+                        $resV['datos'] = $arDatos;
+                     }
+                  }
                }
 
 
@@ -1550,14 +1751,17 @@ function buscarCURP($serviciosValidador) {
          } else {
             $resV['error'] = true;
             $resV['mensaje'] = 'El formato del CURP es incorrecto';
+            $resV['aceptado'] = false;
          }
       } else {
          $resV['error'] = true;
          $resV['mensaje'] = 'El CURP debe contener 18 caracteres alfanumericos';
+         $resV['aceptado'] = false;
       }
    } else {
    	$resV['error'] = true;
       $resV['mensaje'] = 'Debe ingresar 18 caracteres';
+      $resV['aceptado'] = false;
    }
 
    header('Content-type: application/json');
@@ -2245,10 +2449,12 @@ function modificarCotizacionesPorCampoCompleto($serviciosReferencias) {
 
       $valor = mysql_result($resCot,0,'bitacoracrea').' '.$valor.' - '.$_SESSION['usua_sahilices'].' '.date('Y-m-d H:i:s').'.\n';
 
-      if ($_SESSION['idroll_sahilices'] == 7) {
-         $resEnviarEmail = $serviciosReferencias->enviarEmailModificacionCotizacion($id,'Bitacora: '.$valor,'',$enviaEmail=1);
-      } else {
-         $resEnviarEmail = $serviciosReferencias->enviarEmailModificacionCotizacion($id,'Bitacora: '.$valor,$_SESSION['usua_sahilices'],$enviaEmail=1);
+      if (mysql_result($resCot,0,'refestadocotizaciones') == 4) {
+         if ($_SESSION['idroll_sahilices'] == 7) {
+            $resEnviarEmail = $serviciosReferencias->enviarEmailModificacionCotizacion($id,'Bitacora: '.$valor,'',$enviaEmail=1);
+         } else {
+            $resEnviarEmail = $serviciosReferencias->enviarEmailModificacionCotizacion($id,'Bitacora: '.$valor,$_SESSION['usua_sahilices'],$enviaEmail=1);
+         }
       }
    }
 
@@ -11433,12 +11639,14 @@ function insertarClientes($serviciosReferencias) {
    $reftipoidentificacion = $_POST['reftipoidentificacion'];
    $nroidentificacion = $_POST['nroidentificacion'];
 
+   $fechanacimiento = $_POST['fechanacimiento'];
+
    $existe = $serviciosReferencias->existeClienteAPYN($nombre,$apellidopaterno,$apellidomaterno);
 
    if (($existe == 1) && ($reftipopersonas == 1)) {
       echo 'El cliente ya existe en la base de datos';
    } else {
-      $res = $serviciosReferencias->insertarClientes($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion);
+      $res = $serviciosReferencias->insertarClientes($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion,$fechanacimiento);
 
       if ((integer)$res > 0) {
          if ($_SESSION['idroll_sahilices'] == 7) {

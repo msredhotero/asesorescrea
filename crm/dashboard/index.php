@@ -1032,27 +1032,14 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 								<?php if ($_SESSION['idroll_sahilices'] == 16) { ?>
 									<h3>Hola, <?php echo strtoupper($nombrecompleto); ?></h3>
 									<hr>
-									<?php if ($_SESSION['usuaid_sahilices'] == 201) { ?>
+									<?php if (201 == 201) { ?>
 
-									<?php
-									while ($row = mysql_fetch_array($resProductosVenta)) {
-									?>
-									<div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
-										<a href="venta/new.php?producto=<?php echo $row['idproducto']; ?>">
-										<div class="info-box bg-green hover-expand-effect">
-											<div class="icon">
-												<i class="material-icons">attach_money</i>
-											</div>
-											<div class="content">
-												<div class="text"><?php echo $row['producto']; ?></div>
-												<div class="number"><span class="lblPolizasActivas">OBTENER</span></div>
-											</div>
-										</div>
-										</a>
+									
+									<div class"row imgVenta button-container-img">
+										<img src="../imagenes/ventaenlinea_bck2.jpg" width="100%"/>
+										<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.3em;" onclick="window.location='venta/productos.php'">COMPRAR EN LINEA</button>
 									</div>
-									<?php
-									}
-									?>
+
 									<div class"row imgCotiza button-container-img" style="margin-top:20px;">
 										<img src="../imagenes/cotiza_bck2.jpg" width="100%"/>
 										<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.3em;" onclick="window.location='solicitar.php'">SOLICITAR INFORMACIÓN</button>
@@ -1071,20 +1058,8 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 									<img src="../imagenes/cotiza_bck.jpg" width="100%"/>
 									<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.5em;" onclick="window.location='enproceso/new.php'">SOLICITAR COTIZACION</button>
 								</div>
-							
-
-								<?php } ?>
 
 
-
-
-
-
-								<hr>
-
-								<p>Puedes contactarnos en el Teléfono: <b><span style="color:#5DC1FD;">55 51 35 02 59</span></b></p>
-								<p>Horarios de atención: <b>09:00 a 16:00.</b></p>
-								<p>Correo: <a href="mailto:reclutamiento@asesorescrea.com" style="color:#5DC1FD !important;"><b>reclutamiento@asesorescrea.com</b></a></p>
 								<br>
 								<p>Aqui usted encontrara avisos importantes sobre su estado en el Proceso de Reclutamiento</p>
 								<?php echo $leyendaDocumentacion; ?>
@@ -1136,6 +1111,20 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 									</div>
 								<?php } ?>
 							<?php } ?>
+
+								<?php } ?>
+
+
+
+
+
+
+								<hr>
+
+								<p>Puedes contactarnos en el Teléfono: <b><span style="color:#5DC1FD;">55 51 35 02 59</span></b></p>
+								<p>Horarios de atención: <b>09:00 a 16:00.</b></p>
+								<p>Correo: <a href="mailto:reclutamiento@asesorescrea.com" style="color:#5DC1FD !important;"><b>reclutamiento@asesorescrea.com</b></a></p>
+
 
 							</form>
 						</div>

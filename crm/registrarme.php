@@ -12,124 +12,432 @@ $serviciosReferencias = new ServiciosReferencias();
 $serviciosFunciones 	= new Servicios();
 $serviciosValidador = new serviciosValidador();
 
-if (isset($_SESSION['usua_sahilices'])) {
-  header('Location: dashboard/index.php');
-} else {
 
-  $arInput = array();
+function buscarRFC($rfc,$serviciosValidador) {
 
-  $error = false;
+   $resV['error'] = false;
 
-  $nombre           = $_POST['nombre'];
-  $apellidopaterno  = $_POST['apellido-paterno'];
-  $apellidomaterno  = $_POST['apellido-materno'];
-  $email            = $_POST['correo-electronico'];
-  $fechanacimiento  = $_POST['fecha-nacimiento'];
-  $telefono         = $_POST['telefono'];
-  $sexo             = $_POST['sexo'];
-  $codigopostal     = $_POST['codigo-postal'];
-  $estado           = $_POST['estado'];
+   $arDatos = array();
 
-  if (isset($_POST['delegacion'])) {
-    $delegacion       = $_POST['delegacion'];
-  } else {
-    $delegacion       = '';
-  }
+   if ((isset($rfc))) {
 
-  if (isset($_POST['colonia'])) {
-    $colonia       = $_POST['colonia'];
-  } else {
-    $colonia       = '';
-  }
+      if ((strlen($rfc) == 13) || (strlen($rfc) == 12)) {
+         $validarER = $serviciosValidador->validarRFC($rfc);
 
-   if (isset($_POST['estadocivil'])) {
-      $refestadocivil   = $_POST['estadocivil'];
-   } else {
-      $refestadocivil   = 7;
-   }
+         if ($validarER) {
+            //hasta aca esta todo ok
 
-  $ciudad           = $_POST['ciudad'];
+            $ch = curl_init();
+            $url = 'https://crea.signaturainnovacionesjuridicas.com/api/consultas/sat?rfc='.$rfc;
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            //set the content type to application/json
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
 
-   if ($nombre == '' ) {
-      array_push($arInput,array( 'lblerror' =>"* Debe completar el campo Nombre"));
-      $error = true;
-   }
+            //return response instead of outputting
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-   if ($apellidopaterno == '' ) {
-      array_push($arInput,array( 'lblerror' =>"* Debe completar el campo Apellido Paterno"));
-      $error = true;
-   }
+            //execute the POST request
+            $result = curl_exec($ch);
+            curl_close($ch);
 
-   if ($apellidomaterno == '') {
-      array_push($arInput,array( 'lblerror' =>"* Debe completar el campo Apellido Materno"));
-      $error = true;
-   }
+            if (!is_string($result) || !strlen($result)) {
+               $resV['error'] = true;
+               $resV['mensaje'] = 'El RFC es incorrecto';
+               $resV['aceptado'] = true;
 
-   if ($email == '') {
-      array_push($arInput,array( 'lblerror' =>"* Debe completar el campo Correo Electronico"));
-      $error = true;
-   } else {
-      if ($serviciosValidador->validaEmail($email) === false) {
-         array_push($arInput,array( 'lblerror' =>"* Correo Electronico invalido"));
-         $error = true;
-      }
-   }
+            } else {
+
+               $arFirmaFiel = json_decode($result, true);
+
+               //die(var_dump($arFirmaFiel));
+
+               if ($arFirmaFiel == null) {
+                  $resV['error'] = true;
+                  $resV['mensaje'] = 'El formato del RFC es incorrecto';
+                  $resV['aceptado'] = false;
+               } else {
+                  if (isset($arFirmaFiel['Cause'])) {
+                     $resV['error'] = true;
+                     $resV['mensaje'] = $arFirmaFiel['Detail'];
+                     $resV['aceptado'] = true;
+                  } else {
+                     if ($arFirmaFiel['rfc'] == null) {
+                        $resV['error'] = true;
+                        $resV['mensaje'] = 'RFC inexistente';
+                        $resV['aceptado'] = true;
+                     } else {
+                        $apellidoPaterno  = $arFirmaFiel['apellidoPaterno'];
+                        $apellidoMaterno  = $arFirmaFiel['apellidoMaterno'];
+                        $nombres          = $arFirmaFiel['nombres'];
+                        $nombreCompleto   = $arFirmaFiel['nombreCompleto'];
+                        $sexo             = $arFirmaFiel['sexo'];
+                        $nacionalidad     = $arFirmaFiel['nacionalidad'];
+                        $fechaNacimiento  = $arFirmaFiel['fechaNacimiento'];
+                        $cveEntidadNac    = $arFirmaFiel['cveEntidadNac'];
+                        $domicilio        = $arFirmaFiel['domicilio'];
+                        $desTelefono      = $arFirmaFiel['desTelefono'];
+                        $curp             = $arFirmaFiel['curp'];
+                        $correoElectronico= $arFirmaFiel['correoElectronico'];
+                        $numeroInterior   = $arFirmaFiel['numeroInterior'];
+                        $numeroExterior   = $arFirmaFiel['numeroExterior'];
+                        $municipio        = $arFirmaFiel['municipio'];
+                        $entidadFederativa= $arFirmaFiel['entidadFederativa'];
+                        $colonia          = $arFirmaFiel['colonia'];
+                        $codigoPostal     = $arFirmaFiel['codigoPostal'];
+                        $calle            = $arFirmaFiel['calle'];
+                        $rfc              = $arFirmaFiel['rfc'];
+                        $curp             = $arFirmaFiel['curp'];
+
+                        array_push($arDatos,
+                           array(
+                              'apellidoPaterno'=>$apellidoPaterno,
+                              'apellidoMaterno'=>$apellidoMaterno,
+                              'nombres'=>$nombres,
+                              'nombreCompleto'=>$nombreCompleto,
+                              'sexo'=>$sexo,
+                              'nacionalidad'=>$nacionalidad,
+                              'fechaNacimiento'=> ($fechaNacimiento == '' ? '0000-00-00' : date('Y-m-d', strtotime(str_replace('/', '-', $fechaNacimiento)))),
+                              'cveEntidadNac'=>$cveEntidadNac,
+                              'domicilio'=>$domicilio,
+                              'desTelefono'=>$desTelefono,
+                              'numeroInterior'=>$numeroInterior,
+                              'numeroExterior'=>$numeroExterior,
+                              'municipio'=>$municipio,
+                              'entidadFederativa'=>$entidadFederativa,
+                              'colonia'=>$colonia,
+                              'codigoPostal'=>$codigoPostal,
+                              'calle'=>$calle,
+                              'rfc'=>$rfc,
+                              'curp'=>$curp,
+                           )
+                        );
+
+                        $resV['datos'] = $arDatos;
+                     }
+
+                  }
+               }
 
 
 
 
-  $pass       = $serviciosReferencias->GUID();
-  $tokenVerificacion = $serviciosReferencias->GUID();
-
-  $existeEmail = $serviciosUsuario->existeUsuario($email);
-
-  if ($existeEmail == 1) {
-     array_push($arInput,array( 'lblerror' =>"* El Email ingresado ya existe! "));
-
-     $error = true;
-  }
-
-  if ($error === false) {
-     // todo ok
-     $refusuarios = $serviciosUsuario->insertarUsuarioActivo($nombre,$pass,16,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,'0',$tokenVerificacion);
-
-      if ((integer)$refusuarios > 0) {
-
-         $res = $serviciosUsuario->insertarActivacionusuarios($refusuarios,$tokenVerificacion,'','');
-
-         $fechacrea = date('Y-m-d');
-         $fechamodi = date('Y-m-d');
-         $usuariocrea = 'Web';
-         $usuariomodi = date('Y-m-d');
-
-         $numerocliente = $serviciosReferencias->generaNroCliente();
 
 
-         $res = $serviciosReferencias->insertarClientes(1,$nombre,$apellidopaterno,$apellidomaterno,'','','',$telefono,$email,'','',$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,'','','',0,$colonia,$delegacion,$codigopostal,'','','',$estado,'','',$sexo,$refestadocivil);
-
-         // empiezo la activacion del usuarios
-        // $resActivacion = $serviciosUsuario->registrarCliente($email, $apellidopaterno.' '.$apellidomaterno, $nombre, $res, $refusuarios,$pass);
-
-        $resActivacion = $serviciosUsuario->activarCliente($email, $nombre, $tokenVerificacion);
-
-         if ($resActivacion) {
-
-            $error = false;
+            }
          } else {
-            $error = true;
-
-            array_push($arInput,array( 'lblerror' =>"* Se genero un error en el sistema, intentelo nuevamente por favor. "));
+            $resV['error'] = true;
+            $resV['mensaje'] = 'El formato del RFC es incorrecto';
+            $resV['aceptado'] = false;
          }
       } else {
-         $error = true;
-         array_push($arInput,array( 'lblerror' =>"* Se genero un error en el sistema, intentelo nuevamente por favor. "));
+         $resV['error'] = true;
+         $resV['mensaje'] = 'El RFC debe contener 12 o 13 caracteres alfanumericos';
+         $resV['aceptado'] = false;
+      }
+   } else {
+   	$resV['error'] = true;
+      $resV['mensaje'] = 'Debe ingresar 12 o 13 caracteres';
+      $resV['aceptado'] = false;
+   }
+
+   return $resV;
+}
+
+
+
+
+function buscarCURP($curp,$serviciosValidador) {
+
+   $resV['error'] = false;
+
+   $arDatos = array();
+
+   if ((isset($curp))) {
+
+
+      if (strlen($curp) == 18) {
+         $validarER = $serviciosValidador->validarCurp($curp);
+
+         if ($validarER) {
+            //hasta aca esta todo ok
+
+            $ch = curl_init();
+            $url = 'https://crea.signaturainnovacionesjuridicas.com/api/consultas/renapo?curp='.$curp;
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            //set the content type to application/json
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+
+            //return response instead of outputting
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            //execute the POST request
+            $result = curl_exec($ch);
+            curl_close($ch);
+
+            if (!is_string($result) || !strlen($result)) {
+               $resV['error'] = true;
+               $resV['mensaje'] = 'El CURP es incorrecto';
+               $resV['aceptado'] = false;
+
+            } else {
+
+               $arFirmaFiel = json_decode($result, true);
+
+               if ($arFirmaFiel == null) {
+                  $resV['error'] = true;
+                  $resV['mensaje'] = 'El formato del CURP es incorrecto';
+                  $resV['aceptado'] = false;
+               } else {
+                  if (isset($arFirmaFiel['Cause'])) {
+                     $resV['error'] = true;
+                     $resV['mensaje'] = $arFirmaFiel['Detail'];
+                     $resV['aceptado'] = true;
+                  } else {
+                     if ($arFirmaFiel['curp'] == null) {
+                        $resV['error'] = true;
+                        $resV['mensaje'] = 'CURP inexistente';
+                        $resV['aceptado'] = true;
+                     } else {
+                        $apellidoPaterno  = $arFirmaFiel['apellidoPaterno'];
+                        $apellidoMaterno  = $arFirmaFiel['apellidoMaterno'];
+                        $nombres          = $arFirmaFiel['nombres'];
+                        $nombreCompleto   = $arFirmaFiel['nombreCompleto'];
+                        $sexo             = $arFirmaFiel['sexo'];
+                        $nacionalidad     = $arFirmaFiel['nacionalidad'];
+                        $fechaNacimiento  = $arFirmaFiel['fechaNacimiento'];
+                        $cveEntidadNac    = $arFirmaFiel['cveEntidadNac'];
+                        $domicilio        = $arFirmaFiel['domicilio'];
+                        $desTelefono      = $arFirmaFiel['desTelefono'];
+                        $curp             = $arFirmaFiel['curp'];
+                        $correoElectronico= $arFirmaFiel['correoElectronico'];
+                        $numeroInterior   = $arFirmaFiel['numeroInterior'];
+                        $numeroExterior   = $arFirmaFiel['numeroExterior'];
+                        $municipio        = $arFirmaFiel['municipio'];
+                        $entidadFederativa= $arFirmaFiel['entidadFederativa'];
+                        $colonia          = $arFirmaFiel['colonia'];
+                        $codigoPostal     = $arFirmaFiel['codigoPostal'];
+                        $calle            = $arFirmaFiel['calle'];
+                        $rfc              = $arFirmaFiel['rfc'];
+                        $curp             = $arFirmaFiel['curp'];
+
+                        array_push($arDatos,
+                           array(
+                              'apellidoPaterno'=>$apellidoPaterno,
+                              'apellidoMaterno'=>$apellidoMaterno,
+                              'nombres'=>$nombres,
+                              'nombreCompleto'=>$nombreCompleto,
+                              'sexo'=>$sexo,
+                              'nacionalidad'=>$nacionalidad,
+                              'fechaNacimiento'=> ($fechaNacimiento == '' ? '0000-00-00' : date('Y-m-d', strtotime(str_replace('/', '-', $fechaNacimiento)))),
+                              'cveEntidadNac'=>$cveEntidadNac,
+                              'domicilio'=>$domicilio,
+                              'desTelefono'=>$desTelefono,
+                              'numeroInterior'=>$numeroInterior,
+                              'numeroExterior'=>$numeroExterior,
+                              'municipio'=>$municipio,
+                              'entidadFederativa'=>$entidadFederativa,
+                              'colonia'=>$colonia,
+                              'codigoPostal'=>$codigoPostal,
+                              'calle'=>$calle,
+                              'rfc'=>$rfc,
+                              'curp'=>$curp,
+                           )
+                        );
+
+                        $resV['datos'] = $arDatos;
+                     }
+                  }
+               }
+
+
+            }
+         } else {
+            $resV['error'] = true;
+            $resV['mensaje'] = 'El formato del CURP es incorrecto';
+            $resV['aceptado'] = false;
+         }
+      } else {
+         $resV['error'] = true;
+         $resV['mensaje'] = 'El CURP debe contener 18 caracteres alfanumericos';
+         $resV['aceptado'] = false;
+      }
+   } else {
+   	$resV['error'] = true;
+      $resV['mensaje'] = 'Debe ingresar 18 caracteres';
+      $resV['aceptado'] = false;
+   }
+
+   return $resV;
+}
+
+
+
+
+
+   $arInput = array();
+
+   $error = false;
+
+   if (isset($_POST['input_tipo_persona'])) {
+      $tipopersona      = $_POST['input_tipo_persona'];
+
+      $pass       = $serviciosReferencias->GUID();
+      $tokenVerificacion = $serviciosReferencias->GUID();
+
+
+      if ($tipopersona == 1) {
+
+         if ((isset($_POST['persona-fisica-rfc'])) && ($_POST['persona-fisica-rfc'] != '')) {
+            $resDatos = buscarRFC($_POST['persona-fisica-rfc'], $serviciosValidador);
+
+            $nombre           = $resDatos['datos'][0]['nombres'];
+            $apellidopaterno  = $resDatos['datos'][0]['apellidoPaterno'];
+            $apellidomaterno  = $resDatos['datos'][0]['apellidoMaterno'];
+            $email            = $_POST['input_email_fisica_rfc'];
+            $fechanacimiento  = $resDatos['datos'][0]['fechaNacimiento'];
+            $telefono         = $resDatos['datos'][0]['desTelefono'];
+            $sexo             = ($resDatos['datos'][0]['sexo'] == 'H' ? 'Masculino' : 'Femenino');
+            $codigopostal     = $resDatos['datos'][0]['codigoPostal'];
+            $estado           = $resDatos['datos'][0]['entidadFederativa'];
+            $delegacion       = $resDatos['datos'][0]['municipio'];
+            $colonia          = $resDatos['datos'][0]['colonia'];
+            $domicilio        = $resDatos['datos'][0]['calle'];
+            $edificio         = '';
+            $nroexterior      = $resDatos['datos'][0]['numeroExterior'];
+            $nrointerior      = $resDatos['datos'][0]['numeroInterior'];
+            $refestadocivil   = 0;
+            $ciudad           = '';
+
+            $rfc              = $resDatos['datos'][0]['rfc'];
+            $curp             = $resDatos['datos'][0]['curp'];
+         }
+
+         if ((isset($_POST['persona-fisica-curp'])) && ($_POST['persona-fisica-curp'] != '')) {
+            $resDatos = buscarCURP($_POST['persona-fisica-curp'], $serviciosValidador);
+
+            $nombre           = $resDatos['datos'][0]['nombres'];
+            $apellidopaterno  = $resDatos['datos'][0]['apellidoPaterno'];
+            $apellidomaterno  = $resDatos['datos'][0]['apellidoMaterno'];
+            $email            = $_POST['input_email_fisica_curp'];
+            $fechanacimiento  = $resDatos['datos'][0]['fechaNacimiento'];
+            $telefono         = $resDatos['datos'][0]['desTelefono'];
+            $sexo             = ($resDatos['datos'][0]['sexo'] == 'H' ? 'Masculino' : 'Femenino');
+            $codigopostal     = $resDatos['datos'][0]['codigoPostal'];
+            $estado           = $resDatos['datos'][0]['entidadFederativa'];
+            $delegacion       = $resDatos['datos'][0]['municipio'];
+            $colonia          = $resDatos['datos'][0]['colonia'];
+            $domicilio        = $resDatos['datos'][0]['calle'];
+            $edificio         = '';
+            $nroexterior      = $resDatos['datos'][0]['numeroExterior'];
+            $nrointerior      = $resDatos['datos'][0]['numeroInterior'];
+            $refestadocivil   = 0;
+            $ciudad           = '';
+            $rfc              = $resDatos['datos'][0]['rfc'];
+            $curp             = $resDatos['datos'][0]['curp'];
+
+         }
+
+         $razonsocial = '';
+
+      } else {
+
+
+         $resDatos = buscarRFC($_POST['persona-moral-rfc'], $serviciosValidador);
+
+         $nombre           = $resDatos['datos'][0]['nombres'];
+         $apellidopaterno  = $resDatos['datos'][0]['apellidoPaterno'];
+         $apellidomaterno  = $resDatos['datos'][0]['apellidoMaterno'];
+         $email            = $_POST['input_email_moral_rfc'];
+         $fechanacimiento  = $resDatos['datos'][0]['fechaNacimiento'];
+         $telefono         = $resDatos['datos'][0]['desTelefono'];
+         $sexo             = ($resDatos['datos'][0]['sexo'] == 'H' ? 'Masculino' : 'Femenino');
+         $codigopostal     = $resDatos['datos'][0]['codigoPostal'];
+         $estado           = $resDatos['datos'][0]['entidadFederativa'];
+         $delegacion       = $resDatos['datos'][0]['municipio'];
+         $colonia          = $resDatos['datos'][0]['colonia'];
+         $domicilio        = $resDatos['datos'][0]['calle'];
+         $edificio         = '';
+         $nroexterior      = $resDatos['datos'][0]['numeroExterior'];
+         $nrointerior      = $resDatos['datos'][0]['numeroInterior'];
+         $refestadocivil   = 0;
+         $ciudad           = '';
+
+         $razonsocial = $_POST['persona-moral-razon-social'];
+         $nombre = $razonsocial;
+
+         $rfc              = $resDatos['datos'][0]['rfc'];
+         $curp             = $resDatos['datos'][0]['curp'];
+
       }
 
 
-  }
 
 
-}
+
+
+      $existeEmail = $serviciosUsuario->existeUsuario($email);
+
+      if ($existeEmail == 1) {
+         array_push($arInput,array( 'lblerror' =>"* El Email ingresado ya existe! "));
+
+         $error = true;
+      }
+
+      if ($error === false) {
+         // todo ok
+
+
+         $refusuarios = $serviciosUsuario->insertarUsuarioInActivo($nombre,$pass,16,$email,$nombre.' '.$apellidopaterno.' '.$apellidomaterno,'0',$tokenVerificacion);
+
+         if ((integer)$refusuarios > 0) {
+
+            $res = $serviciosUsuario->insertarActivacionusuarios($refusuarios,$tokenVerificacion,'','');
+
+            $fechacrea = date('Y-m-d');
+            $fechamodi = date('Y-m-d');
+            $usuariocrea = 'Web';
+            $usuariomodi = 'Web';
+
+            $numerocliente = $serviciosReferencias->generaNroCliente();
+
+
+            $res = $serviciosReferencias->insertarClientes($tipopersona,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,'',$telefono,$email,$rfc,'',$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,'','','',0,$colonia,$delegacion,$codigopostal,'',$nroexterior,$nrointerior,$estado,'',$curp,$sexo,$refestadocivil,0,'',$fechanacimiento);
+
+            // empiezo la activacion del usuarios
+            // $resActivacion = $serviciosUsuario->registrarCliente($email, $apellidopaterno.' '.$apellidomaterno, $nombre, $res, $refusuarios,$pass);
+
+            //$resActivacion = $serviciosUsuario->activarCliente($email, $nombre, $tokenVerificacion);
+
+            if ($res>0) {
+
+               $error = false;
+            } else {
+               $error = true;
+
+               $resEliminar = $serviciosReferencias->eliminarUsuariosDefinitivamente($refusuarios);
+
+               array_push($arInput,array( 'lblerror' =>"* Se genero un error en el sistema, intentelo nuevamente por favor. "));
+            }
+
+         } else {
+            $error = true;
+            array_push($arInput,array( 'lblerror' =>"* Se genero un error en el sistema, intentelo nuevamente por favor. "));
+         }
+
+         $error = false;
+
+      }
+
+   } else {
+      $error = true;
+      array_push($arInput,array( 'lblerror' =>"* Se genero un error en el sistema, intentelo nuevamente por favor. "));
+   }
+
+
+
+
 
 
 ?>

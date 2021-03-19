@@ -651,6 +651,36 @@ function insertarUsuarioActivo($usuario,$password,$refroles,$email,$nombrecomple
 }
 
 
+
+function insertarUsuarioInActivo($usuario,$password,$refroles,$email,$nombrecompleto,$activo) {
+	$sql = "INSERT INTO dbusuarios
+				(idusuario,
+				usuario,
+				password,
+				refroles,
+				email,
+				nombrecompleto,
+            activo)
+			VALUES
+				(null,
+				'".($usuario)."',
+				'".($password)."',
+				".$refroles.",
+				'".($email)."',
+				'".($nombrecompleto)."',
+            0)";
+	if ($this->existeUsuario($email) == true) {
+		return "Ya existe el usuario";
+	}
+	$res = $this->query($sql,1);
+	if ($res == false) {
+		return 'Error al insertar datos';
+	} else {
+
+		return $res;
+	}
+}
+
 function modificarUsuario($id,$usuario,$password,$refroles,$email,$nombrecompleto,$activo) {
 	$sql = "UPDATE dbusuarios
 			SET

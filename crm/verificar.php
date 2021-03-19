@@ -26,29 +26,35 @@ if (mysql_num_rows($resActivacion) > 0) {
 
 	$resUsuario = $serviciosUsuario->traerUsuarioId($idusuario);
 
-	$resPostulantes = $serviciosReferencias->traerClientesPorUsuarioCompleto($idusuario);
+	if (mysql_num_rows($resUsuario)>0) {
+		$resPostulantes = $serviciosReferencias->traerClientesPorUsuarioCompleto($idusuario);
 
-	// verifico que el usuario no este activo ya
-	if (mysql_result($resUsuario,0,'activo') == 'Si') {
-		$arResultado['leyenda'] = 'Usted ya fue dado de alta y esta activo.';
+		// verifico que el usuario no este activo ya
+		if (mysql_result($resUsuario,0,'activo') == 'Si') {
+			$arResultado['leyenda'] = 'Usted ya fue dado de alta y esta activo.';
+		} else {
+			$arResultado['usuario'] = mysql_result($resUsuario,0,'nombrecompleto');
+			$arResultado['leyenda'] = '';
+		}
+
+		if (mysql_num_rows($resPostulantes) > 0) {
+			$arResultado['postulante']['nombre'] = strtoupper( mysql_result($resPostulantes,0,'nombre'));
+			$arResultado['postulante']['apellidopaterno'] = strtoupper( mysql_result($resPostulantes,0,'apellidopaterno'));
+			$arResultado['postulante']['apellidomaterno'] = strtoupper( mysql_result($resPostulantes,0,'apellidomaterno'));
+			$arResultado['postulante']['email'] = mysql_result($resPostulantes,0,'email');
+			$arResultado['postulante']['id'] = mysql_result($resPostulantes,0,'idcliente');
+		}
+
+		//pongo al usuario $activo
+		//$resUsuario = $serviciosUsuario->activarUsuario($idusuario);
+
+		// concreto la activacion
+		//$resConcretar = $serviciosUsuario->eliminarActivacionusuarios(mysql_result($resActivacion,0,0));
+
 	} else {
-		$arResultado['usuario'] = mysql_result($resUsuario,0,'nombrecompleto');
-		$arResultado['leyenda'] = '';
+		$arResultado['leyenda'] = 'Error, token inexistente';
 	}
 
-	if (mysql_num_rows($resPostulantes) > 0) {
-		$arResultado['postulante']['nombre'] = strtoupper( mysql_result($resPostulantes,0,'nombre'));
-		$arResultado['postulante']['apellidopaterno'] = strtoupper( mysql_result($resPostulantes,0,'apellidopaterno'));
-		$arResultado['postulante']['apellidomaterno'] = strtoupper( mysql_result($resPostulantes,0,'apellidomaterno'));
-		$arResultado['postulante']['email'] = mysql_result($resPostulantes,0,'email');
-		$arResultado['postulante']['id'] = mysql_result($resPostulantes,0,'idcliente');
-	}
-
-	//pongo al usuario $activo
-	//$resUsuario = $serviciosUsuario->activarUsuario($idusuario);
-
-	// concreto la activacion
-	//$resConcretar = $serviciosUsuario->eliminarActivacionusuarios(mysql_result($resActivacion,0,0));
 
 
 } else {
@@ -120,7 +126,7 @@ if (mysql_num_rows($resActivacion) > 0) {
         <div class="card">
             <div class="body demo-masked-input">
                <form id="sign_in" method="POST">
-					 	<?php if ($arResultado['leyenda'] == '') { ?>
+					 	<?php if (($arResultado['leyenda'] == '') && (mysql_num_rows($resUsuario)>0)) { ?>
 						<div align="center">
 							<h3><?php echo $arResultado['postulante']['nombre'].' '.$arResultado['postulante']['apellidopaterno'].' '.$arResultado['postulante']['apellidomaterno']; ?></h3>
 							<div class="alert bg-green">Por favor cargue una password para completar el alta de usuario.</div>
@@ -154,7 +160,7 @@ if (mysql_num_rows($resActivacion) > 0) {
 								<i class="material-icons">lock</i>
 							</span>
 							<div class="form-line">
-								<input type="password" class="form-control" name="password" id="password" maxlength="8" placeholder="Ingrese un Password" required/>
+								<input type="password" class="form-control" name="password" id="password" maxlength="10" placeholder="Ingrese un Password" required/>
 
 							</div>
 
@@ -165,7 +171,7 @@ if (mysql_num_rows($resActivacion) > 0) {
 								<i class="material-icons">lock</i>
 							</span>
 							<div class="form-line">
-								<input type="password" class="form-control" name="passwordaux" id="passwordaux" maxlength="8" placeholder="Confirme su Password" required/>
+								<input type="password" class="form-control" name="passwordaux" id="passwordaux" maxlength="10" placeholder="Confirme su Password" required/>
 
 							</div>
 
@@ -269,7 +275,7 @@ if (mysql_num_rows($resActivacion) > 0) {
 
 
 				function validarPASS(pass) {
-						var re = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/,
+						var re = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{10,})/,
 						validado = pass.match(re);
 
 				    if (!validado)  //Coincide con el formato general?
@@ -307,22 +313,27 @@ if (mysql_num_rows($resActivacion) > 0) {
 					if (validarPASS($('#password').val()) == false) {
 						swal({
 							title: "Respuesta",
-							text: "PASSWORD no valido. Recuerde que el PASSWORD debe contener (8 caracteres, al menos una mayuscula, al menos una minuscula y un numero)",
+							text: "PASSWORD no valido. Recuerde que el PASSWORD debe contener (10 caracteres, al menos una mayuscula, al menos una minuscula y un numero)",
 							type: "error",
 							timer: 10000,
 							showConfirmButton: true
 						});
 
-						$(this).focus();
+						//$(this).focus();
 					} else {
 						if (validaIgualdad($('#password').val(),$('#passwordaux').val()) == false) {
-							swal({
-								title: "Error",
-								text: "Los PASSWORDs no coinciden",
-								type: "error",
-								timer: 10000,
-								showConfirmButton: true
-							});
+							if ($('#passwordaux').val() == '') {
+								$('#passwordaux').focus();
+							} else {
+								swal({
+									title: "Error",
+									text: "Los PASSWORDs no coinciden",
+									type: "error",
+									timer: 10000,
+									showConfirmButton: true
+								});
+							}
+
 
 							$('#login').hide();
 						} else {

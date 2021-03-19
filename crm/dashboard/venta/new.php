@@ -37,9 +37,15 @@ $rTipoPersona = mysql_result($rCliente,0,'reftipopersonas');
 
 if (isset($_GET['producto'])) {
 	$rIdProducto = $_GET['producto'];
+} else {
+	header('Location: productos.php');
 }
 
+$resAuxProd = $serviciosReferencias->traerProductosPorId($rIdProducto);
 
+if (mysql_num_rows($resAuxProd) <= 0) {
+	header('Location: productos.php');
+}
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
 $resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Venta",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
@@ -3292,6 +3298,68 @@ if (count($contratentaDatosCompletos) > 0) {
 		}
 
 		$('.contRangers').hide();
+
+		$("#wizard_with_validation").on("keyup",'.tsrfc', function(){
+			//alert('asd');
+			if ($('#wizard_with_validation .tsrfc').val().length >= 12 ) {
+				traerRFC($('#wizard_with_validation .tsrfc').val());
+			}
+		});
+
+
+		function traerRFC(rfc) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'buscarRFC',
+					rfc: rfc,
+					tipopersona: 1
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					if (data.error == false) {
+
+						$('#wizard_with_validation .tsfechanacimiento').val(data.datos[0].fechaNacimiento);
+						$('#wizard_with_validation .tsdomicilio').val(data.datos[0].calle);
+						$('#wizard_with_validation .tsnroexterior').val(data.datos[0].numeroExterior);
+						$('#wizard_with_validation .tsedificio').val(data.datos[0].numeroInterior);
+						$('#wizard_with_validation .tsnrointerior').val(data.datos[0].numeroInterior);
+						$('#wizard_with_validation .tscolonia').val(data.datos[0].colonia);
+						$('#wizard_with_validation .tsmunicipio').val(data.datos[0].municipio);
+						$('#wizard_with_validation .tsestado').val(data.datos[0].entidadFederativa);
+						$('#wizard_with_validation .tscodigopostal').val(data.datos[0].codigoPostal);
+						$('#wizard_with_validation .tstelefonocelular').val(data.datos[0].desTelefono);
+
+					} else {
+						swal({
+							title: "Respuesta",
+							text: data.mensaje,
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+					});
+				}
+			});
+		}
 
 
 	});
