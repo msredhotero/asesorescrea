@@ -620,7 +620,7 @@ if (mysql_num_rows($resActivacion) > 0) {
 
                                                                         <div class="demo-checkbox">
                                                                            <input type="checkbox" id="aceptaterminos"  name="aceptaterminos" class="filled-in" />
-                                                                           <label for="aceptaterminos">Acepto las condiciones legales de asesorescrea.com</label>
+                                                                           <label for="aceptaterminos">Acepto los Términos y condiciones de asesorescrea.com</label>
                                                                         </div>
 
                                                                         <div class="demo-checkbox">
