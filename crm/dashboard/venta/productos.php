@@ -336,7 +336,6 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
                                  <label class="form-label">Limite de Responsabilidad</label>
                                  <div class="form-group input-group">
                                     <select class="form-control" id="limite" name="limite">
-                                       <option value="1">$ 1,000,000.00 M.N.</option>
                                        <option value="2">$ 2,500,000.00 M.N.</option>
                                        <option value="3">$ 5,000,000.00 M.N.</option>
                                     </select>
