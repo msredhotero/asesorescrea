@@ -1,3 +1,83 @@
+<?php
+
+require 'includes/funcionesUsuarios.php';
+require 'includes/funcionesReferencias.php';
+require 'includes/funciones.php';
+
+session_start();
+
+$serviciosUsuario = new ServiciosUsuarios();
+$serviciosReferencias = new ServiciosReferencias();
+$serviciosFunciones 	= new Servicios();
+
+if (!isset($_GET['token'])) {
+	$ui = 'asda23asd23asd';
+} else {
+	$ui = $_GET['token'];
+}
+
+
+$resActivacion = $serviciosUsuario->traerActivacionusuariosPorToken($ui);
+
+if (mysql_num_rows($resActivacion) > 0) {
+
+
+	$idusuario = mysql_result($resActivacion,0,'refusuarios');
+
+	$resUsuario = $serviciosUsuario->traerUsuarioId($idusuario);
+
+	if (mysql_num_rows($resUsuario)>0) {
+		$resPostulantes = $serviciosReferencias->traerClientesPorUsuarioCompleto($idusuario);
+
+		// verifico que el usuario no este activo ya
+		if (mysql_result($resUsuario,0,'activo') == 'Si') {
+			$arResultado['leyenda'] = 'Usted ya fue dado de alta y esta activo.';
+		} else {
+			$arResultado['usuario'] = mysql_result($resUsuario,0,'nombrecompleto');
+			$arResultado['leyenda'] = '';
+		}
+
+		if (mysql_num_rows($resPostulantes) > 0) {
+
+			$arResultado['postulante']['nombre'] = strtoupper( mysql_result($resPostulantes,0,'nombre'));
+			$arResultado['postulante']['apellidopaterno'] = strtoupper( mysql_result($resPostulantes,0,'apellidopaterno'));
+			$arResultado['postulante']['apellidomaterno'] = strtoupper( mysql_result($resPostulantes,0,'apellidomaterno'));
+			$arResultado['postulante']['email'] = mysql_result($resPostulantes,0,'email');
+			$arResultado['postulante']['id'] = mysql_result($resPostulantes,0,'idcliente');
+		}
+
+		//pongo al usuario $activo
+		//$resUsuario = $serviciosUsuario->activarUsuario($idusuario);
+
+		// concreto la activacion
+		//$resConcretar = $serviciosUsuario->eliminarActivacionusuarios(mysql_result($resActivacion,0,0));
+
+	} else {
+		$arResultado['leyenda'] = 'Error, token inexistente';
+	}
+
+
+
+} else {
+
+
+   $idusuario = 0;
+
+	$resToken = $serviciosUsuario->traerActivacionusuariosPorToken($ui);
+
+	if (mysql_num_rows($resToken) > 0) {
+
+		$arResultado['leyenda'] = 'La vigencia para darse de alta a caducado, haga click <a href="prolongar.php?token='.$ui.'">AQUI</a> para prolongar la activación';
+	} else {
+		$arResultado['leyenda'] = 'Esta clave de Activación es inexistente';
+	}
+
+}
+
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="es">
    <head>
@@ -6,6 +86,13 @@
       <meta http-equiv="X-UA-Compatible" content="IE=Edge">
       <link rel="pingback" href="https://asesorescrea.com/xmlrpc.php">
       <title>Registro &#8211; CREA | Asesores en Banca y Seguros</title>
+
+      <!-- Animation Css -->
+      <link href="https://asesorescrea.com/desarrollo/crm/plugins/animate-css/animate.css" rel="stylesheet" />
+
+      <!-- Sweetalert Css -->
+      <link href="https://asesorescrea.com/desarrollo/crm/plugins/sweetalert/sweetalert.css" rel="stylesheet" />
+
       <script type="text/javascript">
          var custom_blog_css = "";
          if (document.getElementById("custom_blog_styles")) {
@@ -287,7 +374,7 @@
                            <p><a class="gt3_icon_link" href="#" target="_blank" style="font-size: 18px; color: inherit; margin-right: 20px;" rel="noopener"><i class="fa fa-linkedin"> </i></a> <a class="gt3_icon_link" href="#" target="_blank" style="font-size: 18px; color: inherit; margin-right: 20px;" rel="noopener"><i class="fa fa-twitter"> </i></a> <a class="gt3_icon_link" href="#" target="_blank" style="font-size: 18px; color: inherit; margin-right: 20px;" rel="noopener"><i class="fa fa-facebook"> </i></a> <a class="gt3_icon_link" href="#" target="_blank" style="font-size: 18px; color: inherit;" rel="noopener"><i class="fa fa-instagram"> </i></a></p>
                         </div>
                         <div class="gt3_header_builder_component gt3_header_builder_text_component">
-                           <p><a href="#"><strong>Iniciar sesión</strong></a></p>
+                           <p><a href="https://www.asesorescrea.com/desarrollo/crm/index.php"><strong>Iniciar sesión</strong></a></p>
                         </div>
                      </div>
                   </div>
@@ -454,105 +541,9 @@
          </div>
       </div>
 
-      <div class="site_wrapper fadeOnLoad contTipoPersona">
-         <div class="main_wrapper">
-            <div class="container container-sidebar_none">
-               <div class="row sidebar_none">
-                  <div class="content-container span12">
-                     <section id='main_content'>
-                        <div data-elementor-type="wp-post" data-elementor-id="7548" class="elementor elementor-7548" data-elementor-settings="[]">
-                           <div class="elementor-inner">
-                              <div class="elementor-section-wrap">
-                                 <section class="elementor-element elementor-element-64a8775 elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-top-section" data-id="64a8775" data-element_type="section">
-                                    <div class="elementor-container elementor-column-gap-default">
-                                       <div class="elementor-row">
-                                          <div class="elementor-element elementor-element-8c75890 elementor-column elementor-col-100 elementor-top-column" data-id="8c75890" data-element_type="column">
-                                             <div class="elementor-column-wrap  elementor-element-populated">
-                                                <div class="elementor-widget-wrap">
-                                                   <div class="elementor-element elementor-element-af0170e elementor-widget elementor-widget-heading" data-id="af0170e" data-element_type="widget" data-widget_type="heading.default">
-                                                      <div class="elementor-widget-container">
-                                                         <h2 class="elementor-heading-title elementor-size-default">Selecciona si eres persona Física o Moral</h2>
-                                                      </div>
-                                                   </div>
-                                                </div>
-                                             </div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </section>
-                                 <section class="elementor-element elementor-element-e82af0c elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-top-section" data-id="e82af0c" data-element_type="section">
-                                    <div class="elementor-container elementor-column-gap-default">
-                                       <div class="elementor-row">
-                                          <div class="elementor-element elementor-element-149ab48 elementor-column elementor-col-50 elementor-top-column" data-id="149ab48" data-element_type="column">
-                                             <div class="elementor-column-wrap  elementor-element-populated">
-                                                <div class="elementor-widget-wrap">
-                                                   <div class="gt3-core-button--alignment_block elementor-element elementor-element-c24e46e elementor-widget elementor-widget-gt3-core-button" data-id="c24e46e" data-element_type="widget" data-widget_type="gt3-core-button.default">
-                                                      <div class="elementor-widget-container">
-                                                         <div class="gt3_module_button_elementor size_normal alignment_block button_icon_none hover_none ">
-                                                            <a class="button_size_elementor_normal alignment_block border_icon_none hover_none btn_icon_position_left btnFisica" href="javascript:void(0)">
-                                                            <span class="gt3_module_button__container">
-                                                            <span class="gt3_module_button__cover front"><span class="elementor_gt3_btn_text">PERSONA FÍSICA</span></span>
-                                                            </span>
-                                                            </a>
-                                                         </div>
-                                                      </div>
-                                                   </div>
-                                                </div>
-                                             </div>
-                                          </div>
-                                          <div class="elementor-element elementor-element-5418493 elementor-column elementor-col-50 elementor-top-column" data-id="5418493" data-element_type="column">
-                                             <div class="elementor-column-wrap  elementor-element-populated">
-                                                <div class="elementor-widget-wrap">
-                                                   <div class="gt3-core-button--alignment_block elementor-element elementor-element-a91658c elementor-widget elementor-widget-gt3-core-button" data-id="a91658c" data-element_type="widget" data-widget_type="gt3-core-button.default">
-                                                      <div class="elementor-widget-container">
-                                                         <div class="gt3_module_button_elementor size_normal alignment_block button_icon_none hover_none ">
-                                                            <a class="button_size_elementor_normal alignment_block border_icon_none hover_none btn_icon_position_left btnMoral" href="javascript:void(0)">
-                                                            <span class="gt3_module_button__container">
-                                                            <span class="gt3_module_button__cover front"><span class="elementor_gt3_btn_text">PERSONA MORAL</span></span>
-                                                            </span>
-                                                            </a>
-                                                         </div>
-                                                      </div>
-                                                   </div>
-                                                </div>
-                                             </div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </section>
-                                 <section class="elementor-element elementor-element-c23efc5 elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-top-section" data-id="c23efc5" data-element_type="section" style="margin-bottom:150px;">
-                                    <div class="elementor-container elementor-column-gap-default">
-                                       <div class="elementor-row">
-                                          <div class="elementor-element elementor-element-d9c2442 elementor-column elementor-col-100 elementor-top-column" data-id="d9c2442" data-element_type="column">
-                                             <div class="elementor-column-wrap  elementor-element-populated">
-                                                <div class="elementor-widget-wrap">
-                                                   <div class="elementor-element elementor-element-31e98cd elementor-widget elementor-widget-spacer" data-id="31e98cd" data-element_type="widget" data-widget_type="spacer.default">
-                                                      <div class="elementor-widget-container">
-                                                         <div class="elementor-spacer">
-                                                            <div class="elementor-spacer-inner"></div>
-                                                         </div>
-                                                      </div>
-                                                   </div>
-                                                </div>
-                                             </div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </section>
-                              </div>
-                           </div>
-                        </div>
-                        <div class="clear"></div>
-                        <div id="comments"></div>
-                     </section>
-                  </div>
-               </div>
-            </div>
-         </div>
-         <!-- .main_wrapper -->
-      </div> <!-- fin del tipo persona -->
 
-   <form action="registrarme.php" method="post" id="formulario_registro" class="wpcf7-form init" novalidate="novalidate">
+
+   <form id="sign_in" method="POST">
       <div class="site_wrapper fadeOnLoad contPersonaFisicaRFC">
          <div class="main_wrapper">
             <div class="container container-sidebar_none">
@@ -596,33 +587,90 @@
 
                                                                      </div>
 
+                                                                     <?php if (($arResultado['leyenda'] == '') && (mysql_num_rows($resUsuario)>0)) { ?>
 
 
-                                                                     <p><label style="color:#333743;"> Ingresa tu RFC con homoclave<br />
-                                                                        <span class="wpcf7-form-control-wrap persona-fisica-rfc"><input type="text" id="input_persona-fisica-rfc" name="persona-fisica-rfc" value="" minlength="12" maxlength="13" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" /></span> </label>
+                                                                     <div align="center">
+                                                   							<h3>Bienvenido, <?php echo $arResultado['postulante']['nombre'].' '.$arResultado['postulante']['apellidopaterno'].' '.$arResultado['postulante']['apellidomaterno']; ?></h3>
+                                                   							<div class="alert bg-green">Por favor cargue una password para completar el alta de usuario.</div>
+                                                   							<div class="alert bg-red">Recuerde que el PASSWORD debe contener (10 caracteres, al menos una mayuscula, al menos una minuscula y un numero).</div>
+                                                   						</div>
+
+                                                                     <div class="contFormulario">
+
+                                                                     <p><label style="color:#333743;"> Usuario<br />
+                                                                        <span class="wpcf7-form-control-wrap persona-fisica-rfc"><input type="text" id="nombre" name="nombre" value="<?php echo $arResultado['usuario']; ?>" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" readonly/></span> </label>
                                                                      </p>
 
-                                                                     <div style="margin-top:-40px; margin-bottom:40px;" class="elementor-element elementor-element-f3de906 elementor-widget elementor-widget-text-editor" data-id="f3de906" data-element_type="widget" data-widget_type="text-editor.default">
+                                                                     <p><label style="color:#333743;"> Correo Electrónico<br />
+                                                                        <span class="wpcf7-form-control-wrap persona-fisica-rfc"><input type="text" id="email" name="email" value="<?php echo $arResultado['postulante']['email']; ?>" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" readonly /></span> </label>
+                                                                     </p>
+
+
+                                                                     <p><label style="color:#333743;"> Password<br />
+                                                                        <span class="wpcf7-form-control-wrap persona-fisica-rfc"><input type="password" id="password" name="password" value="" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" maxlength="10" /></span> </label>
+                                                                     </p>
+
+                                                                     <p><label style="color:#333743;"> Confirme su Password<br />
+                                                                        <span class="wpcf7-form-control-wrap persona-fisica-rfc"><input type="password" id="passwordaux" name="passwordaux" value="" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" maxlength="10" /></span> </label>
+                                                                     </p>
+
+
+                                                                     <input type="hidden" name="idusuario" id="idusuario" value="<?php echo $idusuario; ?>" />
+                                                   						<input type="hidden" name="idcliente" id="idcliente" value="<?php echo $arResultado['postulante']['id']; ?>" />
+                                                                     <input type="hidden" name="activacion" id="activacion" value="<?php echo mysql_result($resActivacion,0,0); ?>" />
+
+                                                                     <p>
+                                                                        <input type="button" id="login" value="ENVIAR" class="wpcf7-form-control wpcf7-submit btnEnviarPersonaFisicaRFC" style="display:block !important;" />
+
+                                                                     </p>
+
+                                                                  </div>
+
+                                                                  <div class="contRespuesta" align="center">
+                                                                     <div class="gt3-core-button--alignment_block elementor-element elementor-element-ca9fca0 elementor-widget elementor-widget-gt3-core-button" data-id="ca9fca0" data-element_type="widget" data-widget_type="gt3-core-button.default">
                                                                         <div class="elementor-widget-container">
-                                                                           <div class="elementor-text-editor elementor-clearfix">
-                                                                              <p>Haz <a href="javascript:void(0)" class="cargarCURP">clic aquí</a> para cargar tu CURP, en caso de no conocer tu RFC.</p>
+                                                                           <div class="gt3_module_button_elementor size_normal alignment_block button_icon_none hover_none ">
+                                                                              <a class="button_size_elementor_normal border_icon_none hover_none btn_icon_position_left" href="https://www.asesorescrea.com/desarrollo/crm/index.php">
+                                                                              <span class="gt3_module_button__container">
+                                                                              <span class="gt3_module_button__cover front"><span class="elementor_gt3_btn_text">INICIAR SESION</span></span>
+                                                                              </span>
+                                                                              </a>
                                                                            </div>
                                                                         </div>
                                                                      </div>
+                                                                  </div>
+
+                                                                     <?php } else { ?>
+
+                                                                        <div align="center">
+
+                                                      							<div class="alert bg-red"><?php echo $arResultado['leyenda']; ?></div>
+                                                      						</div>
 
 
 
-                                                                     <p><label style="color:#333743;"> Tu correo electrónico (obligatorio)<br />
-                                                                        <span class="wpcf7-form-control-wrap input_cemail_fisica_rfc"><input type="email" name="input_email_fisica_rfc" id="input_email_fisica_rfc" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-email wpcf7-validates-as-email" /></span> </label>
+                                                                        <div align="center" class="gt3-core-button--alignment_block elementor-element elementor-element-ca9fca0 elementor-widget elementor-widget-gt3-core-button" data-id="ca9fca0" data-element_type="widget" data-widget_type="gt3-core-button.default">
+                                                                           <div class="elementor-widget-container">
+                                                                              <div class="gt3_module_button_elementor size_normal alignment_block button_icon_none hover_none ">
+                                                                                 <a class="button_size_elementor_normal border_icon_none hover_none btn_icon_position_left" href="https://www.asesorescrea.com/desarrollo/crm/index.php">
+                                                                                 <span class="gt3_module_button__container">
+                                                                                 <span class="gt3_module_button__cover front"><span class="elementor_gt3_btn_text">INICIAR SESION</span></span>
+                                                                                 </span>
+                                                                                 </a>
+                                                                              </div>
+                                                                           </div>
+                                                                        </div>
 
-                                                                     </p>
-                                                                     <p><label style="color:#333743;"> Confirma tu correo electrónico (obligatorio)<br />
-                                                                        <span class="wpcf7-form-control-wrap input_cemail_fisica_rfc"><input type="email" name="input_cemail_fisica_rfc" id="input_cemail_fisica_rfc" value="" size="60" class="wpcf7-form-control wpcf7-text wpcf7-email wpcf7-validates-as-email"/></span> </label>
-                                                                     </p>
-                                                                     <p>
-                                                                        <input type="button" value="Enviar" class="wpcf7-form-control wpcf7-submit btnEnviarPersonaFisicaRFC" style="display:block !important;" />
+                                                                     <?php } ?>
 
-                                                                     </p>
+                                                   						<input type="hidden" name="accion" id="accion" value="activarUsuarioCliente" />
+                                                               <input type="hidden" name="token" id="token" value="<?php echo $ui; ?>" />
+
+
+
+
+
 
 
                                                                </div>
@@ -632,17 +680,7 @@
                                                    </div>
 
 
-                                                   <div class="gt3-core-button--alignment_block elementor-element elementor-element-ca9fca0 elementor-widget elementor-widget-gt3-core-button" data-id="ca9fca0" data-element_type="widget" data-widget_type="gt3-core-button.default">
-                                                      <div class="elementor-widget-container">
-                                                         <div class="gt3_module_button_elementor size_normal alignment_block button_icon_none hover_none ">
-                                                            <a class="button_size_elementor_normal border_icon_none hover_none btn_icon_position_left btnTipoPersona" href="javascript:void(0)">
-                                                            <span class="gt3_module_button__container">
-                                                            <span class="gt3_module_button__cover front"><span class="elementor_gt3_btn_text">VOLVER</span></span>
-                                                            </span>
-                                                            </a>
-                                                         </div>
-                                                      </div>
-                                                   </div>
+
                                                    <div class="elementor-element elementor-element-31e98cd elementor-widget elementor-widget-spacer" data-id="31e98cd" data-element_type="widget" data-widget_type="spacer.default">
                                                       <div class="elementor-widget-container">
                                                          <div class="elementor-spacer">
@@ -670,227 +708,7 @@
       </div> <!-- fin de persona fisica rfc -->
 
 
-      <div class="site_wrapper fadeOnLoad contPersonaFisicaCURP">
-         <div class="main_wrapper">
-            <div class="container container-sidebar_none">
-               <div class="row sidebar_none">
-                  <div class="content-container span12">
-                     <section id='main_content'>
-                        <div data-elementor-type="wp-post" data-elementor-id="7561" class="elementor elementor-7561" data-elementor-settings="[]">
-                           <div class="elementor-inner">
-                              <div class="elementor-section-wrap">
-                                 <section class="elementor-element elementor-element-64a8775 elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-top-section" data-id="64a8775" data-element_type="section">
-                                    <div class="elementor-container elementor-column-gap-default">
-                                       <div class="elementor-row">
-                                          <div class="elementor-element elementor-element-8c75890 elementor-column elementor-col-100 elementor-top-column" data-id="8c75890" data-element_type="column">
-                                             <div class="elementor-column-wrap  elementor-element-populated">
-                                                <div class="elementor-widget-wrap">
-                                                   <div class="elementor-element elementor-element-6216d58 elementor-widget elementor-widget-heading" data-id="6216d58" data-element_type="widget" data-widget_type="heading.default">
-                                                      <div class="elementor-widget-container">
-                                                         <h2 class="elementor-heading-title elementor-size-default">Ingresa tus datos</h2>
-                                                      </div>
-                                                   </div>
-                                                   <div class="elementor-element elementor-element-337e562 eael-contact-form-7-button-custom elementor-widget elementor-widget-eael-contact-form-7" data-id="337e562" data-element_type="widget" data-widget_type="eael-contact-form-7.default">
-                                                      <div class="elementor-widget-container">
-                                                         <div class="eael-contact-form-7-wrapper">
-                                                            <div class="eael-contact-form eael-contact-form-7 eael-contact-form-337e562 placeholder-show eael-contact-form-align-default">
-                                                               <div role="form" class="wpcf7" id="wpcf7-f7581-p7561-o1" lang="es-ES" dir="ltr">
-                                                                  <div class="screen-reader-response" role="alert" aria-live="polite"></div>
 
-                                                                     <div style="display: none;">
-                                                                        <input type="hidden" name="_wpcf7" value="7581" />
-                                                                        <input type="hidden" name="_wpcf7_version" value="5.2.2" />
-                                                                        <input type="hidden" name="_wpcf7_locale" value="es_ES" />
-                                                                        <input type="hidden" name="_wpcf7_unit_tag" value="wpcf7-f7581-p7561-o1" />
-                                                                        <input type="hidden" name="_wpcf7_container_post" value="7561" />
-                                                                        <input type="hidden" name="_wpcf7_posted_data_hash" value="" />
-                                                                     </div>
-
-                                                                     <div class="erroresCURP" style="color:#F00;">
-
-                                                                     </div>
-                                                                     <div class="erroresEmail" style="color:#F00;">
-
-                                                                     </div>
-
-                                                                     <div class="elementor-element elementor-element-2517fa2 elementor-widget elementor-widget-text-editor" data-id="2517fa2" data-element_type="widget" data-widget_type="text-editor.default">
-                                                                        <div class="elementor-widget-container">
-                                                                           <div class="elementor-text-editor elementor-clearfix">
-                                                                              <p>Puedes consultar tu CURP en el siguiente enlace: <a href="https://www.gob.mx/curp/" target="_blank">https://www.gob.mx/curp/</a></p>
-                                                                           </div>
-                                                                        </div>
-                                                                     </div>
-
-                                                                     <p><label> Ingresa tu CURP<br />
-                                                                        <span class="wpcf7-form-control-wrap persona-fisica-curp"><input type="text" id="input_persona-fisica-curp" name="persona-fisica-curp" value="" minlength="12" maxlength="18" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" /></span> </label>
-                                                                     </p>
-                                                                     <p><label> Tu correo electrónico (obligatorio)<br />
-                                                                        <span class="wpcf7-form-control-wrap input_email_fisica_curp"><input type="email" name="input_email_fisica_curp" id="input_email_fisica_curp" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-email wpcf7-validates-as-required wpcf7-validates-as-email" aria-required="true" aria-invalid="false" /></span> </label>
-                                                                     </p>
-                                                                     <p><label> Confirma tu correo electrónico (obligatorio)<br />
-                                                                        <span class="wpcf7-form-control-wrap input_cemail_fisica_curp"><input type="email" name="input_cemail_fisica_curp" id="input_cemail_fisica_curp" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-email wpcf7-validates-as-required wpcf7-validates-as-email" aria-required="true" aria-invalid="false" /></span> </label>
-                                                                     </p>
-                                                                     <p>
-                                                                        <input type="button" value="Enviar" class="wpcf7-form-control wpcf7-submit btnEnviarPersonaFisicaCURP" />
-
-                                                                     </p>
-
-
-                                                               </div>
-                                                            </div>
-                                                         </div>
-                                                      </div>
-                                                   </div>
-
-
-                                                   <div class="gt3-core-button--alignment_block elementor-element elementor-element-ca9fca0 elementor-widget elementor-widget-gt3-core-button" data-id="ca9fca0" data-element_type="widget" data-widget_type="gt3-core-button.default">
-                                                      <div class="elementor-widget-container">
-                                                         <div class="gt3_module_button_elementor size_normal button_icon_none hover_none ">
-                                                            <!-- alignment_block  alignment_block-->
-                                                            <a class="button_size_elementor_normal border_icon_none hover_none btn_icon_position_left btnTipoPersona" href="javascript:void(0)">
-                                                            <span class="gt3_module_button__container">
-                                                            <span class="gt3_module_button__cover front"><span class="elementor_gt3_btn_text">VOLVER</span></span>
-                                                            </span>
-                                                            </a>
-                                                         </div>
-                                                      </div>
-                                                   </div>
-                                                   <div class="elementor-element elementor-element-31e98cd elementor-widget elementor-widget-spacer" data-id="31e98cd" data-element_type="widget" data-widget_type="spacer.default">
-                                                      <div class="elementor-widget-container">
-                                                         <div class="elementor-spacer">
-                                                            <div class="elementor-spacer-inner"></div>
-                                                         </div>
-                                                      </div>
-                                                   </div>
-                                                </div>
-                                             </div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </section>
-                              </div>
-                           </div>
-                        </div>
-                        <div class="clear"></div>
-                        <div id="comments"></div>
-                     </section>
-                  </div>
-               </div>
-            </div>
-         </div>
-         <!-- .main_wrapper -->
-      </div> <!-- fin persona fisica curp -->
-
-
-
-      <div class="site_wrapper fadeOnLoad contPersonaMoralRFC">
-         <div class="main_wrapper">
-            <div class="container container-sidebar_none">
-               <div class="row sidebar_none">
-                  <div class="content-container span12">
-                     <section id='main_content'>
-                        <div data-elementor-type="wp-post" data-elementor-id="7561" class="elementor elementor-7561" data-elementor-settings="[]">
-                           <div class="elementor-inner">
-                              <div class="elementor-section-wrap">
-                                 <section class="elementor-element elementor-element-64a8775 elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-top-section" data-id="64a8775" data-element_type="section">
-                                    <div class="elementor-container elementor-column-gap-default">
-                                       <div class="elementor-row">
-                                          <div class="elementor-element elementor-element-8c75890 elementor-column elementor-col-100 elementor-top-column" data-id="8c75890" data-element_type="column">
-                                             <div class="elementor-column-wrap  elementor-element-populated">
-                                                <div class="elementor-widget-wrap">
-                                                   <div class="elementor-element elementor-element-6216d58 elementor-widget elementor-widget-heading" data-id="6216d58" data-element_type="widget" data-widget_type="heading.default">
-                                                      <div class="elementor-widget-container">
-                                                         <h2 class="elementor-heading-title elementor-size-default">Ingresa tus datos</h2>
-                                                      </div>
-                                                   </div>
-                                                   <div class="elementor-element elementor-element-337e562 eael-contact-form-7-button-custom elementor-widget elementor-widget-eael-contact-form-7" data-id="337e562" data-element_type="widget" data-widget_type="eael-contact-form-7.default">
-                                                      <div class="elementor-widget-container">
-                                                         <div class="eael-contact-form-7-wrapper">
-                                                            <div class="eael-contact-form eael-contact-form-7 eael-contact-form-337e562 placeholder-show eael-contact-form-align-default">
-                                                               <div role="form" class="wpcf7" id="wpcf7-f7581-p7561-o1" lang="es-ES" dir="ltr">
-                                                                  <div class="screen-reader-response" role="alert" aria-live="polite"></div>
-
-                                                                     <div style="display: none;">
-                                                                        <input type="hidden" name="_wpcf7" value="7581" />
-                                                                        <input type="hidden" name="_wpcf7_version" value="5.2.2" />
-                                                                        <input type="hidden" name="_wpcf7_locale" value="es_ES" />
-                                                                        <input type="hidden" name="_wpcf7_unit_tag" value="wpcf7-f7581-p7561-o1" />
-                                                                        <input type="hidden" name="_wpcf7_container_post" value="7561" />
-                                                                        <input type="hidden" name="_wpcf7_posted_data_hash" value="" />
-
-
-
-                                                                     </div>
-                                                                     <div class="erroresRFC" style="color:#F00;">
-
-                                                                     </div>
-                                                                     <div class="erroresEmail" style="color:#F00;">
-
-                                                                     </div>
-                                                                     <p><label> Ingresa tu RFC con homoclave<br />
-                                                                        <span class="wpcf7-form-control-wrap persona-moral-rfc"><input type="text" id="input_persona-moral-rfc" name="persona-moral-rfc" value="" minlength="12" maxlength="13" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" /></span> </label>
-                                                                     </p>
-
-                                                                     <p><label> Ingresa tu Razon Social<br />
-                                                                        <span class="wpcf7-form-control-wrap persona-moral-razon-social"><input type="text" id="input_persona-moral-razon-social" name="persona-moral-razon-social" value="" minlength="4" maxlength="120" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" /></span> </label>
-                                                                     </p>
-
-                                                                     <p><label> Tu correo electrónico (obligatorio)<br />
-                                                                        <span class="wpcf7-form-control-wrap input_cemail_moral_rfc"><input type="email" name="input_email_moral_rfc" id="input_email_moral_rfc" value="" size="40" class="wpcf7-form-control wpcf7-text wpcf7-email wpcf7-validates-as-email" /></span> </label>
-
-                                                                     </p>
-                                                                     <p><label> Confirma tu correo electrónico (obligatorio)<br />
-                                                                        <span class="wpcf7-form-control-wrap input_cemail_moral_rfc"><input type="email" name="input_cemail_moral_rfc" id="input_cemail_moral_rfc" value="" size="60" class="wpcf7-form-control wpcf7-text wpcf7-email wpcf7-validates-as-email"/></span> </label>
-                                                                     </p>
-                                                                     <p>
-                                                                        <input type="button" value="Enviar" class="wpcf7-form-control wpcf7-submit btnEnviarPersonaMoralRFC" />
-
-                                                                     </p>
-
-
-                                                               </div>
-                                                            </div>
-                                                         </div>
-                                                      </div>
-                                                   </div>
-
-
-                                                   <div class="gt3-core-button--alignment_block elementor-element elementor-element-ca9fca0 elementor-widget elementor-widget-gt3-core-button" data-id="ca9fca0" data-element_type="widget" data-widget_type="gt3-core-button.default">
-                                                      <div class="elementor-widget-container">
-                                                         <div class="gt3_module_button_elementor size_normal alignment_block button_icon_none hover_none ">
-                                                            <a class="button_size_elementor_normal border_icon_none hover_none btn_icon_position_left btnTipoPersona" href="javascript:void(0)">
-                                                            <span class="gt3_module_button__container">
-                                                            <span class="gt3_module_button__cover front"><span class="elementor_gt3_btn_text">VOLVER</span></span>
-                                                            </span>
-                                                            </a>
-                                                         </div>
-                                                      </div>
-                                                   </div>
-                                                   <div class="elementor-element elementor-element-31e98cd elementor-widget elementor-widget-spacer" data-id="31e98cd" data-element_type="widget" data-widget_type="spacer.default">
-                                                      <div class="elementor-widget-container">
-                                                         <div class="elementor-spacer">
-                                                            <div class="elementor-spacer-inner"></div>
-                                                         </div>
-                                                      </div>
-                                                   </div>
-                                                </div>
-                                             </div>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </section>
-                              </div>
-                           </div>
-                        </div>
-                        <div class="clear"></div>
-                        <div id="comments"></div>
-                     </section>
-                  </div>
-               </div>
-            </div>
-         </div>
-         <!-- .main_wrapper -->
-      </div> <!-- fin de persona moral rfc -->
 
 
    </form>
@@ -1085,260 +903,152 @@
       <script type="text/javascript" id="gt3_custom_footer_js">jQuery(document).ready(function(){
          });
       </script>
+
+      <!-- SweetAlert Plugin Js -->
+      <script src="plugins/sweetalert/sweetalert.min.js"></script>
+
+
       <script>
          jQuery(document).ready(function(){
 
             //finfin
 
-            jQuery('.rfcBTN').hide();
-            jQuery('#btnCargarPersonaFisicaCURP').hide();
+            jQuery('.contRespuesta').hide();
 
-            jQuery('.btnEnviarPersonaFisicaRFC').click(function() {
-               traerRFC(jQuery('#input_persona-fisica-rfc').val());
+            //var $demoMaskedInput = $('.demo-masked-input');
+ 				function validarPASS(pass) {
+ 						var re = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{10,})/,
+ 						validado = pass.match(re);
+
+ 				    if (!validado)  //Coincide con el formato general?
+ 				    	return false;
+
+ 				    return true; //Validado
+ 				}
+
+ 				function validaIgualdad(pass, passaux) {
+ 					if (pass != passaux) {
+ 						return false;
+ 					}
+
+ 					return true;
+ 				}
+
+
+ 				jQuery('#passwordaux').focusout(function() {
+ 					if (validaIgualdad(jQuery('#password').val(),jQuery('#passwordaux').val()) == false) {
+ 						swal({
+ 							title: "Error",
+ 							text: "Los PASSWORDs no coinciden",
+ 							type: "error",
+ 							timer: 10000,
+ 							showConfirmButton: true
+ 						});
+
+ 						jQuery('#login').hide();
+ 					} else {
+ 						jQuery('#login').show();
+ 					}
+ 				});
+
+ 				jQuery('#password').focusout(function() {
+ 					if (validarPASS(jQuery('#password').val()) == false) {
+ 						swal({
+ 							title: "Respuesta",
+ 							text: "PASSWORD no valido. Recuerde que el PASSWORD debe contener (10 caracteres, al menos una mayuscula, al menos una minuscula y un numero)",
+ 							type: "error",
+ 							timer: 10000,
+ 							showConfirmButton: true
+ 						});
+
+ 						//$(this).focus();
+ 					} else {
+ 						if (validaIgualdad(jQuery('#password').val(),jQuery('#passwordaux').val()) == false) {
+ 							if (jQuery('#passwordaux').val() == '') {
+ 								jQuery('#passwordaux').focus();
+ 							} else {
+ 								swal({
+ 									title: "Error",
+ 									text: "Los PASSWORDs no coinciden",
+ 									type: "error",
+ 									timer: 10000,
+ 									showConfirmButton: true
+ 								});
+ 							}
+
+
+ 							jQuery('#login').hide();
+ 						} else {
+ 							jQuery('#login').show();
+ 						}
+ 					}
+ 				});
+
+            jQuery('#login').click(function() {
+               if ((validarPASS(jQuery('#password').val()) == true) && (validarPASS(jQuery('#passwordaux').val()) == true) && (validaIgualdad(jQuery('#password').val(),jQuery('#passwordaux').val()) == true)) {
+                  jQuery.ajax({
+							data: {
+                        idusuario: jQuery('#idusuario').val(),
+                        activacion: jQuery('#activacion').val(),
+                        idcliente: jQuery('#idcliente').val(),
+                        token: jQuery('#token').val(),
+                        accion: jQuery('#accion').val(),
+                        password: jQuery('#password').val()
+                     },
+                    url:   'ajax/ajax.php',
+                    type:  'post',
+                    beforeSend: function () {
+
+								jQuery('.contRespuesta').hide();
+                    },
+                    success:  function (response) {
+
+                         if (isNaN(response)) {
+
+                            jQuery('.contRespuesta').hide();
+                            jQuery('.contFormulario').show();
+
+                             swal({
+                                 title: "Respuesta",
+                                 text: "Se genero un error",
+                                 type: "error",
+                                 timer: 2000,
+                                 showConfirmButton: false
+                             });
+									  jQuery('#login').show();
+
+                         } else {
+                            swal({
+                                title: "Respuesta",
+                                text: "Tu usuario se activo correctamente, muchas gracias",
+                                type: "success",
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                             jQuery('.contRespuesta').show();
+                             jQuery('.contFormulario').hide();
+
+
+                             //url = "dashboard/";
+                             //$(location).attr('href',url);
+                         }
+
+                    }
+                });
+
+
+
+             } else {
+                swal({
+                  title: "Error",
+                  text: "Por favor verifique los PASSWORDs",
+                  type: "error",
+                  timer: 10000,
+                  showConfirmButton: true
+               });
+             }
             });
 
-            jQuery('.btnEnviarPersonaMoralRFC').click(function() {
-               traerMoralRFC(jQuery('#input_persona-moral-rfc').val());
-            });
-
-            jQuery('.btnEnviarPersonaFisicaCURP').click(function() {
-               traerCURP(jQuery('#input_persona-fisica-curp').val());
-            });
-
-
-            function caracteresCorreoValido(email){
-
-                //var email = $(email).val();
-                var caract = new RegExp(/^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/);
-
-                if (caract.test(email) == false){
-                    return false;
-                }else{
-                    return true;
-                }
-            }
-
-
-            function traerMoralRFC(rfc) {
-
-      			jQuery.ajax({
-      				url: 'ajax/ajax.php',
-      				type: 'POST',
-      				// Form data
-      				//datos del formulario
-      				data: {
-      					accion: 'buscarRFC',
-      					rfc: rfc,
-                     tipopersona: 2
-      				},
-      				//mientras enviamos el archivo
-      				beforeSend: function(){
-                     jQuery('.erroresRFC').html('');
-
-      				},
-      				//una vez finalizado correctamente
-      				success: function(data){
-      					if (data.error == false) {
-
-                        //jQuery('.erroresRFC').html('<h4>hola, ' + data.datos[0].nombreCompleto + '</h4>');
-                        if ((jQuery('#input_email_moral_rfc').val() == '') || (jQuery('#input_cemail_moral_rfc').val() == '')) {
-                           jQuery('.erroresEmail').html('Debe completar los campos de correo electrónico y confirmación de correo electrónico');
-                        } else {
-                           if (jQuery('#input_email_moral_rfc').val() != jQuery('#input_cemail_moral_rfc').val()) {
-                              jQuery('.erroresEmail').html('Los campos de correo electrónico y confirmación de correo electrónico deben ser iguales');
-                           } else {
-                              if ( (caracteresCorreoValido(jQuery('#input_email_moral_rfc').val())==false) && (caracteresCorreoValido(jQuery('#input_cemail_moral_rfc').val())==false)) {
-                                 jQuery('.erroresEmail').html('El correo electrónico ingresado no es válido');
-                              } else {
-                                 if (jQuery('#input_persona-moral-razon-social').val() == '') {
-                                    jQuery('.erroresEmail').html('Ingrese la razon social por favor');
-                                 } else {
-                                    jQuery( "#formulario_registro" ).submit();
-                                 }
-
-
-                              }
-
-                           }
-
-                        }
-
-      					} else {
-                        jQuery('.erroresRFC').html('<h4>' + data.mensaje + '</h4>');
-
-
-      					}
-      				},
-      				//si ha ocurrido un error
-      				error: function(){
-      					jQuery('.erroresRFC').html('<h4>Actualice la pagina</h4>');
-      				}
-      			});
-      		}
-
-            function traerRFC(rfc) {
-
-      			jQuery.ajax({
-      				url: 'ajax/ajax.php',
-      				type: 'POST',
-      				// Form data
-      				//datos del formulario
-      				data: {
-      					accion: 'buscarRFC',
-      					rfc: rfc,
-                     tipopersona: 1
-      				},
-      				//mientras enviamos el archivo
-      				beforeSend: function(){
-                     jQuery('.erroresRFC').html('');
-
-      				},
-      				//una vez finalizado correctamente
-      				success: function(data){
-      					if (data.error == false) {
-
-                        jQuery('.erroresRFC').html('<h4>Bienvenido, ' + data.datos[0].nombreCompleto + '</h4>');
-                        if ((jQuery('#input_email_fisica_rfc').val() == '') || (jQuery('#input_cemail_fisica_rfc').val() == '')) {
-                           jQuery('.erroresEmail').html('Debe completar los campos de correo electrónico y confirmación de correo electrónico');
-                        } else {
-                           if (jQuery('#input_email_fisica_rfc').val() != jQuery('#input_cemail_fisica_rfc').val()) {
-                              jQuery('.erroresEmail').html('Los campos de correo electrónico y confirmación de correo electrónico deben ser iguales');
-                           } else {
-                              if ( (caracteresCorreoValido(jQuery('#input_email_fisica_rfc').val())==false) && (caracteresCorreoValido(jQuery('#input_cemail_fisica_rfc').val())==false)) {
-                                 jQuery('.erroresEmail').html('El correo electrónico ingresado no es válido');
-                              } else {
-                                 jQuery( "#formulario_registro" ).submit();
-
-                              }
-
-                           }
-
-                        }
-
-      					} else {
-                        jQuery('.erroresRFC').html('<h4>' + data.mensaje + '</h4>');
-
-
-      					}
-      				},
-      				//si ha ocurrido un error
-      				error: function(){
-      					jQuery('.erroresRFC').html('<h4>Actualice la pagina</h4>');
-      				}
-      			});
-      		}
-
-
-            function traerCURP(curp) {
-      			jQuery.ajax({
-      				url: 'ajax/ajax.php',
-      				type: 'POST',
-      				// Form data
-      				//datos del formulario
-      				data: {
-      					accion: 'buscarCURP',
-      					curp: curp
-      				},
-      				//mientras enviamos el archivo
-      				beforeSend: function(){
-                     jQuery('.erroresCURP').html('');
-      				},
-      				//una vez finalizado correctamente
-      				success: function(data){
-      					if (data.error == false) {
-
-                        jQuery('.erroresCURP').html('<h4>hola, ' + data.datos[0].nombreCompleto + '</h4>');
-                        if ((jQuery('#input_email_fisica_curp').val() == '') || (jQuery('#input_cemail_fisica_curp').val() == '')) {
-                           jQuery('.erroresEmail').html('Debe completar los campos de correo electrónico y confirmación de correo electrónico');
-                        } else {
-                           if (jQuery('#input_email_fisica_curp').val() != jQuery('#input_cemail_fisica_curp').val()) {
-                              jQuery('.erroresEmail').html('Los campos de correo electrónico y confirmación de correo electrónico deben ser iguales');
-                           } else {
-                              if ( (caracteresCorreoValido(jQuery('#input_email_fisica_curp').val())==false) && (caracteresCorreoValido(jQuery('#input_cemail_fisica_curp').val())==false)) {
-                                 jQuery('.erroresEmail').html('El correo electrónico ingresado no es válido');
-                              } else {
-                                 jQuery( "#formulario_registro" ).submit();
-
-                              }
-
-                           }
-
-                        }
-
-      					} else {
-      						jQuery('.erroresCURP').html('<h4>' + data.mensaje + '</h4>');
-
-      					}
-      				},
-      				//si ha ocurrido un error
-      				error: function(){
-                     jQuery('.erroresCURP').html('<h4>Actualice la pagina</h4>');
-
-      				}
-      			});
-      		}
-
-            function vaciarFisicaRFC() {
-               jQuery('#input_email_fisica_rfc').val('');
-               jQuery('#input_cemail_fisica_rfc').val('');
-               jQuery('#input_persona-fisica-rfc').val('');
-               jQuery('#input_persona-moral-rfc').val();
-               jQuery('.erroresRFC').html('');
-               jQuery('.erroresEmail').html('');
-            }
-
-            function vaciarFisicaCURP() {
-               jQuery('#input_email_fisica_curp').val('');
-               jQuery('#input_cemail_fisica_curp').val('');
-               jQuery('#input_persona-fisica-curp').val('');
-               jQuery('#input_persona-moral-rfc').val();
-               jQuery('.erroresCURP').html('');
-               jQuery('.erroresEmail').html('');
-            }
-
-            jQuery('.cargarCURP').click(function() {
-               jQuery('.contPersonaFisicaRFC').hide();
-               jQuery('.contTipoPersona').hide();
-               jQuery('.contPersonaFisicaCURP').show();
-               jQuery('.contPersonaMoralRFC').hide();
-               vaciarFisicaRFC();
-            });
-
-            jQuery('.btnFisica').click(function() {
-               jQuery('.contPersonaFisicaRFC').show();
-               jQuery('.contTipoPersona').hide();
-               jQuery('.contPersonaFisicaCURP').hide();
-               jQuery('#input_tipo_persona').val(1);
-               jQuery('.contPersonaMoralRFC').hide();
-               vaciarFisicaCURP();
-               vaciarFisicaRFC();
-            });
-
-
-            jQuery('.btnMoral').click(function() {
-               jQuery('.contPersonaFisicaRFC').hide();
-               jQuery('.contTipoPersona').hide();
-               jQuery('.contPersonaFisicaCURP').hide();
-               jQuery('.contPersonaMoralRFC').show();
-               jQuery('#input_tipo_persona').val(2);
-               vaciarFisicaCURP();
-               vaciarFisicaRFC();
-            });
-
-
-            jQuery('.contPersonaMoralRFC').hide();
-
-            jQuery('.btnTipoPersona').click(function() {
-               jQuery('.contPersonaFisicaRFC').hide();
-               jQuery('.contTipoPersona').show();
-               jQuery('.contPersonaFisicaCURP').hide();
-               jQuery('.contPersonaMoralRFC').hide();
-               vaciarFisicaCURP();
-               vaciarFisicaRFC();
-            });
-
-            jQuery('.contPersonaFisicaRFC').hide();
-            jQuery('.contPersonaFisicaCURP').hide();
 
 
 

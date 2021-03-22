@@ -1536,7 +1536,7 @@ function buscarRFC($serviciosValidador) {
                } else {
                   if (isset($arFirmaFiel['Cause'])) {
                      $resV['error'] = true;
-                     $resV['mensaje'] = $arFirmaFiel['Detail'];
+                     $resV['mensaje'] = 'El RFC que ingresas no existe, favor verificar';
                      $resV['aceptado'] = false;
                   } else {
                      if ($arFirmaFiel['rfc'] == null) {

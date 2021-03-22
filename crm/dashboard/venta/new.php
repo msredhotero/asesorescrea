@@ -41,6 +41,8 @@ if (isset($_GET['producto'])) {
 	header('Location: productos.php');
 }
 
+
+
 $resAuxProd = $serviciosReferencias->traerProductosPorId($rIdProducto);
 
 if (mysql_num_rows($resAuxProd) <= 0) {

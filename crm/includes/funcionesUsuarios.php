@@ -848,7 +848,7 @@ function activarCliente($email, $nombre, $token) {
 
    $cuerpo .= '<body><p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Hola, '.$nombre.'. Es un honor recibir su registro en nuestro sistema.</p>';
 
-   $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">A partir de ahora, te asesoramos de manera integral con las mejores condiciones del mercado. Para esto, te pedimos por favor que confirmes tu email haciendo click <b><a href="https://asesorescrea.com/desarrollo/crm/verificar.php?token='.$token.'">Aqui</a></b>.</p></body>';
+   $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">A partir de ahora, te asesoramos de manera integral con las mejores condiciones del mercado. Para esto, te pedimos por favor que confirmes tu email haciendo click <b><a href="https://asesorescrea.com/desarrollo/crm/confirmar.php?token='.$token.'">Aqui</a></b>.</p></body>';
 
 
    $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';

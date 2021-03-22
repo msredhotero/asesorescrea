@@ -408,7 +408,7 @@ function buscarCURP($curp,$serviciosValidador) {
             // empiezo la activacion del usuarios
             // $resActivacion = $serviciosUsuario->registrarCliente($email, $apellidopaterno.' '.$apellidomaterno, $nombre, $res, $refusuarios,$pass);
 
-            //$resActivacion = $serviciosUsuario->activarCliente($email, $nombre, $tokenVerificacion);
+            $resActivacion = $serviciosUsuario->activarCliente($email, $nombre, $tokenVerificacion);
 
             if ($res>0) {
 
