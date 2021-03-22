@@ -616,6 +616,21 @@ if (mysql_num_rows($resActivacion) > 0) {
                                                                      </p>
 
 
+                                                                     <div class="input-group">
+
+                                                                        <div class="demo-checkbox">
+                                                                           <input type="checkbox" id="aceptaterminos"  name="aceptaterminos" class="filled-in" />
+                                                                           <label for="aceptaterminos">Acepto las condiciones legales de asesorescrea.com</label>
+                                                                        </div>
+
+                                                                        <div class="demo-checkbox">
+                                                                           <input type="checkbox" id="subscripcion" name="subscripcion" class="filled-in" />
+                                                                           <label for="subscripcion">Acepto Políticas de privacidad de asesorescrea.com</label>
+                                                                        </div>
+
+                                                                     </div>
+
+
                                                                      <input type="hidden" name="idusuario" id="idusuario" value="<?php echo $idusuario; ?>" />
                                                    						<input type="hidden" name="idcliente" id="idcliente" value="<?php echo $arResultado['postulante']['id']; ?>" />
                                                                      <input type="hidden" name="activacion" id="activacion" value="<?php echo mysql_result($resActivacion,0,0); ?>" />
@@ -985,63 +1000,73 @@ if (mysql_num_rows($resActivacion) > 0) {
  				});
 
             jQuery('#login').click(function() {
-               if ((validarPASS(jQuery('#password').val()) == true) && (validarPASS(jQuery('#passwordaux').val()) == true) && (validaIgualdad(jQuery('#password').val(),jQuery('#passwordaux').val()) == true)) {
-                  jQuery.ajax({
-							data: {
-                        idusuario: jQuery('#idusuario').val(),
-                        activacion: jQuery('#activacion').val(),
-                        idcliente: jQuery('#idcliente').val(),
-                        token: jQuery('#token').val(),
-                        accion: jQuery('#accion').val(),
-                        password: jQuery('#password').val()
-                     },
-                    url:   'ajax/ajax.php',
-                    type:  'post',
-                    beforeSend: function () {
+               if (( jQuery('#aceptaterminos').attr('checked') ) && ( jQuery('#subscripcion').attr('checked') )) {
+                  if ((validarPASS(jQuery('#password').val()) == true) && (validarPASS(jQuery('#passwordaux').val()) == true) && (validaIgualdad(jQuery('#password').val(),jQuery('#passwordaux').val()) == true)) {
+                     jQuery.ajax({
+   							data: {
+                           idusuario: jQuery('#idusuario').val(),
+                           activacion: jQuery('#activacion').val(),
+                           idcliente: jQuery('#idcliente').val(),
+                           token: jQuery('#token').val(),
+                           accion: jQuery('#accion').val(),
+                           password: jQuery('#password').val()
+                        },
+                       url:   'ajax/ajax.php',
+                       type:  'post',
+                       beforeSend: function () {
 
-								jQuery('.contRespuesta').hide();
-                    },
-                    success:  function (response) {
+   								jQuery('.contRespuesta').hide();
+                       },
+                       success:  function (response) {
 
-                         if (isNaN(response)) {
+                            if (isNaN(response)) {
 
-                            jQuery('.contRespuesta').hide();
-                            jQuery('.contFormulario').show();
+                               jQuery('.contRespuesta').hide();
+                               jQuery('.contFormulario').show();
 
-                             swal({
-                                 title: "Respuesta",
-                                 text: "Se genero un error",
-                                 type: "error",
-                                 timer: 2000,
-                                 showConfirmButton: false
-                             });
-									  jQuery('#login').show();
+                                swal({
+                                    title: "Respuesta",
+                                    text: "Se genero un error",
+                                    type: "error",
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+   									  jQuery('#login').show();
 
-                         } else {
-                            swal({
-                                title: "Respuesta",
-                                text: "Tu usuario se activo correctamente, muchas gracias",
-                                type: "success",
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                             jQuery('.contRespuesta').show();
-                             jQuery('.contFormulario').hide();
-
-
-                             //url = "dashboard/";
-                             //$(location).attr('href',url);
-                         }
-
-                    }
-                });
+                            } else {
+                               swal({
+                                   title: "Respuesta",
+                                   text: "Tu usuario se activo correctamente, muchas gracias",
+                                   type: "success",
+                                   timer: 2000,
+                                   showConfirmButton: false
+                               });
+                                jQuery('.contRespuesta').show();
+                                jQuery('.contFormulario').hide();
 
 
+                                //url = "dashboard/";
+                                //$(location).attr('href',url);
+                            }
 
+                       }
+                   });
+
+
+
+                } else {
+                   swal({
+                     title: "Error",
+                     text: "Por favor verifique los PASSWORDs",
+                     type: "error",
+                     timer: 10000,
+                     showConfirmButton: true
+                  });
+                }
              } else {
                 swal({
                   title: "Error",
-                  text: "Por favor verifique los PASSWORDs",
+                  text: "Por favor acepte los terminos y condiciones y las politicas de privacidad",
                   type: "error",
                   timer: 10000,
                   showConfirmButton: true
