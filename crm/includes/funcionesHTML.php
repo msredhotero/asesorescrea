@@ -57,7 +57,7 @@ function menu($usuario,$titulo,$rol,$empresa) {
 	}
 
 	if ($_SESSION['idroll_sahilices'] == 16) {
-		if ($_SESSION['usuaid_sahilices'] != 201) {
+		if ($_SESSION['usuaid_sahilices'] == 201) {
 			$sql = "select idmenu,url,icono, nombre, permiso, orden from predio_menu where idmenu=13";
 
 			//die(var_dump($sql));
