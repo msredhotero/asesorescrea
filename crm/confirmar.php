@@ -591,20 +591,22 @@ if (mysql_num_rows($resActivacion) > 0) {
 
 
                                                                      <div align="center">
-                                                   							<h3>Bienvenido, <?php echo $arResultado['postulante']['nombre'].' '.$arResultado['postulante']['apellidopaterno'].' '.$arResultado['postulante']['apellidomaterno']; ?></h3>
-                                                   							<div class="alert bg-green">Por favor cargue una password para completar el alta de usuario.</div>
-                                                   							<div class="alert bg-red">Recuerde que el PASSWORD debe contener (10 caracteres, al menos una mayuscula, al menos una minuscula y un numero).</div>
+                                                   							<p>Bienvenido, <?php echo $arResultado['postulante']['nombre'].' '.$arResultado['postulante']['apellidopaterno'].' '.$arResultado['postulante']['apellidomaterno']; ?></p>
+                                                   							<div class="alert bg-green"><h4>Por favor cargue una password para completar el alta de usuario.</h4></div>
+                                                   							
                                                    						</div>
 
                                                                      <div class="contFormulario">
 
-                                                                     <p><label style="color:#333743;"> Usuario<br />
+                                                                     <p style="display: none;"><label style="color:#333743;"> Usuario<br />
                                                                         <span class="wpcf7-form-control-wrap persona-fisica-rfc"><input type="text" id="nombre" name="nombre" value="<?php echo $arResultado['usuario']; ?>" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" readonly/></span> </label>
                                                                      </p>
 
-                                                                     <p><label style="color:#333743;"> Correo Electrónico<br />
+                                                                     <p><label style="color:#333743;"> Usuario<br />
                                                                         <span class="wpcf7-form-control-wrap persona-fisica-rfc"><input type="text" id="email" name="email" value="<?php echo $arResultado['postulante']['email']; ?>" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" readonly /></span> </label>
                                                                      </p>
+
+                                                                     <div class="alert bg-green"><h6>Tu PASSWORD debe contener (10 caracteres, al menos una mayuscula, al menos una minuscula y un numero).</h6></div>
 
 
                                                                      <p><label style="color:#333743;"> Password<br />
