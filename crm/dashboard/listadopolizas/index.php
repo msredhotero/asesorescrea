@@ -227,6 +227,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 										<th>Asegurado</th>
 										<th>Vencimiento</th>
 										<th>Producto</th>
+										<th>Orden de Trabajo</th>
 										<th>Acciones</th>
 									</thead>
 									<tfoot>
@@ -234,6 +235,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 										<th>Asegurado</th>
 										<th>Vencimiento</th>
 										<th>Producto</th>
+										<th>Orden de Trabajo</th>
 										<th>Acciones</th>
 									</tfoot>
 
@@ -250,6 +252,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 										<th>Asegurado</th>
 										<th>Vencimiento</th>
 										<th>Producto</th>
+										<th>Orden de Trabajo</th>
 										<th>Acciones</th>
 									</thead>
 									<tfoot>
@@ -257,6 +260,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 										<th>Asegurado</th>
 										<th>Vencimiento</th>
 										<th>Producto</th>
+										<th>Orden de Trabajo</th>
 										<th>Acciones</th>
 									</tfoot>
 
@@ -272,6 +276,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 										<th>Asegurado</th>
 										<th>Vencimiento</th>
 										<th>Producto</th>
+										<th>Orden de Trabajo</th>
 										<th>Acciones</th>
 									</thead>
 									<tfoot>
@@ -279,6 +284,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 										<th>Asegurado</th>
 										<th>Vencimiento</th>
 										<th>Producto</th>
+										<th>Orden de Trabajo</th>
 										<th>Acciones</th>
 									</tfoot>
 
@@ -295,6 +301,44 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 
 
 
+<div class="modal fade" id="lgmENVIAR" tabindex="-1" role="dialog">
+	 <div class="modal-dialog modal-lg" role="document">
+		  <div class="modal-content">
+				<div class="modal-header bg-blue">
+					 <h4 class="modal-title" id="largeModalLabel">MODIFICAR ESTADO DE LA POLIZA</h4>
+				</div>
+				<div class="modal-body">
+				 <h3>¿Esta seguro que desea aceptar la poliza?</h3>
+				 <input type="hidden" name="idpolizainiciada" id="idpolizainiciada" />
+
+				</div>
+				<div class="modal-footer">
+					 <button type="button" class="btn waves-effect bg-green btnActivarPoliza" data-dismiss="modal">Aceptar</button>
+					 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+				</div>
+		  </div>
+	 </div>
+</div>
+
+
+<div class="modal fade" id="lgmRECHAZAR" tabindex="-1" role="dialog">
+	 <div class="modal-dialog modal-lg" role="document">
+		  <div class="modal-content">
+				<div class="modal-header bg-blue">
+					 <h4 class="modal-title" id="largeModalLabel">MODIFICAR ESTADO DE LA POLIZA</h4>
+				</div>
+				<div class="modal-body">
+				 <h3>¿Esta seguro que desea rechazar la poliza, esta se eliminará y la cotización volverá a emisión?</h3>
+				 <input type="hidden" name="idpolizainiciadar" id="idpolizainiciadar" />
+
+				</div>
+				<div class="modal-footer">
+					 <button type="button" class="btn waves-effect bg-red btnRechazarPoliza" data-dismiss="modal">Rechazar</button>
+					 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+				</div>
+		  </div>
+	 </div>
+</div>
 
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
@@ -318,6 +362,133 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 
 <script>
 	$(document).ready(function(){
+
+		$("#example2").on("click",'.btnRechazar', function(){
+			idTable =  $(this).attr("id");
+			$('#idpolizainiciadar').val(idTable);
+			$('#lgmRECHAZAR').modal();
+		});
+
+		$('.btnRechazarPoliza').click( function() {
+
+			rechazarPolizarAgente($('#idpolizainiciadar').val());
+		});
+
+		function rechazarPolizarAgente(id) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'rechazarPolizarAgente',
+					id: id
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					if (data.error == false) {
+						swal({
+								title: "Respuesta",
+								text: data.mensaje,
+								type: "success",
+								timer: 1000,
+								showConfirmButton: false
+						});
+						table.draw();
+						table2.draw();
+						table3.draw();
+
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data.mensaje,
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
+
+		$("#example2").on("click",'.btnAceptar', function(){
+			idTable =  $(this).attr("id");
+			$('#idpolizainiciada').val(idTable);
+			$('#lgmENVIAR').modal();
+		});
+
+		$('.btnActivarPoliza').click( function() {
+
+			aceptarPolizarAgente($('#idpolizainiciada').val());
+		});
+
+		function aceptarPolizarAgente(id) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'aceptarPolizarAgente',
+					id: id
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					if (data.error == false) {
+						swal({
+								title: "Respuesta",
+								text: data.mensaje,
+								type: "success",
+								timer: 1000,
+								showConfirmButton: false
+						});
+						table.draw();
+						table2.draw();
+						table3.draw();
+
+					} else {
+						swal({
+								title: "Respuesta",
+								text: data.mensaje,
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
+						});
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
 
 		$('.contHistorico').hide();
 		$('.contValidacion').hide();

@@ -24,7 +24,7 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../emision/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../mesacontrol/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
@@ -39,7 +39,7 @@ if ($_SESSION['idroll_sahilices'] == 10) {
 
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Emision",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Mesa de Control",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -185,6 +185,17 @@ switch ($iddocumentacion) {
 	break;
 }
 
+$puedeCargar = 0;
+if ($estadoDocumentacion == 'Falta Cargar') {
+	$puedeCargar = 1;
+} else {
+	if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4) ) {
+		$puedeCargar = 1;
+	} else {
+		$puedeCargar = 0;
+	}
+
+}
 
 ?>
 
@@ -413,7 +424,7 @@ switch ($iddocumentacion) {
 								</div>
 							</form>
 
-							<?php if (($_SESSION['idroll_sahilices']==1)||($_SESSION['idroll_sahilices']==4)||($_SESSION['idroll_sahilices']==11)||($_SESSION['idroll_sahilices']==3)) { ?>
+							<?php if ($puedeCargar == 1) { ?>
 							<div class="row">
 
 								<form action="subir.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
@@ -449,12 +460,7 @@ switch ($iddocumentacion) {
 							</ul>
 						</div>
 						<div class="body">
-							<div class="row">
-								<button type="button" class="btn bg-red waves-effect btnEliminar">
-									<i class="material-icons">remove</i>
-									<span>ELIMINAR</span>
-								</button>
-							</div>
+
 							<div class="row">
 								<a href="javascript:void(0);" class="thumbnail timagen1">
 									<img class="img-responsive">
@@ -529,63 +535,7 @@ switch ($iddocumentacion) {
 					<div class="modal-body">
 					 <h3>¿Esta seguro que desea <span class="lblModiEstado"></span> la cotizacion?</h3>
 
-					 <div class="row contFrmRechazoDefinitivo">
-	 					<h4>Por favor ingrese los motivos del rechazo, para poderte afrocer un mejor servicio!!</h4>
-	 					<div class="row">
-		 					<div class="col-xs-6">
-								<div class="form-group input-group">
-									<label class="label-form">Motivo</label>
-			 						<select class="form-control" id="motivo" name="motivo">
-			 							<option value="Precio">Precio</option>
-			 							<option value="Mal Servicio">Mal Servicio</option>
-			 							<option value="Otro">Otro</option>
-			 						</select>
-			 					</div>
-							</div>
-						</div>
-						<div class="contMotivosPrecio">
 
-							<div class="row">
-								<div class="col-xs-3">
-									<div class="form-group input-group">
-										<label class="label-form">No se compartió información</label>
-				 						<select class="form-control" id="nocompartioinformacion" name="nocompartioinformacion">
-				 							<option value="1">Si</option>
-				 							<option value="0">No</option>
-				 						</select>
-									</div>
-			 					</div>
-
-			 					<div class="col-xs-3">
-									<div class="form-group input-group">
-										<label class="label-form">Prima total Inbursa</label>
-				 						<input type="text" class="form-control" id="primatotalinbursa" name="primatotalinbursa" />
-									</div>
-			 					</div>
-								<div class="col-xs-3">
-									<div class="form-group input-group">
-										<label class="label-form">Prima total Competencia</label>
-				 						<input type="text" class="form-control" id="primatotalcompetencia" name="primatotalcompetencia" />
-									</div>
-			 					</div>
-								<div class="col-xs-3">
-									<div class="form-group input-group">
-										<label class="label-form">Aseguradora que se queda negocio</label>
-				 						<select class="form-control" id="aseguradora" name="aseguradora">
-											<?php while ($rowA = mysql_fetch_array($resVar10m)) {
-												echo '<option value="'.$rowA['razonsocial'].'">'.$rowA['razonsocial'].'</option>';
-											}
-											?>
-											<option value="Otra">Otra</option>
-				 						</select>
-									</div>
-			 					</div>
-							</div>
-						</div>
-	 					<hr>
-	 					<p>Puedes contactarnos en el Tel fijo: <b><span style="color:#5DC1FD;">55 51 35 02 59</span></b></p>
-	 					<p>Correo: <a href="mailto:ventas@asesorescrea.com" style="color:#5DC1FD !important;"><b>ventas@asesorescrea.com</b></a></p>
-	 				</div>
 					</div>
 					<div class="modal-footer">
 						 <button type="button" class="btn waves-effect modificarEstadoCotizacionRechazo"></button>
@@ -882,7 +832,7 @@ switch ($iddocumentacion) {
 							$("."+contenedor).hide();
 
 						} else {
-							if ((cadena.indexOf("officedocument") > -1) || (cadena.indexOf("sheet") > -1)) {
+							if ((cadena.indexOf("officedocument") > -1) || (cadena.indexOf("sheet") > -1) || (cadena.indexOf("csv") > -1) || (cadena.indexOf("xls") > -1) || (cadena.indexOf("xlsx") > -1) || (cadena.indexOf("excel") > -1)) {
 								$('#'+contenedorpdf).hide();
 								$("."+contenedor).hide();
 								$('#contExcel').show();
@@ -950,7 +900,7 @@ switch ($iddocumentacion) {
 		};
 
 
-		<?php if (($idestadodocumentacion != 5)) { ?>
+		<?php if (($puedeCargar == 1)) { ?>
 		var myDropzone = new Dropzone("#archivos", {
 			params: {
 				 idasociado: <?php echo $id; ?>,

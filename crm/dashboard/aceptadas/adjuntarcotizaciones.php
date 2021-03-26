@@ -155,15 +155,15 @@ if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 	$idestadodocumentacion = 1;
 }
 
-switch ($iddocumentacion) {
-	case 35:
+switch (mysql_result($resDocumentacion,0,'documentacion')) {
+	case 'Orden de trabajo':
 		// code...
-		$dato = mysql_result($resultado,0,'nropoliza');
+		$dato = mysql_result($resultado,0,'ot');
 
-		$input = '<input type="text" name="nropoliza" maxlength="13" id="nropoliza" class="form-control" value="'.$dato.'"/> ';
+		$input = '<input type="text" name="ot" maxlength="13" id="ot" class="form-control" value="'.$dato.'"/> ';
 		$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
-		$leyenda = 'Cargue el Nro de Poliza';
-		$campo = 'nropoliza';
+		$leyenda = 'Cargue la Orden de Trabajo';
+		$campo = 'ot';
 	break;
 	case 36:
 		// code...
@@ -708,7 +708,7 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11
 			$('.contFrmRechazoDefinitivo').hide();
 
 			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
-			$('#estadomodificarestadorechazo').val(27);
+			$('#estadomodificarestadorechazo').val(30);
 			$('#lgmModificarEstado').modal();
 
 		});//fin del boton eliminar
@@ -800,7 +800,7 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11
 				// Form data
 				//datos del formulario
 				data: {
-					accion: 'modificarCotizacionUnicaDocumentacion',
+					accion: 'modificarCotizacionUnicaDocumentacionCot',
 					idcotizacion: <?php echo $id; ?>,
 					campo: '<?php echo $campo; ?>',
 					valor: valor

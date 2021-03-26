@@ -9,6 +9,48 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+
+   /* PARA Clientesbck */
+
+   function insertarClientesbck($idcliente) {
+      $sql = "insert into dbclientesbck(idclientebck,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,email,rfc,ine,curp,fechanacimiento,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,reftipopersonas,telefonofijo,telefonocelular,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,genero,refestadocivil,reftipoidentificacion,nroidentificacion)
+      SELECT
+         idcliente,          nombre,
+          apellidopaterno,          apellidomaterno,
+          razonsocial,          domicilio,
+          email,          rfc,
+          ine,          curp,
+          fechanacimiento,          numerocliente,
+          refusuarios,          fechacrea,
+          fechamodi,          usuariocrea,
+          usuariomodi,          reftipopersonas,
+          telefonofijo,          telefonocelular,
+          idclienteinbursa,          emisioncomprobantedomicilio,
+          emisionrfc,          vencimientoine,
+          colonia,          municipio,
+          codigopostal,          edificio,
+          nroexterior,          nrointerior,
+          estado,          ciudad,
+          genero,          refestadocivil,
+          reftipoidentificacion,          nroidentificacion
+      FROM dbclientes
+      where idcliente = ".$idcliente.";";
+
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function traerClientesbckPorId($id) {
+   $sql = "select idclientebck,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,email,rfc,ine,curp,fechanacimiento,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,reftipopersonas,telefonofijo,telefonocelular,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,genero,refestadocivil,reftipoidentificacion,nroidentificacion from dbclientesbck where idclientebck =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: dbclientesbck*/
+
    function traerCotizacionesFiltros($busqueda,$filtro) {
 
       $cadRolPorRama = '';
@@ -3859,7 +3901,7 @@ return $res;
 
       $preguntasSencibles = $this->necesitoPreguntaSencible($idcliente,$idcuestionario);
       $cad = '';
-      $cad .= '<div class="row" style="padding: 5px 20px;">';
+      $cad .= '<div class="row" style="padding: 5px 0px;">';
 
 
          $pregunta = '';
@@ -3948,7 +3990,7 @@ return $res;
             if ($row['idtiporespuesta'] == 1) {
 
                if ($row['obligatoria'] == '1') {
-                  $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+                  $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block;">
 
                      <div class="form-group input-group">
                         <div class="form-line">
@@ -3991,7 +4033,7 @@ return $res;
                }
 
 
-               $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block">
+               $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrespuesta" style="display:block;">
 
                   <div class="form-group input-group">
                      <div class="demo-radio-button">
@@ -4069,7 +4111,7 @@ return $res;
 
       $preguntasSencibles = $this->necesitoPreguntaSencible($idcliente,$idcuestionario);
       $cad = '';
-      $cad .= '<div class="row" style="padding: 5px 20px;">';
+      $cad .= '<div class="row" style="padding: 5px 0px;">';
 
 
          $pregunta = '';
@@ -4369,7 +4411,7 @@ return $res;
                      $cadValorRespuesta = '';
                   }
 
-                  $cadInput .= '<div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 frmContrespuesta" style="display:block">
+                  $cadInput .= '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 frmContrespuesta" style="display:block">
 
                      <div class="form-group input-group">
                         <div class="demo-radio-button">
@@ -4426,7 +4468,7 @@ return $res;
             }
 
             array_push($arPreguntas,array(
-               'divRow' => '<div class="row '.$escondido.' clcontPregunta'.$row['dependerespuestaaux'].'" style="padding: 5px 20px;" id="contPregunta'.$row['idpreguntacuestionario'].'">',
+               'divRow' => '<div class="row '.$escondido.' clcontPregunta'.$row['dependerespuestaaux'].'" style="padding: 5px 0;" id="contPregunta'.$row['idpreguntacuestionario'].'">',
                'pregunta' => $row['pregunta'],
                'idpregunta'=>$row['idpreguntacuestionario'],
                'respuestas' => $cadInput,
@@ -4460,7 +4502,7 @@ return $res;
 
 
       $cad = '';
-      $cad .= '<div class="row" style="padding: 5px 20px;">';
+      $cad .= '<div class="row" style="padding: 5px 0px;">';
 
 
          $pregunta = '';
@@ -4866,7 +4908,7 @@ return $res;
             }
 
             array_push($arPreguntas,array(
-               'divRow' => '<div class="row col-xs-4 '.$escondido.' clcontPregunta'.$row['dependerespuestaaux'].'" style="padding: 5px 20px;" id="contPregunta'.$row['idpreguntacuestionario'].'">',
+               'divRow' => '<div class="row col-xs-4 '.$escondido.' clcontPregunta'.$row['dependerespuestaaux'].'" style="padding: 5px 0px;" id="contPregunta'.$row['idpreguntacuestionario'].'">',
                'pregunta' => $row['pregunta'],
                'idpregunta'=>$row['idpreguntacuestionario'],
                'respuestas' => $cadInput
@@ -8402,7 +8444,8 @@ return $res;
       v.nropoliza,
       (case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
       v.fechavencimientopoliza,
-      p.producto
+      p.producto,
+      c.ot
 		from dbventas v
 
 		inner join dbcotizaciones c ON c.idcotizacion = v.refcotizaciones
@@ -8468,7 +8511,8 @@ return $res;
       v.nropoliza,
       (case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
       v.fechavencimientopoliza,
-      p.producto
+      p.producto,
+      c.ot
 		from dbventas v
 
 		inner join dbcotizaciones c ON c.idcotizacion = v.refcotizaciones
@@ -10609,22 +10653,23 @@ return $res;
 
 	/* PARA Directorioasesores */
 
-	function insertarDirectorioasesores($refasesores,$area,$razonsocial,$telefono,$email,$telefonocelular) {
-		$sql = "insert into dbdirectorioasesores(iddirectorioasesor,refasesores,area,razonsocial,telefono,email,telefonocelular)
-		values ('',".$refasesores.",'".$area."','".$razonsocial."','".$telefono."','".$email."','".$telefonocelular."')";
-		$res = $this->query($sql,1);
-		return $res;
-	}
+   function insertarDirectorioasesores($refasesores,$area,$razonsocial,$telefono,$email,$telefonocelular,$password,$recibenotificaciones) {
+      $sql = "insert into dbdirectorioasesores(iddirectorioasesor,refasesores,area,razonsocial,telefono,email,telefonocelular,password,recibenotificaciones)
+      values ('',".$refasesores.",'".$area."','".$razonsocial."','".$telefono."','".$email."','".$telefonocelular."','".$password."','".$recibenotificaciones."')";
+
+      $res = $this->query($sql,1);
+      return $res;
+   }
 
 
-	function modificarDirectorioasesores($id,$refasesores,$area,$razonsocial,$telefono,$email,$telefonocelular) {
-		$sql = "update dbdirectorioasesores
-		set
-		refasesores = ".$refasesores.",area = '".$area."',razonsocial = '".$razonsocial."',telefono = '".$telefono."',email = '".$email."',telefonocelular = '".$telefonocelular."'
-		where iddirectorioasesor =".$id;
-		$res = $this->query($sql,0);
-		return $res;
-	}
+   function modificarDirectorioasesores($id,$refasesores,$area,$razonsocial,$telefono,$email,$telefonocelular,$password,$recibenotificaciones) {
+      $sql = "update dbdirectorioasesores
+      set
+      refasesores = ".$refasesores.",area = '".$area."',razonsocial = '".$razonsocial."',telefono = '".$telefono."',email = '".$email."',telefonocelular = '".$telefonocelular."',password = '".$password."',recibenotificaciones = '".$recibenotificaciones."'
+      where iddirectorioasesor =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
 
 
 	function eliminarDirectorioasesores($id) {
@@ -10666,7 +10711,8 @@ return $res;
 		d.telefono,
 		d.telefonocelular,
 		d.email,
-		d.refasesores
+      d.password,
+      (case when d.recibenotificaciones = '1' then 'Si' else 'No' end) as recibenotificaciones
 		from dbdirectorioasesores d
 		where d.refasesores = ".$refasesores." ".$where."
 		ORDER BY ".$colSort." ".$colSortDir." ";
@@ -10678,13 +10724,13 @@ return $res;
 
 
 	function traerDirectorioasesoresPorId($id) {
-		$sql = "select iddirectorioasesor,refasesores,area,razonsocial,telefono,email,telefonocelular from dbdirectorioasesores where iddirectorioasesor =".$id;
+		$sql = "select iddirectorioasesor,refasesores,area,razonsocial,telefono,email,telefonocelular,password,recibenotificaciones from dbdirectorioasesores where iddirectorioasesor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
 	function traerDirectorioasesoresPorAsesor($idasesor) {
-		$sql = "select iddirectorioasesor,refasesores,area,razonsocial,telefono,email,telefonocelular from dbdirectorioasesores where refasesores =".$idasesor;
+		$sql = "select iddirectorioasesor,refasesores,area,razonsocial,telefono,email,telefonocelular,password,recibenotificaciones from dbdirectorioasesores where refasesores =".$idasesor;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -11226,6 +11272,48 @@ return $res;
 					where d.reftipodocumentaciones in (3)
 
 					order by 1";
+		$res = $this->query($sql,0);
+ 		return $res;
+	}
+
+   function traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionGral($idcotizacion,$tipodocumentacion,$notin='', $in='' ) {
+
+      if ($notin != '') {
+         $cadNotIn = ' and d.iddocumentacion not in ('.$notin.') ';
+      } else {
+         $cadNotIn = '';
+      }
+
+
+
+      if ($in != '') {
+         $cadIn = ' and d.iddocumentacion in ('.$in.') ';
+      } else {
+         $cadIn = '';
+      }
+
+		$sql = "SELECT
+					    d.iddocumentacion,
+					    d.documentacion,
+					    d.obligatoria,
+					    da.iddocumentacioncotizacion,
+					    da.archivo,
+					    da.type,
+					    coalesce( ed.estadodocumentacion, 'Falta') as estadodocumentacion,
+						 ed.color,
+					    ed.idestadodocumentacion,
+                   d.carpeta
+					FROM
+					    dbdocumentaciones d
+					        LEFT JOIN
+					    dbdocumentacioncotizaciones da ON d.iddocumentacion = da.refdocumentaciones
+					        AND da.refcotizaciones = ".$idcotizacion."
+					        LEFT JOIN
+					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
+					where d.reftipodocumentaciones in (".$tipodocumentacion.")
+                     and d.activo='1' ".$cadNotIn.$cadIn."
+					order by d.obligatoria, d.orden";
+
 		$res = $this->query($sql,0);
  		return $res;
 	}
@@ -12702,7 +12790,9 @@ return $res;
       c.folio,
       DATEDIFF(CURDATE(),c.fechacrea) as dias,
       (case when c.version > 0 then 'En Ajuste' else 'Nueva' end) as gestion,
-      max(DATE_FORMAT(tz.fechacrea, '%d-%m-%Y %H:%i:%s')) as fechaevento
+      max(DATE_FORMAT(tz.fechacrea, '%d-%m-%Y %H:%i:%s')) as fechaevento,
+      c.ot,
+      c.primaneta,c.primatotal
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
@@ -12855,7 +12945,9 @@ return $res;
       c.folio,
       DATEDIFF(CURDATE(),c.fechacrea) as dias,
       (case when c.version > 0 then 'En Ajuste' else 'Nueva' end) as gestion,
-      max(DATE_FORMAT(tz.fechacrea, '%d-%m-%Y %H:%i:%s')) as fechaevento
+      max(DATE_FORMAT(tz.fechacrea, '%d-%m-%Y %H:%i:%s')) as fechaevento,
+      c.ot,
+      c.primaneta ,c.primatotal
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas

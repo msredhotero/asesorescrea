@@ -60,13 +60,15 @@ $_SESSION['idasesor_aux'] = $id;
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbdirectorioasesores";
 
-$lblCambio	 	= array('refasesores','razonsocial','telefonocelular');
-$lblreemplazo	= array('Asesores','Nombre','Tel. Fijo');
+$lblCambio	 	= array('refasesores','razonsocial','telefonocelular','recibenotificaciones');
+$lblreemplazo	= array('Asesores','Nombre','Tel. Fijo','Recibe Notificaciones');
 
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resultado,array(3,4,2),' ');
 
-$refdescripcion = array(0=> $cadRef2);
-$refCampo 	=  array('refasesores');
+$cadRef10 = "<option value='0'>No</option><option value='1'>Si</option>";
+
+$refdescripcion = array(0=> $cadRef2,1=>$cadRef10);
+$refCampo 	=  array('refasesores','recibenotificaciones');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -216,6 +218,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Telefono</th>
 												<th>Telfono Movil</th>
 												<th>Email</th>
+												<th>Password</th>
+												<th>Recibe Notificaciones</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -226,6 +230,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 												<th>Telefono</th>
 												<th>Telfono Movil</th>
 												<th>Email</th>
+												<th>Password</th>
+												<th>Recibe Notificaciones</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>

@@ -24,13 +24,13 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../entregadas/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../mesacontrol/');
 //*** FIN  ****/
 
 $fecha = date('Y-m-d');
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
-$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Entregadas",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
+$resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Mesa de Control",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
 $configuracion = $serviciosReferencias->traerConfiguracion();
 
@@ -72,7 +72,6 @@ $lblreemplazo	= $baseHTML->devolverLabelPorTabla($tabla)[1];
 
 $modificar = "modificarCotizaciones";
 $idTabla = "idcotizacion";
-
 
 $idestado = mysql_result($resultado,0,'refestadocotizaciones');
 
@@ -157,7 +156,12 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 	$resGuia = $serviciosReferencias->traerEstadocotizacionesPorIn('1,2');
 } else {
-	$resVar5	= $serviciosReferencias->traerAsesores();
+	if (($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22)) {
+		$resVar5	= $serviciosReferencias->traerAsesoresPorId(mysql_result($resultado,0,'refasesores'));
+	} else {
+		$resVar5	= $serviciosReferencias->traerAsesores();
+	}
+
 	$cadRef5 = $serviciosFunciones->devolverSelectBoxActivo($resVar5,array(2,3,4),' ',mysql_result($resultado,0,'refasesores'));
 
 	$resGuia = $serviciosReferencias->traerEstadocotizacionesPorIn('1,2,3,4,5');
@@ -165,75 +169,113 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 
 
 if ($_SESSION['idroll_sahilices'] == 7) {
-	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId($idestado);
+	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId(mysql_result($resultado,0,'refestadocotizaciones'));
 	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$idestado);
 } else {
 
-	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorIn('1,4,8,10,12,13');
+	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorIn('1,4,8,10,12,13,26,27');
 	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$idestado);
 }
 
 
-switch (mysql_result($resultado,0,'cobertura')) {
-	case 'Si':
-		$cadRef7 = "<option value='Si' selected>Si</option><option value='No'>No</option><option value='No lo se'>No lo se</option>";
-	break;
-	case 'No':
-		$cadRef7 = "<option value='Si'>Si</option><option value='No' selected>No</option><option value='No lo se'>No lo se</option>";
-	break;
-	case 'No lo se':
-		$cadRef7 = "<option value='Si'>Si</option><option value='No'>No</option><option value='No lo se' selected>No lo se</option>";
-	break;
-	default:
-		$cadRef7 = "<option value='Si'>Si</option><option value='No'>No</option><option value='No lo se' selected>No lo se</option>";
-	break;
+if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) {
+	switch (mysql_result($resultado,0,'cobertura')) {
+		case 'Si':
+			$cadRef7 = "<option value='Si' selected>Si</option><option value='No'>No</option><option value='No lo se'>No lo se</option>";
+		break;
+		case 'No':
+			$cadRef7 = "<option value='Si'>Si</option><option value='No' selected>No</option><option value='No lo se'>No lo se</option>";
+		break;
+		case 'No lo se':
+			$cadRef7 = "<option value='Si'>Si</option><option value='No'>No</option><option value='No lo se' selected>No lo se</option>";
+		break;
+		default:
+			$cadRef7 = "<option value=''>-- Seleccionar --</option><option value='Si'>Si</option><option value='No'>No</option><option value='No lo se'>No lo se</option>";
+		break;
+	}
+} else {
+	$cadRef7 = "<option value='".mysql_result($resultado,0,'cobertura')."'>".mysql_result($resultado,0,'cobertura')."</option>";
 }
 
 //die(var_dump($ordenPosible));
 
-switch (mysql_result($resultado,0,'presentacotizacion')) {
-	case 'Si':
-		$cadRef8 = "<option value='Si' selected>Si</option><option value='No'>No</option>";
-	break;
-	case 'No':
-		$cadRef8 = "<option value='Si'>Si</option><option value='No' selected>No</option>";
-	break;
-	default:
-		$cadRef8 = "<option value='Si'>Si</option><option value='No' selected>No</option>";
-	break;
+if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) {
+	switch (mysql_result($resultado,0,'presentacotizacion')) {
+		case 'Si':
+			$cadRef8 = "<option value='Si' selected>Si</option><option value='No'>No</option>";
+		break;
+		case 'No':
+			$cadRef8 = "<option value='Si'>Si</option><option value='No' selected>No</option>";
+		break;
+		default:
+			$cadRef8 = "<option value=''>-- Seleccionar --</option><option value='Si'>Si</option><option value='No'>No</option>";
+		break;
+	}
+} else {
+	$cadRef8 = "<option value='".mysql_result($resultado,0,'presentacotizacion')."'>".mysql_result($resultado,0,'presentacotizacion')."</option>";
 }
 
-switch (mysql_result($resultado,0,'tiponegocio')) {
-	case 'Negocio nuevo':
-		$cadRef9 = "<option value='Negocio nuevo' selected>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
-	break;
-	case 'Renovación':
-		$cadRef9 = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación' selected>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
-	break;
-	case 'Renovación póliza con otro agente':
-		$cadRef9 = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente' selected>Renovación póliza con otro agente</option>";
-	break;
-	default:
-		$cadRef9 = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
-	break;
+
+if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) {
+
+	switch (mysql_result($resultado,0,'tiponegocio')) {
+		case 'Negocio nuevo':
+			$cadRef9 = "<option value='Negocio nuevo' selected>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
+		break;
+		case 'Renovación':
+			$cadRef9 = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación' selected>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
+		break;
+		case 'Renovación póliza con otro agente':
+			$cadRef9 = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente' selected>Renovación póliza con otro agente</option>";
+		break;
+		default:
+			$cadRef9 = "<option value=''>-- Seleccionar --</option><option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
+		break;
+	}
+} else {
+	$cadRef9 = "<option value='".mysql_result($resultado,0,'tiponegocio')."'>".mysql_result($resultado,0,'tiponegocio')."</option>";
 }
 
 $cadRef11 = '';
-switch (mysql_result($resultado,0,'existeprimaobjetivo')) {
-	case '1':
-		$cadRef11 = "<option value='1' selected>Si</option><option value='0'>No</option>";
-	break;
-	case '0':
-		$cadRef11 = "<option value='1'>Si</option><option value='0' selected>No</option>";
-	break;
+
+if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) {
+	switch (mysql_result($resultado,0,'existeprimaobjetivo')) {
+		case '1':
+			$cadRef11 = "<option value='1' selected>Si</option><option value='0'>No</option>";
+		break;
+		case '0':
+			$cadRef11 = "<option value='1'>Si</option><option value='0' selected>No</option>";
+		break;
+		default:
+			$cadRef11 = "<option value=''>-- Seleccionar --</option><option value='1'>Si</option><option value='0' selected>No</option>";
+		break;
+	}
+} else {
+	switch (mysql_result($resultado,0,'existeprimaobjetivo')) {
+		case '1':
+			$cadRef11 = "<option value='1'>Si</option>";
+		break;
+		case '0':
+			$cadRef11 = "<option value='0'>No</option>";
+		break;
+		default:
+			$cadRef11 = "<option value=''>-- Ninguno --</option>";
+		break;
+	}
 }
 
 $resVar10	= $serviciosReferencias->traerAseguradora();
-$cadRef10 = '<option value="0">-- Seleccionar --</option>';
-$cadRef10 .= $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',mysql_result($resultado,0,'coberturaactual'));
 
-$resVar10m	= $serviciosReferencias->traerAseguradora();
-//$cadMotivosRechazos = $serviciosFunciones->devolverSelectBox($resVar10m,array(1),'');
+if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) {
+
+	$cadRef10 = "<option value='0'>-- Seleccionar --</option>";
+	$cadRef10 .= $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',mysql_result($resultado,0,'coberturaactual'));
+} else {
+	$cadRef10 = $serviciosFunciones->devolverSelectBoxActivoUnico($resVar10,array(1),'',mysql_result($resultado,0,'coberturaactual'));
+	if ($cadRef10 == '') {
+		$cadRef10 = "<option value='0'>-- Ninguno --</option>";
+	}
+}
 
 $resEstadoUnico = $serviciosReferencias->traerEtapacotizacion();
 $cadEstUnico = $serviciosFunciones->devolverSelectBoxActivo($resEstadoUnico,array(1),'',mysql_result($resultado,0,'refestados'));
@@ -272,7 +314,7 @@ if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16
 } else {
 	$documentacionesadicionales = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
 	$documentacionesadicionales2 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
-	$documentacionesadicionales3 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'82,83,84,85,86');
+	$documentacionesadicionales3 = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3);
 }
 
 $documentacionesrequeridas = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,$refdoctipo);
@@ -346,6 +388,7 @@ $rightsidebar = '<ul class="nav nav-tabs tab-nav-right" role="tablist">
 
                 <li role="presentation" class="active"><a href="#settings" data-toggle="tab">DOCUMENTACIONES</a></li>
             </ul>
+            <div class="tab-content">
 
                 <div role="tabpanel" class="tab-pane fade in active" id="settings">
                     <div class="demo-settings">
@@ -379,7 +422,11 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 	$modalVigencias = 1;
 }
 
+$refDoc = '3,'.$refdoctipo;
+
 $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'','82,83,84,85,86');
+
+//$resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($id,5);
 
 
 ?>
@@ -427,15 +474,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 		.alert > i{ vertical-align: middle !important; }
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		#codigopostal { width: 400px; }
-
-		.pdfobject-container { height: 60rem; border: 1rem solid rgba(0,0,0,.1); }
-
-		.modal-dialog {
-		  width: 80%;
-		  height: 80%;
-		  /*margin: 10px 10px;*/
-		  padding: 0;
-		}
+		.pdfobject-container { height: 50rem; border: 1rem solid rgba(0,0,0,.1); }
 
 	</style>
 
@@ -494,14 +533,14 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								MODIFICAR <?php echo strtoupper($plural); ?> <button type="button" class="btn bg-cyan waves-effect btnLstDocumentaciones"><i class="material-icons">unarchive</i><span class="js-right-sidebar" data-close="true">VISUALIZAR DOCUMENTOS</span></button>
+								MODIFICAR <?php echo strtoupper($plural); ?>
 
-								<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
-								<button type="button" class="btn bg-brown waves-effect btnAdjuntar"><i class="material-icons">unarchive</i><span>ADJUNTAR COTIZACIONES</span></button>
-
+								<?php if ($idestado == 30) { ?>
+								<button type="button" class="btn bg-brown waves-effect btnAdjuntar"><i class="material-icons">unarchive</i><span>DOCUMENTOS GENERALES</span></button>
 								<?php } ?>
 
 								<button type="button" class="btn btn-info waves-effect btnTrazabilidad" data-cotizacion="<?php echo $id; ?>"><i class="material-icons">show_chart</i><span>TRAZABILIDAD</span></button>
+
 
 
 							</h2>
@@ -525,6 +564,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 							$cotAceptada = 0;
 							$cotPDF = '';
 							$lblAceptada = '';
+
 							while ($rowCI = mysql_fetch_array($resCotizacionInbursa) ) {
 
 								if ($rowCI['archivo'] != '') {
@@ -544,7 +584,8 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 										?>
 
 
-							<?php	}
+							<?php
+								}
 							}
 							?>
 								</div>
@@ -553,10 +594,11 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 							<form class="formulario frmNuevo" role="form" id="sign_in">
 
 
-								<div class="row datosFormulario" style="padding: 5px 20px;">
+								<div class="row" style="padding: 5px 20px;">
 
+									<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 4)) {
+									?>
 									<?php echo $frmUnidadNegocios; ?>
-
 									<div class="form-group col-md-12 frmContobservaciones" style="display:block">
 										<label for="observaciones" class="control-label" style="text-align:left">Escriba mensaje para la bitacora </label>
 										<div class="input-group col-md-12">
@@ -566,11 +608,6 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 									<input type="hidden" id="estadoactual" name="estadoactual" value=""/>
 								</div>
-
-								<div class="row">
-									<div id="example1"></div>
-								</div>
-
 								<div class="row" style="display:none;">
 									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContidclienteinbursa" style="display:block">
 										<label class="form-label">ID Cliente Inbursa </label>
@@ -591,44 +628,88 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 										</div>
 									</div>
 								</div>
+								<?php if (mysql_num_rows($cuestionario)>0) { ?>
+								<div class="row" style="padding: 5px 20px;">
+									<table class="display table table-border" style="border:1px solid #333;">
+										<thead>
+											<th colspan="2">CUESTIONARIO</th>
+										</thead>
+										<tbody>
+											<tr>
+												<th>Pregunta</th>
+												<th>Respuesta</th>
+											</tr>
+									<?php
+									$pregunta = '';
+									$idcuestionario = 0;
+
+									while ($rowC = mysql_fetch_array($cuestionario)) {
+										$idcuestionario = $rowC['idcuestionario'];
+										echo '<tr><td>';
+										if ($pregunta != $rowC['pregunta']) {
+											$pregunta = $rowC['pregunta'];
+											echo $pregunta.'</td>';
+										} else {
+											echo '</td>';
+										}
+									?>
+										<td><h5 style="color:green;">* <?php echo ($rowC['respuesta'] == 'Lo que el ususario ingrese' ? $rowC['respuestavalor'] : $rowC['respuesta']); ?></h5></td>
+									</tr>
+									<?php
+									}
+
+									//die(var_dump($idcuestionario.'-'.$idCliente));
+									$resClienteDatos = $serviciosReferencias->necesitoPreguntaSencible($idCliente,$idcuestionario);
+									$pregunta = '';
+									foreach ($resClienteDatos[0] as $rowCC) {
+										echo '<tr><td>';
+										if ($pregunta != $rowCC['pregunta']) {
+											$pregunta = $rowCC['pregunta'];
+											echo $pregunta.'</td>';
+										} else {
+											echo '</td>';
+										}
+
+									?>
+									<td><h5 style="color:green;">* <?php echo $rowCC['valor']; ?></h5></td>
+								</tr>
+								<?php } ?>
+										</tbody>
+									</table>
+								</div>
+								<?php } ?>
+
+							<?php } else { // esta parte es para mesa de control que no es los administradores?>
+								<div class="row">
+									<div id="example1"></div>
+								</div>
+							<?php } ?>
+
 
 								<div class="row">
 									<p>Acciones</p>
 									<div class="modal-footer">
 										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+											<button type="button" class="btn btn-info waves-effect">ESTADO: <?php echo mysql_result($resEstados,0,'estadocotizacion'); ?></button>
 
-
-											<?php if ($idestado == 8 ) { ?>
-											<!--<button id="8" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>-->
-
-											<?php if ($exiteAceptada == 1) { ?>
-											<button type="button" class="btn bg-green waves-effect btnAbandonada">Aceptada</button>
-											<?php } ?>
-											<?php
-											if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 3)) {
-											?>
-											<button type="button" class="btn bg-amber waves-effect btnDenegada">En Ajuste</button>
-											<button type="button" class="btn bg-red waves-effect btnInsuficiente">Rechazada</button>
-											<?php } ?>
-
-										<?php } else {
-											if ($_SESSION['idroll_sahilices'] != 7) {
-												if ($idestado <= 11) {
-											?>
-
-										<?php } else { ?>
-											<button id="<?php echo $idestado; ?>" type="button" class="btn waves-effect btnContinuar"><?php echo mysql_result($resEstados,0,'estadocotizacion'); ?></button>
-										<?php
-										}
-										} ?>
+										<?php if ($idestado == 30) { ?>
+											<button type="button" class="btn btn-success waves-effect btnAceptarMesaDeControl">ACEPTAR</button>
+											<button type="button" class="btn btn-danger waves-effect btnRechazarMesaDeControl">Rechazar</button>
 										<?php } ?>
+
+											<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 14) || ($_SESSION['idroll_sahilices'] == 15) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22) || ($_SESSION['idroll_sahilices'] == 23)) { ?>
+											<button id="<?php echo $idestado; ?>" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>
+											<?php } ?>
+
+
 
 
 										</div>
 				               </div>
 								</div>
 
-
+								<input type="hidden" id="refestadocotizaciones" name="refestadocotizaciones" value="26"/>
+								<input type="hidden" id="refestados" name="refestados" value="5"/>
 							</form>
 							</div>
 						</div>
@@ -686,86 +767,12 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 	 <div class="modal-dialog modal-lg" role="document">
 		  <div class="modal-content">
 				<div class="modal-header bg-blue">
-					 <h4 class="modal-title" id="largeModalLabel">MODIFICAR ESTADO DE LA COTIZACIÓN</h4>
+					 <h4 class="modal-title" id="largeModalLabel">MODIFICAR ESTADO DE LA COTIZACION</h4>
 				</div>
 				<div class="modal-body">
-					<h3 class="lblOtra">¿Esta seguro que desea <span class="lblModiEstado"></span> la cotizacion <?php echo $lblAceptada; ?> ?</h3>
-					<h3 class="lblAcepta">Eligiste la Cotización: <?php echo $lblAceptada; ?></h3>
+				 <h3>¿Esta seguro que desea <span class="lblModiEstado"></span> la cotizacion?</h3>
 
 
-
-				<div class="row contFrmAceptadas">
-					<h4>Una vez ACEPTADA, su cotización estará en el listado de cotizaciones aceptadas, donde deberá cargar la documentación necesaria para la emisión.</h4>
-					<?php
-					//buscar el suuario de mas seguros
-					if ($_SESSION['usuaid_sahilices'] == 154) {
-					?>
-						<input type="hidden" class="form-control" value="emisión@masseguros.mx" id="emailequipo" name="emailequipo" />
-					<?php } else { ?>
-						<p>Si quiere notificar a alquien de tu equipo de trabajo, escribe el correo electrónico</p>
-						<input type="email" class="form-control" id="emailequipo" name="emailequipo" />
-					<?php } ?>
-
-
-
-				</div>
-				 <div class="row contFrmRechazoDefinitivo">
- 					<h4>Por favor ingrese los motivos del rechazo, para poderte afrocer un mejor servicio!!</h4>
- 					<div class="row">
-	 					<div class="col-xs-6">
-							<div class="form-group input-group">
-								<label class="label-form">Motivo</label>
-		 						<select class="form-control" id="motivo" name="motivo">
-		 							<option value="Precio">Precio</option>
-		 							<option value="Mal Servicio">Mal Servicio</option>
-		 							<option value="Otro">Otro</option>
-		 						</select>
-		 					</div>
-						</div>
-					</div>
-					<div class="contMotivosPrecio">
-
-						<div class="row">
-							<div class="col-xs-3">
-								<div class="form-group input-group">
-									<label class="label-form">No se compartió información</label>
-			 						<select class="form-control" id="nocompartioinformacion" name="nocompartioinformacion">
-			 							<option value="1">Si</option>
-			 							<option value="0">No</option>
-			 						</select>
-								</div>
-		 					</div>
-
-		 					<div class="col-xs-3">
-								<div class="form-group input-group">
-									<label class="label-form">Prima total Inbursa</label>
-			 						<input type="text" class="form-control" id="primatotalinbursa" name="primatotalinbursa" />
-								</div>
-		 					</div>
-							<div class="col-xs-3">
-								<div class="form-group input-group">
-									<label class="label-form">Prima total Competencia</label>
-			 						<input type="text" class="form-control" id="primatotalcompetencia" name="primatotalcompetencia" />
-								</div>
-		 					</div>
-							<div class="col-xs-3">
-								<div class="form-group input-group">
-									<label class="label-form">Aseguradora que se queda negocio</label>
-			 						<select class="form-control" id="aseguradora" name="aseguradora">
-										<?php while ($rowA = mysql_fetch_array($resVar10m)) {
-											echo '<option value="'.$rowA['razonsocial'].'">'.$rowA['razonsocial'].'</option>';
-										}
-										?>
-										<option value="Otra">Otra</option>
-			 						</select>
-								</div>
-		 					</div>
-						</div>
-					</div>
- 					<hr>
- 					<p>Puedes contactarnos en el Tel fijo: <b><span style="color:#5DC1FD;">55 51 35 02 59</span></b></p>
- 					<p>Correo: <a href="mailto:ventas@asesorescrea.com" style="color:#5DC1FD !important;"><b>ventas@asesorescrea.com</b></a></p>
- 				</div>
 				</div>
 				<div class="modal-footer">
 					 <button type="button" class="btn waves-effect modificarEstadoCotizacionRechazo"></button>
@@ -807,10 +814,14 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 <script>
 	$(document).ready(function(){
 
+		<?php if ($cotAceptada != 0) { ?>
+			PDFObject.embed("<?php echo $cotPDF; ?>", "#example1");
+		<?php } ?>
+
+
 		$('.frmContbitacorainbursa').hide();
 		$('.frmContbitacoraagente').hide();
 		$("#bitacoracrea").prop('readonly',true);
-
 
 		$('.btnModificarBitacora').click(function() {
 
@@ -870,82 +881,16 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 			});
 		}
 
-		$('.contFrmAceptadas').hide();
-
-		<?php if ($cotAceptada != 0) { ?>
-			PDFObject.embed("<?php echo $cotPDF; ?>", "#example1");
-		<?php } ?>
-
-		<?php
-		if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 7)) {
-		?>
-		$('.btnCotizacion').click(function() {
-			var contImagen = $(this).data('imagen');
-			var idcot =  $(this).attr('id');
-			PDFObject.embed(contImagen, "#example1");
-			aceptarCotizacionInbursa(idcot);
-		});
-		<?php } ?>
-
-		<?php
-		if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 3)) {
-		?>
-		$('.datosFormulario').hide();
-		<?php } else { ?>
-			$('.datosFormulario').hide();
-		<?php } ?>
-
-		function trazabilidad(id,idestado,dato,url) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {
-					accion: 'trazabilidadCotizacion',
-					id: id,
-					idestado: idestado,
-					dato: dato,
-					url: url
-				},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-				},
-				//si ha ocurrido un error
-				error: function(){
-					swal({
-						title: "Respuesta",
-						text: 'Actualice la pagina',
-						type: "error",
-						timer: 2000,
-						showConfirmButton: false
-					});
-				}
-			});
-		}
-
 		$('.btnAdjuntar').click(function() {
 			url = "adjuntarcotizaciones.php?id=<?php echo $id; ?>";
 			$(location).attr('href',url);
 		});
 
-		$('.frmContcobertura').hide();
-		$('.frmContrefasociados').hide();
-		$('.frmContot').hide();
-		$('.frmContarticulo').hide();
-		$('.frmContversion').hide();
-		$('.frmContprimaneta').hide();
-		$('.frmContprimatotal').hide();
-		$('.frmContfolio').hide();
-
 		$('.btnaceptarCotizacion').click(function() {
 			aceptarCotizacionInbursa();
 		});
 
-		function aceptarCotizacionInbursa(id) {
+		function aceptarCotizacionInbursa() {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
@@ -953,7 +898,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 				//datos del formulario
 				data: {
 					accion: 'aceptarCotizacionInbursa',
-					id: id,
+					id: $('#aceptarCotizacion').val(),
 					idcotizacion: <?php echo $id; ?>
 				},
 				//mientras enviamos el archivo
@@ -1005,10 +950,18 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 			}
 		});
 
+		$('.frmContcobertura').hide();
+		$('.frmContrefasociados').hide();
+
+		$('.frmContarticulo').hide();
+		$('.frmContversion').hide();
+
+		$('.frmContfolio').hide();
+
 		<?php if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 16) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22) || ($_SESSION['idroll_sahilices'] == 23)) { ?>
 		$('.frmContrefestadocotizaciones').hide();
 		$('.frmContarticulo').hide();
-		$('.frmContot').hide();
+
 		<?php } ?>
 
 		$('#primaneta').number( true, 2 ,'.','');
@@ -1071,7 +1024,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 					}
 
 					$('#lgmModificarEstado').modal('toggle');
-					$(location).attr('href','index.php');
+					location.reload();
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -1096,8 +1049,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 				data: {
 					accion: 'modificarCotizacionesPorCampo',
 					id: $('#idmodificarestadorechazo').val(),
-					idestado: $('#estadomodificarestadorechazo').val(),
-					emailequipo: $('#emailequipo').val()
+					idestado: $('#estadomodificarestadorechazo').val()
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
@@ -1114,7 +1066,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 					});
 					$('#lgmModificarEstado').modal('toggle');
 					table.ajax.reload();
-					$(location).attr('href','index.php');
+					location.reload();
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -1181,16 +1133,10 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 			});
 		}
 
-		$('.btnAbandonada').click(function() {
+		$('.btnAceptarMesaDeControl').click(function() {
 
 			$('.lblModiEstado').html('aceptar');
-			$('.lblAcepta').show();
-			$('.lblOtra').hide();
-
-
-			$('.modificarEstadoCotizacionRechazo').html('ACEPTADA');
-
-			$('.contFrmAceptadas').show();
+			$('.modificarEstadoCotizacionRechazo').html('ACEPTAR');
 
 			$('.modificarEstadoCotizacionRechazo').addClass('bg-green');
 			$('.modificarEstadoCotizacionRechazo').removeClass('bg-amber');
@@ -1199,20 +1145,17 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 			$('.contFrmRechazoDefinitivo').hide();
 
 			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
-			$('#estadomodificarestadorechazo').val(9);
+			$('#estadomodificarestadorechazo').val(27);
 			$('#lgmModificarEstado').modal();
 
 		});//fin del boton eliminar
 
 		$('.btnDenegada').click(function() {
 
-			$('.lblModiEstado').html('pasar a en ajuste');
-			$('.lblAcepta').hide();
-			$('.lblOtra').show();
+			$('.lblModiEstado').html('EN AJUSTE');
 			$('.modificarEstadoCotizacionRechazo').html('EN AJUSTE');
 
 			$('.contFrmRechazoDefinitivo').hide();
-			$('.contFrmAceptadas').hide();
 
 			$('.modificarEstadoCotizacionRechazo').removeClass('bg-green');
 			$('.modificarEstadoCotizacionRechazo').addClass('bg-amber');
@@ -1227,13 +1170,10 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 		$('.btnInsuficiente').click(function() {
 
-			$('.lblModiEstado').html('rechazar');
-			$('.lblAcepta').hide();
-			$('.lblOtra').show();
+			$('.lblModiEstado').html('RECHAZADA');
 			$('.modificarEstadoCotizacionRechazo').html('RECHAZADA');
 
 			$('.contFrmRechazoDefinitivo').hide();
-			$('.contFrmAceptadas').hide();
 
 			$('.modificarEstadoCotizacionRechazo').removeClass('bg-green');
 			$('.modificarEstadoCotizacionRechazo').removeClass('bg-amber');
@@ -1247,13 +1187,10 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 		$('.btnRechazadaDefinitivamente').click(function() {
 
-			$('.lblModiEstado').html('rechazar definitivamente');
-			$('.lblAcepta').hide();
-			$('.lblOtra').show();
+			$('.lblModiEstado').html('RECHAZADA DEFINITIVAMENTE');
 			$('.modificarEstadoCotizacionRechazo').html('RECHAZADA DEFINITIVAMENTE');
 
 			$('.contFrmRechazoDefinitivo').show();
-			$('.contFrmAceptadas').hide();
 
 			$('.modificarEstadoCotizacionRechazo').removeClass('bg-green');
 			$('.modificarEstadoCotizacionRechazo').removeClass('bg-amber');
@@ -1329,6 +1266,9 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 				}
 			});
 		}
+
+
+
 
 
 
@@ -1888,7 +1828,9 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 
 		$('.frmNuevo').submit(function(e){
-
+			idTable =  $('.btnContinuar').attr("id");
+			$('#refestadocotizaciones').val(idTable);
+			$('#refestados').val(3);
 			e.preventDefault();
 			if ($('#sign_in')[0].checkValidity()) {
 				//información del formulario

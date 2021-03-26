@@ -91,22 +91,31 @@ function enviarCorreosEtapas( $etapa, $id) {
    return $resEmail;
 }
 
+function traerAsesoresPorId($id) {
+$sql = "select idasesor,refusuarios,nombre,apellidopaterno,apellidomaterno,email,curp,rfc,ine,fechanacimiento,sexo,codigopostal,refescolaridades,telefonomovil,telefonocasa,telefonotrabajo,fechacrea,fechamodi,usuariocrea,usuariomodi,reftipopersonas,claveinterbancaria,idclienteinbursa,claveasesor,fechaalta,nss,razonsocial,nropoliza,vigdesdecedulaseguro,vighastacedulaseguro,vigdesderc,vighastarc,refestadoasesor,refestadoasesorinbursa,envioalcliente from dbasesores where idasesor =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
 
 function login($usuario,$pass) {
 
-	$sqlusu = "select * from dbusuarios where email = '".$usuario."' and refroles <> 19";
+   $sqlusuDirectorio = "select refasesores,password,razonsocial from dbdirectorioasesores where email = '".$usuario."' and password = '".$pass."'";
 
-	$error = '';
+   $respusuDirectorio = $this->query($sqlusuDirectorio,0);
 
-	if (trim($usuario) != '' and trim($pass) != '') {
+   $error = '';
 
-	$respusu = $this->query($sqlusu,0);
+   if (mysql_num_rows($respusuDirectorio) > 0) {
+      $idasesor = mysql_result($respusuDirectorio,0,0);
+      $pass = mysql_result($respusuDirectorio,0,1);
+      $nombreDirectorio = mysql_result($respusuDirectorio,0,2);
 
-	if (mysql_num_rows($respusu) > 0) {
+      $resAsesor = $this->traerAsesoresPorId($idasesor);
 
+      $idUsua = mysql_result($resAsesor,0,'refusuarios');
 
-		$idUsua = mysql_result($respusu,0,0);
-		$sqlpass = "SELECT
+      $sqlpass = "SELECT
                    u.nombrecompleto,
                    u.email,
                    u.usuario,
@@ -119,40 +128,33 @@ function login($usuario,$pass) {
                    tbroles r ON r.idrol = u.refroles
                      left join dbtokenasesores tk on tk.refusuarios = u.idusuario
                WHERE
-                   password = '".$pass."' AND u.activo = 1
+                   u.activo = 1
                        AND idusuario = ".$idUsua;
 
 
-		$resppass = $this->query($sqlpass,0);
+      $resppass = $this->query($sqlpass,0);
 
-		if (mysql_num_rows($resppass) > 0) {
-			$error = '';
-			} else {
-				$error = 'Usuario o Password incorrecto';
-			}
+      if (mysql_num_rows($resppass) > 0) {
+         $error = '';
+      } else {
+         $error = 'Usuario o Password incorrecto';
+      }
 
-		}
-		else
-
-		{
-			$error = 'Usuario o Password incorrecto';
-		}
-
-		if ($error == '') {
-			//die(var_dump($error));
-			session_start();
+      if ($error == '') {
+         //die(var_dump($error));
+         session_start();
 
          if (mysql_result($resppass,0,4) == 16) {
             $resCliente = $this->traerClientesPorUsuario($idUsua);
 
             $_SESSION['idcliente_sahilices'] = mysql_result($resCliente,0,0);
          }
-			$_SESSION['usua_sahilices'] = $usuario;
-			$_SESSION['nombre_sahilices'] = mysql_result($resppass,0,0);
-			$_SESSION['usuaid_sahilices'] = $idUsua;
-			$_SESSION['email_sahilices'] = mysql_result($resppass,0,1);
-			$_SESSION['idroll_sahilices'] = mysql_result($resppass,0,4);
-			$_SESSION['refroll_sahilices'] = mysql_result($resppass,0,3);
+         $_SESSION['usua_sahilices'] = $usuario;
+         $_SESSION['nombre_sahilices'] = $nombreDirectorio;
+         $_SESSION['usuaid_sahilices'] = $idUsua;
+         $_SESSION['email_sahilices'] = mysql_result($resppass,0,1);
+         $_SESSION['idroll_sahilices'] = mysql_result($resppass,0,4);
+         $_SESSION['refroll_sahilices'] = mysql_result($resppass,0,3);
          if (mysql_result($resppass,0,4) == 19) {
             $_SESSION['token_ac'] = mysql_result($resppass,0,5);
          } else {
@@ -161,12 +163,84 @@ function login($usuario,$pass) {
 
 
 
-			return 1;
-		}
+         return 1;
+      }
 
-	}	else {
-		$error = 'Usuario y Password son campos obligatorios';
-	}
+   } else {
+      $sqlusu = "select * from dbusuarios where email = '".$usuario."' and refroles <> 19";
+
+   	if (trim($usuario) != '' and trim($pass) != '') {
+
+   	$respusu = $this->query($sqlusu,0);
+
+   	if (mysql_num_rows($respusu) > 0) {
+
+
+   		$idUsua = mysql_result($respusu,0,0);
+   		$sqlpass = "SELECT
+                      u.nombrecompleto,
+                      u.email,
+                      u.usuario,
+                      r.descripcion,
+                      r.idrol,
+                      coalesce(tk.token,'') as token
+                  FROM
+                      dbusuarios u
+                          INNER JOIN
+                      tbroles r ON r.idrol = u.refroles
+                        left join dbtokenasesores tk on tk.refusuarios = u.idusuario
+                  WHERE
+                      password = '".$pass."' AND u.activo = 1
+                          AND idusuario = ".$idUsua;
+
+
+   		$resppass = $this->query($sqlpass,0);
+
+   		if (mysql_num_rows($resppass) > 0) {
+   			$error = '';
+   			} else {
+   				$error = 'Usuario o Password incorrecto';
+   			}
+
+   		}
+   		else
+
+   		{
+   			$error = 'Usuario o Password incorrecto';
+   		}
+
+   		if ($error == '') {
+   			//die(var_dump($error));
+   			session_start();
+
+            if (mysql_result($resppass,0,4) == 16) {
+               $resCliente = $this->traerClientesPorUsuario($idUsua);
+
+               $_SESSION['idcliente_sahilices'] = mysql_result($resCliente,0,0);
+            }
+   			$_SESSION['usua_sahilices'] = $usuario;
+   			$_SESSION['nombre_sahilices'] = mysql_result($resppass,0,0);
+   			$_SESSION['usuaid_sahilices'] = $idUsua;
+   			$_SESSION['email_sahilices'] = mysql_result($resppass,0,1);
+   			$_SESSION['idroll_sahilices'] = mysql_result($resppass,0,4);
+   			$_SESSION['refroll_sahilices'] = mysql_result($resppass,0,3);
+            if (mysql_result($resppass,0,4) == 19) {
+               $_SESSION['token_ac'] = mysql_result($resppass,0,5);
+            } else {
+               $_SESSION['token_ac'] = $this->GUID();
+            }
+
+
+
+   			return 1;
+   		}
+
+   	}	else {
+   		$error = 'Usuario y Password son campos obligatorios';
+   	}
+   }
+
+
 
 
 	return $error;

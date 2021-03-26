@@ -598,6 +598,14 @@ if (count($contratentaDatosCompletos) > 0) {
 	$existenDatosCompletosContratenta = 0;
 }
 
+// verifico si ya guarde los datos de domicilio y telelfono en dbclientesbck
+$resBckUpCliente = $serviciosReferencias->traerClientesbckPorId($rIdCliente);
+if (mysql_num_rows($resBckUpCliente) > 0) {
+	$existeBckUpCliente = 1;
+} else {
+	$existeBckUpCliente = 0;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -1378,6 +1386,126 @@ if (count($contratentaDatosCompletos) > 0) {
 	</form>
 
 
+
+
+
+	<div class="modal fade" id="lgmDomicilioTelefono" tabindex="-1" role="dialog">
+		 <div class="modal-dialog modal-xlg" role="document">
+			  <div class="modal-content">
+					<div class="modal-header">
+						 <h4 class="modal-title" id="largeModalLabel">DATOS DEL CONTRATANTE NECESARIOS</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+
+							<div class="row">
+								<div class="col-xs-6">
+									<div class="list-group">
+										<a href="javascript:void(0);" class="list-group-item active">
+										DATOS CARGADOS
+										</a>
+										<a href="javascript:void(0);" class="list-group-item">Tel. Movil: <?php echo mysql_result($rCliente,0,'telefonocelular'); ?></a>
+										<a href="javascript:void(0);" class="list-group-item">Tel. Fijo: <?php echo mysql_result($rCliente,0,'telefonofijo'); ?></a>
+										<a href="javascript:void(0);" class="list-group-item">Calle: <?php echo mysql_result($rCliente,0,'domicilio'); ?></a>
+										<a href="javascript:void(0);" class="list-group-item">Nro. Int.: <?php echo mysql_result($rCliente,0,'nrointerior'); ?></a>
+										<a href="javascript:void(0);" class="list-group-item">Nro. Ext.: <?php echo mysql_result($rCliente,0,'nroexterior'); ?></a>
+										<a href="javascript:void(0);" class="list-group-item">Edificio: <?php echo mysql_result($rCliente,0,'edificio'); ?></a>
+										<a href="javascript:void(0);" class="list-group-item">Cod. Postal: <?php echo mysql_result($rCliente,0,'codigopostal'); ?></a>
+										<a href="javascript:void(0);" class="list-group-item">Estado: <?php echo mysql_result($rCliente,0,'estado'); ?></a>
+										<a href="javascript:void(0);" class="list-group-item">Colonia: <?php echo mysql_result($rCliente,0,'colonia'); ?></a>
+										<a href="javascript:void(0);" class="list-group-item">Municipio: <?php echo mysql_result($rCliente,0,'municipio'); ?></a>
+										<a href="javascript:void(0);" class="list-group-item">Ciudad: <?php echo mysql_result($rCliente,0,'ciudad'); ?></a>
+
+										<a href="javascript:void(0);" class="list-group-item"><button type="button" class="btn btn-warning waves-effect btnQuieroModificar">DESEO MODIFICAR ESTOS DATOS</button> <button type="button" class="btn btn-success waves-effect btnQuieroMantener right">DESEO MANTENER ESTOS DATOS</button></a>
+									</div>
+								</div>
+								<div class="col-xs-6">
+									<div class="list-group panelDatosModificar">
+										<a href="javascript:void(0);" class="list-group-item active">
+										DATOS A MODIFICAR
+										</a>
+										<a href="javascript:void(0);" class="list-group-item">
+											<div class="input-group">
+												<div class="input-group-addon">Tel. Movil: <span style="color:red;">*</span></div>
+												<input type="text" class="form-control" id="dctelefonocelular" name="dctelefonocelular" />
+											</div>
+										</a>
+										<a href="javascript:void(0);" class="list-group-item">
+											<div class="input-group">
+												<div class="input-group-addon">Tel. Fijo:</div>
+												<input type="text" class="form-control" id="dctelefonofijo" name="dctelefonofijo" />
+											</div>
+										</a>
+										<a href="javascript:void(0);" class="list-group-item">
+											<div class="input-group">
+												<div class="input-group-addon">Calle: <span style="color:red;">*</span></div>
+												<input type="text" class="form-control" id="dccalle" name="dccalle" />
+											</div>
+										</a>
+										<a href="javascript:void(0);" class="list-group-item">
+											<div class="input-group">
+												<div class="input-group-addon">Nro. Int: <span style="color:red;">*</span></div>
+												<input type="text" class="form-control" id="dcnrointerior" name="dcnrointerior" />
+											</div>
+										</a>
+										<a href="javascript:void(0);" class="list-group-item">
+											<div class="input-group">
+												<div class="input-group-addon">Nro. Ext: <span style="color:red;">*</span></div>
+												<input type="text" class="form-control" id="dcnroexterior" name="dcnroexterior" />
+											</div>
+										</a>
+										<a href="javascript:void(0);" class="list-group-item">
+											<div class="input-group">
+												<div class="input-group-addon">Edificio: <span style="color:red;">*</span></div>
+												<input type="text" class="form-control" id="dcedificio" name="dcedificio" />
+											</div>
+										</a>
+										<a href="javascript:void(0);" class="list-group-item">
+											<div class="input-group">
+												<div class="input-group-addon">Codigo Postal: <span style="color:red;">*</span></div>
+												<input type="text" class="form-control" id="dccodigopostal" name="dccodigopostal" />
+											</div>
+										</a>
+										<a href="javascript:void(0);" class="list-group-item">
+											<div class="input-group">
+												<div class="input-group-addon">Estado: <span style="color:red;">*</span></div>
+												<input type="text" class="form-control" id="dcestado" name="dcestado" />
+											</div>
+										</a>
+										<a href="javascript:void(0);" class="list-group-item">
+											<div class="input-group">
+												<div class="input-group-addon">Colonia: <span style="color:red;">*</span></div>
+												<input type="text" class="form-control" id="dccolonia" name="dccolonia" />
+											</div>
+										</a>
+										<a href="javascript:void(0);" class="list-group-item">
+											<div class="input-group">
+												<div class="input-group-addon">Municipio: <span style="color:red;">*</span></div>
+												<input type="text" class="form-control" id="dcmunicipio" name="dcmunicipio" />
+											</div>
+										</a>
+										<a href="javascript:void(0);" class="list-group-item">
+											<div class="input-group">
+												<div class="input-group-addon">Ciudad: <span style="color:red;">*</span></div>
+												<input type="text" class="form-control" id="dcciudad" name="dcciudad" />
+											</div>
+										</a>
+										<a href="javascript:void(0);" class="list-group-item"><button type="button" class="btn btn-success waves-effect btnModificarDC">MODIFICAR</button></a>
+									</div>
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+					<div class="modal-footer">
+						 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+					</div>
+			  </div>
+		 </div>
+	</div>
+
+
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 
 <script src="../../js/jquery.easy-autocomplete.min.js"></script>
@@ -1427,8 +1555,154 @@ if (count($contratentaDatosCompletos) > 0) {
 <script>
 	$(document).ready(function(){
 
+		$('.btnModificarDC').click(function() {
+			if (($('#dctelefonocelular').val() == '') || ($('#dccalle').val() == '') || ($('#dcnrointerior').val() == '') || ($('#dcnroexterior').val() == '') || ($('#dcedificio').val() == '') || ($('#dccodigopostal').val() == '') || ($('#dcestado').val() == '') || ($('#dccolonia').val() == '') || ($('#dcmunicipio').val() == '') || ($('#dcciudad').val() == '')) {
+				swal({
+					title: "Respuesta",
+					text: 'Complete todos los campos obligatorios para modificar los datos',
+					type: "error",
+					timer: 2000,
+					showConfirmButton: false
+				});
+			} else {
+				modificarDatosClientes( $('#dctelefonofijo').val(),$('#dctelefonocelular').val(),$('#dccalle').val(),$('#dcnrointerior').val(),$('#dcnroexterior').val(),$('#dcedificio').val(),$('#dccodigopostal').val(),$('#dcestado').val(),$('#dccolonia').val(),$('#dcmunicipio').val(),$('#dcciudad').val());
+
+			}
+
+		});
+
+		function modificarDatosClientes(telefonofijo,telefonocelular,calle,nrointerior,nroexterior,edificio,codigopostal,estado,colonia,municipio,ciudad) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificarDatosClientes',
+					id: <?php echo $rIdCliente; ?>,
+					telefonofijo: telefonofijo,
+					telefonocelular:telefonocelular,
+					calle:calle,
+					nrointerior: nrointerior,
+					nroexterior: nroexterior,
+					edificio: edificio,
+					codigopostal: codigopostal,
+					estado: estado,
+					colonia: colonia,
+					municipio: municipio,
+					ciudad: ciudad
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error == false) {
+						swal({
+							title: "Respuesta",
+							text: 'Datos actualizados',
+							type: "success",
+							timer: 2000,
+							showConfirmButton: false
+						});
+
+						setTimeout(function(){ location.reload(); }, 2000);
 
 
+					} else {
+						swal({
+							title: "Respuesta",
+							text: 'No existe cuestionario para completar, continue',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+					});
+				}
+			});
+		}
+
+		$('.btnQuieroMantener').click(function() {
+			insertarBckUpCliente();
+		});
+
+		function insertarBckUpCliente() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'insertarBckUpCliente',
+					id: <?php echo $rIdCliente; ?>
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error == false) {
+						swal({
+							title: "Respuesta",
+							text: 'Los datos quedaran iguales',
+							type: "success",
+							timer: 2000,
+							showConfirmButton: false
+						});
+
+						setTimeout(function(){ location.reload(); }, 2000);
+					} else {
+						swal({
+							title: "Respuesta",
+							text: 'No existe cuestionario para completar, continue',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+					});
+				}
+			});
+		}
+
+
+
+		$('#dctelefonofijo').inputmask('9999999999', { placeholder: '__________' });
+		$('#dctelefonocelular').inputmask('9999999999', { placeholder: '__________' });
+
+		<?php if ($existeBckUpCliente == 0) { ?>
+		$('#lgmDomicilioTelefono').modal();
+		<?php } ?>
+
+		$('.panelDatosModificar').hide();
+		$('.btnQuieroModificar').click(function() {
+			$('.panelDatosModificar').show();
+		});
 
 
 		$('.frmContparentescoASG').hide();
@@ -1453,6 +1727,47 @@ if (count($contratentaDatosCompletos) > 0) {
 				$("#parentescoBNF").prop('required',false);
 			}
 		});
+
+
+		var optionsDC = {
+
+			url: "../../json/jsbuscarpostal.php",
+
+			getValue: function(element) {
+				return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+			},
+
+			ajaxSettings: {
+				dataType: "json",
+				method: "POST",
+				data: {
+					busqueda: $("#dccodigopostal").val()
+				}
+			},
+
+			preparePostData: function (data) {
+				data.busqueda = $("#dccodigopostal").val();
+				return data;
+			},
+
+			list: {
+				maxNumberOfElements: 20,
+				match: {
+					enabled: true
+				},
+				onClickEvent: function() {
+					var value = $("#dccodigopostal").getSelectedItemData().codigo;
+					$("#dccodigopostal").val(value);
+					$("#dcmunicipio").val($("#dccodigopostal").getSelectedItemData().municipio);
+					$("#dcestado").val($("#dccodigopostal").getSelectedItemData().estado);
+					$("#dccolonia").val($("#dccodigopostal").getSelectedItemData().colonia);
+
+
+				}
+			}
+		};
+
+		$("#dccodigopostal").easyAutocomplete(optionsDC);
 
 		var options = {
 

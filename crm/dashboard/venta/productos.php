@@ -65,7 +65,7 @@ $lblPrecioVIDA500 = '';
 $existeCotizacionParaProductoVRIM = $serviciosReferencias->traerValoredadPorProductoEdad(41,$edad);
 
 if (mysql_num_rows($existeCotizacionParaProductoVRIM)>0) {
-   $lblPrecioVRIM = '$'.mysql_result($existeCotizacionParaProductoVRIM,0,'valor');
+   $lblPrecioVRIM = '$ '.number_format (mysql_result($existeCotizacionParaProductoVRIM,0,'valor'),2,'.',',');
 } else {
    $lblPrecioVRIM = '';
 }
@@ -74,7 +74,7 @@ $existeCotizacionParaProductoSEVI = $serviciosReferencias->traerValoredadPorProd
 
 if (mysql_num_rows($existeCotizacionParaProductoSEVI)>0) {
    //die(var_dump(mysql_result($existeCotizacionParaProductoSEVI,0,'valor')));
-   $lblPrecioSEVI = '$'.mysql_result($existeCotizacionParaProductoSEVI,0,'valor');
+   $lblPrecioSEVI = '$ '.number_format (mysql_result($existeCotizacionParaProductoSEVI,0,'valor'),2,'.',',');
 } else {
    $lblPrecioSEVI = '';
 }
@@ -83,7 +83,7 @@ if (mysql_num_rows($existeCotizacionParaProductoSEVI)>0) {
 $existeCotizacionParaProductoS500 = $serviciosReferencias->traerValoredadPorProductoEdad(54,$edad);
 
 if (mysql_num_rows($existeCotizacionParaProductoS500)>0) {
-   $lblPrecioVIDA500 = '$'.mysql_result($existeCotizacionParaProductoS500,0,'valor');
+   $lblPrecioVIDA500 = '$ '.number_format (mysql_result($existeCotizacionParaProductoS500,0,'valor'),2,'.',',');
 } else {
    $lblPrecioVIDA500 = '';
 }

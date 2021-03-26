@@ -524,19 +524,10 @@ if (mysql_num_rows($resActivacion) > 0) {
          }
       </script>
       <div class="gt3-page-title_wrapper">
-         <div class='gt3-page-title gt3-page-title_horiz_align_left gt3-page-title_vert_align_middle gt3-page-title_has_img_bg' style="background-color:#202326;height:390px;color:#ffffff;margin-bottom:60px;background-image:url(https://asesorescrea.com/wp-content/uploads/2020/07/banner-portada-Asesores-CREA-registro.jpg);background-size:cover;background-repeat:no-repeat;background-attachment:scroll;background-position:center center;">
+         <div class='gt3-page-title gt3-page-title_horiz_align_left gt3-page-title_vert_align_middle gt3-page-title_has_img_bg' style="background-color:#202326;height:40px;color:#ffffff;margin-bottom:10px;background-image:url(https://asesorescrea.com/wp-content/uploads/2020/07/banner-portada-Asesores-CREA-registro.jpg);background-size:cover;background-repeat:no-repeat;background-attachment:scroll;background-position:center center;">
             <div class='gt3-page-title-fill' style='background-color:#343852;'></div>
             <div class='gt3-page-title__inner has_fill_inner'>
-               <div class='container'>
-                  <div class='gt3-page-title__content'>
-                     <div class='page_title'>
-                        <h1>Registro</h1>
-                        <div class='page_sub_title' style="color:#c6ac83;">
-                           <div>Si aún no cuentas con un seguro, regístrate y te asesoramos sin compromiso con las mejores condiciones del mercado.</div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
+
             </div>
          </div>
       </div>
@@ -593,7 +584,7 @@ if (mysql_num_rows($resActivacion) > 0) {
                                                                      <div align="center">
                                                    							<p>Bienvenido, <?php echo $arResultado['postulante']['nombre'].' '.$arResultado['postulante']['apellidopaterno'].' '.$arResultado['postulante']['apellidomaterno']; ?></p>
                                                    							<div class="alert bg-green"><h4>Por favor cargue una password para completar el alta de usuario.</h4></div>
-                                                   							
+
                                                    						</div>
 
                                                                      <div class="contFormulario">

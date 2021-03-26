@@ -127,14 +127,21 @@ switch ($tabla) {
 		$resAjax = $datos[0];
 		$res = $datos[1];
 
-		$label = array('btnPoliza');
-		$class = array('bg-blue');
-		$icon = array('file_download');
+		if ($estado == 2) {
+			$label = array('btnAceptar','btnRechazar');
+			$class = array('bg-green','bg-red');
+			$icon = array('done','remove');
+		} else {
+			$label = array('btnPoliza');
+			$class = array('bg-blue');
+			$icon = array('file_download');
+		}
+
 
 
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 4;
+		$termina = 5;
 	break;
 	case 'tokenasesores':
 		$idasesor = $_GET['idasesor'];
@@ -931,7 +938,7 @@ switch ($tabla) {
 
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 5;
+		$termina = 7;
 
 	break;
 
@@ -1351,13 +1358,18 @@ switch ($tabla) {
 					$termina = 10;
 				}
 
-				/*
-				if (($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22)) {
-					$label = array();
-					$class = array();
-					$icon = array();
+				$filtroNuevo = '';
+			break;
+			case 13:
+				$label = array('btnModificar');
+				$class = array('bg-amber');
+				$icon = array('create');
+				$whereEstado = ' c.refestados in (6) and c.refestadocotizaciones in (30) ';
+				if ($_SESSION['idroll_sahilices'] == 7) {
+					$termina = 13;
+				} else {
+					$termina = 13;
 				}
-				*/
 
 				$filtroNuevo = '';
 			break;

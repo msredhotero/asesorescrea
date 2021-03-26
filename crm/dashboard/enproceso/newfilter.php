@@ -1698,7 +1698,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 			});
 		}
 
-
+		$('.frmContot').hide();
 
 		$('.frmContparentescoASG').hide();
 		$('.frmContparentescoBNF').hide();

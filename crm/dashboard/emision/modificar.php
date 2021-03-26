@@ -489,10 +489,10 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								MODIFICAR <?php echo strtoupper($plural); ?> <button type="button" class="btn bg-cyan waves-effect btnLstDocumentaciones"><i class="material-icons">unarchive</i><span class="js-right-sidebar" data-close="true">VISUALIZAR DOCUMENTOS</span></button>
+								MODIFICAR <?php echo strtoupper($plural); ?>
 
 
-								<button type="button" class="btn bg-brown waves-effect btnAdjuntar"><i class="material-icons">unarchive</i><span>ADJUNTAR DOCUMENTOS PARA EMITIR</span></button>
+								<button type="button" class="btn bg-brown waves-effect btnAdjuntar"><i class="material-icons">unarchive</i><span>DOCUMENTOS GENERALES</span></button>
 
 								<button type="button" class="btn btn-info waves-effect btnTrazabilidad" data-cotizacion="<?php echo $id; ?>"><i class="material-icons">show_chart</i><span>TRAZABILIDAD</span></button>
 

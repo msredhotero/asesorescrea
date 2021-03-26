@@ -10,7 +10,10 @@ body {
 }
 
 
-
+.contCuestionario .col-lg-12, .contCuestionario .col-md-12, .contCuestionario .col-sm-12, .contCuestionario .col-xs-12 {
+   padding-right: 4px !important;
+   padding-left: 4px !important;
+}
 /* Estilo de la palabra "Login" */
 .login-page .login-box .msg {
     color: #1c2a47 !important;

@@ -1423,10 +1423,82 @@ switch ($accion) {
    case 'buscarRFC':
       buscarRFC($serviciosValidador);
    break;
+   case 'modificarDatosClientes':
+      modificarDatosClientes($serviciosReferencias);
+   break;
+   case 'insertarBckUpCliente':
+      insertarBckUpCliente($serviciosReferencias);
+   break;
+   case 'rechazarPolizarAgente':
+      rechazarPolizarAgente($serviciosReferencias);
+   break;
 
 
 }
 /* FinFinFin */
+
+function rechazarPolizarAgente($serviciosReferencias) {
+   session_start();
+   $usuariomodi = $_SESSION['usua_sahilices'];
+
+   $id = $_POST['id'];
+
+   $resVenta = $serviciosReferencias->traerVentasPorId($id);
+
+   $idcotizacion = mysql_result($resVenta,0,'refcotizaciones');
+
+   $resEliminar = $serviciosReferencias->eliminarVentasDefinitivo($id);
+
+   //modifico la cotizacion anterior a historial
+   $resModE = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestados',4,$usuariomodi);
+
+   //modifico la cotizacion anterior a historial
+   $resModEc = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestadocotizaciones',27,$usuariomodi);
+
+   $resV['error'] = false;
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function insertarBckUpCliente($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $resBck = $serviciosReferencias->insertarClientesbck($id);
+
+   $resV['error'] = false;
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function modificarDatosClientes($serviciosReferencias) {
+   $id = $_POST['id'];
+   $telefonofijo = str_replace('_','',$_POST['telefonofijo']);
+   $telefonocelular = str_replace('_','',$_POST['telefonocelular']);
+   $calle = $_POST['calle'];
+   $nroexterior = $_POST['nroexterior'];
+   $nrointerior = $_POST['nrointerior'];
+   $edificio = $_POST['edificio'];
+   $codigopostal = $_POST['codigopostal'];
+   $estado = $_POST['estado'];
+   $colonia = $_POST['colonia'];
+   $municipio = $_POST['municipio'];
+   $ciudad = $_POST['ciudad'];
+
+   $resBck = $serviciosReferencias->insertarClientesbck($id);
+
+   $resDomicilio = $serviciosReferencias->modificarClientesDomicilio($id,$calle,$nroexterior,$nrointerior,$edificio,$estado,$municipio,$colonia,$codigopostal,$ciudad);
+
+   $resTelFijo = $serviciosReferencias->modificarCampoParticularClientes($id,'telefonofijo',$telefonofijo);
+   $resTelFijo = $serviciosReferencias->modificarCampoParticularClientes($id,'telefonocelular',$telefonocelular);
+
+   $resV['error'] = false;
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
 
 
 function traerDocumentacionPorCotizacionDocumentacionRechazo($serviciosReferencias) {
@@ -6466,7 +6538,7 @@ function cuestionario($serviciosReferencias) {
 
          if ($valor['leyenda'] != '') {
            $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
-            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-6 estiloPregunta" style="display:block; float:left;">
+            <div class="col-lg-7 col-md-7 col-sm-6 col-xs-6 estiloPregunta" style="display:block; float:left;">
               <p><span>'.($valor['pregunta']).'</span> <i class="material-icons" style="color:grey;" data-toggle="tooltip" data-placement="top" title="'.($valor['leyenda']).'">help</i></p>
               <input type="hidden" value="'.$valor['idpregunta'].'" name="rulesPregunta'.$valor['idpregunta'].'" id="rulesPregunta'.$valor['idpregunta'].'"/>
             </div>
@@ -6474,7 +6546,7 @@ function cuestionario($serviciosReferencias) {
            //</div>
          } else {
            $cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
-            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-6 estiloPregunta" style="display:block; float:left;">
+            <div class="col-lg-7 col-md-7 col-sm-6 col-xs-6 estiloPregunta" style="display:block; float:left;">
               <p>'.($valor['pregunta']).'</p>
               <input type="hidden" value="'.$valor['idpregunta'].'" name="rulesPregunta'.$valor['idpregunta'].'" id="rulesPregunta'.$valor['idpregunta'].'"/>
             </div>
@@ -6482,7 +6554,7 @@ function cuestionario($serviciosReferencias) {
            //</div>
          }
 
-         $cad .= '<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 right estiloPregunta" style="display:block; float:right;">'.($valor['respuestas']).'</div>';
+         $cad .= '<div class="col-lg-5 col-md-5 col-sm-6 col-xs-6 right estiloPregunta" style="display:block; float:right;">'.($valor['respuestas']).'</div>';
 
          /*$cad .= '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContpregunta" style="display:block">
             <h4>Pregunta</h4>
@@ -8109,8 +8181,10 @@ function insertarDirectorioasesores($serviciosReferencias) {
    $telefono = $_POST['telefono'];
    $email = $_POST['email'];
    $telefonocelular = $_POST['telefonocelular'];
+   $password = $_POST['password'];
+   $recibenotificaciones = $_POST['recibenotificaciones'];
 
-   $res = $serviciosReferencias->insertarDirectorioasesores($refasesores,$area,$razonsocial,$telefono,$email,$telefonocelular);
+   $res = $serviciosReferencias->insertarDirectorioasesores($refasesores,$area,$razonsocial,$telefono,$email,$telefonocelular,$password,$recibenotificaciones);
 
    if ((integer)$res > 0) {
       echo '';
@@ -8127,8 +8201,10 @@ function modificarDirectorioasesores($serviciosReferencias) {
    $telefono = $_POST['telefono'];
    $email = $_POST['email'];
    $telefonocelular = $_POST['telefonocelular'];
+   $password = $_POST['password'];
+   $recibenotificaciones = $_POST['recibenotificaciones'];
 
-   $res = $serviciosReferencias->modificarDirectorioasesores($id,$refasesores,$area,$razonsocial,$telefono,$email,$telefonocelular);
+   $res = $serviciosReferencias->modificarDirectorioasesores($id,$refasesores,$area,$razonsocial,$telefono,$email,$telefonocelular,$password,$recibenotificaciones);
 
    if ($res == true) {
       echo '';
@@ -10964,8 +11040,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
       case 'dbdirectorioasesores':
          $resultado = $serviciosReferencias->traerDirectorioasesoresPorId($id);
 
-         $lblCambio	 	= array('refasesores','razonsocial','telefonocelular');
-         $lblreemplazo	= array('Asesores','Nombre','Tel. Movil');
+         $lblCambio	 	= array('refasesores','razonsocial','telefonocelular','recibenotificaciones');
+         $lblreemplazo	= array('Asesores','Nombre','Tel. Fijo','Recibe Notificaciones');
 
 
 
@@ -10976,8 +11052,15 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
 
          $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resAsesores,array(3,4,2),' ',mysql_result($resultado,0,'refasesores'));
 
-         $refdescripcion = array(0=> $cadRef2);
-         $refCampo 	=  array('refasesores');
+         if (mysql_result($resultado,0,'recibenotificaciones') == '1') {
+            $cadRef10 = "<option value='0'>No</option><option value='1' selected>Si</option>";
+         } else {
+            $cadRef10 = "<option value='0' selected>No</option><option value='1'>Si</option>";
+         }
+
+
+         $refdescripcion = array(0=> $cadRef2,1=>$cadRef10);
+         $refCampo 	=  array('refasesores','recibenotificaciones');
       break;
       case 'dbcotizaciones':
          $resultado = $serviciosReferencias->traerCotizacionesPorId($id);
