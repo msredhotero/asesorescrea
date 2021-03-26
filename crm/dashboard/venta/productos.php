@@ -237,6 +237,33 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 
 							<div class="row" style="margin-top:40px;">
+
+								<div class="col-xs-12 col-md-6">
+									<img src="../../imagenes/doctor.jpg" width="100%"/>
+								</div>
+								<div class="col-xs-12 col-md-6">
+									<h4 style="color: #C6AC83;font-size: 30px;line-height: 36px;">Paquete de Protección y Servicios médicos</h4>
+
+									<ul style="font-size:20px !important;">
+										<li style="margin-top:10px;">1.- Primera consulta de especialidad gratis con cualquier doctor de la red de VRIM, compuesta por más de 8 mil médicos a nivel nacional.</li>
+										<li style="margin-top:10px;">2.- Reembolso de GMM por accidente hasta $50,000 pesos. </li>
+										<li style="margin-top:10px;">3.- Seguro de vida por muerte accidental por $500,000 pesos.</li>
+										<li style="margin-top:10px;">4.- Servicio funerario con cobertura nacional.</li>
+										<li style="margin-top:10px;">5.- Atención médica, psicológica y nutricional telefónica 24/7.</li>
+										<li style="margin-top:10px;">6.- 1 traslado de ambulancia sin costo.</li>
+										<li style="margin-top:10px;">7.- Descuentos hasta el 50% en laboratorios, hospitales, cirugías, tratamientos dentales y visuales, enfermeras a domicilio, aparatos auditivos y más.</li>
+
+									</ul>
+                           <?php if ($lblPrecioVRIM != '') { ?>
+                           <div class="row" style="margin-top:40px; text-align:center;">
+      								<button type="button" id="btnCotizarVrim" class="btn bg-blue waves-effect btnCotizarVrim" style="padding:40px 80px; font-size:100%;">CONTRATAR PLAN ANUAL POR <?php echo $lblPrecioVRIM; ?></button>
+      							</div>
+                           <?php } ?>
+								</div>
+
+							</div>
+
+							<div class="row" style="margin-top:40px;">
 								<div class="col-xs-12 col-md-6">
 									<h4 style="color: #C6AC83;font-size: 32px;line-height: 36px;">Enfermedades Graves</h4>
 									<h4 style="line-height: 1.5; "><b>Pagaremos 300 mil pesos en caso de que seas diagnosticado con cualquiera de las siguientes enfermedades graves:</b></h4>
@@ -261,31 +288,6 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 									<img src="../../imagenes/infarto__.jpg" width="100%"/>
 								</div>
 
-							</div>
-
-							<div class="row" style="margin-top:40px;">
-								<div class="col-xs-12 col-md-6">
-									<img src="../../imagenes/doctor.jpg" width="100%"/>
-								</div>
-								<div class="col-xs-12 col-md-6">
-									<h4 style="color: #C6AC83;font-size: 30px;line-height: 36px;">Paquete de Protección y Servicios médicos</h4>
-
-									<ul style="font-size:20px !important;">
-										<li style="margin-top:10px;">1.- Primera consulta de especialidad gratis con cualquier doctor de la red de VRIM, compuesta por más de 8 mil médicos a nivel nacional.</li>
-										<li style="margin-top:10px;">2.- Reembolso de GMM por accidente hasta $50,000 pesos. </li>
-										<li style="margin-top:10px;">3.- Seguro de vida por muerte accidental por $500,000 pesos.</li>
-										<li style="margin-top:10px;">4.- Servicio funerario con cobertura nacional.</li>
-										<li style="margin-top:10px;">5.- Atención médica, psicológica y nutricional telefónica 24/7.</li>
-										<li style="margin-top:10px;">6.- 1 traslado de ambulancia sin costo.</li>
-										<li style="margin-top:10px;">7.- Descuentos hasta el 50% en laboratorios, hospitales, cirugías, tratamientos dentales y visuales, enfermeras a domicilio, aparatos auditivos y más.</li>
-
-									</ul>
-                           <?php if ($lblPrecioVRIM != '') { ?>
-                           <div class="row" style="margin-top:40px; text-align:center;">
-      								<button type="button" id="btnCotizarVrim" class="btn bg-blue waves-effect btnCotizarVrim" style="padding:40px 80px; font-size:100%;">CONTRATAR PLAN ANUAL POR <?php echo $lblPrecioVRIM; ?></button>
-      							</div>
-                           <?php } ?>
-								</div>
 							</div>
 
 
