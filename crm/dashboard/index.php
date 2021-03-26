@@ -1034,9 +1034,9 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 									<hr>
 									<?php if (201 == 201) { ?>
 
-									
+
 									<div class"row imgVenta button-container-img">
-										<img src="../imagenes/ventaenlinea_bck2.jpg" width="100%"/>
+										<img src="../imagenes/ventaenlinea_bck2.jpg" width="100%" onclick="window.location='venta/productos.php'"/>
 										<button type="button" class="btn btn-lg btn-block bg-blue" style="background-color:#c6ac83 !important; font-size:1.3em;" onclick="window.location='venta/productos.php'">COMPRAR EN LINEA</button>
 									</div>
 
