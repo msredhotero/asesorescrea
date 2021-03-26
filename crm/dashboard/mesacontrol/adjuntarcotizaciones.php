@@ -155,7 +155,7 @@ if (mysql_num_rows($resDocumentacionAsesor) > 0) {
 	$idestadodocumentacion = 1;
 }
 
-switch (mysql_result($resDocumentacion,0,'documentacion')) {
+switch ( trim(mysql_result($resDocumentacion,0,'documentacion'))) {
 	case 'Orden de trabajo':
 		// code...
 		$dato = mysql_result($resultado,0,'ot');
