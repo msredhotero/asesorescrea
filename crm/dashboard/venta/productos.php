@@ -238,9 +238,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 							<div class="row" style="margin-top:40px;">
 
-								<div class="col-xs-12 col-md-6">
-									<img src="../../imagenes/doctor.jpg" width="100%"/>
-								</div>
+
 								<div class="col-xs-12 col-md-6">
 									<h4 style="color: #C6AC83;font-size: 30px;line-height: 36px;">Paquete de Protección y Servicios médicos</h4>
 
@@ -260,10 +258,16 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
       							</div>
                            <?php } ?>
 								</div>
+								<div class="col-xs-12 col-md-6">
+									<img src="../../imagenes/doctor.jpg" width="100%"/>
+								</div>
 
 							</div>
 
 							<div class="row" style="margin-top:40px;">
+								<div class="col-xs-12 col-md-6">
+									<img src="../../imagenes/infarto__.jpg" width="100%"/>
+								</div>
 								<div class="col-xs-12 col-md-6">
 									<h4 style="color: #C6AC83;font-size: 32px;line-height: 36px;">Enfermedades Graves</h4>
 									<h4 style="line-height: 1.5; "><b>Pagaremos 300 mil pesos en caso de que seas diagnosticado con cualquiera de las siguientes enfermedades graves:</b></h4>
@@ -284,9 +288,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
                            <?php } ?>
 
 								</div>
-								<div class="col-xs-12 col-md-6">
-									<img src="../../imagenes/infarto__.jpg" width="100%"/>
-								</div>
+
 
 							</div>
 
