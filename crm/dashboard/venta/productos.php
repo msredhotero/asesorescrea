@@ -300,7 +300,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
       								<button type="button" id="btnCotizarS500" class="btn bg-blue waves-effect btnCotizarS500" style="padding:40px 80px; font-size:100%;">CONTRATAR PLAN ANUAL POR <?php echo $lblPrecioVIDA500; ?></button>
       							</div>
                            <?php } ?>
-                           <p><small>*El costo de este producto es bajo una protección por 500 mil pesos.</small></p>
+                           <p style="margin-top:15px;"><small>*El costo de este producto esta conciderado respecto a tu edad, de acuerdo a los datos de registro y una protección por 500 mil pesos.</small></p>
 
 								</div>
 								<div class="col-xs-12 col-md-6">
