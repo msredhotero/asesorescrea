@@ -1432,10 +1432,75 @@ switch ($accion) {
    case 'rechazarPolizarAgente':
       rechazarPolizarAgente($serviciosReferencias);
    break;
+   case 'insertarDocumentacionprocesos':
+      insertarDocumentacionprocesos($serviciosReferencias);
+   break;
+   case 'modificarDocumentacionprocesos':
+      modificarDocumentacionprocesos($serviciosReferencias);
+   break;
+   case 'eliminarDocumentacionprocesos':
+      eliminarDocumentacionprocesos($serviciosReferencias);
+   break;
+   case 'traerDocumentacionprocesos':
+      traerDocumentacionprocesos($serviciosReferencias);
+   break;
+
 
 
 }
 /* FinFinFin */
+
+function insertarDocumentacionprocesos($serviciosReferencias) {
+   $refdocumentaciones = $_POST['refdocumentaciones'];
+   $refprocesocotizacion = $_POST['refprocesocotizacion'];
+
+   $res = $serviciosReferencias->insertarDocumentacionprocesos($refdocumentaciones,$refprocesocotizacion);
+
+   if ((integer)$res > 0) {
+   echo '';
+   } else {
+   echo 'Hubo un error al insertar datos';
+   }
+}
+
+function modificarDocumentacionprocesos($serviciosReferencias) {
+   $id = $_POST['id'];
+   $refdocumentaciones = $_POST['refdocumentaciones'];
+   $refprocesocotizacion = $_POST['refprocesocotizacion'];
+
+   $res = $serviciosReferencias->modificarDocumentacionprocesos($id,$refdocumentaciones,$refprocesocotizacion);
+
+   if ($res == true) {
+   echo '';
+   } else {
+   echo 'Hubo un error al modificar datos';
+   }
+}
+
+function eliminarDocumentacionprocesos($serviciosReferencias) {
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->eliminarDocumentacionprocesos($id);
+
+   if ($res == true) {
+   echo '';
+   } else {
+   echo 'Hubo un error al eliminar datos';
+   }
+}
+
+function traerDocumentacionprocesos($serviciosReferencias) {
+   $res = $serviciosReferencias->traerDocumentacionprocesos();
+   $ar = array();
+
+   while ($row = mysql_fetch_array($res)) {
+      array_push($ar, $row);
+   }
+
+   $resV['datos'] = $ar;
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function rechazarPolizarAgente($serviciosReferencias) {
    session_start();
@@ -1446,8 +1511,13 @@ function rechazarPolizarAgente($serviciosReferencias) {
    $resVenta = $serviciosReferencias->traerVentasPorId($id);
 
    $idcotizacion = mysql_result($resVenta,0,'refcotizaciones');
+   $versionvieja = mysql_result($resVenta,0,'version');
 
-   $resEliminar = $serviciosReferencias->eliminarVentasDefinitivo($id);
+   // pongo los recibos en cancelados.
+   $resEliminarCobros = $serviciosReferencias->eliminarPeriodicidadventasdetalleEndoso($id,$versionvieja);
+
+   // pongo la venta en el historial, cancelada por endoso id:7
+   $resModEstadoVenta = $serviciosReferencias->modificarVentasUnicaDocumentacion($id, 'refestadoventa', 7);
 
    //modifico la cotizacion anterior a historial
    $resModE = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestados',4,$usuariomodi);
@@ -8176,7 +8246,7 @@ function eliminarDomicilios($serviciosReferencias) {
 
 function insertarDirectorioasesores($serviciosReferencias) {
    $refasesores = $_POST['refasesores'];
-   $area = $_POST['area'];
+   $refareadirectorios = $_POST['refareadirectorios'];
    $razonsocial = $_POST['razonsocial'];
    $telefono = $_POST['telefono'];
    $email = $_POST['email'];
@@ -8184,7 +8254,7 @@ function insertarDirectorioasesores($serviciosReferencias) {
    $password = $_POST['password'];
    $recibenotificaciones = $_POST['recibenotificaciones'];
 
-   $res = $serviciosReferencias->insertarDirectorioasesores($refasesores,$area,$razonsocial,$telefono,$email,$telefonocelular,$password,$recibenotificaciones);
+   $res = $serviciosReferencias->insertarDirectorioasesores($refasesores,$refareadirectorios,$razonsocial,$telefono,$email,$telefonocelular,$password,$recibenotificaciones);
 
    if ((integer)$res > 0) {
       echo '';
@@ -8196,7 +8266,7 @@ function insertarDirectorioasesores($serviciosReferencias) {
 function modificarDirectorioasesores($serviciosReferencias) {
    $id = $_POST['id'];
    $refasesores = $_POST['refasesores'];
-   $area = $_POST['area'];
+   $refareadirectorios = $_POST['refareadirectorios'];
    $razonsocial = $_POST['razonsocial'];
    $telefono = $_POST['telefono'];
    $email = $_POST['email'];
@@ -8204,7 +8274,7 @@ function modificarDirectorioasesores($serviciosReferencias) {
    $password = $_POST['password'];
    $recibenotificaciones = $_POST['recibenotificaciones'];
 
-   $res = $serviciosReferencias->modificarDirectorioasesores($id,$refasesores,$area,$razonsocial,$telefono,$email,$telefonocelular,$password,$recibenotificaciones);
+   $res = $serviciosReferencias->modificarDirectorioasesores($id,$refasesores,$refareadirectorios,$razonsocial,$telefono,$email,$telefonocelular,$password,$recibenotificaciones);
 
    if ($res == true) {
       echo '';
@@ -10365,6 +10435,7 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
    session_start();
 
    switch ($tabla) {
+
       case 'dbcontactosperfiles':
          $resultado = $serviciosReferencias->traerContactosperfilesPorId( $id);
 
@@ -11040,8 +11111,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
       case 'dbdirectorioasesores':
          $resultado = $serviciosReferencias->traerDirectorioasesoresPorId($id);
 
-         $lblCambio	 	= array('refasesores','razonsocial','telefonocelular','recibenotificaciones');
-         $lblreemplazo	= array('Asesores','Nombre','Tel. Fijo','Recibe Notificaciones');
+         $lblCambio	 	= array('refasesores','razonsocial','telefonocelular','recibenotificaciones','refareadirectorios');
+         $lblreemplazo	= array('Asesores','Nombre','Tel. Fijo','Recibe Notificaciones','Area');
 
 
 
@@ -11058,9 +11129,12 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
             $cadRef10 = "<option value='0' selected>No</option><option value='1'>Si</option>";
          }
 
+         $resAreas = $serviciosReferencias->traerAreasdirectorio();
+         $cadArea = $serviciosFunciones->devolverSelectBoxActivo($resAreas,array(1),'',mysql_result($resultado,0,'refareadirectorios'));
 
-         $refdescripcion = array(0=> $cadRef2,1=>$cadRef10);
-         $refCampo 	=  array('refasesores','recibenotificaciones');
+
+         $refdescripcion = array(0=> $cadRef2,1=>$cadRef10,2=>$cadArea);
+         $refCampo 	=  array('refasesores','recibenotificaciones','refareadirectorios');
       break;
       case 'dbcotizaciones':
          $resultado = $serviciosReferencias->traerCotizacionesPorId($id);
@@ -11948,6 +12022,9 @@ function insertarDocumentaciones($serviciosReferencias) {
    $res = $serviciosReferencias->insertarDocumentaciones($reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$orden,$carpeta,$activo,$refprocesocotizacion,$leyenda);
 
    if ((integer)$res > 0) {
+      if ((isset($_POST['refprocesocotizacionadicional'])) && ($_POST['refprocesocotizacionadicional'] !=0)) {
+         $resDA = $serviciosReferencias->insertarDocumentacionprocesos($res,$_POST['refprocesocotizacionadicional']);
+      }
       echo '';
    } else {
       echo 'Hubo un error al insertar datos';
@@ -11973,6 +12050,10 @@ function modificarDocumentaciones($serviciosReferencias) {
    $res = $serviciosReferencias->modificarDocumentaciones($id,$reftipodocumentaciones,$documentacion,$obligatoria,$cantidadarchivos,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$orden,$carpeta,$activo,$refprocesocotizacion,$leyenda);
 
    if ($res == true) {
+      if ((isset($_POST['refprocesocotizacionadicionalM'])) && ($_POST['refprocesocotizacionadicionalM'] !=0)) {
+         $resEDA = $serviciosReferencias->eliminarDocumentacionprocesosPorDocumentacion($id);
+         $resDA = $serviciosReferencias->insertarDocumentacionprocesos($id,$_POST['refprocesocotizacionadicionalM']);
+      }
       echo '';
    } else {
       echo 'Hubo un error al modificar datos';

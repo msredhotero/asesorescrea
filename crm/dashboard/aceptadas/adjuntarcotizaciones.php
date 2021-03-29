@@ -55,6 +55,8 @@ $id = mysql_result($resultado,0,'idcotizacion');
 
 $refDoc = '3,'.$refdoctipo;
 
+//die(var_dump($refDoc));
+
 $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($id, $refDoc);
 $resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($id,$refDoc);
 
@@ -322,6 +324,9 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11
 				$archivosCargadosObligatorios = 0;
 				$lblObligatorio = '';
 				while ($row = mysql_fetch_array($resDocumentaciones)) {
+
+
+
 					if ($row['iddocumentacion'] == $iddocumentacion) {
 						$activaLbl = ' cssActive ';
 					} else {
@@ -331,7 +336,10 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11
 						$puedeEnviar = 1;
 					}
 
-					if ($row['obligatoria'] == '1') {
+					//3=aceptadas , 4=Entregadas, 5=emision, 6=mesa de control
+					$cambiaObligatoriedad = $serviciosReferencias->existeDocumentacionprocesosPorDocumentacionesProceso($row['iddocumentacion'],3);
+
+					if (($row['obligatoria'] == '1') || $cambiaObligatoriedad==1) {
 						$archivosObligatorios += 1;
 						$lblObligatorio = ' <span style="color:red;">(*)</span>';
 					} else {

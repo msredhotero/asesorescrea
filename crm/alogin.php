@@ -38,8 +38,15 @@ if (isset($_SESSION['usua_sahilices'])) {
 
                $_SESSION['idcliente_sahilices'] = mysql_result($resCliente,0,0);
             }
-   			$_SESSION['usua_sahilices'] = mysql_result($resUsuario,0,'email');
-   			$_SESSION['nombre_sahilices'] = mysql_result($resUsuario,0,'nombrecompleto');
+
+            if (mysql_result($resAutologin,0,'email') == '') {
+               $_SESSION['usua_sahilices'] = mysql_result($resUsuario,0,'email');
+      			$_SESSION['nombre_sahilices'] = mysql_result($resUsuario,0,'nombrecompleto');
+            } else {
+               $_SESSION['usua_sahilices'] = mysql_result($resAutologin,0,'email');
+      			$_SESSION['nombre_sahilices'] = mysql_result($resAutologin,0,'nombrecompleto');
+            }
+
    			$_SESSION['usuaid_sahilices'] = mysql_result($resUsuario,0,0);
    			$_SESSION['email_sahilices'] = mysql_result($resUsuario,0,'email');
    			$_SESSION['idroll_sahilices'] = mysql_result($resUsuario,0,'refroles');

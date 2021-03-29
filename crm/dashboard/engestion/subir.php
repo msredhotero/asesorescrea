@@ -132,7 +132,7 @@
 	      //$resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id,date('Y-m-d H:i:s'),31,$_SESSION['usua_sahilices'],0,0,0,mysql_result($resDocumentacion,0,'documentacion'),'');
 
 			//trazabilidad 7, en gestion
-         $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id,$fecha,7,$_SESSION['usua_sahilices'],0,0,0,'Se altero la fecha, se cargo la documentación '.mysql_result($resDocumentacion,0,'documentacion'),'',0);
+         //$resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id,$fecha,7,$_SESSION['usua_sahilices'],0,0,0,'Se altero la fecha, se cargo la documentación '.mysql_result($resDocumentacion,0,'documentacion'),'',0);
 
 			if ($pos === false) {
 				$image = new \Gumlet\ImageResize($imagen_subida);

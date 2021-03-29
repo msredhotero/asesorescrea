@@ -657,6 +657,7 @@ if (mysql_num_rows($resBckUpCliente) > 0) {
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		.tscodigopostal { width: 400px; }
 
+
 		.ui-autocomplete { position: absolute; cursor: default;z-index:30 !important;}
 
 		.sectionC {
@@ -1393,113 +1394,129 @@ if (mysql_num_rows($resBckUpCliente) > 0) {
 		 <div class="modal-dialog modal-xlg" role="document">
 			  <div class="modal-content">
 					<div class="modal-header">
-						 <h4 class="modal-title" id="largeModalLabel">DATOS DEL CONTRATANTE NECESARIOS</h4>
+						 <h4 class="modal-title" id="largeModalLabel">POR FAVOR CONFIRME O MODIFIQUE LA SIGUIENTE INFORMACION</h4>
 					</div>
 					<div class="modal-body">
 						<div class="row">
 
 							<div class="row">
-								<div class="col-xs-6">
-									<div class="list-group">
-										<a href="javascript:void(0);" class="list-group-item active">
-										DATOS CARGADOS
-										</a>
-										<a href="javascript:void(0);" class="list-group-item">Tel. Movil: <?php echo mysql_result($rCliente,0,'telefonocelular'); ?></a>
-										<a href="javascript:void(0);" class="list-group-item">Tel. Fijo: <?php echo mysql_result($rCliente,0,'telefonofijo'); ?></a>
-										<a href="javascript:void(0);" class="list-group-item">Calle: <?php echo mysql_result($rCliente,0,'domicilio'); ?></a>
-										<a href="javascript:void(0);" class="list-group-item">Nro. Int.: <?php echo mysql_result($rCliente,0,'nrointerior'); ?></a>
-										<a href="javascript:void(0);" class="list-group-item">Nro. Ext.: <?php echo mysql_result($rCliente,0,'nroexterior'); ?></a>
-										<a href="javascript:void(0);" class="list-group-item">Edificio: <?php echo mysql_result($rCliente,0,'edificio'); ?></a>
-										<a href="javascript:void(0);" class="list-group-item">Cod. Postal: <?php echo mysql_result($rCliente,0,'codigopostal'); ?></a>
-										<a href="javascript:void(0);" class="list-group-item">Estado: <?php echo mysql_result($rCliente,0,'estado'); ?></a>
-										<a href="javascript:void(0);" class="list-group-item">Colonia: <?php echo mysql_result($rCliente,0,'colonia'); ?></a>
-										<a href="javascript:void(0);" class="list-group-item">Municipio: <?php echo mysql_result($rCliente,0,'municipio'); ?></a>
-										<a href="javascript:void(0);" class="list-group-item">Ciudad: <?php echo mysql_result($rCliente,0,'ciudad'); ?></a>
-
-										<a href="javascript:void(0);" class="list-group-item"><button type="button" class="btn btn-warning waves-effect btnQuieroModificar">DESEO MODIFICAR ESTOS DATOS</button> <button type="button" class="btn btn-success waves-effect btnQuieroMantener right">DESEO MANTENER ESTOS DATOS</button></a>
+								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">Tel. Movil: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dctelefonocelular" name="dctelefonocelular" value="<?php echo mysql_result($rCliente,0,'telefonocelular'); ?>" />
+										</div>
 									</div>
 								</div>
-								<div class="col-xs-6">
-									<div class="list-group panelDatosModificar">
-										<a href="javascript:void(0);" class="list-group-item active">
-										DATOS A MODIFICAR
-										</a>
-										<a href="javascript:void(0);" class="list-group-item">
-											<div class="input-group">
-												<div class="input-group-addon">Tel. Movil: <span style="color:red;">*</span></div>
-												<input type="text" class="form-control" id="dctelefonocelular" name="dctelefonocelular" />
-											</div>
-										</a>
-										<a href="javascript:void(0);" class="list-group-item">
-											<div class="input-group">
-												<div class="input-group-addon">Tel. Fijo:</div>
-												<input type="text" class="form-control" id="dctelefonofijo" name="dctelefonofijo" />
-											</div>
-										</a>
-										<a href="javascript:void(0);" class="list-group-item">
-											<div class="input-group">
-												<div class="input-group-addon">Calle: <span style="color:red;">*</span></div>
-												<input type="text" class="form-control" id="dccalle" name="dccalle" />
-											</div>
-										</a>
-										<a href="javascript:void(0);" class="list-group-item">
-											<div class="input-group">
-												<div class="input-group-addon">Nro. Int: <span style="color:red;">*</span></div>
-												<input type="text" class="form-control" id="dcnrointerior" name="dcnrointerior" />
-											</div>
-										</a>
-										<a href="javascript:void(0);" class="list-group-item">
-											<div class="input-group">
-												<div class="input-group-addon">Nro. Ext: <span style="color:red;">*</span></div>
-												<input type="text" class="form-control" id="dcnroexterior" name="dcnroexterior" />
-											</div>
-										</a>
-										<a href="javascript:void(0);" class="list-group-item">
-											<div class="input-group">
-												<div class="input-group-addon">Edificio: <span style="color:red;">*</span></div>
-												<input type="text" class="form-control" id="dcedificio" name="dcedificio" />
-											</div>
-										</a>
-										<a href="javascript:void(0);" class="list-group-item">
-											<div class="input-group">
-												<div class="input-group-addon">Codigo Postal: <span style="color:red;">*</span></div>
-												<input type="text" class="form-control" id="dccodigopostal" name="dccodigopostal" />
-											</div>
-										</a>
-										<a href="javascript:void(0);" class="list-group-item">
-											<div class="input-group">
-												<div class="input-group-addon">Estado: <span style="color:red;">*</span></div>
-												<input type="text" class="form-control" id="dcestado" name="dcestado" />
-											</div>
-										</a>
-										<a href="javascript:void(0);" class="list-group-item">
-											<div class="input-group">
-												<div class="input-group-addon">Colonia: <span style="color:red;">*</span></div>
-												<input type="text" class="form-control" id="dccolonia" name="dccolonia" />
-											</div>
-										</a>
-										<a href="javascript:void(0);" class="list-group-item">
-											<div class="input-group">
-												<div class="input-group-addon">Municipio: <span style="color:red;">*</span></div>
-												<input type="text" class="form-control" id="dcmunicipio" name="dcmunicipio" />
-											</div>
-										</a>
-										<a href="javascript:void(0);" class="list-group-item">
-											<div class="input-group">
-												<div class="input-group-addon">Ciudad: <span style="color:red;">*</span></div>
-												<input type="text" class="form-control" id="dcciudad" name="dcciudad" />
-											</div>
-										</a>
-										<a href="javascript:void(0);" class="list-group-item"><button type="button" class="btn btn-success waves-effect btnModificarDC">MODIFICAR</button></a>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:none;">
+									<label class="form-label">Tel. Fijo: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dctelefonofijo" name="dctelefonofijo" value="<?php echo mysql_result($rCliente,0,'telefonofijo'); ?>" />
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 frmContrfc" style="display:block;">
+									<label class="form-label">Calle: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dccalle" name="dccalle" value="<?php echo mysql_result($rCliente,0,'domicilio'); ?>" />
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">Nro. Interior: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dcnrointerior" name="dcnrointerior" value="<?php echo mysql_result($rCliente,0,'nrointerior'); ?>" />
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">Nro. Exterior: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dcnroexterior" name="dcnroexterior" value="<?php echo mysql_result($rCliente,0,'nroexterior'); ?>" />
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">Edificio: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dcedificio" name="dcedificio" value="<?php echo mysql_result($rCliente,0,'edificio'); ?>" />
+										</div>
 									</div>
 								</div>
 							</div>
+
+							<div class="row">
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">Cod. Postal: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dccodigopostal" name="dccodigopostal" value="<?php echo mysql_result($rCliente,0,'codigopostal'); ?>" />
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">Estado: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dcestado" name="dcestado" value="<?php echo mysql_result($rCliente,0,'estado'); ?>" readonly/>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">Colonia: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dccolonia" name="dccolonia" value="<?php echo mysql_result($rCliente,0,'colonia'); ?>" readonly/>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">Municipio: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dcmunicipio" name="dcmunicipio" value="<?php echo mysql_result($rCliente,0,'municipio'); ?>" readonly/>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">Ciudad: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dcciudad" name="dcciudad" value="<?php echo mysql_result($rCliente,0,'ciudad'); ?>"/>
+										</div>
+									</div>
+								</div>
+
+
+
+							</div>
+
+
+
 
 						</div>
 
 					</div>
 					<div class="modal-footer">
-						 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+						<button type="button" class="btn btn-warning waves-effect btnModificarDC">MODIFICAR</button>
+						<button type="button" class="btn btn-success waves-effect btnQuieroMantener">CONFIRMAR</button>
+						<button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
 					</div>
 			  </div>
 		 </div>

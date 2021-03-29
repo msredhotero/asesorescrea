@@ -60,15 +60,18 @@ $_SESSION['idasesor_aux'] = $id;
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbdirectorioasesores";
 
-$lblCambio	 	= array('refasesores','razonsocial','telefonocelular','recibenotificaciones');
-$lblreemplazo	= array('Asesores','Nombre','Tel. Fijo','Recibe Notificaciones');
+$lblCambio	 	= array('refasesores','razonsocial','telefonocelular','recibenotificaciones','refareadirectorios');
+$lblreemplazo	= array('Asesores','Nombre','Tel. Fijo','Recibe Notificaciones','Area');
 
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resultado,array(3,4,2),' ');
 
-$cadRef10 = "<option value='0'>No</option><option value='1'>Si</option>";
+$cadRef10 = "<option value='1'>Si</option><option value='0'>No</option>";
 
-$refdescripcion = array(0=> $cadRef2,1=>$cadRef10);
-$refCampo 	=  array('refasesores','recibenotificaciones');
+$resAreas = $serviciosReferencias->traerAreasdirectorio();
+$cadArea = $serviciosFunciones->devolverSelectBox($resAreas,array(1),'');
+
+$refdescripcion = array(0=> $cadRef2,1=>$cadRef10,2=>$cadArea);
+$refCampo 	=  array('refasesores','recibenotificaciones','refareadirectorios');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////

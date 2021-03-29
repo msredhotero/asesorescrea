@@ -336,7 +336,10 @@ if ($estadoDocumentacion == 'Falta Cargar') {
 						$puedeEnviar = 1;
 					}
 
-					if ($row['obligatoria'] == '1') {
+					//3=aceptadas , 4=Entregadas, 5=emision, 6=mesa de control
+					$cambiaObligatoriedad = $serviciosReferencias->existeDocumentacionprocesosPorDocumentacionesProceso($row['iddocumentacion'],6);
+
+					if (($row['obligatoria'] == '1') || $cambiaObligatoriedad==1) {
 						$archivosObligatorios += 1;
 						$lblObligatoria = ' <span style="color:red;">(*)</span>';
 					} else {

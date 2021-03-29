@@ -72,6 +72,27 @@ $refCampo 	=  array('reftipodocumentaciones','obligatoria','activo','refprocesoc
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
+
+/////////////////////// Opciones para la creacion del formulario  /////////////////////
+$tabla2 			= "dbdocumentacionprocesos";
+
+$lblCambio	 	= array('reftipodocumentaciones','refprocesocotizacion');
+$lblreemplazo	= array('Tipo Documentacion','Proceso');
+
+$resVar = $serviciosReferencias->traerTipodocumentaciones();
+$cadRef = $serviciosFunciones->devolverSelectBox($resVar,array(1),'');
+
+$cadRef2 = "<option value='1'>Si</option><option value='0'>No</option>";
+
+$resVar3 = $serviciosReferencias->traerProcesocotizacion();
+$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
+
+$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef2,3=>$cadRef3);
+$refCampo 	=  array('reftipodocumentaciones','obligatoria','activo','refprocesocotizacion');
+
+$frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+//////////////////////////////////////////////  FIN de los opciones //////////////////////////
+
 $cadRefb = '<option value="">-- Seleccionar --</option>';
 $cadRefb .= $cadRef;
 $cadRef3b = '<option value="">-- Seleccionar --</option>';
@@ -255,6 +276,19 @@ $cadRef3b .= $cadRef3;
 							<div class="row">
 								<?php echo $frmUnidadNegocios; ?>
 							</div>
+							<div class="row">
+								<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrefprocesocotizacionadicional" style="display:block">
+									<label for="refprocesocotizacionadicional" class="control-label" style="text-align:left">Desea agregar esta documentacion a algun proceso de forma obligatoria </label>
+									<div class="form-group input-group col-md-12">
+										<div class="form-line">
+											<select class="form-control" id="refprocesocotizacionadicional" name="refprocesocotizacionadicional" aria-invalid="false">
+												<option value="0">-- Seleccionar --</option>
+												<?php echo $cadRef3; ?>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
 
 	               </div>
 	               <div class="modal-footer">
@@ -278,6 +312,19 @@ $cadRef3b .= $cadRef3;
 		               <div class="modal-body">
 								<div class="row frmAjaxModificar">
 
+								</div>
+								<div class="row">
+									<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 frmContrefprocesocotizacionadicionalM" style="display:block">
+										<label for="refprocesocotizacionadicional" class="control-label" style="text-align:left">Desea agregar esta documentacion a algun proceso de forma obligatoria </label>
+										<div class="form-group input-group col-md-12">
+											<div class="form-line">
+												<select class="form-control" id="refprocesocotizacionadicionalM" name="refprocesocotizacionadicionalM" aria-invalid="false">
+													<option value="0">-- Seleccionar --</option>
+													<?php echo $cadRef3; ?>
+												</select>
+											</div>
+										</div>
+									</div>
 								</div>
 		               </div>
 		               <div class="modal-footer">
@@ -334,6 +381,17 @@ $cadRef3b .= $cadRef3;
 
 <script>
 	$(document).ready(function(){
+
+		$('.frmContrefprocesocotizacionadicional').hide();
+
+		$('#obligatoria').change(function() {
+			if ($(this).val() == '1') {
+				$('.frmContrefprocesocotizacionadicional').hide();
+				$('#refprocesocotizacionadicional').val(0);
+			} else {
+				$('.frmContrefprocesocotizacionadicional').show();
+			}
+		});
 
 		$('.frmContcantidadarchivos').hide();
 		$('.frmContcarpeta').hide();

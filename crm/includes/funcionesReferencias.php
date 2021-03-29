@@ -10,6 +10,126 @@ date_default_timezone_set('America/Mexico_City');
 class ServiciosReferencias {
 
 
+   /* PARA Documentacionprocesos */
+
+   function insertarDocumentacionprocesos($refdocumentaciones,$refprocesocotizacion) {
+      $sql = "insert into dbdocumentacionprocesos(iddocumentacionproceso,refdocumentaciones,refprocesocotizacion)
+      values ('',".$refdocumentaciones.",".$refprocesocotizacion.")";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarDocumentacionprocesos($id,$refdocumentaciones,$refprocesocotizacion) {
+      $sql = "update dbdocumentacionprocesos
+      set
+      refdocumentaciones = ".$refdocumentaciones.",refprocesocotizacion = ".$refprocesocotizacion."
+      where iddocumentacionproceso =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarDocumentacionprocesos($id) {
+      $sql = "delete from dbdocumentacionprocesos where iddocumentacionproceso =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function eliminarDocumentacionprocesosPorDocumentacion($id) {
+      $sql = "delete from dbdocumentacionprocesos where refdocumentaciones =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerDocumentacionprocesos() {
+      $sql = "select
+      d.iddocumentacionproceso,
+      d.refdocumentaciones,
+      d.refprocesocotizacion
+      from dbdocumentacionprocesos d
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerDocumentacionprocesosPorId($id) {
+      $sql = "select iddocumentacionproceso,refdocumentaciones,refprocesocotizacion from dbdocumentacionprocesos where iddocumentacionproceso =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerDocumentacionprocesosPorDocumentaciones($refdocumentaciones) {
+      $sql = "select iddocumentacionproceso,refdocumentaciones,refprocesocotizacion from dbdocumentacionprocesos where refdocumentaciones =".$refdocumentaciones;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function existeDocumentacionprocesosPorDocumentacionesProceso($refdocumentaciones,$idproceso) {
+      $sql = "select iddocumentacionproceso,refdocumentaciones,refprocesocotizacion from dbdocumentacionprocesos where refdocumentaciones =".$refdocumentaciones." and refprocesocotizacion =".$idproceso;
+      $res = $this->query($sql,0);
+
+      if (mysql_num_rows($res) > 0) {
+         return 1;
+      }
+      return 0;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: dbdocumentacionprocesos*/
+
+   /* PARA Areasdirectorio */
+
+   function insertarAreasdirectorio($area) {
+      $sql = "insert into tbareasdirectorio(idareadirectorio,area)
+      values ('','".$area."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarAreasdirectorio($id,$area) {
+      $sql = "update tbareasdirectorio
+      set
+      area = '".$area."'
+      where idareadirectorio =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarAreasdirectorio($id) {
+      $sql = "delete from tbareasdirectorio where idareadirectorio =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerAreasdirectorio() {
+      $sql = "select
+      a.idareadirectorio,
+      a.area
+      from tbareasdirectorio a
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerAreasdirectorioPorId($id) {
+      $sql = "select idareadirectorio,area from tbareasdirectorio where idareadirectorio =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: tbareasdirectorio*/
+
+
    /* PARA Clientesbck */
 
    function insertarClientesbck($idcliente) {
@@ -381,8 +501,8 @@ return $res;
             values ('',".$reftabla.",".$idreferencia.",'".$fechacrea."',".$refevento.",'".$usuariocrea."',".$idreferenciaaux1.",".$idreferenciaaux2.",".$idreferenciaaux3.",'".$dato."','".$url."')";
             $res = $this->query($sql,1);
 
-            if (((integer)$res > 0) && ($reftabla==12) && ((mysql_result($resEvento,0,'enviaemailagestion') == '1') || ($url != ''))) {
-               $resMensaje = $this->enviarEmailModificacionCotizacion($idreferencia,mysql_result($resEvento,0,'nombre').' - '.$dato,$url);
+            if (((integer)$res > 0) && ($reftabla==12) && ((mysql_result($resEvento,0,'enviaemailaagente') == '1') || (mysql_result($resEvento,0,'enviaemailagestion') == '1') || ($url != ''))) {
+               $resMensaje = $this->enviarEmailModificacionCotizacion($idreferencia,mysql_result($resEvento,0,'nombre').' - '.$dato,$url,1,$refevento);
             }
          } else {
             $res = 0;
@@ -634,9 +754,28 @@ return $res;
       return 0;
    }
 
-   function enviarEmailModificacionCotizacion($id,$dato,$adcional,$enviaEmail=1) {
+   function traerDirectorioEmails($idasesor, $idevento) {
+      $sql = "select
+         distinct d.email,d.razonsocial
+         from		dbasesores a
+         inner
+         join		dbdirectorioasesores d
+         on			a.idasesor = d.refasesores
+         inner
+         join		dbareasdirectorioeventos ad
+         on			ad.refareasdirectorio = d.refareadirectorios
+         where a.idasesor =".$idasesor." and ad.refeventos = ".$idevento;
+
+      $res = $this->query($sql,0);
+
+      return $res;
+   }
+
+   function enviarEmailModificacionCotizacion($id,$dato,$adcional,$enviaEmail=1,$refevento) {
 
       $resCotizaciones = $this->traerCotizacionesPorIdCompleto($id);
+
+      $resEvento = $this->traerEventosPorId($refevento);
 
       //determino el producto para avisar a quien corresponda, por ahora solo para los roles de areas tecnicas y sus contactos
       $refproductos = mysql_result($resCotizaciones,0,'refproductos');
@@ -645,39 +784,162 @@ return $res;
 
       $idrol = mysql_result($resProduto,0,'refgestion');
 
-      $resUsuarios = $this->traerUsuariosPorRoles($idrol);
-      $resContactos = $this->traerContactosperfilesPorRol($idrol);
+      $idasesor = mysql_result($resCotizaciones,0,'refasesores');
 
+      $emailasesor = mysql_result($resCotizaciones,0,'emailasesor');
+
+      $idusuarioasesor = mysql_result($resCotizaciones,0,'idusuarioasesor');
+
+      // cadena de emails a disparar
       $cadDestino = '';
 
-      while ($rowU = mysql_fetch_array($resUsuarios)) {
-         $pos = strpos($cadDestino, $rowU['email']);
-         if (($rowU['email'] != '') && ($pos === false)) {
-            $cadDestino .= $rowU['email'].', ';
+      // para la parte especifica de en gestion con las areas tecnicas
+      if (mysql_result($resEvento,0,'enviaemailagestion') == '1') {
+         $resUsuarios = $this->traerUsuariosPorRoles($idrol);
+         $resContactos = $this->traerContactosperfilesPorRol($idrol);
+
+
+
+         while ($rowU = mysql_fetch_array($resUsuarios)) {
+            $pos = strpos($cadDestino, $rowU['email']);
+            if (($rowU['email'] != '') && ($pos === false)) {
+               $cadDestino .= $rowU['email'].', ';
+            }
+         }
+
+         while ($rowC = mysql_fetch_array($resUsuarios)) {
+            $pos = strpos($cadDestino, $rowC['email']);
+            if (($rowC['email'] != '') && ($pos === false)) {
+               $cadDestino .= $rowC['email'].', ';
+            }
+         }
+
+         if ($adcional != '') {
+            $cadDestino = $adcional.', ';
+         }
+
+         if ($cadDestino != '') {
+
+            if ($this->existeUsuarioSistema($adcional) == 1) {
+               // por ahora nada mas
+               $token = $this->GUID();
+               $resAutoLogin = $this->insertarAutologin(261,$token,'engestion/modificar.php?id='.$id,'0');
+            } else {
+               if ($adcional == '') {
+                  // por ahora nada mas
+                  $token = $this->GUID();
+                  $resAutoLogin = $this->insertarAutologin(261,$token,'engestion/modificar.php?id='.$id,'0');
+               }
+            }
+
+
+
+            $asunto = 'Alerta Cotización, cotización: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
+
+            $cuerpo = '';
+
+            $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+            $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+            $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+            $cuerpo .= "
+            <style>
+            	body { font-family: 'Lato', sans-serif; }
+            	header { font-family: 'Prata', serif; }
+            </style>";
+
+            $cuerpo .= '<body>';
+
+            $cuerpo .= $dato;
+
+            if ($adcional == '') {
+               $cuerpo .= '<p>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</p>';
+            }
+
+            $cuerpo .= '</body>';
+
+            if ($enviaEmail==1) {
+               $exito = $this->enviarEmail(substr($cadDestino,0,-2), utf8_decode( $asunto),utf8_decode($cuerpo));
+            } else {
+               $exito = $this->enviarEmail(substr($cadDestino,0,-2), utf8_decode( $asunto),utf8_decode($cuerpo));
+            }
+
+
+            $gestor = fopen('logemails'.date('Y_m_d_H_i_s').'.txt', 'w');
+            fwrite($gestor, $cadDestino.' '.date('Y-m-d H:i:s'));
+            fclose($gestor);
+
+            return '';
          }
       }
 
-      while ($rowC = mysql_fetch_array($resUsuarios)) {
-         $pos = strpos($cadDestino, $rowC['email']);
-         if (($rowC['email'] != '') && ($pos === false)) {
-            $cadDestino .= $rowC['email'].', ';
+      $rutaUrl = '';
+      $cadDestinoLog = '';
+
+      // para las notificaciones del directorio
+      if (mysql_result($resEvento,0,'enviaemailaagente') == '1') {
+
+         switch (mysql_result($resEvento,0,'idevento')) {
+            case 11:
+               $rutaUrl = 'entregadas';
+            break;
+            case 12:
+               $rutaUrl = 'aceptadas';
+            break;
+            case 32:
+               $rutaUrl = 'mesacontrol';
+            break;
          }
-      }
 
-      if ($adcional != '') {
-         $cadDestino = $adcional.', ';
-      }
+         $resDirectorioEmail = $this->traerDirectorioEmails($idasesor, mysql_result($resEvento,0,'idevento'));
 
+         while ($rowDA = mysql_fetch_array($resDirectorioEmail)) {
 
-      ////// fin ////////////////////////////
+            $cadDestino = $rowDA['email'];
 
-      if ($cadDestino != '') {
+            $cadDestinoLog .= $rowDA['email'].', ';
 
-         if ($this->existeUsuarioSistema($adcional) == 1) {
-            // por ahora nada mas
             $token = $this->GUID();
-            $resAutoLogin = $this->insertarAutologin(261,$token,'engestion/modificar.php?id='.$id,'0');
+
+            $resAutoLogin = $this->insertarAutologin($idusuarioasesor,$token, $rutaUrl.'/modificar.php?id='.$id,'0',$rowDA['email'],$rowDA['razonsocial']);
+
+
+            $asunto = 'Alerta Cotización, cotización: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
+
+            $cuerpo = '';
+
+            $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+            $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+            $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+            $cuerpo .= "
+            <style>
+            	body { font-family: 'Lato', sans-serif; }
+            	header { font-family: 'Prata', serif; }
+            </style>";
+
+            $cuerpo .= '<body>';
+
+            $cuerpo .= $dato;
+
+            $cuerpo .= '<p>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</p>';
+
+            $cuerpo .= '</body>';
+
+            $exito = $this->enviarEmail($cadDestino, utf8_decode( $asunto),utf8_decode($cuerpo));
+
          }
+
+         $cadDestinoLog .= $emailasesor;
+
+         $token = $this->GUID();
+
+         $resAutoLogin = $this->insertarAutologin($idusuarioasesor,$token, $rutaUrl.'/modificar.php?id='.$id,'0');
+
 
          $asunto = 'Alerta Cotización, cotización: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
 
@@ -691,33 +953,30 @@ return $res;
 
          $cuerpo .= "
          <style>
-         	body { font-family: 'Lato', sans-serif; }
-         	header { font-family: 'Prata', serif; }
+            body { font-family: 'Lato', sans-serif; }
+            header { font-family: 'Prata', serif; }
          </style>";
 
          $cuerpo .= '<body>';
 
          $cuerpo .= $dato;
 
-         if ($adcional == '') {
-            $cuerpo .= '<p>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</p>';
-         }
+         $cuerpo .= '<p>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</p>';
 
          $cuerpo .= '</body>';
 
-         if ($enviaEmail==1) {
-            $exito = $this->enviarEmail(substr($cadDestino,0,-2), utf8_decode( $asunto),utf8_decode($cuerpo));
-         } else {
-            $exito = $this->enviarEmail(substr($cadDestino,0,-2), utf8_decode( $asunto),utf8_decode($cuerpo));
-         }
-
+         $exito = $this->enviarEmail($emailasesor, utf8_decode( $asunto),utf8_decode($cuerpo));
 
          $gestor = fopen('logemails'.date('Y_m_d_H_i_s').'.txt', 'w');
-         fwrite($gestor, $cadDestino.' '.date('Y-m-d H:i:s'));
+         fwrite($gestor, $cadDestinoLog.' '.date('Y-m-d H:i:s'));
          fclose($gestor);
 
          return '';
       }
+
+      ////// fin ////////////////////////////
+
+
 
    }
 
@@ -10653,19 +10912,19 @@ return $res;
 
 	/* PARA Directorioasesores */
 
-   function insertarDirectorioasesores($refasesores,$area,$razonsocial,$telefono,$email,$telefonocelular,$password,$recibenotificaciones) {
-      $sql = "insert into dbdirectorioasesores(iddirectorioasesor,refasesores,area,razonsocial,telefono,email,telefonocelular,password,recibenotificaciones)
-      values ('',".$refasesores.",'".$area."','".$razonsocial."','".$telefono."','".$email."','".$telefonocelular."','".$password."','".$recibenotificaciones."')";
+   function insertarDirectorioasesores($refasesores,$refareadirectorios,$razonsocial,$telefono,$email,$telefonocelular,$password,$recibenotificaciones) {
+      $sql = "insert into dbdirectorioasesores(iddirectorioasesor,refasesores,refareadirectorios,razonsocial,telefono,email,telefonocelular,password,recibenotificaciones)
+      values ('',".$refasesores.",".$refareadirectorios.",'".$razonsocial."','".$telefono."','".$email."','".$telefonocelular."','".$password."','".$recibenotificaciones."')";
 
       $res = $this->query($sql,1);
       return $res;
    }
 
 
-   function modificarDirectorioasesores($id,$refasesores,$area,$razonsocial,$telefono,$email,$telefonocelular,$password,$recibenotificaciones) {
+   function modificarDirectorioasesores($id,$refasesores,$refareadirectorios,$razonsocial,$telefono,$email,$telefonocelular,$password,$recibenotificaciones) {
       $sql = "update dbdirectorioasesores
       set
-      refasesores = ".$refasesores.",area = '".$area."',razonsocial = '".$razonsocial."',telefono = '".$telefono."',email = '".$email."',telefonocelular = '".$telefonocelular."',password = '".$password."',recibenotificaciones = '".$recibenotificaciones."'
+      refasesores = ".$refasesores.",refareadirectorios = ".$refareadirectorios.",razonsocial = '".$razonsocial."',telefono = '".$telefono."',email = '".$email."',telefonocelular = '".$telefonocelular."',password = '".$password."',recibenotificaciones = '".$recibenotificaciones."'
       where iddirectorioasesor =".$id;
       $res = $this->query($sql,0);
       return $res;
@@ -10683,7 +10942,7 @@ return $res;
 		$sql = "select
 		d.iddirectorioasesor,
 		d.refasesores,
-		d.area,
+		d.refareadirectorios,
 		d.razonsocial,
 		d.telefono,
 		d.telefonocelular,
@@ -10700,13 +10959,13 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and (d.area like '%".$busqueda."%' or d.razonsocial like '%".$busqueda."%' or d.telefono like '%".$busqueda."%' or d.email like '%".$busqueda."%' or d.telefonocelular like '%".$busqueda."%' )";
+			$where = " and (a.area like '%".$busqueda."%' or d.razonsocial like '%".$busqueda."%' or d.telefono like '%".$busqueda."%' or d.email like '%".$busqueda."%' or d.telefonocelular like '%".$busqueda."%' )";
 		}
 
 
 		$sql = "select
 		d.iddirectorioasesor,
-		d.area,
+		a.area,
 		d.razonsocial,
 		d.telefono,
 		d.telefonocelular,
@@ -10714,6 +10973,7 @@ return $res;
       d.password,
       (case when d.recibenotificaciones = '1' then 'Si' else 'No' end) as recibenotificaciones
 		from dbdirectorioasesores d
+      inner join tbareasdirectorio a on a.idareadirectorio = d.refareadirectorios
 		where d.refasesores = ".$refasesores." ".$where."
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
@@ -10724,13 +10984,13 @@ return $res;
 
 
 	function traerDirectorioasesoresPorId($id) {
-		$sql = "select iddirectorioasesor,refasesores,area,razonsocial,telefono,email,telefonocelular,password,recibenotificaciones from dbdirectorioasesores where iddirectorioasesor =".$id;
+		$sql = "select iddirectorioasesor,refasesores,refareadirectorios,razonsocial,telefono,email,telefonocelular,password,recibenotificaciones from dbdirectorioasesores where iddirectorioasesor =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
 	function traerDirectorioasesoresPorAsesor($idasesor) {
-		$sql = "select iddirectorioasesor,refasesores,area,razonsocial,telefono,email,telefonocelular,password,recibenotificaciones from dbdirectorioasesores where refasesores =".$idasesor;
+		$sql = "select iddirectorioasesor,refasesores,refareadirectorios,razonsocial,telefono,email,telefonocelular,password,recibenotificaciones from dbdirectorioasesores where refasesores =".$idasesor;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -20786,18 +21046,18 @@ return $res;
 
    /* PARA Autologin */
 
-   function insertarAutologin($refusuarios,$token,$url,$usado) {
-      $sql = "insert into autologin(idautologin,refusuarios,token,url,usado)
-      values ('',".$refusuarios.",'".$token."','".$url."','".$usado."')";
+   function insertarAutologin($refusuarios,$token,$url,$usado,$email='',$nombrecompleto='') {
+      $sql = "insert into autologin(idautologin,refusuarios,token,url,usado,email,nombrecompleto)
+      values ('',".$refusuarios.",'".$token."','".$url."','".$usado."','".$email."','".$nombrecompleto."')";
       $res = $this->query($sql,1);
       return $res;
    }
 
 
-   function modificarAutologin($id,$refusuarios,$token,$url,$usado) {
+   function modificarAutologin($id,$refusuarios,$token,$url,$usado,$email='',$nombrecompleto='') {
       $sql = "update autologin
       set
-      refusuarios = ".$refusuarios.",token = '".$token."',url = '".$url."',usado = '".$usado."'
+      refusuarios = ".$refusuarios.",token = '".$token."',url = '".$url."',usado = '".$usado."',email = '".$email."',nombrecompleto = '".$nombrecompleto."'
       where idautologin =".$id;
       $res = $this->query($sql,0);
       return $res;
@@ -20826,13 +21086,13 @@ return $res;
 
 
    function traerAutologinPorId($id) {
-      $sql = "select idautologin,refusuarios,token,url,usado from autologin where idautologin =".$id;
+      $sql = "select idautologin,refusuarios,token,url,usado,email,nombrecompleto from autologin where idautologin =".$id;
       $res = $this->query($sql,0);
       return $res;
    }
 
    function traerAutologinPorToken($token) {
-      $sql = "select idautologin,refusuarios,token,url,usado from autologin where token ='".$token."'";
+      $sql = "select idautologin,refusuarios,token,url,usado,email,nombrecompleto from autologin where token ='".$token."'";
       $res = $this->query($sql,0);
       return $res;
    }
