@@ -1525,6 +1525,9 @@ function rechazarPolizarAgente($serviciosReferencias) {
    //modifico la cotizacion anterior a historial
    $resModEc = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestadocotizaciones',27,$usuariomodi);
 
+   //trazabilidad 29- endoso a emision
+   $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id, date('Y-m-d H:i:s'),29,$usuariomodi,0,0,0,'Se endoso un poliza y se volvio la cotizacion a emision','');
+
    $resV['error'] = false;
 
    header('Content-type: application/json');
