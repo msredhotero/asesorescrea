@@ -11115,7 +11115,7 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $resultado = $serviciosReferencias->traerDirectorioasesoresPorId($id);
 
          $lblCambio	 	= array('refasesores','razonsocial','telefonocelular','recibenotificaciones','refareadirectorios');
-         $lblreemplazo	= array('Asesores','Nombre','Tel. Fijo','Recibe Notificaciones','Area');
+         $lblreemplazo	= array('Asesores','Nombre','Tel. Movil','Recibe Notificaciones','Area');
 
 
 

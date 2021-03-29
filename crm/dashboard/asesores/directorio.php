@@ -61,7 +61,7 @@ $_SESSION['idasesor_aux'] = $id;
 $tabla 			= "dbdirectorioasesores";
 
 $lblCambio	 	= array('refasesores','razonsocial','telefonocelular','recibenotificaciones','refareadirectorios');
-$lblreemplazo	= array('Asesores','Nombre','Tel. Fijo','Recibe Notificaciones','Area');
+$lblreemplazo	= array('Asesores','Nombre','Tel. Movil','Recibe Notificaciones','Area');
 
 $cadRef2 = $serviciosFunciones->devolverSelectBox($resultado,array(3,4,2),' ');
 
