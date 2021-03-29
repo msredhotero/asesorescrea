@@ -8419,7 +8419,7 @@ return $res;
       inner join dbventas v on v.refcotizaciones = vf.refcotizaciones and v.version = vf.version and v.refproductosaux = vf.refproductosaux
       inner join tbestadoventa ev on ev.idestadoventa = v.refestadoventa
 
-		where v.refestadoventa in (2,3,4,5) ".$where.$cadFecha.$cadAgente."
+		where v.refestadoventa in (2,3,4,5,7,8) ".$where.$cadFecha.$cadAgente."
 
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
@@ -13065,7 +13065,45 @@ return $res;
       left join tbeventos ee on ee.reftabla=16 and ee.idreferencia=c.refestadocotizaciones
       left join dbtrazabilidad tz on tz.refevento = ee.idevento and tz.idreferencia = c.idcotizacion and tz.reftabla=12
 		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
-
+      left join dbventas vv on vv.refcotizaciones = c.idcotizacion
+		where ".$whereEstado.$where." ".$whereSinVenta." and vv.idventa is null
+      group by c.idcotizacion,
+		cli.reftipopersonas,cli.apellidopaterno, cli.apellidomaterno, cli.nombre,cli.razonsocial,
+		pro.producto,
+		ase.apellidopaterno, ase.apellidomaterno, ase.nombre,
+		aso.apellidopaterno, aso.apellidomaterno, aso.nombre,
+      c.fechacrea,
+      est.estadocotizacion,
+      c.folio,
+      c.version
+      union all
+      select
+		c.idcotizacion,
+		(case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
+		pro.producto,
+		concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
+		concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
+      min(DATE_FORMAT(tz.fechacrea, '%d-%m-%Y %H:%i:%s')) as fechacrea,
+      est.estadocotizacion,
+      c.folio,
+      DATEDIFF(CURDATE(),c.fechacrea) as dias,
+      'Endoso' as gestion,
+      max(DATE_FORMAT(tz.fechacrea, '%d-%m-%Y %H:%i:%s')) as fechaevento,
+      c.ot,
+      c.primaneta,c.primatotal
+		from dbcotizaciones c
+		inner join dbclientes cli ON cli.idcliente = c.refclientes
+		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
+		inner join tbproductos pro ON pro.idproducto = c.refproductos
+      inner join tbtipoproductorama tr on tr.idtipoproductorama = pro.reftipoproductorama ".$cadRolPorRama."
+		inner join dbasesores ase ON ase.idasesor = c.refasesores
+      ".$cadFiltroNuevo."
+		left join dbusuarios us ON us.idusuario = c.refusuarios
+		left join dbasociados aso ON aso.idasociado = c.refasociados
+      left join tbeventos ee on ee.reftabla=16 and ee.idreferencia=c.refestadocotizaciones
+      left join dbtrazabilidad tz on tz.refevento = ee.idevento and tz.idreferencia = c.idcotizacion and tz.reftabla=12
+		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
+      inner join dbventas vv on vv.refcotizaciones = c.idcotizacion and vv.refestadoventa=7
 		where ".$whereEstado.$where." ".$whereSinVenta."
       group by c.idcotizacion,
 		cli.reftipopersonas,cli.apellidopaterno, cli.apellidomaterno, cli.nombre,cli.razonsocial,
@@ -13218,7 +13256,43 @@ return $res;
 		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
       left join tbeventos ee on ee.reftabla=16 and ee.idreferencia=c.refestadocotizaciones
       left join dbtrazabilidad tz on tz.refevento = ee.idevento and tz.idreferencia = c.idcotizacion and tz.reftabla=12
-
+      left join dbventas vv on vv.refcotizaciones = c.idcotizacion
+		where ".$whereEstado." and ase.idasesor = ".$idasesor." ".$where." and vv.idventa is null
+      group by c.idcotizacion,
+		cli.reftipopersonas,cli.apellidopaterno, cli.apellidomaterno, cli.nombre,cli.razonsocial,
+		pro.producto,
+		ase.apellidopaterno, ase.apellidomaterno, ase.nombre,
+		aso.apellidopaterno, aso.apellidomaterno, aso.nombre,
+      c.fechacrea,
+      est.estadocotizacion,
+      c.folio,
+      c.version
+      union all
+      select
+		c.idcotizacion,
+		(case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
+		pro.producto,
+		concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
+		concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
+      min(DATE_FORMAT(tz.fechacrea, '%d-%m-%Y %H:%i:%s')) as fechacrea,
+      est.estadocotizacion,
+      c.folio,
+      DATEDIFF(CURDATE(),c.fechacrea) as dias,
+      'Endoso' as gestion,
+      max(DATE_FORMAT(tz.fechacrea, '%d-%m-%Y %H:%i:%s')) as fechaevento,
+      c.ot,
+      c.primaneta ,c.primatotal
+		from dbcotizaciones c
+		inner join dbclientes cli ON cli.idcliente = c.refclientes
+		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
+		inner join tbproductos pro ON pro.idproducto = c.refproductos
+		inner join dbasesores ase ON ase.idasesor = c.refasesores
+		left join dbusuarios us ON us.idusuario = c.refusuarios
+		left join dbasociados aso ON aso.idasociado = c.refasociados
+		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
+      left join tbeventos ee on ee.reftabla=16 and ee.idreferencia=c.refestadocotizaciones
+      left join dbtrazabilidad tz on tz.refevento = ee.idevento and tz.idreferencia = c.idcotizacion and tz.reftabla=12
+      inner join dbventas vv on vv.refcotizaciones = c.idcotizacion and vv.refestadoventa=7
 		where ".$whereEstado." and ase.idasesor = ".$idasesor." ".$where."
       group by c.idcotizacion,
 		cli.reftipopersonas,cli.apellidopaterno, cli.apellidomaterno, cli.nombre,cli.razonsocial,

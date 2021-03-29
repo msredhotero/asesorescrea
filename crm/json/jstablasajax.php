@@ -1056,7 +1056,7 @@ switch ($tabla) {
 
 		if ($_SESSION['idroll_sahilices'] == 7) {
 
-			$datos = $serviciosReferencias->traerVentasajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+			$datos = $serviciosReferencias->traerVentasPorAsesorCompletoAjax($length, $start, $busqueda,$colSort,$colSortDir,$asesor,$idcliente,$min,$max,3);
 
 			$resAjax = $datos[0];
 			$res = $datos[1];
@@ -1287,9 +1287,9 @@ switch ($tabla) {
 				$icon = array('create');
 				$whereEstado = ' c.refestados in (4) and c.refestadocotizaciones in (27) ';
 				if ($_SESSION['idroll_sahilices'] == 7) {
-					$termina = 6;
+					$termina = 10;
 				} else {
-					$termina = 6;
+					$termina = 10;
 				}
 
 				/*

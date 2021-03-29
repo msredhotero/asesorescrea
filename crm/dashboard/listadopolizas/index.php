@@ -328,7 +328,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 					 <h4 class="modal-title" id="largeModalLabel">MODIFICAR ESTADO DE LA POLIZA</h4>
 				</div>
 				<div class="modal-body">
-				 <h3>¿Esta seguro que desea rechazar la poliza, esta se eliminará y la cotización volverá a emisión?</h3>
+				 <h3>¿Esta seguro que desea rechazar la poliza, esta se enviara al historial y la cotización volverá a emisión?</h3>
 				 <input type="hidden" name="idpolizainiciadar" id="idpolizainiciadar" />
 
 				</div>
@@ -393,7 +393,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 					if (data.error == false) {
 						swal({
 								title: "Respuesta",
-								text: data.mensaje,
+								text: 'Rechazada correctamente',
 								type: "success",
 								timer: 1000,
 								showConfirmButton: false
