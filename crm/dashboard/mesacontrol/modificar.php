@@ -696,7 +696,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 										<?php if ($idestado == 30) { ?>
 											<!--<button type="button" class="btn btn-success waves-effect btnAceptarMesaDeControl">ACEPTAR</button>-->
-											<button type="button" class="btn btn-danger waves-effect btnRechazarMesaDeControl">Rechazar</button>
+											<button type="button" class="btn btn-danger waves-effect btnInsuficiente">CANCELA LA COTIZACION</button>
 										<?php } ?>
 
 											<?php if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 14) || ($_SESSION['idroll_sahilices'] == 15) || ($_SESSION['idroll_sahilices'] == 3) || ($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22) || ($_SESSION['idroll_sahilices'] == 23)) { ?>
@@ -1177,8 +1177,8 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 		$('.btnInsuficiente').click(function() {
 
-			$('.lblModiEstado').html('RECHAZADA');
-			$('.modificarEstadoCotizacionRechazo').html('RECHAZADA');
+			$('.lblModiEstado').html('cancela la cotización');
+			$('.modificarEstadoCotizacionRechazo').html('CANCELA LA COTIZACION');
 
 			$('.contFrmRechazoDefinitivo').hide();
 
