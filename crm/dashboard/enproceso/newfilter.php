@@ -602,6 +602,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 $resDirectorioNecesario = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesarios($idasesor);
 $resSuscriptores = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosArea($idasesor,2);
 $resMesaControl = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosArea($idasesor,3);
+$resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosArea($idasesor,1);
 
 ?>
 
@@ -1209,11 +1210,11 @@ $resMesaControl = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesar
 									<h3>DIRECTORIO</h3>
 										<fieldset>
 											<div class="row clearfix" style="margin-top:15px; padding: 0 20px;">
-												<h4>Debe seleccionar al menos un Suscriptor y un Admin Mesa de Control</h4>
 
-												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+
+												<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" style="display:block">
 													<p>
-	                                       <b>Suscriptor</b>
+	                                       <b>Suscripción</b>
 	                                    </p>
 													<select required id="suscriptor_select" name="suscriptor_select[]" class="js-example-basic-multiple" multiple="multiple">
 												<?php
@@ -1226,13 +1227,26 @@ $resMesaControl = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesar
 													</select>
 												</div>
 
-												<div class="col-lg-4 col-md-6 col-sm-6 col-xs-12" style="display:block">
+												<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" style="display:block">
 													<p>
 	                                       <b>Admin Mesa de Control</b>
 	                                    </p>
 													<select required id="mesacontrol_select" name="mesacontrol_select[]"  class="js-example-basic-multiple" multiple="multiple">
 												<?php
 												while ($rowD = mysql_fetch_array($resMesaControl)) {
+												?>
+													<option value="<?php echo $rowD['iddirectorioasesor']; ?>"><?php echo $rowD['razonsocial']; ?></option>
+												<?php } ?>
+													</select>
+												</div>
+
+												<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" style="display:block">
+													<p>
+	                                       <b>Ventas</b>
+	                                    </p>
+													<select required id="ventas_select" name="ventas_select[]"  class="js-example-basic-multiple" multiple="multiple">
+												<?php
+												while ($rowD = mysql_fetch_array($resVentas)) {
 												?>
 													<option value="<?php echo $rowD['iddirectorioasesor']; ?>"><?php echo $rowD['razonsocial']; ?></option>
 												<?php } ?>
@@ -2683,6 +2697,13 @@ $resMesaControl = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesar
 			});
 
 			$("#mesacontrol_select option").each(function()
+			{
+			   if ($(this).prop('selected')) {
+					insertarCotizacionesdirectorio($(this).val());
+				}
+			});
+
+			$("#ventas_select option").each(function()
 			{
 			   if ($(this).prop('selected')) {
 					insertarCotizacionesdirectorio($(this).val());
