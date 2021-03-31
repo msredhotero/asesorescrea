@@ -695,7 +695,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 
 				<div class="row contFrmAceptadas">
-					<h4>Una vez ACEPTADA, su cotización estará en el listado de cotizaciones aceptadas, donde deberá cargar la documentación necesaria para la emisión.</h4>
+					<h4>Una vez ACEPTADA, su cotización estará en el listado de cotizaciones en mesa de control, donde deberá cargar la documentación necesaria para la emisión.</h4>
 					<?php
 					//buscar el suuario de mas seguros
 					if ($_SESSION['usuaid_sahilices'] == 154) {
