@@ -808,7 +808,7 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocu
 					$('.infoPlanilla').hide();
 					$('#<?php echo $iddocumentacion; ?>').addClass('bg-blue');
 					$('#<?php echo $iddocumentacion; ?> .number').html('Cargada');
-					//location.reload();
+					location.reload();
 				});
 
 				this.on('error', function( file, resp ){
