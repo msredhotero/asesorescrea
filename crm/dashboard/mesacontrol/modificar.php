@@ -537,6 +537,8 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 								<?php if ($idestado == 30) { ?>
 								<button type="button" class="btn bg-brown waves-effect btnAdjuntar"><i class="material-icons">unarchive</i><span>DOCUMENTOS GENERALES</span></button>
+
+								<button type="button" class="btn bg-green waves-effect btnAdjuntar2"><i class="material-icons">unarchive</i><span>ADJUNTAR DOCUMENTOS PARA EMITIR</span></button>
 								<?php } ?>
 
 								<button type="button" class="btn btn-info waves-effect btnTrazabilidad" data-cotizacion="<?php echo $id; ?>"><i class="material-icons">show_chart</i><span>TRAZABILIDAD</span></button>
@@ -693,7 +695,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 											<button type="button" class="btn btn-info waves-effect">ESTADO: <?php echo mysql_result($resEstados,0,'estadocotizacion'); ?></button>
 
 										<?php if ($idestado == 30) { ?>
-											<button type="button" class="btn btn-success waves-effect btnAceptarMesaDeControl">ACEPTAR</button>
+											<!--<button type="button" class="btn btn-success waves-effect btnAceptarMesaDeControl">ACEPTAR</button>-->
 											<button type="button" class="btn btn-danger waves-effect btnRechazarMesaDeControl">Rechazar</button>
 										<?php } ?>
 
@@ -883,6 +885,11 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 		$('.btnAdjuntar').click(function() {
 			url = "adjuntarcotizaciones.php?id=<?php echo $id; ?>";
+			$(location).attr('href',url);
+		});
+
+		$('.btnAdjuntar2').click(function() {
+			url = "adjuntarcotizacionese.php?id=<?php echo $id; ?>";
 			$(location).attr('href',url);
 		});
 
