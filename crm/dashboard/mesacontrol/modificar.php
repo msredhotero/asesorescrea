@@ -1177,7 +1177,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 		$('.btnInsuficiente').click(function() {
 
-			$('.lblModiEstado').html('cancela la cotización');
+			$('.lblModiEstado').html('cancelar la cotización');
 			$('.modificarEstadoCotizacionRechazo').html('CANCELA LA COTIZACION');
 
 			$('.contFrmRechazoDefinitivo').hide();
