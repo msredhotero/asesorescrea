@@ -1444,11 +1444,27 @@ switch ($accion) {
    case 'traerDocumentacionprocesos':
       traerDocumentacionprocesos($serviciosReferencias);
    break;
+   case 'insertarCotizacionesdirectorio':
+      insertarCotizacionesdirectorio($serviciosReferencias);
+   break;
 
 
 
 }
 /* FinFinFin */
+
+function insertarCotizacionesdirectorio($serviciosReferencias) {
+   $refcotizaciones = $_POST['refcotizaciones'];
+   $refdirectorioasesores = $_POST['refdirectorioasesores'];
+
+   $res = $serviciosReferencias->insertarCotizacionesdirectorio($refcotizaciones,$refdirectorioasesores);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
 
 function insertarDocumentacionprocesos($serviciosReferencias) {
    $refdocumentaciones = $_POST['refdocumentaciones'];
@@ -4534,7 +4550,7 @@ function modificarCotizacionesPorCampo($serviciosReferencias,$serviciosUsuarios)
          $mensaje = 'SE MODIFICO CORRECTAMENTE';
       } else {
 
-         if ($idestado == 12) {
+         if (($idestado == 12) || ($idestado == 30)) {
             // modifico el estado de la cotizacion
             $resModEstadoCot = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',$idestado, $_SESSION['usua_sahilices']);
          }

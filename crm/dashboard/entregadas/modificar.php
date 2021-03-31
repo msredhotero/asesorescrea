@@ -1199,7 +1199,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 			$('.contFrmRechazoDefinitivo').hide();
 
 			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
-			$('#estadomodificarestadorechazo').val(9);
+			$('#estadomodificarestadorechazo').val(30);
 			$('#lgmModificarEstado').modal();
 
 		});//fin del boton eliminar

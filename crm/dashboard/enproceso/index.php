@@ -486,10 +486,11 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 			},
 		   "rowCallback": function( row, data, index ) {
 				//alert(data[4].substring(0,10));
+				/*
 			  if (datediff(parseDate(data[4].substring(0,10)), parseDate('<?php echo date('Y-m-d'); ?>') )  > 1) {
 				  $('td', row).css('background-color', '#F62121');
 				  $('td', row).css('color', 'white');
-			  }
+			  }*/
 		   }<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>,
 			"columnDefs": [
 				{

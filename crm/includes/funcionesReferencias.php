@@ -10,6 +10,91 @@ date_default_timezone_set('America/Mexico_City');
 class ServiciosReferencias {
 
 
+
+   /* PARA Cotizacionesdirectorio */
+
+   function insertarCotizacionesdirectorio($refcotizaciones,$refdirectorioasesores) {
+      $sql = "insert into dbcotizacionesdirectorio(idcotizaciondirectorio,refcotizaciones,refdirectorioasesores)
+      values ('',".$refcotizaciones.",".$refdirectorioasesores.")";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
+
+   function modificarCotizacionesdirectorio($id,$refcotizaciones,$refdirectorioasesores) {
+      $sql = "update dbcotizacionesdirectorio
+      set
+      refcotizaciones = ".$refcotizaciones.",refdirectorioasesores = ".$refdirectorioasesores."
+      where idcotizaciondirectorio =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function eliminarCotizacionesdirectorio($id) {
+      $sql = "delete from dbcotizacionesdirectorio where idcotizaciondirectorio =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerCotizacionesdirectorio() {
+      $sql = "select
+      c.idcotizaciondirectorio,
+      c.refcotizaciones,
+      c.refdirectorioasesores
+      from dbcotizacionesdirectorio c
+      order by 1";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   function traerCotizacionesdirectorioPorId($id) {
+      $sql = "select idcotizaciondirectorio,refcotizaciones,refdirectorioasesores from dbcotizacionesdirectorio where idcotizaciondirectorio =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerCotizacionesdirectorioPorCotizacion($id) {
+      $sql = "select idcotizaciondirectorio,refcotizaciones,refdirectorioasesores from dbcotizacionesdirectorio where refcotizaciones =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerCotizacionesdirectorioPorCotizacionCompleto($id,$idevento) {
+      $sql = "SELECT
+                cd.idcotizaciondirectorio,
+                cd.refcotizaciones,
+                cd.refdirectorioasesores,
+                a.area,
+                da.email,
+                da.razonsocial,
+                ase.refusuarios
+            FROM
+                dbcotizacionesdirectorio cd
+                    INNER JOIN
+                dbcotizaciones c ON c.idcotizacion = cd.refcotizaciones
+                    INNER JOIN
+                dbdirectorioasesores da ON da.iddirectorioasesor = cd.refdirectorioasesores
+                    AND c.refasesores = da.refasesores
+                    INNER JOIN
+                tbareasdirectorio a ON a.idareadirectorio = da.refareadirectorios
+            		inner join
+            	dbasesores ase on ase.idasesor = da.refasesores
+                  inner join
+               dbareasdirectorioeventos ad on ad.refareasdirectorio = da.refareadirectorios
+            WHERE
+                cd.refcotizaciones = ".$id." and ad.refeventos = ".$idevento;
+
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+
+   /* Fin */
+   /* /* Fin de la Tabla: dbcotizacionesdirectorio*/
+
    /* PARA Documentacionprocesos */
 
    function insertarDocumentacionprocesos($refdocumentaciones,$refprocesocotizacion) {
@@ -893,7 +978,8 @@ return $res;
             break;
          }
 
-         $resDirectorioEmail = $this->traerDirectorioEmails($idasesor, mysql_result($resEvento,0,'idevento'));
+         //terminar aca
+         $resDirectorioEmail = $this->traerCotizacionesdirectorioPorCotizacionCompleto($id, mysql_result($resEvento,0,'idevento'));
 
          while ($rowDA = mysql_fetch_array($resDirectorioEmail)) {
 
@@ -10991,6 +11077,18 @@ return $res;
 
 	function traerDirectorioasesoresPorAsesor($idasesor) {
 		$sql = "select iddirectorioasesor,refasesores,refareadirectorios,razonsocial,telefono,email,telefonocelular,password,recibenotificaciones from dbdirectorioasesores where refasesores =".$idasesor;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function traerDirectorioasesoresPorAsesorNecesarios($idasesor) {
+		$sql = "select iddirectorioasesor,refasesores,refareadirectorios,razonsocial,telefono,email,telefonocelular,password,recibenotificaciones from dbdirectorioasesores where refasesores =".$idasesor." and refareadirectorios in (2,3)";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+   function traerDirectorioasesoresPorAsesorNecesariosArea($idasesor,$idarea) {
+		$sql = "select iddirectorioasesor,refasesores,refareadirectorios,razonsocial,telefono,email,telefonocelular,password,recibenotificaciones from dbdirectorioasesores where refasesores =".$idasesor." and refareadirectorios =".$idarea;
 		$res = $this->query($sql,0);
 		return $res;
 	}

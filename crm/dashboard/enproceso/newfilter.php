@@ -282,16 +282,19 @@ if (isset($_GET['id'])) {
 
 	switch (mysql_result($resultado,0,'tiponegocio')) {
 		case 'Negocio nuevo':
-			$cadRef9b = "<option value='Negocio nuevo' selected>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
+			$cadRef9b = "<option value='Negocio nuevo' selected>Negocio nuevo</option><option value='Renovación en inbursa'>Renovación en inbursa</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option><option value='Renovación póliza en otra aseguradora'>Renovación póliza en otra aseguradora</option>";
 		break;
-		case 'Renovación':
-			$cadRef9b = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación' selected>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
+		case 'Renovación en inbursa':
+			$cadRef9b = "<option value='Negocio nuevo' >Negocio nuevo</option><option value='Renovación en inbursa' selected>Renovación en inbursa</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option><option value='Renovación póliza en otra aseguradora'>Renovación póliza en otra aseguradora</option>";
 		break;
 		case 'Renovación póliza con otro agente':
-			$cadRef9b = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente' selected>Renovación póliza con otro agente</option>";
+			$cadRef9b = "<option value='Negocio nuevo' >Negocio nuevo</option><option value='Renovación en inbursa' >Renovación en inbursa</option><option value='Renovación póliza con otro agente' selected>Renovación póliza con otro agente</option><option value='Renovación póliza en otra aseguradora'>Renovación póliza en otra aseguradora</option>";
+		break;
+		case 'Renovación póliza en otra aseguradora':
+			$cadRef9b = "<option value='Negocio nuevo' >Negocio nuevo</option><option value='Renovación en inbursa' >Renovación en inbursa</option><option value='Renovación póliza con otro agente' >Renovación póliza con otro agente</option><option value='Renovación póliza en otra aseguradora' selected>Renovación póliza en otra aseguradora</option>";
 		break;
 		default:
-			$cadRef9b = "<option value='Negocio nuevo'>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
+			$cadRef9b = "<option value='Negocio nuevo' >Negocio nuevo</option><option value='Renovación en inbursa' >Renovación en inbursa</option><option value='Renovación póliza con otro agente' >Renovación póliza con otro agente</option><option value='Renovación póliza en otra aseguradora'>Renovación póliza en otra aseguradora</option>";
 		break;
 	}
 
@@ -496,7 +499,7 @@ if (isset($_GET['id'])) {
 
 	$cadRef7b = "<option value='Si'>Si</option><option value='No'>No</option><option value='No lo se' selected>No lo se</option>";
 	$cadRef8b = "<option value='Si'>Si</option><option value='No' selected>No</option>";
-	$cadRef9b = "<option value='Negocio nuevo' selected>Negocio nuevo</option><option value='Renovación'>Renovación</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option>";
+	$cadRef9b = "<option value='Negocio nuevo' selected>Negocio nuevo</option><option value='Renovación en inbursa'>Renovación en inbursa</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option><option value='Renovación póliza en otra aseguradora'>Renovación póliza en otra aseguradora</option>";
 	$cadRef11b = "<option value='1'>Si</option><option value='0' selected>No</option>";
 
 	$primaobjetivo = 0;
@@ -596,6 +599,10 @@ $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuesti
 $resEstadoCivil = $serviciosReferencias->traerEstadocivilPorIn('1,2');
 $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,array(1),'');
 
+$resDirectorioNecesario = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesarios($idasesor);
+$resSuscriptores = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosArea($idasesor,2);
+$resMesaControl = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosArea($idasesor,3);
+
 ?>
 
 <!DOCTYPE html>
@@ -642,12 +649,19 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 	<!-- noUISlider Css -->
    <link href="../../plugins/nouislider/nouislider.min.css" rel="stylesheet" />
 
+	<!--<link rel="stylesheet" href="../../css/touch_multiselect.css">-->
+	<link href="../../plugins/multi-select/css/multi-select.css" rel="stylesheet">
+
+
+
 	<style>
 		.alert > i{ vertical-align: middle !important; }
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		.tscodigopostal { width: 400px; }
 
 		.ui-autocomplete { position: absolute; cursor: default;z-index:30 !important;}
+
+		.pdfobject-container { height: 40rem; border: 1rem solid rgba(0,0,0,.1); }
 
 		.sectionC {
 			height:360px;
@@ -1185,11 +1199,50 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 											</div>
 										</div>
+									</fieldset>
 
+									<?php
+									// seteo el beneficiario en cero
 
+									if (mysql_num_rows($resDirectorioNecesario) > 0) {
+										?>
+									<h3>DIRECTORIO</h3>
+										<fieldset>
+											<div class="row clearfix" style="margin-top:15px; padding: 0 20px;">
+												<h4>Debe seleccionar al menos un Suscriptor y un Admin Mesa de Control</h4>
 
+												<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+													<p>
+	                                       <b>Suscriptor</b>
+	                                    </p>
+													<select required id="suscriptor_select" name="suscriptor_select[]" class="js-example-basic-multiple" multiple="multiple">
+												<?php
+												while ($rowD = mysql_fetch_array($resSuscriptores)) {
+												?>
+														<option value="<?php echo $rowD['iddirectorioasesor']; ?>"><?php echo $rowD['razonsocial']; ?></option>
+												<?php
+												}
+												?>
+													</select>
+												</div>
+
+												<div class="col-lg-4 col-md-6 col-sm-6 col-xs-12" style="display:block">
+													<p>
+	                                       <b>Admin Mesa de Control</b>
+	                                    </p>
+													<select required id="mesacontrol_select" name="mesacontrol_select[]"  class="js-example-basic-multiple" multiple="multiple">
+												<?php
+												while ($rowD = mysql_fetch_array($resMesaControl)) {
+												?>
+													<option value="<?php echo $rowD['iddirectorioasesor']; ?>"><?php echo $rowD['razonsocial']; ?></option>
+												<?php } ?>
+													</select>
+												</div>
+
+											</div>
 
 									</fieldset>
+								<?php } ?>
 
                            </form>
 
@@ -1659,12 +1712,16 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 <!-- noUISlider Plugin Js -->
 <script src="../../plugins/nouislider/nouislider.js"></script>
 
+<script src="../../plugins/multi-select/js/jquery.multi-select.js"></script>
 
-<!-- Chart Plugins Js -->
+<!--<script src="../../js/jquery.touch-multiselect.js"></script>-->
+
 
 
 <script>
 	$(document).ready(function(){
+
+
 
 		function trazabilidad(id,idestado,dato,url) {
 			$.ajax({
@@ -2491,7 +2548,7 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 
 
 		$("#wizard_with_validation").on("change",'#tiponegocio', function(){
-			if (($(this)[0].selectedIndex == 1) || ($(this)[0].selectedIndex == 2)) {
+			if (($(this)[0].selectedIndex == 1) || ($(this)[0].selectedIndex == 2) || ($(this)[0].selectedIndex == 3)) {
 				$('.frmContfechavencimiento').show();
 				$('.frmContcoberturaactual').show();
 
@@ -2605,9 +2662,68 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 	            return form.valid();
 	        },
 	        onFinished: function (event, currentIndex) {
-	            modificarCotizacion(4);
+				   <?php
+				   if (mysql_num_rows($resDirectorioNecesario) > 0) {
+					?>
+					cargarDirectorioCotizacion();
+					<?php } else { ?>
+					modificarCotizacion(4);
+					<?php } ?>
+
+
 	        }
 	    });
+
+		function cargarDirectorioCotizacion() {
+			$("#suscriptor_select option").each(function()
+			{
+			   if ($(this).prop('selected')) {
+					insertarCotizacionesdirectorio($(this).val());
+				}
+			});
+
+			$("#mesacontrol_select option").each(function()
+			{
+			   if ($(this).prop('selected')) {
+					insertarCotizacionesdirectorio($(this).val());
+				}
+			});
+
+			modificarCotizacion(4);
+		}
+
+		function insertarCotizacionesdirectorio(refdirectorioasesores) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'insertarCotizacionesdirectorio',
+					refcotizaciones: <?php echo $id; ?>,
+					refdirectorioasesores: refdirectorioasesores
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
 
 		function seguirAdelante() {
 			form.steps("next");
@@ -3789,6 +3905,8 @@ $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,arra
 			});
 		}
 
+		//$('#wizard_with_validation .js-example-basic-multiple').touchMultiSelect();
+		$('#wizard_with_validation .js-example-basic-multiple').selectpicker();
 
 	});
 </script>
