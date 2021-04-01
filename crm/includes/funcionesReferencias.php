@@ -7502,8 +7502,8 @@ return $res;
 
 	function traerUltimoMes($id) {
 		$sql = "select
-		DATE_ADD(max(pd.fechapago), INTERVAL 30 DAY) as fechapago,
-		DATE_ADD(max(pd.fechavencimiento), INTERVAL 30 DAY) as fechavencimiento,
+		DATE_ADD(max(pd.fechapago), INTERVAL 1 MONTH) as fechapago,
+		DATE_ADD(max(pd.fechavencimiento), INTERVAL 1 MONTH) as fechavencimiento,
 		max(pd.montototal) as montototal,
 		max(pd.primaneta) as primaneta,
 		max(pd.porcentajecomision) as porcentajecomision,
