@@ -137,6 +137,8 @@ if (isset($_GET['id'])) {
 
 	$tipoProducto = mysql_result($resProductoPrincipal,0,'reftipoproducto');
 
+	$leyendabeneficiario = mysql_result($resProductoPrincipal,0,'leyendabeneficiario');
+
 	if (mysql_result($resProductoPrincipal,0,'beneficiario') == '1') {
 		$llevaBeneficiario = 1;
 	} else {
@@ -968,7 +970,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 										<h3>BENEFICIARIO</h3>
                                  <fieldset>
 												<div class="row">
-													<h4>La contratación de VRIM Platino te cubre por muerte accidental por $500,000 pesos en caso de tener una eventualidad indícanos quien seria el beneficiario.</h4>
+													<h4><?php echo $leyendabeneficiario; ?></h4>
 
 													<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContbeneficiarioaux" style="display:block">
 														<div class="form-group form-float">
@@ -1229,7 +1231,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 
 												<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" style="display:block">
 													<p>
-	                                       <b>Admin Mesa de Control</b>
+	                                       <b>Admin/Mesa de Control</b>
 	                                    </p>
 													<select required id="mesacontrol_select" name="mesacontrol_select[]"  class="js-example-basic-multiple" multiple="multiple">
 												<?php
