@@ -875,6 +875,11 @@ return $res;
 
       $idusuarioasesor = mysql_result($resCotizaciones,0,'idusuarioasesor');
 
+      $refetapa = mysql_result($resCotizaciones,0,'refestados');
+
+      // sirve para saber si actuo sobre el mismo usuario logueado o va a otro
+      $direccion = 0;
+
       // cadena de emails a disparar
       $cadDestino = '';
 
@@ -885,8 +890,9 @@ return $res;
 
 
 
+         $idUsuarioPrincipal = 0;
          while ($rowU = mysql_fetch_array($resUsuarios)) {
-            $pos = strpos($cadDestino, $rowU['email']);
+            $idUsuarioPrincipal = $rowU['idusuario'];
             if (($rowU['email'] != '') && ($pos === false)) {
                $cadDestino .= $rowU['email'].', ';
             }
@@ -908,12 +914,12 @@ return $res;
             if ($this->existeUsuarioSistema($adcional) == 1) {
                // por ahora nada mas
                $token = $this->GUID();
-               $resAutoLogin = $this->insertarAutologin(261,$token,'engestion/modificar.php?id='.$id,'0');
+               $resAutoLogin = $this->insertarAutologin($idUsuarioPrincipal,$token,'engestion/modificar.php?id='.$id,'0');
             } else {
                if ($adcional == '') {
                   // por ahora nada mas
                   $token = $this->GUID();
-                  $resAutoLogin = $this->insertarAutologin(261,$token,'engestion/modificar.php?id='.$id,'0');
+                  $resAutoLogin = $this->insertarAutologin($idUsuarioPrincipal,$token,'engestion/modificar.php?id='.$id,'0');
                }
             }
 
@@ -966,30 +972,95 @@ return $res;
       // para las notificaciones del directorio
       if (mysql_result($resEvento,0,'enviaemailaagente') == '1') {
 
-         switch (mysql_result($resEvento,0,'idevento')) {
-            case 11:
-               $rutaUrl = 'entregadas';
-            break;
-            case 12:
-               $rutaUrl = 'aceptadas';
-            break;
-            case 32:
-               $rutaUrl = 'mesacontrol';
-            break;
+         if ($refevento == 33) {
+            switch ($refetapa) {
+               case 2:
+                  $rutaUrl = 'engestion';
+               break;
+               case 3:
+                  $rutaUrl = 'entregadas';
+               break;
+               case 4:
+                  $rutaUrl = 'aceptadas';
+               break;
+               case 6:
+                  $rutaUrl = 'mesacontrol';
+               break;
+            }
+
+            // si no es un agente, notifico al agente y a los sub perfiles
+            if ($_SESSION['idroll_sahilices'] != 7) {
+               $direccion = 0;
+            } else {
+               //si es un agente el usuario que dispara el evento, notifico al que gestiona la cotizacion
+               $direccion = 1;
+            }
+
+         } else {
+            switch (mysql_result($resEvento,0,'idevento')) {
+               case 11:
+                  $rutaUrl = 'entregadas';
+               break;
+               case 12:
+                  $rutaUrl = 'aceptadas';
+               break;
+               case 32:
+                  $rutaUrl = 'mesacontrol';
+               break;
+            }
+
+
          }
 
-         //terminar aca
-         $resDirectorioEmail = $this->traerCotizacionesdirectorioPorCotizacionCompleto($id, mysql_result($resEvento,0,'idevento'));
 
-         while ($rowDA = mysql_fetch_array($resDirectorioEmail)) {
 
-            $cadDestino = $rowDA['email'];
+         if ($direccion==0) {
+            $resDirectorioEmail = $this->traerCotizacionesdirectorioPorCotizacionCompleto($id, mysql_result($resEvento,0,'idevento'));
 
-            $cadDestinoLog .= $rowDA['email'].', ';
+            while ($rowDA = mysql_fetch_array($resDirectorioEmail)) {
+
+               $cadDestino = $rowDA['email'];
+
+               $cadDestinoLog .= $rowDA['email'].', ';
+
+               $token = $this->GUID();
+
+               $resAutoLogin = $this->insertarAutologin($idusuarioasesor,$token, $rutaUrl.'/modificar.php?id='.$id,'0',$rowDA['email'],$rowDA['razonsocial']);
+
+
+               $asunto = 'Alerta Cotización, cotización: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
+
+               $cuerpo = '';
+
+               $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+               $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+               $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+               $cuerpo .= "
+               <style>
+               	body { font-family: 'Lato', sans-serif; }
+               	header { font-family: 'Prata', serif; }
+               </style>";
+
+               $cuerpo .= '<body>';
+
+               $cuerpo .= $dato;
+
+               $cuerpo .= '<p>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</p>';
+
+               $cuerpo .= '</body>';
+
+               $exito = $this->enviarEmail($cadDestino, utf8_decode( $asunto),utf8_decode($cuerpo));
+
+            }
+
+            $cadDestinoLog .= $emailasesor;
 
             $token = $this->GUID();
 
-            $resAutoLogin = $this->insertarAutologin($idusuarioasesor,$token, $rutaUrl.'/modificar.php?id='.$id,'0',$rowDA['email'],$rowDA['razonsocial']);
+            $resAutoLogin = $this->insertarAutologin($idusuarioasesor,$token, $rutaUrl.'/modificar.php?id='.$id,'0');
 
 
             $asunto = 'Alerta Cotización, cotización: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
@@ -1004,8 +1075,8 @@ return $res;
 
             $cuerpo .= "
             <style>
-            	body { font-family: 'Lato', sans-serif; }
-            	header { font-family: 'Prata', serif; }
+               body { font-family: 'Lato', sans-serif; }
+               header { font-family: 'Prata', serif; }
             </style>";
 
             $cuerpo .= '<body>';
@@ -1016,42 +1087,83 @@ return $res;
 
             $cuerpo .= '</body>';
 
-            $exito = $this->enviarEmail($cadDestino, utf8_decode( $asunto),utf8_decode($cuerpo));
+            $exito = $this->enviarEmail($emailasesor, utf8_decode( $asunto),utf8_decode($cuerpo));
+         } else {
+            $resUsuarios = $this->traerUsuariosPorRoles($idrol);
+            $resContactos = $this->traerContactosperfilesPorRol($idrol);
 
+
+            $idUsuarioPrincipal = 0;
+            while ($rowU = mysql_fetch_array($resUsuarios)) {
+               $idUsuarioPrincipal = $rowU['idusuario'];
+
+               $pos = strpos($cadDestino, $rowU['email']);
+               if (($rowU['email'] != '') && ($pos === false)) {
+                  $cadDestino .= $rowU['email'].', ';
+               }
+            }
+
+            while ($rowC = mysql_fetch_array($resUsuarios)) {
+               $pos = strpos($cadDestino, $rowC['email']);
+               if (($rowC['email'] != '') && ($pos === false)) {
+                  $cadDestino .= $rowC['email'].', ';
+               }
+            }
+
+            if ($adcional != '') {
+               $cadDestino = $adcional.', ';
+            }
+
+            if ($cadDestino != '') {
+
+               if ($this->existeUsuarioSistema($adcional) == 1) {
+                  // por ahora nada mas
+                  $token = $this->GUID();
+                  $resAutoLogin = $this->insertarAutologin($idUsuarioPrincipal,$token,$rutaUrl.'/modificar.php?id='.$id,'0');
+               } else {
+                  if ($adcional == '') {
+                     // por ahora nada mas
+                     $token = $this->GUID();
+                     $resAutoLogin = $this->insertarAutologin($idUsuarioPrincipal,$token,$rutaUrl.'/modificar.php?id='.$id,'0');
+                  }
+               }
+
+
+
+               $asunto = 'Alerta Cotización, cotización: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
+
+               $cuerpo = '';
+
+               $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+               $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+               $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+               $cuerpo .= "
+               <style>
+               	body { font-family: 'Lato', sans-serif; }
+               	header { font-family: 'Prata', serif; }
+               </style>";
+
+               $cuerpo .= '<body>';
+
+               $cuerpo .= $dato;
+
+               if ($adcional == '') {
+                  $cuerpo .= '<p>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</p>';
+               }
+
+               $cuerpo .= '</body>';
+
+               if ($enviaEmail==1) {
+                  $exito = $this->enviarEmail(substr($cadDestino,0,-2), utf8_decode( $asunto),utf8_decode($cuerpo));
+               } else {
+                  $exito = $this->enviarEmail(substr($cadDestino,0,-2), utf8_decode( $asunto),utf8_decode($cuerpo));
+               }
+            }
          }
 
-         $cadDestinoLog .= $emailasesor;
-
-         $token = $this->GUID();
-
-         $resAutoLogin = $this->insertarAutologin($idusuarioasesor,$token, $rutaUrl.'/modificar.php?id='.$id,'0');
-
-
-         $asunto = 'Alerta Cotización, cotización: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
-
-         $cuerpo = '';
-
-         $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
-
-         $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
-
-         $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
-
-         $cuerpo .= "
-         <style>
-            body { font-family: 'Lato', sans-serif; }
-            header { font-family: 'Prata', serif; }
-         </style>";
-
-         $cuerpo .= '<body>';
-
-         $cuerpo .= $dato;
-
-         $cuerpo .= '<p>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</p>';
-
-         $cuerpo .= '</body>';
-
-         $exito = $this->enviarEmail($emailasesor, utf8_decode( $asunto),utf8_decode($cuerpo));
 
          $gestor = fopen('logemails'.date('Y_m_d_H_i_s').'.txt', 'w');
          fwrite($gestor, $cadDestinoLog.' '.date('Y-m-d H:i:s'));
@@ -12955,25 +13067,25 @@ return $res;
    }
 
 
-	function insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda) {
-		$sql = "insert into dbcotizaciones(idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion,fechaemitido,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,observaciones,fechavencimiento,coberturaactual,existeprimaobjetivo,primaobjetivo,folio,primaobjetivototal, reftipomoneda)
-		values ('',".$refclientes.",".$refproductos.",".$refasesores.",".$refasociados.",".$refestadocotizaciones.",'".$cobertura."','".$reasegurodirecto."','".$tiponegocio."','".$presentacotizacion."',".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",'".date('Y-m-d H:i:s')."','".date('Y-m-d H:i:s')."','".$usuariocrea."','".$usuariomodi."',".$refusuarios.",'".$observaciones."','".$fechavencimiento."','".$coberturaactual."','".$existeprimaobjetivo."',".$primaobjetivo.",'".$this->generaFolioInternoCotizaciones()."',".$primaobjetivototal.",".$reftipomoneda.")";
+	function insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda,$folioagente) {
+		$sql = "insert into dbcotizaciones(idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion,fechaemitido,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,observaciones,fechavencimiento,coberturaactual,existeprimaobjetivo,primaobjetivo,folio,primaobjetivototal, reftipomoneda,folioagente)
+		values ('',".$refclientes.",".$refproductos.",".$refasesores.",".$refasociados.",".$refestadocotizaciones.",'".$cobertura."','".$reasegurodirecto."','".$tiponegocio."','".$presentacotizacion."',".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",'".date('Y-m-d H:i:s')."','".date('Y-m-d H:i:s')."','".$usuariocrea."','".$usuariomodi."',".$refusuarios.",'".$observaciones."','".$fechavencimiento."','".$coberturaactual."','".$existeprimaobjetivo."',".$primaobjetivo.",'".$this->generaFolioInternoCotizaciones()."',".$primaobjetivototal.",".$reftipomoneda.",'".$folioagente."')";
 
 		$res = $this->query($sql,1);
 		return $res;
 	}
 
-   function insertarCotizacionesSQL($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda) {
-		$sql = "insert into dbcotizaciones(idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion,fechaemitido,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,observaciones,fechavencimiento,coberturaactual,existeprimaobjetivo,primaobjetivo,primaobjetivototal,reftipomoneda)
-		values ('',".$refclientes.",".$refproductos.",".$refasesores.",".$refasociados.",".$refestadocotizaciones.",'".$cobertura."','".$reasegurodirecto."','".$tiponegocio."','".$presentacotizacion."',".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",'".date('Y-m-d H:i:s')."','".date('Y-m-d H:i:s')."','".$usuariocrea."','".$usuariomodi."',".$refusuarios.",'".$observaciones."','".$fechavencimiento."','".$coberturaactual."','".$existeprimaobjetivo."',".$primaobjetivo.",".$primaobjetivototal.",".$reftipomoneda.")";
+   function insertarCotizacionesSQL($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda,$folioagente) {
+		$sql = "insert into dbcotizaciones(idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion,fechaemitido,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,observaciones,fechavencimiento,coberturaactual,existeprimaobjetivo,primaobjetivo,primaobjetivototal,reftipomoneda,folioagente)
+		values ('',".$refclientes.",".$refproductos.",".$refasesores.",".$refasociados.",".$refestadocotizaciones.",'".$cobertura."','".$reasegurodirecto."','".$tiponegocio."','".$presentacotizacion."',".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",'".date('Y-m-d H:i:s')."','".date('Y-m-d H:i:s')."','".$usuariocrea."','".$usuariomodi."',".$refusuarios.",'".$observaciones."','".$fechavencimiento."','".$coberturaactual."','".$existeprimaobjetivo."',".$primaobjetivo.",".$primaobjetivototal.",".$reftipomoneda.",'".$folioagente."')";
 
 		return $sql;
 	}
 
-	function modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$bitacoracrea,$bitacorainbursa,$bitacoraagente,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda) {
+	function modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$bitacoracrea,$bitacorainbursa,$bitacoraagente,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda,$folioagente) {
 		$sql = "update dbcotizaciones
 		set
-		refclientes = ".$refclientes.",refproductos = ".$refproductos.",refasesores = ".$refasesores.",refasociados = ".$refasociados.",refestadocotizaciones = ".$refestadocotizaciones.",cobertura = '".$cobertura."',reasegurodirecto = '".$reasegurodirecto."',tiponegocio = '".$tiponegocio."',presentacotizacion = '".$presentacotizacion."',fechapropuesta = ".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",fecharenovacion = ".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",fechaemitido = ".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',refusuarios = ".$refusuarios.",observaciones = '".$observaciones."',fechavencimiento = '".$fechavencimiento."',coberturaactual = '".$coberturaactual."',bitacoracrea = '".$bitacoracrea."',bitacorainbursa = '".$bitacorainbursa."',bitacoraagente = '".$bitacoraagente."',existeprimaobjetivo = '".$existeprimaobjetivo."',primaobjetivo = ".$primaobjetivo.",primaobjetivototal = ".$primaobjetivototal.",reftipomoneda = ".$reftipomoneda." where idcotizacion =".$id;
+		refclientes = ".$refclientes.",refproductos = ".$refproductos.",refasesores = ".$refasesores.",refasociados = ".$refasociados.",refestadocotizaciones = ".$refestadocotizaciones.",cobertura = '".$cobertura."',reasegurodirecto = '".$reasegurodirecto."',tiponegocio = '".$tiponegocio."',presentacotizacion = '".$presentacotizacion."',fechapropuesta = ".($fechapropuesta == '' ? 'NULL' : "'".$fechapropuesta ."'").",fecharenovacion = ".($fecharenovacion == '' ? 'NULL' : "'".$fecharenovacion ."'").",fechaemitido = ".($fechaemitido == '' ? 'NULL' : "'".$fechaemitido ."'").",fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',refusuarios = ".$refusuarios.",observaciones = '".$observaciones."',fechavencimiento = '".$fechavencimiento."',coberturaactual = '".$coberturaactual."',bitacoracrea = '".$bitacoracrea."',bitacorainbursa = '".$bitacorainbursa."',bitacoraagente = '".$bitacoraagente."',existeprimaobjetivo = '".$existeprimaobjetivo."',primaobjetivo = ".$primaobjetivo.",primaobjetivototal = ".$primaobjetivototal.",reftipomoneda = ".$reftipomoneda.",folioagente = '".$folioagente."' where idcotizacion =".$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -13150,7 +13262,7 @@ return $res;
       (case when c.version > 0 then 'En Ajuste' else 'Nueva' end) as gestion,
       max(DATE_FORMAT(tz.fechacrea, '%d-%m-%Y %H:%i:%s')) as fechaevento,
       c.ot,
-      c.primaneta,c.primatotal
+      c.primaneta,c.primatotal, c.folioagente
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
@@ -13188,7 +13300,7 @@ return $res;
       'Endoso' as gestion,
       max(DATE_FORMAT(tz.fechacrea, '%d-%m-%Y %H:%i:%s')) as fechaevento,
       c.ot,
-      c.primaneta,c.primatotal
+      c.primaneta,c.primatotal, c.folioagente
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
@@ -13343,7 +13455,7 @@ return $res;
       (case when c.version > 0 then 'En Ajuste' else 'Nueva' end) as gestion,
       max(DATE_FORMAT(tz.fechacrea, '%d-%m-%Y %H:%i:%s')) as fechaevento,
       c.ot,
-      c.primaneta ,c.primatotal
+      c.primaneta ,c.primatotal, c.folioagente
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
@@ -13379,7 +13491,7 @@ return $res;
       'Endoso' as gestion,
       max(DATE_FORMAT(tz.fechacrea, '%d-%m-%Y %H:%i:%s')) as fechaevento,
       c.ot,
-      c.primaneta ,c.primatotal
+      c.primaneta ,c.primatotal, c.folioagente
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
@@ -13484,7 +13596,7 @@ return $res;
 
 
 	function traerCotizacionesPorId($id) {
-		$sql = "select idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,observaciones,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,fechaemitido,fechavencimiento,coberturaactual,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion,bitacoracrea,bitacorainbursa,bitacoraagente,existeprimaobjetivo,primaobjetivo,folio,version,refcotizaciones,refestados,primaneta,primatotal,ot,articulo,primaobjetivototal,reftipomoneda from dbcotizaciones where idcotizacion =".$id;
+		$sql = "select idcotizacion,refclientes,refproductos,refasesores,refasociados,refestadocotizaciones,observaciones,fechacrea,fechamodi,usuariocrea,usuariomodi,refusuarios,fechaemitido,fechavencimiento,coberturaactual,cobertura,reasegurodirecto,tiponegocio,presentacotizacion,fechapropuesta,fecharenovacion,bitacoracrea,bitacorainbursa,bitacoraagente,existeprimaobjetivo,primaobjetivo,folio,version,refcotizaciones,refestados,primaneta,primatotal,ot,articulo,primaobjetivototal,reftipomoneda,folioagente from dbcotizaciones where idcotizacion =".$id;
 
 		$res = $this->query($sql,0);
 		return $res;
@@ -13511,7 +13623,7 @@ return $res;
          ase.claveasesor, cli.refusuarios as idusuariocliente, ase.refusuarios as idusuarioasesor,
          ase.envioalcliente, pro.consolicitud, c.ot, c.articulo,
          concat(ase.apellidopaterno, ' ', ase.nombre) as asesorsolo,
-         pro.reftipoproductorama, c.primaobjetivototal, c.reftipomoneda
+         pro.reftipoproductorama, c.primaobjetivototal, c.reftipomoneda, c.folioagente
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join dbasesores ase ON ase.idasesor = c.refasesores
@@ -13538,7 +13650,7 @@ return $res;
 		c.presentacotizacion,c.fechapropuesta,c.fecharenovacion,
       c.bitacoracrea,c.bitacorainbursa,c.bitacoraagente,c.existeprimaobjetivo,c.primaobjetivo, pro.precio ,
 	  c.tieneasegurado, c.refasegurados,c.folio,c.version,c.refcotizaciones, c.refestados,
-     c.primaneta,c.primatotal, pro.reftipodocumentaciones, ase.envioalcliente, c.ot, c.articulo, c.primaobjetivototal, c.reftipomoneda
+     c.primaneta,c.primatotal, pro.reftipodocumentaciones, ase.envioalcliente, c.ot, c.articulo, c.primaobjetivototal, c.reftipomoneda, c.folioagente
 		from dbcotizaciones c
 		inner join dbclientes cli ON cli.idcliente = c.refclientes
 		inner join dbasesores ase ON ase.idasesor = c.refasesores

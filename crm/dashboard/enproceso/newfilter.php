@@ -994,6 +994,14 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 									<h3>INFORMACIÓN DEL NEGOCIO</h3>
 									<fieldset>
 										<div class="row">
+											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContfolioagente" style="display:block">
+												<div class="form-group form-float">
+													<label class="form-label" style="margin-top:20px;">Folio Agente</label>
+													<div class="form-line">
+														<input type="text" class="form-control" id="folioagente" name="folioagente" />
+													</div>
+												</div>
+											</div>
 											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContot" style="display:block">
 												<div class="form-group form-float">
 													<label class="form-label" style="margin-top:20px;">OT (Orden de Trabajo)</label>
@@ -2931,7 +2939,9 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 					fechapropuesta: '<?php echo date('Y-m-d'); ?>',
 					foliotys: '',
 					refbeneficiarioaux: $('#refbeneficiarioaux').val(),
-					reftipomoneda: $('#reftipomoneda').val()
+					reftipomoneda: $('#reftipomoneda').val(),
+					folioagente: $('#folioagente').val(),
+					ot: $('#ot').val()
  				},
  				//mientras enviamos el archivo
  				beforeSend: function(){

@@ -204,6 +204,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 												<th>Orden de Trabajo</th>
 												<th>Prima Neta</th>
 												<th>Prima Total</th>
+												<th>Folio Agente</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -222,6 +223,7 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 												<th>Orden de Trabajo</th>
 												<th>Prima Neta</th>
 												<th>Prima Total</th>
+												<th>Folio Agente</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>

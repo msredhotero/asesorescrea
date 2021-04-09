@@ -202,6 +202,10 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 												<th></th>
 												<th>Proceso</th>
 												<th>Fecha Actualizacion</th>
+												<th></th>
+												<th></th>
+												<th></th>
+												<th>Folio Agente</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -217,6 +221,10 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 												<th></th>
 												<th>Proceso</th>
 												<th>Fecha Actualizacion</th>
+												<th></th>
+												<th></th>
+												<th></th>
+												<th>Folio Agente</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -455,6 +463,21 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 					"targets": [ 7 ],
 					"visible": false,
 					"searchable": false
+				},
+				{
+					"targets": [ 10 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [ 11 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [ 12 ],
+					"visible": false,
+					"searchable": false
 				}
 
 		  ]<?php } else { ?>
@@ -473,7 +496,22 @@ if ($_SESSION['idroll_sahilices'] == 3) {
   					"targets": [ 7 ],
   					"visible": false,
   					"searchable": false
-  				}
+  				},
+				{
+					"targets": [ 10 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [ 11 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [ 12 ],
+					"visible": false,
+					"searchable": false
+				}
 
 
   		  ]

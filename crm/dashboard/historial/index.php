@@ -191,43 +191,39 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 									<table id="example" class="display table " style="width:100%">
 										<thead>
 											<tr>
-											<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
 												<th>Cliente</th>
 												<th>Producto</th>
 												<th>Asesor</th>
 												<th>Asociado</th>
 												<th>Fecha</th>
 												<th>Estado</th>
-
-											<?php } else { ?>
-												<th>Cliente</th>
-												<th>Producto</th>
-												<th>Asesor</th>
-												<th>Asociado</th>
-												<th>Fecha</th>
-												<th>Estado</th>
-											<?php } ?>
+												<th>Folio</th>
+												<th>Dias</th>
+												<th>Gestion</th>
+												<th>Fecha Actualización</th>
+												<th>Orden de Trabajo</th>
+												<th>Prima Neta</th>
+												<th>Prima Total</th>
+												<th>Folio Agente</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
-												<?php if ($_SESSION['idroll_sahilices'] == 7) { ?>
-													<th>Cliente</th>
-													<th>Producto</th>
-													<th>Asesor</th>
-													<th>Asociado</th>
-													<th>Fecha</th>
-													<th>Estado</th>
-
-												<?php } else { ?>
-													<th>Cliente</th>
-													<th>Producto</th>
-													<th>Asesor</th>
-													<th>Asociado</th>
-													<th>Fecha</th>
-													<th>Estado</th>
-												<?php } ?>
+												<th>Cliente</th>
+												<th>Producto</th>
+												<th>Asesor</th>
+												<th>Asociado</th>
+												<th>Fecha</th>
+												<th>Estado</th>
+												<th>Folio</th>
+												<th>Dias</th>
+												<th>Gestion</th>
+												<th>Fecha Actualización</th>
+												<th>Orden de Trabajo</th>
+												<th>Prima Neta</th>
+												<th>Prima Total</th>
+												<th>Folio Agente</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -451,9 +447,54 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 					"targets": [ 3 ],
 					"visible": false,
 					"searchable": false
+				},
+				{
+					"targets": [ 4 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [ 5 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [ 6 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [ 7 ],
+					"visible": false,
+					"searchable": false
 				}
 
-		  ]<?php } ?>
+		  ]<?php } else { ?>
+			  ,
+  			"columnDefs": [
+  				{
+  					"targets": [ 4 ],
+  					"visible": false,
+  					"searchable": false
+  				},
+  				{
+  					"targets": [ 5 ],
+  					"visible": false,
+  					"searchable": false
+  				},
+  				{
+  					"targets": [ 6 ],
+  					"visible": false,
+  					"searchable": false
+  				},
+  				{
+  					"targets": [ 7 ],
+  					"visible": false,
+  					"searchable": false
+  				}
+
+  		  ]
+			<?php } ?>
 		});
 
 

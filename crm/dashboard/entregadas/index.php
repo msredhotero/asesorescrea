@@ -197,7 +197,15 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 												<th>Asesor</th>
 												<th>Asociado</th>
 												<th>Fecha</th>
-												<th>Estado</th>
+												<th></th>
+												<th></th>
+												<th></th>
+												<th>Proceso</th>
+												<th>Fecha Actualizacion</th>
+												<th></th>
+												<th></th>
+												<th></th>
+												<th>Folio Agente</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -208,7 +216,15 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 												<th>Asesor</th>
 												<th>Asociado</th>
 												<th>Fecha</th>
-												<th>Estado</th>
+												<th></th>
+												<th></th>
+												<th></th>
+												<th>Proceso</th>
+												<th>Fecha Actualizacion</th>
+												<th></th>
+												<th></th>
+												<th></th>
+												<th>Folio Agente</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -450,9 +466,74 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 					"targets": [ 3 ],
 					"visible": false,
 					"searchable": false
+				},
+				{
+					"targets": [ 5 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [ 6 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [ 7 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [ 10 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [ 11 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [ 12 ],
+					"visible": false,
+					"searchable": false
 				}
 
-		  ]<?php } ?>
+		  ]<?php } else { ?>
+			  ,"columnDefs": [
+  				{
+  					"targets": [ 5 ],
+  					"visible": false,
+  					"searchable": false
+  				},
+  				{
+  					"targets": [ 6 ],
+  					"visible": false,
+  					"searchable": false
+  				},
+  				{
+  					"targets": [ 7 ],
+  					"visible": false,
+  					"searchable": false
+  				},
+				{
+					"targets": [ 10 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [ 11 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": [ 12 ],
+					"visible": false,
+					"searchable": false
+				}
+
+
+  		  ]
+			<?php } ?>
 		});
 
 

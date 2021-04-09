@@ -1240,7 +1240,7 @@ switch ($tabla) {
 				}
 
 				$whereEstado = ' c.refestados in (2) ';
-				$termina = 10;
+				$termina = 14;
 
 				$filtroNuevo = '';
 			break;
@@ -1250,9 +1250,9 @@ switch ($tabla) {
 				$icon = array('create');
 				$whereEstado = ' c.refestados in (3) and c.refestadocotizaciones not in (11) ';
 				if ($_SESSION['idroll_sahilices'] == 7) {
-					$termina = 6;
+					$termina = 14;
 				} else {
-					$termina = 6;
+					$termina = 14;
 				}
 
 				$filtroNuevo = '';
@@ -1263,13 +1263,13 @@ switch ($tabla) {
 					$class = array();
 					$icon = array();
 					$whereEstado = ' c.refestados in (4) and c.refestadocotizaciones not in (27) ';
-					$termina = 6;
+					$termina = 14;
 				} else {
 					$label = array('btnModificar');
 					$class = array('bg-amber');
 					$icon = array('create');
 					$whereEstado = ' c.refestados in (4) and c.refestadocotizaciones not in (27) ';
-					$termina = 6;
+					$termina = 14;
 				}
 
 				if (($_SESSION['idroll_sahilices'] == 20) || ($_SESSION['idroll_sahilices'] == 21) || ($_SESSION['idroll_sahilices'] == 22)) {
@@ -1287,9 +1287,9 @@ switch ($tabla) {
 				$icon = array('create');
 				$whereEstado = ' c.refestados in (4) and c.refestadocotizaciones in (27) ';
 				if ($_SESSION['idroll_sahilices'] == 7) {
-					$termina = 10;
+					$termina = 14;
 				} else {
-					$termina = 10;
+					$termina = 14;
 				}
 
 				/*
@@ -1307,7 +1307,7 @@ switch ($tabla) {
 				$class = array('bg-green');
 				$icon = array('check_circle');
 				$whereEstado = ' c.refestados in (4) ';
-				$termina = 7;
+				$termina = 14;
 				$filtroNuevo = 'poragente';
 			break;
 			case 7:
@@ -1315,7 +1315,7 @@ switch ($tabla) {
 				$class = array('bg-green');
 				$icon = array('check_circle');
 				$whereEstado = ' c.refestados in (4) ';
-				$termina = 7;
+				$termina = 14;
 				$filtroNuevo = 'enlinea';
 			break;
 			case 10:
@@ -1330,7 +1330,7 @@ switch ($tabla) {
 				}
 
 				$whereEstado = ' est.idestadocotizacion in (10) ';
-				$termina = 5;
+				$termina = 14;
 
 				$filtroNuevo = ' and ';
 			break;
@@ -1340,9 +1340,9 @@ switch ($tabla) {
 				$icon = array('create');
 				$whereEstado = ' c.refestados in (3) and c.refestadocotizaciones in (11) ';
 				if ($_SESSION['idroll_sahilices'] == 7) {
-					$termina = 6;
+					$termina = 14;
 				} else {
-					$termina = 6;
+					$termina = 14;
 				}
 
 				$filtroNuevo = '';
@@ -1353,9 +1353,9 @@ switch ($tabla) {
 				$icon = array('create');
 				$whereEstado = ' c.refestados in (5) and c.refestadocotizaciones in (26) ';
 				if ($_SESSION['idroll_sahilices'] == 7) {
-					$termina = 10;
+					$termina = 14;
 				} else {
-					$termina = 10;
+					$termina = 14;
 				}
 
 				$filtroNuevo = '';
@@ -1366,9 +1366,9 @@ switch ($tabla) {
 				$icon = array('create');
 				$whereEstado = ' c.refestados in (6) and c.refestadocotizaciones in (30) ';
 				if ($_SESSION['idroll_sahilices'] == 7) {
-					$termina = 13;
+					$termina = 14;
 				} else {
-					$termina = 13;
+					$termina = 14;
 				}
 
 				$filtroNuevo = '';

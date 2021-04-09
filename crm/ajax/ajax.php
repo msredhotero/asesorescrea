@@ -2617,12 +2617,10 @@ function modificarCotizacionesPorCampoCompleto($serviciosReferencias) {
 
       $valor = mysql_result($resCot,0,'bitacoracrea').' '.$valor.' - '.$_SESSION['usua_sahilices'].' '.date('Y-m-d H:i:s').'.\n';
 
-      if (mysql_result($resCot,0,'refestadocotizaciones') == 4) {
-         if ($_SESSION['idroll_sahilices'] == 7) {
-            $resEnviarEmail = $serviciosReferencias->enviarEmailModificacionCotizacion($id,'Bitacora: '.$valor,'',$enviaEmail=1);
-         } else {
-            $resEnviarEmail = $serviciosReferencias->enviarEmailModificacionCotizacion($id,'Bitacora: '.$valor,$_SESSION['usua_sahilices'],$enviaEmail=1);
-         }
+      if ($_SESSION['idroll_sahilices'] == 7) {
+         $resEnviarEmail = $serviciosReferencias->enviarEmailModificacionCotizacion($id,'Bitacora: '.$valor,'',$enviaEmail=1,33);
+      } else {
+         $resEnviarEmail = $serviciosReferencias->enviarEmailModificacionCotizacion($id,'Bitacora: '.$valor,$_SESSION['usua_sahilices'],$enviaEmail=1,33);
       }
    }
 
@@ -2747,7 +2745,13 @@ function insertarVentasCompleto($serviciosReferencias) {
       $reftipomoneda = 1;
    }
 
-   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda);
+   if (isset($_POST['folioagente'])) {
+      $folioagente = $_POST['folioagente'];
+   } else {
+      $folioagente = '';
+   }
+
+   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda,$folioagente);
 
    if ((integer)$res > 0) {
 
@@ -6533,8 +6537,14 @@ function validarCuestionario($serviciosReferencias) {
          $reftipomoneda = 1;
       }
 
+      if (isset($_POST['folioagente'])) {
+         $folioagente = $_POST['folioagente'];
+      } else {
+         $folioagente = '';
+      }
 
-      $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda);
+
+      $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda,$folioagente);
 
 
       if ((integer)$res > 0) {
@@ -8670,7 +8680,13 @@ function insertarCotizaciones($serviciosReferencias) {
       $reftipomoneda = 1;
    }
 
-   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda);
+   if (isset($_POST['folioagente'])) {
+      $folioagente = $_POST['folioagente'];
+   } else {
+      $folioagente = '';
+   }
+
+   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda, $folioagente);
 
    if ((integer)$res > 0) {
 
@@ -8764,6 +8780,12 @@ function modificarCotizaciones($serviciosReferencias) {
       $reftipomoneda = 1;
    }
 
+   if (isset($_POST['folioagente'])) {
+      $folioagente = $_POST['folioagente'];
+   } else {
+      $folioagente = '';
+   }
+
 
    if ($refestadocotizaciones == 12) {
 
@@ -8811,7 +8833,7 @@ function modificarCotizaciones($serviciosReferencias) {
    }
 
 
-   $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$bitacoracrea,$bitacorainbursa,$bitacoraagente,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda);
+   $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$bitacoracrea,$bitacorainbursa,$bitacoraagente,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda,$folioagente);
 
    if ($res == true) {
       if (isset($_POST['refbeneficiarioaux'])) {
