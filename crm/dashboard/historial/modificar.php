@@ -152,7 +152,7 @@ $resUsuario = $serviciosUsuario->traerUsuarioId(mysql_result($resultado,0,'refus
 $cadRef1 	= $serviciosFunciones->devolverSelectBox($resUsuario,array(1),'');
 
 $resVar2	= $serviciosReferencias->traerClientesPorId(mysql_result($resultado,0,'refclientes'));
-$cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(3,4,2),' ',mysql_result($resultado,0,'refclientes'));
+$cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(3,4,2,5),' ',mysql_result($resultado,0,'refclientes'));
 
 $idclienteinbursa = mysql_result($resVar2,0,'idclienteinbursa');
 
