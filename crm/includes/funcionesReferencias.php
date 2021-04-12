@@ -893,7 +893,7 @@ return $res;
          $idUsuarioPrincipal = 0;
          while ($rowU = mysql_fetch_array($resUsuarios)) {
             $idUsuarioPrincipal = $rowU['idusuario'];
-            
+
             $pos = strpos($cadDestino, $rowU['email']);
             if (($rowU['email'] != '') && ($pos === false)) {
                $cadDestino .= $rowU['email'].', ';
@@ -960,7 +960,7 @@ return $res;
             }
 
 
-            $gestor = fopen('logemails'.date('Y_m_d_H_i_s_engestion').'.txt', 'w');
+            $gestor = fopen('logemails'.date('Y_m_d_H_i_s_1').'.txt', 'w');
             fwrite($gestor, $cadDestino.' '.date('Y-m-d H:i:s'));
             fclose($gestor);
 
