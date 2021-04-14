@@ -1092,6 +1092,21 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 										</div>
 
 										<div class="row">
+											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContvigenciapoliza" style="display:block">
+												<b>Fecha de Vigencia</b>
+												<div class="input-group">
+
+												<span class="input-group-addon">
+													 <i class="material-icons">date_range</i>
+												</span>
+												  <div class="form-line">
+
+														<input style="width:200px;" type="text" class="form-control" id="vigenciapoliza" name="vigenciapoliza" value="" />
+
+												  </div>
+												</div>
+											</div>
+
 										<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContfechavencimiento" style="display:block">
 											<b>Fecha de Vencimiento póliza Actual</b>
 											<div class="input-group">
@@ -1250,6 +1265,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 													</select>
 												</div>
 
+												<?php if (mysql_num_rows($resVentas)>0) { ?>
 												<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" style="display:block">
 													<p>
 	                                       <b>Ventas</b>
@@ -1262,6 +1278,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 												<?php } ?>
 													</select>
 												</div>
+												<?php } ?>
 
 											</div>
 
@@ -1531,10 +1548,35 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 	                   <h4 class="modal-title" id="largeModalLabel">CARGAR NUEVO BENEFICIARIO</h4>
 	               </div>
 	               <div class="modal-body">
+
+							<div class="row">
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContreftipopersonasBNF" style="display:block">
+									<label for="reftipopersonasBNF" class="control-label" style="text-align:left">Tipo de Parentesco  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group col-md-12">
+										<div class="form-line">
+											<select class="form-control" id="reftipopersonasBNF" name="reftipopersonas"  required >
+												<option value="1">Fisica</option>
+												<option value="2">Moral</option>
+											</select>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrazonsocialBNF" style="display:block">
+									<label class="form-label">Razon Social  <span style="color:red;">*</span> </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="razonsocialBNF" name="razonsocial" />
+
+										</div>
+									</div>
+								</div>
+							</div>
+
 							<div class="row">
 
 								<div class="row" style="margin-top:15px;">
-									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContnombre" style="display:block">
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContnombreBNF" style="display:block">
 										<label class="form-label">Nombre Completo  <span style="color:red;">*</span> </label>
 										<div class="form-group input-group">
 											<div class="form-line">
@@ -1544,8 +1586,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 										</div>
 									</div>
 
-
-									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContapellidopaterno" style="display:block">
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContapellidopaternoBNF" style="display:block">
 										<label class="form-label">Apellido Paterno  <span style="color:red;">*</span> </label>
 										<div class="form-group input-group">
 											<div class="form-line">
@@ -1555,8 +1596,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 										</div>
 									</div>
 
-
-									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContapellidomaterno" style="display:block">
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContapellidomaternoBNF" style="display:block">
 										<label class="form-label">Apellido Materno  <span style="color:red;">*</span> </label>
 										<div class="form-group input-group">
 											<div class="form-line">
@@ -1601,7 +1641,6 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 											</div>
 										</div>
 									</div>
-
 
 									<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContfechanacimiento" style="display:block">
 										<label class="form-label">Fecha De Nacimiento  <span style="color:red;">*</span> </label>
@@ -2578,11 +2617,18 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 
 				$("#fechavencimiento").prop('required',true);
 				$("#coberturaactual").prop('required',true);
+
+				$('#wizard_with_validation #vigenciapoliza').val('');
+				$('.frmContvigenciapoliza').hide();
+
 			} else {
+				$('.frmContvigenciapoliza').show();
 				$('.frmContfechavencimiento').hide();
 				$('.frmContcoberturaactual').hide();
 				$('#fechavencimiento').val('');
 				$('#coberturaactual').val('');
+
+				$('#wizard_with_validation #fechavencimiento').val('');
 
 				$("#fechavencimiento").prop('required',false);
 				$("#coberturaactual").prop('required',false);
@@ -2857,7 +2903,8 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 					bitacoraagente: '',
 					existeprimaobjetivo: $('#existeprimaobjetivo').val(),
 					primaobjetivo: $('#primaobjetivo').val(),
-					primaobjetivototal: $('#primaobjetivototal').val()
+					primaobjetivototal: $('#primaobjetivototal').val(),
+					vigenciapoliza: $('#vigenciapoliza').val()
  				},
  				//mientras enviamos el archivo
  				beforeSend: function(){
@@ -2941,7 +2988,8 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 					refbeneficiarioaux: $('#refbeneficiarioaux').val(),
 					reftipomoneda: $('#reftipomoneda').val(),
 					folioagente: $('#folioagente').val(),
-					ot: $('#ot').val()
+					ot: $('#ot').val(),
+					vigenciapoliza: $('#vigenciapoliza').val()
  				},
  				//mientras enviamos el archivo
  				beforeSend: function(){
@@ -3005,6 +3053,41 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 
 		$('.frmContnumerocliente').hide();
 		$('.frmContrefusuarios').hide();
+
+		$('.frmContrazonsocialBNF').hide();
+
+		$('#reftipopersonasBNF').change(function() {
+			if ($(this).val() == 1) {
+				$('.frmContrazonsocialBNF').hide();
+				$('#razonsocialBNF').val('');
+
+				$("#nombreBNF").prop('required',true);
+				$("#apellidopaternoBNF").prop('required',true);
+				$("#apellidomaternoBNF").prop('required',true);
+				$("#razonsocialBNF").prop('required',false);
+
+				$('.frmContapellidomaternoBNF label span').remove();
+				$('.frmContapellidopaternoBNF label span').remove();
+				$('.frmContnombreBNF label span').remove();
+
+				$('.frmContapellidomaternoBNF label').append('<span style="color:red;">*</span>');
+				$('.frmContapellidopaternoBNF label').append('<span style="color:red;">*</span>');
+				$('.frmContnombreBNF label').append('<span style="color:red;">*</span>');
+
+			} else {
+				$('.frmContrazonsocialBNF').show();
+
+				$("#nombreBNF").prop('required',false);
+				$("#apellidopaternoBNF").prop('required',false);
+				$("#apellidomaternoBNF").prop('required',false);
+				$("#razonsocialBNF").prop('required',true);
+
+				$('.frmContapellidomaternoBNF label span').remove();
+				$('.frmContapellidopaternoBNF label span').remove();
+				$('.frmContnombreBNF label span').remove();
+
+			}
+		});
 
 		$('.btnNuevoMoral').click(function() {
 
@@ -3142,6 +3225,14 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 
 
 		$('#wizard_with_validation #fechavencimiento').bootstrapMaterialDatePicker({
+			format: 'YYYY-MM-DD',
+			lang : 'es',
+			clearButton: true,
+			weekStart: 1,
+			time: false
+		});
+
+		$('#wizard_with_validation #vigenciapoliza').bootstrapMaterialDatePicker({
 			format: 'YYYY-MM-DD',
 			lang : 'es',
 			clearButton: true,
@@ -3426,6 +3517,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 
 		$('.frmNuevoBNF').submit(function(e){
 
+
 			e.preventDefault();
 			if ($('#sign_in2')[0].checkValidity()) {
 				//información del formulario
@@ -3464,8 +3556,6 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 									timer: 2500,
 									showConfirmButton: false
 							});
-
-
 						}
 					},
 					//si ha ocurrido un error
@@ -3475,6 +3565,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 					}
 				});
 			}
+
 		});
 
 

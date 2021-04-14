@@ -216,7 +216,7 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 										</button>
 										<button type="button" class="btn bg-orange waves-effect btnPagos">
 											<i class="material-icons">update</i>
-											<span>PERIODICIDAD DE PAGOS</span>
+											<span>FORMA DE PAGO</span>
 										</button>
 										<?php if (mysql_num_rows($resPeriodicidad)>0) { ?>
 											<button type="button" class="btn bg-grey waves-effect btnRecibos">

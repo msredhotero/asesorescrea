@@ -136,7 +136,7 @@ $resUsuario = $serviciosUsuario->traerUsuarioId(mysql_result($resultado,0,'refus
 $cadRef1 	= $serviciosFunciones->devolverSelectBox($resUsuario,array(1),'');
 
 $resVar2	= $serviciosReferencias->traerClientesPorId(mysql_result($resultado,0,'refclientes'));
-$cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(3,4,2),' ',mysql_result($resultado,0,'refclientes'));
+$cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(3,4,2,5),' ',mysql_result($resultado,0,'refclientes'));
 
 $idclienteinbursa = mysql_result($resVar2,0,'idclienteinbursa');
 
@@ -709,63 +709,153 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 
 				</div>
-				 <div class="row contFrmRechazoDefinitivo">
- 					<h4>Por favor ingrese los motivos del rechazo, para poderte afrocer un mejor servicio!!</h4>
- 					<div class="row">
-	 					<div class="col-xs-6">
-							<div class="form-group input-group">
-								<label class="label-form">Motivo</label>
-		 						<select class="form-control" id="motivo" name="motivo">
-		 							<option value="Precio">Precio</option>
-		 							<option value="Mal Servicio">Mal Servicio</option>
-		 							<option value="Otro">Otro</option>
-		 						</select>
-		 					</div>
-						</div>
-					</div>
-					<div class="contMotivosPrecio">
+				<div class="row contFrmRechazoDefinitivo" style="padding:0 20px;">
+				  <h4>Por favor ingrese los motivos del rechazo, para poderte afrocer un mejor servicio!!</h4>
 
-						<div class="row">
-							<div class="col-xs-3">
-								<div class="form-group input-group">
-									<label class="label-form">No se compartió información</label>
-			 						<select class="form-control" id="nocompartioinformacion" name="nocompartioinformacion">
-			 							<option value="1">Si</option>
-			 							<option value="0">No</option>
-			 						</select>
-								</div>
-		 					</div>
+				  <div class="row contFrmObservaciones">
+					  <div class="col-xs-12">
+						  <div class="form-group input-group">
+							  <label class="label-form">Observaciones</label>
+							  <textarea type="text" rows="4" cols="6" class="form-control" id="observacionrechazo" name="observacionrechazo" placeholder="Ingrese las observaciones..."></textarea>
+						  </div>
+					  </div>
+				  </div>
 
-		 					<div class="col-xs-3">
-								<div class="form-group input-group">
-									<label class="label-form">Prima total Inbursa</label>
-			 						<input type="text" class="form-control" id="primatotalinbursa" name="primatotalinbursa" />
-								</div>
-		 					</div>
-							<div class="col-xs-3">
-								<div class="form-group input-group">
-									<label class="label-form">Prima total Competencia</label>
-			 						<input type="text" class="form-control" id="primatotalcompetencia" name="primatotalcompetencia" />
-								</div>
-		 					</div>
-							<div class="col-xs-3">
-								<div class="form-group input-group">
-									<label class="label-form">Aseguradora que se queda negocio</label>
-			 						<select class="form-control" id="aseguradora" name="aseguradora">
-										<?php while ($rowA = mysql_fetch_array($resVar10m)) {
-											echo '<option value="'.$rowA['razonsocial'].'">'.$rowA['razonsocial'].'</option>';
-										}
-										?>
-										<option value="Otra">Otra</option>
-			 						</select>
-								</div>
-		 					</div>
-						</div>
-					</div>
- 					<hr>
- 					<p>Puedes contactarnos en el Tel fijo: <b><span style="color:#5DC1FD;">55 51 35 02 59</span></b></p>
- 					<p>Correo: <a href="mailto:ventas@asesorescrea.com" style="color:#5DC1FD !important;"><b>ventas@asesorescrea.com</b></a></p>
- 				</div>
+				  <div class="row">
+					  <div class="col-xs-6">
+						  <div class="form-group input-group">
+							  <label class="label-form">Motivo</label>
+							  <select class="form-control" id="motivo" name="motivo">
+								  <option value="Precio">Precio</option>
+								  <option value="Mal Servicio">Mal Servicio</option>
+								  <option value="Agente no quiso dar retroalimentación">Agente no quiso dar retroalimentación</option>
+								  <option value="Otro">Otro</option>
+							  </select>
+						  </div>
+					  </div>
+				  </div>
+				  <div class="contMotivosPrecio">
+
+					  <div class="row">
+						  <div class="col-xs-3">
+							  <div class="form-group input-group">
+								  <label class="label-form">No se compartió información</label>
+								  <select class="form-control" id="nocompartioinformacion" name="nocompartioinformacion">
+									  <option value="1">Si</option>
+									  <option value="0">No</option>
+								  </select>
+							  </div>
+						  </div>
+
+						  <div class="col-xs-3">
+							  <div class="form-group input-group">
+								  <label class="label-form">Prima total Inbursa</label>
+								  <input type="text" class="form-control" id="primatotalinbursa" name="primatotalinbursa" />
+							  </div>
+						  </div>
+						  <div class="col-xs-3">
+							  <div class="form-group input-group">
+								  <label class="label-form">Prima total Competencia</label>
+								  <input type="text" class="form-control" id="primatotalcompetencia" name="primatotalcompetencia" />
+							  </div>
+						  </div>
+						  <div class="col-xs-3">
+							  <div class="form-group input-group">
+								  <label class="label-form">Aseguradora que se queda negocio</label>
+								  <select class="form-control" id="aseguradora" name="aseguradora">
+									  <?php while ($rowA = mysql_fetch_array($resVar10m)) {
+										  echo '<option value="'.$rowA['razonsocial'].'">'.$rowA['razonsocial'].'</option>';
+									  }
+									  ?>
+									  <option value="Otra">Otra</option>
+								  </select>
+							  </div>
+						  </div>
+					  </div>
+				  </div>
+				  <hr>
+
+
+				  <div class="row">
+					  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+						  <div class="card ">
+							  <div class="header bg-blue">
+								  <h2>
+									  PUEDE SUBIR UN ARCHIVO PARA COMPLEMENTAR
+								  </h2>
+								  <ul class="header-dropdown m-r--5">
+									  <li class="dropdown">
+										  <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+											  <i class="material-icons">more_vert</i>
+										  </a>
+										  <ul class="dropdown-menu pull-right">
+
+										  </ul>
+									  </li>
+								  </ul>
+							  </div>
+							  <div class="body table-responsive">
+
+								  <div class="row">
+
+									  <form action="subirrechazo.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+										  <div class="dz-message">
+											  <div class="drag-icon-cph">
+												  <i class="material-icons">touch_app</i>
+											  </div>
+											  <h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+										  </div>
+										  <div class="fallback">
+											  <input name="file" type="file" id="archivos" />
+											  <input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
+										  </div>
+									  </form>
+								  </div>
+
+							  </div>
+						  </div>
+					  </div>
+
+
+					  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+						  <div class="card">
+							  <div class="header bg-blue">
+								  <h2>
+									  ARCHIVO CARGADO
+								  </h2>
+								  <ul class="header-dropdown m-r--5">
+									  <li class="dropdown">
+										  <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+											  <i class="material-icons">more_vert</i>
+										  </a>
+									  </li>
+								  </ul>
+							  </div>
+							  <div class="body">
+
+								  <div class="row">
+									  <a href="javascript:void(0);" class="thumbnail timagen11">
+										  <img class="img-responsive">
+									  </a>
+									  <div id="example11"></div>
+									  <div id="contExcel1" style="margin:15px;">
+										  <button type="button" class="btn btn-lg btn-success btnVerArchivo" style="margin-left:0px;"><i class="material-icons">search</i>VER ARCHIVO</button>
+										  <input type="hidden" id="verarchivo1" name="verarchivo1" value=""/>
+									  </div>
+								  </div>
+
+						  </div>
+					  </div>
+				  </div>
+
+
+			  </div>
+
+				  <hr>
+				  <p>Puedes contactarnos en el Tel fijo: <b><span style="color:#5DC1FD;">55 51 35 02 59</span></b></p>
+				  <p>Correo: <a href="mailto:ventas@asesorescrea.com" style="color:#5DC1FD !important;"><b>ventas@asesorescrea.com</b></a></p>
+			  </div>
+
 				</div>
 				<div class="modal-footer">
 					 <button type="button" class="btn waves-effect modificarEstadoCotizacionRechazo"></button>
@@ -793,6 +883,8 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 <script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
 
+<script src="../../plugins/dropzone/dropzone.js"></script>
+
 <!-- Moment Plugin Js -->
     <script src="../../plugins/momentjs/moment.js"></script>
 	 <script src="../../js/moment-with-locales.js"></script>
@@ -806,6 +898,98 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 <script>
 	$(document).ready(function(){
+
+
+		function traerImagen1(contenedorpdf, contenedor) {
+			$.ajax({
+				data:  {idcotizacion: <?php echo $id; ?>,
+						accion: 'traerDocumentacionPorCotizacionDocumentacionRechazo'},
+				url:   '../../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+					$("." + contenedor + " img").attr("src",'');
+					$('#contExcel1').val('');
+					$('#contExcel1').hide();
+				},
+				success:  function (response) {
+					var cadena = response.datos.type.toLowerCase();
+
+					if (response.datos.type != '') {
+						if (cadena.indexOf("pdf") > -1) {
+							PDFObject.embed(response.datos.imagen, "#"+contenedorpdf);
+							$('#'+contenedorpdf).show();
+							$("."+contenedor).hide();
+
+						} else {
+							if ((cadena.indexOf("officedocument") > -1) || (cadena.indexOf("sheet") > -1)) {
+								$('#'+contenedorpdf).hide();
+								$("."+contenedor).hide();
+								$('#contExcel1').show();
+								$('#verarchivo1').val(response.datos.imagen);
+							} else {
+								$("." + contenedor + " img").attr("src",response.datos.imagen);
+								$("."+contenedor).show();
+								$('#'+contenedorpdf).hide();
+							}
+						}
+					}
+					if (response.error) {
+						$('.btnEliminar').hide();
+						$('.guardarEstado').hide();
+					} else {
+
+						$('.btnEliminar').show();
+						$('.guardarEstado').show();
+					}
+				}
+			});
+		}
+
+		$('#primatotalinbursa').number( true, 2 ,'.','');
+		$('#primatotalcompetencia').number( true, 2 ,'.','');
+
+		traerImagen1('example11','timagen11');
+
+		$('.btnVerArchivo1').click(function() {
+			window.open($('#verarchivo1').val(),'_blank');
+		});
+
+		Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
+
+		Dropzone.options.frmFileUpload = {
+			maxFilesize: 30,
+			acceptedFiles: ".jpg,.jpeg,.pdf,.xls,.xlsx,.csv",
+			accept: function(file, done) {
+				done();
+			},
+			init: function() {
+				this.on("sending", function(file, xhr, formData){
+					formData.append("idasociado", '<?php echo $id; ?>');
+
+				});
+				this.on('success', function( file, resp ){
+					traerImagen1('example11','timagen11');
+					$('.lblPlanilla').hide();
+					swal("Correcto!", resp.replace("1", ""), "success");
+					$('.btnGuardar').show();
+					$('.infoPlanilla').hide();
+
+					//location.reload();
+				});
+
+				this.on('error', function( file, resp ){
+					swal("Error!", resp.replace("1", ""), "warning");
+				});
+			}
+		};
+
+
+		var myDropzone = new Dropzone("#archivos", {
+			params: {
+				 idasociado: <?php echo $id; ?>
+			},
+			url: 'subirrechazo.php'
+		});
 
 		$('.frmContbitacorainbursa').hide();
 		$('.frmContbitacoraagente').hide();
@@ -1028,8 +1212,11 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 					ajustarCotizacion();
 
 				} else {
-					modificarCotizacionesPorCampo();
-
+					if ($('#estadomodificarestadorechazo').val() == 11) {
+						modificarCotizacionesPorCampoRechazoDefinitivo();
+					} else {
+						modificarCotizacionesPorCampo();
+					}
 				}
 			}
 
@@ -1144,7 +1331,8 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 					nocompartioinformacion: $('#nocompartioinformacion').val(),
 					primatotalinbursa: $('#primatotalinbursa').val(),
 					primatotalcompetencia: $('#primatotalcompetencia').val(),
-					aseguradora: $('#aseguradora').val()
+					aseguradora: $('#aseguradora').val(),
+					observacion: $('#observacionrechazo').val()
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
@@ -1232,7 +1420,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 			$('.lblOtra').show();
 			$('.modificarEstadoCotizacionRechazo').html('RECHAZADA');
 
-			$('.contFrmRechazoDefinitivo').hide();
+			$('.contFrmRechazoDefinitivo').show();
 			$('.contFrmAceptadas').hide();
 
 			$('.modificarEstadoCotizacionRechazo').removeClass('bg-green');

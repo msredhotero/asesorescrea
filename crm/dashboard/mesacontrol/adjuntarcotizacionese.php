@@ -53,6 +53,8 @@ $refdoctipo = mysql_result($resProducto,0,'reftipodocumentaciones');
 
 $id = mysql_result($resultado,0,'idcotizacion');
 
+$idasesor  = mysql_result($resultado,0,'refasesores');
+
 $refDoc = '3,'.$refdoctipo;
 
 //die(var_dump($refDoc));
@@ -194,6 +196,22 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11
 }
 
 
+$resCobranza = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosArea($idasesor,4);
+
+if (mysql_num_rows($resCobranza)>0) {
+	$existeCobranzaPerfil = 1;
+
+} else {
+	$existeCobranzaPerfil = 0;
+
+}
+
+$resCobranzaCargada = $serviciosReferencias->traerCotizacionesdirectorioPorCotizacionArea($id,4);
+if (mysql_num_rows($resCobranzaCargada)>0) {
+	$puedeSeguirAux = 1;
+} else {
+	$puedeSeguirAux = 0;
+}
 ?>
 
 <!DOCTYPE html>
@@ -234,6 +252,9 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11
 	<link rel="stylesheet" href="../../css/easy-autocomplete.min.css">
 	<!-- Additional CSS Themes file - not required-->
 	<link rel="stylesheet" href="../../css/easy-autocomplete.themes.min.css">
+
+	<!--<link rel="stylesheet" href="../../css/touch_multiselect.css">-->
+	<link href="../../plugins/multi-select/css/multi-select.css" rel="stylesheet">
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
@@ -362,7 +383,7 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11
 						</div>
 					</div>
 				<?php }  ?>
-				<?php if ($archivosCargadosObligatorios == $archivosObligatorios) { ?>
+				<?php if (($archivosCargadosObligatorios == $archivosObligatorios) && (($existeCobranzaPerfil==0) || ($existeCobranzaPerfil==1 && $puedeSeguirAux==1))) { ?>
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box-3 bg-green hover-zoom-effect btnAceptarMesaDeControl">
 							<div class="icon">
@@ -377,11 +398,14 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11
 				<?php } ?>
 			</div>
 
-			<div class="row">
-				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+			<div class="row" style="margin-bottom:20px !important;">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<button type="button" class="btn btn-info waves-effect btnVolverFiltro" data-ir="modificar" data-referencia="<?php echo $id; ?>"><i class="material-icons">reply</i><span>VOLVER</span></button>
+					<button type="button" class="btn btn-success waves-effect btnCobranzaModal"><i class="material-icons">account_balance</i><span>SELECCIONE LOS PERFILES DE COBRANZA</span></button>
 				</div>
 			</div>
+
+
 
 			<div class="row">
 				<?php if ($puedeCargarDocumentacion == 1) { ?>
@@ -403,6 +427,8 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11
 							</ul>
 						</div>
 						<div class="body table-responsive">
+
+
 
 							<form class="form" id="formCountry">
 
@@ -535,6 +561,46 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11
 	</form>
 
 
+	<!-- perfiles de cobranza -->
+	<div class="modal fade" id="lgmPerfiles" tabindex="-1" role="dialog">
+		 <div class="modal-dialog modal-lg" role="document">
+			  <div class="modal-content">
+					<div class="modal-header">
+						 <h4 class="modal-title" id="largeModalLabel">Perfiles de Cobranza</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row clearfix" style="margin-top:15px; padding: 0 20px;">
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+								<select required id="suscriptor_select" name="suscriptor_select[]" class="js-example-basic-multiple" multiple="multiple">
+							<?php
+							while ($rowD = mysql_fetch_array($resCobranza)) {
+							?>
+									<option value="<?php echo $rowD['iddirectorioasesor']; ?>"><?php echo $rowD['razonsocial']; ?></option>
+							<?php
+							}
+							?>
+								</select>
+							</div>
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+								<h5>Cargados</h5>
+								<ul>
+									<?php
+									while ($rowD = mysql_fetch_array($resCobranzaCargada)) {
+									?>
+									<li><?php echo $rowD['razonsocial']; ?></li>
+									<?php } ?>
+								</ul>
+							</div>
+					</div>
+					<div class="modal-footer">
+						 <button type="button" class="btn btn-success waves-effect btnGuardarPerfiles" data-dismiss="modal">GUARDAR</button>
+						 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+					</div>
+			  </div>
+		 </div>
+	</div>
+
+
 
 
 	<div class="modal fade" id="lgmModificarEstado" tabindex="-1" role="dialog">
@@ -643,9 +709,62 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11
 <!-- JQuery Steps Plugin Js -->
 <script src="../../plugins/jquery-steps/jquery.steps.js"></script>
 
+<script src="../../plugins/multi-select/js/jquery.multi-select.js"></script>
+
 <script>
 
 	$(document).ready(function(){
+
+		$('.btnGuardarPerfiles').click(function() {
+			$("#suscriptor_select option").each(function()
+			{
+				if ($(this).prop('selected')) {
+					insertarCotizacionesdirectorioUnico($(this).val());
+					location.reload();
+				}
+			});
+		});
+
+
+		function insertarCotizacionesdirectorioUnico(refdirectorioasesores) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'insertarCotizacionesdirectorioUnico',
+					refcotizaciones: <?php echo $id; ?>,
+					refdirectorioasesores: refdirectorioasesores,
+					area:4
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
+		$('.js-example-basic-multiple').selectpicker();
+
+		$('.btnCobranzaModal').click(function() {
+			$('#lgmPerfiles').modal();
+		});
 
 		$('.btnAceptarMesaDeControl').click(function() {
 
@@ -1052,7 +1171,63 @@ if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11
 		});
 
 
+		$('.frmPerfiles').submit(function(e){
 
+			e.preventDefault();
+			if ($('.frmPerfiles')[0].checkValidity()) {
+
+				//información del formulario
+				var formData = new FormData($(".formulario")[1]);
+				var message = "";
+				//hacemos la petición ajax
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: formData,
+					//necesario para subir archivos via ajax
+					cache: false,
+					contentType: false,
+					processData: false,
+					//mientras enviamos el archivo
+					beforeSend: function(){
+
+					},
+					//una vez finalizado correctamente
+					success: function(data){
+
+						if (data == '') {
+							swal({
+									title: "Respuesta",
+									text: "Registro Modificado con exito!!",
+									type: "success",
+									timer: 1500,
+									showConfirmButton: false
+							});
+
+							$('#lgmModificar').modal('hide');
+							table.ajax.reload();
+						} else {
+							swal({
+									title: "Respuesta",
+									text: data,
+									type: "error",
+									timer: 2500,
+									showConfirmButton: false
+							});
+
+
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+						$("#load").html('');
+					}
+				});
+			}
+		});
 
 	});
 </script>

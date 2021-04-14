@@ -456,7 +456,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 }
 
 
-
+$resVar10m	= $serviciosReferencias->traerAseguradora();
 
 ?>
 
@@ -704,9 +704,6 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 				               </div>
 								</div>
 
-
-
-
 							</form>
 							</div>
 						</div>
@@ -783,7 +780,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 
 
 
-<div class="modal fade" id="lgmModificarEstado" tabindex="-1" role="dialog">
+<div class="modal fade" id="lgmModificarEstado" tabindex="-1" role="dialog" style="overflow-y: scroll;">
 	 <div class="modal-dialog modal-lg" role="document">
 		  <div class="modal-content">
 				<div class="modal-header bg-blue">
@@ -824,6 +821,8 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 
 <script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
 
+<script src="../../plugins/dropzone/dropzone.js"></script>
+
 <!-- Moment Plugin Js -->
     <script src="../../plugins/momentjs/moment.js"></script>
 	 <script src="../../js/moment-with-locales.js"></script>
@@ -831,10 +830,14 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 	 <script src="../../js/picker.js"></script>
 	 <script src="../../js/picker.date.js"></script>
 
+<script src="../../js/pdfobject.min.js"></script>
+
 <script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
 
 <script>
 	$(document).ready(function(){
+
+
 
 		$('.btnMotivos').click(function() {
 			$('#lgmMOTIVOS').modal();
@@ -843,9 +846,14 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 		$('#primaneta').number( true, 2 ,'.','');
 		$('#primatotal').number( true, 2 ,'.','');
 
+		$('#primatotalinbursa').number( true, 2 ,'.','');
+		$('#primatotalcompetencia').number( true, 2 ,'.','');
+
 
 		$('#version').prop('readonly',true);
 		$('#folio').prop('readonly',true);
+		$('#folioagente').prop('readonly',true);
+		$('#vigenciapoliza').prop('readonly',true);
 
 		$('.frmContcobertura').hide();
 		$('.frmContrefasociados').hide();
@@ -916,6 +924,57 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 					});
 					$('#lgmModificarEstado').modal('toggle');
 					location.reload();
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
+		function modificarCotizacionesPorCampoRechazoDefinitivo() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificarCotizacionesPorCampoRechazoDefinitivo',
+					id: $('#idmodificarestadorechazo').val(),
+					idestado: $('#estadomodificarestadorechazo').val(),
+					motivo: $('#motivo').val(),
+					nocompartioinformacion: $('#nocompartioinformacion').val(),
+					primatotalinbursa: $('#primatotalinbursa').val(),
+					primatotalcompetencia: $('#primatotalcompetencia').val(),
+					aseguradora: $('#aseguradora').val()
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					swal({
+							title: "Respuesta",
+							text: data.mensaje,
+							type: data.tipo,
+							timer: 1500,
+							showConfirmButton: false
+					});
+
+					if (data.error == false) {
+						$('#lgmModificarEstado').modal('toggle');
+						location.reload();
+					}
+
+					table.ajax.reload();
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -1052,7 +1111,7 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 		$('.btnOtro').click(function() {
 
 			$('.lblModiEstado').html('pasa a OTRO Conducto');
-			$('.contFrmObservaciones').hide();
+			$('.contFrmObservaciones').show();
 			$('.modificarEstadoCotizacionRechazo').html('OTRO');
 			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
 			$('#estadomodificarestadorechazo').val(28);

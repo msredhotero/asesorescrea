@@ -41,9 +41,9 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
-$singular = "Periodicidad de Pago";
+$singular = "FORMA de Pago";
 
-$plural = "Periodicidad de Pago";
+$plural = "FORMA de Pago";
 
 $eliminar = "eliminarPeriodicidadventas";
 
@@ -219,7 +219,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								<?php echo strtoupper($plural); ?>
+								FORMA DE PAGO
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">

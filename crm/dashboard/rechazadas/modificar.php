@@ -136,7 +136,7 @@ $resUsuario = $serviciosUsuario->traerUsuarioId(mysql_result($resultado,0,'refus
 $cadRef1 	= $serviciosFunciones->devolverSelectBox($resUsuario,array(1),'');
 
 $resVar2	= $serviciosReferencias->traerClientesPorId(mysql_result($resultado,0,'refclientes'));
-$cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(3,4,2),' ',mysql_result($resultado,0,'refclientes'));
+$cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar2,array(3,4,2,5),' ',mysql_result($resultado,0,'refclientes'));
 
 $idclienteinbursa = mysql_result($resVar2,0,'idclienteinbursa');
 
@@ -428,6 +428,26 @@ if ($vigenciasCliente['errorVINE'] == 'true') {
 
 $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacion($id,3,'','82,83,84,85,86');
 
+
+$resMotivosRechazos = $serviciosReferencias->traerMotivorechazocotizacionesPorCotizacion($id);
+
+if (mysql_num_rows($resMotivosRechazos)>0) {
+	$existeMotivoRechazo = 1;
+	list($precioMR,$observacionMR) = explode('-',mysql_result($resMotivosRechazos,0,'motivo'));
+	$primatotalinbursaMR = mysql_result($resMotivosRechazos,0,'primatotalinbursa');
+	$primatotalcompetenciaMR = mysql_result($resMotivosRechazos,0,'primatotalcompetencia');
+	$aseguradoraMR = mysql_result($resMotivosRechazos,0,'aseguradora');
+	$nocompartioinformacionMR = mysql_result($resMotivosRechazos,0,'nocompartioinformacion');
+
+} else {
+	$existeMotivoRechazo = 0;
+	$precioMR = 'Precio';
+	$observacionMR = '';
+	$nocompartioinformacion = 1;
+	$primatotalinbursaMR = 0;
+	$primatotalcompetenciaMR = 0;
+	$aseguradoraMR = 0;
+}
 
 ?>
 
@@ -779,6 +799,16 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 				 <div class="row contFrmRechazoDefinitivo">
  					<h4>Por favor ingrese los motivos del rechazo, para poderte afrocer un mejor servicio!!</h4>
+
+					<div class="row contFrmObservaciones">
+ 					   <div class="col-xs-12">
+ 						   <div class="form-group input-group">
+								<label class="label-form">Observaciones</label>
+								<textarea type="text" rows="4" cols="6" class="form-control" id="observacionrechazo" name="observacionrechazo" placeholder="Ingrese las observaciones..."><?php echo $observacionMR; ?></textarea>
+ 						   </div>
+ 					   </div>
+ 				   </div>
+
  					<div class="row">
 	 					<div class="col-xs-6">
 							<div class="form-group input-group">
@@ -909,19 +939,6 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 
 				</div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
  					<hr>
  					<p>Puedes contactarnos en el Tel fijo: <b><span style="color:#5DC1FD;">55 51 35 02 59</span></b></p>
  					<p>Correo: <a href="mailto:ventas@asesorescrea.com" style="color:#5DC1FD !important;"><b>ventas@asesorescrea.com</b></a></p>
@@ -969,10 +986,18 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 <script>
 	$(document).ready(function(){
 
+		$('#nocompartioinformacion').val(<?php echo $nocompartioinformacionMR; ?>);
+		$('#motivo').val('<?php echo $precioMR; ?>');
+		$('#aseguradora').val('<?php echo $aseguradoraMR; ?>');
+		$('#primatotalinbursa').val(<?php echo $primatotalinbursaMR; ?>);
+		$('#primatotalcompetencia').val(<?php echo $primatotalcompetenciaMR; ?>);
 
 		$('.frmContbitacorainbursa').hide();
 		$('.frmContbitacoraagente').hide();
 		$("#bitacoracrea").prop('readonly',true);
+
+		$('#primatotalinbursa').number( true, 2 ,'.','');
+		$('#primatotalcompetencia').number( true, 2 ,'.','');
 
 
 		$('.btnModificarBitacora').click(function() {

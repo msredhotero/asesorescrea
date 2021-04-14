@@ -75,6 +75,18 @@ if (mysql_num_rows($resDocumentacionReciboExistenteXML)>0) {
 	$archivosXML = '';
 }
 
+if (mysql_num_rows($resDocumentacionReciboExistenteCLAUSULAS)>0) {
+	$archivosCLAUS = "../../archivos/ventas/".$id.'/'.mysql_result($resDocumentacionReciboExistenteCLAUSULAS,0,'carpeta').'/'.mysql_result($resDocumentacionReciboExistenteCLAUSULAS,0,'archivo');
+} else {
+	$archivosCLAUS = '';
+}
+
+if (mysql_num_rows($resDocumentacionReciboExistenteEXPEDIENTE)>0) {
+	$archivosEXP = "../../archivos/ventas/".$id.'/'.mysql_result($resDocumentacionReciboExistenteEXPEDIENTE,0,'carpeta').'/'.mysql_result($resDocumentacionReciboExistenteEXPEDIENTE,0,'archivo');
+} else {
+	$archivosEXP = '';
+}
+
 
 if (mysql_num_rows($resDocumentacionReciboExistentePDF)>0) {
 	$archivosPDF = "../../archivos/ventas/".$id.'/'.mysql_result($resDocumentacionReciboExistentePDF,0,'carpeta').'/'.mysql_result($resDocumentacionReciboExistentePDF,0,'archivo');
@@ -200,7 +212,27 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 							<i class="material-icons">arrow_back</i>
 							<span>VOLVER</span>
 						</button>
-						<?php if ($idestado == 6) { ?>
+						<?php if ($archivosXML != '') { ?>
+							<button type="button" onClick="window.open('<?php echo $archivosXML; ?>')" class="btn bg-blue waves-effect btnXML" style="margin-bottom:15px;">
+								<i class="material-icons">file_download</i>
+								<span>XML</span>
+							</button>
+						<?php } ?>
+						<?php if ($archivosCLAUS != '') { ?>
+							<button type="button" onClick="window.open('<?php echo $archivosCLAUS; ?>')" class="btn bg-blue waves-effect btnCLAU" style="margin-bottom:15px;">
+								<i class="material-icons">file_download</i>
+								<span>CLAUSULAS</span>
+							</button>
+						<?php } ?>
+						<?php if ($archivosEXP != '') { ?>
+							<button type="button" onClick="window.open('<?php echo $archivosEXP; ?>')" class="btn bg-blue waves-effect btnEXP" style="margin-bottom:15px;">
+								<i class="material-icons">file_download</i>
+								<span>EXPEDIENTE</span>
+							</button>
+						<?php } ?>
+						<?php
+							//ver bien
+							if ($idestado == 66) { ?>
 							<button type="button" class="btn btn-success waves-effect btnAceptar" style="margin-bottom:15px;">
 								<i class="material-icons">done</i>
 								<span>ACEPTAR</span>

@@ -128,9 +128,9 @@ switch ($tabla) {
 		$res = $datos[1];
 
 		if ($estado == 2) {
-			$label = array('btnAceptar','btnRechazar');
-			$class = array('bg-green','bg-red');
-			$icon = array('done','remove');
+			$label = array('btnAceptar','btnRechazar','btnPoliza');
+			$class = array('bg-green','bg-red','bg-blue');
+			$icon = array('done','remove','search');
 		} else {
 			$label = array('btnPoliza');
 			$class = array('bg-blue');

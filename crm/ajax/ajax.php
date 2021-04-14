@@ -1448,10 +1448,30 @@ switch ($accion) {
       insertarCotizacionesdirectorio($serviciosReferencias);
    break;
 
+   case 'insertarCotizacionesdirectorioUnico':
+      insertarCotizacionesdirectorioUnico($serviciosReferencias);
+   break;
+
 
 
 }
 /* FinFinFin */
+
+function insertarCotizacionesdirectorioUnico($serviciosReferencias) {
+   $refcotizaciones = $_POST['refcotizaciones'];
+   $refdirectorioasesores = $_POST['refdirectorioasesores'];
+   $idarea = $_POST['area'];
+
+   $resEliminar = $serviciosReferencias->eliminarCotizacionesdirectorioPorCotizacionArea($refcotizaciones,$idarea);
+
+   $res = $serviciosReferencias->insertarCotizacionesdirectorio($refcotizaciones,$refdirectorioasesores);
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
 
 function insertarCotizacionesdirectorio($serviciosReferencias) {
    $refcotizaciones = $_POST['refcotizaciones'];
@@ -2751,7 +2771,13 @@ function insertarVentasCompleto($serviciosReferencias) {
       $folioagente = '';
    }
 
-   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda,$folioagente);
+   if (isset($_POST['vigenciapoliza'])) {
+      $vigenciapoliza = $_POST['vigenciapoliza'];
+   } else {
+      $vigenciapoliza = '';
+   }
+
+   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda,$folioagente,$vigenciapoliza);
 
    if ((integer)$res > 0) {
 
@@ -4677,6 +4703,14 @@ function modificarCotizacionesPorCampoRechazoDefinitivo($serviciosReferencias) {
       $aseguradora = '';
    }
 
+   if (isset($_POST['observacion'])) {
+      $observacion = $_POST['observacion'];
+   } else {
+      $observacion = '';
+   }
+
+   $fechacrea = date('Y-m-d H:i:s');
+
    if ($error == '') {
       // trai los valores del estado a modificar
       $resEstado = $serviciosReferencias->traerEstadocotizacionesPorId($idestado);
@@ -4720,14 +4754,17 @@ function modificarCotizacionesPorCampoRechazoDefinitivo($serviciosReferencias) {
 
       }
 
-      $res = $serviciosReferencias->insertarMotivorechazocotizaciones($id,$motivo,$nocompartioinformacion,$primatotalinbursa,$primatotalcompetencia,$aseguradora);
+      $res = $serviciosReferencias->insertarMotivorechazocotizaciones($id,$motivo.'-'.$observacion,$nocompartioinformacion,$primatotalinbursa,$primatotalcompetencia,$aseguradora);
+
 
       $resEvento = $serviciosReferencias->traerEventosPorReferencia(16, 'tbestadocotizaciones', 'idestadocotizacion', $idestadotrazabilidad);
+
+      //para la observacion
 
       if (mysql_num_rows($resEvento)>0) {
          //el evento esta cargado
          $refevento = mysql_result($resEvento,0,0);
-         $dato = 'Motivo del Rechazo: '.$motivo;
+         $dato = 'Motivo del Rechazo: '.$motivo.'- '.$observacion;
       } else {
          $refevento = $idestadotrazabilidad;
          $dato = '';
@@ -5489,7 +5526,12 @@ function insertarAsegurados($serviciosReferencias) {
    $nombre = $_POST['nombre'];
    $apellidopaterno = $_POST['apellidopaterno'];
    $apellidomaterno = $_POST['apellidomaterno'];
-   $razonsocial = '';
+
+   if (isset($_POST['razonsocial'])) {
+      $razonsocial = $_POST['razonsocial'];
+   } else {
+      $razonsocial = '';
+   }
 
    $ine = '';
    $curp = $_POST['curp'];
@@ -5500,7 +5542,12 @@ function insertarAsegurados($serviciosReferencias) {
    $fechamodi = date('Y-m-d H:i:s');
    $usuariocrea = $_SESSION['usua_sahilices'];
    $usuariomodi = $_SESSION['usua_sahilices'];
-   $reftipopersonas = 1;
+   if (isset($_POST['reftipopersonas'])) {
+      $reftipopersonas = $_POST['reftipopersonas'];
+   } else {
+      $reftipopersonas = 1;
+   }
+
 
    $idclienteinbursa = '';
    $emisioncomprobantedomicilio = '';
@@ -5510,22 +5557,6 @@ function insertarAsegurados($serviciosReferencias) {
 
    $refclientes = $_POST['refclientes'];
    $reftipoparentesco = $_POST['reftipoparentesco'];
-
-   /*
-   $domicilio = $_POST['domicilio'];
-   $email = $_POST['email'];
-   $rfc = $_POST['rfc'];
-   $colonia = $_POST['colonia'];
-   $municipio = $_POST['municipio'];
-   $codigopostal = $_POST['codigopostal'];
-   $edificio = $_POST['edificio'];
-   $nroexterior = $_POST['nroexterior'];
-   $nrointerior = $_POST['nrointerior'];
-   $estado = $_POST['estado'];
-   $ciudad = '';
-   $telefonofijo = $_POST['telefonofijo'];
-   $telefonocelular = $_POST['telefonocelular'];
-   */
 
    $domicilio = '';
    $email = '';
@@ -5656,7 +5687,7 @@ function traerBeneficiariosPorCliente($serviciosReferencias, $serviciosFunciones
 
    if ((integer)$res > 0) {
       $resV['error'] = false;
-      $resV['dato'] = $serviciosFunciones->devolverSelectBox($res,array(3,4,2),' ')."<option value=''>Nuevo</option>";
+      $resV['dato'] = $serviciosFunciones->devolverSelectBox($res,array(3,4,2,5),' ')."<option value=''>Nuevo</option>";
    } else {
       $resV['error'] = true;
       $resV['dato'] = "<option value=''>-- Seleccionar --</option><option value=''>Nuevo</option>";
@@ -5675,7 +5706,7 @@ function traerAseguradosPorCliente($serviciosReferencias, $serviciosFunciones) {
 
    if ((integer)$res > 0) {
       $resV['error'] = false;
-      $resV['dato'] = "<option value=''>-- Seleccionar --</option>".$serviciosFunciones->devolverSelectBox($res,array(3,4,2),' ')."<option value=''>Nuevo</option>";
+      $resV['dato'] = "<option value=''>-- Seleccionar --</option>".$serviciosFunciones->devolverSelectBox($res,array(3,4,2,5),' ')."<option value=''>Nuevo</option>";
    } else {
       $resV['error'] = true;
       $resV['dato'] = "<option value=''>-- Seleccionar --</option><option value=''>Nuevo</option>";
@@ -6543,8 +6574,14 @@ function validarCuestionario($serviciosReferencias) {
          $folioagente = '';
       }
 
+      if (isset($_POST['vigenciapoliza'])) {
+         $vigenciapoliza = $_POST['vigenciapoliza'];
+      } else {
+         $vigenciapoliza = '';
+      }
 
-      $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda,$folioagente);
+
+      $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda,$folioagente,$vigenciapoliza);
 
 
       if ((integer)$res > 0) {
@@ -8686,7 +8723,13 @@ function insertarCotizaciones($serviciosReferencias) {
       $folioagente = '';
    }
 
-   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda, $folioagente);
+   if (isset($_POST['vigenciapoliza'])) {
+      $vigenciapoliza = $_POST['vigenciapoliza'];
+   } else {
+      $vigenciapoliza = '';
+   }
+
+   $res = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda, $folioagente, $vigenciapoliza);
 
    if ((integer)$res > 0) {
 
@@ -8787,6 +8830,13 @@ function modificarCotizaciones($serviciosReferencias) {
    }
 
 
+   if (isset($_POST['vigenciapoliza'])) {
+      $vigenciapoliza = $_POST['vigenciapoliza'];
+   } else {
+      $vigenciapoliza = '';
+   }
+
+
    if ($refestadocotizaciones == 12) {
 
       // modifico la cotizacion a la ultima etapa
@@ -8833,7 +8883,7 @@ function modificarCotizaciones($serviciosReferencias) {
    }
 
 
-   $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$bitacoracrea,$bitacorainbursa,$bitacoraagente,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda,$folioagente);
+   $res = $serviciosReferencias->modificarCotizaciones($id,$refclientes,$refproductos,$refasesores,$refasociados,$refestadocotizaciones,$cobertura,$reasegurodirecto,$tiponegocio,$presentacotizacion,$fechapropuesta,$fecharenovacion,$fechaemitido,$fechamodi,$usuariomodi,$refusuarios,$observaciones,$fechavencimiento,$coberturaactual,$bitacoracrea,$bitacorainbursa,$bitacoraagente,$existeprimaobjetivo,$primaobjetivo,$primaobjetivototal,$reftipomoneda,$folioagente,$vigenciapoliza);
 
    if ($res == true) {
       if (isset($_POST['refbeneficiarioaux'])) {
