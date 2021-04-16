@@ -1059,6 +1059,8 @@ $resVar10m	= $serviciosReferencias->traerAseguradora();
 							timer: 1800,
 							showConfirmButton: false
 						});
+
+						location.reload();
 					} else {
 						swal({
 							title: "Respuesta",
