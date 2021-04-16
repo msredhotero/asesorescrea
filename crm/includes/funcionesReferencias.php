@@ -8285,8 +8285,13 @@ return $res;
 
       if ($resEliminarCobros) {
 
+         $comisioncedida = 0;
+         $financiamiento = 0;
+         $gastosexpedicion = 0;
+         $iva = 0;
+
          //creo la venta con la nueva version
-         $resI = $this->insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$id,$version,0,$observaciones,$vigenciadesde);
+         $resI = $this->insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$id,$version,0,$observaciones,$vigenciadesde,$comisioncedida,$financiamiento,$gastosexpedicion,$iva);
 
          $resP = $this->insertarPeriodicidadventasPorVenta($resI,$id);
          return $resI;

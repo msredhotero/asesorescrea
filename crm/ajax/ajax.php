@@ -2811,7 +2811,12 @@ function insertarVentasCompleto($serviciosReferencias) {
       $refbeneficiarios = $_POST['refbeneficiarios'];
       $resModificarBEN = $serviciosReferencias->modificarCotizacionesBeneficiario($res,$refbeneficiarios);
 
-      $resVenta = $serviciosReferencias->insertarVentas($res,6,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,0,0,1,$observaciones='',$vigenciadesde,$fechaemision,$reftipomoneda);
+      $comisioncedida = $_POST['comisioncedida'];
+      $financiamiento = $_POST['financiamiento'];
+      $gastosexpedicion = $_POST['gastosexpedicion'];
+      $iva = $_POST['iva'];
+
+      $resVenta = $serviciosReferencias->insertarVentas($res,6,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,0,0,1,$observaciones='',$vigenciadesde,$fechaemision,$reftipomoneda,$comisioncedida,$financiamiento,$gastosexpedicion,$iva);
 
       // inserto la cartera de productos del cliente
       $resIC = $serviciosReferencias->insertarClientescartera($refclientes,$refproductos,$vigenciadesde,'','1');

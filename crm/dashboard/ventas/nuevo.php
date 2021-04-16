@@ -55,8 +55,8 @@ $modificar = "modificarVentas";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbcotizaciones";
 
-$lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones','fechaemitido','primaneta','primatotal','recibopago','fechapago','nrorecibo','importecomisionagente','importebonopromotor','cobertura','reasegurodirecto','fecharenovacion','fechapropuesta','tiponegocio','presentacotizacion','existeprimaobjetivo','primaobjetivo','tieneasegurado','refasegurados','primaobjetivototal');
-$lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor','Cobertura Requiere Reaseguro','Reaseguro Directo con Inbursa o Broker','Fecha renovación o presentación de propueta al cliente','Fecha en que se entrega propuesta','Tipo de negocio para agente','Presenta Cotizacion o Poliza de competencia','Existe Prima Objetivo','Prima Objetivo Neta','Tiene Asegurado','Asegurado','Prima Objetivo Total');
+$lblCambio	 	= array('refusuarios','refclientes','refproductos','refasesores','refasociados','refestadocotizaciones','fechaemitido','primaneta','primatotal','recibopago','fechapago','nrorecibo','importecomisionagente','importebonopromotor','cobertura','reasegurodirecto','fecharenovacion','fechapropuesta','tiponegocio','presentacotizacion','existeprimaobjetivo','primaobjetivo','tieneasegurado','refasegurados','primaobjetivototal','reftipomoneda','folioagente');
+$lblreemplazo	= array('Usuario','Clientes','Productos','Asesores','Asociados','Estado','Fecha Emitido','Prima Neta','Prima Total','Recibo Pago','Fecha Pago','Nro Recibo','Importe Com. Agente','Importe Bono Promotor','Cobertura Requiere Reaseguro','Reaseguro Directo con Inbursa o Broker','Fecha renovación o presentación de propueta al cliente','Fecha en que se entrega propuesta','Tipo de negocio para agente','Presenta Cotizacion o Poliza de competencia','Existe Prima Objetivo','Prima Objetivo Neta','Tiene Asegurado','Asegurado','Prima Objetivo Total','Tipo Moneda','Folio Agente');
 
 
 $cadRef1 	= "<option value='0'>Se genera automaticamente</option>";
@@ -116,8 +116,11 @@ $cadAsegurado = "<option value='0'>No</option><option value='1'>Otra persona</op
 
 $cadRefAsegurado = "<option value='0'>El Contratante</option>";
 
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadRef7b,7=>$cadRef8b,8=>$cadRef9b,9=>$cadRef11b,10=>$cadAsegurado,11=>$cadRefAsegurado);
-$refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones','cobertura','presentacotizacion','tiponegocio','existeprimaobjetivo','tieneasegurado','refasegurados');
+$resTipoMoneda = $serviciosReferencias->traerTipomoneda();
+$cadTipoMoneda = $serviciosFunciones->devolverSelectBox($resTipoMoneda,array(1),'');
+
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadRef7b,7=>$cadRef8b,8=>$cadRef9b,9=>$cadRef11b,10=>$cadAsegurado,11=>$cadRefAsegurado,12=>$cadTipoMoneda);
+$refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones','cobertura','presentacotizacion','tiponegocio','existeprimaobjetivo','tieneasegurado','refasegurados','reftipomoneda');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
@@ -347,6 +350,59 @@ $cadTipoMoneda = $serviciosFunciones->devolverSelectBox($resTipoMoneda,array(1),
 	                                 </div>
 	                              </div>
                               </div>
+
+									</div>
+
+									<div class="row">
+										<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcomisioncedida" style="display:block">
+											<label for="Comision Cedida" class="control-label" style="text-align:left">Comision Cedida </label>
+											<div class="form-group input-group">
+			                           <span class="input-group-addon">$</span>
+			                           <div class="form-line">
+			                              <input type="text" class="form-control" id="comisioncedida" name="comisioncedida" value="" >
+			                           </div>
+			                           <span class="input-group-addon">.00</span>
+			                        </div>
+										</div>
+
+
+
+										<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContfinanciamiento" style="display:block">
+											<label for="financiamiento" class="control-label" style="text-align:left">Financiamiento </label>
+											<div class="form-group input-group">
+			                           <span class="input-group-addon">$</span>
+			                           <div class="form-line">
+			                              <input type="text" class="form-control" id="financiamiento" name="financiamiento" value="" >
+			                           </div>
+			                           <span class="input-group-addon">.00</span>
+			                        </div>
+										</div>
+
+
+
+										<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContgastosexpedicion" style="display:block">
+											<label for="Gastos de Expedición" class="control-label" style="text-align:left">Gastos De Expedición </label>
+											<div class="form-group input-group">
+			                           <span class="input-group-addon">$</span>
+			                           <div class="form-line">
+			                              <input type="text" class="form-control" id="gastosexpedicion" name="gastosexpedicion" value="" >
+			                           </div>
+			                           <span class="input-group-addon">.00</span>
+			                        </div>
+										</div>
+
+
+
+										<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContiva" style="display:block">
+											<label for="IVA" class="control-label" style="text-align:left">IVA </label>
+											<div class="form-group input-group">
+			                           <span class="input-group-addon">$</span>
+			                           <div class="form-line">
+			                              <input type="text" class="form-control" id="iva" name="iva" value="" >
+			                           </div>
+			                           <span class="input-group-addon">.00</span>
+			                        </div>
+										</div>
 
 									</div>
 
@@ -582,6 +638,15 @@ $cadTipoMoneda = $serviciosFunciones->devolverSelectBox($resTipoMoneda,array(1),
 <script>
 	$(document).ready(function(){
 
+		$('#iva').number( true, 2 ,'.','');
+		$('#comisioncedida').number( true, 2 ,'.','');
+		$('#financiamiento').number( true, 2 ,'.','');
+		$('#gastosexpedicion').number( true, 2 ,'.','');
+
+		$('#iva').val('16');
+		$('#comisioncedida').val('0');
+		$('#financiamiento').val('0');
+		$('#gastosexpedicion').val('0');
 
 		var options = {
 			url: "../../json/jsbuscarclientes.php",

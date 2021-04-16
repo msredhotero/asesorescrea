@@ -130,6 +130,9 @@ if (mysql_num_rows($resPaquete) > 0) {
 
 	}
 
+	$resTipoMoneda = $serviciosReferencias->traerTipomoneda();
+	$cadTipoMoneda = $serviciosFunciones->devolverSelectBox($resTipoMoneda,array(1),'');
+
 
 	$cadRef3 = "<option value='0'>Mismo de la cotización</option>";
 	$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3,3=>$cadTipoMoneda);
