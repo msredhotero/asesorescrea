@@ -320,6 +320,11 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 <script>
 	$(document).ready(function(){
 
+		$('#iva').number( true, 2 ,'.','');
+		$('#comisioncedida').number( true, 2 ,'.','');
+		$('#financiamiento').number( true, 2 ,'.','');
+		$('#gastosexpedicion').number( true, 2 ,'.','');
+
 		$('.btnActivar').click(function() {
 			$('#lgmENVIAR').modal();
 		});
