@@ -55,6 +55,11 @@ $modificar = "modificarPeriodicidadventas";
 $id = $_GET['id'];
 
 $resultado = $serviciosReferencias->traerVentasPorId($id);
+/*
+$serviciosReferencias->emailDePagoDirecto($id);
+
+die();
+*/
 
 $idcotizacion = mysql_result($resultado,0,'refcotizaciones');
 
@@ -71,8 +76,8 @@ if (mysql_num_rows($resPeriodicidad) > 0) {
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbperiodicidadventas";
 
-$lblCambio	 	= array('refventas','reftipoperiodicidad','reftipocobranza','afiliacionnumber','tipotarjeta');
-$lblreemplazo	= array('Venta','Periodicidad','Tipo de Cobranza','Afiliacion','Tipo Tarjeta');
+$lblCambio	 	= array('refventas','reftipoperiodicidad','reftipocobranza','afiliacionnumber','tipotarjeta','vigencia','tarjetanumber');
+$lblreemplazo	= array('Venta','Periodicidad','Tipo de Cobranza','Clabe Interbancaria','Tipo de Cuenta','Vigencia','Nro de Tarjeta');
 
 $resVar = $serviciosReferencias->traerVentasPorIdCompleto($id);
 $cadRef = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(15),' ',$id);
@@ -89,18 +94,28 @@ if ($existe == 1) {
 	$cadRef3 = $serviciosFunciones->devolverSelectBoxActivo($resVar3,array(1),'',mysql_result($resPeriodicidad,0,'reftipocobranza'));
 
 	$banco = mysql_result($resPeriodicidad,0,'banco');
-	$afiliacionnumber = $serviciosReferencias->hiddenString($serviciosReferencias->decryptIt(mysql_result($resPeriodicidad,0,'afiliacionnumber')),0,4);
+	$tarjetanumber = mysql_result($resPeriodicidad,0,'tarjetanumber');
+	//die(var_dump($tarjetanumber));
+	$afiliacionnumber = mysql_result($resPeriodicidad,0,'afiliacionnumber');
+	$vigencia = mysql_result($resPeriodicidad,0,'vigencia');
 	$tipotarjeta = mysql_result($resPeriodicidad,0,'tipotarjeta');
+
 	if ($tipotarjeta == '1') {
-		$tipotarjeta = 'Tarjeta de Credito';
+
 		$cadRef4 = "<option value='1'>Tarjeta de Credito</option>";
 	} else {
 		if ($tipotarjeta == '2') {
-			$tipotarjeta = 'Tarjeta de Debito';
-			$cadRef4 = "<option value='2'>Tarjeta de Debito</option>";
+
+			$cadRef4 = "<option value='2' selected>Tarjeta de Debito</option>";
 		} else {
-			$tipotarjeta = '';
-			$cadRef4 = "<option value=''>-- Sin debito --</option>";
+			if ($tipotarjeta == '3') {
+
+				$cadRef4 = "<option value='3'>Cuenta Bancaria</option>";
+			} else {
+
+				$cadRef4 = "<option value=''>-- Sin debito --</option>";
+			}
+
 		}
 	}
 
@@ -109,10 +124,12 @@ if ($existe == 1) {
 	$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),'');
 
 	$banco = '';
+	$tarjetanumber = '';
 	$afiliacionnumber = '';
+	$vigencia = '';
 	$tipotarjeta = '';
 
-	$cadRef4 = "<option value=''>-- Sin debito --</option><option value='1'>Tarjeta de Credito</option><option value='2'>Tarjeta de Debito</option>";
+	$cadRef4 = "<option value=''>-- Sin debito --</option><option value='1'>Tarjeta de Credito</option><option value='2'>Tarjeta de Debito</option><option value='3'>Cuenta Bancaria</option>";
 }
 
 
@@ -159,6 +176,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.bootstrap.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.jqueryui.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.css">
+	<!-- Bootstrap Material Datetime Picker Css -->
+	<link href="../../plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet" />
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
@@ -256,6 +275,11 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 											<span>COBROS</span>
 										</button>
 
+										<button type="button" class="btn bg-orange waves-effect btnCalcularRecibos">
+											<i class="material-icons">unarchive</i>
+											<span>CALCULAR Y GENERAR AUTOMATICAMENTE LOS RECIBOS</span>
+										</button>
+
 
 										<?php } ?>
 										<?php } ?>
@@ -263,6 +287,11 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 											<i class="material-icons">arrow_back</i>
 											<span>VOLVER</span>
 										</button>
+									</div>
+								</div>
+								<div class="row">
+									<div id="vistapreviaRecibos">
+
 									</div>
 								</div>
 
@@ -320,18 +349,154 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 <script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
 
-<script src="../../js/picker.js"></script>
-<script src="../../js/picker.date.js"></script>
+<!-- Moment Plugin Js -->
+    <script src="../../plugins/momentjs/moment.js"></script>
+	 <script src="../../js/moment-with-locales.js"></script>
 
+	 <script src="../../js/picker.js"></script>
+	 <script src="../../js/picker.date.js"></script>
+
+<script src="https://asesorescrea.com/desarrollo/crm/dashboard/ecommerce/assets/js/jquery.payform.min.js"></script>
+<script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
 
 <script>
 	$(document).ready(function(){
 
-		$('#refventas').val
+		$('.btnCalcularRecibos').click(function() {
+			generarRecibosCalculados();
+		});
+
+		function generarRecibosCalculados() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'generarRecibosCalculados', id: <?php echo $id; ?>},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('#vistapreviaRecibos').html('');
+					$('.btnCalcularRecibos').hide();
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					$('#vistapreviaRecibos').html(data);
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+
+		}
+
+		$('#vigencia').bootstrapMaterialDatePicker({
+			format: 'YYYY/MM/01',
+			lang : 'es',
+			clearButton: true,
+			weekStart: 1,
+			time: false,
+			minDate : new Date()
+		});
+
+		$('#tarjetanumber').payform('formatCardNumber');
+
+		$('#afiliacionnumber').inputmask('999999999999999999', { placeholder: '__________________', "onincomplete": function(){
+			swal("Error!", 'Complete los 18 digitos', "warning");
+			$('#afiliacionnumber').focus();
+
+		} });
+
+		$('.frmContbanco').hide();
+		$('.frmContafiliacionnumber').hide();
+		$('.frmConttarjetanumber').hide();
+		$('.frmContvigencia').hide();
+
+		<?php
+		if ($existe == 1) {
+		if (($tipotarjeta == 1) || ($tipotarjeta == 2)) {
+		?>
+		$('.frmContbanco').hide();
+		$('.frmContafiliacionnumber').hide();
+		$('.frmConttarjetanumber').show();
+		$('.frmContvigencia').show();
+		<?php } else { ?>
+
+			<?php if ($tipotarjeta == 3) { ?>
+				$('.frmContbanco').show();
+				$('.frmContafiliacionnumber').show();
+				$('.frmConttarjetanumber').hide();
+				$('.frmContvigencia').hide();
+			<?php } else { ?>
+				$('.frmConttipotarjeta').hide();
+				$('.frmContbanco').hide();
+				$('.frmContafiliacionnumber').hide();
+				$('.frmConttarjetanumber').hide();
+				$('.frmContvigencia').hide();
+			<?php } ?>
+		<?php } } else { ?>
+
+		$("#reftipocobranza").change( function(){
+			if ($(this)[0].selectedIndex == 0)  {
+				$('.frmConttipotarjeta').show();
+			} else {
+
+				$('.frmConttipotarjeta').hide();
+				$('.frmContbanco').hide();
+				$('.frmContafiliacionnumber').hide();
+				$('.frmConttarjetanumber').hide();
+				$('.frmContvigencia').hide();
+
+				$('#banco').val('');
+				$('#afiliacionnumber').val('');
+				$('#tarjetanumber').val('');
+				$('#vigencia').val('');
+
+			}
+		});
+
+		$("#tipotarjeta").change( function(){
+			if (($(this)[0].selectedIndex == 1) || ($(this)[0].selectedIndex == 2)) {
+				$('.frmContbanco').hide();
+				$('.frmContafiliacionnumber').hide();
+				$('.frmConttarjetanumber').show();
+				$('.frmContvigencia').show();
+
+				$('#banco').val('');
+				$('#afiliacionnumber').val('');
+			} else {
+				if ($(this)[0].selectedIndex == 3)  {
+					$('.frmContbanco').show();
+					$('.frmContafiliacionnumber').show();
+					$('.frmConttarjetanumber').hide();
+					$('.frmContvigencia').hide();
+
+					$('#tarjetanumber').val('');
+					$('#vigencia').val('');
+				} else {
+					$('.frmContbanco').hide();
+					$('.frmContafiliacionnumber').hide();
+					$('.frmConttarjetanumber').hide();
+					$('.frmContvigencia').hide();
+
+					$('#banco').val('');
+					$('#afiliacionnumber').val('');
+					$('#tarjetanumber').val('');
+					$('#vigencia').val('');
+				}
+			}
+
+		});
+
+		<?php } ?>
 
 		$('#banco').val('<?php echo $banco; ?>');
-		$('#afiliacionnumber').val('<?php //echo $afiliacionnumber; ?>');
+		$('#afiliacionnumber').val('<?php echo $afiliacionnumber; ?>');
 		$('#tipotarjeta').val('<?php echo $tipotarjeta; ?>');
+		$('#vigencia').val('<?php echo $vigencia; ?>');
+		$('#tarjetanumber').val('<?php echo $tarjetanumber; ?>');
 
 		$('.btnArchivos').click(function() {
 			url = "subirdocumentacioni.php?id=<?php echo $idcotizacion; ?>&documentacion=35";
@@ -371,20 +536,6 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 				$('.frmAjaxModificar #montocomision').val( 0);
 			}
 		}
-
-
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '315px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
-
-		});
 
 
 		var table = $('#example').DataTable({

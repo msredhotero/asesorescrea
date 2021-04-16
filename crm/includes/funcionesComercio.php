@@ -146,6 +146,7 @@ class serviciosComercio
 		return 'COM0000000001';
 	}
 
+   //esta en dos lados serviciosreferencias tambian
    function insertarComercioinicio($token,$comtotal,$comcurrency,$comaddres,$comorderid,$commerchant,$comstore,$comterm,$comdigest,$urlback,$reforigencomercio,$refestadotransaccion,$refafiliados,$fechacrea,$usuariocrea,$vigencia,$observaciones,$usuariomodi,$reftabla,$idreferencia) {
       $sql = "insert into dbcomercioinicio(idcomercioinicio,token,comtotal,comcurrency,comaddres,comorderid,commerchant,comstore,comterm,comdigest,urlback,reforigencomercio,refestadotransaccion,refafiliados,fechacrea,usuariocrea,vigencia,observaciones,fechamodi,usuariomodi,reftabla,idreferencia)
       values ('','".$token."',".$comtotal.",'".$comcurrency."','".$comaddres."',".$comorderid.",'".$commerchant."','".$comstore."','".$comterm."','".$comdigest."','".$urlback."',".$reforigencomercio.",".$refestadotransaccion.",".$refafiliados.",'".$fechacrea."','".$usuariocrea."',adddate(current_date(),1),'".$observaciones."','".date('Y-m-d H:i:s')."','".$usuariomodi."',".$reftabla.",".$idreferencia.")";
@@ -174,6 +175,7 @@ class serviciosComercio
       return $res;
    }
 
+   //esta en dos lados
    function modificarComercioInicioOrderID($id) {
       $sql = "update dbcomercioinicio set comorderid = '".$id."' where idcomercioinicio = ".$id;
       $res = $this->query($sql,0);

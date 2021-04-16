@@ -61,8 +61,8 @@ $resVenta = $serviciosReferencias->traerVentasPorCotizacion($id);
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbventas";
 
-$lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','refestadoventa','refproductosaux','vigenciadesde','fechaemision','reftipomoneda');
-$lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Estado Poliza','Producto Especifico','Vigencia Desde','Fecha de Emision','Tipo Moneda');
+$lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','refestadoventa','refproductosaux','vigenciadesde','fechaemision','reftipomoneda','comisioncedida','gastosexpedicion','iva');
+$lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Estado Poliza','Producto Especifico','Vigencia Desde','Fecha de Emision','Tipo Moneda','Comision Cedida','Gastos de Expedición','IVA');
 
 
 $resVar = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
@@ -130,9 +130,12 @@ if (mysql_num_rows($resPaquete) > 0) {
 
 	}
 
+
 	$cadRef3 = "<option value='0'>Mismo de la cotización</option>";
 	$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3,3=>$cadTipoMoneda);
 	$refCampo 	=  array('refcotizaciones','refestadoventa','refproductosaux','reftipomoneda');
+
+
 
 	$formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
@@ -369,6 +372,16 @@ if (mysql_num_rows($resPaquete) > 0) {
 
 <script>
 	$(document).ready(function(){
+
+		$('#iva').val('16');
+		$('#comisioncedida').val('0');
+		$('#financiamiento').val('0');
+		$('#gastosexpedicion').val('0');
+
+		$('#iva').number( true, 2 ,'.','');
+		$('#comisioncedida').number( true, 2 ,'.','');
+		$('#financiamiento').number( true, 2 ,'.','');
+		$('#gastosexpedicion').number( true, 2 ,'.','');
 
 		$('.btnVolver').click(function() {
 			url = "index.php";

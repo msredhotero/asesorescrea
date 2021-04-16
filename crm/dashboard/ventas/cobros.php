@@ -105,8 +105,8 @@ if (mysql_num_rows($resPeriodicidadVenta) > 0) {
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbperiodicidadventasdetalle";
 
-$lblCambio	 	= array('refperiodicidadventas','montototal','primaneta','porcentajecomision','montocomision','fechapago','fechavencimiento','refestadopago','nrorecibo');
-$lblreemplazo	= array('Venta','Monto Total','Prima Neta','% Comision','Monto Comision','Fecha Pago','Fecha Vencimiento','Estado Pago','Nro Recibo');
+$lblCambio	 	= array('refperiodicidadventas','montototal','primaneta','porcentajecomision','montocomision','fechapago','fechavencimiento','refestadopago','nrorecibo','fechafinservicio');
+$lblreemplazo	= array('Venta','Monto Total','Prima Neta','% Comision','Monto Comision','Fecha Pago','Fecha Limite','Estado Pago','Nro Recibo','Fecha Vencimiento');
 
 $resVar = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 $cadRef = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(1),' ',$id);
@@ -538,6 +538,24 @@ if (mysql_result($resProductos,0,'reftipoproductorama') == 12) {
 		});
 
 		$('.frmAjaxNuevo #fechavencimiento').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		});
+
+
+		$('.frmAjaxNuevo #fechafinservicio').pickadate({
 			format: 'yyyy-mm-dd',
 			labelMonthNext: 'Siguiente mes',
 			labelMonthPrev: 'Previo mes',

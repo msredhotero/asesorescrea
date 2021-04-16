@@ -192,14 +192,10 @@ if (!isset($_SESSION['usua_sahilices']))
 		// MODIFICO EL RECIBO A PROCESO DE VALIDACION, COPIA EL RECIBO Y LO ADJUNTO AL COMPROBANTE DE PAGO
 		$resME = $serviciosReferencias->modificarPeriodicidadventasdetalleEstado($idcotizacion,2,$_SESSION['usua_sahilices'],date('Y-m-d H:i:s'));
 
-
 		$nroComprobante = $serviciosComercio->generaNroRecibo();
-
 
 		// modifico el estado a aprobado
 		$resModificarEstado = $serviciosComercio->modificarComercioInicioEstado($token,2);
-
-
 
 		$resNroRecibo = $serviciosComercio->modificarComercioInicioNroRecibo($token,$nroComprobante);
 
@@ -243,7 +239,6 @@ if (!isset($_SESSION['usua_sahilices']))
 		}
 
 		require ('../../reportes/rptFacturaPagoReciboOnlineManual.php');
-
 
 		////////////////// genero el insert del pago y copio el archivo ////////
 		$resPP = $serviciosReferencias->insertarPeriodicidadventaspagos($idcotizacion,$precioTotal,$nroComprobante,date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),'');

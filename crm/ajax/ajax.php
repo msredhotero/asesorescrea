@@ -1451,11 +1451,26 @@ switch ($accion) {
    case 'insertarCotizacionesdirectorioUnico':
       insertarCotizacionesdirectorioUnico($serviciosReferencias);
    break;
-
+   case 'generarRecibosCalculados':
+      generarRecibosCalculados($serviciosReferencias);
+   break;
 
 
 }
 /* FinFinFin */
+
+function generarRecibosCalculados($serviciosReferencias) {
+   session_start();
+   $id = $_POST['id'];
+
+   $res = $serviciosReferencias->generarRecibosCalculados($id);
+
+   $cad = '';
+   foreach ($res as $valor) {
+      $cad .= 'Fecha Vencimiento: '.$valor['fechavencimiento'].' - Fecha Limite:'.$valor['fechalimite'].' - Monto: '.$valor['monto'].'<br><br>';
+   }
+   echo $cad;
+}
 
 function insertarCotizacionesdirectorioUnico($serviciosReferencias) {
    $refcotizaciones = $_POST['refcotizaciones'];
@@ -3719,7 +3734,12 @@ function insertarVentas($serviciosReferencias) {
    $fechaemision = $_POST['fechaemision'];
    $reftipomoneda = $_POST['reftipomoneda'];
 
-   $res = $serviciosReferencias->insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux, $refventas,$version, $observaciones,$vigenciadesde,$fechaemision,$reftipomoneda);
+   $comisioncedida = $_POST['comisioncedida'];
+   $financiamiento = $_POST['financiamiento'];
+   $gastosexpedicion = $_POST['gastosexpedicion'];
+   $iva = $_POST['iva'];
+
+   $res = $serviciosReferencias->insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux, $refventas,$version, $observaciones,$vigenciadesde,$fechaemision,$reftipomoneda,$comisioncedida,$financiamiento,$gastosexpedicion,$iva);
 
    if ((integer)$res > 0) {
 
@@ -7371,8 +7391,9 @@ function insertarPeriodicidadventasdetalle($serviciosReferencias) {
    $nrorecibo = $_POST['nrorecibo'];
 
    $fechapagoreal = $_POST['fechapagoreal'];
+   $fechafinservicio = $_POST['fechafinservicio'];
 
-   $res = $serviciosReferencias->insertarPeriodicidadventasdetalle($refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi,$nrorecibo,$fechapagoreal);
+   $res = $serviciosReferencias->insertarPeriodicidadventasdetalle($refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariocrea,$usuariomodi,$fechacrea,$fechamodi,$nrorecibo,$fechapagoreal,$fechafinservicio);
 
    if ((integer)$res > 0) {
       echo '';
@@ -7401,8 +7422,9 @@ function modificarPeriodicidadventasdetalle($serviciosReferencias) {
    $fechamodi = date('Y-m-d H:i:s');
 
    $fechapagoreal = $_POST['fechapagoreal'];
+   $fechafinservicio = $_POST['fechafinservicio'];
 
-   $res = $serviciosReferencias->modificarPeriodicidadventasdetalle($id,$refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariomodi,$fechamodi,$nrorecibo,$fechapagoreal);
+   $res = $serviciosReferencias->modificarPeriodicidadventasdetalle($id,$refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariomodi,$fechamodi,$nrorecibo,$fechapagoreal,$fechafinservicio);
 
 
 
@@ -7481,7 +7503,10 @@ function insertarPeriodicidadventas($serviciosReferencias) {
    $afiliacionnumber = $_POST['afiliacionnumber'];
    $tipotarjeta = $_POST['tipotarjeta'];
 
-   $res = $serviciosReferencias->insertarPeriodicidadventas($refventas,$reftipoperiodicidad,$reftipocobranza,$banco,$afiliacionnumber,$tipotarjeta);
+   $vigencia = $_POST['vigencia'];
+   $tarjetanumber = $_POST['tarjetanumber'];
+
+   $res = $serviciosReferencias->insertarPeriodicidadventas($refventas,$reftipoperiodicidad,$reftipocobranza,$banco,$afiliacionnumber,$tipotarjeta,$vigencia,$tarjetanumber);
 
    if ((integer)$res > 0) {
       echo '';
@@ -10672,8 +10697,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $idTabla = "idperiodicidadventadetalle";
 
 
-         $lblCambio	 	= array('refperiodicidadventas','montototal','primaneta','porcentajecomision','montocomision','fechapago','fechavencimiento','refestadopago','nrorecibo');
-         $lblreemplazo	= array('Venta','Monto Total','Prima Neta','% Comision','Monto Comision','Fecha Pago','Fecha Vencimiento','Estado Pago','Nro Recibo');
+         $lblCambio	 	= array('refperiodicidadventas','montototal','primaneta','porcentajecomision','montocomision','fechapago','fechavencimiento','refestadopago','nrorecibo','fechafinservicio');
+         $lblreemplazo	= array('Venta','Monto Total','Prima Neta','% Comision','Monto Comision','Fecha Pago','Fecha Limite','Estado Pago','Nro Recibo','Fecha Vencimiento');
 
          $resVar = $serviciosReferencias->traerPeriodicidadventasPorIdCompleto(mysql_result($resultado,0,'refperiodicidadventas'));
          $cadRef = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(1,2,3),' ',mysql_result($resultado,0,'refperiodicidadventas'));

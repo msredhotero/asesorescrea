@@ -102,6 +102,13 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
+
+		.modal-dialog {
+		  width: 80%;
+		  height: 80%;
+		  /*margin: 10px 10px;*/
+		  padding: 0;
+		}
 	</style>
 
 
@@ -368,8 +375,15 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 														<th>Asesor</th>
 														<th>Asociado</th>
 														<th>Fecha</th>
-														<th>Estado</th>
-														<th>Folio</th>
+														<th></th>
+														<th></th>
+														<th></th>
+														<th>Proceso</th>
+														<th>Fecha Actualizacion</th>
+														<th></th>
+														<th></th>
+														<th></th>
+														<th>Folio Agente</th>
 														<th>Acciones</th>
 													</tr>
 												</thead>
@@ -380,8 +394,15 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 														<th>Asesor</th>
 														<th>Asociado</th>
 														<th>Fecha</th>
-														<th>Estado</th>
-														<th>Folio</th>
+														<th></th>
+														<th></th>
+														<th></th>
+														<th>Proceso</th>
+														<th>Fecha Actualizacion</th>
+														<th></th>
+														<th></th>
+														<th></th>
+														<th>Folio Agente</th>
 														<th>Acciones</th>
 													</tr>
 												</tfoot>
@@ -399,8 +420,15 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 														<th>Asesor</th>
 														<th>Asociado</th>
 														<th>Fecha</th>
-														<th>Estado</th>
-														<th>Folio</th>
+														<th></th>
+														<th></th>
+														<th></th>
+														<th>Proceso</th>
+														<th>Fecha Actualizacion</th>
+														<th></th>
+														<th></th>
+														<th></th>
+														<th>Folio Agente</th>
 														<th>Acciones</th>
 													</tr>
 												</thead>
@@ -411,8 +439,15 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 														<th>Asesor</th>
 														<th>Asociado</th>
 														<th>Fecha</th>
-														<th>Estado</th>
-														<th>Folio</th>
+														<th></th>
+														<th></th>
+														<th></th>
+														<th>Proceso</th>
+														<th>Fecha Actualizacion</th>
+														<th></th>
+														<th></th>
+														<th></th>
+														<th>Folio Agente</th>
 														<th>Acciones</th>
 													</tr>
 												</tfoot>
@@ -745,7 +780,40 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 					"sortAscending":  ": activate to sort column ascending",
 					"sortDescending": ": activate to sort column descending"
 				}
-			}
+			},"columnDefs": [
+			 {
+				 "targets": [ 5 ],
+				 "visible": false,
+				 "searchable": false
+			 },
+			 {
+				 "targets": [ 6 ],
+				 "visible": false,
+				 "searchable": false
+			 },
+			 {
+				 "targets": [ 7 ],
+				 "visible": false,
+				 "searchable": false
+			 },
+			 {
+				 "targets": [ 10 ],
+				 "visible": false,
+				 "searchable": false
+			 },
+			 {
+				 "targets": [ 11 ],
+				 "visible": false,
+				 "searchable": false
+			 },
+			 {
+				 "targets": [ 12 ],
+				 "visible": false,
+				 "searchable": false
+			 }
+
+
+		]
 		});
 
 		var table3 = $('#example3').DataTable({
@@ -775,7 +843,40 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 					"sortAscending":  ": activate to sort column ascending",
 					"sortDescending": ": activate to sort column descending"
 				}
-			}
+			},"columnDefs": [
+			 {
+				 "targets": [ 5 ],
+				 "visible": false,
+				 "searchable": false
+			 },
+			 {
+				 "targets": [ 6 ],
+				 "visible": false,
+				 "searchable": false
+			 },
+			 {
+				 "targets": [ 7 ],
+				 "visible": false,
+				 "searchable": false
+			 },
+			 {
+				 "targets": [ 10 ],
+				 "visible": false,
+				 "searchable": false
+			 },
+			 {
+				 "targets": [ 11 ],
+				 "visible": false,
+				 "searchable": false
+			 },
+			 {
+				 "targets": [ 12 ],
+				 "visible": false,
+				 "searchable": false
+			 }
+
+
+		]
 		});
 
 		var table4 = $('#example4').DataTable({
@@ -805,7 +906,40 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 					"sortAscending":  ": activate to sort column ascending",
 					"sortDescending": ": activate to sort column descending"
 				}
-			}
+			},"columnDefs": [
+			 {
+				 "targets": [ 5 ],
+				 "visible": false,
+				 "searchable": false
+			 },
+			 {
+				 "targets": [ 6 ],
+				 "visible": false,
+				 "searchable": false
+			 },
+			 {
+				 "targets": [ 7 ],
+				 "visible": false,
+				 "searchable": false
+			 },
+			 {
+				 "targets": [ 10 ],
+				 "visible": false,
+				 "searchable": false
+			 },
+			 {
+				 "targets": [ 11 ],
+				 "visible": false,
+				 "searchable": false
+			 },
+			 {
+				 "targets": [ 12 ],
+				 "visible": false,
+				 "searchable": false
+			 }
+
+
+		]
 		});
 
 		$("#sign_in").submit(function(e){
