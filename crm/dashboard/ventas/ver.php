@@ -59,8 +59,8 @@ $resultado = $serviciosReferencias->traerVentasPorId($id);
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbventas";
 
-$lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','fechaemision','vigenciadesde','reftipomoneda');
-$lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Fecha de Emision','Vigencia Desde','Tipo Moneda');
+$lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','fechaemision','vigenciadesde','reftipomoneda','comisioncedida','gastosexpedicion','iva');
+$lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Fecha de Emision','Vigencia Desde','Tipo Moneda','Comision Cedida','Gastos de Expedición','IVA');
 
 $modificar = "modificarVentas";
 $idTabla = "idventa";
