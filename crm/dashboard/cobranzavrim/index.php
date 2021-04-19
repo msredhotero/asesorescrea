@@ -242,7 +242,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 											<tr>
 												<th>Cliente</th>
 												<th>Nro Poliza</th>
-												<th>Fecha Vencimiento</th>
+												<th>Fecha Limite</th>
 												<th>Nro Cliente</th>
 												<th>Id Cliente Inbursa</th>
 												<th>Nro Recibo</th>
@@ -255,7 +255,7 @@ if (($_SESSION['idroll_sahilices'] == 17) || ($_SESSION['idroll_sahilices'] == 1
 											<tr>
 												<th>Cliente</th>
 												<th>Nro Poliza</th>
-												<th>Fecha Vencimiento</th>
+												<th>Fecha Limite</th>
 												<th>Nro Cliente</th>
 												<th>Id Cliente Inbursa</th>
 												<th>Nro Recibo</th>

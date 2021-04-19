@@ -1571,9 +1571,18 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 										</div>
 									</div>
 								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">RFC <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="rfcBNF" name="rfc" maxlength="13" />
+										</div>
+									</div>
+								</div>
 							</div>
 
-							<div class="row">
+							<div class="row contBNFpersonafisica">
 
 								<div class="row" style="margin-top:15px;">
 									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContnombreBNF" style="display:block">
@@ -1680,15 +1689,6 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 
 								<div class="row" style="margin-top:15px;">
 
-
-									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:block">
-										<label class="form-label">RFC <span style="color:red;">*</span>  </label>
-										<div class="form-group input-group">
-											<div class="form-line">
-												<input type="text" class="form-control" id="rfcBNF" name="rfc" maxlength="13" required />
-											</div>
-										</div>
-									</div>
 
 									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmConttipoidentificacion" style="display:block">
 										<label class="form-label">Tipo Identificación <span style="color:red;">*</span>  </label>
@@ -3065,6 +3065,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 				$("#apellidopaternoBNF").prop('required',true);
 				$("#apellidomaternoBNF").prop('required',true);
 				$("#razonsocialBNF").prop('required',false);
+				$("#rfcBNF").prop('required',false);
 
 				$('.frmContapellidomaternoBNF label span').remove();
 				$('.frmContapellidopaternoBNF label span').remove();
@@ -3074,8 +3075,14 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 				$('.frmContapellidopaternoBNF label').append('<span style="color:red;">*</span>');
 				$('.frmContnombreBNF label').append('<span style="color:red;">*</span>');
 
+				$('.contBNFpersonafisica').show();
+
 			} else {
 				$('.frmContrazonsocialBNF').show();
+
+				$("#rfcBNF").prop('required',true);
+
+				$('.contBNFpersonafisica').hide();
 
 				$("#nombreBNF").prop('required',false);
 				$("#apellidopaternoBNF").prop('required',false);

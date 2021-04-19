@@ -313,7 +313,7 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 												<th>P. Neta</th>
 												<th>P. Total</th>
 												<th>Folio TYS</th>
-												<th>Fecha Venc.</th>
+												<th>Fecha Limite</th>
 												<th>Nro Poliza</th>
 												<th>Estado</th>
 												<th>Acciones</th>
@@ -328,7 +328,7 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 												<th>P. Neta</th>
 												<th>P. Total</th>
 												<th>Folio TYS</th>
-												<th>Fecha Venc.</th>
+												<th>Fecha Limite</th>
 												<th>Nro Poliza</th>
 												<th>Estado</th>
 												<th>Acciones</th>

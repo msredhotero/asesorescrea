@@ -55,8 +55,8 @@ $modificar = "modificarSiniestros";
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbsiniestros";
 
-$lblCambio	 	= array('refventas','refestadosiniestro','fechasiniestro','fechaaplicacion');
-$lblreemplazo	= array('Poliza','Estado','Fecha del Siniestro','Fecha de Aplicacion o solucion');
+$lblCambio	 	= array('refventas','refestadosiniestro','fechasiniestro','fechaaplicacion','nro');
+$lblreemplazo	= array('Poliza','Estado','Fecha del Siniestro','Fecha de Aplicacion o solucion','No. de Siniestro');
 
 $resVar1 = $serviciosReferencias->traerVentasActivos();
 $cadRef1 = $serviciosFunciones->devolverSelectBox($resVar1,array(1,2,9),' - ');
@@ -205,6 +205,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										<thead>
 											<tr>
 												<th>Nro Poliza</th>
+												<th>No. de Sieniestro</th>
 												<th>Estado</th>
 												<th>Monto</th>
 												<th>Fecha del Siniestro</th>
@@ -215,6 +216,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										<tfoot>
 											<tr>
 												<th>Nro Poliza</th>
+												<th>No. de Sieniestro</th>
 												<th>Estado</th>
 												<th>Monto</th>
 												<th>Fecha del Siniestro</th>
@@ -231,6 +233,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										<thead>
 											<tr>
 												<th>Nro Poliza</th>
+												<th>No. de Sieniestro</th>
 												<th>Estado</th>
 												<th>Monto</th>
 												<th>Fecha del Siniestro</th>
@@ -241,6 +244,7 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 										<tfoot>
 											<tr>
 												<th>Nro Poliza</th>
+												<th>No. de Sieniestro</th>
 												<th>Estado</th>
 												<th>Monto</th>
 												<th>Fecha del Siniestro</th>

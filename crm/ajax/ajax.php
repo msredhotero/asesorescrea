@@ -2838,7 +2838,9 @@ function insertarSiniestros($serviciosReferencias) {
    $monto = $_POST['monto'];
    $fechasiniestro = $_POST['fechasiniestro'];
    $fechaaplicacion = $_POST['fechaaplicacion'];
-   $res = $serviciosReferencias->insertarSiniestros($refventas,$refestadosiniestro,$monto,$fechasiniestro,$fechaaplicacion);
+   $nro = $_POST['nro'];
+
+   $res = $serviciosReferencias->insertarSiniestros($refventas,$refestadosiniestro,$monto,$fechasiniestro,$fechaaplicacion,$nro);
    if ((integer)$res > 0) {
    echo '';
    } else {
@@ -2853,7 +2855,9 @@ function modificarSiniestros($serviciosReferencias) {
    $monto = $_POST['monto'];
    $fechasiniestro = $_POST['fechasiniestro'];
    $fechaaplicacion = $_POST['fechaaplicacion'];
-   $res = $serviciosReferencias->modificarSiniestros($id,$refventas,$refestadosiniestro,$monto,$fechasiniestro,$fechaaplicacion);
+   $nro = $_POST['nro'];
+
+   $res = $serviciosReferencias->modificarSiniestros($id,$refventas,$refestadosiniestro,$monto,$fechasiniestro,$fechaaplicacion,$nro);
    if ($res == true) {
    echo '';
    } else {
@@ -7215,7 +7219,7 @@ function traerDocumentacionPorVentaDocumentacion($serviciosReferencias) {
    $resV['datos'] = '';
    $resV['error'] = false;
 
-   if (($iddocumentacion == 35) || ($iddocumentacion == 147) || ($iddocumentacion == 148) || ($iddocumentacion == 153) || ($iddocumentacion == 154)) {
+   if (($iddocumentacion == 35) || ($iddocumentacion == 147) || ($iddocumentacion == 148) || ($iddocumentacion == 153) || ($iddocumentacion == 154)|| ($iddocumentacion == 237)) {
       $resFoto = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($idventa,$iddocumentacion);
       $carpetaDetalle = 'ventas';
    } else {
@@ -7563,8 +7567,14 @@ function modificarVentas($serviciosReferencias) {
    $fechaemision = $_POST['fechaemision'];
    $reftipomoneda = $_POST['reftipomoneda'];
 
+   $comisioncedida = $_POST['comisioncedida'];
+   $financiamiento = $_POST['financiamiento'];
+   $gastosexpedicion = $_POST['gastosexpedicion'];
+   $iva = $_POST['iva'];
+
    if ($error == '') {
-      $res = $serviciosReferencias->modificarVentas($id,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechamodi,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$refventas,$version,$refmotivorechazopoliza,$observaciones,$vigenciadesde,$fechaemision,$reftipomoneda);
+      $res = $serviciosReferencias->modificarVentas($id,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechamodi,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$refventas,$version,$refmotivorechazopoliza,$observaciones,$vigenciadesde,$fechaemision,$reftipomoneda,$comisioncedida,$financiamiento,$gastosexpedicion,$iva);
+
 
       if ($res == true) {
          echo '';
@@ -10682,8 +10692,8 @@ function frmAjaxModificar($serviciosFunciones, $serviciosReferencias, $servicios
          $idTabla = "idsiniestro";
 
 
-         $lblCambio	 	= array('refventas','refestadosiniestro','fechasiniestro','fechaaplicacion');
-         $lblreemplazo	= array('Poliza','Estado','Fecha del Siniestro','Fecha de Aplicacion o solucion');
+         $lblCambio	 	= array('refventas','refestadosiniestro','fechasiniestro','fechaaplicacion','nro');
+         $lblreemplazo	= array('Poliza','Estado','Fecha del Siniestro','Fecha de Aplicacion o solucion','No. de Siniestro');
 
          $resVar1 = $serviciosReferencias->traerVentasActivos();
          $cadRef1 = $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1,2,9),' - ',mysql_result($resultado,0,'refventas'));

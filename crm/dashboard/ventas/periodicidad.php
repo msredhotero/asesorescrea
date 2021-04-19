@@ -141,6 +141,8 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
+$resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasdetallePorVenta($id);
+
 ?>
 
 <!DOCTYPE html>
@@ -274,11 +276,12 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 											<i class="material-icons">unarchive</i>
 											<span>COBROS</span>
 										</button>
-
+										<?php if (mysql_num_rows($resPeriodicidad)<0) { ?>
 										<button type="button" class="btn bg-orange waves-effect btnCalcularRecibos">
 											<i class="material-icons">unarchive</i>
 											<span>CALCULAR Y GENERAR AUTOMATICAMENTE LOS RECIBOS</span>
 										</button>
+										<?php } ?>
 
 
 										<?php } ?>

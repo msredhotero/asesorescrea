@@ -225,7 +225,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 									<thead>
 										<th>No Poliza</th>
 										<th>Asegurado</th>
-										<th>Vencimiento</th>
+										<th>Fecha Limite</th>
 										<th>Producto</th>
 										<th>Orden de Trabajo</th>
 										<th>Acciones</th>
@@ -233,7 +233,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 									<tfoot>
 										<th>No Poliza</th>
 										<th>Asegurado</th>
-										<th>Vencimiento</th>
+										<th>Fecha Limite</th>
 										<th>Producto</th>
 										<th>Orden de Trabajo</th>
 										<th>Acciones</th>
@@ -250,7 +250,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 									<thead>
 										<th>No Poliza</th>
 										<th>Asegurado</th>
-										<th>Vencimiento</th>
+										<th>Fecha Limite</th>
 										<th>Producto</th>
 										<th>Orden de Trabajo</th>
 										<th>Acciones</th>
@@ -258,7 +258,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 									<tfoot>
 										<th>No Poliza</th>
 										<th>Asegurado</th>
-										<th>Vencimiento</th>
+										<th>Fecha Limite</th>
 										<th>Producto</th>
 										<th>Orden de Trabajo</th>
 										<th>Acciones</th>
@@ -274,7 +274,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 									<thead>
 										<th>No Poliza</th>
 										<th>Asegurado</th>
-										<th>Vencimiento</th>
+										<th>Fecha Limite</th>
 										<th>Producto</th>
 										<th>Orden de Trabajo</th>
 										<th>Acciones</th>
@@ -282,7 +282,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 									<tfoot>
 										<th>No Poliza</th>
 										<th>Asegurado</th>
-										<th>Vencimiento</th>
+										<th>Fecha Limite</th>
 										<th>Producto</th>
 										<th>Orden de Trabajo</th>
 										<th>Acciones</th>

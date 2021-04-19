@@ -518,7 +518,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 						</div>
 						<div class="body table-responsive">
 							<div class="row">
-								<div class="col-sm-8 col-xs-12">
+								<div class="col-sm-7 col-xs-12">
 							<?php
 							$cadCotizacionParaAceptar = '';
 							$exiteAceptada = 0;
@@ -547,6 +547,32 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 							<?php	}
 							}
 							?>
+								</div>
+								<div class="col-sm-5 col-xs-12" align="right">
+									<?php if ($idestado == 8 ) { ?>
+										<!--<button id="8" type="submit" class="btn btn-success waves-effect btnContinuar">MODIFICAR</button>-->
+
+										<?php if ($exiteAceptada == 1) { ?>
+										<button type="button" class="btn bg-green waves-effect btnAbandonada">Aceptada</button>
+										<?php } ?>
+										<?php
+										if (($_SESSION['idroll_sahilices'] == 7) || ($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 11) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 3)) {
+										?>
+										<button type="button" class="btn bg-amber waves-effect btnDenegada">En Ajuste</button>
+										<button type="button" class="btn bg-red waves-effect btnInsuficiente">Rechazada</button>
+										<?php } ?>
+
+									<?php } else {
+										if ($_SESSION['idroll_sahilices'] != 7) {
+											if ($idestado <= 11) {
+										?>
+
+									<?php } else { ?>
+										<button id="<?php echo $idestado; ?>" type="button" class="btn waves-effect btnContinuar"><?php echo mysql_result($resEstados,0,'estadocotizacion'); ?></button>
+									<?php
+									}
+									} ?>
+									<?php } ?>
 								</div>
 
 							</div>

@@ -676,7 +676,7 @@ switch ($iddocumentacion) {
 					});
 					$('#lgmModificarEstado').modal('toggle');
 
-					$(location).attr('href','index.php');
+					$(location).attr('href','../ventas/new.php?id=<?php echo $id; ?>&origen=2');
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -694,8 +694,8 @@ switch ($iddocumentacion) {
 
 		$('.btnAbandonada').click(function() {
 
-			$('.lblModiEstado').html('enviar a emisión');
-			$('.modificarEstadoCotizacionRechazo').html('ENVIAR');
+			$('.lblModiEstado').html('generar la poliza de');
+			$('.modificarEstadoCotizacionRechazo').html('GENERAR POLIZA');
 
 			$('.modificarEstadoCotizacionRechazo').addClass('bg-green');
 			$('.modificarEstadoCotizacionRechazo').removeClass('bg-amber');

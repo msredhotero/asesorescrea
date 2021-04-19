@@ -219,7 +219,7 @@ $cadVar2 = $serviciosFunciones->devolverSelectBox($resEstadoVenta,array(1),'');
 												<th>P. Neta</th>
 												<th>P. Total</th>
 												<th>Folio TYS</th>
-												<th>Fecha Venc.</th>
+												<th>Fecha Limite</th>
 												<th>Nro Poliza</th>
 												<th>Acciones</th>
 											</tr>
@@ -233,7 +233,7 @@ $cadVar2 = $serviciosFunciones->devolverSelectBox($resEstadoVenta,array(1),'');
 												<th>P. Neta</th>
 												<th>P. Total</th>
 												<th>Folio TYS</th>
-												<th>Fecha Venc.</th>
+												<th>Fecha Limite</th>
 												<th>Nro Poliza</th>
 												<th>Acciones</th>
 											</tr>
@@ -254,7 +254,7 @@ $cadVar2 = $serviciosFunciones->devolverSelectBox($resEstadoVenta,array(1),'');
 												<th>P. Neta</th>
 												<th>P. Total</th>
 												<th>Folio TYS</th>
-												<th>Fecha Venc.</th>
+												<th>Fecha Limite</th>
 												<th>Nro Poliza</th>
 												<th>Acciones</th>
 											</tr>
@@ -268,7 +268,7 @@ $cadVar2 = $serviciosFunciones->devolverSelectBox($resEstadoVenta,array(1),'');
 												<th>P. Neta</th>
 												<th>P. Total</th>
 												<th>Folio TYS</th>
-												<th>Fecha Venc.</th>
+												<th>Fecha Limite</th>
 												<th>Nro Poliza</th>
 												<th>Acciones</th>
 											</tr>
@@ -289,7 +289,7 @@ $cadVar2 = $serviciosFunciones->devolverSelectBox($resEstadoVenta,array(1),'');
 												<th>P. Neta</th>
 												<th>P. Total</th>
 												<th>Folio TYS</th>
-												<th>Fecha Venc.</th>
+												<th>Fecha Limite</th>
 												<th>Nro Poliza</th>
 												<th>Acciones</th>
 											</tr>
@@ -303,7 +303,7 @@ $cadVar2 = $serviciosFunciones->devolverSelectBox($resEstadoVenta,array(1),'');
 												<th>P. Neta</th>
 												<th>P. Total</th>
 												<th>Folio TYS</th>
-												<th>Fecha Venc.</th>
+												<th>Fecha Limite</th>
 												<th>Nro Poliza</th>
 												<th>Acciones</th>
 											</tr>

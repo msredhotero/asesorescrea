@@ -50,6 +50,29 @@ class ServiciosReferencias {
 
             array_push($arCad,array('fechavencimiento'=>$fechafinservicio,'fechalimite'=>$fechavencimiento,'monto'=>$montototal));
 
+            $resDocumentacionesPrimerRecibo = $this->traerDocumentacionPorVentaDocumentacionCompleta($id,'237');
+
+            if (mysql_num_rows($resDocumentacionesPrimerRecibo)>0) {
+               // verifico si no existe la carpeta y el archivo y copy el primer recibo si existe.
+               if (file_exists('../archivos/ventas/'.$id.'/primerrecibo/')) {
+                  if (!file_exists('../archivos/cobros/'.$resPVD.'/')) {
+                     mkdir('../archivos/cobros/'.$resPVD.'/', 0777);
+
+                     if (!file_exists('../archivos/cobros/'.$resPVD.'/recibos/')) {
+                        mkdir('../archivos/cobros/'.$resPVD.'/recibos/', 0777);
+
+                        $resCopy = copy('../archivos/ventas/'.$id.'/primerrecibo'.'/'.mysql_result($resDocumentacionesPrimerRecibo,0,'archivo'), '../archivos/cobros/'.$resPVD.'/recibos/'.mysql_result($resDocumentacionesPrimerRecibo,0,'archivo'));
+
+                        $resInsertar = $this->insertarDocumentacionventas(0,38,mysql_result($resDocumentacionesPrimerRecibo,0,'archivo'),mysql_result($resDocumentacionesPrimerRecibo,0,'type'),5,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),$_SESSION['usua_sahilices'],$_SESSION['usua_sahilices'],$resPVD);
+
+
+                     }
+                  }
+
+               }
+            }
+
+
          } else {
             $fechavencimiento = mysql_result($resCalculo,0,'fechavencimiento');
             $fechafinservicio = mysql_result($resCalculo,0,'fechafinservicio');
@@ -1155,6 +1178,12 @@ return $res;
 
       $emailasesor = mysql_result($resCotizaciones,0,'emailasesor');
 
+      $folioagente = mysql_result($resCotizaciones,0,'folioagente');
+
+      $lblcliente = mysql_result($resCotizaciones,0,'clientesolo');
+
+      $lblproducto = mysql_result($resCotizaciones,0,'producto');
+
       $idusuarioasesor = mysql_result($resCotizaciones,0,'idusuarioasesor');
 
       $refetapa = mysql_result($resCotizaciones,0,'refestados');
@@ -1209,7 +1238,7 @@ return $res;
 
 
 
-            $asunto = 'Alerta Cotización, cotización: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
+            $asunto = 'Alerta Cotización, cotización: folio: '.$folioagente.' - Cliente: '.$lblcliente.' - Producto: '.$lblproducto.' - Asesor: '.mysql_result($resCotizaciones,0,'asesor');
 
             $cuerpo = '';
 
@@ -1312,7 +1341,7 @@ return $res;
                $resAutoLogin = $this->insertarAutologin($idusuarioasesor,$token, $rutaUrl.'/modificar.php?id='.$id,'0',$rowDA['email'],$rowDA['razonsocial']);
 
 
-               $asunto = 'Alerta Cotización, cotización: folio: '.mysql_result($resCotizaciones,0,'folio').' - Agente: '.mysql_result($resCotizaciones,0,'asesor');
+               $asunto = 'Alerta Cotización, cotización: folio: '.$folioagente.' - Cliente: '.$lblcliente.' - Producto: '.$lblproducto.' - Asesor: '.mysql_result($resCotizaciones,0,'asesor');
 
                $cuerpo = '';
 
@@ -2051,15 +2080,15 @@ return $res;
 
    /* PARA Siniestros */
 
-   function insertarSiniestros($refventas,$refestadosiniestro,$monto,$fechasiniestro,$fechaaplicacion) {
+   function insertarSiniestros($refventas,$refestadosiniestro,$monto,$fechasiniestro,$fechaaplicacion,$nro) {
       if ($fechaaplicacion == '') {
-         $sql = "insert into dbsiniestros(idsiniestro,refventas,refestadosiniestro,monto,fechasiniestro,fechaaplicacion)
-         values ('',".$refventas.",".$refestadosiniestro.",".$monto.",'".$fechasiniestro."',NULL)";
+         $sql = "insert into dbsiniestros(idsiniestro,refventas,refestadosiniestro,monto,fechasiniestro,fechaaplicacion,nro)
+         values ('',".$refventas.",".$refestadosiniestro.",".$monto.",'".$fechasiniestro."',NULL,'".$nro."')";
          $res = $this->query($sql,1);
          return $res;
       } else {
-         $sql = "insert into dbsiniestros(idsiniestro,refventas,refestadosiniestro,monto,fechasiniestro,fechaaplicacion)
-         values ('',".$refventas.",".$refestadosiniestro.",".$monto.",'".$fechasiniestro."','".$fechaaplicacion."')";
+         $sql = "insert into dbsiniestros(idsiniestro,refventas,refestadosiniestro,monto,fechasiniestro,fechaaplicacion,nro)
+         values ('',".$refventas.",".$refestadosiniestro.",".$monto.",'".$fechasiniestro."','".$fechaaplicacion."','".$nro."')";
          $res = $this->query($sql,1);
          return $res;
       }
@@ -2067,16 +2096,16 @@ return $res;
    }
 
 
-   function modificarSiniestros($id,$refventas,$refestadosiniestro,$monto,$fechasiniestro,$fechaaplicacion) {
+   function modificarSiniestros($id,$refventas,$refestadosiniestro,$monto,$fechasiniestro,$fechaaplicacion,$nro) {
       if ($fechaaplicacion == '') {
          $sql = "update dbsiniestros
          set
-         refventas = ".$refventas.",refestadosiniestro = ".$refestadosiniestro.",monto = ".$monto.",fechasiniestro = '".$fechasiniestro."',fechaaplicacion = NULL
+         refventas = ".$refventas.",refestadosiniestro = ".$refestadosiniestro.",monto = ".$monto.",fechasiniestro = '".$fechasiniestro."',fechaaplicacion = NULL,nro = '".$nro."'
          where idsiniestro =".$id;
       } else {
          $sql = "update dbsiniestros
          set
-         refventas = ".$refventas.",refestadosiniestro = ".$refestadosiniestro.",monto = ".$monto.",fechasiniestro = '".$fechasiniestro."',fechaaplicacion = '".$fechaaplicacion."'
+         refventas = ".$refventas.",refestadosiniestro = ".$refestadosiniestro.",monto = ".$monto.",fechasiniestro = '".$fechasiniestro."',fechaaplicacion = '".$fechaaplicacion."',nro = '".$nro."'
          where idsiniestro =".$id;
       }
 
@@ -2105,6 +2134,7 @@ return $res;
       $sql = "select
       s.idsiniestro,
       v.nropoliza,
+      s.nro,
       est.estadosiniestro,
       s.monto,
       s.fechasiniestro,
@@ -2143,7 +2173,7 @@ return $res;
 
 
    function traerSiniestrosPorId($id) {
-   $sql = "select idsiniestro,refventas,refestadosiniestro,monto,fechasiniestro,fechaaplicacion from dbsiniestros where idsiniestro =".$id;
+   $sql = "select idsiniestro,refventas,refestadosiniestro,monto,fechasiniestro,fechaaplicacion,nro from dbsiniestros where idsiniestro =".$id;
    $res = $this->query($sql,0);
    return $res;
    }
@@ -8358,10 +8388,10 @@ return $res;
 	}
 
 
-	function modificarVentas($id,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechamodi,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$refventas,$version,$refmotivorechazopoliza,$observaciones,$vigenciadesde,$reftipomoneda,$comisioncedida,$financiamiento,$gastosexpedicion,$iva) {
+	function modificarVentas($id,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechamodi,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$refventas,$version,$refmotivorechazopoliza,$observaciones,$vigenciadesde,$fechaemision,$reftipomoneda,$comisioncedida,$financiamiento,$gastosexpedicion,$iva) {
 		$sql = "update dbventas
 		set
-		refcotizaciones = ".$refcotizaciones.",refestadoventa = ".$refestadoventa.",primaneta = ".$primaneta.",primatotal = ".$primatotal.",fechavencimientopoliza = '".$fechavencimientopoliza."',nropoliza = '".$nropoliza."',fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',foliotys = '".$foliotys."',foliointerno = '".$foliointerno."',refproductosaux = ".$refproductosaux.",refventas = ".$refventas.",version = ".$version.",refmotivorechazopoliza = ".$refmotivorechazopoliza.",observaciones = '".$observaciones."',vigenciadesde = '".$vigenciadesde."',reftipomoneda = ".$reftipomoneda.",comisioncedida = ".$comisioncedida.",financiamiento = ".$financiamiento.",gastosexpedicion = ".$gastosexpedicion.",iva = ".$iva." where idventa =".$id;
+		refcotizaciones = ".$refcotizaciones.",refestadoventa = ".$refestadoventa.",primaneta = ".$primaneta.",primatotal = ".$primatotal.",fechavencimientopoliza = '".$fechavencimientopoliza."',nropoliza = '".$nropoliza."',fechamodi = '".$fechamodi."',usuariomodi = '".$usuariomodi."',foliotys = '".$foliotys."',foliointerno = '".$foliointerno."',refproductosaux = ".$refproductosaux.",refventas = ".$refventas.",version = ".$version.",refmotivorechazopoliza = ".$refmotivorechazopoliza.",observaciones = '".$observaciones."',vigenciadesde = '".$vigenciadesde."',fechaemision = '".$fechaemision."',reftipomoneda = ".$reftipomoneda.",comisioncedida = ".$comisioncedida.",financiamiento = ".$financiamiento.",gastosexpedicion = ".$gastosexpedicion.",iva = ".$iva." where idventa =".$id;
 
 		$res = $this->query($sql,0);
 		return $res;
