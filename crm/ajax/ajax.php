@@ -5585,7 +5585,7 @@ function insertarAsegurados($serviciosReferencias) {
 
 
    $refclientes = $_POST['refclientes'];
-   $reftipoparentesco = $_POST['reftipoparentesco'];
+   $reftipoparentesco = ($_POST['reftipoparentesco']== '' ? 4 : $_POST['reftipoparentesco']);
 
    $domicilio = '';
    $email = '';
@@ -5606,12 +5606,14 @@ function insertarAsegurados($serviciosReferencias) {
    $resCliente = $serviciosReferencias->traerClientesPorId($refclientes);
 
    $genero = $_POST['genero'];
-   $refestadocivil = $_POST['refestadocivil'];
+   $refestadocivil = ($_POST['refestadocivil'] == '' ? 0 : $_POST['refestadocivil']);
 
-   $reftipoidentificacion = $_POST['reftipoidentificacion'];
+   $reftipoidentificacion = ($_POST['reftipoidentificacion'] == '' ? 0 : $_POST['reftipoidentificacion']);
    $nroidentificacion = $_POST['nroidentificacion'];
 
    $res = $serviciosReferencias->insertarAsegurados($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco,$fechanacimiento,$parentesco,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion);
+
+   //die(var_dump($res));
 
    if ((integer)$res > 0) {
       $resV['error'] = false;

@@ -1572,7 +1572,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 									</div>
 								</div>
 
-								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfcBNF" style="display:block">
 									<label class="form-label">RFC <span style="color:red;">*</span>  </label>
 									<div class="form-group input-group">
 										<div class="form-line">
@@ -1589,7 +1589,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 										<label class="form-label">Nombre Completo  <span style="color:red;">*</span> </label>
 										<div class="form-group input-group">
 											<div class="form-line">
-												<input type="text" class="form-control" id="nombreBNF" name="nombre"  required />
+												<input type="text" class="form-control" id="nombreBNF" name="nombre" />
 
 											</div>
 										</div>
@@ -1599,7 +1599,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 										<label class="form-label">Apellido Paterno  <span style="color:red;">*</span> </label>
 										<div class="form-group input-group">
 											<div class="form-line">
-												<input type="text" class="form-control" id="apellidopaternoBNF" name="apellidopaterno"  required />
+												<input type="text" class="form-control" id="apellidopaternoBNF" name="apellidopaterno" />
 
 											</div>
 										</div>
@@ -1609,7 +1609,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 										<label class="form-label">Apellido Materno  <span style="color:red;">*</span> </label>
 										<div class="form-group input-group">
 											<div class="form-line">
-												<input type="text" class="form-control" id="apellidomaternoBNF" name="apellidomaterno"  required />
+												<input type="text" class="form-control" id="apellidomaternoBNF" name="apellidomaterno" />
 
 											</div>
 										</div>
@@ -1619,7 +1619,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 										<label for="reftipoparentesco" class="control-label" style="text-align:left">Tipo de Parentesco  <span style="color:red;">*</span> </label>
 										<div class="form-group input-group col-md-12">
 											<div class="form-line">
-												<select class="form-control" id="reftipoparentescoBNF" name="reftipoparentesco"  required >
+												<select class="form-control" id="reftipoparentescoBNF" name="reftipoparentesco" >
 													<option value="">-- Seleccionar --</option>
 													<option value="1">Padres</option>
 													<option value="2">Conyuge</option>
@@ -1655,7 +1655,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 										<label class="form-label">Fecha De Nacimiento  <span style="color:red;">*</span> </label>
 										<div class="form-group input-group">
 											<div class="form-line">
-												<input type="text" class="form-control" id="fechanacimientoBNF" name="fechanacimiento" required/>
+												<input type="text" class="form-control" id="fechanacimientoBNF" name="fechanacimiento" />
 											</div>
 										</div>
 									</div>
@@ -1664,7 +1664,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 										<label class="form-label">Genero <span style="color:red;">*</span>  </label>
 										<div class="form-group input-group">
 											<div class="form-line">
-												<select class="form-control" id="generoBNF" name="genero"  required >
+												<select class="form-control" id="generoBNF" name="genero" >
 													<option value="">-- Seleccionar --</option>
 													<option value="Femenino">Femenino</option>
 													<option value="Masculino">Masculino</option>
@@ -1677,7 +1677,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 										<label class="form-label">Estado Civil <span style="color:red;">*</span>  </label>
 										<div class="form-group input-group">
 											<div class="form-line">
-												<select class="form-control" id="refestadocivilBNF" name="refestadocivil"  required >
+												<select class="form-control" id="refestadocivilBNF" name="refestadocivil">
 													<option value="">-- Seleccionar --</option>
 													<?php echo $cadRefEstadoCivil; ?>
 												</select>
@@ -1694,7 +1694,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 										<label class="form-label">Tipo Identificación <span style="color:red;">*</span>  </label>
 										<div class="form-group input-group">
 											<div class="form-line">
-												<select class="form-control" id="reftipoidentificacionBNF" name="reftipoidentificacion"  required >
+												<select class="form-control" id="reftipoidentificacionBNF" name="reftipoidentificacion" >
 													<option value="">-- Seleccionar --</option>
 													<option value="1">INE</option>
 													<option value="2">Pasaporte</option>
@@ -1707,7 +1707,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 										<label class="form-label">No. Identificación <span style="color:red;">*</span>  </label>
 										<div class="form-group input-group">
 											<div class="form-line">
-												<input type="text" class="form-control" id="identificacionBNF" name="nroidentificacion" maxlength="13" required />
+												<input type="text" class="form-control" id="identificacionBNF" name="nroidentificacion" maxlength="13"/>
 											</div>
 										</div>
 									</div>
@@ -3055,15 +3055,25 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 		$('.frmContrefusuarios').hide();
 
 		$('.frmContrazonsocialBNF').hide();
+		$('.frmContrfcBNF').hide();
 
 		$('#reftipopersonasBNF').change(function() {
 			if ($(this).val() == 1) {
 				$('.frmContrazonsocialBNF').hide();
 				$('#razonsocialBNF').val('');
+				$('.frmContrfcBNF').hide();
 
 				$("#nombreBNF").prop('required',true);
 				$("#apellidopaternoBNF").prop('required',true);
 				$("#apellidomaternoBNF").prop('required',true);
+				$("#reftipoparentescoBNF").prop('required',true);
+				$("#curpBNF").prop('required',true);
+				$("#fechanacimientoBNF").prop('required',true);
+				$("#generoBNF").prop('required',true);
+				$("#refestadocivilBNF").prop('required',true);
+				$("#reftipoidentificacionBNF").prop('required',true);
+				$("#identificacionBNF").prop('required',true);
+
 				$("#razonsocialBNF").prop('required',false);
 				$("#rfcBNF").prop('required',false);
 
@@ -3079,15 +3089,22 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 
 			} else {
 				$('.frmContrazonsocialBNF').show();
-
-				$("#rfcBNF").prop('required',true);
-
+				$('.frmContrfcBNF').show();
 				$('.contBNFpersonafisica').hide();
 
 				$("#nombreBNF").prop('required',false);
 				$("#apellidopaternoBNF").prop('required',false);
 				$("#apellidomaternoBNF").prop('required',false);
+				$("#reftipoparentescoBNF").prop('required',false);
+				$("#curpBNF").prop('required',false);
+				$("#fechanacimientoBNF").prop('required',false);
+				$("#generoBNF").prop('required',false);
+				$("#refestadocivilBNF").prop('required',false);
+				$("#reftipoidentificacionBNF").prop('required',false);
+				$("#identificacionBNF").prop('required',false);
+
 				$("#razonsocialBNF").prop('required',true);
+				$("#rfcBNF").prop('required',true);
 
 				$('.frmContapellidomaternoBNF label span').remove();
 				$('.frmContapellidopaternoBNF label span').remove();
