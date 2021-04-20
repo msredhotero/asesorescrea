@@ -7434,8 +7434,9 @@ function modificarPeriodicidadventasdetalle($serviciosReferencias) {
 
    $fechapagoreal = $_POST['fechapagoreal'];
    $fechafinservicio = $_POST['fechafinservicio'];
+   $refformapago = ($_POST['refformapago'] == '' ? 0 : $_POST['refformapago']);
 
-   $res = $serviciosReferencias->modificarPeriodicidadventasdetalle($id,$refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariomodi,$fechamodi,$nrorecibo,$fechapagoreal,$fechafinservicio);
+   $res = $serviciosReferencias->modificarPeriodicidadventasdetalle($id,$refperiodicidadventas,$montototal,$primaneta,$porcentajecomision,$montocomision,$fechapago,$fechavencimiento,$refestadopago,$usuariomodi,$fechamodi,$nrorecibo,$fechapagoreal,$refformapago,$fechafinservicio);
 
 
 
