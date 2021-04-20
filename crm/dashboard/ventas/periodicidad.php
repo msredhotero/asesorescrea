@@ -276,7 +276,7 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasdetallePorVenta
 											<i class="material-icons">unarchive</i>
 											<span>COBROS</span>
 										</button>
-										<?php if (mysql_num_rows($resPeriodicidad)<0) { ?>
+										<?php if (mysql_num_rows($resPeriodicidad)<=0) { ?>
 										<button type="button" class="btn bg-orange waves-effect btnCalcularRecibos">
 											<i class="material-icons">unarchive</i>
 											<span>CALCULAR Y GENERAR AUTOMATICAMENTE LOS RECIBOS</span>
