@@ -1200,9 +1200,9 @@ switch ($tabla) {
 			$resAjax = $datos[0];
 			$res = $datos[1];
 
-			$label = array('btnRenovaciones','btnCancelarVencida');
-			$class = array('bg-orange','bg-red');
-			$icon = array('build','not_interested');
+			$label = array('btnRenovaciones','btnVer','btnCancelarVencida');
+			$class = array('bg-orange','bg-green','bg-red');
+			$icon = array('build','search','not_interested');
 
 		}
 

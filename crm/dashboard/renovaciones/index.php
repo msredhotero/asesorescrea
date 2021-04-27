@@ -778,6 +778,12 @@ $cadVar2 = $serviciosFunciones->devolverSelectBox($resEstadoVenta,array(1),'');
 
 		});//fin del boton modificar
 
+		$("#example").on("click",'.btnVer', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','ver.php?id=' + idTable);
+
+		});//fin del boton modificar
+
 		$("#example2").on("click",'.btnVer', function(){
 			idTable =  $(this).attr("id");
 			$(location).attr('href','ver.php?id=' + idTable);
