@@ -221,6 +221,7 @@ $cadVar2 = $serviciosFunciones->devolverSelectBox($resEstadoVenta,array(1),'');
 												<th>Folio TYS</th>
 												<th>Fecha Limite</th>
 												<th>Nro Poliza</th>
+												<th>Dias</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -235,6 +236,7 @@ $cadVar2 = $serviciosFunciones->devolverSelectBox($resEstadoVenta,array(1),'');
 												<th>Folio TYS</th>
 												<th>Fecha Limite</th>
 												<th>Nro Poliza</th>
+												<th>Dias</th>
 												<th>Acciones</th>
 											</tr>
 										</tfoot>
@@ -411,6 +413,27 @@ $cadVar2 = $serviciosFunciones->devolverSelectBox($resEstadoVenta,array(1),'');
 				  </div>
 			 </div>
 		</div>
+
+		<div class="modal fade" id="lgmCancelarVencimiento" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header bg-orange">
+						<h4 class="modal-title" id="largeModalLabel">NO RENOVAR</h4>
+					</div>
+					<div class="modal-body">
+						<h2>¿Esta seguro que desea no renovar la Poliza?</h2>
+						<div class="row">
+							
+							<input type="hidden" name="idventavencimiento" id="idventavencimiento" value="" />
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger waves-effect btnCancelarPolizaVencimiento">NO RENOVAR</button>
+						<button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+					</div>
+				</div>
+			</div>
+		</div>
 <?php } ?>
 
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
@@ -435,6 +458,65 @@ $cadVar2 = $serviciosFunciones->devolverSelectBox($resEstadoVenta,array(1),'');
 
 <script>
 	$(document).ready(function(){
+
+
+
+		$('.btnCancelarPolizaVencimiento').click(function() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificarVentasUnicaDocumentacionAux', 
+					idventa: $('#idventavencimiento').val(),
+					campo: 'refestadoventa',
+					valor: 10
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error==false) {
+						swal({
+							title: "Respuesta",
+							text: "Registro Cancelado con exito!!",
+							type: "success",
+							timer: 1500,
+							showConfirmButton: false
+						});
+						$('#lgmCancelarVencimiento').modal('toggle');
+						table.ajax.reload();
+						table2.ajax.reload();
+						table3.ajax.reload();
+
+					} else {
+						swal({
+							title: "Respuesta",
+							text: data,
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+					});
+
+				}
+			});
+		});
 
 		var table = $('#example3').DataTable({
 			"bProcessing": true,
@@ -470,6 +552,8 @@ $cadVar2 = $serviciosFunciones->devolverSelectBox($resEstadoVenta,array(1),'');
 			$(location).attr('href','poliza.php?id=' + idTable);
 
 		});//fin del boton modificar
+
+		
 
 		<?php if ($_SESSION['idroll_sahilices'] != 16) { ?>
 
@@ -607,7 +691,7 @@ $cadVar2 = $serviciosFunciones->devolverSelectBox($resEstadoVenta,array(1),'');
 
 
 
-		var table = $('#example').DataTable({
+		var table2 = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
 			"order": [[ 7, "desc" ]],
@@ -634,10 +718,25 @@ $cadVar2 = $serviciosFunciones->devolverSelectBox($resEstadoVenta,array(1),'');
 					"sortAscending":  ": activate to sort column ascending",
 					"sortDescending": ": activate to sort column descending"
 				}
-			}
+			},
+		   "rowCallback": function( row, data, index ) {
+				//alert(data[4].substring(0,10));
+			  if (data[9] > 0) {
+				  $('td', row).css('background-color', '#F62121');
+				  $('td', row).css('color', 'white');
+			  }
+		   },
+			"columnDefs": [
+				{
+					"targets": [ 9 ],
+					"visible": false,
+					"searchable": false
+				}
+
+		  ]
 		});
 
-		var table = $('#example2').DataTable({
+		var table3 = $('#example2').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=renovacioneshistorico",
@@ -672,6 +771,19 @@ $cadVar2 = $serviciosFunciones->devolverSelectBox($resEstadoVenta,array(1),'');
 			e.preventDefault();
 		});
 
+		$("#example").on("click",'.btnCancelarVencida', function(){
+			idTable =  $(this).attr("id");
+			$('#idventavencimiento').val(idTable);
+			$('#lgmCancelarVencimiento').modal();
+
+		});//fin del boton modificar
+
+		$("#example2").on("click",'.btnVer', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','ver.php?id=' + idTable);
+
+		});//fin del boton modificar
+
 		$("#example3").on("click",'.btnVer', function(){
 			idTable =  $(this).attr("id");
 			$(location).attr('href','ver.php?id=' + idTable);
@@ -686,7 +798,7 @@ $cadVar2 = $serviciosFunciones->devolverSelectBox($resEstadoVenta,array(1),'');
 
 		$("#example").on("click",'.btnRenovaciones', function(){
 			idTable =  $(this).attr("id");
-			$(location).attr('href','renovaciones.php?id=' + idTable);
+			$(location).attr('href','renovacionesselect.php?id=' + idTable);
 
 		});//fin del boton endoso
 

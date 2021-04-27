@@ -967,9 +967,49 @@ switch ($tabla) {
 			$resAjax = $datos[0];
 			$res = $datos[1];
 
-			$label = array('btnModificar','btnVer','btnEliminar','btnEndoso');
-			$class = array('bg-amber','bg-green','bg-red','bg-lime');
-			$icon = array('Modificar','Ver','Eliminar','Endoso');
+			$label = array('btnModificar','btnVer','btnEliminar','btnEndoso','btnCancelar');
+			$class = array('bg-amber','bg-green','bg-red','bg-lime','bg-red');
+			$icon = array('Modificar','Ver','Eliminar','Endoso','Cancelar');
+
+		}
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 11;
+
+	break;
+
+	case 'ventasvencidas':
+
+		$min = $_GET['start'];
+		$max = $_GET['end'];
+
+
+		if ($_SESSION['idroll_sahilices'] == 7) {
+
+			$resVar5	= $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
+			$idasesor = mysql_result($resVar5,0,'idasesor');
+
+			$datos = $serviciosReferencias->traerVentaEstadosajax($length, $start, $busqueda,$colSort,$colSortDir,$idasesor,'1',1);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
+			$label = array('btnModificar','btnEliminar');
+			$class = array('bg-amber','bg-red');
+			$icon = array('create','delete');
+		} else {
+
+			$responsableComercial = $_GET['sSearch_0'];
+
+			$datos = $serviciosReferencias->traerVentaEstadosajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,0,'1',1);
+
+			$resAjax = $datos[0];
+			$res = $datos[1];
+
+			$label = array('btnModificar','btnVer','btnCancelarVencida');
+			$class = array('bg-amber','bg-green','bg-red');
+			$icon = array('Modificar','Ver','Cancelar por vencimiento');
 
 		}
 
@@ -1160,15 +1200,15 @@ switch ($tabla) {
 			$resAjax = $datos[0];
 			$res = $datos[1];
 
-			$label = array('btnRenovaciones');
-			$class = array('bg-orange');
-			$icon = array('build');
+			$label = array('btnRenovaciones','btnCancelarVencida');
+			$class = array('bg-orange','bg-red');
+			$icon = array('build','not_interested');
 
 		}
 
 		$indiceID = 0;
 		$empieza = 1;
-		$termina = 9;
+		$termina = 10;
 
 	break;
 
@@ -2269,7 +2309,7 @@ $id = 0;
 			array_push($arAux, ($row[$i]));
 		}
 
-		if (($tabla == 'postulantes') || ($tabla == 'ventas') || ($tabla == 'ventasiniciadas') || ($tabla == 'postulanteshistorico') || ($tabla == 'asesores') || ($tabla == 'asociadostemporales') || ($tabla == 'asociados') || ($tabla == 'clientes') || ($tabla == 'cuestionario') || ($tabla == 'preguntascuestionario') || ($tabla == 'respuestascuestionario')) {
+		if (($tabla == 'postulantes') || ($tabla == 'ventas') || ($tabla == 'ventasvencidas') || ($tabla == 'ventasiniciadas') || ($tabla == 'postulanteshistorico') || ($tabla == 'asesores') || ($tabla == 'asociadostemporales') || ($tabla == 'asociados') || ($tabla == 'clientes') || ($tabla == 'cuestionario') || ($tabla == 'preguntascuestionario') || ($tabla == 'respuestascuestionario')) {
 			array_push($arAux, armarAccionesDropDown($row[0],$label,$class,$icon));
 		} else {
 			array_push($arAux, armarAcciones($row[0],$label,$class,$icon));

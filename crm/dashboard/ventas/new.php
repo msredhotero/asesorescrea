@@ -149,6 +149,22 @@ if (mysql_num_rows($resPaquete) > 0) {
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
+$resRenovacion = $serviciosReferencias->traerRenovacionesPorCotizacionNueva($id);
+
+if (mysql_num_rows($resRenovacion) > 0) {
+	$idrenovacion = mysql_result($resRenovacion,0,0);
+
+	$existeRenovacion = 1;
+
+	$resVentasVieja = $serviciosReferencias->traerVentasPorId(mysql_result($resRenovacion,0,'refventas'));
+
+	$polizaVieja = mysql_result($resVentasVieja,0,'nropoliza');
+	$fechavencimientoVieja = mysql_result($resVentasVieja,0,'fechavencimientopoliza');
+} else {
+	$existeRenovacion = 0;
+	$idrenovacion = 0;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -262,6 +278,13 @@ if (mysql_num_rows($resPaquete) > 0) {
 							</ul>
 						</div>
 						<div class="body table-responsive">
+							<?php if ($existeRenovacion == 1) { ?>
+							<div class="alert alert-warning">
+								<p>Esta Poliza es una renovación de la <b>Poliza: <?php echo $polizaVieja; ?></b> , fecha de vencimiento: <b><?php echo $fechavencimientoVieja; ?></p>
+							</div>
+							
+							<?php } ?>
+							
 							<?php
 								$resVenta = $serviciosReferencias->traerVentasPorCotizacionPaquetes($id,$frm['idproducto']);
 								if (mysql_num_rows($resVenta) > 0) {
@@ -309,7 +332,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 
 									</div>
 								</div>
-
+								<input type="hidden" id="idrenovacion" name="idrenovacion" value="<?php echo $idrenovacion; ?>"/>
 							</form>
 							<?php
 								$cantForm += 1;

@@ -591,6 +591,7 @@ if (mysql_num_rows($resCobranzaCargada)>0) {
 									<?php } ?>
 								</ul>
 							</div>
+						</div>
 					</div>
 					<div class="modal-footer">
 						 <button type="button" class="btn btn-success waves-effect btnGuardarPerfiles" data-dismiss="modal">GUARDAR</button>
@@ -768,6 +769,8 @@ if (mysql_num_rows($resCobranzaCargada)>0) {
 
 		$('.btnAceptarMesaDeControl').click(function() {
 
+			$('#lgmModificarEstado').modal();
+
 			$('.lblModiEstado').html('aceptar');
 			$('.modificarEstadoCotizacionRechazo').html('ACEPTAR');
 
@@ -779,7 +782,7 @@ if (mysql_num_rows($resCobranzaCargada)>0) {
 
 			$('#idmodificarestadorechazo').val(<?php echo $id; ?>);
 			$('#estadomodificarestadorechazo').val(27);
-			$('#lgmModificarEstado').modal();
+			
 
 		});//fin del boton eliminar
 

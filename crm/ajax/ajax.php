@@ -1454,10 +1454,68 @@ switch ($accion) {
    case 'generarRecibosCalculados':
       generarRecibosCalculados($serviciosReferencias);
    break;
-
+   case 'generarRenovacionDesdeCotizacion':
+      generarRenovacionDesdeCotizacion($serviciosReferencias);
+   break;
+   case 'modificarVentasUnicaDocumentacionAux':
+      modificarVentasUnicaDocumentacionAux($serviciosReferencias);
+   break;
 
 }
 /* FinFinFin */
+
+function modificarVentasUnicaDocumentacionAux($serviciosReferencias) {
+   $idventa = $_POST['idventa'];
+   $campo = $_POST['campo'];
+   $valor = $_POST['valor'];
+
+   $res = $serviciosReferencias->modificarVentasUnicaDocumentacion($idventa, $campo, $valor);
+
+   if ($res == true) {
+      $resV['leyenda'] = '';
+      $resV['error'] = false;
+   } else {
+      $resV['leyenda'] = 'Hubo un error al modificar datos';
+      $resV['error'] = true;
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function generarRenovacionDesdeCotizacion($serviciosReferencias) {
+   session_start();
+
+   $idventa = $_POST['id'];
+   $fechacrea = date('Y-m-d H:i:s');
+   $fechamodi = date('Y-m-d H:i:s');
+   $usuariocrea = $_SESSION['usuaid_sahilices'];
+   $usuariomodi = $_SESSION['usuaid_sahilices'];
+   $identico = 0;
+
+
+   $resVentas = $serviciosReferencias->traerVentasPorId($idventa);
+
+   $idcotizacion = mysql_result($resVentas,0,'refcotizaciones');
+
+   $resCotizaciones = $serviciosReferencias->copiarCotizacion($idcotizacion, $fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$identico);
+
+   if ($resCotizaciones['error']) {
+      $resV['error'] = true;
+      $resV['mensaje'] = 'Se genero un error el crear la renovacion por cotizacion: '.$resCotizaciones['mensaje'];
+   } else {
+      $resV['error'] = false;
+      $resV['mensaje'] = 'Se genero correctamente la renovacion';
+      $resV['id'] = $resCotizaciones['id'];
+
+      $resRenovacion = $serviciosReferencias->insertarRenovaciones($idventa,0,$fechacrea,$idcotizacion,$resV['id']);
+
+   }
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+
+}
 
 function generarRecibosCalculados($serviciosReferencias) {
    session_start();
@@ -2997,49 +3055,73 @@ function generarRenovacion($serviciosReferencias) {
    session_start();
 
    $refcotizaciones = $_POST['refcotizaciones'];
-   $refestadoventa = 6; // fijo porque recien empieza
-   $primaneta = ($_POST['primaneta'] == '' ? 0 : $_POST['primaneta']);
-   $primatotal = ($_POST['primatotal'] == '' ? 0 : $_POST['primatotal']);
-   $fechavencimientopoliza = $_POST['fechavencimientopoliza'];
-   $nropoliza = $_POST['nropoliza'];
    $fechacrea = date('Y-m-d H:i:s');
    $fechamodi = date('Y-m-d H:i:s');
    $usuariocrea = $_SESSION['usua_sahilices'];
    $usuariomodi = $_SESSION['usua_sahilices'];
-   $foliotys = $_POST['foliotys'];
-   $foliointerno = $serviciosReferencias->generaFolioInterno();
 
-   if (isset($_POST['refproductosaux'])) {
-      $refproductosaux = $_POST['refproductosaux'];
-   } else {
-      $refproductosaux = 0;
-   }
+   // genero la cotizacion identica
+   $identico = 1;
 
-   $refventas = 0;
+   //copio la cotizacion anterior con todos sus archivos
+   $resCopiar = $serviciosReferencias->copiarCotizacion($refcotizaciones, $fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$identico);
 
-   $refventaviejo = $_POST['refventaviejo'];
-
-   $version = $serviciosReferencias->generarVersion($refventas);
-
-   $observaciones = $_POST['observaciones'];
-   $vigenciadesde = $_POST['vigenciadesde'];
-
-   $res = $serviciosReferencias->insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$refventas,$version,$observaciones,$vigenciadesde);
-
-
-   if ((integer)$res > 0) {
-      $resRenovacion = $serviciosReferencias->insertarRenovaciones($refventaviejo,$res,date('Y-m-d H:i:s'));
-      $resP = $serviciosReferencias->insertarPeriodicidadventasPorVenta($res,$refventaviejo);
-      $resV['error'] = false;
-   } else {
+   if ($resCopiar['error']) {
       $resV['error'] = true;
-      $resV['mensaje'] = 'Se genero un problema el crear el endoso, verifique';
+      $resV['mensaje'] = 'Se genero un problema el crear la cotizacion, verifique';
+   } else {
+
+      $refcotizacionesnueva = $resCopiar['id'];
+      $refestadoventa = 6; // fijo porque recien empieza
+      $primaneta = ($_POST['primaneta'] == '' ? 0 : $_POST['primaneta']);
+      $primatotal = ($_POST['primatotal'] == '' ? 0 : $_POST['primatotal']);
+      $fechavencimientopoliza = $_POST['fechavencimientopoliza'];
+      $nropoliza = $_POST['nropoliza'];
+      
+      $foliotys = $_POST['foliotys'];
+      $foliointerno = $serviciosReferencias->generaFolioInterno();
+
+      if (isset($_POST['refproductosaux'])) {
+         $refproductosaux = $_POST['refproductosaux'];
+      } else {
+         $refproductosaux = 0;
+      }
+
+      $refventas = 0;
+
+      $refventaviejo = $_POST['refventaviejo'];
+
+      $version = $serviciosReferencias->generarVersion($refventas);
+
+      $observaciones = $_POST['observaciones'];
+      $vigenciadesde = $_POST['vigenciadesde'];
+
+      $fechaemision = $_POST['fechaemision'];
+      $reftipomoneda = $_POST['reftipomoneda'];
+
+      $comisioncedida = $_POST['comisioncedida'];
+      $financiamiento = $_POST['financiamiento'];
+      $gastosexpedicion = $_POST['gastosexpedicion'];
+      $iva = $_POST['iva'];
+
+      $res = $serviciosReferencias->insertarVentas($refcotizacionesnueva,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$refventas,$version,$observaciones,$vigenciadesde,$fechaemision,$reftipomoneda,$comisioncedida,$financiamiento,$gastosexpedicion,$iva);
+
+
+      if ((integer)$res > 0) {
+         $resRenovacion = $serviciosReferencias->insertarRenovaciones($refventaviejo,$res,date('Y-m-d H:i:s'),$refcotizaciones,$refcotizacionesnueva);
+         $resP = $serviciosReferencias->insertarPeriodicidadventasPorVenta($res,$refventaviejo);
+         $resV['error'] = false;
+      } else {
+         $resV['error'] = true;
+         $resV['mensaje'] = 'Se genero un problema el crear el endoso, verifique';
+
+      }
 
    }
-
 
    header('Content-type: application/json');
    echo json_encode($resV);
+   
 
 }
 
@@ -3748,6 +3830,8 @@ function insertarVentas($serviciosReferencias) {
    $gastosexpedicion = $_POST['gastosexpedicion'];
    $iva = $_POST['iva'];
 
+   //die(var_dump($_POST['idrenovacion']));
+
    $res = $serviciosReferencias->insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux, $refventas,$version, $observaciones,$vigenciadesde,$fechaemision,$reftipomoneda,$comisioncedida,$financiamiento,$gastosexpedicion,$iva);
 
    if ((integer)$res > 0) {
@@ -3775,6 +3859,12 @@ function insertarVentas($serviciosReferencias) {
 
       //trazabilidad finaliza la cotizacion en una poliza
       $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$refcotizaciones,$fechacrea,12,$usuariocrea,0,0,0,'Cotización Aceptada - Poliza/Nro Tarjeta: '.$nropoliza,'');
+
+      
+
+      if ((isset($_POST['idrenovacion'])) && ($_POST['idrenovacion'] != 0)) {
+         $resRenovacion = $serviciosReferencias->modificarRenovacionesPorVenta($_POST['idrenovacion'], $res);
+      }
 
       echo '';
    } else {
@@ -5316,175 +5406,181 @@ function validarCuestionarioPersona($serviciosReferencias) {
    $ultimaDependeAux = '';
 
 
-   foreach ($ar['rules'] as $valor) {
-      $pregunta = $valor['pregunta'];
-
-
-
-      // $array[3] se actualizará con cada valor de $array...
-      if ($valor['tipo'] == 1) {
-         if (!(isset($_POST[$valor['respuesta']]))) {
-            if ($valor['obligatoria'] == '1') {
-               if ($dependeValor == '') {
-                  $resV['error'] = true;
-                  array_push($arErrores,array('error' => 'Debe completar la respuesta','pregunta'=>$pregunta));
-               } else {
-                  if ($dependeValor == $valor['dependerespuestaaux']) {
-                     array_push($arErrores,array('error' => 'Debe completar la respuesta','pregunta'=>$pregunta));
-                  }
-               }
-
-            }
-
-         } else {
-            array_push($arRespuestas,
-                  array('refpreguntascuestionario' => $valor['idpregunta'],
-                  'refrespuestascuestionario' => $valor['idrespuesta'],
-                  'pregunta' => $pregunta,
-                  'respuesta' => 'Lo que el ususario ingrese',
-                  'respuestavalor' => $_POST[$valor['respuesta']])
-               );
-         }
-      }
-
-      if ($valor['tipo'] == 2) {
-         if (!(isset($_POST[$valor['respuesta']]))) {
-            if ($valor['obligatoria'] == '1') {
-               if ($dependeValor == '') {
-                  $resV['error'] = true;
-                  array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
-               } else {
-                  if ($dependeValor == $valor['dependerespuestaaux']) {
-                     $resV['error'] = true;
-                     array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
-                  }
-               }
-
-            }
-         } else {
-            $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($_POST[$valor['respuesta']]);
-            array_push($arRespuestas,
-                  array('refpreguntascuestionario' => $valor['idpregunta'],
-                  'refrespuestascuestionario' => $_POST[$valor['respuesta']],
-                  'pregunta' => $pregunta,
-                  'respuesta' => mysql_result($rRespuesta,0,'respuesta'),
-                  'respuestavalor' => $_POST[$valor['respuesta']])
-               );
-         }
-      }
-
-      if ($valor['tipo'] == 3) {
-         if (!(isset($_POST[$valor['respuesta']]))) {
-            if ($valor['obligatoria'] == '1') {
-               if ($dependeValor == '') {
-                  $resV['error'] = true;
-                  array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
-               } else {
-                  if ($dependeValor == $valor['dependerespuestaaux']) {
-                     $resV['error'] = true;
-                     array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
-                  }
-               }
-
-            }
-         } else {
-            $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($_POST[$valor['respuesta']]);
-            array_push($arRespuestas,
-                  array('refpreguntascuestionario' => $valor['idpregunta'],
-                  'refrespuestascuestionario' => $_POST[$valor['respuesta']],
-                  'pregunta' => $pregunta,
-                  'respuesta' => mysql_result($rRespuesta,0,'respuesta'),
-                  'respuestavalor' => $_POST[$valor['respuesta']])
-               );
-         }
-      }
-
-      if ($valor['tipo'] == 4) {
-         $existio4 = 1;
-         if ($idpregunta != $valor['idpregunta']) {
-            $idpregunta = $valor['idpregunta'];
-
-
-            if (($bandera == 1) && ($evaluoVerdadero == 1)) {
+   if ($ar['rules'] != '') {
+      foreach ($ar['rules'] as $valor) {
+         $pregunta = $valor['pregunta'];
+   
+   
+   
+         // $array[3] se actualizará con cada valor de $array...
+         if ($valor['tipo'] == 1) {
+            if (!(isset($_POST[$valor['respuesta']]))) {
                if ($valor['obligatoria'] == '1') {
                   if ($dependeValor == '') {
-                     $errorGeneral = 1;
-                     array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
                      $resV['error'] = true;
+                     array_push($arErrores,array('error' => 'Debe completar la respuesta','pregunta'=>$pregunta));
                   } else {
                      if ($dependeValor == $valor['dependerespuestaaux']) {
+                        array_push($arErrores,array('error' => 'Debe completar la respuesta','pregunta'=>$pregunta));
+                     }
+                  }
+   
+               }
+   
+            } else {
+               array_push($arRespuestas,
+                     array('refpreguntascuestionario' => $valor['idpregunta'],
+                     'refrespuestascuestionario' => $valor['idrespuesta'],
+                     'pregunta' => $pregunta,
+                     'respuesta' => 'Lo que el ususario ingrese',
+                     'respuestavalor' => $_POST[$valor['respuesta']])
+                  );
+            }
+         }
+   
+         if ($valor['tipo'] == 2) {
+            if (!(isset($_POST[$valor['respuesta']]))) {
+               if ($valor['obligatoria'] == '1') {
+                  if ($dependeValor == '') {
+                     $resV['error'] = true;
+                     array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
+                  } else {
+                     if ($dependeValor == $valor['dependerespuestaaux']) {
+                        $resV['error'] = true;
+                        array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
+                     }
+                  }
+   
+               }
+            } else {
+               $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($_POST[$valor['respuesta']]);
+               array_push($arRespuestas,
+                     array('refpreguntascuestionario' => $valor['idpregunta'],
+                     'refrespuestascuestionario' => $_POST[$valor['respuesta']],
+                     'pregunta' => $pregunta,
+                     'respuesta' => mysql_result($rRespuesta,0,'respuesta'),
+                     'respuestavalor' => $_POST[$valor['respuesta']])
+                  );
+            }
+         }
+   
+         if ($valor['tipo'] == 3) {
+            if (!(isset($_POST[$valor['respuesta']]))) {
+               if ($valor['obligatoria'] == '1') {
+                  if ($dependeValor == '') {
+                     $resV['error'] = true;
+                     array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
+                  } else {
+                     if ($dependeValor == $valor['dependerespuestaaux']) {
+                        $resV['error'] = true;
+                        array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
+                     }
+                  }
+   
+               }
+            } else {
+               $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($_POST[$valor['respuesta']]);
+               array_push($arRespuestas,
+                     array('refpreguntascuestionario' => $valor['idpregunta'],
+                     'refrespuestascuestionario' => $_POST[$valor['respuesta']],
+                     'pregunta' => $pregunta,
+                     'respuesta' => mysql_result($rRespuesta,0,'respuesta'),
+                     'respuestavalor' => $_POST[$valor['respuesta']])
+                  );
+            }
+         }
+   
+         if ($valor['tipo'] == 4) {
+            $existio4 = 1;
+            if ($idpregunta != $valor['idpregunta']) {
+               $idpregunta = $valor['idpregunta'];
+   
+   
+               if (($bandera == 1) && ($evaluoVerdadero == 1)) {
+                  if ($valor['obligatoria'] == '1') {
+                     if ($dependeValor == '') {
                         $errorGeneral = 1;
                         array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
                         $resV['error'] = true;
+                     } else {
+                        if ($dependeValor == $valor['dependerespuestaaux']) {
+                           $errorGeneral = 1;
+                           array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
+                           $resV['error'] = true;
+                        }
                      }
+   
                   }
-
+   
+                  $evaluoVerdadero = 1;
+   
                }
-
-               $evaluoVerdadero = 1;
-
+   
+   
+               $bandera = 0;
+   
             }
-
-
-            $bandera = 0;
-
+            if ((isset($_POST[$valor['respuesta']]))) {
+               $evaluoVerdadero = 0;
+               //// ya lo inserto porque seria el primero
+               $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($valor['idrespuesta']);
+               array_push($arRespuestas,
+                     array('refpreguntascuestionario' => $valor['idpregunta'],
+                     'refrespuestascuestionario' => $valor['idrespuesta'],
+                     'pregunta' => $pregunta,
+                     'respuesta' => mysql_result($rRespuesta,0,'respuesta'),
+                     'respuestavalor' => $_POST[$valor['respuesta']])
+                  );
+            }
+   
+   
+            $bandera = 1;
          }
-         if ((isset($_POST[$valor['respuesta']]))) {
-            $evaluoVerdadero = 0;
-            //// ya lo inserto porque seria el primero
-            $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($valor['idrespuesta']);
-            array_push($arRespuestas,
-                  array('refpreguntascuestionario' => $valor['idpregunta'],
-                  'refrespuestascuestionario' => $valor['idrespuesta'],
-                  'pregunta' => $pregunta,
-                  'respuesta' => mysql_result($rRespuesta,0,'respuesta'),
-                  'respuestavalor' => $_POST[$valor['respuesta']])
-               );
+   
+   
+         if ((integer)$valor['depende'] > 0) {
+            if (isset($_POST[$valor['respuesta']])) {
+               $dependePreguntaID = $valor['depende'];
+               $dependeRespuestaID = $valor['dependerespuesta'];
+               $dependeValor = $_POST[$valor['respuesta']];
+            } else {
+               $dependePreguntaID = $valor['depende'];
+               $dependeRespuestaID = $valor['dependerespuesta'];
+               $dependeValor = 0;
+            }
+   
          }
-
-
-         $bandera = 1;
-      }
-
-
-      if ((integer)$valor['depende'] > 0) {
-         if (isset($_POST[$valor['respuesta']])) {
-            $dependePreguntaID = $valor['depende'];
-            $dependeRespuestaID = $valor['dependerespuesta'];
-            $dependeValor = $_POST[$valor['respuesta']];
-         } else {
-            $dependePreguntaID = $valor['depende'];
-            $dependeRespuestaID = $valor['dependerespuesta'];
-            $dependeValor = 0;
+   
+         if ((integer)($valor['depende'] == 0) && (integer)($valor['dependeaux'] == 0)) {
+            $dependePreguntaID = '';
+            $dependeRespuestaID = '';
+            $dependeValor = '';
          }
-
+   
+         $ultimaDependeAux = $valor['dependerespuestaaux'];
       }
-
-      if ((integer)($valor['depende'] == 0) && (integer)($valor['dependeaux'] == 0)) {
-         $dependePreguntaID = '';
-         $dependeRespuestaID = '';
-         $dependeValor = '';
-      }
-
-      $ultimaDependeAux = $valor['dependerespuestaaux'];
-   }
-
-   //die(var_dump($arRespuestas));
-
-   if (($bandera == 1) && ($evaluoVerdadero == 1) && ($existio4 == 1)) {
-      if ($dependeValor == '') {
-         $errorGeneral = 1;
-         array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
-         $resV['error'] = true;
-      } else {
-         if ($dependeValor == $ultimaDependeAux) {
+   
+      //die(var_dump($arRespuestas));
+   
+      if (($bandera == 1) && ($evaluoVerdadero == 1) && ($existio4 == 1)) {
+         if ($dependeValor == '') {
             $errorGeneral = 1;
             array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
             $resV['error'] = true;
+         } else {
+            if ($dependeValor == $ultimaDependeAux) {
+               $errorGeneral = 1;
+               array_push($arErrores,array('error' => 'Debe elegir al menos una respuesta','pregunta'=>$pregunta));
+               $resV['error'] = true;
+            }
          }
+   
       }
+   } else {
+      $resV['error'] = false;
 
    }
+   
 
    $resV['errores'] = $arErrores;
 
@@ -8879,6 +8975,19 @@ function modificarCotizaciones($serviciosReferencias) {
       $vigenciapoliza = '';
    }
 
+   if (isset($_POST['idrenovacion'])) {
+      $idrenovacion = $_POST['idrenovacion'];
+
+      // verifico sino la cree anteriormente
+      $resRenovacion = $serviciosReferencias->traerRenovacionesPorCotizacionNueva($id);
+
+      if (mysql_num_rows($resRenovacion) > 0) {
+         $idrenovacion = 0;
+      }
+   } else {
+      $idrenovacion = 0;
+   }
+
 
    if ($refestadocotizaciones == 12) {
 
@@ -8953,6 +9062,17 @@ function modificarCotizaciones($serviciosReferencias) {
       }
       //trazabilidad dependen el estado
       $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id,$fechamodi,$refevento,$usuariomodi,0,0,0,$dato,'');
+
+      //para las renovaciones
+      if ($idrenovacion != 0) {
+         $resVentas = $serviciosReferencias->traerVentasPorId($idrenovacion);
+
+         if (mysql_num_rows($resVentas)>0) {
+            //inserto el registro que me marca la renovacion
+            $resRenovacion = $serviciosReferencias->insertarRenovaciones(mysql_result($resVentas,0,'idventa'),0,$fechamodi,mysql_result($resVentas,0,'refcotizaciones'),$id);
+         }
+         
+      }
 
       echo '';
    } else {

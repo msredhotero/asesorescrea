@@ -59,8 +59,8 @@ $resultado = $serviciosReferencias->traerVentasPorId($id);
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbventas";
 
-$lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','fechaemision','vigenciadesde','reftipomoneda','comisioncedida','gastosexpedicion','iva');
-$lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Fecha de Emision','Vigencia Desde','Tipo Moneda','Comision Cedida','Gastos de Expedición','IVA');
+$lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','fechaemision','vigenciadesde','reftipomoneda','comisioncedida','gastosexpedicion','iva','refmotivorechazopoliza');
+$lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Fecha de Emision','Vigencia Desde','Tipo Moneda','Comision Cedida','Gastos de Expedición','IVA','Motivo de rechazo');
 
 $modificar = "modificarVentas";
 $idTabla = "idventa";
@@ -74,15 +74,34 @@ $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),' ',my
 $resTipoMoneda = $serviciosReferencias->traerTipomoneda();
 $cadTipoMoneda = $serviciosFunciones->devolverSelectBoxActivo($resTipoMoneda,array(1),'',mysql_result($resultado,0,'reftipomoneda'));
 
+$resMotivoRechazo = $serviciosReferencias->traerMotivorechazopolizaPorId(mysql_result($resultado,0,'refmotivorechazopoliza'));
+$cadMotivoRechazo = $serviciosFunciones->devolverSelectBox($resMotivoRechazo,array(1),'');
 
-$refdescripcion = array(0=>$cadRef,1=>$cadRef2, 2=> $cadTipoMoneda);
-$refCampo 	=  array('refcotizaciones','refestadoventa','reftipomoneda');
+$refdescripcion = array(0=>$cadRef,1=>$cadRef2, 2=> $cadTipoMoneda, 3=>$cadMotivoRechazo);
+$refCampo 	=  array('refcotizaciones','refestadoventa','reftipomoneda','refmotivorechazopoliza');
 
 $formulario = $serviciosFunciones->camposTablaModificar($id, $idTabla,$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
+
+
+$resRenovacion = $serviciosReferencias->traerRenovacionesPorVentaNueva($id);
+
+if (mysql_num_rows($resRenovacion) > 0) {
+	$idrenovacion = mysql_result($resRenovacion,0,0);
+
+	$existeRenovacion = 1;
+
+	$resVentasVieja = $serviciosReferencias->traerVentasPorId(mysql_result($resRenovacion,0,'refventas'));
+
+	$polizaVieja = mysql_result($resVentasVieja,0,'nropoliza');
+	$fechavencimientoVieja = mysql_result($resVentasVieja,0,'fechavencimientopoliza');
+} else {
+	$existeRenovacion = 0;
+	$idrenovacion = 0;
+}
 
 ?>
 
@@ -193,6 +212,12 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 							</ul>
 						</div>
 						<div class="body table-responsive">
+							<?php if ($existeRenovacion == 1) { ?>
+								<div class="alert alert-warning">
+									<p>Esta Poliza es una renovación de la <b>Poliza: <?php echo $polizaVieja; ?></b> , fecha de vencimiento: <b><?php echo $fechavencimientoVieja; ?></p>
+								</div>
+							
+							<?php } ?>
 							<form class="formulario frmModificar" role="form" id="sign_in">
 								<div class="row">
 									<?php echo $formulario; ?>
@@ -351,31 +376,31 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 				success: function(data){
 					if (data.error == false) {
 						swal({
-								title: "Respuesta",
-								text: data.mensaje,
-								type: "success",
-								timer: 1000,
-								showConfirmButton: false
+							title: "Respuesta",
+							text: data.mensaje,
+							type: "success",
+							timer: 1000,
+							showConfirmButton: false
 						});
 
 					} else {
 						swal({
-								title: "Respuesta",
-								text: data.mensaje,
-								type: "error",
-								timer: 2000,
-								showConfirmButton: false
+							title: "Respuesta",
+							text: data.mensaje,
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
 						});
 					}
 				},
 				//si ha ocurrido un error
 				error: function(){
 					swal({
-							title: "Respuesta",
-							text: 'Actualice la pagina',
-							type: "error",
-							timer: 2000,
-							showConfirmButton: false
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
 					});
 
 				}
@@ -396,7 +421,11 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 
 		$('.frmContrefventas').hide();
 		$('.frmContrefproductosaux').hide();
-		$('.frmContrefmotivorechazopoliza').hide();
+		<?php if (mysql_result($resultado,0,'refestadoventa') == 9) { ?>
+			$('.frmContrefmotivorechazopoliza').show();
+		<?php } else { ?>
+			$('.frmContrefmotivorechazopoliza').hide();	
+		<?php } ?>
 
 		$('.btnArchivos').click(function() {
 			url = "subirdocumentacion.php?id=<?php echo $id; ?>&documentacion=35";

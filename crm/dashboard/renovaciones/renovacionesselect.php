@@ -91,37 +91,33 @@ if ((mysql_result($resCliente,0,'fechanacimiento') == '') || (mysql_result($resC
 	$edad = $serviciosReferencias->calculaedad(mysql_result($resCliente,0,'fechanacimiento'));
 }
 
+
 $resProducto = $serviciosReferencias->traerProductosPorId($idproducto);
 
 $resPaquete = $serviciosReferencias->traerPaquetedetallesPorPaquete($idproducto);
-
-$fechavencimiento = mysql_result($resVenta,0,'fechavencimientopoliza');
 
 $formularioAr = array();
 
 if (mysql_num_rows($resPaquete) > 0) {
 	while ($rowP = mysql_fetch_array($resPaquete)) {
 
-		if ($idproductoespecifico == $rowP['refproductos']) {
-			$existeCotizacionParaProducto = $serviciosReferencias->traerValoredadPorProductoEdad($rowP['refproductos'],$edad);
+		$existeCotizacionParaProducto = $serviciosReferencias->traerValoredadPorProductoEdad($rowP['refproductos'],$edad);
 
-			if ($rowP['unicomonto'] == '1') {
-				$acumPrecio = $rowP['valor'];
-			} else {
-				$acumPrecio = mysql_result($existeCotizacionParaProducto,0,'valor');
-			}
-
-			$resVar3 = $serviciosReferencias->traerProductosPorId($rowP['refproductos']);
-			$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),' ');
-
-			$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3);
-			$refCampo 	=  array('refcotizaciones','refestadoventa','refproductosaux');
-
-			$formulario = $serviciosFunciones->camposTablaModificar($idventa,'idventa',$insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
-
-			array_push($formularioAr, array('formulario' => $formulario, 'producto'=> $rowP['producto'], 'idproducto' => $rowP['refproductos'], 'monto' => $acumPrecio ));
+		if ($rowP['unicomonto'] == '1') {
+			$acumPrecio = $rowP['valor'];
+		} else {
+			$acumPrecio = mysql_result($existeCotizacionParaProducto,0,'valor');
 		}
 
+		$resVar3 = $serviciosReferencias->traerProductosPorId($rowP['refproductos']);
+		$cadRef3 = $serviciosFunciones->devolverSelectBox($resVar3,array(1),' ');
+
+		$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3,3=>$cadTipoMoneda);
+		$refCampo 	=  array('refcotizaciones','refestadoventa','refproductosaux','reftipomoneda');
+
+		$formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+
+		array_push($formularioAr, array('formulario' => $formulario, 'producto'=> $rowP['producto'], 'idproducto' => $rowP['refproductos'], 'monto' => $acumPrecio ));
 	}
 
 
@@ -138,15 +134,38 @@ if (mysql_num_rows($resPaquete) > 0) {
 	}
 
 	$resTipoMoneda = $serviciosReferencias->traerTipomoneda();
-	$cadTipoMoneda = $serviciosFunciones->devolverSelectBoxActivo($resTipoMoneda,array(1),'',mysql_result($resVenta,0,'reftipomoneda'));
+	$cadTipoMoneda = $serviciosFunciones->devolverSelectBox($resTipoMoneda,array(1),'');
+
 
 	$cadRef3 = "<option value='0'>Mismo de la cotización</option>";
 	$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadRef3,3=>$cadTipoMoneda);
 	$refCampo 	=  array('refcotizaciones','refestadoventa','refproductosaux','reftipomoneda');
 
-	$formulario = $serviciosFunciones->camposTablaModificar($idventa,'idventa',$insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
-	array_push($formularioAr, array('formulario' => $formulario, 'producto'=> $idproducto, 'idproducto' => 0, 'monto' => $acumPrecio));
+
+	$formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+
+	array_push($formularioAr, array('formulario' => $formulario, 'producto'=> mysql_result($resProducto,0,'producto'), 'idproducto' => 0, 'monto' => $acumPrecio));
+}
+
+//$formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
+
+//////////////////////////////////////////////  FIN de los opciones //////////////////////////
+
+$resRenovacion = $serviciosReferencias->traerRenovacionesPorCotizacionNueva($id);
+
+if (mysql_num_rows($resRenovacion) > 0) {
+	$idrenovacion = mysql_result($resRenovacion,0,0);
+
+	$existeRenovacion = 1;
+
+	$resVentasVieja = $serviciosReferencias->traerVentasPorId(mysql_result($resRenovacion,0,'refventas'));
+
+	$polizaVieja = mysql_result($resVentasVieja,0,'nropoliza');
+	$fechavencimientoVieja = mysql_result($resVentasVieja,0,'fechavencimientopoliza');
+} else {
+	$existeRenovacion = 0;
+	$idrenovacion = 0;
 }
 
 //$formulario = $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
@@ -241,16 +260,13 @@ if (mysql_num_rows($resPaquete) > 0) {
 	<div class="container-fluid">
 		<div class="row clearfix">
 
-			<?php
-				foreach ($formularioAr as $frm) {
 
-			?>
 			<div class="row">
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								<?php echo strtoupper($plural); ?> - <?php echo $frm['producto']; ?> - Precio Calculado: <?php echo $frm['monto']; ?>
+								RENOVACIONES
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -264,31 +280,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 							</ul>
 						</div>
 						<div class="body table-responsive">
-							<?php
-								$resVenta = $serviciosReferencias->traerVentasPorCotizacionPaquetes($id,$frm['idproducto']);
-								if (mysql_num_rows($resVentaOriginal) > 0) {
-							?>
-
-							<div class="row">
-								<div class="button-demo">
-									<button type="button" class="btn btn-black waves-effect btnVolver">
-										<i class="material-icons">arrow_back</i>
-										<span>VOLVER</span>
-									</button>
-
-									<button type="button" class="btn bg-red waves-effect">
-										<i class="material-icons">save</i>
-										<span>YA SE CARGO ESTA VENTA</span>
-									</button>
-								</div>
-							</div>
-							<?php } else { ?>
-							<form class="formulario frmNuevo" role="form" id="sign_in">
-								<div class="row">
-									<?php echo $frm['formulario']; ?>
-									<input type="hidden" name="refventaviejo" id="refventaviejo" value="<?php echo $idventa; ?>"/>
-
-								</div>
+							
 								<div class="row">
 									<div class="button-demo">
 										<button type="button" class="btn btn-black waves-effect btnVolver">
@@ -298,9 +290,13 @@ if (mysql_num_rows($resPaquete) > 0) {
 
 
 										<?php if (array_search($_SESSION['idroll_sahilices'], $arRoles) >= 0) { ?>
-											<button type="submit" class="btn bg-light-blue waves-effect btnNuevo">
+											<button type="button" class="btn bg-green waves-effect btnMantener">
 												<i class="material-icons">save</i>
-												<span>GUARDAR</span>
+												<span>MANTENER POLIZA</span>
+											</button>
+											<button type="button" class="btn bg-light-blue waves-effect btnNuevaCotizacion">
+												<i class="material-icons">save</i>
+												<span>COMENZAR PROCESO DE COTIZACION</span>
 											</button>
 
 										<?php } ?>
@@ -310,13 +306,13 @@ if (mysql_num_rows($resPaquete) > 0) {
 								</div>
 
 							</form>
-							<?php } ?>
+		
 
 						</div>
 					</div>
 				</div>
 			</div>
-			<?php } ?>
+
 		</div>
 	</div>
 </section>
@@ -371,12 +367,14 @@ if (mysql_num_rows($resPaquete) > 0) {
 
 <script>
 	$(document).ready(function(){
-		
-		$('#vigenciadesde').val('<?php echo $fechavencimiento; ?>');
-		$('#fechaemision').val('');
-		$('#fechavencimientopoliza').val('');
 
-		$('#iva').val('16');
+        $(".btnMantener").click(function() {
+			idTable =  $(this).attr("id");
+			$(location).attr('href','renovaciones.php?id=<?php echo $idventa; ?>');
+
+		});//fin del boton endoso
+
+        $('#iva').val('16');
 		$('#comisioncedida').val('0');
 		$('#financiamiento').val('0');
 		$('#gastosexpedicion').val('0');
@@ -477,25 +475,6 @@ if (mysql_num_rows($resPaquete) > 0) {
 		$('#montocomision').number( true, 2,'.','' );
 		$('#porcentajecomision').number( true, 2,'.','' );
 
-		
-
-		$('#fechaemision').pickadate({
-			format: 'yyyy-mm-dd',
-			labelMonthNext: 'Siguiente mes',
-			labelMonthPrev: 'Previo mes',
-			labelMonthSelect: 'Selecciona el mes del año',
-			labelYearSelect: 'Selecciona el año',
-			selectMonths: true,
-			selectYears: 100,
-			today: 'Hoy',
-			clear: 'Borrar',
-			close: 'Cerrar',
-			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
-			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-		});
-
 		$('#fechavencimientopoliza').pickadate({
 			format: 'yyyy-mm-dd',
 			labelMonthNext: 'Siguiente mes',
@@ -530,6 +509,46 @@ if (mysql_num_rows($resPaquete) > 0) {
 			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
 		});
 
+		$('.btnNuevaCotizacion').click(function() {
+			generarRenovacionDesdeCotizacion();
+		});
+
+
+		function generarRenovacionDesdeCotizacion() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {accion: 'generarRenovacionDesdeCotizacion',id: <?php echo $idventa; ?>},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.btnNuevaCotizacion').hide();
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error) {
+						$('.btnNuevaCotizacion').show();
+
+						swal("Error!", data.mensaje, "error");
+
+					} else {
+						swal("Ok!", data.mensaje, "success");
+
+						$('.btnNuevaCotizacion').hide();
+
+						//$(location).attr('href','../enproceso/newfilter.php?id=' + data.id);
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
 
 		function frmAjaxModificar(id) {
 			$.ajax({
@@ -551,7 +570,7 @@ if (mysql_num_rows($resPaquete) > 0) {
 
 
 					} else {
-						swal("Error!", data, "warning");
+						swal("Error!", data, "error");
 
 						$("#load").html('');
 					}
@@ -582,21 +601,21 @@ if (mysql_num_rows($resPaquete) > 0) {
 
 					if (data == '') {
 						swal({
-								title: "Respuesta",
-								text: "Registro Eliminado con exito!!",
-								type: "success",
-								timer: 1500,
-								showConfirmButton: false
+							title: "Respuesta",
+							text: "Registro Eliminado con exito!!",
+							type: "success",
+							timer: 1500,
+							showConfirmButton: false
 						});
 						$('#lgmEliminar').modal('toggle');
 						table.ajax.reload();
 					} else {
 						swal({
-								title: "Respuesta",
-								text: data,
-								type: "error",
-								timer: 2000,
-								showConfirmButton: false
+							title: "Respuesta",
+							text: data,
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
 						});
 
 					}
@@ -752,12 +771,6 @@ if (mysql_num_rows($resPaquete) > 0) {
 		});
 	});
 </script>
-
-
-
-
-
-
 
 
 </body>

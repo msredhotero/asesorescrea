@@ -9,6 +9,136 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+
+   /* PARA Solicitudvrim */
+
+   function insertarSolicitudvrim($reftokenvrim,$cveasesor,$tipoasesor,$cveoficina,$tipooficina,$tiposolicitud,$tipopersona,$razonsocial,$nombre,$apellidopaterno,$apellidomaterno,$fechanacimiento,$correo,$telefonofijo,$celular,$cveproducto,$tnombre,$tapellidopaterno,$tapellidomaterno,$tfechanacimiento,$tcorreo,$tcelular,$fechacrea,$usuariocrea) {
+   $sql = "insert into dbsolicitudvrim(idsolicitudvrim,reftokenvrim,cveasesor,tipoasesor,cveoficina,tipooficina,tiposolicitud,tipopersona,razonsocial,nombre,apellidopaterno,apellidomaterno,fechanacimiento,correo,telefonofijo,celular,cveproducto,tnombre,tapellidopaterno,tapellidomaterno,tfechanacimiento,tcorreo,tcelular,fechacrea,usuariocrea)
+   values ('',".$reftokenvrim.",'".$cveasesor."','".$tipoasesor."','".$cveoficina."','".$tipooficina."','".$tiposolicitud."','".$tipopersona."','".$razonsocial."','".$nombre."','".$apellidopaterno."','".$apellidomaterno."','".$fechanacimiento."','".$correo."','".$telefonofijo."','".$celular."','".$cveproducto."','".$tnombre."','".$tapellidopaterno."','".$tapellidomaterno."','".$tfechanacimiento."','".$tcorreo."','".$tcelular."','".$fechacrea."','".$usuariocrea."')";
+   $res = $this->query($sql,1);
+   return $res;
+   }
+
+
+   function modificarSolicitudvrim($id,$reftokenvrim,$cveasesor,$tipoasesor,$cveoficina,$tipooficina,$tiposolicitud,$tipopersona,$razonsocial,$nombre,$apellidopaterno,$apellidomaterno,$fechanacimiento,$correo,$telefonofijo,$celular,$cveproducto,$tnombre,$tapellidopaterno,$tapellidomaterno,$tfechanacimiento,$tcorreo,$tcelular,$fechacrea,$usuariocrea) {
+   $sql = "update dbsolicitudvrim
+   set
+   reftokenvrim = ".$reftokenvrim.",cveasesor = '".$cveasesor."',tipoasesor = '".$tipoasesor."',cveoficina = '".$cveoficina."',tipooficina = '".$tipooficina."',tiposolicitud = '".$tiposolicitud."',tipopersona = '".$tipopersona."',razonsocial = '".$razonsocial."',nombre = '".$nombre."',apellidopaterno = '".$apellidopaterno."',apellidomaterno = '".$apellidomaterno."',fechanacimiento = '".$fechanacimiento."',correo = '".$correo."',telefonofijo = '".$telefonofijo."',celular = '".$celular."',cveproducto = '".$cveproducto."',tnombre = '".$tnombre."',tapellidopaterno = '".$tapellidopaterno."',tapellidomaterno = '".$tapellidomaterno."',tfechanacimiento = '".$tfechanacimiento."',tcorreo = '".$tcorreo."',tcelular = '".$tcelular."',fechacrea = '".$fechacrea."',usuariocrea = '".$usuariocrea."' where idsolicitudvrim =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function eliminarSolicitudvrim($id) {
+   $sql = "delete from dbsolicitudvrim where idsolicitudvrim =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function traerSolicitudvrim() {
+   $sql = "select
+   s.idsolicitudvrim,
+   s.reftokenvrim,
+   s.cveasesor,
+   s.tipoasesor,
+   s.cveoficina,
+   s.tipooficina,
+   s.tiposolicitud,
+   s.tipopersona,
+   s.razonsocial,
+   s.nombre,
+   s.apellidopaterno,
+   s.apellidomaterno,
+   s.fechanacimiento,
+   s.correo,
+   s.telefonofijo,
+   s.celular,
+   s.cveproducto,
+   s.tnombre,
+   s.tapellidopaterno,
+   s.tapellidomaterno,
+   s.tfechanacimiento,
+   s.tcorreo,
+   s.tcelular,
+   s.fechacrea,
+   s.usuariocrea
+   from dbsolicitudvrim s
+   order by 1";
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   function traerSolicitudvrimPorId($id) {
+   $sql = "select idsolicitudvrim,reftokenvrim,cveasesor,tipoasesor,cveoficina,tipooficina,tiposolicitud,tipopersona,razonsocial,nombre,apellidopaterno,apellidomaterno,fechanacimiento,correo,telefonofijo,celular,cveproducto,tnombre,tapellidopaterno,tapellidomaterno,tfechanacimiento,tcorreo,tcelular,fechacrea,usuariocrea from dbsolicitudvrim where idsolicitudvrim =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
+
+   /* Fin */
+   /* Fin de la Tabla: dbsolicitudvrim */
+
+/* PARA Tokenvrim */
+
+function insertarTokenvrim($grant_type,$username,$password,$access_token,$token_type,$expires_in,$fechacrea,$usuariocrea,$reftabla,$idreferencia) {
+$sql = "insert into dbtokenvrim(idtokenvrim,grant_type,username,password,access_token,token_type,expires_in,fechacrea,usuariocrea,reftabla,idreferencia)
+values ('','".$grant_type."','".$username."','".$password."',".$access_token.",'".$token_type."',".$expires_in.",'".$fechacrea."','".$usuariocrea."',".$reftabla.",".$idreferencia.")";
+$res = $this->query($sql,1);
+return $res;
+}
+
+
+function modificarTokenvrim($id,$grant_type,$username,$password,$access_token,$token_type,$expires_in,$fechacrea,$usuariocrea,$reftabla,$idreferencia) {
+$sql = "update dbtokenvrim
+set
+grant_type = '".$grant_type."',username = '".$username."',password = '".$password."',access_token = ".$access_token.",token_type = '".$token_type."',expires_in = ".$expires_in.",fechacrea = '".$fechacrea."',usuariocrea = '".$usuariocrea."',reftabla = ".$reftabla.",idreferencia = ".$idreferencia."
+where idtokenvrim =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function eliminarTokenvrim($id) {
+$sql = "delete from dbtokenvrim where idtokenvrim =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerTokenvrim() {
+$sql = "select
+t.idtokenvrim,
+t.grant_type,
+t.username,
+t.password,
+t.access_token,
+t.token_type,
+t.expires_in,
+t.fechacrea,
+t.usuariocrea,
+t.reftabla,
+t.idreferencia
+from dbtokenvrim t
+order by 1";
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+function traerTokenvrimPorId($id) {
+$sql = "select idtokenvrim,grant_type,username,password,access_token,token_type,expires_in,fechacrea,usuariocrea,reftabla,idreferencia from dbtokenvrim where idtokenvrim =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+
+/* Fin */
+/* /* Fin de la Tabla: dbtokenvrim*/
+
+
+
    function generarRecibosCalculados($id) {
       $resVenta = $this->traerVentasPorIdCompleto($id);
 
@@ -2589,22 +2719,31 @@ return $res;
 
    /* PARA Renovaciones */
 
-   function insertarRenovaciones($refventas,$nuevaventa,$fechacreacion) {
-   $sql = "insert into dbrenovaciones(idrenovacion,refventas,nuevaventa,fechacreacion)
-   values ('',".$refventas.",".$nuevaventa.",'".$fechacreacion."')";
+   function insertarRenovaciones($refventas,$nuevaventa,$fechacreacion,$refcotizaciones,$nuevacotizacion) {
+   $sql = "insert into dbrenovaciones(idrenovacion,refventas,nuevaventa,fechacreacion,refcotizaciones,nuevacotizacion)
+   values ('',".$refventas.",".$nuevaventa.",'".$fechacreacion."',".$refcotizaciones.",".$nuevacotizacion.")";
    $res = $this->query($sql,1);
    return $res;
    }
 
 
-   function modificarRenovaciones($id,$refventas,$nuevaventa,$fechacreacion) {
+   function modificarRenovaciones($id,$refventas,$nuevaventa,$fechacreacion,$refcotizaciones,$nuevacotizacion) {
    $sql = "update dbrenovaciones
    set
-   refventas = ".$refventas.",nuevaventa = ".$nuevaventa.",fechacreacion = '".$fechacreacion."'
+   refventas = ".$refventas.",nuevaventa = ".$nuevaventa.",fechacreacion = '".$fechacreacion."',refcotizaciones = ".$refcotizaciones.",nuevacotizacion = ".$nuevacotizacion."
    where idrenovacion =".$id;
    $res = $this->query($sql,0);
    return $res;
    }
+
+   function modificarRenovacionesPorVenta($id,$nuevaventa) {
+      $sql = "update dbrenovaciones
+      set
+      nuevaventa = ".$nuevaventa."
+      where idrenovacion =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+      }
 
 
    function eliminarRenovaciones($id) {
@@ -2628,13 +2767,31 @@ return $res;
 
 
    function traerRenovacionesPorId($id) {
-      $sql = "select idrenovacion,refventas,nuevaventa,fechacreacion from dbrenovaciones where idrenovacion =".$id;
+      $sql = "select idrenovacion,refventas,nuevaventa,fechacreacion,refcotizaciones,nuevacotizacion from dbrenovaciones where idrenovacion =".$id;
       $res = $this->query($sql,0);
       return $res;
    }
 
    function traerRenovacionesPorVentaVieja($id) {
-      $sql = "select idrenovacion,refventas,nuevaventa,fechacreacion from dbrenovaciones where refventas =".$id;
+      $sql = "select idrenovacion,refventas,nuevaventa,fechacreacion,refcotizaciones,nuevacotizacion from dbrenovaciones where refventas =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerRenovacionesPorVentaNueva($id) {
+      $sql = "select idrenovacion,refventas,nuevaventa,fechacreacion,refcotizaciones,nuevacotizacion from dbrenovaciones where nuevaventa =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerRenovacionesPorCotizacionVieja($id) {
+      $sql = "select idrenovacion,refventas,nuevaventa,fechacreacion,refcotizaciones,nuevacotizacion from dbrenovaciones where refcotizaciones =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerRenovacionesPorCotizacionNueva($id) {
+      $sql = "select idrenovacion,refventas,nuevaventa,fechacreacion,refcotizaciones,nuevacotizacion from dbrenovaciones where nuevacotizacion =".$id;
       $res = $this->query($sql,0);
       return $res;
    }
@@ -8321,7 +8478,7 @@ return $res;
          $iva = 0;
 
          //creo la venta con la nueva version
-         $resI = $this->insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$id,$version,0,$observaciones,$vigenciadesde,$comisioncedida,$financiamiento,$gastosexpedicion,$iva);
+         $resI = $this->insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$id,$version,0,$observaciones,$vigenciadesde,'',1,$comisioncedida,$financiamiento,$gastosexpedicion,$iva);
 
          $resP = $this->insertarPeriodicidadventasPorVenta($resI,$id);
          return $resI;
@@ -8442,6 +8599,122 @@ return $res;
 		$res = $this->query($sql,0);
 		return $res;
 	}
+
+
+   function traerVentaEstadosajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,$agente,$estado,$vencidas) {
+		$where = '';
+      $cadEstado = ' v.refestadoventa in ('.$estado.') ';
+		$roles = '';
+
+      if ($vencidas == 1) {
+         $cadVencidas = ' and v.fechavencimientopoliza < current_date() ';
+      } else {
+         $cadVencidas = ' and v.fechavencimientopoliza >= current_date() ';
+      }
+
+	   if ($responsableComercial != '') {
+	      $roles = " ase.refusuarios = ".$responsableComercial." and ";
+	   } else {
+	      $roles = '';
+	   }
+
+      $cadFecha = '';
+		if ($min != '' && $max != '') {
+			$cadFecha = " and c.fechacrea between '".$min."' and '".$max."' ";
+		} else {
+			if ($min != '' && $max == '') {
+				$cadFecha = " and c.fechacrea >= '".$min."' ";
+			} else {
+				if ($min == '' && $max != '') {
+					$cadFecha = " and c.fechacrea <= '".$max."' ";
+				}
+			}
+		}
+
+		$cadAgente = '';
+		if ($agente != '') {
+			$cadAgente = " and ase.idasesor =".$agente.' ';
+		}
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (".$roles." (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or cli.razonsocial like '%".$busqueda."%' or (case when v.refproductosaux > 0 then proa.producto else pro.producto end) like '%".$busqueda."%' or concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%' or v.nropoliza like '%".$busqueda."%'))";
+		} else {
+			if ($responsableComercial != '') {
+	         $where = " and ase.refusuarios = ".$responsableComercial." ";
+	      }
+		}
+
+
+		$sql = "select
+		v.idventa,
+		(case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
+		(case when v.refproductosaux > 0 then proa.producto else pro.producto end) as producto,
+		concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
+		concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
+		v.primaneta,
+		v.primatotal,
+		v.foliotys,
+		v.fechavencimientopoliza,
+		v.nropoliza,
+      tp.tipoperiodicidad,
+      tcc.tipocobranza,
+		est.estadocotizacion,
+		v.foliointerno,
+		c.refclientes,
+		c.refproductos,
+		c.refasesores,
+		c.refasociados,
+		c.refestadocotizaciones,
+		c.observaciones,
+		c.fechacrea,
+		c.fechamodi,
+		c.usuariocrea,
+		c.usuariomodi,
+		c.refusuarios,
+      tp.meses,
+      COUNT(pvd.idperiodicidadventadetalle) AS cantrecibos
+		from dbcotizaciones c
+		inner join dbclientes cli ON cli.idcliente = c.refclientes
+		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
+		inner join tbproductos pro ON pro.idproducto = c.refproductos
+		inner join dbasesores ase ON ase.idasesor = c.refasesores
+		left join dbusuarios us ON us.idusuario = c.refusuarios
+		left join dbasociados aso ON aso.idasociado = c.refasociados
+		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
+		inner join (select
+                     max(version) as version,refcotizaciones, refproductosaux
+                     from		dbventas
+                     group by refcotizaciones, refproductosaux) vf
+               on vf.refcotizaciones = c.idcotizacion
+      left join tbproductos proa ON proa.idproducto = vf.refproductosaux
+      inner join dbventas v on v.refcotizaciones = vf.refcotizaciones and v.version = vf.version and v.refproductosaux = vf.refproductosaux
+            INNER JOIN
+          dbperiodicidadventas pv ON pv.refventas = v.idventa
+              INNER JOIN
+          tbtipoperiodicidad tp ON tp.idtipoperiodicidad = pv.reftipoperiodicidad
+            inner join tbtipocobranza tcc on tcc.idtipocobranza = pv.reftipocobranza
+              left JOIN
+          dbperiodicidadventasdetalle pvd ON pvd.refperiodicidadventas = pv.idperiodicidadventa
+      where ".$cadEstado.$cadVencidas." ".$where.$cadFecha.$cadAgente."
+      GROUP BY v.idventa , cli.apellidopaterno , cli.apellidomaterno , cli.nombre , v.refproductosaux , pro.producto , ase.apellidopaterno , ase.apellidomaterno ,
+      ase.nombre , aso.apellidopaterno , aso.apellidomaterno , aso.nombre , v.primaneta , v.primatotal , v.foliotys , v.fechavencimientopoliza , v.nropoliza ,
+      est.estadocotizacion , v.foliointerno , c.refclientes , c.refproductos , c.refasesores , c.refasociados , c.refestadocotizaciones , c.observaciones ,
+      c.fechacrea , c.fechamodi , c.usuariocrea , c.usuariomodi , c.refusuarios , tp.meses, v.refestadoventa
+
+
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+      //tp.meses
+		//die(var_dump($sql));
+      //having (case when max(v.version) > 1 then 13 else COUNT(pvd.idperiodicidadventadetalle) end) >= 1
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+
+   
 
    function traerVentasActivos() {
 		$sql = "select
@@ -8566,30 +8839,8 @@ return $res;
 		return $res;
 	}
 
-
-   function traerVentasRenovacionesPendientesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$idasesor) {
-		$where = '';
-
-		$roles = '';
-
-	   if ($responsableComercial != '') {
-	      $roles = " ase.refusuarios = ".$responsableComercial." and ";
-	   } else {
-	      $roles = '';
-	   }
-
-      $cadAsesor = '';
-      if ($idasesor != '') {
-         $cadAsesor = " and ase.idasesor = ".$idasesor." ";
-      }
-
-		$busqueda = str_replace("'","",$busqueda);
-		if ($busqueda != '') {
-			$where = " and ".$roles." (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or (case when v.refproductosaux > 0 then proa.producto else pro.producto end) like '%".$busqueda."%' or concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%' or v.nropoliza like '%".$busqueda."%' or cli.razonsocial like '%".$busqueda."%')";
-		}
-
-
-		$sql = "select
+   function traerRenovacionesPorVencer($idasesor, $idcliente, $idproducto, $idcotizacion) {
+      $sql = "select
 		v.idventa,
 		(case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
 		(case when v.refproductosaux > 0 then proa.producto else pro.producto end) as producto,
@@ -8629,9 +8880,86 @@ return $res;
                on vf.refcotizaciones = c.idcotizacion
       left join tbproductos proa ON proa.idproducto = vf.refproductosaux
       inner join dbventas v on v.refcotizaciones = vf.refcotizaciones and v.version = vf.version and v.refproductosaux = vf.refproductosaux
+      left join dbrenovaciones rn ON rn.refventas = v.idventa and rn.refcotizaciones = ".$idcotizacion."
+
+		where v.refestadoventa = 1
+            and rn.idrenovacion is null
+            and DATEDIFF(v.fechavencimientopoliza,CURDATE()) <= 60
+            and ase.idasesor = ".$idasesor."
+            and pro.idproducto = ".$idproducto."
+            and cli.idcliente = ".$idcliente;
+
+      $res = $this->query($sql,0);
+
+      return $res;
+   }
+
+
+   function traerVentasRenovacionesPendientesajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$idasesor) {
+		$where = '';
+
+		$roles = '';
+
+	   if ($responsableComercial != '') {
+	      $roles = " ase.refusuarios = ".$responsableComercial." and ";
+	   } else {
+	      $roles = '';
+	   }
+
+      $cadAsesor = '';
+      if ($idasesor != '') {
+         $cadAsesor = " and ase.idasesor = ".$idasesor." ";
+      }
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and ".$roles." (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or (case when v.refproductosaux > 0 then proa.producto else pro.producto end) like '%".$busqueda."%' or concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%' or v.nropoliza like '%".$busqueda."%' or cli.razonsocial like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+		v.idventa,
+		(case when cli.reftipopersonas = '1' then concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as cliente,
+		(case when v.refproductosaux > 0 then proa.producto else pro.producto end) as producto,
+		concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,
+		concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) as asociado,
+		v.primaneta,
+		v.primatotal,
+		v.foliotys,
+		v.fechavencimientopoliza,
+		v.nropoliza,
+      DATEDIFF(CURDATE(),v.fechavencimientopoliza) as dias,
+		est.estadocotizacion,
+		v.foliointerno,
+		c.refclientes,
+		c.refproductos,
+		c.refasesores,
+		c.refasociados,
+		c.refestadocotizaciones,
+		c.observaciones,
+		c.fechacrea,
+		c.fechamodi,
+		c.usuariocrea,
+		c.usuariomodi,
+		c.refusuarios
+		from dbcotizaciones c
+		inner join dbclientes cli ON cli.idcliente = c.refclientes
+		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
+		inner join tbproductos pro ON pro.idproducto = c.refproductos
+		inner join dbasesores ase ON ase.idasesor = c.refasesores
+		left join dbusuarios us ON us.idusuario = c.refusuarios
+		left join dbasociados aso ON aso.idasociado = c.refasociados
+		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
+		inner join (select
+                     max(version) as version,refcotizaciones, refproductosaux
+                     from		dbventas
+                     group by refcotizaciones, refproductosaux) vf
+               on vf.refcotizaciones = c.idcotizacion
+      left join tbproductos proa ON proa.idproducto = vf.refproductosaux
+      inner join dbventas v on v.refcotizaciones = vf.refcotizaciones and v.version = vf.version and v.refproductosaux = vf.refproductosaux
       left join dbrenovaciones rn ON rn.refventas = v.idventa
 
-		where v.refestadoventa = 1 and rn.idrenovacion is null and DATEDIFF(v.fechavencimientopoliza,CURDATE()) <= 29 ".$where.$cadAsesor."
+		where v.refestadoventa = 1 and rn.idrenovacion is null and DATEDIFF(v.fechavencimientopoliza,CURDATE()) <= 60 ".$where.$cadAsesor."
 
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
@@ -8721,6 +9049,8 @@ return $res;
 
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
+
+      // ver con javier esto: v.vigenciadesde > CURDATE()
 
 		//die(var_dump($sql));
 
@@ -8976,7 +9306,7 @@ return $res;
       inner join dbventas v on v.refcotizaciones = vf.refcotizaciones and v.version = vf.version and v.refproductosaux = vf.refproductosaux
       inner join tbestadoventa ev on ev.idestadoventa = v.refestadoventa
 
-		where v.refestadoventa in (2,3,4,5,7,8) ".$where.$cadFecha.$cadAgente."
+		where v.refestadoventa in (2,3,4,5,7,8,9,10) ".$where.$cadFecha.$cadAgente."
 
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
@@ -9077,7 +9407,7 @@ return $res;
             inner join tbtipocobranza tcc on tcc.idtipocobranza = pv.reftipocobranza
               left JOIN
           dbperiodicidadventasdetalle pvd ON pvd.refperiodicidadventas = pv.idperiodicidadventa
-      where v.refestadoventa = 1 ".$where.$cadFecha.$cadAgente."
+      where v.refestadoventa = 1 and v.fechavencimientopoliza >= current_date() ".$where.$cadFecha.$cadAgente."
       GROUP BY v.idventa , cli.apellidopaterno , cli.apellidomaterno , cli.nombre , v.refproductosaux , pro.producto , ase.apellidopaterno , ase.apellidomaterno ,
       ase.nombre , aso.apellidopaterno , aso.apellidomaterno , aso.nombre , v.primaneta , v.primatotal , v.foliotys , v.fechavencimientopoliza , v.nropoliza ,
       est.estadocotizacion , v.foliointerno , c.refclientes , c.refproductos , c.refasesores , c.refasociados , c.refestadocotizaciones , c.observaciones ,
@@ -9291,7 +9621,7 @@ return $res;
             $cadEstado = ' and v.refestadoventa = 6 ';
          break;
          case 3:
-            $cadEstado = ' and v.refestadoventa in (3,4,5,6,7,8) ';
+            $cadEstado = ' and v.refestadoventa in (3,4,5,6,7,8,9,10) ';
          break;
       }
 
@@ -13302,6 +13632,185 @@ return $res;
             return 1;
          }
       }
+   }
+
+
+   function copiarCotizacion($idcotizacion, $fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$identico) {
+      $version = 1;
+      $folio = $this->generaFolioInternoCotizaciones();
+
+      $fechacrea = date('Y-m-d H:i:s');
+      $fechamodi = date('Y-m-d H:i:s');
+
+      if ($identico == 1) {
+         $sql = "INSERT INTO `dbcotizaciones`
+                  (`idcotizacion`,`refclientes`,
+                  `refproductos`,`refasesores`,
+                  `refasociados`,`refestadocotizaciones`,
+                  `cobertura`,`reasegurodirecto`,
+                  `tiponegocio`,`presentacotizacion`,
+                  `fechapropuesta`,`fecharenovacion`,
+                  `fechaemitido`,`fechacrea`,
+                  `fechamodi`,`usuariocrea`,
+                  `usuariomodi`,`refusuarios`,
+                  `fechavencimiento`,`coberturaactual`,
+                  `existeprimaobjetivo`,`primaobjetivo`,
+                  `tieneasegurado`,`refasegurados`,
+                  `refbeneficiarios`,`folio`,
+                  `version`,`refcotizaciones`,
+                  `refestados`,`primaneta`,
+                  `primatotal`,`bitacoracrea`,
+                  `bitacorainbursa`,`bitacoraagente`,
+                  `observaciones`)
+                  SELECT '',
+                      `refclientes`,
+                      `refproductos`,
+                      `refasesores`,
+                      `refasociados`,
+                      `refestadocotizaciones`,
+                      `cobertura`,
+                      `reasegurodirecto`,
+                      'Renovación en inbursa',
+                      `presentacotizacion`,
+                      NULL,
+                      `fecharenovacion`,
+                      `fechaemitido`,
+                      '".$fechacrea."',
+                      '".$fechamodi."',
+                      '".$usuariocrea."',
+                      '".$usuariomodi."',
+                      `refusuarios`,
+                      `fechavencimiento`,
+                      63,
+                      `existeprimaobjetivo`,
+                      `primaobjetivo`,
+                      `tieneasegurado`,
+                      `refasegurados`,
+                      `refbeneficiarios`,
+                      '".$folio."',
+                      ".$version.",
+                      ".$idcotizacion.",
+                      `refestados`,
+                      `primaneta`,
+                      `primatotal`,
+                      `bitacoracrea`,
+                      `bitacorainbursa`,
+                      `bitacoraagente`,
+                      `observaciones`
+                  FROM `dbcotizaciones` where idcotizacion = ".$idcotizacion;
+      } else {
+         $sql = "INSERT INTO `dbcotizaciones`
+                  (`idcotizacion`,`refclientes`,
+                  `refproductos`,`refasesores`,
+                  `refasociados`,`refestadocotizaciones`,
+                  `cobertura`,`reasegurodirecto`,
+                  `tiponegocio`,`presentacotizacion`,
+                  `fechapropuesta`,`fecharenovacion`,
+                  `fechaemitido`,`fechacrea`,
+                  `fechamodi`,`usuariocrea`,
+                  `usuariomodi`,`refusuarios`,
+                  `fechavencimiento`,`coberturaactual`,
+                  `existeprimaobjetivo`,`primaobjetivo`,
+                  `tieneasegurado`,`refasegurados`,
+                  `refbeneficiarios`,`folio`,
+                  `version`,`refcotizaciones`,
+                  `refestados`,`primaneta`,
+                  `primatotal`,`bitacoracrea`,
+                  `bitacorainbursa`,`bitacoraagente`,
+                  `observaciones`)
+                  SELECT '',
+                      `refclientes`,
+                      `refproductos`,
+                      `refasesores`,
+                      `refasociados`,
+                      1,
+                      `cobertura`,
+                      `reasegurodirecto`,
+                      'Renovación en inbursa',
+                      `presentacotizacion`,
+                      NULL,
+                      `fecharenovacion`,
+                      `fechaemitido`,
+                      '".$fechacrea."',
+                      '".$fechamodi."',
+                      '".$usuariocrea."',
+                      '".$usuariomodi."',
+                      `refusuarios`,
+                      `fechavencimiento`,
+                      63,
+                      `existeprimaobjetivo`,
+                      `primaobjetivo`,
+                      `tieneasegurado`,
+                      `refasegurados`,
+                      `refbeneficiarios`,
+                      '".$folio."',
+                      ".$version.",
+                      ".$idcotizacion.",
+                      1,
+                      `primaneta`,
+                      `primatotal`,
+                      `bitacoracrea`,
+                      `bitacorainbursa`,
+                      `bitacoraagente`,
+                      `observaciones`
+                  FROM `dbcotizaciones` where idcotizacion = ".$idcotizacion;
+      }
+      
+
+      $res = $this->query($sql,1);
+
+
+
+      if ((integer)$res > 0) {
+
+         //trazabilidad 1
+         $resTZ = $this->insertarTrazabilidad(12,$res,$fechacrea,1,$usuariocrea,0,0,0,'Se genero una cotización nueva a partir de un ajuste','');
+
+         // si es identico tambien copio archivos
+         if ($identico == 1) {
+            if (!file_exists('../archivos/cotizaciones/'.$res)) {
+               mkdir('../archivos/cotizaciones/'.$res, 0777);
+            }
+
+            // necesito recuperar los archivos
+            $resArchivos = $this->traerDocumentacioncotizacionesPorCotizacionCopia($idcotizacion);
+
+            while ($rowAr = mysql_fetch_array($resArchivos)) {
+
+               $dir_origen = '../archivos/cotizaciones/'.$idcotizacion.'/'.$rowAr['carpeta'].'/';
+               $dir_destino = '../archivos/cotizaciones/'.$res.'/'.$rowAr['carpeta'].'/';
+
+               if (!file_exists('../archivos/cotizaciones/'.$res.'/')) {
+                  mkdir('../archivos/cotizaciones/'.$res.'/', 0777);
+               }
+
+               if (!file_exists($dir_destino)) {
+                  mkdir($dir_destino, 0777);
+               }
+
+               $resCopy = copy($dir_origen.$rowAr['archivo'] , $dir_destino.$rowAr['archivo']);
+
+               //insert
+               if ($resCopy) {
+                  $resInsertarArchivo = $this->insertarDocumentacioncotizaciones($res,$rowAr['refdocumentaciones'],$rowAr['archivo'],$rowAr['type'],$rowAr['refestadodocumentaciones'],$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
+               }
+
+            }
+         }
+
+         $resV['error'] = false;
+         $resV['mensaje'] = 'Se genero correctamente';
+         $resV['id'] = $res;
+
+      } else {
+
+         $resV['error'] = true;
+         $resV['mensaje'] = 'No se pudo insertar el registro';
+         $resV['id'] = 0;
+      }
+
+      return $resV;
+
    }
 
    function ajustarCotizacion($idcotizacion, $fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {

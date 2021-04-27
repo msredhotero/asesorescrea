@@ -58,6 +58,22 @@ if (isset($_GET['id'])) {
 	$id = $_GET['id'];
 	$resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
+	$resRenovacion = $serviciosReferencias->traerRenovacionesPorCotizacionNueva($id);
+
+	if (mysql_num_rows($resRenovacion) > 0) {
+		$idrenovacion = mysql_result($resRenovacion,0,0);
+
+		$existeRenovacion = 1;
+
+		$resVentasVieja = $serviciosReferencias->traerVentasPorId(mysql_result($resRenovacion,0,'refventas'));
+
+		$polizaVieja = mysql_result($resVentasVieja,0,'nropoliza');
+		$fechavencimientoVieja = mysql_result($resVentasVieja,0,'fechavencimientopoliza');
+	} else {
+		$existeRenovacion = 0;
+		$idrenovacion = 0;
+	}
+
 	if (mysql_num_rows($resultado)<=0) {
 		header('Location: index.php');
 	}
@@ -282,23 +298,28 @@ if (isset($_GET['id'])) {
 		break;
 	}
 
-	switch (mysql_result($resultado,0,'tiponegocio')) {
-		case 'Negocio nuevo':
-			$cadRef9b = "<option value='Negocio nuevo' selected>Negocio nuevo</option><option value='Renovación en inbursa'>Renovación en inbursa</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option><option value='Renovación póliza en otra aseguradora'>Renovación póliza en otra aseguradora</option>";
-		break;
-		case 'Renovación en inbursa':
-			$cadRef9b = "<option value='Negocio nuevo' >Negocio nuevo</option><option value='Renovación en inbursa' selected>Renovación en inbursa</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option><option value='Renovación póliza en otra aseguradora'>Renovación póliza en otra aseguradora</option>";
-		break;
-		case 'Renovación póliza con otro agente':
-			$cadRef9b = "<option value='Negocio nuevo' >Negocio nuevo</option><option value='Renovación en inbursa' >Renovación en inbursa</option><option value='Renovación póliza con otro agente' selected>Renovación póliza con otro agente</option><option value='Renovación póliza en otra aseguradora'>Renovación póliza en otra aseguradora</option>";
-		break;
-		case 'Renovación póliza en otra aseguradora':
-			$cadRef9b = "<option value='Negocio nuevo' >Negocio nuevo</option><option value='Renovación en inbursa' >Renovación en inbursa</option><option value='Renovación póliza con otro agente' >Renovación póliza con otro agente</option><option value='Renovación póliza en otra aseguradora' selected>Renovación póliza en otra aseguradora</option>";
-		break;
-		default:
-			$cadRef9b = "<option value='Negocio nuevo' >Negocio nuevo</option><option value='Renovación en inbursa' >Renovación en inbursa</option><option value='Renovación póliza con otro agente' >Renovación póliza con otro agente</option><option value='Renovación póliza en otra aseguradora'>Renovación póliza en otra aseguradora</option>";
-		break;
+	if ($existeRenovacion == 1) {
+		$cadRef9b = "<option value='Renovación en inbursa'>Renovación en inbursa</option>";
+	} else {
+		switch (mysql_result($resultado,0,'tiponegocio')) {
+			case 'Negocio nuevo':
+				$cadRef9b = "<option value='Negocio nuevo' selected>Negocio nuevo</option><option value='Renovación en inbursa'>Renovación en inbursa</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option><option value='Renovación póliza en otra aseguradora'>Renovación póliza en otra aseguradora</option>";
+			break;
+			case 'Renovación en inbursa':
+				$cadRef9b = "<option value='Negocio nuevo' >Negocio nuevo</option><option value='Renovación en inbursa' selected>Renovación en inbursa</option><option value='Renovación póliza con otro agente'>Renovación póliza con otro agente</option><option value='Renovación póliza en otra aseguradora'>Renovación póliza en otra aseguradora</option>";
+			break;
+			case 'Renovación póliza con otro agente':
+				$cadRef9b = "<option value='Negocio nuevo' >Negocio nuevo</option><option value='Renovación en inbursa' >Renovación en inbursa</option><option value='Renovación póliza con otro agente' selected>Renovación póliza con otro agente</option><option value='Renovación póliza en otra aseguradora'>Renovación póliza en otra aseguradora</option>";
+			break;
+			case 'Renovación póliza en otra aseguradora':
+				$cadRef9b = "<option value='Negocio nuevo' >Negocio nuevo</option><option value='Renovación en inbursa' >Renovación en inbursa</option><option value='Renovación póliza con otro agente' >Renovación póliza con otro agente</option><option value='Renovación póliza en otra aseguradora' selected>Renovación póliza en otra aseguradora</option>";
+			break;
+			default:
+				$cadRef9b = "<option value='Negocio nuevo' >Negocio nuevo</option><option value='Renovación en inbursa' >Renovación en inbursa</option><option value='Renovación póliza con otro agente' >Renovación póliza con otro agente</option><option value='Renovación póliza en otra aseguradora'>Renovación póliza en otra aseguradora</option>";
+			break;
+		}
 	}
+	
 
 	$cadRef11 = '';
 	switch (mysql_result($resultado,0,'existeprimaobjetivo')) {
@@ -426,36 +447,6 @@ if (isset($_GET['id'])) {
 
 	//////////////////////////////////////////////
 
-	switch ($iddocumentacion) {
-		case 35:
-			// code...
-			$dato = mysql_result($resultado,0,'nropoliza');
-
-			$input = '<input type="text" name="nropoliza" maxlength="13" id="nropoliza" class="form-control" value="'.$dato.'"/> ';
-			$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
-			$leyenda = 'Cargue el Nro de Poliza';
-			$campo = 'nropoliza';
-		break;
-		case 36:
-			// code...
-			$dato = mysql_result($resultado,0,'nrorecibo');
-
-			$input = '<input type="text" name="nrorecibo" maxlength="20" id="nrorecibo" class="form-control" value="'.$dato.'"/> ';
-			$boton = '<button type="button" class="btn btn-primary waves-effect btnModificar">GUARDAR</button>';
-			$leyenda = 'Cargue el Nro de Recibo';
-			$campo = 'nrorecibo';
-		break;
-
-
-		default:
-			// code...
-			$input = '';
-			$boton = '';
-			$leyenda = '';
-			$campo = '';
-		break;
-	}
-
 	if (mysql_num_rows($resDocumentacion)>0) {
 		$documentacionNombre = mysql_result($resDocumentacion,0,'documentacion');
 	} else {
@@ -472,6 +463,17 @@ if (isset($_GET['id'])) {
 
 	$resTipoMoneda = $serviciosReferencias->traerTipomoneda();
 	$cadTipoMoneda = $serviciosFunciones->devolverSelectBox($resTipoMoneda,array(1),'');
+
+	//para las renovaciones
+	if ($existeRenovacion == 1) {
+		$resRenovaciones = $serviciosReferencias->traerVentasPorId(mysql_result($resRenovacion,0,'refventas'));
+		$cadRefRenovacion = $serviciosFunciones->devolverSelectBox($resRenovaciones,array(9,10),' - ');
+	} else {
+		$resRenovaciones = $serviciosReferencias->traerRenovacionesPorVencer($refAsesores, $rIdCliente, $refProductos, $id);
+		$cadRefRenovacion = $serviciosFunciones->devolverSelectBox($resRenovaciones,array(9,8),' - ');
+	}
+	
+	
 
 // fin de cuando ya graba el producto
 } else {
@@ -595,7 +597,9 @@ $frmUnidadNegociosASG 	= $serviciosFunciones->camposTablaViejo($insertarASG ,$ta
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 
-$resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuestionarioObligatorias(mysql_result($resProducto,0,'refcuestionarios'));
+//die(var_dump( mysql_result($resProducto,0,'refcuestionarios') == '' ? 0 : mysql_result($resProducto,0,'refcuestionarios')));
+
+$resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuestionarioObligatorias(mysql_result($resProducto,0,'refcuestionarios') == '' ? 0 : mysql_result($resProducto,0,'refcuestionarios'));
 
 
 $resEstadoCivil = $serviciosReferencias->traerEstadocivilPorIn('1,2');
@@ -605,6 +609,8 @@ $resDirectorioNecesario = $serviciosReferencias->traerDirectorioasesoresPorAseso
 $resSuscriptores = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosArea($idasesor,2);
 $resMesaControl = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosArea($idasesor,3);
 $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosArea($idasesor,1);
+
+
 
 ?>
 
@@ -1107,35 +1113,55 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 												</div>
 											</div>
 
-										<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContfechavencimiento" style="display:block">
-											<b>Fecha de Vencimiento póliza Actual</b>
-											<div class="input-group">
+											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContfechavencimiento" style="display:block">
+												<b>Fecha de Vencimiento póliza Actual</b>
+												<div class="input-group form-group">
 
-											<span class="input-group-addon">
-												 <i class="material-icons">date_range</i>
-											</span>
-											  <div class="form-line">
-
-													<input style="width:200px;" type="text" class="form-control" id="fechavencimiento" name="fechavencimiento" value="" />
-
-											  </div>
-											</div>
-										</div>
-
-										<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 frmContcoberturaactual" style="display:block">
-
-											<div class="form-group input-group">
-												<label class="form-label">Aseguradora con quien esta suscrita la póliza</label>
+												<span class="input-group-addon">
+													<i class="material-icons">date_range</i>
+												</span>
 												<div class="form-line">
-													<select class="form-control" id="coberturaactual" name="coberturaactual" required>
-														<option value='0'>-- Seleccionar --</option>
-														<?php echo $cadRef10; ?>
-													</select>
+
+														<input style="width:200px;" type="text" class="form-control" id="fechavencimiento" name="fechavencimiento" value="" />
+
+												</div>
 												</div>
 											</div>
 
-											<input style="width:200px;" type="hidden" class="form-control" id="fecharenovacion" name="fecharenovacion" />
-										</div>
+											<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 frmContcoberturaactual" style="display:block">
+
+												<div class="form-group input-group">
+													<label class="form-label">Aseguradora con quien esta suscrita la póliza</label>
+													<div class="form-line">
+														<select class="form-control" id="coberturaactual" name="coberturaactual" required>
+															<option value='0'>-- Seleccionar --</option>
+															<?php echo $cadRef10; ?>
+														</select>
+													</div>
+												</div>
+
+												<input style="width:200px;" type="hidden" class="form-control" id="fecharenovacion" name="fecharenovacion" />
+											</div>
+
+											<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 frmContrenovaciones" style="display:block">
+
+												<div class="form-group input-group">
+													<label class="form-label">Renovación</label>
+													<div class="form-line">
+														<select class="form-control" id="idrenovacion" name="idrenovacion">
+														<?php 
+															// si existe una renovacion creada para empezar a cotizar de cero, fijo los datos
+															if ($existeRenovacion == 0) { 
+														?>
+															<option value='0'>-- Seleccionar --</option>
+														<?php } ?>
+															<?php echo $cadRefRenovacion; ?>
+														</select>
+													</div>
+												</div>
+
+												<input style="width:200px;" type="hidden" class="form-control" id="fecharenovacion" name="fecharenovacion" />
+											</div>
 										</div>
 
 										<div class="row">
@@ -2535,11 +2561,11 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 					if (data.error) {
 
 						swal({
-								title: "Respuesta",
-								text: 'Ocurrio un error verifique los datos',
-								type: "error",
-								timer: 2000,
-								showConfirmButton: false
+							title: "Respuesta",
+							text: 'Ocurrio un error verifique los datos',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
 						});
 
 						form.steps("previous");
@@ -2609,8 +2635,27 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 		});
 
 
+		<?php 
+			// si existe una renovacion creada para empezar a cotizar de cero, fijo los datos
+			if ($existeRenovacion == 1) { 
+		?>
+			$('.frmContrenovaciones').show();
+			$('.frmContfechavencimiento').show();
+			$('.frmContcoberturaactual').show();
+			$('.frmContvigenciapoliza').hide();
 
-		$("#wizard_with_validation").on("change",'#tiponegocio', function(){
+			$("#wizard_with_validation #fechavencimiento").prop('required',true);
+			$("#wizard_with_validation #coberturaactual").prop('required',true);
+
+
+
+			$("#wizard_with_validation #coberturaactual").prop('readonly',true);
+			$("#wizard_with_validation #idrenovacion").prop('readonly',true);
+
+
+
+		<?php } else { ?>
+			$("#wizard_with_validation").on("change",'#tiponegocio', function(){
 			if (($(this)[0].selectedIndex == 1) || ($(this)[0].selectedIndex == 2) || ($(this)[0].selectedIndex == 3)) {
 				$('.frmContfechavencimiento').show();
 				$('.frmContcoberturaactual').show();
@@ -2620,6 +2665,13 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 
 				$('#wizard_with_validation #vigenciapoliza').val('');
 				$('.frmContvigenciapoliza').hide();
+
+				if ($(this)[0].selectedIndex == 1) {
+					$('.frmContrenovaciones').show();
+				} else {
+					$('.frmContrenovaciones').hide();
+					$('#wizard_with_validation #idrenovacion').val(0);
+				}
 
 			} else {
 				$('.frmContvigenciapoliza').show();
@@ -2635,6 +2687,8 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 
 			}
 		});
+		<?php } ?>
+		
 
 
 
@@ -2642,6 +2696,9 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 			$(event.currentTarget).find('[role="menu"] li a').removeClass('waves-effect');
 			$(event.currentTarget).find('[role="menu"] li:not(.disabled) a').addClass('waves-effect');
 		}
+
+		$('.contSubirArchivos1').hide();
+		$('.contSubirArchivos2').hide();
 
 		//Advanced form with validation
 	    var form = $('#wizard_with_validation').show();
@@ -2989,7 +3046,8 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 					reftipomoneda: $('#reftipomoneda').val(),
 					folioagente: $('#folioagente').val(),
 					ot: $('#ot').val(),
-					vigenciapoliza: $('#vigenciapoliza').val()
+					vigenciapoliza: $('#vigenciapoliza').val(),
+					idrenovacion: $('#idrenovacion').val()
  				},
  				//mientras enviamos el archivo
  				beforeSend: function(){
@@ -3657,41 +3715,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 			modificarEstadoDocumentacionCotizaciones($('#refestados').val());
 		});
 
-		function modificarEstadoDocumentacionCotizaciones(idestado) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {
-					accion: 'modificarEstadoDocumentacionCotizaciones',
-					iddocumentacioncotizacion: <?php echo $iddocumentacionasociado; ?>,
-					idestado: idestado
-				},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-					$('.guardarEstado').hide();
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data.error == false) {
-						swal("Ok!", 'Se modifico correctamente el estado de la documentación <?php echo $campo; ?>', "success");
-						$('.guardarEstado').show();
-						//location.reload();
-					} else {
-						swal("Error!", data.leyenda, "warning");
-
-						$("#load").html('');
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
-		}
+		
 
 		function traerImagen(contenedorpdf, contenedor) {
 			$.ajax({
@@ -3803,41 +3827,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 			modificarEstadoDocumentacionCotizaciones2($('#refestados2').val());
 		});
 
-		function modificarEstadoDocumentacionCotizaciones2(idestado) {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {
-					accion: 'modificarEstadoDocumentacionCotizaciones',
-					iddocumentacioncotizacion: <?php echo $iddocumentacionasociado2; ?>,
-					idestado: idestado
-				},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-					$('.guardarEstado2').hide();
-				},
-				//una vez finalizado correctamente
-				success: function(data){
-
-					if (data.error == false) {
-						swal("Ok!", 'Se modifico correctamente el estado de la documentación <?php echo $campo; ?>', "success");
-						$('.guardarEstado2').show();
-						//location.reload();
-					} else {
-						swal("Error!", data.leyenda, "warning");
-
-						$("#load").html('');
-					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
-					$("#load").html('');
-				}
-			});
-		}
+		
 
 		$('.btnVerArchivo').click(function() {
 			window.open($('#verarchivo').val(),'_blank');

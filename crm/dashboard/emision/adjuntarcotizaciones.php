@@ -328,7 +328,7 @@ switch ($iddocumentacion) {
 					//3=aceptadas , 4=Entregadas, 5=emision, 6=mesa de control
 					$cambiaObligatoriedad = $serviciosReferencias->existeDocumentacionprocesosPorDocumentacionesProceso($row['iddocumentacion'],5);
 
-					if (($row['obligatoria'] == '1') || $cambiaObligatoriedad==1) {
+					if (($row['obligatoria'] == '1')) {
 						$archivosObligatorios += 1;
 						$lblObligatoria = ' <span style="color:red;">(*)</span>';
 					} else {
@@ -339,7 +339,9 @@ switch ($iddocumentacion) {
 						$archivosCargadosObligatorios += 1;
 					}
 
-					if ($row['archivo'] != '') {
+					
+
+					if (($row['archivo'] != '') || (($row['obligatoria'] == '1') || $cambiaObligatoriedad==1)) {
 				?>
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box-3 bg-<?php echo $row['color'].$activaLbl; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
@@ -352,9 +354,13 @@ switch ($iddocumentacion) {
 							</div>
 						</div>
 					</div>
-				<?php } } ?>
-				<?php if (($_SESSION['idroll_sahilices']==1)||($_SESSION['idroll_sahilices']==4)||($_SESSION['idroll_sahilices']==11)||($_SESSION['idroll_sahilices']==3)) { ?>
-				<?php if ($archivosCargadosObligatorios == $archivosObligatorios) { ?>
+				<?php } } 
+					//die(var_dump($archivosObligatorios.' '.$archivosCargadosObligatorios));
+				?>
+				<?php if (($_SESSION['idroll_sahilices']==1)||($_SESSION['idroll_sahilices']==4)||($_SESSION['idroll_sahilices']==11)||($_SESSION['idroll_sahilices']==3)) { 
+					
+					?>
+				<?php if ($archivosCargadosObligatorios >= $archivosObligatorios) { ?>
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box-3 bg-green hover-zoom-effect btnAbandonada">
 							<div class="icon">

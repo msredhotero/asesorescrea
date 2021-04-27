@@ -64,6 +64,9 @@ $resAsesores = $serviciosReferencias->traerAsesores();
 $cadRef33 = '<option value="">-- Seleccionar --</option>';
 $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' ');
 
+$resMotivoRechazo = $serviciosReferencias->traerMotivorechazopoliza();
+$cadMotivoRechazos = $serviciosFunciones->devolverSelectBox($resMotivoRechazo,array(1),'');
+
 ?>
 
 <!DOCTYPE html>
@@ -203,6 +206,10 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 												<i class="material-icons">timeline</i>
 												<span>ACTIVAS</span>
 											</button>
+											<button type="button" class="btn bg-red waves-effect btnVencidas">
+												<i class="material-icons">alarm_add</i>
+												<span>VENCIDAS</span>
+											</button>
 											<button type="button" class="btn bg-grey waves-effect btnHistorico">
 												<i class="material-icons">history</i>
 												<span>HISTORICO</span>
@@ -266,6 +273,45 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 								<div class="row contActuales" style="padding: 5px 20px;">
 									<h4>POLIZAS ACTIVAS</h4>
 									<table id="example" class="display table " style="width:100%">
+										<thead>
+											<tr>
+												<th>Cliente</th>
+												<th>Producto</th>
+												<th>Asesor</th>
+												<th>Asociado</th>
+												<th>P. Neta</th>
+												<th>P. Total</th>
+												<th>Folio TYS</th>
+												<th>Fecha Venc.</th>
+												<th>Nro Poliza</th>
+												<th>Periodicidad Pago</th>
+												<th>Metodo de Pago</th>
+												<th>Acciones</th>
+											</tr>
+										</thead>
+										<tfoot>
+											<tr>
+												<th>Cliente</th>
+												<th>Producto</th>
+												<th>Asesor</th>
+												<th>Asociado</th>
+												<th>P. Neta</th>
+												<th>P. Total</th>
+												<th>Folio TYS</th>
+												<th>Fecha Venc.</th>
+												<th>Nro Poliza</th>
+												<th>Periodicidad Pago</th>
+												<th>Metodo de Pago</th>
+												<th>Acciones</th>
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+
+
+								<div class="row contVencidas" style="padding: 5px 20px;">
+									<h4>POLIZAS VENCIDAS</h4>
+									<table id="example7" class="display table " style="width:100%">
 										<thead>
 											<tr>
 												<th>Cliente</th>
@@ -508,8 +554,8 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 		                   <h4 class="modal-title" id="largeModalLabel">ELIMINAR <?php echo strtoupper($singular); ?></h4>
 		               </div>
 		               <div class="modal-body">
-										 <p>¿Esta seguro que desea eliminar el registro?</p>
-										 <small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
+							<p>¿Esta seguro que desea eliminar el registro?</p>
+							<small>* Si este registro esta relacionado con algun otro dato no se podría eliminar.</small>
 		               </div>
 		               <div class="modal-footer">
 		                   <button type="button" class="btn btn-danger waves-effect eliminar">ELIMINAR</button>
@@ -521,6 +567,63 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 			<input type="hidden" id="accion" name="accion" value="<?php echo $eliminar; ?>"/>
 			<input type="hidden" name="ideliminar" id="ideliminar" value="0">
 		</form>
+
+
+
+		<div class="modal fade" id="lgmCancelarPoliza" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header bg-orange">
+						<h4 class="modal-title" id="largeModalLabel">CANCELAR POLIZA</h4>
+					</div>
+					<div class="modal-body">
+						<h2>¿Esta seguro que desea cancelar la Poliza?</h2>
+						<div class="row">
+							<div class="col-xs-6">
+								<div class="form-group input-group">
+									<label class="label-form">Motivo del Rechazo</label>
+									<select class="form-control" id="motivorechazo" name="motivorechazo">
+										<?php echo $cadMotivoRechazos; ?>
+									</select>
+								</div>
+							</div>
+							<div class="col-xs-12">
+								<div class="form-group input-group">
+									<label class="label-form">Observaciones</label>
+									<textarea type="text" rows="4" cols="6" class="form-control" id="observacionrechazo" name="observacionrechazo" placeholder="Ingrese las observaciones..."></textarea>
+								</div>
+							</div>
+							<input type="hidden" name="idventarechazo" id="idventarechazo" value="" />
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger waves-effect btnCancelarPoliza">CANCELAR</button>
+						<button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="lgmCancelarVencimiento" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header bg-orange">
+						<h4 class="modal-title" id="largeModalLabel">CANCELAR POLIZA</h4>
+					</div>
+					<div class="modal-body">
+						<h2>¿Esta seguro que desea cancelar por vencimiento la Poliza?</h2>
+						<div class="row">
+							
+							<input type="hidden" name="idventavencimiento" id="idventavencimiento" value="" />
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger waves-effect btnCancelarPolizaVencimiento">CANCELAR</button>
+						<button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+					</div>
+				</div>
+			</div>
+		</div>
 
 
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
@@ -584,23 +687,34 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 
 		$('.contHistorico').hide();
 		$('.contIniciada').hide();
+		$('.contVencidas').hide();
 
 		$('.btnIniciada').click(function() {
 			$('.contHistorico').hide();
 			$('.contIniciada').show();
 			$('.contActuales').hide();
+			$('.contVencidas').hide();
 		});
 
 		$('.btnHistorico').click(function() {
 			$('.contHistorico').show();
 			$('.contIniciada').hide();
 			$('.contActuales').hide();
+			$('.contVencidas').hide();
 		});
 
 		$('.btnVigente').click(function() {
 			$('.contHistorico').hide();
 			$('.contIniciada').hide();
 			$('.contActuales').show();
+			$('.contVencidas').hide();
+		});
+
+		$('.btnVencidas').click(function() {
+			$('.contHistorico').hide();
+			$('.contIniciada').hide();
+			$('.contActuales').hide();
+			$('.contVencidas').show();
 		});
 
 		$('.btnCalcularM').click(function() {
@@ -626,6 +740,46 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 				$('.frmAjaxModificar #montocomision').val( 0);
 			}
 		}
+
+
+		var table7 = $('#example7').DataTable({
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=ventasvencidas",
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+				/* Add some extra data to the sender */
+				aoData.push( { "name": "start", "value": $('#fechadesde_filtro').val(), } );
+				aoData.push( { "name": "end", "value": $('#fechahasta_filtro').val(), } );
+				aoData.push( { "name": "agente", "value": $('#agente_filtro').val(), } );
+				$.getJSON( sSource, aoData, function (json) {
+				/* Do whatever additional processing you want on the callback, then tell DataTables */
+				fnCallback(json)
+				} );
+			},
+			"language": {
+				"emptyTable":     "No hay datos cargados",
+				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
+				"infoEmpty":      "Mostrar 0 hasta 0 del total de 0 filas",
+				"infoFiltered":   "(filtrados del total de _MAX_ filas)",
+				"infoPostFix":    "",
+				"thousands":      ",",
+				"lengthMenu":     "Mostrar _MENU_ filas",
+				"loadingRecords": "Cargando...",
+				"processing":     "Procesando...",
+				"search":         "Buscar:",
+				"zeroRecords":    "No se encontraron resultados",
+				"paginate": {
+					"first":      "Primero",
+					"last":       "Ultimo",
+					"next":       "Siguiente",
+					"previous":   "Anterior"
+				},
+				"aria": {
+					"sortAscending":  ": activate to sort column ascending",
+					"sortDescending": ": activate to sort column descending"
+				}
+			}
+		});
 
 
 
@@ -750,6 +904,7 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 			table.draw();
 			table5.draw();
 			table6.draw();
+			table7.draw();
 		} );
 
 
@@ -950,7 +1105,33 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 			$(location).attr('href','nuevo.php');
 		});
 
+		$("#example7").on("click",'.btnVer', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','ver.php?id=' + idTable);
+
+		});//fin del boton modificar
+
+		$("#example").on("click",'.btnCancelar', function(){
+			idTable =  $(this).attr("id");
+			$('#idventarechazo').val(idTable);
+			$('#lgmCancelarPoliza').modal();
+
+		});//fin del boton modificar
+
+		$("#example7").on("click",'.btnCancelarVencida', function(){
+			idTable =  $(this).attr("id");
+			$('#idventavencimiento').val(idTable);
+			$('#lgmCancelarVencimiento').modal();
+
+		});//fin del boton modificar
+
 		$("#example").on("click",'.btnVer', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','ver.php?id=' + idTable);
+
+		});//fin del boton modificar
+
+		$("#example6").on("click",'.btnVer', function(){
 			idTable =  $(this).attr("id");
 			$(location).attr('href','ver.php?id=' + idTable);
 
@@ -1085,6 +1266,120 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 
 		}
 
+		$('.btnCancelarPolizaVencimiento').click(function() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificarVentasUnicaDocumentacionAux', 
+					idventa: $('#idventavencimiento').val(),
+					campo: 'refestadoventa',
+					valor: 8
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error==false) {
+						swal({
+							title: "Respuesta",
+							text: "Registro Cancelado con exito!!",
+							type: "success",
+							timer: 1500,
+							showConfirmButton: false
+						});
+						$('#lgmCancelarVencimiento').modal('toggle');
+						table.ajax.reload();
+						table5.ajax.reload();
+						table7.ajax.reload();
+
+					} else {
+						swal({
+							title: "Respuesta",
+							text: data,
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+					});
+
+				}
+			});
+		});
+
+		$('.btnCancelarPoliza').click(function() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'eliminarVentas', 
+					id: $('#idventarechazo').val(),
+					observaciones: $('#observacionrechazo').val(),
+					estadoventa: 9,
+					motivorechazo: $('#motivorechazo').val()
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data == '') {
+						swal({
+							title: "Respuesta",
+							text: "Registro Cancelado con exito!!",
+							type: "success",
+							timer: 1500,
+							showConfirmButton: false
+						});
+						$('#lgmCancelarPoliza').modal('toggle');
+						table.ajax.reload();
+						table5.ajax.reload();
+
+					} else {
+						swal({
+							title: "Respuesta",
+							text: data,
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+					});
+
+				}
+			});
+		});
+
 
 		function frmAjaxEliminar(id) {
 			$.ajax({
@@ -1102,11 +1397,11 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 
 					if (data == '') {
 						swal({
-								title: "Respuesta",
-								text: "Registro Eliminado con exito!!",
-								type: "success",
-								timer: 1500,
-								showConfirmButton: false
+							title: "Respuesta",
+							text: "Registro Eliminado con exito!!",
+							type: "success",
+							timer: 1500,
+							showConfirmButton: false
 						});
 						$('#lgmEliminar').modal('toggle');
 						table.ajax.reload();
@@ -1114,11 +1409,11 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 
 					} else {
 						swal({
-								title: "Respuesta",
-								text: data,
-								type: "error",
-								timer: 2000,
-								showConfirmButton: false
+							title: "Respuesta",
+							text: data,
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
 						});
 
 					}
@@ -1126,11 +1421,11 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 				//si ha ocurrido un error
 				error: function(){
 					swal({
-							title: "Respuesta",
-							text: 'Actualice la pagina',
-							type: "error",
-							timer: 2000,
-							showConfirmButton: false
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
 					});
 
 				}
@@ -1143,6 +1438,12 @@ $cadRef33 .= $serviciosFunciones->devolverSelectBox($resAsesores,array(3,4,2),' 
 		$('.eliminar').click(function() {
 			frmAjaxEliminar($('#ideliminar').val());
 		});
+
+		$("#example7").on("click",'.btnModificar', function(){
+			idTable =  $(this).attr("id");
+			frmAjaxModificar(idTable);
+			$('#lgmModificar').modal();
+		});//fin del boton modificar
 
 		$("#example").on("click",'.btnModificar', function(){
 			idTable =  $(this).attr("id");

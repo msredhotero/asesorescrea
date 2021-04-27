@@ -62,8 +62,8 @@ $valores = $serviciosReferencias->verificaPolizaDatosCargados($id);
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbventas";
 
-$lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','vigenciadesde');
-$lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Vigencia Desde');
+$lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','fechaemision','vigenciadesde','reftipomoneda','comisioncedida','gastosexpedicion','iva','refmotivorechazopoliza');
+$lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Fecha de Emision','Vigencia Desde','Tipo Moneda','Comision Cedida','Gastos de Expedición','IVA','Motivo de rechazo');
 
 $modificar = "modificarVentas";
 $idTabla = "idventa";
@@ -74,9 +74,14 @@ $cadRef = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(1,2,3),' ',
 $resVar1 = $serviciosReferencias->traerEstadoventa();
 $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),' ',mysql_result($resultado,0,'refestadoventa'));
 
+$resTipoMoneda = $serviciosReferencias->traerTipomoneda();
+$cadTipoMoneda = $serviciosFunciones->devolverSelectBoxActivo($resTipoMoneda,array(1),'',mysql_result($resultado,0,'reftipomoneda'));
 
-$refdescripcion = array(0=>$cadRef,1=>$cadRef2);
-$refCampo 	=  array('refcotizaciones','refestadoventa');
+$resMotivoRechazo = $serviciosReferencias->traerMotivorechazopolizaPorId(mysql_result($resultado,0,'refmotivorechazopoliza'));
+$cadMotivoRechazo = $serviciosFunciones->devolverSelectBox($resMotivoRechazo,array(1),'');
+
+$refdescripcion = array(0=>$cadRef,1=>$cadRef2, 2=> $cadTipoMoneda, 3=>$cadMotivoRechazo);
+$refCampo 	=  array('refcotizaciones','refestadoventa','reftipomoneda','refmotivorechazopoliza');
 
 $formulario = $serviciosFunciones->camposTablaModificar($id, $idTabla,$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
@@ -289,6 +294,19 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 <script>
 	$(document).ready(function(){
 
+		$('#iva').number( true, 2 ,'.','');
+		$('#comisioncedida').number( true, 2 ,'.','');
+		$('#financiamiento').number( true, 2 ,'.','');
+		$('#gastosexpedicion').number( true, 2 ,'.','');
+
+		$('.frmContrefventas').hide();
+		$('.frmContrefproductosaux').hide();
+		<?php if (mysql_result($resultado,0,'refestadoventa') == 9) { ?>
+			$('.frmContrefmotivorechazopoliza').show();
+		<?php } else { ?>
+			$('.frmContrefmotivorechazopoliza').hide();	
+		<?php } ?>
+
 		$('.btnVolver').click(function() {
 			url = "index.php";
 			$(location).attr('href',url);
@@ -344,20 +362,6 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 		}
 
 
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '315px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
-
-		});
-
-
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
@@ -395,6 +399,41 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 		$('#primatotal').number( true, 2,'.','' );
 		$('#montocomision').number( true, 2,'.','' );
 		$('#porcentajecomision').number( true, 2,'.','' );
+
+		
+		$('#vigenciadesde').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		});
+
+		$('#fechaemision').pickadate({
+			format: 'yyyy-mm-dd',
+			labelMonthNext: 'Siguiente mes',
+			labelMonthPrev: 'Previo mes',
+			labelMonthSelect: 'Selecciona el mes del año',
+			labelYearSelect: 'Selecciona el año',
+			selectMonths: true,
+			selectYears: 100,
+			today: 'Hoy',
+			clear: 'Borrar',
+			close: 'Cerrar',
+			monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+			weekdaysFull: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+			weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+		});
 
 		$('#fechavencimientopoliza').pickadate({
 			format: 'yyyy-mm-dd',
