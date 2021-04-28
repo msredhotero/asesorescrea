@@ -260,6 +260,11 @@ if (mysql_num_rows($resRenovacion) > 0) {
 											<span>ACTIVAR</span>
 										</button>
 										<?php } ?>
+
+										<button type="button" class="btn bg-black waves-effect btnTarjetaVRIM">
+											<i class="material-icons">done_all</i>
+											<span>GENERAR TARJETA VRIM</span>
+										</button>
 									</div>
 								</div>
 
@@ -357,6 +362,116 @@ if (mysql_num_rows($resRenovacion) > 0) {
 		$('.btnActivarPoliza').click(function() {
 			aceptarPolizarAgente();
 		});
+
+		//
+		function tokenVRIM() {
+			$.ajax({
+				url: 'https://www.salud-interactiva.com/apisolicitudVRIM/API/TOKEN',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					grant_type: 'password',
+					username: 'as350rcr3a',
+					password: 'vr1m@2021_cr3a'
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					alert(data);
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
+		//tokenVRIM();
+
+		
+
+		function solicitudVRIM() {
+
+			var arCliente = [];
+
+			arCliente['tipoPersona'] = 1;
+			arCliente['razonSocial'] = '';
+			arCliente['nombre'] = 'marcos';
+			arCliente['apellidoPaterno'] = 'prueba';
+			arCliente['apellidoMaterno'] = 'prueba';
+			arCliente['fechaNacimiento'] = '1985/05/20';
+			arCliente['correo'] = 'msredhotero@gmail.com';
+			arCliente['TelefonoFijo'] = '2216184415';
+			arCliente['Celular'] = '2216184415';
+
+			var arPedidos = [];
+
+			arPedidos['cveProducto'] = 'VD20';
+
+			var arTarjeta = [];
+
+			arTarjeta['nombre'] = 'marcos';
+			arTarjeta['apellidoPaterno'] = 'prueba';
+			arTarjeta['apellidoMaterno'] = 'prueba';
+			arTarjeta['fechaNacimiento'] = '1985/05/20';
+			arTarjeta['correo'] = 'msredhotero@gmail.com';
+			arTarjeta['Celular'] = '2216184415';
+
+			arPedidos['Tarjetas'] = arTarjeta;
+
+			//console.log(arPedidos);
+
+			$.ajax({
+				url: 'https://www.salud-interactiva.com/apisolicitudVRIM/API/SOLICITUD',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				headers: {
+					"Authorization": "Bearer I6F)H(abRi?qWy$bs]0;vlnI]+}0byaBO:vRb63x1;?Yb%q1yRe)(1ezIU,H)8+2{cLP&9+#LGV65lfO5wwxEnsdzR.k#d9_;JOEzJ=3Tvn2e4*lv=jgrpmeA#z!%sQ#aw%dpsldh5ha+(P[Gi.:.Zzsv0:&3I[vc?JQ[yPANT+5_FrM24ctjI/K&q]7z!(i/_[SmOQ%M(m;Z[lotnS}jhYfR}KxhuxlLc[+NK5z4%U7d;{:%sq.b)]N*y"
+				},
+				data: {
+					cveAsesor: '28222',
+					tipoAsesor: '1',
+					cveOficina: '1220',
+					tipoOficina: '2',
+					tipoSolicitud: 12,
+					Cliente: arCliente,
+					Pedidos: arPedidos
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					alert(data);
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
+		solicitudVRIM();
 
 		function aceptarPolizarAgente() {
 			$.ajax({
