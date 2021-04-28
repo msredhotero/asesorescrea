@@ -103,6 +103,85 @@ if (mysql_num_rows($resRenovacion) > 0) {
 	$idrenovacion = 0;
 }
 
+
+/*
+$arCliente = [];
+
+$arCliente['tipoPersona'] = 1;
+$arCliente['razonSocial'] = '';
+$arCliente['nombre'] = 'marcos';
+$arCliente['apellidoPaterno'] = 'prueba';
+$arCliente['apellidoMaterno'] = 'prueba';
+$arCliente['fechaNacimiento'] = '1985/05/20';
+$arCliente['correo'] = 'msredhotero@gmail.com';
+$arCliente['TelefonoFijo'] = '';
+$arCliente['Celular'] = '2216184415';
+
+$arPedidos = [];
+
+$arTarjeta = [];
+
+$arTarjeta['nombre'] = 'marcos';
+$arTarjeta['apellidoPaterno'] = 'prueba';
+$arTarjeta['apellidoMaterno'] = 'prueba';
+$arTarjeta['fechaNacimiento'] = '1985/05/20';
+$arTarjeta['correo'] = 'msredhotero@gmail.com';
+$arTarjeta['Celular'] = '2216184415';
+
+$arPedidos = array('cveProducto'=>'VD20','Tarjetas'=>$arTarjeta);
+
+//$arTotal = [$cveAsesor,$tipoAsesor,$cveOficina,$tipoOficina,$tipoSolicitud,$arCliente,$arPedidos];
+
+
+
+$params = array(
+	'cveAsesor' => '28222',
+	'tipoAsesor' => '1',
+	'cveOficina' => '1220',
+	'tipoOficina' => '2',
+	'tipoSolicitud' => 12,
+	'Cliente' => $arCliente,
+	'Pedidos' => $arPedidos,
+);
+
+$cadenaCURL = json_encode($params);
+
+$cadenaFinalCURL = str_replace('}}}','}]}]}',str_replace('"Tarjetas":','"Tarjetas":[',str_replace(',"Pedidos":','],"Pedidos":[',str_replace('"Cliente":','"Cliente":[',$cadenaCURL))));
+
+
+$curl = curl_init();
+
+curl_setopt_array($curl, array(
+  CURLOPT_URL => "https://www.salud-interactiva.com/apisolicitudVRIM/API/SOLICITUD",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => "",
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 30,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_POSTFIELDS => $cadenaFinalCURL,
+  CURLOPT_HTTPHEADER => array(
+    "Authorization: Bearer Nd/a7b(twLCw:c.144tL}!3z1zZrs_svC.mOslrFWrha{8n{4s-AU3sl(C(Sea:o#5U-.=GANKKmXJc_,V7Q{qhnfUBH9L/xsI6B13W)V))*a=Nm6]JU!:apFdd[z}uUu2FFhBNBX*9Ag2F2$3h=W0(l1CAFGSVNp#d&5APub_([Gq,kN)O]dzT4)mkXFAPPvo69Fr-2zPZI:,rqqb*wRy([7/{Yb?Ld(8B!mJe,[swrq{!]CK,cC#YJn(",
+    "Content-Type: application/json",
+    "Postman-Token: 51b9d58e-36e1-4790-9476-e1daf4878520",
+    "cache-control: no-cache"
+  ),
+));
+
+$response = curl_exec($curl);
+$err = curl_error($curl);
+
+curl_close($curl);
+
+if ($err) {
+  echo "cURL Error #:" . $err;
+} else {
+  echo $response;
+}
+
+*/
+
+
 ?>
 
 <!DOCTYPE html>
@@ -433,13 +512,21 @@ if (mysql_num_rows($resRenovacion) > 0) {
 			//console.log(arPedidos);
 
 			$.ajax({
-				url: 'https://www.salud-interactiva.com/apisolicitudVRIM/API/SOLICITUD',
-				type: 'POST',
+				"async": true,
+				"crossDomain": true,
+				"url": "https://www.salud-interactiva.com/apisolicitudVRIM/API/SOLICITUD",
+				"method": "POST",
+				"headers": {
+					"Content-Type": "application/json",
+					"Authorization": "Bearer ]1f%U]Ncs0.lqtf,%Mec,0-&mibD[Myg49TPvrihW-54aAx8Ax658o!S45D3BS7Dwa*vqrwo;=x}YNeg?]WMn8%X};a:J!L*XjqQC{y#KV%*?$Utq3/uAyl13mno_oKSm69z-eZ[gXIq__yJ(Uvl,(0*{6w1e-=%T1ZDTki{o,:*NJ70Zin==5K/-*cVWnjkiNBN5LDB3nAQ:*x#+bu.e+.topJH.S-(its+_iTWCqHZxK]IM(ViKxGie:",
+					"cache-control": "no-cache",
+					"Access-Control-Allow-Headers" : "Content-Type",
+					"Access-Control-Allow-Origin": "http://localhost",
+					"Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+				},
+				"processData": false,
 				// Form data
 				//datos del formulario
-				headers: {
-					"Authorization": "Bearer I6F)H(abRi?qWy$bs]0;vlnI]+}0byaBO:vRb63x1;?Yb%q1yRe)(1ezIU,H)8+2{cLP&9+#LGV65lfO5wwxEnsdzR.k#d9_;JOEzJ=3Tvn2e4*lv=jgrpmeA#z!%sQ#aw%dpsldh5ha+(P[Gi.:.Zzsv0:&3I[vc?JQ[yPANT+5_FrM24ctjI/K&q]7z!(i/_[SmOQ%M(m;Z[lotnS}jhYfR}KxhuxlLc[+NK5z4%U7d;{:%sq.b)]N*y"
-				},
 				data: {
 					cveAsesor: '28222',
 					tipoAsesor: '1',
@@ -449,6 +536,7 @@ if (mysql_num_rows($resRenovacion) > 0) {
 					Cliente: arCliente,
 					Pedidos: arPedidos
 				},
+				method: 'POST',
 				//mientras enviamos el archivo
 				beforeSend: function(){
 
@@ -471,7 +559,9 @@ if (mysql_num_rows($resRenovacion) > 0) {
 			});
 		}
 
-		solicitudVRIM();
+		//solicitudVRIM();
+
+		
 
 		function aceptarPolizarAgente() {
 			$.ajax({
