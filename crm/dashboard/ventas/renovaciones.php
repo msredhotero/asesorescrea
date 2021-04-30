@@ -280,6 +280,60 @@ if (mysql_num_rows($resPaquete) > 0) {
 									<input type="hidden" name="refventaviejo" id="refventaviejo" value="<?php echo $idventa; ?>"/>
 
 								</div>
+
+
+								<div class="row">
+										<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContcomisioncedida" style="display:block">
+											<label for="Comision Cedida" class="control-label" style="text-align:left">Comision Cedida </label>
+											<div class="form-group input-group">
+			                           <span class="input-group-addon">$</span>
+			                           <div class="form-line">
+			                              <input type="text" class="form-control" id="comisioncedida" name="comisioncedida" value="" >
+			                           </div>
+			                           <span class="input-group-addon">.00</span>
+			                        </div>
+										</div>
+
+
+
+										<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContfinanciamiento" style="display:block">
+											<label for="financiamiento" class="control-label" style="text-align:left">Financiamiento </label>
+											<div class="form-group input-group">
+			                           <span class="input-group-addon">$</span>
+			                           <div class="form-line">
+			                              <input type="text" class="form-control" id="financiamiento" name="financiamiento" value="" >
+			                           </div>
+			                           <span class="input-group-addon">.00</span>
+			                        </div>
+										</div>
+
+
+
+										<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContgastosexpedicion" style="display:block">
+											<label for="Gastos de Expedición" class="control-label" style="text-align:left">Gastos De Expedición </label>
+											<div class="form-group input-group">
+			                           <span class="input-group-addon">$</span>
+			                           <div class="form-line">
+			                              <input type="text" class="form-control" id="gastosexpedicion" name="gastosexpedicion" value="" >
+			                           </div>
+			                           <span class="input-group-addon">.00</span>
+			                        </div>
+										</div>
+
+
+
+										<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContiva" style="display:block">
+											<label for="IVA" class="control-label" style="text-align:left">IVA </label>
+											<div class="form-group input-group">
+			                           <span class="input-group-addon">$</span>
+			                           <div class="form-line">
+			                              <input type="text" class="form-control" id="iva" name="iva" value="" >
+			                           </div>
+			                           <span class="input-group-addon">.00</span>
+			                        </div>
+										</div>
+
+									</div>
 								<div class="row">
 									<div class="button-demo">
 										<button type="button" class="btn btn-black waves-effect btnVolver">
@@ -363,6 +417,17 @@ if (mysql_num_rows($resPaquete) > 0) {
 <script>
 	$(document).ready(function(){
 
+
+		$('#iva').number( true, 2 ,'.','');
+		$('#comisioncedida').number( true, 2 ,'.','');
+		$('#financiamiento').number( true, 2 ,'.','');
+		$('#gastosexpedicion').number( true, 2 ,'.','');
+
+		$('#iva').val('16');
+		$('#comisioncedida').val('0');
+		$('#financiamiento').val('0');
+		$('#gastosexpedicion').val('0');
+
 		$("#nropoliza").prop('required',true);
 		$("#primatotal").prop('required',true);
 		$("#primaneta").prop('required',true);
@@ -411,19 +476,6 @@ if (mysql_num_rows($resPaquete) > 0) {
 			}
 		}
 
-
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '315px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
-
-		});
 
 
 		var table = $('#example').DataTable({

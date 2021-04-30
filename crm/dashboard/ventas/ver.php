@@ -14,6 +14,7 @@ include ('../../includes/funcionesUsuarios.php');
 include ('../../includes/funcionesHTML.php');
 include ('../../includes/funcionesReferencias.php');
 include ('../../includes/base.php');
+include ('../../includes/vrim.api.class.php');
 
 $serviciosFunciones 	= new Servicios();
 $serviciosUsuario 		= new ServiciosUsuarios();
@@ -103,6 +104,17 @@ if (mysql_num_rows($resRenovacion) > 0) {
 	$idrenovacion = 0;
 }
 
+/*
+$vrimAPI = new ApiVrim('password', 'as350rcr3a', 'vr1m@2021_cr3a',$_SESSION['usua_sahilices']);
+
+$token = $vrimAPI->tokenVRIM();
+
+if ($vrimAPI->getError() == '') {
+	echo $vrimAPI->getAccesstoken();
+} else {
+	echo $vrimAPI->getError();
+}
+*/
 
 /*
 $arCliente = [];
