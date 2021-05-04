@@ -805,7 +805,7 @@ $pdf->useTemplate($tplIdx, 0, 0);
 //$pdf->Output('Vida500AC.pdf', 'I');
 
 
-$pdf->Output( __DIR__.'/'.'../archivos/solicitudes/cotizaciones/'.$id.'/RCMedicosAC.pdf', 'F');
+$pdf->Output( __DIR__.'/'.'../archivos/solicitudes/cotizaciones/'.$id.'/FSOLICITUDAC.pdf', 'F');
 
 
 ?>

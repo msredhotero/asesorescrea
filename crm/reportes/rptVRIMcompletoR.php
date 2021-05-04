@@ -642,7 +642,7 @@ echo "4,3,'fecha de la solicitud',".$pdf->GetX().",".$pdf->GetY().",'anio','','a
 
 //$pdf->Output('VRIMcompletoAC.pdf', 'I');
 
-$pdf->Output( __DIR__.'/'.'../archivos/solicitudes/cotizaciones/'.$id.'/VRIMcompletoAC.pdf', 'F');
+$pdf->Output( __DIR__.'/'.'../archivos/solicitudes/cotizaciones/'.$id.'/FSOLICITUDAC.pdf', 'F');
 
 
 
