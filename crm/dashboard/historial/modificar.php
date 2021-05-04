@@ -180,12 +180,12 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 }
 
 if ($_SESSION['idroll_sahilices'] == 7) {
-	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId($ordenPosible);
-	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$idestado);
+	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorId(mysql_result($resultado,0,'refestadocotizaciones'));
+	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',mysql_result($resultado,0,'refestadocotizaciones'));
 } else {
 
 	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorIn('1,4,8,10,12,13,26,27');
-	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',$idestado);
+	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',mysql_result($resultado,0,'refestadocotizaciones'));
 }
 
 
@@ -254,9 +254,12 @@ $cadRef10 = $serviciosFunciones->devolverSelectBoxActivo($resVar10,array(1),'',m
 $resVarEtapa = $serviciosReferencias->traerEtapacotizacion();
 $cadEtapa = $serviciosFunciones->devolverSelectBoxActivo($resVarEtapa,array(1),'',mysql_result($resultado,0,'coberturaactual'));
 
+$resTipoMoneda = $serviciosReferencias->traerTipomonedaPorId(mysql_result($resultado,0,'reftipomoneda'));
+$cadTipoMoneda = $serviciosFunciones->devolverSelectBox($resTipoMoneda,array(1),'');
 
-$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadRef7,7=>$cadRef8,8=>$cadRef9,9=>$cadRef10,10=>$cadRef11,11=>$cadEtapa);
-$refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones','cobertura','presentacotizacion','tiponegocio','coberturaactual','existeprimaobjetivo','refestados');
+
+$refdescripcion = array(0=> $cadRef1,1=> $cadRef2,2=> $cadRef3,3=> $cadRef4 , 4=>$cadRef5,5=>$cadRef6,6=>$cadRef7,7=>$cadRef8,8=>$cadRef9,9=>$cadRef10,10=>$cadRef11,11=>$cadEtapa,12=>$cadTipoMoneda);
+$refCampo 	=  array('refusuarios','refclientes','refproductos','refasociados','refasesores','refestadocotizaciones','cobertura','presentacotizacion','tiponegocio','coberturaactual','existeprimaobjetivo','refestados','reftipomoneda');
 
 $frmUnidadNegocios = $serviciosFunciones->camposTablaModificar($id, $idTabla,$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////

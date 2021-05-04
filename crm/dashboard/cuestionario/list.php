@@ -41,8 +41,14 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 /////////////////////// Opciones pagina ///////////////////////////////////////////////
 $id = $_GET['id'];
 
-$resultado = $serviciosReferencias->traerCuestionariosPorIdCompletoSolicitudIncompleto($id);
-$resultadoAux = $serviciosReferencias->traerCuestionariosPorIdCompletoSolicitudCompleto($id);
+if (isset($_GET['pdf'])) {
+	$pdf = $_GET['pdf'];
+} else {
+	$pdf = 1;
+}
+
+$resultado = $serviciosReferencias->traerCuestionariosPorIdCompletoSolicitudIncompleto($id,$pdf);
+$resultadoAux = $serviciosReferencias->traerCuestionariosPorIdCompletoSolicitudCompleto($id,$pdf);
 
 
 $singular = "Cuestionario";
@@ -71,10 +77,11 @@ $refCampo 	=  array('activo');
 
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
-$resList = $serviciosReferencias->traerSolicitudesrespuestasInCompleto($id);
+$resList = $serviciosReferencias->traerSolicitudesrespuestasInCompleto($id,$pdf);
+//die(var_dump($resList));
 $cadRefL = $serviciosFunciones->devolverSelectBox($resList,array(1),'');
 
-$resListAux = $serviciosReferencias->traerSolicitudesrespuestasCompleto($id);
+$resListAux = $serviciosReferencias->traerSolicitudesrespuestasCompleto($id,$pdf);
 $cadRefLAux = $serviciosFunciones->devolverSelectBox($resListAux,array(1),'');
 
 
@@ -191,6 +198,30 @@ $cadRefLAux = $serviciosFunciones->devolverSelectBox($resListAux,array(1),'');
 						</div>
 						<div class="body table-responsive">
 							<form class="form" id="formCountry">
+								<div class="row">
+									<div class="col-lg-12 col-md-12">
+										<div class="button-demo">
+
+											<button type="button" class="btn bg-orange waves-effect" onClick="window.location.href='list.php?id=<?php echo $id; ?>&pdf=1';">
+												<i class="material-icons">label</i>
+												<span>F-2092-6 Solicitud de SEVI</span>
+											</button>
+											<button type="button" class="btn bg-orange waves-effect" onClick="window.location.href='list.php?id=<?php echo $id; ?>&pdf=3';">
+												<i class="material-icons">label</i>
+												<span>Vida 500</span>
+											</button>
+											<button type="button" class="btn bg-orange waves-effect" onClick="window.location.href='list.php?id=<?php echo $id; ?>&pdf=4';">
+												<i class="material-icons">label</i>
+												<span>VRIM</span>
+											</button>
+											<button type="button" class="btn bg-orange waves-effect" onClick="window.location.href='list.php?id=<?php echo $id; ?>&pdf=5';">
+												<i class="material-icons">label</i>
+												<span>RC Medicos</span>
+											</button>
+
+										</div>
+									</div>
+								</div>
 								<div class="row">
 									<div class="col-lg-12 col-md-12">
 										<div class="button-demo">

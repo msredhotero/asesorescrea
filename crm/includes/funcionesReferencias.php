@@ -2800,7 +2800,7 @@ return $res;
    /* Fin */
    /* /* Fin de la Tabla: dbrenovaciones*/
 
-   function traerCuestionariodetallePDFPorTablaReferencia($idtabla, $tabla, $idnombre, $id, $pagina) {
+   function traerCuestionariodetallePDFPorTablaReferencia($idtabla, $tabla, $idnombre, $id, $pagina, $refsolicitudpdf) {
 		$sql = "select
       c.idcuestionariodetalle,
       c.pregunta,
@@ -2815,7 +2815,7 @@ return $res;
       inner join dbcuestionarios cu ON cu.idcuestionario = pre.refcuestionarios
       inner join tbtiporespuesta ti ON ti.idtiporespuesta = pre.reftiporespuesta
       inner join dbrespuestascuestionario res ON res.idrespuestacuestionario = c.refrespuestascuestionario
-      inner join dbsolicitudesrespuestas sp on sp.idsolicituderespuesta = res.refsolicitudesrespuestas
+      inner join dbsolicitudesrespuestas sp on sp.idsolicituderespuesta = res.refsolicitudesrespuestas and sp.refsolicitudpdf = ".$refsolicitudpdf."
 		inner join ".$tabla." v on v.".$idnombre." = c.idreferencia
 		where c.reftabla = ".$idtabla." and c.idreferencia = ".$id." and sp.pagina =".$pagina;
 		$res = $this->query($sql,0);
@@ -2904,7 +2904,7 @@ return $res;
       return $res;
    }
 
-   function traerSolicitudesrespuestasCompletoPDF($pagina) {
+   function traerSolicitudesrespuestasCompletoPDF($pagina, $idsolicitudpdf) {
       $sql = "select
          s.sector,
          s.x,
@@ -2917,13 +2917,13 @@ return $res;
       inner join tbsolicitudpdf tp on tp.idsolicitudpdf = s.refsolicitudpdf
       inner join tbtabla tt on tt.idtabla = s.reftabla
 
-      where s.pagina = ".$pagina."
+      where s.pagina = ".$pagina." and tp.idsolicitudpdf = ".$idsolicitudpdf."
       order by 1";
       $res = $this->query($sql,0);
       return $res;
    }
 
-   function traerSolicitudesrespuestasCompletoFijoPDF($pagina) {
+   function traerSolicitudesrespuestasCompletoFijoPDF($pagina, $idsolicitudpdf) {
       $sql = "select
          s.sector,
          s.x,
@@ -2937,7 +2937,7 @@ return $res;
       inner join tbsolicitudpdf tp on tp.idsolicitudpdf = s.refsolicitudpdf
       left join tbtabla tt on tt.idtabla = s.reftabla
 
-      where tt.idtabla is null and s.fijo = '1' and s.pagina = ".$pagina."
+      where tt.idtabla is null and s.fijo = '1' and s.pagina = ".$pagina." and tp.idsolicitudpdf = ".$idsolicitudpdf."
       order by 1";
       $res = $this->query($sql,0);
       return $res;
@@ -2974,7 +2974,7 @@ return $res;
       return $res;
    }
 
-   function traerSolicitudesrespuestasInCompleto($idcuestionario) {
+   function traerSolicitudesrespuestasInCompleto($idcuestionario,$pdf=1) {
       $sql = "select
       s.idsolicituderespuesta,
       concat(' Pagina: ',s.pagina, ' | Sector: ', s.sector, ' | Preg: ', s.pregunta, ' | Nombre: ', s.nombre ) as completo,
@@ -2993,7 +2993,7 @@ return $res;
       (case when s.fijo = '1' then 'Si' else 'No' end) as fijo
 
       from dbsolicitudesrespuestas s
-      inner join tbsolicitudpdf tp on tp.idsolicitudpdf = s.refsolicitudpdf
+      inner join tbsolicitudpdf tp on tp.idsolicitudpdf = s.refsolicitudpdf and tp.idsolicitudpdf = ".$pdf."
       left join tbtabla tt on tt.idtabla = s.reftabla
       left join (select idrespuestacuestionario,refsolicitudesrespuestas from dbrespuestascuestionario rr
    		inner join
@@ -14113,7 +14113,7 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and ".$roles." (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or pro.producto like '%".$busqueda."%' or concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%' or c.folio like '%".$busqueda."%' or cli.razonsocial like '%".$busqueda."%')";
+			$where = " and ".$roles." (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or pro.producto like '%".$busqueda."%' or concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%' or c.folio like '%".$busqueda."%' or cli.razonsocial like '%".$busqueda."%' or c.folioagente like '%".$busqueda."%')";
 		} else {
 			if ($responsableComercial != '') {
 	         $where = " where ase.refusuarios = ".$responsableComercial." ";
@@ -14310,7 +14310,7 @@ return $res;
 
 		$busqueda = str_replace("'","",$busqueda);
 		if ($busqueda != '') {
-			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or pro.producto like '%".$busqueda."%' or concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%' or cli.razonsocial like '%".$busqueda."%')";
+			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or pro.producto like '%".$busqueda."%' or concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%' or cli.razonsocial like '%".$busqueda."%' or c.folioagente like '%".$busqueda."%')";
 		}
 
 

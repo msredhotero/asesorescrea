@@ -94,7 +94,7 @@ if (mysql_result($resCotizacion,0,'refbeneficiarios') > 0) {
 
 
 ////*************** datos **********************************/
-$resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 1);
+$resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 1,1);
 
 while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
    $pdf->SetXY($row['x'], $row['y']);
@@ -111,7 +111,7 @@ while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
 
 }
 
-$resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(1);
+$resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(1,1);
 while ($row = mysql_fetch_array($resReferenciasFijo)) {
    $pdf->SetXY($row['x'], $row['y']);
    $pdf->Write(0, $row['default']);
@@ -119,7 +119,7 @@ while ($row = mysql_fetch_array($resReferenciasFijo)) {
 }
 
 
-$resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(1);
+$resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(1,1);
 
 while ($row = mysql_fetch_array($resReferencias)) {
    $pdf->SetXY($row['x'], $row['y']);
@@ -264,7 +264,7 @@ $pdf->Image(__DIR__.'/'.'F20926_0002.png' , 0 ,0, 210 , 0,'PNG');
 
 if ($idasegurado > 0) {
 
-   $resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 2);
+   $resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 2,1);
 
    while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
       $pdf->SetXY($row['x'], $row['y']);
@@ -281,14 +281,14 @@ if ($idasegurado > 0) {
 
    }
 
-   $resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(2);
+   $resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(2,1);
    while ($row = mysql_fetch_array($resReferenciasFijo)) {
       $pdf->SetXY($row['x'], $row['y']);
       $pdf->Write(0, $row['default']);
 
    }
 
-   $resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(2);
+   $resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(2,1);
 
    while ($row = mysql_fetch_array($resReferencias)) {
       $pdf->SetXY($row['x'], $row['y']);
@@ -395,7 +395,7 @@ $pdf->Image(__DIR__.'/'.'F20926_0003.png' , 0 ,0, 210 , 0,'PNG');
 
 
 ////*************** datos **********************************/
-$resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 3);
+$resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 3,1);
 
 while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
    $pdf->SetXY($row['x'], $row['y']);
@@ -412,7 +412,7 @@ while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
 
 }
 
-$resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(3);
+$resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(3,1);
 while ($row = mysql_fetch_array($resReferenciasFijo)) {
 
    $pdf->SetXY($row['x'], $row['y']);
@@ -420,7 +420,7 @@ while ($row = mysql_fetch_array($resReferenciasFijo)) {
 
 }
 
-$resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(3);
+$resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(3,1);
 
 while ($row = mysql_fetch_array($resReferencias)) {
    $pdf->SetXY($row['x'], $row['y']);
@@ -616,7 +616,7 @@ $pdf->Image(__DIR__.'/'.'F20926_0004.png' , 0 ,0, 210 , 0,'PNG');
 
 
 ////*************** datos **********************************/
-$resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 4);
+$resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 4,1);
 
 while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
    $pdf->SetXY($row['x'], $row['y']);
@@ -633,7 +633,7 @@ while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
 
 }
 
-$resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(4);
+$resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(4,1);
 while ($row = mysql_fetch_array($resReferenciasFijo)) {
    if ($idbeneficiario == 0) {
       if (($row['nombre'] != 'porcentaje (simpre 100%)') && ($row['nombre'] != 'pais de nacimiento') && ($row['nombre'] != 'revocable') && ($row['nombre'] != 'nacionalidad')) {
@@ -646,7 +646,7 @@ while ($row = mysql_fetch_array($resReferenciasFijo)) {
    }
 }
 
-$resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(4);
+$resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(4,1);
 
 while ($row = mysql_fetch_array($resReferencias)) {
    $pdf->SetXY($row['x'], $row['y']);
@@ -768,7 +768,7 @@ $pdf->Image(__DIR__.'/'.'F20926_0005.png' , 0 ,0, 210 , 0,'PNG');
 
 
 ////*************** datos **********************************/
-$resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 5);
+$resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 5,1);
 
 while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
    $pdf->SetXY($row['x'], $row['y']);
@@ -785,14 +785,14 @@ while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
 
 }
 
-$resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(5);
+$resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(5,1);
 while ($row = mysql_fetch_array($resReferenciasFijo)) {
    $pdf->SetXY($row['x'], $row['y']);
    $pdf->Write(0, $row['default']);
 
 }
 
-$resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(5);
+$resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(5,1);
 
 while ($row = mysql_fetch_array($resReferencias)) {
    $pdf->SetXY($row['x'], $row['y']);
@@ -910,7 +910,7 @@ $pdf->Image(__DIR__.'/'.'F20926_0006.png' , 0 ,0, 210 , 0,'PNG');
 
 
 ////*************** datos **********************************/
-$resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 6);
+$resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 6,1);
 
 while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
    $pdf->SetXY($row['x'], $row['y']);
@@ -927,14 +927,14 @@ while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
 
 }
 
-$resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(6);
+$resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(6,1);
 while ($row = mysql_fetch_array($resReferenciasFijo)) {
    $pdf->SetXY($row['x'], $row['y']);
    $pdf->Write(0, $row['default']);
 
 }
 
-$resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(6);
+$resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(6,1);
 
 while ($row = mysql_fetch_array($resReferencias)) {
    $pdf->SetXY($row['x'], $row['y']);
@@ -1058,7 +1058,7 @@ $pdf->SetXY(50, 189.5);
 $pdf->Write(0, strtoupper( utf8_decode( mysql_result($resAsesor,0,'apellidopaterno').' '.mysql_result($resAsesor,0,'apellidomaterno').' '.mysql_result($resAsesor,0,'nombre'))));
 ///////////////
 
-$resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 7);
+$resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 7,1);
 
 while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
    $pdf->SetXY($row['x'], $row['y']);
@@ -1078,7 +1078,7 @@ while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
 $municipioCliente = mysql_result($resCliente,0,'municipio');
 $estadoCliente = mysql_result($resCliente,0,'estado');
 
-$resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(7);
+$resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(7,1);
 while ($row = mysql_fetch_array($resReferenciasFijo)) {
    $pdf->SetXY($row['x'], $row['y']);
    switch ($row['default']) {
@@ -1096,7 +1096,7 @@ while ($row = mysql_fetch_array($resReferenciasFijo)) {
 
 }
 
-$resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(7);
+$resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(7,1);
 
 while ($row = mysql_fetch_array($resReferencias)) {
    $pdf->SetXY($row['x'], $row['y']);
