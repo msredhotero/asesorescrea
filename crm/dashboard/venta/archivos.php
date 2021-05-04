@@ -338,8 +338,22 @@ if (!file_exists($pathSolcitud)) {
 
 $filesSolicitud = array_diff(scandir($pathSolcitud), array('.', '..'));
 if (count($filesSolicitud) < 1) {
+	// switch para los solicitudes
+	switch ($idProducto) {
+		case 41:
+			require ('../../reportes/rptVRIMcompletoR.php');
+		break;
+		case 28:
+			require ('../../reportes/rptFTodos.php');
+		break;
+		case 54:
+			require ('../../reportes/rptVida500R.php');
+		break;
+		case 55:
+			require ('../../reportes/rptRCMedicosR.php');
+		break;
+	}
 	//die(var_dump(__DIR__));
-	require ('../../reportes/rptFTodos.php');
 }
 
 
