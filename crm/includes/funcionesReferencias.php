@@ -9,6 +9,18 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+   function devolverCodigoProductoOficial($idproducto) {
+      $sql = "select nombre, codigoproducto from tbcodigosproductosoficiales where refproductos = ".$idproducto;
+
+      $res = $this->query($sql,0);
+
+      if (mysql_num_rows($res)>0) {
+         return array('nombre' => mysql_result($res,0,0), 'codigoproducto'=>mysql_result($res,0,1));
+      }
+
+      return array('nombre' => '', 'codigoproducto'=> '');
+   }
+
 
    /* PARA Solicitudvrim */
 

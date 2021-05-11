@@ -69,7 +69,7 @@ $pdf =& new FPDI();
 // add a page
 $pdf->AddPage();
 // set the sourcefile
-$pdf->setSourceFile('RCMEDICOS.pdf');
+$pdf->setSourceFile('solRC.pdf');
 // import page 1
 $tplIdx = $pdf->importPage(1);
 // use the imported page as the template
@@ -119,6 +119,12 @@ if (mysql_result($resCotizacion,0,'tieneasegurado') == '1') {
 
 //------------------            pagina 1            ------------------------------------------------------ 
 //------------------ datos generales del solicitante ------------------------------------------------------
+
+
+// emisor = 10118
+
+// identificador comercial = 'falta'
+
 
 
 $resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 1,5);
@@ -282,13 +288,16 @@ while ($row = mysql_fetch_array($resReferencias)) {
 // add a page
 $pdf->AddPage();
 // set the sourcefile
-$pdf->setSourceFile('RCMEDICOS.pdf');
+$pdf->setSourceFile('solRC.pdf');
 // import page 1
 $tplIdx = $pdf->importPage(2);
 // use the imported page as the template
 $pdf->useTemplate($tplIdx, 0, 0);
 
+// desde 12 hs - validar fechas
 
+
+// hasta las 12 hs - validar fechas
 
 $resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 2,5);
 
@@ -452,7 +461,7 @@ while ($row = mysql_fetch_array($resReferencias)) {
 // add a page
 $pdf->AddPage();
 // set the sourcefile
-$pdf->setSourceFile('RCMEDICOS.pdf');
+$pdf->setSourceFile('solRC.pdf');
 // import page 1
 $tplIdx = $pdf->importPage(3);
 // use the imported page as the template
@@ -622,11 +631,21 @@ while ($row = mysql_fetch_array($resReferencias)) {
 // add a page
 $pdf->AddPage();
 // set the sourcefile
-$pdf->setSourceFile('RCMEDICOS.pdf');
+$pdf->setSourceFile('solRC.pdf');
 // import page 1
 $tplIdx = $pdf->importPage(4);
 // use the imported page as the template
 $pdf->useTemplate($tplIdx, 0, 0);
+
+// suma asegurada el valor que calculo con o sin cirugia.
+
+//cobro bancario: no
+
+//periodo pago: unico
+
+//moneda: nacional
+
+//recibo: individual
 
 
 $resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 4,5);
@@ -791,7 +810,7 @@ while ($row = mysql_fetch_array($resReferencias)) {
 // add a page
 $pdf->AddPage();
 // set the sourcefile
-$pdf->setSourceFile('RCMEDICOS.pdf');
+$pdf->setSourceFile('solRC.pdf');
 // import page 1
 $tplIdx = $pdf->importPage(5);
 // use the imported page as the template

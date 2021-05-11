@@ -31,7 +31,13 @@ $resAsesor = $serviciosReferencias->traerAsesoresPorId(mysql_result($resCotizaci
 
 $metodopago = $serviciosReferencias->traerMetodopagoPorCotizacionCompleto($id);
 
+$resPago = $serviciosReferencias->traerPagosPorTablaReferencia(12, 'dbcotizaciones', 'idcotizacion', $id);
+
 $idCliente = mysql_result($resCotizacion,0,'refclientes');
+
+$idProducto = mysql_result($resCotizacion,0,'refproductos');
+
+$total = mysql_result($resCotizacion,0,'primatotal');
 
 $pdf = new FPDF();
 
@@ -47,27 +53,9 @@ if (mysql_result($resCotizacion,0,'tieneasegurado') == '1') {
     $idasegurado = mysql_result($resCotizacion,0,'refasegurados');
     $resAsegurado = $serviciosReferencias->traerAseguradosPorIdPDF($idasegurado);
  
-    /// fijo para entidad federativa de nacimiento
-    $pdf->SetXY(106, 99.5);
-    $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resAsegurado,0,'curp'), mysql_result($resAsegurado,0,'estado'));
-    $pdf->Write(0, $resEF);
-    // fin de entidad federativa
- 
-    /// fijo para entidad federativa de nacimiento
-    $pdf->SetXY(75, 185.5);
-    $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resCliente,0,'curp'), mysql_result($resCliente,0,'estado'));
-    $pdf->Write(0, $resEF);
-    // fin de entidad federativa
- 
  } else {
     $idasegurado = 0;
  
-    /// fijo para entidad federativa de nacimiento
- 
-    $pdf->SetXY(106, 99.5);
-    $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resCliente,0,'curp'), mysql_result($resCliente,0,'estado'));
-    $pdf->Write(0, $resEF);
-    // fin de entidad federativa
  }
  
  if (mysql_result($resCotizacion,0,'refbeneficiarios') > 0) {
@@ -90,10 +78,23 @@ $yConstCuadrado1 = 42;
 $pdf->Image('SolicitudAfiliacionVrim-1.png' , 0 ,0, 210 , 0,'PNG');
 
 
-//fecha solicitud
-$pdf->SetXY(142.4, 43.9);
-//$pdf->Write(0, "SAUPUREIN SAFAR");
-echo "4,1,'fecha solicitud',".$pdf->GetX().",".$pdf->GetY().",'fecha solicitud','','fecha solicitud'".'<br>';
+
+// fecha solicitud
+$pdf->SetXY(142.40, 43.90);
+$pdf->Write(0, date('d/m/Y'));
+
+$resVRIMoficial = $serviciosReferencias->devolverCodigoProductoOficial($idProducto);
+//tipo tarjeta configurar
+$pdf->SetXY(55.40, 214.00);
+$pdf->Write(0, $resVRIMoficial['nombre']);
+
+//codigo producto
+$pdf->SetXY(111.40, 214.00);
+$pdf->Write(0, $resVRIMoficial['codigoproducto']);
+
+//dividir segundo nombre - ver
+
+//domicilio fiscal, solo si quiere facturar y lo saco del rfc.
 
 
 $resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 1,4);
@@ -431,6 +432,45 @@ $yConstCuadrado1 = 42;
 
 $pdf->Image('SolicitudAfiliacionVrim-3.png' , 0 ,0, 210 , 0,'PNG');
 
+//forma de pago
+if (mysql_num_rows($resPago) > 0) {
+   if (mysql_result($resPago,0,'refcuentasbancarias') == 0) {
+      $pdf->SetXY(73.00, 42.50);
+      $pdf->Write(0, 'x');
+   } else {
+      $pdf->SetXY(73.00, 33.00);
+      $pdf->Write(0, 'x');
+   }
+} else {
+   $pdf->SetXY(73.00, 42.50);
+   $pdf->Write(0, 'x');
+}
+
+
+//tipo tarjeta
+$pdf->SetXY(7, 99.50);
+$pdf->Write(0, $resVRIMoficial['nombre']);
+
+//cod producto
+$pdf->SetXY(48.40, 99.50);
+$pdf->Write(0, $resVRIMoficial['codigoproducto']);
+
+//cantidad
+$pdf->SetXY(64.40, 99.50);
+$pdf->Write(0, '1');
+
+//importe
+$pdf->SetXY(82.40, 99.50);
+$pdf->Write(0, $total);
+
+//sub total
+$pdf->SetXY(117.40, 99.50);
+$pdf->Write(0, $total);
+
+//total
+$pdf->SetXY(117.40, 122.50);
+$pdf->Write(0, $total);
+
 
 $resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 1,4);
 
@@ -620,18 +660,18 @@ $pdf->Image('SolicitudAfiliacionVrim-5.png' , 0 ,0, 210 , 0,'PNG');
 
 // dia
 $pdf->SetXY(158, 151);
-//$pdf->Write(0, date('d'));
-echo "4,3,'fecha de la solicitud',".$pdf->GetX().",".$pdf->GetY().",'dia','','dia'".'<br>';
+$pdf->Write(0, date('d'));
+//echo "4,3,'fecha de la solicitud',".$pdf->GetX().",".$pdf->GetY().",'dia','','dia'".'<br>';
 
 // mes
 $pdf->SetXY(181, 151);
-//$pdf->Write(0, date('M'));
-echo "4,3,'fecha de la solicitud',".$pdf->GetX().",".$pdf->GetY().",'mes','','mes'".'<br>';
+$pdf->Write(0, date('B'));
+//echo "4,3,'fecha de la solicitud',".$pdf->GetX().",".$pdf->GetY().",'mes','','mes'".'<br>';
 
 // anio
 $pdf->SetXY(198.4, 151);
-//$pdf->Write(0, date('y'));
-echo "4,3,'fecha de la solicitud',".$pdf->GetX().",".$pdf->GetY().",'anio','','anio'".'<br>';
+$pdf->Write(0, date('y'));
+//echo "4,3,'fecha de la solicitud',".$pdf->GetX().",".$pdf->GetY().",'anio','','anio'".'<br>';
 
 
 

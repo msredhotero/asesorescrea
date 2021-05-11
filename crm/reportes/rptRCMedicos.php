@@ -61,7 +61,7 @@ $pdf =& new FPDI();
 // add a page
 $pdf->AddPage();
 // set the sourcefile
-$pdf->setSourceFile('RCMEDICOS.pdf');
+$pdf->setSourceFile('solRC.pdf');
 // import page 1
 $tplIdx = $pdf->importPage(1);
 // use the imported page as the template
@@ -265,7 +265,7 @@ echo "5,1,'domicilio',".$pdf->GetX().",".$pdf->GetY().",'email','','email'".'<br
 // add a page
 $pdf->AddPage();
 // set the sourcefile
-$pdf->setSourceFile('RCMEDICOS.pdf');
+$pdf->setSourceFile('solRC.pdf');
 // import page 1
 $tplIdx = $pdf->importPage(2);
 // use the imported page as the template
@@ -473,11 +473,11 @@ echo "5,2,'datos generales contratante en caso que sea distinto del solicitante'
 
 
 //desempeñe funcion publica
-$pdf->SetXY(28, 240.2);
+$pdf->SetXY(28, 239.5);
 //$pdf->Write(0, "x");
 echo "5,2,'informacion adicioanl contratante en caso que sea distinto del solicitante',".$pdf->GetX().",".$pdf->GetY().",'desempenie funcion publica','','si'".'<br>';
 //desempeñe funcion publica
-$pdf->SetXY(38, 240.2);
+$pdf->SetXY(38, 239.5);
 //$pdf->Write(0, "x");
 echo "5,2,'informacion adicioanl contratante en caso que sea distinto del solicitante',".$pdf->GetX().",".$pdf->GetY().",'desempenie funcion publica','','no'".'<br>';
 
@@ -510,7 +510,7 @@ echo "5,2,'informacion adicioanl contratante en caso que sea distinto del solici
 // add a page
 $pdf->AddPage();
 // set the sourcefile
-$pdf->setSourceFile('RCMEDICOS.pdf');
+$pdf->setSourceFile('solRC.pdf');
 // import page 1
 $tplIdx = $pdf->importPage(3);
 // use the imported page as the template
@@ -566,201 +566,145 @@ $pdf->SetXY(71.7, 71.7);
 echo "5,3,'informacion del seguro',".$pdf->GetX().",".$pdf->GetY().",'poliza anterior fechavencimiento','','poliza anterior fechavencimiento'".'<br>';
 
 
-//calle
-$pdf->SetXY(8, 96.4);
+//especialidad 1
+$pdf->SetXY(8, 97);
 //$pdf->Write(0, "x");
-echo "5,3,'ubicaion del bien asegurado',".$pdf->GetX().",".$pdf->GetY().",'calle','','calle'".'<br>';
-//no exterior
-$pdf->SetXY(67, 96.4);
-//$pdf->Write(0, "x");
-echo "5,3,'ubicaion del bien asegurado',".$pdf->GetX().",".$pdf->GetY().",'no exterior','','no exterior'".'<br>';
-//edificio
-$pdf->SetXY(85, 96.4);
-//$pdf->Write(0, "x");
-echo "5,3,'ubicaion del bien asegurado',".$pdf->GetX().",".$pdf->GetY().",'edificio','','edificio'".'<br>';
-//no interior
-$pdf->SetXY(109.9, 96.4);
-//$pdf->Write(0, "x");
-echo "5,3,'ubicaion del bien asegurado',".$pdf->GetX().",".$pdf->GetY().",'no interior','','no interior'".'<br>';
-//cp
-$pdf->SetXY(128.3, 96.4);
-//$pdf->Write(0, "x");
-echo "5,3,'ubicaion del bien asegurado',".$pdf->GetX().",".$pdf->GetY().",'cp','','cp'".'<br>';
-//colonia
-$pdf->SetXY(150, 96.4);
-//$pdf->Write(0, "x");
-echo "5,3,'ubicaion del bien asegurado',".$pdf->GetX().",".$pdf->GetY().",'colonia','','colonia'".'<br>';
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'especialidad 1','','especialidad 1'".'<br>';
 
-//ciudad
-$pdf->SetXY(8, 106.4);
+//institucion 1
+$pdf->SetXY(8, 107.3);
 //$pdf->Write(0, "x");
-echo "5,3,'ubicaion del bien asegurado',".$pdf->GetX().",".$pdf->GetY().",'ciudad','','ciudad'".'<br>';
-//entidad federativa
-$pdf->SetXY(58.9, 106.4);
-//$pdf->Write(0, "x");
-echo "5,3,'ubicaion del bien asegurado',".$pdf->GetX().",".$pdf->GetY().",'entidad federativa','','entidad federativa'".'<br>';
-//municipio
-$pdf->SetXY(109.9, 106.4);
-//$pdf->Write(0, "x");
-echo "5,3,'ubicaion del bien asegurado',".$pdf->GetX().",".$pdf->GetY().",'municipio','','municipio'".'<br>';
-//pais
-$pdf->SetXY(160, 106.4);
-//$pdf->Write(0, "x");
-echo "5,3,'ubicaion del bien asegurado',".$pdf->GetX().",".$pdf->GetY().",'pais','','pais'".'<br>';
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'institucion 1','','institucion 1'".'<br>';
 
-//actividad
-$pdf->SetXY(8, 116.4);
+//numero cedula 1
+$pdf->SetXY(8, 117.3);
 //$pdf->Write(0, "x");
-echo "5,3,'ubicaion del bien asegurado',".$pdf->GetX().",".$pdf->GetY().",'actividad','','actividad'".'<br>';
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'numero cedula 1','','numero cedula 1'".'<br>';
 
-//suma asegurada
-$pdf->SetXY(171.6, 131.4);
+//numero secretaria de salud 1
+$pdf->SetXY(140, 117.3);
 //$pdf->Write(0, "x");
-echo "5,3,'coberturas',".$pdf->GetX().",".$pdf->GetY().",'suma asegurada','','suma asegurada'".'<br>';
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'numero secretaria de salud 1','','numero secretaria de salud 1'".'<br>';
 
-//arrendatario
-$pdf->SetXY(13.5, 151);
+//anios 1
+$pdf->SetXY(80, 122.7);
 //$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales',".$pdf->GetX().",".$pdf->GetY().",'arrendatario','','arrendatario'".'<br>';
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'anios 1','','anios 1'".'<br>';
 
-//adicional
-$pdf->SetXY(43.5, 151);
+//meses 1
+$pdf->SetXY(100, 122.7);
 //$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales',".$pdf->GetX().",".$pdf->GetY().",'adicional','','adicional'".'<br>';
-
-//suma asegurada adicional
-$pdf->SetXY(68.7, 151);
-//$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales',".$pdf->GetX().",".$pdf->GetY().",'suma asegurada adicional','','suma asegurada adicional'".'<br>';
-
-//sublimite
-$pdf->SetXY(43.5, 157);
-//$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales',".$pdf->GetX().",".$pdf->GetY().",'sublimite','','sublimite'".'<br>';
-
-//suma asegurada sublimite
-$pdf->SetXY(68.7, 155.7);
-//$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales',".$pdf->GetX().",".$pdf->GetY().",'suma asegurada sublimite','','suma asegurada sublimite'".'<br>';
-
-//asumida
-$pdf->SetXY(13.5, 161.4);
-//$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales',".$pdf->GetX().",".$pdf->GetY().",'asumida','','asumida'".'<br>';
-
-//suma asegurada asumida
-$pdf->SetXY(68.7, 160.9);
-//$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales',".$pdf->GetX().",".$pdf->GetY().",'suma asegurada asumida','','suma asegurada asumida'".'<br>';
-
-//contaminacion
-$pdf->SetXY(13.5, 166.6);
-//$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales',".$pdf->GetX().",".$pdf->GetY().",'contaminacion','','contaminacion'".'<br>';
-
-//suma asegurada contaminacion
-$pdf->SetXY(68.7, 166);
-//$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales',".$pdf->GetX().",".$pdf->GetY().",'suma asegurada contaminacion','','suma asegurada contaminacion'".'<br>';
-
-//contaminacion en el predio
-$pdf->SetXY(13.5, 171.8);
-//$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales',".$pdf->GetX().",".$pdf->GetY().",'contaminacion en el predio','','contaminacion en el predio'".'<br>';
-//explosivos
-$pdf->SetXY(13.5, 177);
-//$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales',".$pdf->GetX().",".$pdf->GetY().",'explosivos','','explosivos'".'<br>';
-//maniobras de carga
-$pdf->SetXY(13.5, 181.7);
-//$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales',".$pdf->GetX().",".$pdf->GetY().",'maniobras de carga','','maniobras de carga'".'<br>';
-//productos en el extrangero
-$pdf->SetXY(13.5, 186.5);
-//$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales',".$pdf->GetX().",".$pdf->GetY().",'productos en el extrangero','','productos en el extrangero'".'<br>';
-
-//suma asegurada extrangero
-$pdf->SetXY(68.7, 185.7);
-//$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales',".$pdf->GetX().",".$pdf->GetY().",'suma asegurada extrangero','','suma asegurada extrangero'".'<br>';
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'meses 1','','meses 1'".'<br>';
 
 
-//productos territorio nacional
-$pdf->SetXY(13.5, 191.5);
-//$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales',".$pdf->GetX().",".$pdf->GetY().",'productos territorio nacional','','productos territorio nacional'".'<br>';
-//profesional
-$pdf->SetXY(13.5, 196.8);
-//$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales',".$pdf->GetX().",".$pdf->GetY().",'profesional','','profesional'".'<br>';
 
-//profesional - profesion
-$pdf->SetXY(43.5, 200.7);
+//especialidad 2
+$pdf->SetXY(8, 134.7);
 //$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales',".$pdf->GetX().",".$pdf->GetY().",'profesional - profesion','','profesional - profesion'".'<br>';
-//profesional - no cedula
-$pdf->SetXY(128.3, 200.7);
-//$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales',".$pdf->GetX().",".$pdf->GetY().",'profesional - no cedula','','profesional - no cedula'".'<br>';
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'especialidad 2','','especialidad 2'".'<br>';
 
+//institucion 2
+$pdf->SetXY(8, 145);
+//$pdf->Write(0, "x");
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'institucion 2','','institucion 2'".'<br>';
 
-//principal
-$pdf->SetXY(13.5, 212);
+//numero cedula 2
+$pdf->SetXY(8, 155);
 //$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales - responsabilidad civil estacionamiento',".$pdf->GetX().",".$pdf->GetY().",'principal','','principal'".'<br>';
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'numero cedula 2','','numero cedula 2'".'<br>';
 
-//accesorio
-$pdf->SetXY(58.4, 212);
+//numero secretaria de salud 2
+$pdf->SetXY(140, 155);
 //$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales - responsabilidad civil estacionamiento',".$pdf->GetX().",".$pdf->GetY().",'accesorio','','accesorio'".'<br>';
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'numero secretaria de salud 2','','numero secretaria de salud 2'".'<br>';
 
-//estacionamiento con acomodador
-$pdf->SetXY(13.5, 217.2);
+//anios 2
+$pdf->SetXY(80, 160.4);
 //$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales - responsabilidad civil estacionamiento',".$pdf->GetX().",".$pdf->GetY().",'estacionamiento con acomodador','','estacionamiento con acomodador'".'<br>';
-//estacionamiento sin acomodador
-$pdf->SetXY(13.5, 222.2);
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'anios 2','','anios 2'".'<br>';
+
+//meses 2
+$pdf->SetXY(100, 160.4);
 //$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales - responsabilidad civil estacionamiento',".$pdf->GetX().",".$pdf->GetY().",'estacionamiento sin acomodador','','estacionamiento sin acomodador'".'<br>';
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'meses 2','','meses 2'".'<br>';
 
 
-//suma asegurada
-$pdf->SetXY(60.6, 226);
+
+//especialidad 3
+$pdf->SetXY(8, 172.4);
 //$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales - responsabilidad civil estacionamiento',".$pdf->GetX().",".$pdf->GetY().",'suma asegurada','','suma asegurada'".'<br>';
-//sublimita por unidad
-$pdf->SetXY(60.6, 231);
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'especialidad 3','','especialidad 3'".'<br>';
+
+//institucion 3
+$pdf->SetXY(8, 182.3);
 //$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales - responsabilidad civil estacionamiento',".$pdf->GetX().",".$pdf->GetY().",'sublimita por unidad','','sublimita por unidad'".'<br>';
-//numero cajones
-$pdf->SetXY(60.6, 236.3);
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'institucion 3','','institucion 3'".'<br>';
+
+//numero cedula 3
+$pdf->SetXY(8, 192.2);
 //$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales - responsabilidad civil estacionamiento',".$pdf->GetX().",".$pdf->GetY().",'numero cajones','','numero cajones'".'<br>';
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'numero cedula 3','','numero cedula 3'".'<br>';
+
+//numero secretaria de salud 3
+$pdf->SetXY(140, 192.2);
+//$pdf->Write(0, "x");
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'numero secretaria de salud 3','','numero secretaria de salud 3'".'<br>';
+
+//anios 3
+$pdf->SetXY(80, 197.7);
+//$pdf->Write(0, "x");
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'anios 3','','anios 3'".'<br>';
+
+//meses 3
+$pdf->SetXY(100, 197.7);
+//$pdf->Write(0, "x");
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'meses 3','','meses 3'".'<br>';
 
 
-//prueba
-$pdf->SetXY(108.4, 212.2);
+//cuenta con consultorio
+$pdf->SetXY(9.2, 205.5);
 //$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales - responsabilidad civil taller',".$pdf->GetX().",".$pdf->GetY().",'prueba','','prueba'".'<br>';
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'cuenta con consultorio','','cuenta con consultorio'".'<br>';
 
-//recoleccion y entrega
-$pdf->SetXY(108.4, 217.2);
+//ejerce sus act en su consultorio
+$pdf->SetXY(9.2, 209.7);
 //$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales - responsabilidad civil taller',".$pdf->GetX().",".$pdf->GetY().",'recoleccion y entrega','','recoleccion y entrega'".'<br>';
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'ejerce sus act en su consultorio','','ejerce sus act en su consultorio'".'<br>';
 
-//suma asegurada
-$pdf->SetXY(168.2, 221.3);
+//otros lugares de trabajo
+$pdf->SetXY(63.2, 214.9);
 //$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales - responsabilidad civil taller',".$pdf->GetX().",".$pdf->GetY().",'suma asegurada','','suma asegurada'".'<br>';
-//sublimita por unidad
-$pdf->SetXY(168.2, 226.4);
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'clinica','','otros lugares de trabajo'".'<br>';
+//otros lugares de trabajo
+$pdf->SetXY(77.7, 214.9);
 //$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales - responsabilidad civil taller',".$pdf->GetX().",".$pdf->GetY().",'sublimita por unidad','','sublimita por unidad'".'<br>';
-//radio de accion para talleres
-$pdf->SetXY(168.2, 231.6);
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'hospital','','otros lugares de trabajo'".'<br>';
+//otros lugares de trabajo
+$pdf->SetXY(95.7, 214.9);
 //$pdf->Write(0, "x");
-echo "5,3,'coberturas adicionales - responsabilidad civil taller',".$pdf->GetX().",".$pdf->GetY().",'radio de accion para talleres','','radio de accion para talleres'".'<br>';
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'sanatorio','','otros lugares de trabajo'".'<br>';
+//otros lugares de trabajo
+$pdf->SetXY(115.4, 214.9);
+//$pdf->Write(0, "x");
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'otro','','otros lugares de trabajo'".'<br>';
+//otros lugares de trabajo
+$pdf->SetXY(129.3, 214.9);
+//$pdf->Write(0, "x");
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'indique otro','','otros lugares de trabajo'".'<br>';
+
+//aparatos de radiologia
+$pdf->SetXY(9.2, 219.6);
+//$pdf->Write(0, "x");
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'aparatos de radiologia','','aparatos de radiologia'".'<br>';
+//reclamos de rc
+$pdf->SetXY(9.2, 224.7);
+//$pdf->Write(0, "x");
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'reclamos de rc','','reclamos de rc'".'<br>';
+
+//reclamos de rc describir
+$pdf->SetXY(13.5, 234.7);
+//$pdf->Write(0, "x");
+echo "5,3,'caracteristicas del asegurado',".$pdf->GetX().",".$pdf->GetY().",'reclamos de rc describir','','reclamos de rc describir'".'<br>';
 
 
 
@@ -772,167 +716,70 @@ echo "5,3,'coberturas adicionales - responsabilidad civil taller',".$pdf->GetX()
 // add a page
 $pdf->AddPage();
 // set the sourcefile
-$pdf->setSourceFile('RCMEDICOS.pdf');
+$pdf->setSourceFile('solRC.pdf');
 // import page 1
 $tplIdx = $pdf->importPage(4);
 // use the imported page as the template
 $pdf->useTemplate($tplIdx, 0, 0);
 
 
-//guaradarropa
-$pdf->SetXY(13.8, 32.5);
+//suma asegurada
+$pdf->SetXY(172.4, 32.5);
 //$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'guaradarropa','','guaradarropa'".'<br>';
-//sublimite suma asegurada guaradarropa
-$pdf->SetXY(112, 32.7);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'sublimite suma asegurada guaradarropa','','sublimite suma asegurada guaradarropa'".'<br>';
-//sublimite por evento guaradarropa
-$pdf->SetXY(161.3, 32.7);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'sublimite por evento guaradarropa','','sublimite por evento guaradarropa'".'<br>';
-
-//equipaje
-$pdf->SetXY(13.8, 37.5);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'equipaje','','equipaje'".'<br>';
-//sublimite suma asegurada equipaje
-$pdf->SetXY(112, 37.7);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'sublimite suma asegurada equipaje','','sublimite suma asegurada equipaje'".'<br>';
-//sublimite por evento equipaje
-$pdf->SetXY(161.3, 37.7);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'sublimite por evento equipaje','','sublimite por evento equipaje'".'<br>';
-
-//caja de seguridad administracion
-$pdf->SetXY(13.8, 42.5);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'caja de seguridad administracion','','caja de seguridad administracion'".'<br>';
-//sublimite suma asegurada caja de seguridad administracion
-$pdf->SetXY(112, 42.7);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'sublimite suma asegurada caja de seguridad administracion','','sublimite suma asegurada caja de seguridad administracion'".'<br>';
-//sublimite por evento caja de seguridad administracion
-$pdf->SetXY(161.3, 42.7);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'sublimite por evento caja de seguridad administracion','','sublimite por evento caja de seguridad administracion'".'<br>';
-
-//caja de seguridad habitacion
-$pdf->SetXY(13.8, 47.5);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'caja de seguridad habitacion','','caja de seguridad habitacion'".'<br>';
-//sublimite suma asegurada caja de seguridad habitacion
-$pdf->SetXY(112, 47.7);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'sublimite suma asegurada caja de seguridad habitacion','','sublimite suma asegurada caja de seguridad habitacion'".'<br>';
-//sublimite por evento caja de seguridad habitacion
-$pdf->SetXY(161.3, 47.7);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'sublimite por evento caja de seguridad habitacion','','sublimite por evento caja de seguridad habitacion'".'<br>';
-
-//sublimite habitacion
-$pdf->SetXY(13.8, 52.5);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'sublimite habitacion','','sublimite habitacion'".'<br>';
-//sublimite suma asegurada sublimite habitacion
-$pdf->SetXY(112, 52.7);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'sublimite suma asegurada equipsublimite habitacionaje','','sublimite suma asegurada sublimite habitacion'".'<br>';
-//sublimite por evento sublimite habitacion
-$pdf->SetXY(161.3, 52.7);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'sublimite por evento sublimite habitacion','','sublimite por evento sublimite habitacion'".'<br>';
-
-//tintoreria
-$pdf->SetXY(13.8, 57.5);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'tintoreria','','tintoreria'".'<br>';
-//sublimite suma asegurada tintoreria
-$pdf->SetXY(112, 57.7);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'sublimite suma asegurada tintoreria','','sublimite suma asegurada tintoreria'".'<br>';
-//sublimite por evento tintoreria
-$pdf->SetXY(161.3, 57.7);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'sublimite por evento tintoreria','','sublimite por evento tintoreria'".'<br>';
-
-//sublimite prenda
-$pdf->SetXY(13.8, 62.5);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'sublimite prenda','','sublimite prenda'".'<br>';
-//sublimite suma asegurada sublimite prenda
-$pdf->SetXY(112, 62.7);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'sublimite suma asegurada sublimite prenda','','sublimite suma asegurada sublimite prenda'".'<br>';
-//sublimite por evento sublimite prenda
-$pdf->SetXY(161.3, 62.7);
-//$pdf->Write(0, "x");
-echo "5,4,'coberturas adicionales - responsabilidad civil hotel',".$pdf->GetX().",".$pdf->GetY().",'sublimite por evento sublimite prenda','','sublimite por evento sublimite prenda'".'<br>';
-
-
+echo "5,4,'coberturas',".$pdf->GetX().",".$pdf->GetY().",'suma asegurada','','suma asegurada'".'<br>';
 
 //cobro bancario
-$pdf->SetXY(34, 77.3);
+$pdf->SetXY(34, 61);
 //$pdf->Write(0, "x");
-echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'cobro bancario','','si'".'<br>';
+echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'si','','cobro bancario'".'<br>';
 //cobro bancario
-$pdf->SetXY(34, 82.4);
+$pdf->SetXY(34, 66.2);
 //$pdf->Write(0, "x");
-echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'cobro bancario','','no'".'<br>';
+echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'no','','cobro bancario'".'<br>';
 
-//periodo de pago
-$pdf->SetXY(71.7, 77.3);
+//periodo pago mensual
+$pdf->SetXY(72.2, 61);
 //$pdf->Write(0, "x");
-echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'periodo de pago','','mensual'".'<br>';
-//periodo de pago
-$pdf->SetXY(92.7, 77.3);
+echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'periodo pago mensual','','periodo pago mensual'".'<br>';
+//periodo pago trimestral
+$pdf->SetXY(93.2, 61);
 //$pdf->Write(0, "x");
-echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'periodo de pago','','trimestral'".'<br>';
-//periodo de pago
-$pdf->SetXY(115.9, 77.3);
+echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'periodo pago trimestral','','periodo pago trimestral'".'<br>';
+//periodo pago semestral
+$pdf->SetXY(116.2, 61);
 //$pdf->Write(0, "x");
-echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'periodo de pago','','semestral'".'<br>';
-//periodo de pago
-$pdf->SetXY(139, 77.3);
+echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'periodo pago semestral','','periodo pago semestral'".'<br>';
+//periodo pago anual
+$pdf->SetXY(139, 61);
 //$pdf->Write(0, "x");
-echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'periodo de pago','','anual'".'<br>';
-//periodo de pago
-$pdf->SetXY(154.4, 77.3);
+echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'periodo pago anual','','periodo pago anual'".'<br>';
+//periodo pago unico
+$pdf->SetXY(154.9, 61);
 //$pdf->Write(0, "x");
-echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'periodo de pago','','unico'".'<br>';
+echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'periodo pago unico','','periodo pago unico'".'<br>';
 
-//moneda
-$pdf->SetXY(71.7, 82.4);
-//$pdf->Write(0, "x");
-echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'moneda','','nacional'".'<br>';
-//moneda
-$pdf->SetXY(92.7, 82.4);
-//$pdf->Write(0, "x");
-echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'moneda','','dolares'".'<br>';
 
-//recibo
-$pdf->SetXY(71.7, 87.2);
+//moneda nacional
+$pdf->SetXY(72.2, 66.2);
 //$pdf->Write(0, "x");
-echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'recibo','','individual'".'<br>';
-//recibo
-$pdf->SetXY(92.7, 87.2);
+echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'moneda nacional','','moneda nacional'".'<br>';
+//moneda dolares
+$pdf->SetXY(93.2, 66.2);
 //$pdf->Write(0, "x");
-echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'recibo','','global'".'<br>';
-//recibo
-$pdf->SetXY(147.6, 87.2);
-//$pdf->Write(0, "x");
-echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'recibo','','filial'".'<br>';
+echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'moneda dolares','','moneda dolares'".'<br>';
 
-//lugar
-$pdf->SetXY(8, 178.4);
+//recibo individual
+$pdf->SetXY(72.2, 71.3);
 //$pdf->Write(0, "x");
-echo "5,4,'declaraciones del solicitante',".$pdf->GetX().",".$pdf->GetY().",'lugar','','lugar'".'<br>';
-//fecha
-$pdf->SetXY(168.6, 178.4);
+echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'recibo individual','','recibo individual'".'<br>';
+//recibo global
+$pdf->SetXY(93.2, 71.3);
 //$pdf->Write(0, "x");
-echo "5,4,'declaraciones del solicitante',".$pdf->GetX().",".$pdf->GetY().",'lugar','','fecha'".'<br>';
-
+echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'recibo global','','recibo global'".'<br>';
+//recibo filial
+$pdf->SetXY(148, 71.3);
+//$pdf->Write(0, "x");
+echo "5,4,'forma de pago',".$pdf->GetX().",".$pdf->GetY().",'recibo filial','','recibo filial'".'<br>';
 
 
 
@@ -945,11 +792,57 @@ echo "5,4,'declaraciones del solicitante',".$pdf->GetX().",".$pdf->GetY().",'lug
 // add a page
 $pdf->AddPage();
 // set the sourcefile
-$pdf->setSourceFile('RCMEDICOS.pdf');
+$pdf->setSourceFile('solRC.pdf');
 // import page 1
 $tplIdx = $pdf->importPage(5);
 // use the imported page as the template
 $pdf->useTemplate($tplIdx, 0, 0);
+
+
+//lugar
+$pdf->SetXY(8, 37.5);
+//$pdf->Write(0, "x");
+echo "5,5,'lugar',".$pdf->GetX().",".$pdf->GetY().",'lugar','','lugar'".'<br>';
+
+//fecha
+$pdf->SetXY(170, 37.5);
+//$pdf->Write(0, "x");
+echo "5,5,'lugar',".$pdf->GetX().",".$pdf->GetY().",'fecha','','fecha'".'<br>';
+
+//nombre solicitante
+$pdf->SetXY(19, 46.95);
+//$pdf->Write(0, "x");
+echo "5,5,'lugar',".$pdf->GetX().",".$pdf->GetY().",'nombre solicitante','','nombre solicitante'".'<br>';
+//nombre contratante
+$pdf->SetXY(121, 46.95);
+//$pdf->Write(0, "x");
+echo "5,5,'lugar',".$pdf->GetX().",".$pdf->GetY().",'nombre contratante','','nombre contratante'".'<br>';
+
+//nombre solicitante consentimiento
+$pdf->SetXY(19, 97.95);
+//$pdf->Write(0, "x");
+echo "5,5,'lugar',".$pdf->GetX().",".$pdf->GetY().",'nombre solicitante consentimiento','','nombre solicitante consentimiento'".'<br>';
+//nombre contratante consentimiento
+$pdf->SetXY(121, 97.95);
+//$pdf->Write(0, "x");
+echo "5,5,'lugar',".$pdf->GetX().",".$pdf->GetY().",'nombre contratante consentimiento','','nombre contratante consentimiento'".'<br>';
+
+
+//clave
+$pdf->SetXY(18.6, 176.5);
+//$pdf->Write(0, "x");
+echo "5,5,'clave',".$pdf->GetX().",".$pdf->GetY().",'clave','','clave'".'<br>';
+
+//nombre asesor
+$pdf->SetXY(47.6, 176.5);
+//$pdf->Write(0, "x");
+echo "5,5,'nombre asesor',".$pdf->GetX().",".$pdf->GetY().",'nombre asesor','','nombre asesor'".'<br>';
+
+//participacion
+$pdf->SetXY(29.3, 181.9);
+//$pdf->Write(0, "x");
+echo "5,5,'participacion',".$pdf->GetX().",".$pdf->GetY().",'participacion','','participacion'".'<br>';
+
 
 
 //------------------           fin pagina 5            ------------------------------------------------------

@@ -89,23 +89,18 @@ if (mysql_result($resCotizacion,0,'tieneasegurado') == '1') {
     $resAsegurado = $serviciosReferencias->traerAseguradosPorIdPDF($idasegurado);
  
     /// fijo para entidad federativa de nacimiento
-    $pdf->SetXY(106, 99.5);
+    $pdf->SetXY(54.40, 142.00);
     $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resAsegurado,0,'curp'), mysql_result($resAsegurado,0,'estado'));
     $pdf->Write(0, $resEF);
     // fin de entidad federativa
  
-    /// fijo para entidad federativa de nacimiento
-    $pdf->SetXY(75, 185.5);
-    $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resCliente,0,'curp'), mysql_result($resCliente,0,'estado'));
-    $pdf->Write(0, $resEF);
-    // fin de entidad federativa
  
  } else {
     $idasegurado = 0;
  
     /// fijo para entidad federativa de nacimiento
  
-    $pdf->SetXY(106, 99.5);
+    $pdf->SetXY(54.40, 142.00);
     $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resCliente,0,'curp'), mysql_result($resCliente,0,'estado'));
     $pdf->Write(0, $resEF);
     // fin de entidad federativa
@@ -126,6 +121,10 @@ if (mysql_result($resCotizacion,0,'tieneasegurado') == '1') {
 
 //------------------            pagina 1            ------------------------------------------------------ 
 //------------------ datos generales del solicitante ------------------------------------------------------
+
+//emisor
+$pdf->SetXY(183.2, 56.2);
+$pdf->Write(0, "18118");
 
 $resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 1,3);
 
@@ -293,6 +292,14 @@ $pdf->setSourceFile('SolicitudproductoVida500.pdf');
 $tplIdx = $pdf->importPage(2);
 // use the imported page as the template
 $pdf->useTemplate($tplIdx, 0, 0);
+
+//emisor = 10118
+
+//producto a contratar = ''
+
+//plan = 'nada por ahora'
+
+
 
 
 $resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 2,3);
@@ -462,6 +469,10 @@ $pdf->setSourceFile('SolicitudproductoVida500.pdf');
 $tplIdx = $pdf->importPage(3);
 // use the imported page as the template
 $pdf->useTemplate($tplIdx, 0, 0);
+
+//cambiar rebeneficiario irrevocable a irrevocable
+
+//forma de pago
 
 
 $resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 3,3);
@@ -651,10 +662,24 @@ while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
 
 }
 
+$municipioCliente = mysql_result($resCliente,0,'municipio');
+$estadoCliente = mysql_result($resCliente,0,'estado');
+
 $resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(4,3);
 while ($row = mysql_fetch_array($resReferenciasFijo)) {
    $pdf->SetXY($row['x'], $row['y']);
-   $pdf->Write(0, $row['default']);
+   switch ($row['default']) {
+      case 'fecha':
+         $pdf->Write(0, date('d/m/Y'));
+      break;
+      case 'lugar y fecha de solicitud':
+         $pdf->Write(0, utf8_decode($municipioCliente).' - '.utf8_decode($estadoCliente));
+      break;
+      default:
+         $pdf->Write(0, $row['default']);
+      break;
+   }
+
 
 }
 
@@ -800,21 +825,17 @@ $tplIdx = $pdf->importPage(5);
 // use the imported page as the template
 $pdf->useTemplate($tplIdx, 0, 0);
 
+//participacion = 100%
 
+//nombre =  Javier A. Foncerrada
+
+// numero condusef = 'falta'
 
 
 //------------------            fin pagina 5            ------------------------------------------------------
 
-// add a page
-$pdf->AddPage();
-// set the sourcefile
-$pdf->setSourceFile('SolicitudproductoVida500.pdf');
-// import page 1
-$tplIdx = $pdf->importPage(4);
-// use the imported page as the template
-$pdf->useTemplate($tplIdx, 0, 0);
 
-//$pdf->Output('Vida500AC.pdf', 'I');
+
 
 
 $pdf->Output( __DIR__.'/'.'../archivos/solicitudes/cotizaciones/'.$id.'/FSOLICITUDAC.pdf', 'F');
