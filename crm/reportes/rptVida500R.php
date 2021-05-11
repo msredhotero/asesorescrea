@@ -839,6 +839,83 @@ $pdf->useTemplate($tplIdx, 0, 0);
 
 // numero condusef = 'falta'
 
+//clave
+//$pdf->SetXY(18.1, 86.6);
+//$pdf->Write(0, "x");
+//echo "3,4,'comisiones',".$pdf->GetX().",".$pdf->GetY().",'clave','','clave'".'<br>';
+
+
+//participacion = 100%
+//clave
+$pdf->SetXY(27.6, 92.2);
+$pdf->Write(0, "100");
+//echo "3,4,'comisiones',".$pdf->GetX().",".$pdf->GetY().",'clave','','clave'".'<br>';
+
+
+
+//nombre =  Javier A. Foncerrada
+//nombre y firma
+$pdf->SetXY(45.6, 92.2);
+$pdf->Write(0, "Javier A. Foncerrada");
+//echo "3,4,'comisiones',".$pdf->GetX().",".$pdf->GetY().",'nombre y firma','','nombre y firma'".'<br>';
+
+
+//dia
+$pdf->SetXY(138.8, 258.9);
+$pdf->Write(0, data('d'));
+//echo "3,4,'fin pagina',".$pdf->GetX().",".$pdf->GetY().",'dia','','dia'".'<br>';
+//condusef
+$pdf->SetXY(152.9, 258.9);
+switch (date('m')) {
+   case '01':
+      $pdf->Write(0, 'Enero');
+   break;
+   case '02':
+      $pdf->Write(0, 'Febrero');
+   break;
+   case '03':
+      $pdf->Write(0, 'Marzo');
+   break;
+   case '04':
+      $pdf->Write(0, 'Abril');
+   break;
+   case '05':
+      $pdf->Write(0, 'Mayo');
+   break;
+   case '06':
+      $pdf->Write(0, 'Junio');
+   break;
+   case '07':
+      $pdf->Write(0, 'Julio');
+   break;
+   case '08':
+      $pdf->Write(0, 'Agosto');
+   break;
+   case '09':
+      $pdf->Write(0, 'Septiembre');
+   break;
+   case '10':
+      $pdf->Write(0, 'Octubre');
+   break;
+   case '11':
+      $pdf->Write(0, 'Noviembre');
+   break;
+   case '12':
+      $pdf->Write(0, 'Diciembre');
+   break;
+}
+//echo "3,4,'fin pagina',".$pdf->GetX().",".$pdf->GetY().",'mes','','mes'".'<br>';
+//condusef
+$pdf->SetXY(163.4, 258.9);
+$pdf->Write(0, date('Y'));
+//echo "3,4,'fin pagina',".$pdf->GetX().",".$pdf->GetY().",'anio','','anio'".'<br>';
+
+// numero condusef = 'falta'
+//condusef
+$pdf->SetXY(7, 262,6);
+$pdf->Write(0, "000");
+//echo "3,4,'fin pagina',".$pdf->GetX().",".$pdf->GetY().",'condusef','','condusef'".'<br>';
+
 
 //------------------            fin pagina 5            ------------------------------------------------------
 
