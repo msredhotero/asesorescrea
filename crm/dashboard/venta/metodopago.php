@@ -141,16 +141,16 @@ if ($edad >= 60) {
 		$resCalculoMedico3 = $serviciosReferencias->traerCuestionariodetallePorTablaReferenciaIdRespuesta(11, 'dbcotizaciones', 'idcotizacion', $id,'1391,1392');
 		$resCalculoMedico4 = $serviciosReferencias->traerCuestionariodetallePorTablaReferenciaIdRespuesta(11, 'dbcotizaciones', 'idcotizacion', $id,'1391,1393');
 		$acumPrecio = 0;
-		if (mysql_num_rows($resCalculoMedico1)>0) {
+		if (mysql_num_rows($resCalculoMedico1)==2) {
 			$acumPrecio = 8124.4;
 		}
-		if (mysql_num_rows($resCalculoMedico2)>0) {
+		if (mysql_num_rows($resCalculoMedico2)==2) {
 			$acumPrecio = 5677.2;
 		}
-		if (mysql_num_rows($resCalculoMedico3)>0) {
+		if (mysql_num_rows($resCalculoMedico3)==2) {
 			$acumPrecio = 6118;
 		}
-		if (mysql_num_rows($resCalculoMedico4)>0) {
+		if (mysql_num_rows($resCalculoMedico4)==2) {
 			$acumPrecio = 4278.8;
 		}
 		
