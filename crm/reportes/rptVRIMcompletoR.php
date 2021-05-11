@@ -676,7 +676,7 @@ $pdf->Write(0, date('d'));
 //echo "4,3,'fecha de la solicitud',".$pdf->GetX().",".$pdf->GetY().",'dia','','dia'".'<br>';
 
 // mes
-$pdf->SetXY(181, 151);
+$pdf->SetXY(177, 151);
 switch (date('m')) {
    case '01':
       $pdf->Write(0, 'Enero');
