@@ -481,10 +481,10 @@ $tplIdx = $pdf->importPage(3);
 $pdf->useTemplate($tplIdx, 0, 0);
 
 //antiguedad 1
-$resCalculoAntiguedad1 = $serviciosReferencias->traerCuestionariodetallePorTablaReferenciaIdRespuesta(11, 'dbcotizaciones', 'idcotizacion', $id,'910');
+$resCalculoAntiguedad1 = $serviciosReferencias->traerCuestionariodetallePorTablaReferenciaIdRespuesta(11, 'dbcotizaciones', 'idcotizacion', $id,'1387');
 
 //antiguedad 2
-$resCalculoAntiguedad2 = $serviciosReferencias->traerCuestionariodetallePorTablaReferenciaIdRespuesta(11, 'dbcotizaciones', 'idcotizacion', $id,'908');
+$resCalculoAntiguedad2 = $serviciosReferencias->traerCuestionariodetallePorTablaReferenciaIdRespuesta(11, 'dbcotizaciones', 'idcotizacion', $id,'1385');
 
 if (mysql_num_rows($resCalculoAntiguedad1)>0) {
    if (mysql_result($resCalculoAntiguedad1,0,'respuestavalor') != '') {
