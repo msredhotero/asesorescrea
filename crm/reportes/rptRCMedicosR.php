@@ -148,7 +148,7 @@ while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
 $resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(1,5);
 while ($row = mysql_fetch_array($resReferenciasFijo)) {
    $pdf->SetXY($row['x'], $row['y']);
-   $pdf->Write(0, $row['default']);
+   $pdf->Write(0, strtoupper( utf8_decode($row['default'])));
 
 }
 
@@ -268,7 +268,14 @@ while ($row = mysql_fetch_array($resReferencias)) {
                         $pdf->Write(0, 'x');
                      }
                   } else {
-                     $pdf->Write(0, mysql_result($resCliente,0,$row['camporeferencia']));
+                     if ($row['camporeferencia']== 'reftipoidentificacion') {
+                        $resTI = $serviciosReferencias->traerTipoidentificacionPorId(mysql_result($resCliente,0,$row['camporeferencia']));
+      
+                        $pdf->Write(0, strtoupper( utf8_decode( mysql_result($resTI,0,1))));
+      
+                     } else {
+                        $pdf->Write(0, strtoupper( utf8_decode(mysql_result($resCliente,0,$row['camporeferencia']))));
+                     }
                   }
                }
 
