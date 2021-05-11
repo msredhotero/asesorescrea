@@ -191,7 +191,7 @@ while ($row = mysql_fetch_array($resReferencias)) {
          } else {
 
             if ($row['camporeferencia']== 'refestadocivil') {
-               die(var_dump($row['nombre']));
+               //die(var_dump($row['nombre']));
                if (mysql_result($resCliente,0,$row['camporeferencia']) == 1 && 'soltero' == $row['nombre']) {
                   $pdf->Write(0, 'x');
                }
