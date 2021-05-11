@@ -87,11 +87,12 @@ if (mysql_result($resCotizacion,0,'tieneasegurado') == '1') {
     /// fijo para entidad federativa de nacimiento
     $pdf->SetXY(106, 99.5);
     $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resAsegurado,0,'curp'), mysql_result($resAsegurado,0,'estado'));
-    $pdf->Write(0, $resEF);
+    //por ahora no va en otra pagina
+    //$pdf->Write(0, $resEF);
     // fin de entidad federativa
  
     /// fijo para entidad federativa de nacimiento
-    $pdf->SetXY(75, 185.5);
+    $pdf->SetXY(57.60, 139.40);
     $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resCliente,0,'curp'), mysql_result($resCliente,0,'estado'));
     $pdf->Write(0, $resEF);
     // fin de entidad federativa
@@ -101,7 +102,7 @@ if (mysql_result($resCotizacion,0,'tieneasegurado') == '1') {
  
     /// fijo para entidad federativa de nacimiento
  
-    $pdf->SetXY(106, 99.5);
+    $pdf->SetXY(57.60, 139.40);
     $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resCliente,0,'curp'), mysql_result($resCliente,0,'estado'));
     $pdf->Write(0, $resEF);
     // fin de entidad federativa
@@ -156,7 +157,7 @@ $resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(1
 
 while ($row = mysql_fetch_array($resReferencias)) {
    $pdf->SetXY($row['x'], $row['y']);
-   if ($row['sector'] == 'datos generales del solicitante') {
+   if ($row['sector'] == 'datos generales contratante') {
       if ($idasegurado > 0) {
          if ($row['camporeferencia']== 'genero') {
             if (mysql_result($resAsegurado,0,$row['camporeferencia']) == $row['nombre']) {
