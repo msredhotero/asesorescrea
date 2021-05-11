@@ -88,13 +88,13 @@ if (mysql_result($resCotizacion,0,'tieneasegurado') == '1') {
     $pdf->SetXY(106, 99.5);
     $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resAsegurado,0,'curp'), mysql_result($resAsegurado,0,'estado'));
     //por ahora no va en otra pagina
-    //$pdf->Write(0, $resEF);
+    //$pdf->Write(0, strtoupper( utf8_decode($resEF)));
     // fin de entidad federativa
  
     /// fijo para entidad federativa de nacimiento
     $pdf->SetXY(57.60, 139.40);
     $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resCliente,0,'curp'), mysql_result($resCliente,0,'estado'));
-    $pdf->Write(0, $resEF);
+    $pdf->Write(0, strtoupper( utf8_decode($resEF)));
     // fin de entidad federativa
  
  } else {
@@ -104,7 +104,7 @@ if (mysql_result($resCotizacion,0,'tieneasegurado') == '1') {
  
     $pdf->SetXY(57.60, 139.40);
     $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resCliente,0,'curp'), mysql_result($resCliente,0,'estado'));
-    $pdf->Write(0, $resEF);
+    $pdf->Write(0, strtoupper( utf8_decode($resEF)));
     // fin de entidad federativa
  }
  
@@ -332,6 +332,8 @@ while ($row = mysql_fetch_array($resReferenciasFijo)) {
 }
 
 
+if ($idasegurado > 0) {
+
 $resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(2,5);
 
 while ($row = mysql_fetch_array($resReferencias)) {
@@ -457,6 +459,8 @@ while ($row = mysql_fetch_array($resReferencias)) {
       }
 
    }
+
+}
 
 }
 
