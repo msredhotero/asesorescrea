@@ -69,7 +69,7 @@ $pdf =& new FPDI();
 // add a page
 $pdf->AddPage();
 // set the sourcefile
-$pdf->setSourceFile('solRC.pdf');
+$pdf->setSourceFile(__DIR__.'/'.'solRC.pdf');
 // import page 1
 $tplIdx = $pdf->importPage(1);
 // use the imported page as the template
@@ -288,7 +288,7 @@ while ($row = mysql_fetch_array($resReferencias)) {
 // add a page
 $pdf->AddPage();
 // set the sourcefile
-$pdf->setSourceFile('solRC.pdf');
+$pdf->setSourceFile(__DIR__.'/'.'solRC.pdf');
 // import page 1
 $tplIdx = $pdf->importPage(2);
 // use the imported page as the template
@@ -461,7 +461,7 @@ while ($row = mysql_fetch_array($resReferencias)) {
 // add a page
 $pdf->AddPage();
 // set the sourcefile
-$pdf->setSourceFile('solRC.pdf');
+$pdf->setSourceFile(__DIR__.'/'.'solRC.pdf');
 // import page 1
 $tplIdx = $pdf->importPage(3);
 // use the imported page as the template
@@ -631,7 +631,7 @@ while ($row = mysql_fetch_array($resReferencias)) {
 // add a page
 $pdf->AddPage();
 // set the sourcefile
-$pdf->setSourceFile('solRC.pdf');
+$pdf->setSourceFile(__DIR__.'/'.'solRC.pdf');
 // import page 1
 $tplIdx = $pdf->importPage(4);
 // use the imported page as the template
@@ -810,7 +810,7 @@ while ($row = mysql_fetch_array($resReferencias)) {
 // add a page
 $pdf->AddPage();
 // set the sourcefile
-$pdf->setSourceFile('solRC.pdf');
+$pdf->setSourceFile(__DIR__.'/'.'solRC.pdf');
 // import page 1
 $tplIdx = $pdf->importPage(5);
 // use the imported page as the template
