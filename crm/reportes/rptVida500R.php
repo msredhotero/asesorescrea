@@ -155,7 +155,7 @@ $resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(1
 
 while ($row = mysql_fetch_array($resReferencias)) {
    $pdf->SetXY($row['x'], $row['y']);
-   if ($row['sector'] == 'datos generales del solicitante') {
+   if ($row['sector'] == '1.1 generales') {
       if ($idasegurado > 0) {
          if ($row['camporeferencia']== 'genero') {
             if (mysql_result($resAsegurado,0,$row['camporeferencia']) == $row['nombre']) {
