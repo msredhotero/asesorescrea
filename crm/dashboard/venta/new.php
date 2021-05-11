@@ -2250,7 +2250,7 @@ if (mysql_num_rows($resBckUpCliente) > 0) {
 						});
 
 						
-						$('#wizard_with_validation #respuestaAntigüedadenelejercicioprofesional(1)').pickadate({
+						$('#wizard_with_validation #respuestaAntigüedadenelejercicioprofesional1').pickadate({
 							format: 'yyyy-mm-dd',
 							labelMonthNext: 'Siguiente mes',
 							labelMonthPrev: 'Previo mes',
@@ -2267,7 +2267,7 @@ if (mysql_num_rows($resBckUpCliente) > 0) {
 							weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
 						});
 
-						$('#wizard_with_validation #respuestaAntigüedadenelejercicioprofesional(2)').pickadate({
+						$('#wizard_with_validation #respuestaAntigüedadenelejercicioprofesional2').pickadate({
 							format: 'yyyy-mm-dd',
 							labelMonthNext: 'Siguiente mes',
 							labelMonthPrev: 'Previo mes',
