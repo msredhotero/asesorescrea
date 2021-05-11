@@ -833,6 +833,24 @@ $tplIdx = $pdf->importPage(5);
 // use the imported page as the template
 $pdf->useTemplate($tplIdx, 0, 0);
 
+
+$resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 5,3);
+
+while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
+   $pdf->SetXY($row['x'], $row['y']);
+   if ($row['default'] == '') {
+      if ($row['idtiporespuesta'] == 1) {
+         $pdf->Write(0, $row['respuestavalor']);
+      } else {
+         $pdf->Write(0, $row['respuesta']);
+      }
+
+   } else {
+      $pdf->Write(0, $row['default']);
+   }
+
+}
+
 //participacion = 100%
 
 //nombre =  Javier A. Foncerrada
