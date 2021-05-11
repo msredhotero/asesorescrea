@@ -35,19 +35,26 @@ $rIdCliente = mysql_result($rCliente,0,0);
 
 $rTipoPersona = mysql_result($rCliente,0,'reftipopersonas');
 
-if (isset($_GET['producto'])) {
-	$rIdProducto = $_GET['producto'];
+if (isset($_GET['id'])) {
+
 } else {
-	header('Location: productos.php');
+	if (isset($_GET['producto'])) {
+		$rIdProducto = $_GET['producto'];
+	} else {
+		header('Location: productos.php');
+	}
+
+	$resAuxProd = $serviciosReferencias->traerProductosPorId($rIdProducto);
+
+	if (mysql_num_rows($resAuxProd) <= 0) {
+		header('Location: productos.php');
+	}
 }
 
 
 
-$resAuxProd = $serviciosReferencias->traerProductosPorId($rIdProducto);
 
-if (mysql_num_rows($resAuxProd) <= 0) {
-	header('Location: productos.php');
-}
+
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
 $resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Venta",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
