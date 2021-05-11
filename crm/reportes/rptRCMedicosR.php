@@ -829,6 +829,154 @@ $tplIdx = $pdf->importPage(5);
 $pdf->useTemplate($tplIdx, 0, 0);
 
 
+//nombre asesor
+$pdf->SetXY(47.6, 176.5);
+$pdf->Write(0, "Javier A. Foncerrada");
+//echo "5,5,'nombre asesor',".$pdf->GetX().",".$pdf->GetY().",'nombre asesor','','nombre asesor'".'<br>';
+
+//participacion
+$pdf->SetXY(29.3, 181.9);
+$pdf->Write(0, "100");
+//echo "5,5,'participacion',".$pdf->GetX().",".$pdf->GetY().",'participacion','','participacion'".'<br>';
+
+
+$resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(5,5);
+while ($row = mysql_fetch_array($resReferenciasFijo)) {
+   $pdf->SetXY($row['x'], $row['y']);
+   $pdf->Write(0, $row['default']);
+
+}
+
+
+$resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(5,5);
+
+while ($row = mysql_fetch_array($resReferencias)) {
+   $pdf->SetXY($row['x'], $row['y']);
+   if ($row['sector'] == 'datos generales del solicitante') {
+      if ($idasegurado > 0) {
+         if ($row['camporeferencia']== 'genero') {
+            if (mysql_result($resAsegurado,0,$row['camporeferencia']) == $row['nombre']) {
+               $pdf->Write(0, 'x');
+            }
+         } else {
+
+            if ($row['camporeferencia']== 'refestadocivil') {
+               if (mysql_result($resAsegurado,0,$row['camporeferencia']) == 1 && 'soltero' == $row['nombre']) {
+                  $pdf->Write(0, 'x');
+               }
+               if (mysql_result($resAsegurado,0,$row['camporeferencia']) == 2 && 'casado' == $row['nombre']) {
+                  $pdf->Write(0, 'x');
+               }
+            } else {
+
+               if ($row['camporeferencia']== 'reftipoidentificacion') {
+                  $resTI = $serviciosReferencias->traerTipoidentificacionPorId(mysql_result($resAsegurado,0,$row['camporeferencia']));
+
+                  $pdf->Write(0, strtoupper( utf8_decode( mysql_result($resTI,0,1))));
+
+               } else {
+                  $pdf->Write(0, strtoupper( utf8_decode( mysql_result($resAsegurado,0,$row['camporeferencia']))));
+               }
+            }
+         }
+
+      } else {
+         if ($row['camporeferencia']== 'genero') {
+            if (mysql_result($resCliente,0,$row['camporeferencia']) == $row['nombre']) {
+               $pdf->Write(0, 'x');
+            }
+         } else {
+
+            if ($row['camporeferencia']== 'refestadocivil') {
+               if (mysql_result($resCliente,0,$row['camporeferencia']) == 1 && 'soltero' == $row['nombre']) {
+                  $pdf->Write(0, 'x');
+               }
+               if (mysql_result($resCliente,0,$row['camporeferencia']) == 2 && 'casado' == $row['nombre']) {
+                  $pdf->Write(0, 'x');
+               }
+            } else {
+
+               if ($row['camporeferencia']== 'reftipoidentificacion') {
+                  $resTI = $serviciosReferencias->traerTipoidentificacionPorId(mysql_result($resCliente,0,$row['camporeferencia']));
+
+                  $pdf->Write(0, strtoupper( utf8_decode( mysql_result($resTI,0,1))));
+
+               } else {
+                  $pdf->Write(0, strtoupper( utf8_decode(mysql_result($resCliente,0,$row['camporeferencia']))));
+               }
+
+
+            }
+         }
+
+      }
+
+   } else {
+      if ($row['sector'] == 'beneficiario') {
+         if (mysql_num_rows($resBeneficiario)>0) {
+
+            if ($row['camporeferencia']== 'genero') {
+               if (mysql_result($resBeneficiario,0,$row['camporeferencia']) == $row['nombre']) {
+                  $pdf->Write(0, 'x');
+               }
+            } else {
+
+               if ($row['camporeferencia']== 'refestadocivil') {
+                  if (mysql_result($resBeneficiario,0,$row['camporeferencia']) == 1 && 'soltero' == $row['nombre']) {
+                     $pdf->Write(0, 'x');
+                  }
+                  if (mysql_result($resBeneficiario,0,$row['camporeferencia']) == 2 && 'casado' == $row['nombre']) {
+                     $pdf->Write(0, 'x');
+                  }
+               } else {
+                  if ($row['camporeferencia']== 'reftipoidentificacion') {
+                     $resTI = $serviciosReferencias->traerTipoidentificacionPorId(mysql_result($resBeneficiario,0,$row['camporeferencia']));
+
+                     $pdf->Write(0, mysql_result($resTI,0,1));
+
+                  } else {
+                     $pdf->Write(0, mysql_result($resBeneficiario,0,$row['camporeferencia']));
+                  }
+
+
+               }
+            }
+         }
+
+      } else {
+         switch ($row['tabla']) {
+            case 'dbasesores':
+               $pdf->Write(0, mysql_result($resAsesor,0,$row['camporeferencia']));
+            break;
+            case 'dbclientes':
+               if ($row['camporeferencia']== 'genero') {
+                  if (mysql_result($resCliente,0,$row['camporeferencia']) == $row['nombre']) {
+                     $pdf->Write(0, 'x');
+                  }
+               } else {
+
+                  if ($row['camporeferencia']== 'refestadocivil') {
+                     if (mysql_result($resCliente,0,$row['camporeferencia']) == 1 && 'soltero' == $row['nombre']) {
+                        $pdf->Write(0, 'x');
+                     }
+                     if (mysql_result($resCliente,0,$row['camporeferencia']) == 2 && 'casado' == $row['nombre']) {
+                        $pdf->Write(0, 'x');
+                     }
+                  } else {
+                     $pdf->Write(0, mysql_result($resCliente,0,$row['camporeferencia']));
+                  }
+               }
+
+            break;
+         }
+
+      }
+
+   }
+
+}
+
+
 //------------------           fin pagina 5            ------------------------------------------------------
 
 
