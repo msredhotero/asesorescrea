@@ -589,7 +589,13 @@ while ($row = mysql_fetch_array($resReferencias)) {
                      $pdf->Write(0, mysql_result($resTI,0,1));
 
                   } else {
-                     $pdf->Write(0, mysql_result($resBeneficiario,0,$row['camporeferencia']));
+                     if ($row['camporeferencia']== 'reftipoparentesco') {
+                        $resTI = $serviciosReferencias->traerTipoparentescoPorId(mysql_result($resBeneficiario,0,$row['camporeferencia']));
+
+                        $pdf->Write(0, mysql_result($resTI,0,1));
+                     } else {
+                        $pdf->Write(0, mysql_result($resBeneficiario,0,$row['camporeferencia']));
+                     }
                   }
 
 
