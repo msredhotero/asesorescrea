@@ -862,7 +862,7 @@ $pdf->Write(0, "Javier A. Foncerrada");
 
 //dia
 $pdf->SetXY(138.8, 258.9);
-$pdf->Write(0, data('d'));
+$pdf->Write(0, date('d'));
 //echo "3,4,'fin pagina',".$pdf->GetX().",".$pdf->GetY().",'dia','','dia'".'<br>';
 //condusef
 $pdf->SetXY(152.9, 258.9);
