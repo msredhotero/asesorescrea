@@ -1017,44 +1017,7 @@ $pdf->Write(0, date('d'));
 //echo "3,4,'fin pagina',".$pdf->GetX().",".$pdf->GetY().",'dia','','dia'".'<br>';
 //condusef
 $pdf->SetXY(152.9, 258.9);
-switch (date('m')) {
-   case '01':
-      $pdf->Write(0, 'Enero');
-   break;
-   case '02':
-      $pdf->Write(0, 'Febrero');
-   break;
-   case '03':
-      $pdf->Write(0, 'Marzo');
-   break;
-   case '04':
-      $pdf->Write(0, 'Abril');
-   break;
-   case '05':
-      $pdf->Write(0, 'Mayo');
-   break;
-   case '06':
-      $pdf->Write(0, 'Junio');
-   break;
-   case '07':
-      $pdf->Write(0, 'Julio');
-   break;
-   case '08':
-      $pdf->Write(0, 'Agosto');
-   break;
-   case '09':
-      $pdf->Write(0, 'Septiembre');
-   break;
-   case '10':
-      $pdf->Write(0, 'Octubre');
-   break;
-   case '11':
-      $pdf->Write(0, 'Noviembre');
-   break;
-   case '12':
-      $pdf->Write(0, 'Diciembre');
-   break;
-}
+$pdf->Write(0, date('m'));
 //echo "3,4,'fin pagina',".$pdf->GetX().",".$pdf->GetY().",'mes','','mes'".'<br>';
 //condusef
 $pdf->SetXY(163.4, 258.9);
