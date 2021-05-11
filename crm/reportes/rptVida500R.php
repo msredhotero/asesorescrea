@@ -851,6 +851,139 @@ while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
 
 }
 
+
+
+
+$resReferencias = $serviciosReferencias->traerSolicitudesrespuestasCompletoPDF(5,3);
+
+while ($row = mysql_fetch_array($resReferencias)) {
+   $pdf->SetXY($row['x'], $row['y']);
+   if ($row['sector'] == 'datos generales del solicitante') {
+      if ($idasegurado > 0) {
+         if ($row['camporeferencia']== 'genero') {
+            if (mysql_result($resAsegurado,0,$row['camporeferencia']) == $row['nombre']) {
+               $pdf->Write(0, 'x');
+            }
+         } else {
+
+            if ($row['camporeferencia']== 'refestadocivil') {
+               if (mysql_result($resAsegurado,0,$row['camporeferencia']) == 1 && 'soltero' == $row['nombre']) {
+                  $pdf->Write(0, 'x');
+               }
+               if (mysql_result($resAsegurado,0,$row['camporeferencia']) == 2 && 'casado' == $row['nombre']) {
+                  $pdf->Write(0, 'x');
+               }
+            } else {
+
+               if ($row['camporeferencia']== 'reftipoidentificacion') {
+                  $resTI = $serviciosReferencias->traerTipoidentificacionPorId(mysql_result($resAsegurado,0,$row['camporeferencia']));
+
+                  $pdf->Write(0, strtoupper( utf8_decode( mysql_result($resTI,0,1))));
+
+               } else {
+                  $pdf->Write(0, strtoupper( utf8_decode( mysql_result($resAsegurado,0,$row['camporeferencia']))));
+               }
+            }
+         }
+
+      } else {
+         if ($row['camporeferencia']== 'genero') {
+            if (mysql_result($resCliente,0,$row['camporeferencia']) == $row['nombre']) {
+               $pdf->Write(0, 'x');
+            }
+         } else {
+
+            if ($row['camporeferencia']== 'refestadocivil') {
+               if (mysql_result($resCliente,0,$row['camporeferencia']) == 1 && 'soltero' == $row['nombre']) {
+                  $pdf->Write(0, 'x');
+               }
+               if (mysql_result($resCliente,0,$row['camporeferencia']) == 2 && 'casado' == $row['nombre']) {
+                  $pdf->Write(0, 'x');
+               }
+            } else {
+
+               if ($row['camporeferencia']== 'reftipoidentificacion') {
+                  $resTI = $serviciosReferencias->traerTipoidentificacionPorId(mysql_result($resCliente,0,$row['camporeferencia']));
+
+                  $pdf->Write(0, strtoupper( utf8_decode( mysql_result($resTI,0,1))));
+
+               } else {
+                  $pdf->Write(0, strtoupper( utf8_decode(mysql_result($resCliente,0,$row['camporeferencia']))));
+               }
+
+
+            }
+         }
+
+      }
+
+   } else {
+      if ($row['sector'] == 'beneficiario') {
+         if (mysql_num_rows($resBeneficiario)>0) {
+
+            if ($row['camporeferencia']== 'genero') {
+               if (mysql_result($resBeneficiario,0,$row['camporeferencia']) == $row['nombre']) {
+                  $pdf->Write(0, 'x');
+               }
+            } else {
+
+               if ($row['camporeferencia']== 'refestadocivil') {
+                  if (mysql_result($resBeneficiario,0,$row['camporeferencia']) == 1 && 'soltero' == $row['nombre']) {
+                     $pdf->Write(0, 'x');
+                  }
+                  if (mysql_result($resBeneficiario,0,$row['camporeferencia']) == 2 && 'casado' == $row['nombre']) {
+                     $pdf->Write(0, 'x');
+                  }
+               } else {
+                  if ($row['camporeferencia']== 'reftipoidentificacion') {
+                     $resTI = $serviciosReferencias->traerTipoidentificacionPorId(mysql_result($resBeneficiario,0,$row['camporeferencia']));
+
+                     $pdf->Write(0, mysql_result($resTI,0,1));
+
+                  } else {
+                     $pdf->Write(0, mysql_result($resBeneficiario,0,$row['camporeferencia']));
+                  }
+
+
+               }
+            }
+         }
+
+      } else {
+         switch ($row['tabla']) {
+            case 'dbasesores':
+               $pdf->Write(0, mysql_result($resAsesor,0,$row['camporeferencia']));
+            break;
+            case 'dbclientes':
+               if ($row['camporeferencia']== 'genero') {
+                  if (mysql_result($resCliente,0,$row['camporeferencia']) == $row['nombre']) {
+                     $pdf->Write(0, 'x');
+                  }
+               } else {
+
+                  if ($row['camporeferencia']== 'refestadocivil') {
+                     if (mysql_result($resCliente,0,$row['camporeferencia']) == 1 && 'soltero' == $row['nombre']) {
+                        $pdf->Write(0, 'x');
+                     }
+                     if (mysql_result($resCliente,0,$row['camporeferencia']) == 2 && 'casado' == $row['nombre']) {
+                        $pdf->Write(0, 'x');
+                     }
+                  } else {
+                     $pdf->Write(0, mysql_result($resCliente,0,$row['camporeferencia']));
+                  }
+               }
+
+            break;
+         }
+
+      }
+
+   }
+
+}
+
+
+
 //participacion = 100%
 
 //nombre =  Javier A. Foncerrada
