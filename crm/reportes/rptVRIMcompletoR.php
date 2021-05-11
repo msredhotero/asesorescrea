@@ -246,7 +246,8 @@ while ($row = mysql_fetch_array($resReferencias)) {
                         $pdf->Write(0, 'x');
                      }
                   } else {
-                     $pdf->Write(0, mysql_result($resCliente,0,$row['camporeferencia']));
+                     $pdf->Write(0,strtoupper( utf8_decode( mysql_result($resCliente,0,$row['camporeferencia'])) ));
+                     
                   }
                }
 
@@ -676,7 +677,45 @@ $pdf->Write(0, date('d'));
 
 // mes
 $pdf->SetXY(181, 151);
-$pdf->Write(0, date('F'));
+switch (date('m')) {
+   case '01':
+      $pdf->Write(0, 'Enero');
+   break;
+   case '02':
+      $pdf->Write(0, 'Febrero');
+   break;
+   case '03':
+      $pdf->Write(0, 'Marzo');
+   break;
+   case '04':
+      $pdf->Write(0, 'Abril');
+   break;
+   case '05':
+      $pdf->Write(0, 'Mayo');
+   break;
+   case '06':
+      $pdf->Write(0, 'Junio');
+   break;
+   case '07':
+      $pdf->Write(0, 'Julio');
+   break;
+   case '08':
+      $pdf->Write(0, 'Agosto');
+   break;
+   case '09':
+      $pdf->Write(0, 'Septiembre');
+   break;
+   case '10':
+      $pdf->Write(0, 'Octubre');
+   break;
+   case '11':
+      $pdf->Write(0, 'Noviembre');
+   break;
+   case '12':
+      $pdf->Write(0, 'Diciembre');
+   break;
+}
+
 //echo "4,3,'fecha de la solicitud',".$pdf->GetX().",".$pdf->GetY().",'mes','','mes'".'<br>';
 
 // anio
