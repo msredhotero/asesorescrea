@@ -841,10 +841,24 @@ $pdf->Write(0, "100");
 //echo "5,5,'participacion',".$pdf->GetX().",".$pdf->GetY().",'participacion','','participacion'".'<br>';
 
 
+$municipioCliente = mysql_result($resCliente,0,'municipio');
+$estadoCliente = mysql_result($resCliente,0,'estado');
+
+
 $resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(5,5);
 while ($row = mysql_fetch_array($resReferenciasFijo)) {
    $pdf->SetXY($row['x'], $row['y']);
-   $pdf->Write(0, $row['default']);
+   switch ($row['default']) {
+      case 'fecha':
+         $pdf->Write(0, date('d/m/Y'));
+      break;
+      case 'lugar':
+         $pdf->Write(0, utf8_decode($municipioCliente).' - '.utf8_decode($estadoCliente));
+      break;
+      default:
+         $pdf->Write(0, $row['default']);
+      break;
+   }
 
 }
 
