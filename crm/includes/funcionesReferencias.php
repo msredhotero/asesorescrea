@@ -6301,6 +6301,33 @@ return $res;
    }
 
 
+   function traerCuestionariodetallePorTablaReferenciaIdRespuesta($idtabla, $tabla, $idnombre, $id, $inidrespuesta) {
+		$sql = "select
+      c.idcuestionariodetalle,
+      c.reftabla,
+      c.idreferencia,
+      c.refpreguntascuestionario,
+      c.refrespuestascuestionario,
+      c.pregunta,
+      c.respuesta,
+      c.respuestavalor,
+      c.fechacrea,
+      c.fechamodi,
+      c.usuariocrea,
+      c.usuariomodi,
+      cu.idcuestionario
+      from dbcuestionariodetalle c
+      inner join dbpreguntascuestionario pre ON pre.idpreguntacuestionario = c.refpreguntascuestionario and (pre.refpreguntassencibles is null or pre.refpreguntassencibles = 0)
+      inner join dbcuestionarios cu ON cu.idcuestionario = pre.refcuestionarios
+      inner join tbtiporespuesta ti ON ti.idtiporespuesta = pre.reftiporespuesta
+      inner join dbrespuestascuestionario res ON res.idrespuestacuestionario = c.refrespuestascuestionario
+		inner join ".$tabla." v on v.".$idnombre." = c.idreferencia
+		where c.reftabla = ".$idtabla." and c.idreferencia = ".$id." and c.refrespuestascuestionario in (".$inidrespuesta.")";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+
    /* Fin */
    /* /* Fin de la Tabla: dbcuestionariodetalle*/
 

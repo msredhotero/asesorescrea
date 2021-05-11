@@ -133,45 +133,69 @@ if ($edad >= 60) {
 	$edadNoAplica = 1;
 } else {
 	$nopuedeContinuar = 0;
-	// calculos
-	$resProductosPaquete = $serviciosReferencias->traerPaquetedetallesPorPaquete($idProducto);
 
-	// es un producto con paquete, son montos combinados
-	if (mysql_num_rows($resProductosPaquete)>0) {
+	//para RC medicos por ahora
+	if ($idProducto == 55) {
+		$resCalculoMedico1 = $serviciosReferencias->traerCuestionariodetallePorTablaReferenciaIdRespuesta(11, 'dbcotizaciones', 'idcotizacion', $id,'1390,1392');
+		$resCalculoMedico2 = $serviciosReferencias->traerCuestionariodetallePorTablaReferenciaIdRespuesta(11, 'dbcotizaciones', 'idcotizacion', $id,'1390,1393');
+		$resCalculoMedico3 = $serviciosReferencias->traerCuestionariodetallePorTablaReferenciaIdRespuesta(11, 'dbcotizaciones', 'idcotizacion', $id,'1391,1392');
+		$resCalculoMedico4 = $serviciosReferencias->traerCuestionariodetallePorTablaReferenciaIdRespuesta(11, 'dbcotizaciones', 'idcotizacion', $id,'1391,1393');
+		$acumPrecio = 0;
+		if (mysql_num_rows($resCalculoMedico1)>0) {
+			$acumPrecio = 8124.4;
+		}
+		if (mysql_num_rows($resCalculoMedico2)>0) {
+			$acumPrecio = 5677.2;
+		}
+		if (mysql_num_rows($resCalculoMedico3)>0) {
+			$acumPrecio = 6118;
+		}
+		if (mysql_num_rows($resCalculoMedico4)>0) {
+			$acumPrecio = 4278.8;
+		}
+		
+	} else {
+		// calculos
+		$resProductosPaquete = $serviciosReferencias->traerPaquetedetallesPorPaquete($idProducto);
 
-		// voy acumulando los valores
-		while ($rowP = mysql_fetch_array($resProductosPaquete)) {
+		// es un producto con paquete, son montos combinados
+		if (mysql_num_rows($resProductosPaquete)>0) {
 
-			$existeCotizacionParaProducto = $serviciosReferencias->traerValoredadPorProductoEdad($rowP['refproductos'],$edad);
+			// voy acumulando los valores
+			while ($rowP = mysql_fetch_array($resProductosPaquete)) {
+
+				$existeCotizacionParaProducto = $serviciosReferencias->traerValoredadPorProductoEdad($rowP['refproductos'],$edad);
+
+				if (mysql_num_rows($existeCotizacionParaProducto)>0) {
+					//die(var_dump($rowP['refproductos']));
+					if ($rowP['unicomonto'] == '1') {
+						$acumPrecio += $rowP['valor'];
+					} else {
+						$acumPrecio += mysql_result($existeCotizacionParaProducto,0,'valor');
+					}
+
+				} else {
+
+					$nopuedeContinuar = 1;
+					break;
+				}
+
+			}
+		} else {
+			// obtengo el valor en base a los valores cargados
+			$existeCotizacionParaProducto = $serviciosReferencias->traerValoredadPorProductoEdad($idProducto,$edad);
 
 			if (mysql_num_rows($existeCotizacionParaProducto)>0) {
 				//die(var_dump($rowP['refproductos']));
-				if ($rowP['unicomonto'] == '1') {
-					$acumPrecio += $rowP['valor'];
-				} else {
-					$acumPrecio += mysql_result($existeCotizacionParaProducto,0,'valor');
-				}
+				$acumPrecio += mysql_result($existeCotizacionParaProducto,0,'valor');
 
 			} else {
-
 				$nopuedeContinuar = 1;
-				break;
 			}
 
 		}
-	} else {
-		// obtengo el valor en base a los valores cargados
-		$existeCotizacionParaProducto = $serviciosReferencias->traerValoredadPorProductoEdad($idProducto,$edad);
-
-		if (mysql_num_rows($existeCotizacionParaProducto)>0) {
-			//die(var_dump($rowP['refproductos']));
-			$acumPrecio += mysql_result($existeCotizacionParaProducto,0,'valor');
-
-		} else {
-			$nopuedeContinuar = 1;
-		}
-
 	}
+	
 }
 
 $precio = $acumPrecio;
