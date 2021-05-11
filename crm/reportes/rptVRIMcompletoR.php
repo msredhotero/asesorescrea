@@ -75,7 +75,7 @@ $pdf->SetTextColor(0,0,0);
 $yCuadrado1 = 5;
 $yConstCuadrado1 = 42;
 
-$pdf->Image('SolicitudAfiliacionVrim-1.png' , 0 ,0, 210 , 0,'PNG');
+$pdf->Image(__DIR__.'/'.'SolicitudAfiliacionVrim-1.png' , 0 ,0, 210 , 0,'PNG');
 
 
 
@@ -262,7 +262,7 @@ $pdf->SetTextColor(0,0,0);
 $yCuadrado1 = 5;
 $yConstCuadrado1 = 42;
 
-$pdf->Image('SolicitudAfiliacionVrim-2.png' , 0 ,0, 210 , 0,'PNG');
+$pdf->Image(__DIR__.'/'.'SolicitudAfiliacionVrim-2.png' , 0 ,0, 210 , 0,'PNG');
 
 
 $resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 1,4);
@@ -430,7 +430,7 @@ $pdf->SetTextColor(0,0,0);
 $yCuadrado1 = 5;
 $yConstCuadrado1 = 42;
 
-$pdf->Image('SolicitudAfiliacionVrim-3.png' , 0 ,0, 210 , 0,'PNG');
+$pdf->Image(__DIR__.'/'.'SolicitudAfiliacionVrim-3.png' , 0 ,0, 210 , 0,'PNG');
 
 //forma de pago
 if (mysql_num_rows($resPago) > 0) {
@@ -638,7 +638,7 @@ $pdf->SetTextColor(0,0,0);
 $yCuadrado1 = 5;
 $yConstCuadrado1 = 42;
 
-$pdf->Image('SolicitudAfiliacionVrim-4.png' , 0 ,0, 210 , 0,'PNG');
+$pdf->Image(__DIR__.'/'.'SolicitudAfiliacionVrim-4.png' , 0 ,0, 210 , 0,'PNG');
 
 
 
@@ -655,7 +655,7 @@ $pdf->SetTextColor(0,0,0);
 $yCuadrado1 = 5;
 $yConstCuadrado1 = 42;
 
-$pdf->Image('SolicitudAfiliacionVrim-5.png' , 0 ,0, 210 , 0,'PNG');
+$pdf->Image(__DIR__.'/'.'SolicitudAfiliacionVrim-5.png' , 0 ,0, 210 , 0,'PNG');
 
 
 // dia
