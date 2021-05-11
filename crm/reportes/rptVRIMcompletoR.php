@@ -3,6 +3,8 @@
 
 date_default_timezone_set('America/Mexico_City');
 
+
+
 include ('../includes/funcionesUsuarios.php');
 include ('../includes/funciones.php');
 include ('../includes/funcionesHTML.php');
@@ -664,6 +666,8 @@ $yConstCuadrado1 = 42;
 
 $pdf->Image(__DIR__.'/'.'SolicitudAfiliacionVrim-5.png' , 0 ,0, 210 , 0,'PNG');
 
+setlocale(LC_TIME,"es_MX");
+setlocale(LC_ALL, 'es_MX');
 
 // dia
 $pdf->SetXY(158, 151);
@@ -672,7 +676,7 @@ $pdf->Write(0, date('d'));
 
 // mes
 $pdf->SetXY(181, 151);
-$pdf->Write(0, date('B'));
+$pdf->Write(0, date('F'));
 //echo "4,3,'fecha de la solicitud',".$pdf->GetX().",".$pdf->GetY().",'mes','','mes'".'<br>';
 
 // anio
