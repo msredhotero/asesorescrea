@@ -327,7 +327,8 @@ while ($row = mysql_fetch_array($resCuestionarioDetalle)) {
 $resReferenciasFijo = $serviciosReferencias->traerSolicitudesrespuestasCompletoFijoPDF(2,5);
 while ($row = mysql_fetch_array($resReferenciasFijo)) {
    $pdf->SetXY($row['x'], $row['y']);
-   $pdf->Write(0, $row['default']);
+   $pdf->Write(0, strtoupper( utf8_decode($row['default'])));
+   
 
 }
 
