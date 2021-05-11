@@ -480,6 +480,36 @@ $tplIdx = $pdf->importPage(3);
 // use the imported page as the template
 $pdf->useTemplate($tplIdx, 0, 0);
 
+//antiguedad 1
+$resCalculoAntiguedad1 = $serviciosReferencias->traerCuestionariodetallePorTablaReferenciaIdRespuesta(11, 'dbcotizaciones', 'idcotizacion', $id,'910');
+
+//antiguedad 2
+$resCalculoAntiguedad2 = $serviciosReferencias->traerCuestionariodetallePorTablaReferenciaIdRespuesta(11, 'dbcotizaciones', 'idcotizacion', $id,'908');
+
+if (mysql_num_rows($resCalculoAntiguedad1)>0) {
+   if (mysql_result($resCalculoAntiguedad1,0,'respuestavalor') != '') {
+      $data_birth = new DateTime(mysql_result($resCalculoAntiguedad1,0,'respuestavalor')); //Crea el objeto DateTime a partir de un string de fecha
+      $data_hoy = new DateTime(); //devuelve la fecha actual
+      $edad = $data_birth->diff($data_hoy); //Aplicamos la diferencia entre fechas
+      $edad = $edad->y; //Obtenemos la diferencia en años del objeto
+
+      $pdf->SetXY(80.00, 122.70);
+      $pdf->Write(0, $edad);
+   }
+}
+
+if (mysql_num_rows($resCalculoAntiguedad2)>0) {
+   if (mysql_result($resCalculoAntiguedad2,0,'respuestavalor') != '') {
+      $data_birth = new DateTime(mysql_result($resCalculoAntiguedad2,0,'respuestavalor')); //Crea el objeto DateTime a partir de un string de fecha
+      $data_hoy = new DateTime(); //devuelve la fecha actual
+      $edad = $data_birth->diff($data_hoy); //Aplicamos la diferencia entre fechas
+      $edad = $edad->y; //Obtenemos la diferencia en años del objeto
+
+      $pdf->SetXY(80.00, 160.40);
+      $pdf->Write(0, $edad);
+   }
+}
+
 
 $resCuestionarioDetalle = $serviciosReferencias->traerCuestionariodetallePDFPorTablaReferencia(11, 'dbcotizaciones', 'idcotizacion', $id, 3,5);
 
