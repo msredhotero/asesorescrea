@@ -2215,7 +2215,7 @@ if (mysql_num_rows($resBckUpCliente) > 0) {
 							weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
 						});
 
-						$('#wizard_with_validation #respuestaVigenciadeseadaDesdelas12:00hrs.del').pickadate({
+						$('#wizard_with_validation #respuestaVigenciadeseadaDesdelas1200hrsdel').pickadate({
 							format: 'yyyy-mm-dd',
 							labelMonthNext: 'Siguiente mes',
 							labelMonthPrev: 'Previo mes',
@@ -2232,7 +2232,7 @@ if (mysql_num_rows($resBckUpCliente) > 0) {
 							weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
 						});
 
-						$('#wizard_with_validation #respuestaVigenciadeseadahastalas12:00hrs.del').pickadate({
+						$('#wizard_with_validation #respuestaVigenciadeseadahastalas1200hrsdel').pickadate({
 							format: 'yyyy-mm-dd',
 							labelMonthNext: 'Siguiente mes',
 							labelMonthPrev: 'Previo mes',
