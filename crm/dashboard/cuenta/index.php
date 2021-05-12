@@ -339,7 +339,7 @@ $cadRef3 .= $serviciosFunciones->devolverSelectBoxActivoText($resColonia,array(0
 									<div class="col-xs-2">
 										<div class="form-group form-float">
 											<div class="form-line">
-												<input type="text" name="edificio" id="edificio" value="<?php echo mysql_result($resCliente,0,'edificio'); ?>" class="form-control" readonly>
+												<input type="text" name="edificio" id="edificio" value="<?php echo mysql_result($resCliente,0,'edificio'); ?>" class="form-control" >
 												<label class="form-label">Edificio</label>
 											</div>
 										</div>
@@ -365,7 +365,7 @@ $cadRef3 .= $serviciosFunciones->devolverSelectBoxActivoText($resColonia,array(0
 												<select class="form-control sick" id="delegacion" name="delegacion">
 													<?php echo $cadRef2; ?>
 												</select>
-												<label class="form-label">Delegación</label>
+												<label class="form-label">Alcaldía o Municipio</label>
 											</div>
 										</div>
 									</div>
@@ -393,7 +393,7 @@ $cadRef3 .= $serviciosFunciones->devolverSelectBoxActivoText($resColonia,array(0
 									<div class="col-xs-3">
 										<div class="form-group form-float">
 											<div class="form-line">
-												<input type="text" name="ciudad" id="ciudad" class="form-control" value="<?php echo mysql_result($resCliente,0,'ciudad'); ?>" readonly>
+												<input type="text" name="ciudad" id="ciudad" class="form-control" value="<?php echo mysql_result($resCliente,0,'ciudad'); ?>" >
 												<label class="form-label">Ciudad</label>
 											</div>
 										</div>
