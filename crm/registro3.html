@@ -804,7 +804,7 @@
 
 
                                                                      </div>
-                                                                     <div class="erroresRFC" style="color:#F00;">
+                                                                     <div class="erroresRFC" style="color:#F00">
 
                                                                      </div>
                                                                      <div class="erroresEmail" style="color:#F00;">
@@ -1147,14 +1147,14 @@
                         }
 
       					} else {
-                        jQuery('.erroresRFC').html('<h4>' + data.mensaje + '</h4>');
+                        jQuery('.erroresRFC').html('<h4 style="color:#F00 !important;">' + data.mensaje + '</h4>');
 
 
       					}
       				},
       				//si ha ocurrido un error
       				error: function(){
-      					jQuery('.erroresRFC').html('<h4>Actualice la pagina</h4>');
+      					jQuery('.erroresRFC').html('<h4 style="color:#F00 !important;">Actualice la pagina</h4>');
       				}
       			});
       		}
@@ -1199,7 +1199,7 @@
                         }
 
       					} else {
-                        jQuery('.erroresRFC').html('<h4>' + data.mensaje + '</h4>');
+                        jQuery('.erroresRFC').html('<h4 style="color:#F00 !important;">' + data.mensaje + '</h4>');
 
 
       					}
@@ -1249,7 +1249,7 @@
                         }
 
       					} else {
-      						jQuery('.erroresCURP').html('<h4>' + data.mensaje + '</h4>');
+      						jQuery('.erroresCURP').html('<h4 style="color:#F00 !important;">' + data.mensaje + '</h4>');
 
       					}
       				},

@@ -10,6 +10,7 @@ include ('../includes/validadores.php');
 include ('../includes/funcionesPostal.php');
 include ('../includes/funcionesComercio.php');
 include ('../includes/base.php');
+include ('../includes/EnvioSMS.class.php');
 
 $serviciosUsuarios  		= new ServiciosUsuarios();
 $serviciosFunciones 		= new Servicios();
@@ -1415,13 +1416,13 @@ switch ($accion) {
       eliminarTransferenciarecibos($serviciosReferencias);
    break;
    case 'buscarCURP':
-      buscarCURP($serviciosValidador);
+      buscarCURP($serviciosValidador,$serviciosReferencias);
    break;
    case 'traerDocumentacionPorCotizacionDocumentacionRechazo':
       traerDocumentacionPorCotizacionDocumentacionRechazo($serviciosReferencias);
    break;
    case 'buscarRFC':
-      buscarRFC($serviciosValidador);
+      buscarRFC($serviciosValidador,$serviciosReferencias);
    break;
    case 'modificarDatosClientes':
       modificarDatosClientes($serviciosReferencias);
@@ -1460,9 +1461,100 @@ switch ($accion) {
    case 'modificarVentasUnicaDocumentacionAux':
       modificarVentasUnicaDocumentacionAux($serviciosReferencias);
    break;
+   case 'enviarNIPmovil':
+      enviarNIPmovil($serviciosUsuarios, $serviciosReferencias);
+   break;
+   case 'verificarNIPSMS':
+      verificarNIPSMS($serviciosUsuarios, $serviciosReferencias);
+   break;
 
 }
 /* FinFinFin */
+
+function verificarNIPSMS($serviciosUsuarios, $serviciosReferencias) {
+   $idusuario = $_POST['idusuario'];
+   $nip = $_POST['nip'];
+
+   if (isset($_POST['activacion'])) {
+      $activacion = $_POST['activacion'];
+   } else {
+      $activacion = '';
+   }
+   
+
+   $resUsuario = $serviciosUsuarios->traerUsuarioId($idusuario);
+
+   if (mysql_num_rows($resUsuario)>0) {
+		$resCliente = $serviciosReferencias->traerClientesPorUsuarioCompleto($idusuario);
+
+      $resNIP = $serviciosUsuarios->traerUsuariosnipPorIdUsuarioNIP($idusuario, $nip,1);
+
+      if (mysql_num_rows($resNIP)>0) {
+
+         if ($activacion == '') {
+            $resV['leyenda'] = 'La activación no es correcta';
+            $resV['error'] = true;
+         } else {
+            //pongo al usuario $activo, espero el nip
+            $resUsuario = $serviciosUsuarios->activarUsuario($idusuario, mysql_result($resUsuario,0,'password'));
+
+            // concreto la activacion, espsero el nip
+            $resConcretar = $serviciosUsuarios->eliminarActivacionusuarios($activacion);
+
+            $resV['leyenda'] = '';
+            $resV['error'] = false;
+         }
+         
+      } else {
+         $resV['leyenda'] = 'Error NIP erroneo';
+         $resV['error'] = true;
+      }
+
+      
+   
+      header('Content-type: application/json');
+      echo json_encode($resV);
+   }
+}
+
+function enviarNIPmovil($serviciosUsuarios, $serviciosReferencias) {
+   $idusuario = $_POST['idusuario'];
+   $telmovil = $_POST['telmovil'];
+
+   $telefono = $serviciosReferencias->limpiarTelfono($telmovil);
+   
+   $resUsuario = $serviciosUsuarios->traerUsuarioId($idusuario);
+
+   $EnvioSMS = new EnvioSMS();
+
+   $token = $serviciosReferencias->generarNIP();
+
+   $msg = ' NIP: '.$token ." Ingresa este numero para validar tu validar tu celular";
+
+	if (mysql_num_rows($resUsuario)>0) {
+		$resCliente = $serviciosReferencias->traerClientesPorUsuarioCompleto($idusuario);
+
+      $envio = $EnvioSMS->enviarSMS($telefono, $msg );
+
+      if ($envio == 1) {
+         $resMarca = $serviciosUsuarios->insertarUsuariosnip($idusuario,1,$token,date('Y-m-d H:i:s'));
+
+         if ($resMarca == true) {
+            $resV['leyenda'] = '';
+            $resV['error'] = false;
+         } else {
+            $resV['leyenda'] = 'Hubo un error al modificar datos';
+            $resV['error'] = true;
+         }
+      
+         header('Content-type: application/json');
+         echo json_encode($resV);
+
+      }
+   }
+
+
+}
 
 function modificarVentasUnicaDocumentacionAux($serviciosReferencias) {
    $idventa = $_POST['idventa'];
@@ -1666,7 +1758,7 @@ function modificarDatosClientes($serviciosReferencias) {
    $estado = $_POST['estado'];
    $colonia = $_POST['colonia'];
    $municipio = $_POST['municipio'];
-   $ciudad = $_POST['ciudad'];
+   $ciudad = ($_POST['ciudad'] == '' ? $_POST['municipio'] : $_POST['ciudad']);
 
    $resBck = $serviciosReferencias->insertarClientesbck($id);
 
@@ -1737,7 +1829,7 @@ function traerDocumentacionPorCotizacionDocumentacionRechazo($serviciosReferenci
 }
 
 
-function buscarRFC($serviciosValidador) {
+function buscarRFC($serviciosValidador,$serviciosReferencias) {
 
    $resV['error'] = false;
 
@@ -1814,7 +1906,7 @@ function buscarRFC($serviciosValidador) {
                               $fechaNacimiento  = $arFirmaFiel['fechaNacimiento'];
                               $cveEntidadNac    = $arFirmaFiel['cveEntidadNac'];
                               $domicilio        = $arFirmaFiel['domicilio'];
-                              $desTelefono      = $arFirmaFiel['desTelefono'];
+                              $desTelefono      = $serviciosReferencias->limpiarTelfono($arFirmaFiel['desTelefono']);
                               $curp             = $arFirmaFiel['curp'];
                               $correoElectronico= $arFirmaFiel['correoElectronico'];
                               $numeroInterior   = $arFirmaFiel['numeroInterior'];
@@ -1926,7 +2018,7 @@ function buscarRFC($serviciosValidador) {
 }
 
 
-function buscarCURP($serviciosValidador) {
+function buscarCURP($serviciosValidador, $serviciosReferencias) {
 
    $resV['error'] = false;
 
@@ -5648,6 +5740,8 @@ function validarCuestionarioPersona($serviciosReferencias) {
 function insertarAsegurados($serviciosReferencias) {
    session_start();
 
+   //vincular con funcionesAsegurados por productos
+
    $nombre = $_POST['nombre'];
    $apellidopaterno = $_POST['apellidopaterno'];
    $apellidomaterno = $_POST['apellidomaterno'];
@@ -5659,7 +5753,20 @@ function insertarAsegurados($serviciosReferencias) {
    }
 
    $ine = '';
-   $curp = $_POST['curp'];
+
+   if (isset($_POST['curp'])) {
+      $curp = $_POST['curp'];
+   } else {
+      $curp = '';
+   }
+
+   if (isset($_POST['rfc'])) {
+      $rfc = $_POST['rfc'];
+   } else {
+      $rfc = '';
+   }
+
+
    $fechanacimiento = $_POST['fechanacimiento'];
    $numerocliente = '';
    $refusuarios = 0;
@@ -5681,11 +5788,16 @@ function insertarAsegurados($serviciosReferencias) {
 
 
    $refclientes = $_POST['refclientes'];
-   $reftipoparentesco = ($_POST['reftipoparentesco']== '' ? 4 : $_POST['reftipoparentesco']);
+
+   if (isset($_POST['reftipoparentesco'])) {
+      $reftipoparentesco = ($_POST['reftipoparentesco']== '' ? 4 : $_POST['reftipoparentesco']);
+   } else {
+      $reftipoparentesco = 4;
+   }
+   
 
    $domicilio = '';
    $email = '';
-   $rfc = $_POST['rfc'];
    $colonia = '';
    $municipio = '';
    $codigopostal = '';
@@ -5704,8 +5816,18 @@ function insertarAsegurados($serviciosReferencias) {
    $genero = $_POST['genero'];
    $refestadocivil = ($_POST['refestadocivil'] == '' ? 0 : $_POST['refestadocivil']);
 
-   $reftipoidentificacion = ($_POST['reftipoidentificacion'] == '' ? 0 : $_POST['reftipoidentificacion']);
-   $nroidentificacion = $_POST['nroidentificacion'];
+   if (isset($_POST['reftipoidentificacion'])) {
+      $reftipoidentificacion = $_POST['reftipoidentificacion'];
+   } else {
+      $reftipoidentificacion = 0;
+   }
+
+   if (isset($_POST['nroidentificacion'])) {
+      $nroidentificacion = ($_POST['reftipoidentificacion'] == '' ? 0 : $_POST['reftipoidentificacion']);
+   } else {
+      $nroidentificacion = '';
+   }
+
 
    $res = $serviciosReferencias->insertarAsegurados($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$refclientes,$reftipoparentesco,$fechanacimiento,$parentesco,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion);
 
@@ -10504,6 +10626,7 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
                      $apellidopaterno  = mysql_result($resClienteAux,0,'apellidopaterno');
                      $apellidomaterno  = mysql_result($resClienteAux,0,'apellidomaterno');
                      $email            = mysql_result($resClienteAux,0,'email');
+                     
                   } else {
                      $nombre           = '';
                      $apellidopaterno  = '';
@@ -10513,26 +10636,40 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
 
                   $password = $_POST['password'];
 
-                  //pongo al usuario $activo
-                  $resUsuario = $serviciosUsuarios->activarUsuario($idusuario,$password);
+                  //pongo al usuario $activo, espero el nip
+                  $resUsuario = $serviciosUsuarios->preactivarUsuario($idusuario,$password);
 
-                  // concreto la activacion
-                  $resConcretar = $serviciosUsuarios->eliminarActivacionusuarios($activacion);
+                  // concreto la activacion, espsero el nip
+                  //$resConcretar = $serviciosUsuarios->eliminarActivacionusuarios($activacion);
 
-                  if ($resUsuario == '') {
+                  
+                  //if ($resUsuario == '') {
                      /* email base */
-                     $destinatario = 'msaupurein@asesorescrea.com';
-                     $asunto = 'Activacion de Usuario';
-                     $cuerpo = 'El usuario '.$nombre.' '.$apellidopaterno.' '.$apellidomaterno.' se dio de alta al sistema';
+                     //$destinatario = 'msaupurein@asesorescrea.com';
+                     //$asunto = 'Activacion de Usuario';
+                     //$cuerpo = 'El usuario '.$nombre.' '.$apellidopaterno.' '.$apellidomaterno.' se dio de alta al sistema';
 
                      //$resEmail = $serviciosUsuarios->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
                      /* email envio un email para darle las indicaciones de como entrar */
-                     $resActivacion = $serviciosUsuarios->registrarCliente($email, $apellidopaterno.' '.$apellidomaterno, $nombre, $idcliente, $idusuario,$password);
+                     //$resActivacion = $serviciosUsuarios->registrarCliente($email, $apellidopaterno.' '.$apellidomaterno, $nombre, $idcliente, //$idusuario,$password);
 
-                     echo '';
-                  } else {
-                     echo 'Hubo un error al modificar datos';
-                  }
+                     //echo '';
+                  //} else {
+                     //echo 'Hubo un error al modificar datos';
+                  //}
+
+                  $resModUsuarioValidaEmail = $serviciosUsuarios->modificarUsuarioValidaEmail($idusuario,'1');
+
+                  /* email base */
+                  $destinatario = 'msaupurein@asesorescrea.com';
+                  $asunto = 'Activacion de Usuario';
+                  $cuerpo = 'El usuario '.$nombre.' '.$apellidopaterno.' '.$apellidomaterno.' se dio de alta al sistema';
+
+                  //$resEmail = $serviciosUsuarios->enviarEmail($destinatario,$asunto,$cuerpo, $referencia='');
+                  /* email envio un email para darle las indicaciones de como entrar */
+                  $resActivacion = $serviciosUsuarios->registrarCliente($email, $apellidopaterno.' '.$apellidomaterno, $nombre, $idcliente, $idusuario,$password);
+
+                  echo '';
               } else {
                   echo 'Se genero un error con el token, por favor verifique los datos';
               }

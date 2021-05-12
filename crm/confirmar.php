@@ -44,6 +44,9 @@ if (mysql_num_rows($resActivacion) > 0) {
 			$arResultado['postulante']['apellidomaterno'] = strtoupper( mysql_result($resPostulantes,0,'apellidomaterno'));
 			$arResultado['postulante']['email'] = mysql_result($resPostulantes,0,'email');
 			$arResultado['postulante']['id'] = mysql_result($resPostulantes,0,'idcliente');
+         $arResultado['postulante']['telefono'] = mysql_result($resPostulantes,0,'telefonocelular');
+         $arResultado['postulante']['validaemail'] = mysql_result($resUsuario,0,'validaemail');
+         
 		}
 
 		//pongo al usuario $activo
@@ -144,7 +147,7 @@ if (mysql_num_rows($resActivacion) > 0) {
          padding: 0 !important;
          }
 
-         .btnEnviarPersonaFisicaRFC, .btnEnviarPersonaFisicaCURP, .btnEnviarPersonaMoralRFC {
+         .btnEnviarPersonaFisicaRFC, .btnEnviarPersonaFisicaCURP, .btnEnviarPersonaMoralRFC, .btnEnviarNIP, .btnVerificarNIP {
             display: inline-block !important;
             transition: background-color 300ms !important;
             color: #fff !important;
@@ -580,7 +583,9 @@ if (mysql_num_rows($resActivacion) > 0) {
 
                                                                      <?php if (($arResultado['leyenda'] == '') && (mysql_num_rows($resUsuario)>0)) { ?>
 
-
+                                                                     <?php
+                                                                        if (($arResultado['postulante']['validaemail'] == '0') || ($arResultado['postulante']['validaemail'] == '')) { 
+                                                                     ?>
                                                                      <div align="center">
                                                    							<p>Bienvenido, <?php echo $arResultado['postulante']['nombre'].' '.$arResultado['postulante']['apellidopaterno'].' '.$arResultado['postulante']['apellidomaterno']; ?></p>
                                                    							<div class="alert bg-green"><h4>Por favor cargue una password para completar el alta de usuario.</h4></div>
@@ -593,20 +598,17 @@ if (mysql_num_rows($resActivacion) > 0) {
                                                                         <span class="wpcf7-form-control-wrap persona-fisica-rfc"><input type="text" id="nombre" name="nombre" value="<?php echo $arResultado['usuario']; ?>" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" readonly/></span> </label>
                                                                      </p>
 
-                                                                     <p><label style="color:#333743;"> Usuario<br />
+                                                                     <p style="display: none;"><label style="color:#333743;"> Usuario<br />
                                                                         <span class="wpcf7-form-control-wrap persona-fisica-rfc"><input type="text" id="email" name="email" value="<?php echo $arResultado['postulante']['email']; ?>" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" readonly /></span> </label>
                                                                      </p>
 
-                                                                     <div class="alert bg-green"><h6>Tu PASSWORD debe contener (10 caracteres, al menos una mayuscula, al menos una minuscula y un numero).</h6></div>
+                                                                     <div class="alert bg-green"><h6>Tu PASSWORD debe contener (8 caracteres, al menos una mayúscula, al menos una minúscula y un numero).</h6></div>
 
 
                                                                      <p><label style="color:#333743;"> Password<br />
-                                                                        <span class="wpcf7-form-control-wrap persona-fisica-rfc"><input type="password" id="password" name="password" value="" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" maxlength="10" /></span> </label>
+                                                                        <span class="wpcf7-form-control-wrap persona-fisica-rfc"><input type="password" id="password" name="password" value="" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" maxlength="16" /></span> </label>
                                                                      </p>
 
-                                                                     <p><label style="color:#333743;"> Confirme su Password<br />
-                                                                        <span class="wpcf7-form-control-wrap persona-fisica-rfc"><input type="password" id="passwordaux" name="passwordaux" value="" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" maxlength="10" /></span> </label>
-                                                                     </p>
 
 
                                                                      <div class="input-group">
@@ -648,6 +650,30 @@ if (mysql_num_rows($resActivacion) > 0) {
                                                                         </div>
                                                                      </div>
                                                                   </div>
+
+                                                                     <?php } else { ?>
+                                                                        <p><label style="color:#333743;"> No. de Movil<br />
+                                                                           <span class="wpcf7-form-control-wrap persona-fisica-rfc"><input type="text" id="telmovil" name="telmovil" value="" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" maxlength="10" /></span> </label>
+                                                                        </p>
+
+                                                                        <p class="lblNIP"><label style="color:#333743;"> Ingresa EL NIP que te enviamos por SMS al Movil<br />
+                                                                           <span class="wpcf7-form-control-wrap persona-fisica-rfc"><input type="text" id="nipmovil" name="nipmovil" value="" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" maxlength="6" minlength="6" /></span> </label>
+                                                                        </p>
+
+                                                                        <p class="contEnviarNIP">
+                                                                           <input type="button" id="loginNIP" value="ENVIAR NIP" class="wpcf7-form-control wpcf7-submit btnEnviarNIP" style="display:block !important;" />
+
+                                                                        </p>
+
+                                                                        <input type="hidden" name="activacion" id="activacion" value="<?php echo mysql_result($resActivacion,0,0); ?>" />
+
+                                                                        
+
+                                                                        <p class="contVerificarNIP">
+                                                                           <input type="button" id="loginNIP" value="VERIFICAR NIP" class="wpcf7-form-control wpcf7-submit btnVerificarNIP" style="display:block !important;" />
+
+                                                                        </p>
+                                                                     <?php } ?>
 
                                                                      <?php } else { ?>
 
@@ -922,10 +948,12 @@ if (mysql_num_rows($resActivacion) > 0) {
             //finfin
 
             jQuery('.contRespuesta').hide();
+            jQuery('.contReenviarNIP').hide();
+            jQuery('.contVerificarNIP').hide();
 
             //var $demoMaskedInput = $('.demo-masked-input');
  				function validarPASS(pass) {
- 						var re = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{10,})/,
+ 						var re = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/,
  						validado = pass.match(re);
 
  				    if (!validado)  //Coincide con el formato general?
@@ -943,58 +971,9 @@ if (mysql_num_rows($resActivacion) > 0) {
  				}
 
 
- 				jQuery('#passwordaux').focusout(function() {
- 					if (validaIgualdad(jQuery('#password').val(),jQuery('#passwordaux').val()) == false) {
- 						swal({
- 							title: "Error",
- 							text: "Los PASSWORDs no coinciden",
- 							type: "error",
- 							timer: 10000,
- 							showConfirmButton: true
- 						});
-
- 						jQuery('#login').hide();
- 					} else {
- 						jQuery('#login').show();
- 					}
- 				});
-
- 				jQuery('#password').focusout(function() {
- 					if (validarPASS(jQuery('#password').val()) == false) {
- 						swal({
- 							title: "Respuesta",
- 							text: "PASSWORD no valido. Recuerde que el PASSWORD debe contener (10 caracteres, al menos una mayuscula, al menos una minuscula y un numero)",
- 							type: "error",
- 							timer: 10000,
- 							showConfirmButton: true
- 						});
-
- 						//$(this).focus();
- 					} else {
- 						if (validaIgualdad(jQuery('#password').val(),jQuery('#passwordaux').val()) == false) {
- 							if (jQuery('#passwordaux').val() == '') {
- 								jQuery('#passwordaux').focus();
- 							} else {
- 								swal({
- 									title: "Error",
- 									text: "Los PASSWORDs no coinciden",
- 									type: "error",
- 									timer: 10000,
- 									showConfirmButton: true
- 								});
- 							}
-
-
- 							jQuery('#login').hide();
- 						} else {
- 							jQuery('#login').show();
- 						}
- 					}
- 				});
-
             jQuery('#login').click(function() {
                if (( jQuery('#aceptaterminos').attr('checked') ) && ( jQuery('#subscripcion').attr('checked') )) {
-                  if ((validarPASS(jQuery('#password').val()) == true) && (validarPASS(jQuery('#passwordaux').val()) == true) && (validaIgualdad(jQuery('#password').val(),jQuery('#passwordaux').val()) == true)) {
+                  if ((validarPASS(jQuery('#password').val()) == true)) {
                      jQuery.ajax({
    							data: {
                            idusuario: jQuery('#idusuario').val(),
@@ -1029,7 +1008,7 @@ if (mysql_num_rows($resActivacion) > 0) {
                             } else {
                                swal({
                                    title: "Respuesta",
-                                   text: "Tu usuario se activo correctamente, muchas gracias",
+                                   text: "Tu usuario se creo correctamente, muchas gracias, por favor activa tu cuenta con un NIP",
                                    type: "success",
                                    timer: 2000,
                                    showConfirmButton: false
@@ -1037,7 +1016,8 @@ if (mysql_num_rows($resActivacion) > 0) {
                                 jQuery('.contRespuesta').show();
                                 jQuery('.contFormulario').hide();
 
-
+                                setTimeout("location.reload(true);", 1500);
+                                //location.reload();
                                 //url = "dashboard/";
                                 //$(location).attr('href',url);
                             }
@@ -1050,7 +1030,7 @@ if (mysql_num_rows($resActivacion) > 0) {
                 } else {
                    swal({
                      title: "Error",
-                     text: "Por favor verifique los PASSWORDs",
+                     text: "Por favor verifique el PASSWORD",
                      type: "error",
                      timer: 10000,
                      showConfirmButton: true
@@ -1066,6 +1046,155 @@ if (mysql_num_rows($resActivacion) > 0) {
                });
              }
             });
+
+
+            jQuery('.btnEnviarNIP').click(function() {
+               
+                  if (( (jQuery('#telmovil').val()) != '') && ( (jQuery('#telmovil').val().length) == 10)) {
+                     jQuery.ajax({
+   							data: {
+                           idusuario: <?php echo $idusuario; ?>,
+                           telmovil: jQuery('#telmovil').val(),
+                           accion: 'enviarNIPmovil'
+                        },
+                       url:   'ajax/ajax.php',
+                       type:  'post',
+                       beforeSend: function () {
+
+   								jQuery('.contRespuesta').hide();
+                           
+                           jQuery('.contVerificarNIP').hide();
+                       },
+                       success:  function (response) {
+
+                            if ((response.error == true)) {
+
+                               jQuery('.contRespuesta').hide();
+                               jQuery('.contFormulario').show();
+                              
+                                swal({
+                                    title: "Respuesta",
+                                    text: "Se genero un error",
+                                    type: "error",
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+   									  
+                               
+                                jQuery('.btnEnviarNIP').val('ENVIAR NIP');
+                                jQuery('.contVerificarNIP').hide();
+
+                            } else {
+                               
+                               swal({
+                                   title: "Respuesta",
+                                   text: "Se te envio un NIP a tu movil",
+                                   type: "success",
+                                   timer: 2000,
+                                   showConfirmButton: false
+                               });
+                               
+                    
+
+                               jQuery('.btnEnviarNIP').val('REENVIAR NIP');
+                                jQuery('.contVerificarNIP').show();
+
+                                //setTimeout("location.reload(true);", 1500);
+                                //location.reload();
+                                //url = "dashboard/";
+                                //$(location).attr('href',url);
+                            }
+
+                       }
+                   });
+
+
+
+                } else {
+                   swal({
+                     title: "Error",
+                     text: "Por favor ingrese un no. de movil válido",
+                     type: "error",
+                     timer: 10000,
+                     showConfirmButton: true
+                  });
+                }
+
+            });
+
+
+            jQuery('.btnVerificarNIP').click(function() {
+               
+               if (( (jQuery('#nipmovil').val()) != '') && ( (jQuery('#nipmovil').val().length) == 6)) {
+                  jQuery.ajax({
+                     data: {
+                        idusuario: <?php echo $idusuario; ?>,
+                        nip: jQuery('#nipmovil').val(),
+                        activacion: jQuery('#activacion').val(),
+                        accion: 'verificarNIPSMS'
+                     },
+                    url:   'ajax/ajax.php',
+                    type:  'post',
+                    beforeSend: function () {
+
+                        jQuery('.contRespuesta').hide();
+                        jQuery('.contVerificarNIP').hide();
+                    },
+                    success:  function (response) {
+
+                         if ((response.error == true)) {
+
+                            jQuery('.contRespuesta').hide();
+                            jQuery('.contFormulario').show();
+                           
+                             swal({
+                                 title: "Respuesta",
+                                 text: "Se genero un error",
+                                 type: "error",
+                                 timer: 2000,
+                                 showConfirmButton: false
+                             });
+                             
+                             jQuery('.contEnviarNIP').show();
+                             jQuery('.contVerificarNIP').show();
+
+                         } else {
+                            
+                            swal({
+                                title: "Respuesta",
+                                text: "Se verifico correctamente tu USUARIO",
+                                type: "success",
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                            
+                 
+
+                             jQuery('.contReenviarNIP').show();
+                             jQuery('.contVerificarNIP').show();
+
+                             setTimeout("location.reload(true);", 1500);
+                             //location.reload();
+                             //url = "dashboard/";
+                             //$(location).attr('href',url);
+                         }
+
+                    }
+                });
+
+
+
+             } else {
+                swal({
+                  title: "Error",
+                  text: "Por favor ingrese un NIP válido",
+                  type: "error",
+                  timer: 10000,
+                  showConfirmButton: true
+               });
+             }
+
+         });
 
 
 

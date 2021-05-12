@@ -4,7 +4,7 @@
 date_default_timezone_set('America/Mexico_City');
 
 
-
+/*
 include ('../includes/funcionesUsuarios.php');
 include ('../includes/funciones.php');
 include ('../includes/funcionesHTML.php');
@@ -17,7 +17,7 @@ $serviciosHTML				= new ServiciosHTML();
 $serviciosReferencias 			= new ServiciosReferencias();
 
 $fecha = date('Y-m-d-H-i-s');
-
+*/
 
 require('fpdf.php');
 

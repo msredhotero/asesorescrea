@@ -9,6 +9,109 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosUsuarios {
 
+	function modificarUsuarioValidaEmail($id,$validaemail) {
+		$sql = "UPDATE dbusuarios
+				SET
+				validaemail = '".($validaemail)."'
+				WHERE idusuario = ".$id;
+		$res = $this->query($sql,0);
+		if ($res == false) {
+			return 'Error al modificar datos';
+		} else {
+			return '';
+		}
+	}
+
+	function modificarUsuarioValidaMovil($id,$validamovil) {
+		$sql = "UPDATE dbusuarios
+				SET
+				validamovil = '".($validamovil)."'
+				WHERE idusuario = ".$id;
+		$res = $this->query($sql,0);
+		if ($res == false) {
+			return 'Error al modificar datos';
+		} else {
+			return '';
+		}
+	}
+
+	function modificarUsuarioValidaSignatura($id,$validasignatura) {
+		$sql = "UPDATE dbusuarios
+				SET
+				validasignatura = '".($validasignatura)."'
+				WHERE idusuario = ".$id;
+		$res = $this->query($sql,0);
+		if ($res == false) {
+			return 'Error al modificar datos';
+		} else {
+			return '';
+		}
+	}
+
+	
+/* PARA Usuariosnip */
+
+function insertarUsuariosnip($refusuarios,$idevento,$nip,$fechacrea) {
+	$sql = "insert into dbusuariosnip(idusuariosnip,refusuarios,idevento,nip,fechacrea)
+	values ('',".$refusuarios.",".$idevento.",'".$nip."','".$fechacrea."')";
+	$res = $this->query($sql,1);
+	return $res;
+}
+	
+	
+	function modificarUsuariosnip($id,$refusuarios,$idevento,$nip,$fechacrea) {
+	$sql = "update dbusuariosnip
+	set
+	refusuarios = ".$refusuarios.",idevento = ".$idevento.",nip = '".$nip."',fechacrea = '".$fechacrea."'
+	where idusuariosnip =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+	
+	
+	function eliminarUsuariosnip($id) {
+	$sql = "delete from dbusuariosnip where idusuariosnip =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+	
+	
+	function traerUsuariosnip() {
+	$sql = "select
+	u.idusuariosnip,
+	u.refusuarios,
+	u.idevento,
+	u.nip,
+	u.fechacrea
+	from dbusuariosnip u
+	order by 1";
+	$res = $this->query($sql,0);
+	return $res;
+	}
+	
+	
+	function traerUsuariosnipPorId($id) {
+	$sql = "select idusuariosnip,refusuarios,idevento,nip,fechacrea from dbusuariosnip where idusuariosnip =".$id;
+	$res = $this->query($sql,0);
+	return $res;
+	}
+
+	function traerUsuariosnipPorIdUsuario($id) {
+		$sql = "select idusuariosnip,refusuarios,idevento,nip,fechacrea from dbusuariosnip where refusuarios =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerUsuariosnipPorIdUsuarioNIP($id, $nip,$idevento) {
+		$sql = "select idusuariosnip,refusuarios,idevento,nip,fechacrea from dbusuariosnip where refusuarios =".$id." and nip = '".$nip."' and idevento = ".$idevento;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+	
+	
+	/* Fin */
+	/* /* Fin de la Tabla: dbusuariosnip*/
+
 function GUID()
 {
     if (function_exists('com_create_guid') === true)
@@ -595,7 +698,8 @@ function traerUsuarioId($id) {
 	$sql = "select
             idusuario,usuario,refroles,
             nombrecompleto,email,password,
-            (case when activo = 1 then 'Si' else 'No' end) as activo
+            (case when activo = 1 then 'Si' else 'No' end) as activo,
+      		validaemail, validamovil, validasignatura
          from dbusuarios where idusuario = ".$id;
 	$res = $this->query($sql,0);
 	if ($res == false) {
@@ -1070,6 +1174,19 @@ function activarUsuario($refusuario, $password) {
 	$sql = "update dbusuarios
 	set
 		activo = 1, password = '".$password."'
+	where idusuario =".$refusuario;
+	$res = $this->query($sql,0);
+	if ($res == false) {
+		return 'Error al modificar datos';
+	} else {
+		return '';
+	}
+}
+
+function preactivarUsuario($refusuario, $password) {
+	$sql = "update dbusuarios
+	set
+		password = '".$password."'
 	where idusuario =".$refusuario;
 	$res = $this->query($sql,0);
 	if ($res == false) {

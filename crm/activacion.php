@@ -338,7 +338,7 @@ if (mysql_num_rows($resActivacion) > 0) {
 
 
 				function validarPASS(pass) {
-						var re = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{10,})/,
+						var re = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/,
 						validado = pass.match(re);
 
 				    if (!validado)  //Coincide con el formato general?
@@ -365,7 +365,7 @@ if (mysql_num_rows($resActivacion) > 0) {
 					if (validarPASS($('#password').val()) == false) {
 						swal({
 							title: "Respuesta",
-							text: "PASSWORD no valido. Recuerde que el PASSWORD debe contener (10 caracteres, al menos una mayuscula, al menos una minuscula y un numero)",
+							text: "PASSWORD no valido. Recuerde que el PASSWORD debe contener (8 caracteres, al menos una mayuscula, al menos una minuscula y un numero)",
 							type: "error",
 							timer: 10000,
 							showConfirmButton: true
@@ -383,17 +383,17 @@ if (mysql_num_rows($resActivacion) > 0) {
 						 var formData = new FormData($("#sign_in")[0]);
 
                    $.ajax({
-								data: formData,
-								//necesario para subir archivos via ajax
-								cache: false,
-								contentType: false,
-								processData: false,
-                       url:   'ajax/ajax.php',
-                       type:  'post',
-                       beforeSend: function () {
-                               $("#load").html('<img src="imagenes/load13.gif" width="50" height="50" />');
-										 $('#login').hide();
-                       },
+						data: formData,
+						//necesario para subir archivos via ajax
+						cache: false,
+						contentType: false,
+						processData: false,
+                        url:   'ajax/ajax.php',
+                        type:  'post',
+                        beforeSend: function () {
+                            $("#load").html('<img src="imagenes/load13.gif" width="50" height="50" />');
+							$('#login').hide();
+                        },
                        success:  function (response) {
 
                             if (isNaN(response)) {
@@ -410,7 +410,7 @@ if (mysql_num_rows($resActivacion) > 0) {
                             } else {
                                 $('#lgmNuevo').modal();
 
-										  $('#login').hide();
+								$('#login').hide();
 
                                 //url = "dashboard/";
                                 //$(location).attr('href',url);

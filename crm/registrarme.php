@@ -13,7 +13,7 @@ $serviciosFunciones 	= new Servicios();
 $serviciosValidador = new serviciosValidador();
 
 
-function buscarRFC($rfc,$serviciosValidador) {
+function buscarRFC($rfc,$serviciosValidador,$serviciosReferencias) {
 
    $resV['error'] = false;
 
@@ -76,7 +76,7 @@ function buscarRFC($rfc,$serviciosValidador) {
                         $fechaNacimiento  = $arFirmaFiel['fechaNacimiento'];
                         $cveEntidadNac    = $arFirmaFiel['cveEntidadNac'];
                         $domicilio        = $arFirmaFiel['domicilio'];
-                        $desTelefono      = $arFirmaFiel['desTelefono'];
+                        $desTelefono      = $serviciosReferencias->limpiarTelfono($arFirmaFiel['desTelefono']);
                         $curp             = $arFirmaFiel['curp'];
                         $correoElectronico= $arFirmaFiel['correoElectronico'];
                         $numeroInterior   = $arFirmaFiel['numeroInterior'];
@@ -147,7 +147,7 @@ function buscarRFC($rfc,$serviciosValidador) {
 
 
 
-function buscarCURP($curp,$serviciosValidador) {
+function buscarCURP($curp,$serviciosValidador,$serviciosReferencias) {
 
    $resV['error'] = false;
 
@@ -209,7 +209,7 @@ function buscarCURP($curp,$serviciosValidador) {
                         $fechaNacimiento  = $arFirmaFiel['fechaNacimiento'];
                         $cveEntidadNac    = $arFirmaFiel['cveEntidadNac'];
                         $domicilio        = $arFirmaFiel['domicilio'];
-                        $desTelefono      = $arFirmaFiel['desTelefono'];
+                        $desTelefono      = $serviciosReferencias->limpiarTelfono($arFirmaFiel['desTelefono']);
                         $curp             = $arFirmaFiel['curp'];
                         $correoElectronico= $arFirmaFiel['correoElectronico'];
                         $numeroInterior   = $arFirmaFiel['numeroInterior'];
@@ -290,7 +290,7 @@ function buscarCURP($curp,$serviciosValidador) {
       if ($tipopersona == 1) {
 
          if ((isset($_POST['persona-fisica-rfc'])) && ($_POST['persona-fisica-rfc'] != '')) {
-            $resDatos = buscarRFC($_POST['persona-fisica-rfc'], $serviciosValidador);
+            $resDatos = buscarRFC($_POST['persona-fisica-rfc'], $serviciosValidador, $serviciosReferencias);
 
             $nombre           = $resDatos['datos'][0]['nombres'];
             $apellidopaterno  = $resDatos['datos'][0]['apellidoPaterno'];
@@ -315,14 +315,14 @@ function buscarCURP($curp,$serviciosValidador) {
          }
 
          if ((isset($_POST['persona-fisica-curp'])) && ($_POST['persona-fisica-curp'] != '')) {
-            $resDatos = buscarCURP($_POST['persona-fisica-curp'], $serviciosValidador);
+            $resDatos = buscarCURP($_POST['persona-fisica-curp'], $serviciosValidador, $serviciosReferencias);
 
             $nombre           = $resDatos['datos'][0]['nombres'];
             $apellidopaterno  = $resDatos['datos'][0]['apellidoPaterno'];
             $apellidomaterno  = $resDatos['datos'][0]['apellidoMaterno'];
             $email            = $_POST['input_email_fisica_curp'];
             $fechanacimiento  = $resDatos['datos'][0]['fechaNacimiento'];
-            $telefono         = $resDatos['datos'][0]['desTelefono'];
+            $telefono         = $serviciosReferencias->limpiarTelfono($resDatos['datos'][0]['desTelefono']);
             $sexo             = ($resDatos['datos'][0]['sexo'] == 'H' ? 'Masculino' : 'Femenino');
             $codigopostal     = $resDatos['datos'][0]['codigoPostal'];
             $estado           = $resDatos['datos'][0]['entidadFederativa'];
@@ -351,7 +351,7 @@ function buscarCURP($curp,$serviciosValidador) {
          $apellidomaterno  = $resDatos['datos'][0]['apellidoMaterno'];
          $email            = $_POST['input_email_moral_rfc'];
          $fechanacimiento  = $resDatos['datos'][0]['fechaNacimiento'];
-         $telefono         = $resDatos['datos'][0]['desTelefono'];
+         $telefono         = $serviciosReferencias->limpiarTelfono($resDatos['datos'][0]['desTelefono']);
          $sexo             = ($resDatos['datos'][0]['sexo'] == 'H' ? 'Masculino' : 'Femenino');
          $codigopostal     = $resDatos['datos'][0]['codigoPostal'];
          $estado           = $resDatos['datos'][0]['entidadFederativa'];
@@ -403,7 +403,7 @@ function buscarCURP($curp,$serviciosValidador) {
             $numerocliente = $serviciosReferencias->generaNroCliente();
 
 
-            $res = $serviciosReferencias->insertarClientes($tipopersona,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,'',$telefono,$email,$rfc,'',$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,'','','',0,$colonia,$delegacion,$codigopostal,'',$nroexterior,$nrointerior,$estado,'',$curp,$sexo,$refestadocivil,0,'',$fechanacimiento);
+            $res = $serviciosReferencias->insertarClientes($tipopersona,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,'',$serviciosReferencias->limpiarTelfono($telefono),$email,$rfc,'',$numerocliente,$refusuarios,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,'','','',0,$colonia,$delegacion,$codigopostal,'',$nroexterior,$nrointerior,$estado,'',$curp,$sexo,$refestadocivil,0,'',$fechanacimiento);
 
             // empiezo la activacion del usuarios
             // $resActivacion = $serviciosUsuario->registrarCliente($email, $apellidopaterno.' '.$apellidomaterno, $nombre, $res, $refusuarios,$pass);

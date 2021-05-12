@@ -492,9 +492,11 @@ if (count($filesSolicitud) < 1) {
 
 						<ul class="nav nav-tabs tab-nav-right" role="tablist">
 							<li role="presentation" class="<?php echo $jqueryactivocliente; ?>"><a href="#tabcontratente" data-toggle="tab">CONTRATANTE</a></li>
-						<?php if ($lblCliente != $lblAsegurado) { ?>
-							<li role="presentation" class="<?php echo $jqueryactivoasegurado; ?>"><a href="#tabasegurado" data-toggle="tab">ASEGURADO</a></li>
-						<?php } ?>
+						
+						
+						<?php //if ($lblCliente != $lblAsegurado) { ?>
+							<!--<li role="presentation" class="<?php //echo $jqueryactivoasegurado; ?>"><a href="#tabasegurado" data-toggle="tab">ASEGURADO</a></li>-->
+						<?php //} ?>
 
 						</ul>
 						<!-- inicio del primer tab -->
@@ -624,107 +626,7 @@ if (count($filesSolicitud) < 1) {
 						</div>
 
 					<!-- fin del primer tab -->
-					<!-- inicio del segundo tab -->
-					<?php if ($lblCliente != $lblAsegurado) { ?>
-
-						<div role="tabpanel" class="tab-pane fade <?php echo $jqueryactivoasegurado2; ?>" id="tabasegurado">
-
-						<h4>Cargue la documentación solicitada, si necesita modificar el documento, repetita el mismo paso y se reemplazara el archivo con el nuevo.</h4>
-
-						<div class="col-xs-12">
-
-						<?php
-							$k=0;
-							while ($rowD = mysql_fetch_array($documentacionesrequeridasAsegurado)) {
-								$i += 1;
-								if ($rowD['archivo'] != '') {
-									$cargados += 1;
-								}
-						?>
-
-						<div class="form-group form-float">
-							<div class="col-xs-4">
-								<button type="button" class="btn btn-block bg-<?php echo ($rowD['color'] == 'blue' ? 'green' : $rowD['color']); ?> waves-effect btna<?php echo str_replace(' ','',$rowD['documentacion']); ?>"><i class="material-icons">unarchive</i><span><?php echo $rowD['documentacion']; ?> (click para cargar)</span></button>
-								<div class="hidden">
-									<input type="text" readonly="readonly" name="archivo<?php echo $i; ?>" id="archivo<?php echo $i; ?>" value="<?php echo $rowD['archivo']; ?>" required/>
-								</div>
-							</div>
-						</div>
-
-						<?php
-							}
-
-						?>
-						</div>
-						<?php if ($docuAsegurado > 0) { ?>
-						<div class="col-xs-12">
-							<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-								<div class="card">
-									<div class="header bg-blue">
-										<h2>
-											DOCUMENTACIÓN: <?php echo mysql_result($resDocumentacion,0,'documentacion'); ?>
-										</h2>
-
-									</div>
-									<div class="body">
-
-										<?php if ($estadoDocumentacion != 'Aceptada') { ?>
-										<div class="row contDropbox">
-
-											<form action="subirase.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
-												<div class="dz-message">
-													<div class="drag-icon-cph">
-														<i class="material-icons">touch_app</i>
-													</div>
-													<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
-												</div>
-												<div class="fallback">
-													<input name="file" type="file" id="archivos" />
-													<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $idAsegurado; ?>" />
-												</div>
-											</form>
-										</div>
-										<?php } ?>
-									</div>
-								</div>
-							</div>
-							<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-								<div class="card">
-									<div class="header bg-blue">
-										<h2>
-											ARCHIVO CARGADO
-										</h2>
-
-									</div>
-									<div class="body">
-
-										<div class="row">
-											<a href="javascript:void(0);" class="thumbnail timagen1">
-												<img class="img-responsive">
-											</a>
-											<div id="example1"></div>
-										</div>
-										<div class="row">
-											<div class="alert bg-<?php echo ($color == 'blue' ? 'green' : $color); ?>">
-												<h4>
-													Estado: <b><?php echo $estadoDocumentacion; ?></b>
-												</h4>
-											</div>
-
-
-										</div>
-
-									</div>
-								</div>
-							</div>
-
-
-						</div>
-						<?php } ?>
-
-					</div>
-					<!-- fin del segundo tab -->
-					<?php } ?>
+					
 
 					</div>
 

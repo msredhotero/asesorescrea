@@ -9,6 +9,12 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+   function limpiarTelfono($telefono){
+		$arrayCAracteres = array("-","_",".",","," ");
+		$telefono = str_replace ( $arrayCAracteres , '' , $telefono );
+      return substr($telefono,-10);
+	}
+
    function devolverCodigoProductoOficial($idproducto) {
       $sql = "select nombre, codigoproducto from tbcodigosproductosoficiales where refproductos = ".$idproducto;
 
@@ -83,9 +89,18 @@ class ServiciosReferencias {
 
 
    function traerSolicitudvrimPorId($id) {
-   $sql = "select idsolicitudvrim,reftokenvrim,cveasesor,tipoasesor,cveoficina,tipooficina,tiposolicitud,tipopersona,razonsocial,nombre,apellidopaterno,apellidomaterno,fechanacimiento,correo,telefonofijo,celular,cveproducto,tnombre,tapellidopaterno,tapellidomaterno,tfechanacimiento,tcorreo,tcelular,fechacrea,usuariocrea from dbsolicitudvrim where idsolicitudvrim =".$id;
-   $res = $this->query($sql,0);
-   return $res;
+      $sql = "select idsolicitudvrim,reftokenvrim,cveasesor,tipoasesor,cveoficina,tipooficina,tiposolicitud,tipopersona,razonsocial,nombre,apellidopaterno,apellidomaterno,fechanacimiento,correo,telefonofijo,celular,cveproducto,tnombre,tapellidopaterno,tapellidomaterno,tfechanacimiento,tcorreo,tcelular,fechacrea,usuariocrea from dbsolicitudvrim where idsolicitudvrim =".$id;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
+   function traerSolicitudvrimPorIdCotizacion($id) {
+      $sql = "select sv.idsolicitudvrim,sv.reftokenvrim 
+         from dbsolicitudvrim sv 
+         inner join dbtokenvrim tv on tv.idtokenvrim = sv.reftokenvrim and tv.reftabla = 11
+         where tv.idreferencia =".$id;
+      $res = $this->query($sql,0);
+      return $res;
    }
 
 
@@ -96,7 +111,7 @@ class ServiciosReferencias {
 
 function insertarTokenvrim($grant_type,$username,$password,$access_token,$token_type,$expires_in,$fechacrea,$usuariocrea,$reftabla,$idreferencia) {
 $sql = "insert into dbtokenvrim(idtokenvrim,grant_type,username,password,access_token,token_type,expires_in,fechacrea,usuariocrea,reftabla,idreferencia)
-values ('','".$grant_type."','".$username."','".$password."',".$access_token.",'".$token_type."',".$expires_in.",'".$fechacrea."','".$usuariocrea."',".$reftabla.",".$idreferencia.")";
+values ('','".$grant_type."','".$username."','".$password."','".$access_token."','".$token_type."',".$expires_in.",'".$fechacrea."','".$usuariocrea."',".$reftabla.",".$idreferencia.")";
 $res = $this->query($sql,1);
 return $res;
 }
@@ -105,7 +120,7 @@ return $res;
 function modificarTokenvrim($id,$grant_type,$username,$password,$access_token,$token_type,$expires_in,$fechacrea,$usuariocrea,$reftabla,$idreferencia) {
 $sql = "update dbtokenvrim
 set
-grant_type = '".$grant_type."',username = '".$username."',password = '".$password."',access_token = ".$access_token.",token_type = '".$token_type."',expires_in = ".$expires_in.",fechacrea = '".$fechacrea."',usuariocrea = '".$usuariocrea."',reftabla = ".$reftabla.",idreferencia = ".$idreferencia."
+grant_type = '".$grant_type."',username = '".$username."',password = '".$password."',access_token = '".$access_token."',token_type = '".$token_type."',expires_in = ".$expires_in.",fechacrea = '".$fechacrea."',usuariocrea = '".$usuariocrea."',reftabla = ".$reftabla.",idreferencia = ".$idreferencia."
 where idtokenvrim =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -143,6 +158,12 @@ function traerTokenvrimPorId($id) {
 $sql = "select idtokenvrim,grant_type,username,password,access_token,token_type,expires_in,fechacrea,usuariocrea,reftabla,idreferencia from dbtokenvrim where idtokenvrim =".$id;
 $res = $this->query($sql,0);
 return $res;
+}
+
+function traerTokenvrimPorIdCotizacion($id) {
+   $sql = "select idtokenvrim,grant_type,username,password,access_token,token_type,expires_in,fechacrea,usuariocrea,reftabla,idreferencia from dbtokenvrim where reftabla = 11 and idreferencia =".$id;
+   $res = $this->query($sql,0);
+   return $res;
 }
 
 
@@ -20065,7 +20086,8 @@ return $res;
       (case when DATEDIFF(CURDATE(), coalesce( emisioncomprobantedomicilio,'1990-01-01')) > 90 then 'true' else 'false' end) as demisioncomprobantedomicilio,
       (case when DATEDIFF(CURDATE(),coalesce( emisionrfc,'1990-01-01')) > 90 then 'true' else 'false' end) as demisionrfc,
       (case when coalesce( vencimientoine,'1990-01-01') > CURDATE() then 'false' else 'true' end) as dvencimientoine,
-      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp, fechanacimiento,genero,refestadocivil,reftipoidentificacion,nroidentificacion
+      colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp, fechanacimiento,genero,refestadocivil,reftipoidentificacion,nroidentificacion,
+      DATE_FORMAT(fechanacimiento, '%Y/%m/%d') as fechanacimientovrim
       from dbclientes where idcliente =".$id;
 		$res = $this->query($sql,0);
 		return $res;
@@ -20301,7 +20323,7 @@ return $res;
 	}
 
    function traerAseguradosPorIdPDF($id) {
-		$sql = 'select idasegurado,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,refclientes,reftipoparentesco,DATE_FORMAT(fechanacimiento, "%d/%m/%Y") as fechanacimiento,parentesco, genero,refestadocivil,reftipoidentificacion,nroidentificacion from dbasegurados where idasegurado ='.$id;
+		$sql = 'select idasegurado,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,refclientes,reftipoparentesco,DATE_FORMAT(fechanacimiento, "%d/%m/%Y") as fechanacimiento,parentesco, genero,refestadocivil,reftipoidentificacion,nroidentificacion,DATE_FORMAT(fechanacimiento, "%Y/%m/%d") as fechanacimientovrim from dbasegurados where idasegurado ='.$id;
 		$res = $this->query($sql,0);
 		return $res;
 	}

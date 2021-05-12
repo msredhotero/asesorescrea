@@ -16,6 +16,7 @@ if (!isset($_SESSION['usua_sahilices']))
 	include ('../../includes/funcionesReferencias.php');
 	include ('../../includes/base.php');
 	include ('../../includes/funcionesComercio.php');
+	include ('../../includes/vrim.api.class.php');
 
 	$serviciosFunciones 	= new Servicios();
 	$serviciosUsuario 		= new ServiciosUsuarios();
@@ -53,6 +54,8 @@ $resMetodoPago = $serviciosReferencias->traerMetodopagoPorCotizacionCompleto($id
 
 $idCliente = mysql_result($resCotizaciones,0,'refclientes');
 
+$resCliente = $serviciosReferencias->traerClientesPorIdCompleto($idCliente);
+
 $lblCliente = mysql_result($resCotizaciones,0,'clientesolo');
 
 $idProducto = mysql_result($resCotizaciones,0,'refproductos');
@@ -77,7 +80,7 @@ $arDocumentacionRechazadas = array();
 if (mysql_result($resCotizaciones,0,'tieneasegurado') == '1') {
 	$resDatosSencibles = $serviciosReferencias->necesitoPreguntaSencibleAsegurado(mysql_result($resCotizaciones,0,'refasegurados'),$idcuestionario);
 	//asegurado
-	$resAsegurado = $serviciosReferencias->traerAseguradosPorId(mysql_result($resCotizaciones,0,'refasegurados'));
+	$resAsegurado = $serviciosReferencias->traerAseguradosPorIdPDF(mysql_result($resCotizaciones,0,'refasegurados'));
 
 
 	if (mysql_num_rows($resAsegurado)>0) {
@@ -87,6 +90,7 @@ if (mysql_result($resCotizaciones,0,'tieneasegurado') == '1') {
 
 		$documentacionesrequeridasAsegurado = $serviciosReferencias->traerDocumentacionPorFamiliarDocumentacionCompletaIn(mysql_result($resAsegurado,0,0),'3,4');
 
+		/*
 		while ($rowD = mysql_fetch_array($documentacionesrequeridasAsegurado)) {
 			//if (($rowD['archivo'] != '') && ($rowD['idestadodocumentacion'] == 5)) {
 			if (($rowD['archivo'] != '')) {
@@ -106,6 +110,7 @@ if (mysql_result($resCotizaciones,0,'tieneasegurado') == '1') {
 			$necesariasParaAprobar += 1;
 			//$necesariasParaAprobar += 0;
 		}
+		*/
 
 
 	}
@@ -216,7 +221,7 @@ if ($consolicitud == 1) {
 
 		   if ((integer)$res > 0) {
 
-		      $resCliente = $serviciosReferencias->traerClientesPorId($idCliente);
+		      
 
 		      $email = mysql_result($resCliente,0,'email');
 
@@ -551,6 +556,96 @@ if ($consolicitud == 1) {
 								<div class="bs-wizard-info text-center"><i class="material-icons">done</i> PASO 1 - CARGA TUS DOCUMENTOS</div>
 								<hr>
 							<?php } ?>
+
+								<?php
+
+								//si es vrim platino, por ahora asi queda
+								if ($idProducto == 41) {
+									//api de vrim
+									//busco el token
+									$resBuscarToken = $serviciosReferencias->traerSolicitudvrimPorIdCotizacion($id);
+
+									if (mysql_num_rows($resBuscarToken) > 0) {
+										//existe ya se lo envie
+									} else {
+										//no existe
+										///creo devuelta el token y la solicitud
+
+										$vrimAPI = new ApiVrim('password', 'as350rcr3a', 'vr1m@2021_cr3a',$_SESSION['usua_sahilices']);
+
+										$tokenVRIM = $vrimAPI->tokenVRIM();
+
+										
+										if ($vrimAPI->getError() == '') {
+											//genero bien el token
+											$tokenBear = $vrimAPI->getAccesstoken();
+
+											$resItoken = $serviciosReferencias->insertarTokenvrim('password','as350rcr3a','vr1m@2021_cr3a',$tokenBear,'bearer',150000,date('Y-m-d'),'marcos',11,$id);
+
+											if ($resItoken > 0) {
+												$arCliente = [];
+
+												$arCliente['tipoPersona'] = 1;
+												$arCliente['razonSocial'] = '';
+												$arCliente['nombre'] = mysql_result($resCliente,0,'nombre');
+												$arCliente['apellidoPaterno'] = mysql_result($resCliente,0,'apellidopaterno');
+												$arCliente['apellidoMaterno'] = mysql_result($resCliente,0,'apellidomaterno');
+												$arCliente['fechaNacimiento'] = mysql_result($resCliente,0,'fechanacimientovrim');
+												$arCliente['correo'] = $_SESSION['usua_sahilices'];
+												$arCliente['TelefonoFijo'] = '';
+												$arCliente['Celular'] = mysql_result($resCliente,0,'telefonocelular');
+
+												$arPedidos = [];
+
+												$arTarjeta = [];
+
+												if (mysql_result($resCotizaciones,0,'tieneasegurado') == '1') {
+													$arTarjeta['nombre'] = mysql_result($resAsegurado,0,'nombre');
+													$arTarjeta['apellidoPaterno'] = mysql_result($resAsegurado,0,'apellidopaterno');
+													$arTarjeta['apellidoMaterno'] = mysql_result($resAsegurado,0,'apellidomaterno');
+													$arTarjeta['fechaNacimiento'] = mysql_result($resAsegurado,0,'fechanacimientovrim');
+													$arTarjeta['correo'] = $_SESSION['usua_sahilices'];
+													$arTarjeta['Celular'] = mysql_result($resCliente,0,'telefonocelular');
+												} else {
+													$arTarjeta['nombre'] = mysql_result($resCliente,0,'nombre');
+													$arTarjeta['apellidoPaterno'] = mysql_result($resCliente,0,'apellidopaterno');
+													$arTarjeta['apellidoMaterno'] = mysql_result($resCliente,0,'apellidomaterno');
+													$arTarjeta['fechaNacimiento'] = mysql_result($resCliente,0,'fechanacimientovrim');
+													$arTarjeta['correo'] = $_SESSION['usua_sahilices'];
+													$arTarjeta['Celular'] = mysql_result($resCliente,0,'telefonocelular');
+												}
+
+												
+
+												$arPedidos = array('cveProducto'=>'VD24','Tarjetas'=>$arTarjeta);
+
+												$solicitudVRIM = $vrimAPI->solicitudVrim($arCliente, $arPedidos, $tokenBear);
+
+												if ($vrimAPI->getError() == '') {
+													//inserto la solicitud, salio todo bien, muestro mensaje
+													$resIsolicitud = $serviciosReferencias->insertarSolicitudvrim($resItoken,'28222','1','1220','2','12','1','',mysql_result($resCliente,0,'nombre'),mysql_result($resCliente,0,'apellidopaterno'),mysql_result($resCliente,0,'apellidomaterno'),mysql_result($resCliente,0,'fechanacimientovrim'),$_SESSION['usua_sahilices'],'',mysql_result($resCliente,0,'telefonocelular'),'VD24',mysql_result($resCliente,0,'nombre'),mysql_result($resCliente,0,'apellidopaterno'),mysql_result($resCliente,0,'apellidomaterno'),mysql_result($resCliente,0,'fechanacimientovrim'),$_SESSION['usua_sahilices'],mysql_result($resCliente,0,'telefonocelular'),date('Y-m-d'),$vrimAPI->getMembresia());
+
+													echo '<div class="alert alert-success"><h4>Su membresia fue generada correctamente</h4><p>Membresia: '.$vrimAPI->getMembresia().'</p><p>Titular: '.$vrimAPI->getTitular().'</p></div>';
+
+												} else {
+													//algo salio mal, muestro mensaje
+													echo '<div class="alert alert-danger"><p>'.$vrimAPI->getError().'</p></div>';
+												}
+											} else {
+												echo '<div class="alert alert-danger"><p>'.$resItoken.'</p></div>';
+											}
+
+											
+										} else {
+											//se genero un error, que recargue la pagina o que se comunique con un asesor para obtener la membresia vrim
+											echo '<div class="alert alert-danger"><p>'.$vrimAPI->getError().'</p></div>';
+										}
+
+									}
+								}
+
+								
+								?>
 
 								<div class="text-center">
 									<h1 class="display-4"> ¡Muchas Gracias!</h1>
