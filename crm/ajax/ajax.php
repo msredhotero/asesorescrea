@@ -1492,6 +1492,7 @@ function verificarNIPSMS($serviciosUsuarios, $serviciosReferencias) {
       if (mysql_num_rows($resNIP)>0) {
 
          if ($activacion == '') {
+            $resModValidaMovil = $serviciosUsuarios->modificarUsuarioValidaMovil($idusuario,'1');
             $resV['leyenda'] = 'La activación no es correcta';
             $resV['error'] = true;
          } else {
