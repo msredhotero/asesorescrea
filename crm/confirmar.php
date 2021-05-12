@@ -72,7 +72,7 @@ if (mysql_num_rows($resActivacion) > 0) {
 
 		$arResultado['leyenda'] = 'La vigencia para darse de alta a caducado, haga click <a href="prolongar.php?token='.$ui.'">AQUI</a> para prolongar la activación';
 	} else {
-		$arResultado['leyenda'] = 'Esta clave de Activación ya no existente';
+		$arResultado['leyenda'] = 'Esta clave de Activación ya no existe';
 	}
 
 }

@@ -9617,6 +9617,31 @@ return $res;
 		return $res;
 	}
 
+   function traerFirmasDigitalesPorCliente($idcliente) {
+		$sql = "select
+		c.idcotizacion,
+      concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as clientecompleto,
+      p.producto,
+      c.fechacrea,
+      c.folio,
+      v.nropoliza
+		from dbcotizaciones c
+      inner join dbclientes cli ON cli.idcliente = c.refclientes
+      inner join tbproductos p on p.idproducto = c.refproductos
+      left join dbasegurados ase ON ase.idasegurado = c.refasegurados
+      left join dbasegurados ben ON ase.idasegurado = c.refbeneficiarios
+      inner join dbventas v on v.refcotizaciones = c.idcotizacion and v.version = 1.0
+      group by c.idcotizacion,
+      cli.apellidopaterno, cli.apellidomaterno, cli.nombre,
+      p.producto,
+      c.fechacrea,
+      c.folio
+      where cli.idcliente = ".$idcliente."
+      order by c.fechacrea desc";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 
    function traerVentasPorUsuarioCompletoAjax($length, $start, $busqueda,$colSort,$colSortDir,$idusuario,$min,$max) {
 

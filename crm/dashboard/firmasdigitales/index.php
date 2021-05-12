@@ -52,7 +52,10 @@ switch ($_SESSION['idroll_sahilices']) {
 		$resultados = $serviciosReferencias->traerFirmasDigitales($idasesor);
 	break;
 	case 16:
-		$resultados = $serviciosReferencias->traerFirmasDigitales($_SESSION['usuaid_sahilices']);
+		$resCliente = $this->traerClientesPorUsuarioCompleto($_SESSION['usuaid_sahilices']);
+
+		$idcliente = mysql_result($resCliente,0,0);
+		$resultados = $serviciosReferencias->traerFirmasDigitalesPorCliente($idcliente);
 	break;
 	case 19:
 		$resultados = $serviciosReferencias->traerFirmasDigitales($_SESSION['usuaid_sahilices']);
