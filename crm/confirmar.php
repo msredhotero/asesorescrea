@@ -147,7 +147,7 @@ if (mysql_num_rows($resActivacion) > 0) {
          padding: 0 !important;
          }
 
-         .btnEnviarPersonaFisicaRFC, .btnEnviarPersonaFisicaCURP, .btnEnviarPersonaMoralRFC, .btnEnviarNIP, .btnVerificarNIP {
+         .btnEnviarPersonaFisicaRFC, .btnEnviarPersonaFisicaCURP, .btnEnviarPersonaMoralRFC, .btnEnviarNIP {
             display: inline-block !important;
             transition: background-color 300ms !important;
             color: #fff !important;
@@ -164,6 +164,33 @@ if (mysql_num_rows($resActivacion) > 0) {
             text-transform: none;
             border: none;
             background-color: #333743 !important;
+            border: 0;
+            float: none;
+            height: auto;
+            margin: 0;
+            padding: 10px 20px !important;
+            -webkit-transition: all .25s linear 0s;
+            -o-transition: all .25s linear 0s;
+            transition: all .25s linear 0s;
+         }
+
+         .btnVerificarNIP {
+            display: inline-block !important;
+            transition: background-color 300ms !important;
+            color: #fff !important;
+            border-radius: 0;
+            outline: none;
+            width: 100%;
+            height: 49px;
+            cursor: pointer;
+            padding: 11px 25px;
+            line-height: 23px;
+            margin: 0 0 25px 0;
+            font-size: 16px;
+            font-weight: 500;
+            text-transform: none;
+            border: none;
+            background-color: #4BF115 !important;
             border: 0;
             float: none;
             height: auto;

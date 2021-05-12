@@ -1539,7 +1539,10 @@ function enviarNIPmovil($serviciosUsuarios, $serviciosReferencias) {
       if ($envio == 1) {
          $resMarca = $serviciosUsuarios->insertarUsuariosnip($idusuario,1,$token,date('Y-m-d H:i:s'));
 
+
+         
          if ($resMarca == true) {
+            $resModClienteTel = $serviciosReferencias->modificarCampoParticularClientes( mysql_result($resCliente,0,'idcliente') ,'telefonocelular',$telefono);
             $resV['leyenda'] = '';
             $resV['error'] = false;
          } else {
