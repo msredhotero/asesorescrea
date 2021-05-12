@@ -128,8 +128,8 @@ if (mysql_num_rows($resCotizaciones)>0) {
 }
 
 // total del valor a pagar //// por ahora un peso (1)
-//$comtotal = $lblPrecio;
-$comtotal = 100;
+$comtotal = $lblPrecio;
+//$comtotal = 100;
 //moneda
 $comcurrency = '484';
 //direccion
