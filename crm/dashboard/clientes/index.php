@@ -14,7 +14,7 @@ include ('../../includes/funcionesUsuarios.php');
 include ('../../includes/funcionesHTML.php');
 include ('../../includes/funcionesReferencias.php');
 include ('../../includes/base.php');
-include ('../../includes/EnvioSMS.class.php');
+//include ('../../includes/EnvioSMS.class.php');
 
 $serviciosFunciones 	= new Servicios();
 $serviciosUsuario 		= new ServiciosUsuarios();
@@ -22,9 +22,9 @@ $serviciosHTML 			= new ServiciosHTML();
 $serviciosReferencias 	= new ServiciosReferencias();
 $baseHTML = new BaseHTML();
 
-$envioSMS = new EnvioSMS();
+//$envioSMS = new EnvioSMS();
 
-echo $envioSMS->enviarSMS('5573634064','Hola Zulma!!');
+//echo $envioSMS->enviarSMS('5573634064','Hola Zulma!!');
 
 
 //*** SEGURIDAD ****/
