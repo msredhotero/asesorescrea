@@ -190,7 +190,7 @@ if (mysql_num_rows($resActivacion) > 0) {
             font-weight: 500;
             text-transform: none;
             border: none;
-            background-color: #4BF115 !important;
+            background-color: #c6ac83 !important;
             border: 0;
             float: none;
             height: auto;
@@ -1040,8 +1040,7 @@ if (mysql_num_rows($resActivacion) > 0) {
                                    timer: 2000,
                                    showConfirmButton: false
                                });
-                                jQuery('.contRespuesta').show();
-                                jQuery('.contFormulario').hide();
+                                
 
                                 setTimeout("location.reload(true);", 1500);
                                 //location.reload();
