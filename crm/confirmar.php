@@ -1175,7 +1175,7 @@ if (mysql_num_rows($resActivacion) > 0) {
                            
                              swal({
                                  title: "Respuesta",
-                                 text: "Se genero un error",
+                                 text: response.leyenda,
                                  type: "error",
                                  timer: 2000,
                                  showConfirmButton: false
