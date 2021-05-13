@@ -382,6 +382,10 @@ if (mysql_num_rows($resActivacion) > 0) {
 
          });
       </script>
+
+      <script type="text/javascript" src="inc/TimeCircles.js"></script>
+      <link rel="stylesheet" href="inc/TimeCircles.css" />
+
    </head>
    <body class="page-template-default page page-id-7099 logged-in  elementor-default elementor-kit-6590 elementor-page elementor-page-7099" data-theme-color="#cfb795" >
       <div class='gt3_header_builder header_over_bg--tablet header_over_bg--mobile header_over_bg'>
@@ -687,19 +691,30 @@ if (mysql_num_rows($resActivacion) > 0) {
                                                                            <span class="wpcf7-form-control-wrap persona-fisica-rfc"><input type="text" id="nipmovil" name="nipmovil" value="" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" maxlength="6" minlength="6" /></span> </label>
                                                                         </p>
 
-                                                                        <p class="contEnviarNIP">
-                                                                           <input type="button" id="loginNIP" value="ENVIAR NIP" class="wpcf7-form-control wpcf7-submit btnEnviarNIP" style="display:block !important;" />
-
+                                                                        <p>
+                                                                        <div align="center" class="contTiempo">   
+                                                                           <label style="color:#334433;"> Tiempo para volver a solicitar el NIP</label>
+                                                                           <div id="CountDownTimer" data-timer="60" style="width: 130px; height: 125px;"></div>
+                                                                        </div>   
                                                                         </p>
+
+                                                                        <div style="width:50%; float:left;" align="center">
+                                                                           <div style="width:60%;" class="contEnviarNIP"> 
+                                                                              <input type="button" id="loginNIP" value="ENVIAR NIP" class="wpcf7-form-control wpcf7-submit btnEnviarNIP" style="display:block !important;" />
+                                                                           </div>
+                                                                        </div>
+                                                                        <div style="width:50%; float:left;" align="center">
+                                                                           <div class="contVerificarNIP" style="width:60%; margin-left:15px;">
+                                                                              <input type="button" id="loginNIP" value="VERIFICAR NIP" class="wpcf7-form-control wpcf7-submit btnVerificarNIP" style="display:block !important;" />
+                                                                           </div>
+                                                                        </div>
+                                                                        
 
                                                                         <input type="hidden" name="activacion" id="activacion" value="<?php echo mysql_result($resActivacion,0,0); ?>" />
 
                                                                         
 
-                                                                        <p class="contVerificarNIP">
-                                                                           <input type="button" id="loginNIP" value="VERIFICAR NIP" class="wpcf7-form-control wpcf7-submit btnVerificarNIP" style="display:block !important;" />
-
-                                                                        </p>
+                                                                        
                                                                      <?php } ?>
 
                                                                      <?php } else { ?>
@@ -970,13 +985,31 @@ if (mysql_num_rows($resActivacion) > 0) {
 
 
       <script>
+         var activo = 1;
          jQuery(document).ready(function(){
 
             //finfin
 
+            jQuery("#CountDownTimer").TimeCircles({ time: { Days: { show: false }, Hours: { show: false }, Minutes: { show: false } }, count_past_zero: false}).addListener(countdownComplete);
+
+            jQuery("#CountDownTimer").TimeCircles().stop();
+
             jQuery('.contRespuesta').hide();
             jQuery('.contReenviarNIP').hide();
-            jQuery('.contVerificarNIP').hide();
+            jQuery('.contVerificarNIP').show();
+
+            jQuery('.contTiempo').hide();
+
+            function countdownComplete(unit, value, total){
+               if(total<=0){
+                  
+                  jQuery('.contEnviarNIP').show();
+                  jQuery('.contTiempo').hide();
+                  activo = 1;
+               }
+            }
+
+            //alert(jQuery("·CountDownTimer").TimeCircles().getTime());
 
             //var $demoMaskedInput = $('.demo-masked-input');
  				function validarPASS(pass) {
@@ -1075,7 +1108,7 @@ if (mysql_num_rows($resActivacion) > 0) {
 
 
             jQuery('.btnEnviarNIP').click(function() {
-               
+
                   if (( (jQuery('#telmovil').val()) != '') && ( (jQuery('#telmovil').val().length) == 10)) {
                      jQuery.ajax({
    							data: {
@@ -1090,6 +1123,9 @@ if (mysql_num_rows($resActivacion) > 0) {
    								jQuery('.contRespuesta').hide();
                            
                            jQuery('.contVerificarNIP').hide();
+                           jQuery('.contTiempo').hide();
+                           jQuery('.contEnviarNIP').show();
+                           activo = 1;
                        },
                        success:  function (response) {
 
@@ -1122,8 +1158,12 @@ if (mysql_num_rows($resActivacion) > 0) {
                                
                     
 
-                               jQuery('.btnEnviarNIP').val('REENVIAR NIP');
+                                jQuery('.btnEnviarNIP').val('REENVIAR NIP');
+                                jQuery('.contEnviarNIP').hide();
                                 jQuery('.contVerificarNIP').show();
+                                jQuery("#CountDownTimer").TimeCircles().restart();
+                                jQuery('.contTiempo').show();
+                                activo = 0;
 
                                 //setTimeout("location.reload(true);", 1500);
                                 //location.reload();
@@ -1199,7 +1239,7 @@ if (mysql_num_rows($resActivacion) > 0) {
                              jQuery('.contReenviarNIP').show();
                              jQuery('.contVerificarNIP').show();
 
-                             setTimeout("location.reload(true);", 1500);
+                             setTimeout(function(){jQuery(location).attr('href',response.login) }, 1500);
                              //location.reload();
                              //url = "dashboard/";
                              //$(location).attr('href',url);

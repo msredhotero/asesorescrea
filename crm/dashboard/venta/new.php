@@ -597,6 +597,10 @@ $frmUnidadNegociosASG 	= $serviciosFunciones->camposTablaViejo($insertarASG ,$ta
 
 $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuestionarioObligatorias(mysql_result($resProducto,0,'refcuestionarios'));
 
+//nuevo para determinar si paso el cuestionario porque no necesito responder algunas preguntas
+$resPreguntasObligatoriasClientesCargadas = $serviciosReferencias->traerPreguntassenciblesPorCuestionarioObligatorias(mysql_result($resProducto,0,'refcuestionarios'),$rIdClient);
+
+die(var_dump($resPreguntasObligatoriasClientesCargadas));
 
 $resEstadoCivil = $serviciosReferencias->traerEstadocivilPorIn('1,2');
 $cadRefEstadoCivil = $serviciosFunciones->devolverSelectBox($resEstadoCivil,array(1),'');

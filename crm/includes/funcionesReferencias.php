@@ -4608,6 +4608,29 @@ return $res;
       return $res;
    }
 
+
+   function traerPreguntassenciblesPorCuestionarioObligatoriasObtenidas($id, $idcliente) {
+      $sql = "select
+             ps.idpreguntassencibles,ps.campo
+            from		tbpreguntassencibles ps
+            inner join	dbpreguntascuestionario pc
+            on			ps.idpreguntassencibles = pc.refpreguntassencibles and pc.refcuestionarios = ".$id." and pc.activo = '1' and pc.obligatoria= '1'
+            group by    ps.pregunta";
+
+      $res = $this->query($sql,0);
+
+      if (mysql_num_rows($res)>0) {
+         $resCliente = $this->traerClientesPorId($idcliente);
+
+         while ($row = mysql_fetch_array($res)) {
+            if (mysql_result($resCliente,0,$row['campo']) == '') {
+               return 1;
+            }
+         }
+      }
+      return 0;
+   }
+
    function nuevoOrdenPreguntas($idcuestionario) {
       $sql = "select
                coalesce(max(orden),0) + 1 as orden

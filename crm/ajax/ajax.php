@@ -1493,8 +1493,12 @@ function verificarNIPSMS($serviciosUsuarios, $serviciosReferencias) {
 
          if ($activacion == '') {
             $resModValidaMovil = $serviciosUsuarios->modificarUsuarioValidaMovil($idusuario,'1');
+
+            
+
             $resV['leyenda'] = 'La activación no es correcta';
             $resV['error'] = true;
+            
          } else {
             //pongo al usuario $activo, espero el nip
             $resUsuario = $serviciosUsuarios->activarUsuario($idusuario, mysql_result($resUsuario,0,'password'));
@@ -1502,8 +1506,15 @@ function verificarNIPSMS($serviciosUsuarios, $serviciosReferencias) {
             // concreto la activacion, espsero el nip
             $resConcretar = $serviciosUsuarios->eliminarActivacionusuarios($activacion);
 
+            $url = 'index.php';
+            $token = $serviciosReferencias->GUID();
+            $resAutoLogin = $serviciosReferencias->insertarAutologin($idusuario,$token,$url,'0');
+
             $resV['leyenda'] = '';
             $resV['error'] = false;
+            //$resV['login'] = 'http://localhost/asesorescrea_nuevo.git/trunk/crm/alogin.php?token='.$token;
+            $resV['login'] = 'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token;
+            
          }
          
       } else {
