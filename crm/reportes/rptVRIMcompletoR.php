@@ -417,7 +417,7 @@ while ($row = mysql_fetch_array($resReferencias)) {
                      $pdf->Write(0, mysql_result($resTI,0,1));
 
                   } else {
-                     
+
                      $pdf->Write(0, mysql_result($resBeneficiario,0,$row['camporeferencia']));
                   }
 
@@ -446,7 +446,13 @@ while ($row = mysql_fetch_array($resReferencias)) {
                         $pdf->Write(0, 'x');
                      }
                   } else {
-                     $pdf->Write(0, mysql_result($resCliente,0,$row['camporeferencia']));
+                     if ($row['camporeferencia']!= 'telefonocelular') {
+                        if ($row['camporeferencia']!= 'email') {
+                           $pdf->Write(0, strtoupper( utf8_decode( mysql_result($resCliente,0,$row['camporeferencia']))));
+                        }
+                     }
+
+                     
                   }
                }
 
