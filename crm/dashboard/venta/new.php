@@ -2773,7 +2773,7 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 			} else {
 				if ($('#wizard_with_validation #tieneasegurado option:selected').text() == 'Yo mismo') {
 					
-					cuestionarioPersonas(<?php echo $rIdProducto; ?>,<?php echo $id; ?>,<?php echo $rIdCliente; ?>,0);
+					//cuestionarioPersonas(<?php echo $rIdProducto; ?>,<?php echo $id; ?>,<?php echo $rIdCliente; ?>,0);
 					
 				} else {
 					
