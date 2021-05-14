@@ -466,7 +466,7 @@ if ($consolicitud == 1) {
 }
 
 if ($idProducto == 41) {
-	$necesariasParaAprobar = 0;
+	$necesariasParaAprobar = 1;
 	$cargados = 1;
 }
 
