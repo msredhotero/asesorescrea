@@ -675,7 +675,8 @@ if ($idProducto == 41) {
 												$arCliente['fechaNacimiento'] = mysql_result($resCliente,0,'fechanacimientovrim');
 												$arCliente['correo'] = $_SESSION['usua_sahilices'];
 												$arCliente['TelefonoFijo'] = '';
-												$arCliente['Celular'] = mysql_result($resCliente,0,'telefonocelular');
+												//lo dijo javier 14-05-2021
+												$arCliente['Celular'] = '5551355135';
 
 												$arPedidos = [];
 
@@ -687,14 +688,16 @@ if ($idProducto == 41) {
 													$arTarjeta['apellidoMaterno'] = mysql_result($resAsegurado,0,'apellidomaterno');
 													$arTarjeta['fechaNacimiento'] = mysql_result($resAsegurado,0,'fechanacimientovrim');
 													$arTarjeta['correo'] = $_SESSION['usua_sahilices'];
-													$arTarjeta['Celular'] = mysql_result($resCliente,0,'telefonocelular');
+													//lo dijo javier 14-05-2021
+													$arTarjeta['Celular'] = '5551355135';
 												} else {
 													$arTarjeta['nombre'] = mysql_result($resCliente,0,'nombre');
 													$arTarjeta['apellidoPaterno'] = mysql_result($resCliente,0,'apellidopaterno');
 													$arTarjeta['apellidoMaterno'] = mysql_result($resCliente,0,'apellidomaterno');
 													$arTarjeta['fechaNacimiento'] = mysql_result($resCliente,0,'fechanacimientovrim');
 													$arTarjeta['correo'] = $_SESSION['usua_sahilices'];
-													$arTarjeta['Celular'] = mysql_result($resCliente,0,'telefonocelular');
+													//lo dijo javier 14-05-2021
+													$arTarjeta['Celular'] = '5551355135';
 												}
 
 												

@@ -1558,7 +1558,7 @@ function enviarNIPmovil($serviciosUsuarios, $serviciosReferencias) {
       $lstNIPporUsuario = $serviciosUsuarios->traerUsuariosnipPorIdUsuarioDestino($idusuario,0);
 
       //si ya realizo 3 intentos para acceder desde el sms, le envio al email
-      if (mysql_num_rows($lstNIPporUsuario) > 3) {
+      if (mysql_num_rows($lstNIPporUsuario) >= 1) {
 
          $email = mysql_result($resUsuario,0,'email');
 
