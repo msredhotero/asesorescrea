@@ -1595,7 +1595,7 @@ function enviarNIPmovil($serviciosUsuarios, $serviciosReferencias) {
 
          if ($resMarca == true) {
 
-            $resV['leyenda'] = '';
+            $resV['leyenda'] = 'Se te envio un NIP a tu correo electrónico';
             $resV['error'] = false;
          } else {
             $resV['leyenda'] = 'Hubo un error al modificar datos';
@@ -1616,7 +1616,7 @@ function enviarNIPmovil($serviciosUsuarios, $serviciosReferencias) {
 
             if ($resMarca == true) {
                $resModClienteTel = $serviciosReferencias->modificarCampoParticularClientes( mysql_result($resCliente,0,'idcliente') ,'telefonocelular',$telefono);
-               $resV['leyenda'] = '';
+               $resV['leyenda'] = 'Se te envio un NIP a tu movil';
                $resV['error'] = false;
             } else {
                $resV['leyenda'] = 'Hubo un error al modificar datos';

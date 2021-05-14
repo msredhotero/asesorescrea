@@ -1150,7 +1150,7 @@ if (mysql_num_rows($resActivacion) > 0) {
                                
                                swal({
                                    title: "Respuesta",
-                                   text: "Se te envio un NIP a tu movil",
+                                   text: data.leyenda,
                                    type: "success",
                                    timer: 2000,
                                    showConfirmButton: false
