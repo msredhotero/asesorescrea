@@ -465,7 +465,10 @@ if ($consolicitud == 1) {
 	$puedeContinuar = 1;
 }
 
-
+if ($idProducto == 41) {
+	$necesariasParaAprobar = 0;
+	$cargados = 1;
+}
 
 ?>
 
