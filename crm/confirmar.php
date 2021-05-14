@@ -683,11 +683,11 @@ if (mysql_num_rows($resActivacion) > 0) {
                                                                   </div>
 
                                                                      <?php } else { ?>
-                                                                        <p><label style="color:#333743;"> No. de Movil<br />
+                                                                        <p><label style="color:#333743;"> No. de Celular a 10 dígitos<br />
                                                                            <span class="wpcf7-form-control-wrap persona-fisica-rfc"><input type="text" id="telmovil" name="telmovil" value="" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" maxlength="10" /></span> </label>
                                                                         </p>
 
-                                                                        <p class="lblNIP"><label style="color:#333743;"> Ingresa EL NIP que te enviamos por SMS al Movil<br />
+                                                                        <p class="lblNIP"><label style="color:#333743;"> Ingresa EL NIP que te enviamos por SMS al celular<br />
                                                                            <span class="wpcf7-form-control-wrap persona-fisica-rfc"><input type="text" id="nipmovil" name="nipmovil" value="" size="40" class="wpcf7-form-control wpcf7-text" aria-invalid="false" maxlength="6" minlength="6" /></span> </label>
                                                                         </p>
 

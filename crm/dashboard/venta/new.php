@@ -2465,7 +2465,12 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 		//nuevo 13/05/2021 determina si puedo pasar en el cuestionario porque no falta nada
 		if (($resPreguntasObligatoriasClientesCargadas == 0) && ($id==0)) { 
 		?>
-		form.steps("next");
+		<?php if ($existeBckUpCliente == 0) { ?>
+
+		<?php } else { ?>
+			form.steps("next");	
+		<?php } ?>
+		
 		<?php } ?>
 
 		var esconde1 = 0;

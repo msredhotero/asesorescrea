@@ -1550,7 +1550,7 @@ function enviarNIPmovil($serviciosUsuarios, $serviciosReferencias) {
 
    $token = $serviciosReferencias->generarNIP();
 
-   $msg = 'ASESORES CREA - NIP: '.$token ." Ingresa este numero para validar tu validar tu celular";
+   $msg = 'ASESORES CREA - NIP: '.$token ." Ingrese este numero para validar tu celular";
 
 	if (mysql_num_rows($resUsuario)>0) {
 		$resCliente = $serviciosReferencias->traerClientesPorUsuarioCompleto($idusuario);
