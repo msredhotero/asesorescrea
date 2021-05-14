@@ -795,7 +795,7 @@ if ($idProducto == 41) {
 										<div class="demo-checkbox">
 
                               	<input type="checkbox" id="basic_checkbox_2" class="filled-in">
-                              	<label for="basic_checkbox_2">al ingresar los dígitos confirmo mi consentimiento de firmar la solicitud F-2092-6 Solicitud de SEVI</label>
+                              	<label for="basic_checkbox_2">al ingresar los dígitos confirmo mi consentimiento de firmar la solicitud</label>
 
                            	</div>
 									</h5>
