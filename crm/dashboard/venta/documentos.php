@@ -60,6 +60,34 @@ $lblCliente = mysql_result($resCotizaciones,0,'clientesolo');
 
 $idProducto = mysql_result($resCotizaciones,0,'refproductos');
 
+if ($idProducto == 41) {
+	$pathSolcitud  = '../../archivos/solicitudes/cotizaciones/'.$id;
+
+	if (!file_exists($pathSolcitud)) {
+		mkdir($pathSolcitud, 0777);
+	}
+
+	$filesSolicitud = array_diff(scandir($pathSolcitud), array('.', '..'));
+	if (count($filesSolicitud) < 1) {
+		// switch para los solicitudes
+		switch ($idProducto) {
+			case 41:
+				require ('../../reportes/rptVRIMcompletoR.php');
+			break;
+			case 28:
+				require ('../../reportes/rptFTodos.php');
+			break;
+			case 54:
+				require ('../../reportes/rptVida500R.php');
+			break;
+			case 55:
+				require ('../../reportes/rptRCMedicosR.php');
+			break;
+		}
+		//die(var_dump(__DIR__));
+	}
+}
+
 $refEstadoCotizacion = mysql_result($resCotizaciones,0,'refestadocotizaciones');
 
 $resProducto = $serviciosReferencias->traerProductosPorId($idProducto);
@@ -530,28 +558,34 @@ if ($consolicitud == 1) {
 						<?php } else { ?>
 							<?php if ($puedeContinuar == 1) { ?>
 								<?php if ($consolicitud == 1) { ?>
-								<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
-								   <div class="col-xs-6 bs-wizard-step complete">
-										<div class="text-center bs-wizard-stepnum">Paso 1</div>
+									<?php if ($idProducto == 41) { ?>
+										<div class="bs-wizard-info text-center"><i class="material-icons">done</i> PASO 1 - FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
+										<hr>
+									<?php } else { ?>
+										<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
+											<div class="col-xs-6 bs-wizard-step complete">
+													<div class="text-center bs-wizard-stepnum">Paso 1</div>
 
-										<div class="progress">
-											<div class="progress-bar"></div>
+													<div class="progress">
+														<div class="progress-bar"></div>
+													</div>
+
+													<a href="siap.php?id=13" class="bs-wizard-dot"></a>
+													<div class="bs-wizard-info text-center">CARGA TUS DOCUMENTOS</div>
+											</div>
+
+											<div class="col-xs-6 bs-wizard-step complete">
+													<div class="text-center bs-wizard-stepnum">Paso 2</div>
+													<div class="progress">
+														<div class="progress-bar"></div>
+													</div>
+													<a href="javascript:void(0)" class="bs-wizard-dot"></a>
+													<div class="bs-wizard-info text-center">FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
+											</div>
+
 										</div>
-
-										<a href="siap.php?id=13" class="bs-wizard-dot"></a>
-										<div class="bs-wizard-info text-center">CARGA TUS DOCUMENTOS</div>
-								   </div>
-
-								   <div class="col-xs-6 bs-wizard-step complete">
-										<div class="text-center bs-wizard-stepnum">Paso 2</div>
-										<div class="progress">
-											<div class="progress-bar"></div>
-										</div>
-										<a href="javascript:void(0)" class="bs-wizard-dot"></a>
-										<div class="bs-wizard-info text-center">FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
-								   </div>
-
-							   </div>
+									<?php } ?>
+								
 							<?php } else { ?>
 								<div class="bs-wizard-info text-center"><i class="material-icons">done</i> PASO 1 - CARGA TUS DOCUMENTOS</div>
 								<hr>
@@ -625,7 +659,7 @@ if ($consolicitud == 1) {
 													//inserto la solicitud, salio todo bien, muestro mensaje
 													$resIsolicitud = $serviciosReferencias->insertarSolicitudvrim($resItoken,'28222','1','1220','2','12','1','',mysql_result($resCliente,0,'nombre'),mysql_result($resCliente,0,'apellidopaterno'),mysql_result($resCliente,0,'apellidomaterno'),mysql_result($resCliente,0,'fechanacimientovrim'),$_SESSION['usua_sahilices'],'',mysql_result($resCliente,0,'telefonocelular'),'VD24',mysql_result($resCliente,0,'nombre'),mysql_result($resCliente,0,'apellidopaterno'),mysql_result($resCliente,0,'apellidomaterno'),mysql_result($resCliente,0,'fechanacimientovrim'),$_SESSION['usua_sahilices'],mysql_result($resCliente,0,'telefonocelular'),date('Y-m-d'),$vrimAPI->getMembresia());
 
-													echo '<div class="alert alert-success"><h4>Su membresia fue generada correctamente</h4><p>Membresia: '.$vrimAPI->getMembresia().'</p><p>Titular: '.$vrimAPI->getTitular().'</p></div>';
+													echo '<h3>Su poliza fue generada correctamente</h3><h5>Membresia: '.$vrimAPI->getMembresia().'</h5><h5>Titular: '.$vrimAPI->getTitular().'</h5>';
 
 												} else {
 													//algo salio mal, muestro mensaje
@@ -649,7 +683,9 @@ if ($consolicitud == 1) {
 
 								<div class="text-center">
 									<h1 class="display-4"> ¡Muchas Gracias!</h1>
-									<h3 class="display-4">En breve estaremos enviando tu póliza, a partir de ese momento estarás protegido .</h3>
+									<?php if ($idProducto != 41) { ?>
+										<h3 class="display-4">En breve estaremos enviando tu póliza, a partir de ese momento estarás protegido .</h3>
+									<?php } ?>
 								</div>
 
 								<div class="row">
@@ -672,24 +708,31 @@ if ($consolicitud == 1) {
 								<h1 class="display-4">¡Firma de manera digital los documentos! </h1>
 							</div>
 
-							<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
-							   <div class="col-xs-6 bs-wizard-step complete">
-									<div class="text-center bs-wizard-stepnum">Paso 1</div>
-									<div class="progress">
-										<div class="progress-bar"></div>
+							<?php if ($idProducto == 41) { ?>
+								<hr>
+								<div class="bs-wizard-info text-center"><i class="material-icons">done</i> PASO 1 - FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
+								
+							<?php } else { ?>
+								<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
+									<div class="col-xs-6 bs-wizard-step complete">
+											<div class="text-center bs-wizard-stepnum">Paso 1</div>
+											<div class="progress">
+												<div class="progress-bar"></div>
+											</div>
+											<a href="siap.php?id=13" class="bs-wizard-dot"></a>
+											<div class="bs-wizard-info text-center">CARGA TUS DOCUMENTOS</div>
 									</div>
-									<a href="siap.php?id=13" class="bs-wizard-dot"></a>
-									<div class="bs-wizard-info text-center">CARGA TUS DOCUMENTOS</div>
-							   </div>
-							   <div class="col-xs-6 bs-wizard-step active">
-									<div class="text-center bs-wizard-stepnum">Paso 2</div>
-									<div class="progress">
-										<div class="progress-bar"></div>
+									<div class="col-xs-6 bs-wizard-step active">
+											<div class="text-center bs-wizard-stepnum">Paso 2</div>
+											<div class="progress">
+												<div class="progress-bar"></div>
+											</div>
+											<a href="javascript:void(0)" class="bs-wizard-dot"></a>
+											<div class="bs-wizard-info text-center">FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
 									</div>
-									<a href="javascript:void(0)" class="bs-wizard-dot"></a>
-									<div class="bs-wizard-info text-center">FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
-							   </div>
-						   </div>
+								</div>
+							<?php } ?>
+							
 
 
 

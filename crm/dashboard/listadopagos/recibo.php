@@ -43,6 +43,16 @@ $id = $_GET['id'];
 
 $resultado = $serviciosReferencias->traerPagosPorId($id);
 
+$idtabla = mysql_result($resultado,0,'reftabla');
+$idreferencia = mysql_result($resultado,0,'idreferencia');
+
+switch ($idtabla) {
+	case 12:
+		$resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($idreferencia);
+	break;
+	
+}
+
 $singular = "Pagos";
 
 $plural = "Pagos";
@@ -192,6 +202,18 @@ $refCampo 	=  array();
 						</div>
 						<div class="body table-responsive">
 							<form class="form" id="formCountry">
+
+							<div class="row" style="margin-left:5px !important;">
+								<button type="button" class="btn btn-info waves-effect btnVolverFiltro" data-ir="index" data-referencia="0"><i class="material-icons">reply</i><span>VOLVER</span></button>
+							</div>
+
+							<div class="row" style="margin-left:5px !important; margin-top:20px;">
+								<div class="list-group">
+									<a href="javascript:void(0);" class="list-group-item active"><?php echo mysql_result($resCotizaciones,0,'cliente'); ?></h5></a>
+									<a href="javascript:void(0);" class="list-group-item">Producto: <?php echo mysql_result($resCotizaciones,0,'producto'); ?></a>
+									<a href="javascript:void(0);" class="list-group-item"><?php echo mysql_result($resultado,0,'destino'); ?></a>
+								</div>
+							</div>
 
 								<div class="row" style="padding: 5px 20px;">
 

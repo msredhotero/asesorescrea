@@ -123,20 +123,29 @@ if (mysql_num_rows($resPagos) > 0) {
 		$lblEstado = 'Falta';
 		$lblColor = 'grey';
 	} else {
-		$lblEstado = mysql_result($resEstadoDocumentacion,0,'estadodocumentacion');
+		//$lblEstado = mysql_result($resEstadoDocumentacion,0,'estadodocumentacion');
+		$lblEstado = 'Su comprobante se cargo correctamente';
 		$lblColor = mysql_result($resEstadoDocumentacion,0,'color');
 	}
 
 } else {
 
-	// la que sea para esto
-	$refcuentasbancarias = 1;
+	
 
 	$conciliado = '0';
 	$archivos = '';
 	$type = '';
 
+	if ($reftipoproductorama == 12) {
+		// cuenta de vrim para transferencia
+		$refcuentasbancarias = 3;
+	} else {
+		// cuenta de javier para transferencia
+		$refcuentasbancarias = 1;
+	}
+
 	$resPagos = $serviciosReferencias->insertarPagos(12,$id,$precio,$serviciosReferencias->GUID(),'Pago por transferencia bancaria',$refcuentasbancarias,$conciliado,$archivos,$type,date('Y-m-d H:i:s'),$_SESSION['nombre_sahilices'],1,'Foncerrada Y Javelly',$lblCliente,'','0');
+	
 
 	$resPagos = $serviciosReferencias->traerPagosPorTablaReferencia(12, 'dbcotizaciones', 'idcotizacion', $id);
 
@@ -153,6 +162,7 @@ if (mysql_num_rows($resPagos) > 0) {
 		$lblColor = 'grey';
 	} else {
 		$lblEstado = mysql_result($resEstadoDocumentacion,0,'estadodocumentacion');
+		
 		$lblColor = mysql_result($resEstadoDocumentacion,0,'color');
 	}
 }
@@ -272,38 +282,45 @@ if ($refEstadoCotizacion == 22) {
 				<div class="col-xs-12">
 		        <div class="card">
 		          <div class="header bg-blue">
-		            <h4 class="my-0 font-weight-normal">Resumen del Pedido: <?php echo mysql_result($resultado,0,'producto'); ?></h4>
+		            <h4 class="my-0 font-weight-normal">Resumen del Pedido: <?php echo mysql_result($resultado,0,'producto'); ?><?php if ($idProducto == 41) { echo ' - Paquete de Protección y Servicios médicos';}?></h4>
 		          </div>
 		          <div class="body table-responsive">
 
 						 <div class="text-center">
-							 <h1 class="display-4">¡Suba su comprobante de pago para ser validado por el area de cobranza!</h1>
+							 <h1 class="display-4">¡Subí tu comprobante de pago para ser validado por el área de cobranza!</h1>
 						 </div>
 
 
 						 <?php if ($consolicitud == 1) { ?>
-						 <div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
-							 <div class="col-xs-6 bs-wizard-step complete">
-								 <div class="text-center bs-wizard-stepnum">Paso 1</div>
 
-								 <div class="progress">
-									 <div class="progress-bar"></div>
-								 </div>
+						<?php if ($idProducto == 41) { ?>	
+							<!--<hr>
+							<div class="bs-wizard-info text-center">PASO SIGUIENTE - FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
+							<hr>-->
+							
+						<?php } else { ?>
+							<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
+								<div class="col-xs-6 bs-wizard-step complete">
+									<div class="text-center bs-wizard-stepnum">Paso 1</div>
 
-								 <a href="siap.php?id=13" class="bs-wizard-dot"></a>
-								 <div class="bs-wizard-info text-center">CARGA TUS DOCUMENTOS</div>
-							 </div>
+									<div class="progress">
+										<div class="progress-bar"></div>
+									</div>
 
-							 <div class="col-xs-6 bs-wizard-step complete">
-								 <div class="text-center bs-wizard-stepnum">Paso 2</div>
-								 <div class="progress">
-									 <div class="progress-bar"></div>
-								 </div>
-								 <a href="javascript:void(0)" class="bs-wizard-dot"></a>
-								 <div class="bs-wizard-info text-center">FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
-							 </div>
+									<a href="siap.php?id=13" class="bs-wizard-dot"></a>
+									<div class="bs-wizard-info text-center">CARGA TUS DOCUMENTOS</div>
+								</div>
 
-						 </div>
+								<div class="col-xs-6 bs-wizard-step complete">
+									<div class="text-center bs-wizard-stepnum">Paso 2</div>
+									<div class="progress">
+										<div class="progress-bar"></div>
+									</div>
+									<a href="javascript:void(0)" class="bs-wizard-dot"></a>
+									<div class="bs-wizard-info text-center">FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
+								</div>
+							</div>
+						<?php } ?>
 					 <?php } else { ?>
 						 <div class="bs-wizard-info text-center">PASO 1 - CARGA TUS DOCUMENTOS</div>
 						 <hr>

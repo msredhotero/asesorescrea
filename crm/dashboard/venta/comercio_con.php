@@ -225,7 +225,13 @@ if (!isset($_SESSION['usua_sahilices']))
 
 			$resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestados',1,$_SESSION['usua_sahilices']);
 
-			$resModificarPM = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestadocotizaciones',20,$_SESSION['usua_sahilices']);
+			// este producto en especifico no carga INE
+			if ($idProducto == 41) {
+				$resModificarPM = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestadocotizaciones',21,$_SESSION['usua_sahilices']);
+			} else {
+				$resModificarPM = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestadocotizaciones',20,$_SESSION['usua_sahilices']);
+			}
+			
 
 			// obstengo el lead que se genero en venta en linea
 			$resLead = $serviciosReferencias->traerLeadPorCotizacion($idcotizacion);

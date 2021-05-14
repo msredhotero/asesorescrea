@@ -4619,14 +4619,42 @@ return $res;
 
       $res = $this->query($sql,0);
 
+      $faltan = 0;
+
       if (mysql_num_rows($res)>0) {
          $resCliente = $this->traerClientesPorId($idcliente);
 
          while ($row = mysql_fetch_array($res)) {
             if (mysql_result($resCliente,0,$row['campo']) == '') {
-               return 1;
+               $faltan += 1;
             }
          }
+         return $faltan;
+      }
+      return 0;
+   }
+
+   function traerPreguntassenciblesPorCuestionarioObligatoriasObtenidasAsegurado($id, $idasegurado) {
+      $sql = "select
+             ps.idpreguntassencibles,ps.campo
+            from		tbpreguntassencibles ps
+            inner join	dbpreguntascuestionario pc
+            on			ps.idpreguntassencibles = pc.refpreguntassencibles and pc.refcuestionarios = ".$id." and pc.activo = '1' and pc.obligatoria= '1'
+            group by    ps.pregunta";
+
+      $res = $this->query($sql,0);
+
+      $faltan = 0;
+
+      if (mysql_num_rows($res)>0) {
+         $resCliente = $this->traerAseguradosPorId($idasegurado);
+
+         while ($row = mysql_fetch_array($res)) {
+            if (mysql_result($resCliente,0,$row['campo']) == '') {
+               $faltan += 1;
+            }
+         }
+         return $faltan;
       }
       return 0;
    }
@@ -21936,7 +21964,7 @@ return $res;
 
 
    function traerUsuariosPorId($id) {
-   $sql = "select idusuario,usuario,password,refroles,email,nombrecompleto,(case when activo = 1 then 'Si' else 'No' end) as activo,refsocios from dbusuarios where idusuario =".$id;
+   $sql = "select idusuario,usuario,password,refroles,email,nombrecompleto,(case when activo = 1 then 'Si' else 'No' end) as activo,refsocios,validaemail,validamovil,validasignatura from dbusuarios where idusuario =".$id;
    $res = $this->query($sql,0);
    return $res;
    }

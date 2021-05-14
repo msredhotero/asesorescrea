@@ -113,7 +113,7 @@ if (!isset($_SESSION['usua_sahilices']))
 			$icono = 'cloud_upload';
 			$estilo = 'bg-cyan';
 			$fecha = date('Y-m-d H:i:s');
-			$url = "listadopagos/ver.php?id=".$id;
+			$url = "listadopagos/recibo.php?id=".$id;
 
 
 			$res = $serviciosNotificaciones->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url);

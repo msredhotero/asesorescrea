@@ -51,9 +51,9 @@ class ServiciosUsuarios {
 	
 /* PARA Usuariosnip */
 
-function insertarUsuariosnip($refusuarios,$idevento,$nip,$fechacrea) {
-	$sql = "insert into dbusuariosnip(idusuariosnip,refusuarios,idevento,nip,fechacrea)
-	values ('',".$refusuarios.",".$idevento.",'".$nip."','".$fechacrea."')";
+function insertarUsuariosnip($refusuarios,$idevento,$nip,$fechacrea,$destino) {
+	$sql = "insert into dbusuariosnip(idusuariosnip,refusuarios,idevento,nip,fechacrea,destino)
+	values ('',".$refusuarios.",".$idevento.",'".$nip."','".$fechacrea."',".$destino.")";
 	$res = $this->query($sql,1);
 	return $res;
 }
@@ -91,19 +91,31 @@ function insertarUsuariosnip($refusuarios,$idevento,$nip,$fechacrea) {
 	
 	
 	function traerUsuariosnipPorId($id) {
-	$sql = "select idusuariosnip,refusuarios,idevento,nip,fechacrea from dbusuariosnip where idusuariosnip =".$id;
+	$sql = "select idusuariosnip,refusuarios,idevento,nip,fechacrea,destino from dbusuariosnip where idusuariosnip =".$id;
 	$res = $this->query($sql,0);
 	return $res;
 	}
 
 	function traerUsuariosnipPorIdUsuario($id) {
-		$sql = "select idusuariosnip,refusuarios,idevento,nip,fechacrea from dbusuariosnip where refusuarios =".$id;
+		$sql = "select idusuariosnip,refusuarios,idevento,nip,fechacrea,destino from dbusuariosnip where refusuarios =".$id;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerUsuariosnipPorIdUsuarioDestino($id,$destino) {
+		$sql = "select idusuariosnip,refusuarios,idevento,nip,fechacrea,destino from dbusuariosnip where refusuarios =".$id." and destino =".$destino;
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
+	function traerUsuariosnipPorIdUsuarioEventoDestino($id,$idevento,$destino) {
+		$sql = "select idusuariosnip,refusuarios,idevento,nip,fechacrea,destino from dbusuariosnip where refusuarios =".$id." and idevento = ".$idevento." and destino =".$destino;
 		$res = $this->query($sql,0);
 		return $res;
 	}
 
 	function traerUsuariosnipPorIdUsuarioNIP($id, $nip,$idevento) {
-		$sql = "select idusuariosnip,refusuarios,idevento,nip,fechacrea from dbusuariosnip where refusuarios =".$id." and nip = '".$nip."' and idevento = ".$idevento;
+		$sql = "select idusuariosnip,refusuarios,idevento,nip,fechacrea,destino from dbusuariosnip where refusuarios =".$id." and nip = '".$nip."' and idevento = ".$idevento;
 		$res = $this->query($sql,0);
 		return $res;
 	}

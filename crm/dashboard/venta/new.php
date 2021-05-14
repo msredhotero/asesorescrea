@@ -146,7 +146,7 @@ if (isset($_GET['id'])) {
 		}
 	}
 
-	$refIdAsegurados = mysql_result($resultado,0,'refasegurados');
+	$refIdAsegurados = (mysql_result($resultado,0,'refasegurados') == '' ? 0 : mysql_result($resultado,0,'refasegurados'));
 	$tieneAsegurado = mysql_result($resultado,0,'tieneasegurado');
 
 	$resProductoPrincipal = $serviciosReferencias->traerProductosPorIdCompleta($refProductos);
@@ -463,6 +463,7 @@ if (isset($_GET['id'])) {
 } else {
 
 	$id = 0;
+	
 
 	if (!(isset($_GET['producto']))) {
 		header('Location: ../index.php');
@@ -598,7 +599,7 @@ $frmUnidadNegociosASG 	= $serviciosFunciones->camposTablaViejo($insertarASG ,$ta
 $resPreguntasSencibles = $serviciosReferencias->traerPreguntassenciblesPorCuestionarioObligatorias(mysql_result($resProducto,0,'refcuestionarios'));
 
 //nuevo para determinar si paso el cuestionario porque no necesito responder algunas preguntas
-$resPreguntasObligatoriasClientesCargadas = $serviciosReferencias->traerPreguntassenciblesPorCuestionarioObligatorias(mysql_result($resProducto,0,'refcuestionarios'),$rIdClient);
+$resPreguntasObligatoriasClientesCargadas = $serviciosReferencias->traerPreguntassenciblesPorCuestionarioObligatoriasObtenidas(mysql_result($resProducto,0,'refcuestionarios'),$rIdCliente);
 
 //die(var_dump($resPreguntasObligatoriasClientesCargadas));
 
@@ -1700,12 +1701,21 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 
 							<?php if ($existenDatosCompletosContratenta == 1) { ?>
 							form.steps("next");
-							<?php } ?>
+							<?php } else { ?>
+								
+							<?php } ?>	
 							form.steps("next");
 						} else {
 							form.steps("next");
+							<?php //si los datos no estan completos pero no son obligatorios, sigo
+								if ($resPreguntasObligatoriasClientesCargadas == 0) { 
+							?>
+							form.steps("next");
+							<?php } ?>	
 						}
 						<?php } ?>
+
+						
 
 
 					} else {
@@ -1732,6 +1742,8 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 				}
 			});
 		}
+
+		
 
 		function cuestionarioPersonas(idproducto,idcotizacion,idcliente,idasegurado) {
 			$.ajax({
@@ -1776,6 +1788,12 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 						$("#wizard_with_validation .tscolonia").prop('readonly',true);
 
 						$("#wizard_with_validation .tscodigopostal").easyAutocomplete(options);
+
+						$("#wizard_with_validation .tscurp").attr("minlength", "18");
+						$("#wizard_with_validation .tscurp").attr("maxlength", "18");
+
+						$("#wizard_with_validation .tsrfc").attr("minlength", "12");
+						$("#wizard_with_validation .tsrfc").attr("maxlength", "13");
 
 
 						$('#wizard_with_validation .contCuestionarioPersonas .escondido').hide();
@@ -1831,7 +1849,7 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 				//una vez finalizado correctamente
 				success: function(data){
 
-					if (data != '') {
+					if (data.datos.cuestionario != '') {
 						$('.contCuestionario').html(data.datos.cuestionario);
 
 						if ((data.datos.cuestionario.indexOf("Altura") > 0) || (data.datos.cuestionario.indexOf("Peso") > 0) || (data.datos.cuestionario.indexOf("Talla") > 0) || (data.datos.cuestionario.indexOf("Estatura") > 0)) {
@@ -1960,13 +1978,9 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 
 
 					} else {
-						swal({
-								title: "Respuesta",
-								text: 'No existe cuestionario para este producto',
-								type: "error",
-								timer: 2000,
-								showConfirmButton: false
-						});
+						<?php if ($id==0) { ?>
+						form.steps("next");
+						<?php } ?>
 
 					}
 				},
@@ -1987,59 +2001,71 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 		cuestionario(<?php echo $rIdProducto; ?>,<?php echo $id; ?>);
 
 		<?php //if ($existenDatosCompletosContratenta == 1) { ?>
+			<?php //lo saque hoy 	13/05/2021 ?>
 		cuestionarioPersonasContratante(<?php echo $rIdProducto; ?>,<?php echo $id; ?>);
 		<?php //} ?>
 
 		function modificoAseguradoPorCotizacion() {
-			$.ajax({
-				url: '../../ajax/ajax.php',
-				type: 'POST',
-				// Form data
-				//datos del formulario
-				data: {
-					accion: 'modificoAseguradoPorCotizacion',
-					id: <?php echo $id; ?>,
-					tieneasegurado: $('#wizard_with_validation #tieneasegurado').val(),
-					refaseguradaaux: $('#wizard_with_validation #refaseguradaaux').val()
-				},
-				//mientras enviamos el archivo
-				beforeSend: function(){
-					$('.contCuestionario').html('');
-				},
-				//una vez finalizado correctamente
-				success: function(data){
+			if ($('#tieneasegurado').val() != '') {
+				$.ajax({
+					url: '../../ajax/ajax.php',
+					type: 'POST',
+					// Form data
+					//datos del formulario
+					data: {
+						accion: 'modificoAseguradoPorCotizacion',
+						id: <?php echo $id; ?>,
+						tieneasegurado: $('#wizard_with_validation #tieneasegurado').val(),
+						refaseguradaaux: $('#wizard_with_validation #refaseguradaaux').val()
+					},
+					//mientras enviamos el archivo
+					beforeSend: function(){
+						$('.contCuestionario').html('');
+					},
+					//una vez finalizado correctamente
+					success: function(data){
 
-					if (data.error) {
-						swal({
+						if (data.error) {
+							swal({
 								title: "Respuesta",
-								text: 'Se genero un error al guardar el asegurado',
+								text: data.leyenda,
 								type: "error",
 								timer: 2000,
 								showConfirmButton: false
-						});
-					} else {
-						swal({
+							});
+						} else {
+							swal({
 								title: "Respuesta",
 								text: 'Se guardo correctamente el asegurado',
 								type: "success",
 								timer: 2000,
 								showConfirmButton: false
+							});
+
+						}
+					},
+					//si ha ocurrido un error
+					error: function(){
+						swal({
+								title: "Respuesta",
+								text: 'Actualice la pagina',
+								type: "error",
+								timer: 2000,
+								showConfirmButton: false
 						});
 
 					}
-				},
-				//si ha ocurrido un error
-				error: function(){
-					swal({
-							title: "Respuesta",
-							text: 'Actualice la pagina',
-							type: "error",
-							timer: 2000,
-							showConfirmButton: false
-					});
-
-				}
-			});
+				});
+			} else {
+				swal({
+					title: "Respuesta",
+					text: 'Por favor seleccione una opción',
+					type: "error",
+					timer: 2000,
+					showConfirmButton: false
+				});
+			}
+			
 		}
 
 
@@ -2352,7 +2378,10 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 
 					<?php if ($tieneAsegurado == '') { ?>
 					if ($tab.trim() == 'INFORMACION DEL ASEGURADO') {
-						modificoAseguradoPorCotizacion();
+						
+						if (currentIndex < newIndex) {
+							modificoAseguradoPorCotizacion();
+						}
 					}
 					<?php }  ?>
 
@@ -2430,6 +2459,14 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 		function seguirAdelante() {
 			form.steps("next");
 		}
+
+
+		<?php
+		//nuevo 13/05/2021 determina si puedo pasar en el cuestionario porque no falta nada
+		if (($resPreguntasObligatoriasClientesCargadas == 0) && ($id==0)) { 
+		?>
+		form.steps("next");
+		<?php } ?>
 
 		var esconde1 = 0;
 		var esconde2 = 0;
@@ -2624,6 +2661,7 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
  								timer: 2000,
  								showConfirmButton: false
  						});
+						  
 						$(location).attr('href', 'metodopago.php?id=<?php echo $id; ?>');
 
  					} else {
@@ -2718,7 +2756,7 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 		<?php
 		} else {
 		?>
-
+		
 		$('#wizard_with_validation .frmContaseguradoaux').hide();
 
 		$('#wizard_with_validation #tieneasegurado').change(function() {
@@ -2726,10 +2764,14 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 				$('#wizard_with_validation .frmContaseguradoaux').show();
 				traerAseguradosPorCliente(0);
 				$('#wizard_with_validation .contCuestionarioPersonas').hide();
+				
 			} else {
 				if ($('#wizard_with_validation #tieneasegurado option:selected').text() == 'Yo mismo') {
+					
 					cuestionarioPersonas(<?php echo $rIdProducto; ?>,<?php echo $id; ?>,<?php echo $rIdCliente; ?>,0);
+					
 				} else {
+					
 					$('#wizard_with_validation .contCuestionarioPersonas').hide();
 				}
 
@@ -2790,7 +2832,7 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 
 			} else {
 				if ( $(this).val() > 0) {
-					//cuestionarioPersonas(<?php echo $rIdProducto; ?>,<?php echo $id; ?>,0,$(this).val());
+					//cuestionarioPersonas(<?php //echo $rIdProducto; ?>,<?php //echo $id; ?>,0,$(this).val());
 				}
 
 			}

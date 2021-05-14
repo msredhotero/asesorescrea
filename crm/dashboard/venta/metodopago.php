@@ -41,7 +41,8 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 if (!(isset($_GET['id']))) {
-	header('Location: index.php');
+	
+	header('Location: ../cotizacionesvigentes/index.php');
 } else {
 	$id = $_GET['id'];
 }
@@ -84,7 +85,8 @@ if (mysql_num_rows($resCotizaciones)>0) {
 	//$lblPrecio = str_replace('.','',$precio);
 
 } else {
-	header('Location: index.php');
+	
+	header('Location: ../cotizacionesvigentes/index.php');
 }
 
 
@@ -384,7 +386,12 @@ $esFinancieraCrea = 0;
 										<div id="collapseTwo_17" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo_17" aria-expanded="false">
 											<div class="panel-body">
 												<p>Debe adjuntarnos su comprobante de pago y activar el servicio.</p>
-												<p>Clabe Interbancaria para transferencias: 036180500079200351</p>
+												<?php if ($idProducto == 41) { ?>
+													<p>Clabe Interbancaria para transferencias: 036180500010368744</p>
+												<?php } else { ?>
+													<p>Clabe Interbancaria para transferencias: 036180500079200351</p>	
+												<?php } ?>
+												
 												<p><small>1 pago de </small></p>
 												<h4>Monto a pagar: MXN <?php echo number_format($precio, 2, ',', '.'); ?></h4>
 												<div class="right">

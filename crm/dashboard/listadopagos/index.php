@@ -350,6 +350,7 @@ $refCampo 	=  array();
 		var table = $('#example').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
+			"order": [[ 5, "desc" ]],
 			"sAjaxSource": "../../json/jstablasajax.php?tabla=listadopagos",
 			"language": {
 				"emptyTable":     "No hay datos cargados",

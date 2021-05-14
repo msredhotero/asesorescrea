@@ -1195,7 +1195,7 @@ switch ($accion) {
       ineCargadoCotizacion($serviciosReferencias);
    break;
    case 'insertarTokens':
-      insertarTokens($serviciosReferencias);
+      insertarTokens($serviciosReferencias, $serviciosUsuarios);
    break;
    case 'reenviarTokens':
       reenviarTokens($serviciosReferencias);
@@ -1491,8 +1491,11 @@ function verificarNIPSMS($serviciosUsuarios, $serviciosReferencias) {
 
       if (mysql_num_rows($resNIP)>0) {
 
+         // verifico si viene desde un sms o desde el email
+         $destino = mysql_result($resNIP,0,'destino');
+
          if ($activacion == '') {
-            $resModValidaMovil = $serviciosUsuarios->modificarUsuarioValidaMovil($idusuario,'1');
+            
 
             
 
@@ -1500,6 +1503,12 @@ function verificarNIPSMS($serviciosUsuarios, $serviciosReferencias) {
             $resV['error'] = true;
             
          } else {
+
+            if ($destino == 0) {
+               $resModValidaMovil = $serviciosUsuarios->modificarUsuarioValidaMovil($idusuario,'1');
+            }
+            
+
             //pongo al usuario $activo, espero el nip
             $resUsuario = $serviciosUsuarios->activarUsuario($idusuario, mysql_result($resUsuario,0,'password'));
 
@@ -1546,15 +1555,46 @@ function enviarNIPmovil($serviciosUsuarios, $serviciosReferencias) {
 	if (mysql_num_rows($resUsuario)>0) {
 		$resCliente = $serviciosReferencias->traerClientesPorUsuarioCompleto($idusuario);
 
-      $envio = $EnvioSMS->enviarSMS($telefono, $msg );
+      $lstNIPporUsuario = $serviciosUsuarios->traerUsuariosnipPorIdUsuarioDestino($idusuario,0);
 
-      if ($envio == 1) {
-         $resMarca = $serviciosUsuarios->insertarUsuariosnip($idusuario,1,$token,date('Y-m-d H:i:s'));
+      //si ya realizo 3 intentos para acceder desde el sms, le envio al email
+      if (mysql_num_rows($lstNIPporUsuario) > 3) {
+         $cuerpo = '';
+
+         $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+         $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+         $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+         $cuerpo .= "
+         <style>
+            body { font-family: 'Lato', sans-serif; }
+            header { font-family: 'Prata', serif; }
+         </style>";
 
 
-         
+
+         $cuerpo .= '<body>';
+
+         $cuerpo .= '<h3><small><p>Este es el nuevo NIP generado para finalizar el alta de la plataforma. </small></h3><p>';
+
+         $cuerpo .= "<center>NIP:<b>".$token."</b></center><p> ";
+
+         $cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
+
+         $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+         $cuerpo .= '</body>';
+
+         //$res = $this->insertarActivacionusuarios($refusuarios,$token,'','');
+
+         $retorno = $serviciosReferencias->enviarEmail($email,'NIP para validar usuario',utf8_decode($cuerpo));
+
+         $resMarca = $serviciosUsuarios->insertarUsuariosnip($idusuario,1,$token,date('Y-m-d H:i:s'),1);
+
          if ($resMarca == true) {
-            $resModClienteTel = $serviciosReferencias->modificarCampoParticularClientes( mysql_result($resCliente,0,'idcliente') ,'telefonocelular',$telefono);
+
             $resV['leyenda'] = '';
             $resV['error'] = false;
          } else {
@@ -1565,7 +1605,31 @@ function enviarNIPmovil($serviciosUsuarios, $serviciosReferencias) {
          header('Content-type: application/json');
          echo json_encode($resV);
 
+
+      } else {
+         // sino realizo las 3 pruebas le envio sms
+         $envio = $EnvioSMS->enviarSMS($telefono, $msg );
+
+         if ($envio == 1) {
+            $resMarca = $serviciosUsuarios->insertarUsuariosnip($idusuario,1,$token,date('Y-m-d H:i:s'),0);
+
+
+            if ($resMarca == true) {
+               $resModClienteTel = $serviciosReferencias->modificarCampoParticularClientes( mysql_result($resCliente,0,'idcliente') ,'telefonocelular',$telefono);
+               $resV['leyenda'] = '';
+               $resV['error'] = false;
+            } else {
+               $resV['leyenda'] = 'Hubo un error al modificar datos';
+               $resV['error'] = true;
+            }
+         
+            header('Content-type: application/json');
+            echo json_encode($resV);
+
+         }
       }
+
+      
    }
 
 
@@ -4002,7 +4066,17 @@ function modificarPagos($serviciosReferencias) {
    $res = $serviciosReferencias->modificarPagos($id,$reftabla,$idreferencia,$monto,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,$refestado,$razonsocial,$contratante,$nrorecibo,'0');
    if ($res == true) {
       if ($refestado == 5) {
-         $resModCotizacion = $serviciosReferencias->modificarCotizacionesPorCampo($idreferencia,'refestadocotizaciones',20, $_SESSION['usua_sahilices']);
+         if ($reftabla == 12) {
+            $resCotizaciones = $serviciosReferencias->traerCotizacionesPorId($idreferencia);
+
+            if (mysql_result($resCotizaciones,0,'refproductos') == 41) {
+               $resModCotizacion = $serviciosReferencias->modificarCotizacionesPorCampo($idreferencia,'refestadocotizaciones',21, $_SESSION['usua_sahilices']);
+            } else {
+               $resModCotizacion = $serviciosReferencias->modificarCotizacionesPorCampo($idreferencia,'refestadocotizaciones',20, $_SESSION['usua_sahilices']);
+            }
+            
+         }
+         
       }
       echo '';
    } else {
@@ -4285,7 +4359,7 @@ function reenviarTokens($serviciosReferencias) {
    }
 }
 
-function insertarTokens($serviciosReferencias) {
+function insertarTokens($serviciosReferencias, $serviciosUsuarios) {
 
    $refcotizaciones = $_POST['refcotizaciones'];
    $reftipo = 1;
@@ -4311,44 +4385,72 @@ function insertarTokens($serviciosReferencias) {
 
       $idusuario = mysql_result($resCliente,0,'refusuarios');
 
+      $telefono = mysql_result($resCliente,0,'telefonocelular');
+
+      $resUsuario = $serviciosReferencias->traerUsuariosPorId($idusuario);
+
       $tokenL = $serviciosReferencias->GUID();
-      $resAutoLogin = $serviciosReferencias->insertarAutologin($idusuario,$tokenL,$url,'0');
 
-      $cuerpo = '';
+      $lstNIPporUsuario = $serviciosUsuarios->traerUsuariosnipPorIdUsuarioEventoDestino($idusuario,$refcotizaciones,0);
+      
 
-      $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+      // si valido si telefono movil, se lo envio al telefono
+      if ((mysql_result($resUsuario,0,'validamovil') == '1') && (mysql_num_rows($lstNIPporUsuario) <= 3)) {
+         $EnvioSMS = new EnvioSMS();
 
-      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+         $msg = ' NIP: '.$token ." Ingresa este numero para firmar tu solicitud";
 
-      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+         $envio = $EnvioSMS->enviarSMS($telefono, $msg );
 
-      $cuerpo .= "
-      <style>
-      	body { font-family: 'Lato', sans-serif; }
-      	header { font-family: 'Prata', serif; }
-      </style>";
+         if ($envio == 1) {
+            $resMarca = $serviciosUsuarios->insertarUsuariosnip($idusuario,$refcotizaciones,$token,date('Y-m-d H:i:s'),0);
+
+         } else {
+            echo 'Hubo un error al enviar el SMS';
+         }
+
+
+      } else {
+         $resAutoLogin = $serviciosReferencias->insertarAutologin($idusuario,$tokenL,$url,'0');
+
+         $cuerpo = '';
+
+         $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+         $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+         $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+         $cuerpo .= "
+         <style>
+            body { font-family: 'Lato', sans-serif; }
+            header { font-family: 'Prata', serif; }
+         </style>";
 
 
 
-      $cuerpo .= '<body>';
+         $cuerpo .= '<body>';
 
-      $cuerpo .= '<h3><small><p>Este es el nuevo NIP generado para firmar de forma digital, por favor ingrese al siguiente <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$tokenL.'"> enlace </a> para finalizar el proceso de venta. </small></h3><p>';
+         $cuerpo .= '<h3><small><p>Este es el nuevo NIP generado para firmar de forma digital, por favor ingrese al siguiente <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$tokenL.'"> enlace </a> para finalizar el proceso de venta. </small></h3><p>';
 
-		$cuerpo .= "<center>NIP:<b>".$token."</b></center><p> ";
+         $cuerpo .= "<center>NIP:<b>".$token."</b></center><p> ";
 
-		$cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
+         $cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
 
-      $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+         $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
 
-      $cuerpo .= '</body>';
+         $cuerpo .= '</body>';
 
-   	$fecha = date_create(date('Y').'-'.date('m').'-'.date('d'));
-   	date_add($fecha, date_interval_create_from_date_string('30 days'));
-   	$fechaprogramada =  date_format($fecha, 'Y-m-d');
+         $fecha = date_create(date('Y').'-'.date('m').'-'.date('d'));
+         date_add($fecha, date_interval_create_from_date_string('30 days'));
+         $fechaprogramada =  date_format($fecha, 'Y-m-d');
 
-   	//$res = $this->insertarActivacionusuarios($refusuarios,$token,'','');
+         //$res = $this->insertarActivacionusuarios($refusuarios,$token,'','');
 
-   	$retorno = $serviciosReferencias->enviarEmail($email,'NIP para firma',utf8_decode($cuerpo));
+         $retorno = $serviciosReferencias->enviarEmail($email,'NIP para firma',utf8_decode($cuerpo));
+      }
+
+      
 
       echo '';
    } else {
@@ -4708,20 +4810,53 @@ function modificoAseguradoPorCotizacion($serviciosReferencias) {
    $tieneasegurado = $_POST['tieneasegurado'];
    $refaseguradaaux = $_POST['refaseguradaaux'];
 
+   $resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
+
+   $rIdProducto  = mysql_result($resultado,0,'refproductos');
+
+   $resProducto = $serviciosReferencias->traerProductosPorIdCompleta($rIdProducto);
+
+   
+
 
    if ($tieneasegurado == 1) {
-      $resMCA = $serviciosReferencias->modificarCotizacionesAsegurado($id,'1',$refaseguradaaux);
+
+      //por ahora
+      //$resPreguntasObligatoriasClientesCargadasAsegurado = $serviciosReferencias->traerPreguntassenciblesPorCuestionarioObligatoriasObtenidasAsegurado(mysql_result($resProducto,0,'refcuestionarios'),$refaseguradaaux);
+
+      $resPreguntasObligatoriasClientesCargadasAsegurado = 0;
+
+      if ($resPreguntasObligatoriasClientesCargadasAsegurado == 0) {
+         $resMCA = $serviciosReferencias->modificarCotizacionesAsegurado($id,'1',$refaseguradaaux);
+
+         if ($resMCA) {
+            $resV['error'] = false;
+      
+         } else {
+            $resV['error'] = true;
+            $resV['leyenda'] = 'Se genero un error al guardar los datos, verifique';
+         }
+      } else {
+         $resV['error'] = true;
+         $resV['leyenda'] = 'Debe completar los campos obligatorios';
+      }
+      
+
+      
    } else {
       $resMCA = $serviciosReferencias->modificarCotizacionesAsegurado($id,'0',0);
+      if ($resMCA) {
+         $resV['error'] = false;
+   
+      } else {
+         $resV['error'] = true;
+         $resV['leyenda'] = 'Se genero un error al guardar los datos, verifique';
+      }
+
+
    }
 
-   if ($resMCA) {
-      $resV['error'] = false;
-
-   } else {
-      $resV['error'] = true;
-
-   }
+   
 
    header('Content-type: application/json');
    echo json_encode($resV);
