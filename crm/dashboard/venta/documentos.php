@@ -17,6 +17,7 @@ if (!isset($_SESSION['usua_sahilices']))
 	include ('../../includes/base.php');
 	include ('../../includes/funcionesComercio.php');
 	include ('../../includes/vrim.api.class.php');
+	include ('../../includes/EnvioSMS.class.php');
 
 	$serviciosFunciones 	= new Servicios();
 	$serviciosUsuario 		= new ServiciosUsuarios();
@@ -219,7 +220,7 @@ while ($rowD = mysql_fetch_array($documentacionesrequeridas)) {
 }
 
 
-
+$comoEnvioNIP = 0;
 
 //////////////////// verifico en el proceso si firma con fiel, simple o autografa ////////////////
 
@@ -240,18 +241,56 @@ if ($consolicitud == 1) {
 		   $token = $serviciosReferencias->generarNIP();
 
 		   $fechacreac = date('Y-m-d H:i:s');
-		   $nuevafecha = strtotime ( '+15 hour' , strtotime ( $fechacreac ) ) ;
+		   $nuevafecha = strtotime ( '+2 minutes' , strtotime ( $fechacreac ) ) ;
 
 		   $refestadotoken = 1;
 		   $vigenciafin = $nuevafecha;
 
 		   $res = $serviciosReferencias->insertarTokens($id,$reftipo,$token,$fechacreac,$refestadotoken,$vigenciafin);
 
+		   $telefono = mysql_result($resCliente,0,'telefonocelular');
+
+    		$resUsuario = $serviciosReferencias->traerUsuariosPorId($_SESSION['usuaid_sahilices']);
+
+			$lstNIPporUsuario = $serviciosUsuario->traerUsuariosnipPorIdUsuarioEventoDestino($_SESSION['usuaid_sahilices'],$id,0);
+
+
 		   if ((integer)$res > 0) {
 
-		      
+			
+			// si valido si telefono movil, se lo envio al telefono
+			if ((mysql_result($resUsuario,0,'validamovil') == '1') && (mysql_num_rows($lstNIPporUsuario) <= 3)) {
 
-		      $email = mysql_result($resCliente,0,'email');
+				$comoEnvioNIP = 1;
+				
+				$EnvioSMS = new EnvioSMS();
+	   
+				$msg = ' NIP: '.$token ." Ingresa este numero para firmar tu solicitud";
+	   
+				$envio = $EnvioSMS->enviarSMS($telefono, $msg );
+	   
+				if ($envio == 1) {
+				    $resMarca = $serviciosUsuario->insertarUsuariosnip($_SESSION['usuaid_sahilices'],$id,$token,date('Y-m-d H:i:s'),0);
+				    if ((integer)$resMarca > 0) {
+						$existeNIP = 1;
+				    } else {
+						echo 'Hubo un error al enviar el SMS';
+						$resEliminar = $serviciosReferencias->eliminarTokens($res);
+						$existeNIP = 0;
+				    }
+				   
+				} else {
+				   echo 'Hubo un error al enviar el SMS';
+				   $resEliminar = $serviciosReferencias->eliminarTokens($res);
+				   $existeNIP = 0;
+				}
+	   
+	   
+			} else {
+
+				$comoEnvioNIP = 2;
+				
+				$email = mysql_result($resCliente,0,'email');
 
 		      $cuerpo = '';
 
@@ -281,17 +320,23 @@ if ($consolicitud == 1) {
 
 		      $cuerpo .= '</body>';
 
-		   	$fecha = date_create(date('Y').'-'.date('m').'-'.date('d'));
-		   	date_add($fecha, date_interval_create_from_date_string('30 days'));
-		   	$fechaprogramada =  date_format($fecha, 'Y-m-d');
+				$fecha = date_create(date('Y').'-'.date('m').'-'.date('d'));
+				date_add($fecha, date_interval_create_from_date_string('30 days'));
+				$fechaprogramada =  date_format($fecha, 'Y-m-d');
 
-		   	//$res = $this->insertarActivacionusuarios($refusuarios,$token,'','');
+				//$res = $this->insertarActivacionusuarios($refusuarios,$token,'','');
 
-		   	$retorno = $serviciosReferencias->enviarEmail($email,'NIP para firma',utf8_decode($cuerpo));
+				$retorno = $serviciosReferencias->enviarEmail($email,'NIP para firma',utf8_decode($cuerpo));
 
-		      echo '';
+				echo '';
 
 				$existeNIP = 1;
+
+			}
+
+		      
+
+		      
 		   } else {
 				$existeNIP = 0;
 			}
@@ -803,6 +848,8 @@ if ($consolicitud == 1) {
 										<i class="material-icons" style="font-size:1.2em;">save</i>
 										<span>FIRMAR</span>
 									</button>
+									<br>
+									<small>* Si aun no le ha llegado el NIP, actualice la pagina por favor</small>
 								</div>
 								<div class="col-xs-3"></div>
 							</div>
@@ -914,7 +961,11 @@ if ($consolicitud == 1) {
 				</div>
 				<div class="modal-body">
 					<div class="row">
-						<h4>Te enviamos un correo electrónico con tu NIP para firmar digitalmente
+						<?php if ($comoEnvioNIP == 2) { ?>
+						<h4>Te enviamos un correo electrónico con tu NIP para firmar digitalmente</h4>
+						<?php } else { ?>
+							<h4>Te enviamos un SMS con tu NIP para firmar digitalmente</h4>
+						<?php } ?>
 					</div>
 				</div>
 				<div class="modal-footer">

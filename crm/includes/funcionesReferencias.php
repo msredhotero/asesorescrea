@@ -3511,7 +3511,7 @@ return $res;
 
    function insertarTokens($refcotizaciones,$reftipo,$token,$fechacreac,$refestadotoken,$vigenciafin) {
       $sql = "insert into dbtokens(idtoken,refcotizaciones,reftipo,token,fechacreac,refestadotoken,vigenciafin)
-      values ('',".$refcotizaciones.",".$reftipo.",'".$token."','".$fechacreac."',".$refestadotoken.",DATE_ADD(now(),INTERVAL 15 hour))";
+      values ('',".$refcotizaciones.",".$reftipo.",'".$token."','".$fechacreac."',".$refestadotoken.",DATE_ADD(now(),INTERVAL 1 MINUTE))";
       $res = $this->query($sql,1);
       return $res;
    }
