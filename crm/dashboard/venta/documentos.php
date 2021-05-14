@@ -265,7 +265,7 @@ if ($consolicitud == 1) {
 				
 				$EnvioSMS = new EnvioSMS();
 	   
-				$msg = ' NIP: '.$token ." Ingresa este numero para firmar tu solicitud";
+				$msg = 'ASESORES CREA - NIP: '.$token ." Ingresa este numero para firmar tu solicitud";
 	   
 				$envio = $EnvioSMS->enviarSMS($telefono, $msg );
 	   
