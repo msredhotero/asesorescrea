@@ -1385,7 +1385,7 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 		$('#dctelefonocelular').inputmask('9999999999', { placeholder: '__________' });
 
 		<?php if ($existeBckUpCliente == 0) { ?>
-		$('#lgmDomicilioTelefono').modal();
+		$('#lgmDomicilioTelefono').modal({backdrop: 'static', keyboard: false});
 		<?php } ?>
 
 		$('.panelDatosModificar').hide();
