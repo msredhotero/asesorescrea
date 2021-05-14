@@ -997,7 +997,7 @@ function registrarCliente($email,$apellido, $nombre,$refcliente,$refusuarios,$pa
    $cuerpo .= '<body><p style="font-family: '."'Lato'".', serif; font-size:1.7em;">A continuación, le enviamos sus datos de acceso a nuestra plataforma:</p>';
 
    $cuerpo .= '<h3 style="font-family: '."'Lato'".', serif; font-size:1.6em;">Nombre de usuario: '.$email.'</h3>';
-   $cuerpo .= '<h3 style="font-family: '."'Lato'".', serif; font-size:1.6em;">Contraseña: '.$pass.'</h3>';
+   
 
    $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
 

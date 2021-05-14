@@ -1550,7 +1550,7 @@ function enviarNIPmovil($serviciosUsuarios, $serviciosReferencias) {
 
    $token = $serviciosReferencias->generarNIP();
 
-   $msg = ' NIP: '.$token ." Ingresa este numero para validar tu validar tu celular";
+   $msg = 'ASESORES CREA - NIP: '.$token ." Ingresa este numero para validar tu validar tu celular";
 
 	if (mysql_num_rows($resUsuario)>0) {
 		$resCliente = $serviciosReferencias->traerClientesPorUsuarioCompleto($idusuario);
@@ -1561,7 +1561,7 @@ function enviarNIPmovil($serviciosUsuarios, $serviciosReferencias) {
       if (mysql_num_rows($lstNIPporUsuario) > 3) {
 
          $email = mysql_result($resUsuario,0,'email');
-         
+
          $cuerpo = '';
 
          $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';

@@ -1150,7 +1150,7 @@ if (mysql_num_rows($resActivacion) > 0) {
                                
                                swal({
                                    title: "Respuesta",
-                                   text: data.leyenda,
+                                   text: response.leyenda,
                                    type: "success",
                                    timer: 2000,
                                    showConfirmButton: false
