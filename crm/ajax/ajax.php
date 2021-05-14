@@ -1559,6 +1559,9 @@ function enviarNIPmovil($serviciosUsuarios, $serviciosReferencias) {
 
       //si ya realizo 3 intentos para acceder desde el sms, le envio al email
       if (mysql_num_rows($lstNIPporUsuario) > 3) {
+
+         $email = mysql_result($resUsuario,0,'email');
+         
          $cuerpo = '';
 
          $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
