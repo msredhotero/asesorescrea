@@ -920,7 +920,7 @@ if (mysql_num_rows($resCobranzaCargada)>0) {
 
 		$('.btnDocumentacion').click(function() {
 			idTable =  $(this).attr("id");
-			url = "adjuntarcotizaciones.php?id=<?php echo $id; ?>&documentacion=" + idTable;
+			url = "adjuntarcotizacionese.php?id=<?php echo $id; ?>&documentacion=" + idTable;
 			$(location).attr('href',url);
 		});
 
