@@ -1710,7 +1710,7 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 							<?php //si los datos no estan completos pero no son obligatorios, sigo
 								if ($resPreguntasObligatoriasClientesCargadas == 0) { 
 							?>
-							//form.steps("next");
+							form.steps("next");
 							<?php } ?>	
 						}
 						<?php } ?>
@@ -1979,7 +1979,7 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 
 					} else {
 						<?php if (($id==0) && ($existeBckUpCliente > 0) && ($resPreguntasObligatoriasClientesCargadas == 0)) { ?>
-						//form.steps("next");
+						form.steps("next");
 						<?php } ?>
 
 					}
@@ -2468,7 +2468,7 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 		<?php if ($existeBckUpCliente == 0) { ?>
 
 		<?php } else { ?>
-			//form.steps("next");	
+			form.steps("next");	
 		<?php } ?>
 		
 		<?php } ?>
@@ -2773,7 +2773,7 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 			} else {
 				if ($('#wizard_with_validation #tieneasegurado option:selected').text() == 'Yo mismo') {
 					
-					//cuestionarioPersonas(<?php //echo $rIdProducto; ?>,<?php echo $id; ?>,<?php //echo $rIdCliente; ?>,0);
+					//cuestionarioPersonas(<?php //echo $rIdProducto; ?>,<?php //echo $id; ?>,<?php //echo $rIdCliente; ?>,0);
 					
 				} else {
 					
