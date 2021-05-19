@@ -250,7 +250,7 @@ class serviciosAsegurados
                 $formBeneficiario	= '';
             break;
             //vida 500
-            case 28:
+            case 54:
                 $formReglasAsegurado = array('nombre','apellidopaterno','apellidomaterno','fechanacimiento','genero','refestadocivil','reftipoparentesco');
                 $formReglasBeneficiario = array('nombre','apellidopaterno','apellidomaterno','fechanacimiento','genero','refestadocivil','reftipoparentesco');
 
