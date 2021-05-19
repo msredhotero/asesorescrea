@@ -267,9 +267,8 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 							
 
 					</div>
-         		</div><!-- fin del contenedor -->
 
-				 <?php if ($_SESSION['usuaid_sahilices'] == 294) { ?>
+					<?php if ($_SESSION['usuaid_sahilices'] == 294) { ?>
 					<div class="row" style="margin-top:40px;">
 								<div class="col-xs-12 col-md-6">
 									<h4 style="color: #C6AC83;font-size: 32px;line-height: 36px;">Vida 500</h4>
@@ -290,6 +289,9 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 					</div>
 				 <?php } ?>
+         		</div><!-- fin del contenedor -->
+
+				 
 			</div>
 		</div>
 	</div>
