@@ -270,22 +270,23 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 					<?php if ($_SESSION['usuaid_sahilices'] == 294) { ?>
 					<div class="row" style="margin-top:40px;">
-								<div class="col-xs-12 col-md-6">
-									<h4 style="color: #C6AC83;font-size: 32px;line-height: 36px;">Vida 500</h4>
-									<h4 style="line-height: 1.5; "><b>Contrata un Seguro de Vida y deja a tus beneficiarios $500,000 en caso de que faltes. También puedes cotizar suma asegurada de $1,000,000 de pesos.</b></h4>
-                           <h4 style="line-height: 1.5; "><b>No hay pretexto para no estar asegurado; el trámite es sencillo y sin moverte de tu lugar.</b></h4>
+							<div class="col-xs-12 col-md-6">
+								<img src="../../imagenes/vida-500-1000000_.jpg" width="100%"/>
+							</div>
+							<div class="col-xs-12 col-md-6">
+								<h4 style="color: #C6AC83;font-size: 32px;line-height: 36px;">Vida 500</h4>
+								<h4 style="line-height: 1.5; "><b>Contrata un Seguro de Vida y deja a tus beneficiarios $500,000 en caso de que faltes. También puedes cotizar suma asegurada de $1,000,000 de pesos.</b></h4>
+                           		<h4 style="line-height: 1.5; "><b>No hay pretexto para no estar asegurado; el trámite es sencillo y sin moverte de tu lugar.</b></h4>
 
                            <?php if ($lblPrecioVIDA500 != '') { ?>
                            <div class="row" style="margin-top:40px; text-align:center;">
-      								<button type="button" id="btnCotizarS500" class="btn bg-blue waves-effect btnCotizarS500" style="padding:40px 80px; font-size:100%;">CONTRATAR PLAN ANUAL POR <?php echo $lblPrecioVIDA500; ?></button>
+      							<button type="button" id="btnCotizarS500" class="btn bg-blue waves-effect btnCotizarS500" style="padding:40px 80px; font-size:100%;">CONTRATAR PLAN ANUAL POR <?php echo $lblPrecioVIDA500; ?></button>
       							</div>
                            <?php } ?>
                            <p style="margin-top:15px;"><small>*El costo de este producto esta conciderado respecto a tu edad, de acuerdo a los datos de registro y una protección por 500 mil pesos.</small></p>
 
-								</div>
-								<div class="col-xs-12 col-md-6">
-									<img src="../../imagenes/vida-500-1000000_.jpg" width="100%"/>
-								</div>
+							</div>
+								
 
 					</div>
 				 <?php } ?>
