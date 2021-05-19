@@ -4401,7 +4401,7 @@ function insertarTokens($serviciosReferencias, $serviciosUsuarios) {
       if ((mysql_result($resUsuario,0,'validamovil') == '1') && (mysql_num_rows($lstNIPporUsuario) <= 3)) {
          $EnvioSMS = new EnvioSMS();
 
-         $msg = ' NIP: '.$token ." Ingresa este numero para firmar tu solicitud";
+         $msg = 'Asesores Crea - NIP: '.$token ." Ingresa este numero para firmar tu solicitud";
 
          $envio = $EnvioSMS->enviarSMS($telefono, $msg );
 

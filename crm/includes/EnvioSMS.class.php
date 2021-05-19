@@ -47,7 +47,7 @@ class EnvioSMS{
 					$phpMailer->isHTML(false);
 					
 					if (!$phpMailer->send()) {
-						echo "Error enviando correo: " . $phpMailer->ErrorInfo;
+						echo "Error: " . $phpMailer->ErrorInfo;
 					}else{
 						// registramos datos	
 
@@ -78,12 +78,6 @@ class EnvioSMS{
 	}
 
 }
-/*
-$celularCliente = '5573634064';
-$msg = 'prueba proceso envio sms '.date("Y-m-d"). " ".date("G:i:s");
-$x_envio = EnvioSMS::enviarSMS($celularCliente,$msg);
 
-echo  $x_envio;
-*/
 
 ?>
