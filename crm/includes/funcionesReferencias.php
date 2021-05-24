@@ -14620,7 +14620,7 @@ return $res;
 
    		concat('Asesor: ', ase.apellidopaterno, ' ', ase.nombre) as asesor,
          concat('Asociado: ', aso.apellidopaterno, ' ', aso.nombre) as asociado,
-         concat( cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as clientesolo,
+         (case when cli.reftipopersonas=1 then concat( cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) else cli.razonsocial end) as clientesolo,
    		c.refclientes,c.refproductos,c.refasesores,c.refasociados,
    		c.refestadocotizaciones,c.observaciones,
    		c.fechacrea,c.fechamodi,c.usuariocrea,c.usuariomodi,c.refusuarios,c.fechaemitido,c.fechavencimiento,

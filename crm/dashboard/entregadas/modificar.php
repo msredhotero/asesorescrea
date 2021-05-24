@@ -437,6 +437,15 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 		  padding: 0;
 		}
 
+		#bitacoracrea {
+			border: ridge 2px;
+			padding: 5px;
+			width: 100%;
+			min-height: 5em;
+			overflow: auto;
+			height:290px !important;
+		}
+
 	</style>
 
 

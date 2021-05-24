@@ -507,6 +507,15 @@ $resVar10m	= $serviciosReferencias->traerAseguradora();
 			color: white !important;
 		}
 
+		#bitacoracrea {
+			border: ridge 2px;
+			padding: 5px;
+			width: 100%;
+			min-height: 5em;
+			overflow: auto;
+			height:290px !important;
+		}
+
 	</style>
 
 
