@@ -444,6 +444,11 @@ if ($_SESSION['idroll_sahilices'] == 3) {
 					"searchable": false
 				},
 				{
+					"targets": [ 8 ],
+					"visible": false,
+					"searchable": false
+				},
+				{
 					"targets": [ 3 ],
 					"visible": false,
 					"searchable": false
@@ -491,7 +496,13 @@ if ($_SESSION['idroll_sahilices'] == 3) {
   					"targets": [ 7 ],
   					"visible": false,
   					"searchable": false
+  				},
+  				{
+  					"targets": [ 8 ],
+  					"visible": false,
+  					"searchable": false
   				}
+				  
 
   		  ]
 			<?php } ?>

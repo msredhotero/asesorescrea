@@ -648,8 +648,8 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 				               </div>
 								</div>
 
-								<input type="hidden" id="refestadocotizaciones" name="refestadocotizaciones" value="26"/>
-								<input type="hidden" id="refestados" name="refestados" value="5"/>
+								<input type="hidden" id="refestadocotizaciones" name="refestadocotizaciones" value="27"/>
+								<input type="hidden" id="refestados" name="refestados" value="4"/>
 							</form>
 							</div>
 						</div>
@@ -1450,13 +1450,22 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 		$('#usuariocrea').val('2020-02-02');
 		$('#usuariomodi').val('2020-02-02');
 
+		$('#vigenciapoliza').bootstrapMaterialDatePicker({
+			format: 'YYYY/MM/DD',
+			lang : 'es',
+			clearButton: true,
+			weekStart: 1,
+			time: false,
+			minDate : '2019/01/01'
+		});
+
 		$('#fecharenovacion').bootstrapMaterialDatePicker({
 			format: 'YYYY/MM/DD',
 			lang : 'es',
 			clearButton: true,
 			weekStart: 1,
 			time: false,
-			minDate : new Date()
+			minDate : '2019/01/01'
 		});
 
 
@@ -1466,7 +1475,7 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 			clearButton: true,
 			weekStart: 1,
 			time: false,
-			minDate : new Date()
+			minDate : '2019/01/01'
 		});
 
 		$('#fechavencimiento').bootstrapMaterialDatePicker({

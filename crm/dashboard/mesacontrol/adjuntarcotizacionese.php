@@ -212,6 +212,33 @@ if (mysql_num_rows($resCobranzaCargada)>0) {
 } else {
 	$puedeSeguirAux = 0;
 }
+
+$resEmision = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosArea($idasesor,6);
+
+if (mysql_num_rows($resEmision)>0) {
+	$existeEmisionPerfil = 1;
+
+} else {
+	$existeEmisionPerfil = 0;
+
+}
+
+$resEmisionCargada = $serviciosReferencias->traerCotizacionesdirectorioPorCotizacionArea($id,6);
+if (mysql_num_rows($resEmisionCargada)>0) {
+	$puedeSeguirAux2 = 1;
+} else {
+	$puedeSeguirAux2 = 0;
+}
+
+
+// se agrega para que cuando carguen el art 492, con solo este dato pueda finalizar el proceso
+$resDocumentacionEspecialAprueba = $serviciosReferencias->traerDocumentacionEspecialMesaDeControl($id,'formatoarticulo492');
+
+if (mysql_num_rows($resDocumentacionEspecialAprueba)>0) {
+	$documentacionEspecialAprueba = 1;
+} else {
+	$documentacionEspecialAprueba = 0;
+}
 ?>
 
 <!DOCTYPE html>
@@ -383,7 +410,7 @@ if (mysql_num_rows($resCobranzaCargada)>0) {
 						</div>
 					</div>
 				<?php }  ?>
-				<?php if (($archivosCargadosObligatorios == $archivosObligatorios) && (($existeCobranzaPerfil==0) || ($existeCobranzaPerfil==1 && $puedeSeguirAux==1))) { ?>
+				<?php if ((($archivosCargadosObligatorios == $archivosObligatorios) && (($existeCobranzaPerfil==0) || ($existeCobranzaPerfil==1 && $puedeSeguirAux==1))) || (($documentacionEspecialAprueba == 1) && (($existeCobranzaPerfil==0) || ($existeCobranzaPerfil==1 && $puedeSeguirAux==1)))) { ?>
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box-3 bg-green hover-zoom-effect btnAceptarMesaDeControl">
 							<div class="icon">
@@ -401,7 +428,7 @@ if (mysql_num_rows($resCobranzaCargada)>0) {
 			<div class="row" style="margin-bottom:20px !important;">
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<button type="button" class="btn btn-info waves-effect btnVolverFiltro" data-ir="modificar" data-referencia="<?php echo $id; ?>"><i class="material-icons">reply</i><span>VOLVER</span></button>
-					<button type="button" class="btn btn-success waves-effect btnCobranzaModal"><i class="material-icons">account_balance</i><span>SELECCIONE LOS PERFILES DE COBRANZA</span></button>
+					<button type="button" class="btn btn-success waves-effect btnCobranzaModal"><i class="material-icons">account_balance</i><span>SELECCIONE LOS PERFILES DE EMISION Y COBRANZA</span></button>
 				</div>
 			</div>
 
@@ -571,21 +598,41 @@ if (mysql_num_rows($resCobranzaCargada)>0) {
 					<div class="modal-body">
 						<div class="row clearfix" style="margin-top:15px; padding: 0 20px;">
 							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+								<h4>COBRANZA</h4>
 								<select required id="suscriptor_select" name="suscriptor_select[]" class="js-example-basic-multiple" multiple="multiple">
-							<?php
-							while ($rowD = mysql_fetch_array($resCobranza)) {
-							?>
-									<option value="<?php echo $rowD['iddirectorioasesor']; ?>"><?php echo $rowD['razonsocial']; ?></option>
-							<?php
-							}
-							?>
+								<?php
+								while ($rowD = mysql_fetch_array($resCobranza)) {
+								?>
+										<option value="<?php echo $rowD['iddirectorioasesor']; ?>"><?php echo $rowD['razonsocial']; ?></option>
+								<?php
+								}
+								?>
+								</select>
+								<h4>EMISION</h4>
+								<select required id="emision_select" name="emision_select[]" class="js-example-basic-multiple" multiple="multiple">
+								<?php
+								while ($rowD = mysql_fetch_array($resEmision)) {
+								?>
+										<option value="<?php echo $rowD['iddirectorioasesor']; ?>"><?php echo $rowD['razonsocial']; ?></option>
+								<?php
+								}
+								?>
 								</select>
 							</div>
 							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
-								<h5>Cargados</h5>
+								<h5>Cargados Cobranza</h5>
 								<ul>
 									<?php
 									while ($rowD = mysql_fetch_array($resCobranzaCargada)) {
+									?>
+									<li><?php echo $rowD['razonsocial']; ?></li>
+									<?php } ?>
+								</ul>
+								<hr>
+								<h5>Cargados Emision</h5>
+								<ul>
+									<?php
+									while ($rowD = mysql_fetch_array($resEmisionCargada)) {
 									?>
 									<li><?php echo $rowD['razonsocial']; ?></li>
 									<?php } ?>
@@ -718,6 +765,14 @@ if (mysql_num_rows($resCobranzaCargada)>0) {
 
 		$('.btnGuardarPerfiles').click(function() {
 			$("#suscriptor_select option").each(function()
+			{
+				if ($(this).prop('selected')) {
+					insertarCotizacionesdirectorioUnico($(this).val());
+					location.reload();
+				}
+			});
+
+			$("#emision_select option").each(function()
 			{
 				if ($(this).prop('selected')) {
 					insertarCotizacionesdirectorioUnico($(this).val());

@@ -223,6 +223,7 @@ class serviciosAlertas
          }
       }
 
+      /**** por ahora no se va a ejecutar, Rosa 25/05/2021
       if ($dias == -11) {
          $res = $this->alertaVencimientoPoliza($dias,2);
 
@@ -230,6 +231,7 @@ class serviciosAlertas
             $resMod = $this->modificarVentasUnicaDocumentacion($row['idventa'], 'refestadoventa', 4);
          }
       }
+      */
 
 
 

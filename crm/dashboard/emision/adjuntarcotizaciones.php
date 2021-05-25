@@ -49,6 +49,15 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 $resProducto = $serviciosReferencias->traerProductosPorId(mysql_result($resultado,0,'refproductos'));
 
+$resCliente = $serviciosReferencias->traerClientesPorId(mysql_result($resultado,0,'refclientes'));
+
+if (mysql_result($resCliente,0,'reftipopersonas') == 1) {
+	$apynCliente = mysql_result($resCliente,0,'apellidopaterno').' '.mysql_result($resCliente,0,'apellidomaterno').' '.mysql_result($resCliente,0,'nombre');
+} else {
+	$apynCliente = mysql_result($resCliente,0,'razonsocial');
+}
+
+
 $refdoctipo = mysql_result($resProducto,0,'reftipodocumentaciones');
 
 $id = mysql_result($resultado,0,'idcotizacion');
@@ -374,6 +383,12 @@ switch ($iddocumentacion) {
 					</div>
 				<?php } ?>
 				<?php } ?>
+			</div>
+
+			<dic class="row">
+				<div class="alert alert-success">
+					<p><i class="material-icons">account_circle</i> <span style="font-size:1.6em !important;"> CLIENTE: <?php echo $apynCliente; ?></span></p>
+				</div>
 			</div>
 
 			<div class="row">

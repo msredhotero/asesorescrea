@@ -9,6 +9,61 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+   
+/* PARA Pixel */
+
+function insertarPixel($reforigen,$donde,$evento,$dato1,$dato2,$dato3,$fechacrea) {
+   $sql = "insert into dbpixel(idpixel,reforigen,donde,evento,dato1,dato2,dato3,fechacrea)
+   values ('',".$reforigen.",'".$donde."','".$evento."','".$dato1."','".$dato2."','".$dato3."','".$fechacrea."')";
+   $res = $this->query($sql,1);
+   return $res;
+   }
+   
+   
+   function modificarPixel($id,$reforigen,$donde,$evento,$dato1,$dato2,$dato3,$fechacrea) {
+   $sql = "update dbpixel
+   set
+   reforigen = ".$reforigen.",donde = '".$donde."',evento = '".$evento."',dato1 = '".$dato1."',dato2 = '".$dato2."',dato3 = '".$dato3."',fechacrea = '".$fechacrea."'
+   where idpixel =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+   
+   
+   function eliminarPixel($id) {
+   $sql = "delete from dbpixel where idpixel =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+   
+   
+   function traerPixel() {
+   $sql = "select
+   p.idpixel,
+   p.reforigen,
+   p.donde,
+   p.evento,
+   p.dato1,
+   p.dato2,
+   p.dato3,
+   p.fechacrea
+   from dbpixel p
+   order by 1";
+   $res = $this->query($sql,0);
+   return $res;
+   }
+   
+   
+   function traerPixelPorId($id) {
+   $sql = "select idpixel,reforigen,donde,evento,dato1,dato2,dato3,fechacrea from dbpixel where idpixel =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+   
+   
+   /* Fin */
+   /* /* Fin de la Tabla: dbpixel*/
+
    function limpiarTelfono($telefono){
 		$arrayCAracteres = array("-","_",".",","," ");
 		$telefono = str_replace ( $arrayCAracteres , '' , $telefono );
@@ -12550,6 +12605,31 @@ return $res;
 		$res = $this->query($sql,0);
 		return $res;
 	}
+
+   function traerDocumentacionEspecialMesaDeControl($idcotizacion,$carpeta) {
+      $sql = "SELECT
+					    d.iddocumentacion,
+					    d.documentacion,
+					    d.obligatoria,
+					    da.iddocumentacioncotizacion,
+					    da.archivo,
+					    da.type,
+					    coalesce( ed.estadodocumentacion, 'Falta') as estadodocumentacion,
+						 ed.color,
+					    ed.idestadodocumentacion
+					FROM
+					    dbdocumentaciones d
+					        inner JOIN
+					    dbdocumentacioncotizaciones da ON d.iddocumentacion = da.refdocumentaciones
+					        AND da.refcotizaciones = ".$idcotizacion."
+					        inner JOIN
+					    tbestadodocumentaciones ed ON ed.idestadodocumentacion = da.refestadodocumentaciones
+					where d.carpeta = '".$carpeta."'
+
+					order by 1";
+		$res = $this->query($sql,0);
+ 		return $res;
+   }
 
 	function traerDocumentacionPorCotizacionDocumentacionCompleta($idcotizacion) {
 		$sql = "SELECT

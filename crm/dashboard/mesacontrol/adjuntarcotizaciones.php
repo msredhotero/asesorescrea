@@ -55,8 +55,8 @@ $id = mysql_result($resultado,0,'idcotizacion');
 
 $refDoc = '3,'.$refdoctipo;
 
-$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionGral($id, $refDoc);
-$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionGral($id,$refDoc);
+$resDocumentaciones = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionGral($id, $refDoc,'46,47,81','');
+$resDocumentacionesAux = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionGral($id,$refDoc,'46,47,81','');
 
 
 if (!(isset($_GET['documentacion']))) {

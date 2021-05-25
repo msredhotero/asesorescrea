@@ -1923,7 +1923,12 @@ function buscarRFC($serviciosValidador,$serviciosReferencias) {
       $tipopersona = 1;
    }
 
+   $fechacrea = date('Y-m-d H:i:s');
+
    if ((isset($_POST['rfc']))) {
+
+      $resPixel = $serviciosReferencias->insertarPixel(1,'registro3','buscarRFC',$_POST['rfc'],'','',$fechacrea);
+
       $rfc = $_POST['rfc'];
 
       if ((strlen($rfc) == 13) || (strlen($rfc) == 12)) {
@@ -2106,7 +2111,13 @@ function buscarCURP($serviciosValidador, $serviciosReferencias) {
 
    $arDatos = array();
 
+   $fechacrea = date('Y-m-d H:i:s');
+
    if ((isset($_POST['curp']))) {
+
+      
+      $resPixel = $serviciosReferencias->insertarPixel(1,'registro3','buscarCURP',$_POST['curp'],'','',$fechacrea);
+
       $curp = $_POST['curp'];
 
       if (strlen($curp) == 18) {
