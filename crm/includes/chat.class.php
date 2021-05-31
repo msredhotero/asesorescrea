@@ -25,7 +25,7 @@ class chatCrea {
     }
 
     public function traerUsuariosChat() {
-        $mysqli = new mysqli('localhost', 'u115752684_desa', 'u115752684_desa', '@Chivas11');
+        $mysqli = new mysqli('localhost', 'u115752684_desa', '@Chivas11', 'u115752684_desa');
         //$mysqli = new mysqli('localhost', 'root', '', 'u115752684_asesores');
         
 
@@ -129,7 +129,7 @@ class chatCrea {
     }
 
     public function traerChatPorUsuario() {
-        $mysqli = new mysqli('localhost', 'u115752684_desa', 'u115752684_desa', '@Chivas11');
+        $mysqli = new mysqli('localhost', 'u115752684_desa', '@Chivas11', 'u115752684_desa');
         //$mysqli = new mysqli('localhost', 'root', '', 'u115752684_asesores');
         
         $error = '';
