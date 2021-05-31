@@ -1565,9 +1565,9 @@ function traerUsuariosChat() {
    $resultado = $chat->traerUsuariosChat();
    //die(var_dump($resultado));
    $cadMensajes = '';
-   $rows = $resultado->fetch_all(MYSQLI_ASSOC);
+   //$rows = $resultado->fetch_all(MYSQLI_ASSOC);
 
-   foreach ($rows as $mensaje) {
+   while($mensaje = mysql_fetch_array($resultado)) {
       //active_chat
       //<span class="chat_date">Dec 25</span> ultima fecha que se conecto
 
@@ -1597,9 +1597,6 @@ function traerUsuariosChat() {
       
       
    }
-
-   $resultado->free();
-
    
 
    $resV['usuarios'] = $cadMensajes;
@@ -1621,37 +1618,29 @@ function traerChatPorUsuarios() {
    $resultado = $chat->traerChatPorUsuario();
    
    $cadMensajes = '';
-   if (is_object($resultado)) {
-      $rows = $resultado->fetch_all(MYSQLI_ASSOC);
 
-      foreach ($rows as $mensaje) {
-         
-         if ($mensaje['lado'] == 0) {
-            $cadMensajes .= '<div class="outgoing_msg">
-            <div class="sent_msg">
-               <p>'.$mensaje['mensaje'].'</p>
-               <span class="time_date"> '.$mensaje['fechacrea'].'</span> </div>
-            </div>';
-         } else {
-            $cadMensajes .= '<div class="incoming_msg">
-            <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-            <div class="received_msg">
-               <div class="received_withd_msg">
-               <p>'.$mensaje['mensaje'].'</p>
-               <span class="time_date"> '.$mensaje['fechacrea'].'</div>
-            </div>
-            </div>';
-         }
+
+   while($mensaje = mysql_fetch_array($resultado)) {
       
-         
-         
+      if ($mensaje['lado'] == 0) {
+         $cadMensajes .= '<div class="outgoing_msg">
+         <div class="sent_msg">
+            <p>'.$mensaje['mensaje'].'</p>
+            <span class="time_date"> '.$mensaje['fechacrea'].'</span> </div>
+         </div>';
+      } else {
+         $cadMensajes .= '<div class="incoming_msg">
+         <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+         <div class="received_msg">
+            <div class="received_withd_msg">
+            <p>'.$mensaje['mensaje'].'</p>
+            <span class="time_date"> '.$mensaje['fechacrea'].'</div>
+         </div>
+         </div>';
       }
-
-      $resultado->free();
+      
    }
-   
 
-   
 
    $resV['mensajes'] = $cadMensajes;
 

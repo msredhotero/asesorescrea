@@ -25,197 +25,153 @@ class chatCrea {
     }
 
     public function traerUsuariosChat() {
-        $mysqli = new mysqli('localhost', 'u115752684_desa', '@Chivas11', 'u115752684_desa');
+        //$mysqli = new mysqli('localhost', 'u115752684_desa', '@Chivas11', 'u115752684_desa');
         //$mysqli = new mysqli('localhost', 'root', '', 'u115752684_asesores');
         
 
-        if ($mysqli->connect_errno) {
-            $error = "No se pudo establecar una conexcion.";
-            return $error;
-        } else {
 
-            switch ($this->getIdrol()) {
-                case 7:
-                    $sql = "SELECT 
-                        u.email, u.nombrecompleto, r.descripcion AS posicion
-                    FROM
-                        dbusuarios u
-                            INNER JOIN
-                        tbroles r ON r.idrol = u.refroles
-                    where u.refroles in (2,3,4,11,20,21)";
-                break;
-                case 20:
-                    $sql = "SELECT 
-                        u.email, u.nombrecompleto, r.descripcion AS posicion
-                    FROM
-                        dbusuarios u
-                            INNER JOIN
-                        tbroles r ON r.idrol = u.refroles
-                    where (u.refroles in (2,3,4,11,21) or (u.refroles = 7 and u.email = '".$this->getEmailasesor()."'))";
-                break;
-                case 21:
-                    $sql = "SELECT 
-                        u.email, u.nombrecompleto, r.descripcion AS posicion
-                    FROM
-                        dbusuarios u
-                            INNER JOIN
-                        tbroles r ON r.idrol = u.refroles
-                    where (u.refroles in (2,3,4,11,20) or (u.refroles = 7 and u.email = '".$this->getEmailasesor()."'))";
-                break;
-                case 2:
-                    $sql = "SELECT 
-                        u.email, u.nombrecompleto, r.descripcion AS posicion
-                    FROM
-                        dbusuarios u
-                            INNER JOIN
-                        tbroles r ON r.idrol = u.refroles
-                    where (u.refroles in (21,3,4,11,20) or (u.refroles = 7 and u.email = '".$this->getEmailasesor()."'))";
-                break;
-                case 3:
-                    $sql = "SELECT 
-                        u.email, u.nombrecompleto, r.descripcion AS posicion
-                    FROM
-                        dbusuarios u
-                            INNER JOIN
-                        tbroles r ON r.idrol = u.refroles
-                    where (u.refroles in (2,21,4,11,20) or (u.refroles = 7 and u.email = '".$this->getEmailasesor()."'))";
-                break;
-                case 4:
-                    $sql = "SELECT 
-                        u.email, u.nombrecompleto, r.descripcion AS posicion
-                    FROM
-                        dbusuarios u
-                            INNER JOIN
-                        tbroles r ON r.idrol = u.refroles
-                    where (u.refroles in (2,21,3,11,20) or (u.refroles = 7 and u.email = '".$this->getEmailasesor()."'))";
-                break;
-                case 1:
-                    $sql = "SELECT 
-                        u.email, u.nombrecompleto, r.descripcion AS posicion
-                    FROM
-                        dbusuarios u
-                            INNER JOIN
-                        tbroles r ON r.idrol = u.refroles
-                    where (u.refroles in (2,21,3,11,20,4) or (u.refroles = 7 and u.email = '".$this->getEmailasesor()."'))";
-                break;
-            }
+        switch ($this->getIdrol()) {
+            case 7:
+                $sql = "SELECT 
+                    u.email, u.nombrecompleto, r.descripcion AS posicion
+                FROM
+                    dbusuarios u
+                        INNER JOIN
+                    tbroles r ON r.idrol = u.refroles
+                where u.refroles in (2,3,4,11,20,21)";
+            break;
+            case 20:
+                $sql = "SELECT 
+                    u.email, u.nombrecompleto, r.descripcion AS posicion
+                FROM
+                    dbusuarios u
+                        INNER JOIN
+                    tbroles r ON r.idrol = u.refroles
+                where (u.refroles in (2,3,4,11,21) or (u.refroles = 7 and u.email = '".$this->getEmailasesor()."'))";
+            break;
+            case 21:
+                $sql = "SELECT 
+                    u.email, u.nombrecompleto, r.descripcion AS posicion
+                FROM
+                    dbusuarios u
+                        INNER JOIN
+                    tbroles r ON r.idrol = u.refroles
+                where (u.refroles in (2,3,4,11,20) or (u.refroles = 7 and u.email = '".$this->getEmailasesor()."'))";
+            break;
+            case 2:
+                $sql = "SELECT 
+                    u.email, u.nombrecompleto, r.descripcion AS posicion
+                FROM
+                    dbusuarios u
+                        INNER JOIN
+                    tbroles r ON r.idrol = u.refroles
+                where (u.refroles in (21,3,4,11,20) or (u.refroles = 7 and u.email = '".$this->getEmailasesor()."'))";
+            break;
+            case 3:
+                $sql = "SELECT 
+                    u.email, u.nombrecompleto, r.descripcion AS posicion
+                FROM
+                    dbusuarios u
+                        INNER JOIN
+                    tbroles r ON r.idrol = u.refroles
+                where (u.refroles in (2,21,4,11,20) or (u.refroles = 7 and u.email = '".$this->getEmailasesor()."'))";
+            break;
+            case 4:
+                $sql = "SELECT 
+                    u.email, u.nombrecompleto, r.descripcion AS posicion
+                FROM
+                    dbusuarios u
+                        INNER JOIN
+                    tbroles r ON r.idrol = u.refroles
+                where (u.refroles in (2,21,3,11,20) or (u.refroles = 7 and u.email = '".$this->getEmailasesor()."'))";
+            break;
+            case 1:
+                $sql = "SELECT 
+                    u.email, u.nombrecompleto, r.descripcion AS posicion
+                FROM
+                    dbusuarios u
+                        INNER JOIN
+                    tbroles r ON r.idrol = u.refroles
+                where (u.refroles in (2,21,3,11,20,4) or (u.refroles = 7 and u.email = '".$this->getEmailasesor()."'))";
+            break;
+        }
 
             
             //die(var_dump($sql));
             
-            if (!$resultado = $mysqli->query($sql)) {
-                
-                echo "Error: La ejecución de la consulta falló debido a: \n";
-                echo "Query: " . $sql . "\n";
-                echo "Errno: " . $mysqli->errno . "\n";
-                echo "Error: " . $mysqli->error . "\n";
-                
-            } else {
-                // no hay filas
-                if ($resultado->num_rows === 0) {
-                    return 0;
-                } else {
-                    
-                    return $mysqli->query($sql);
+        $res = $this->query($sql,0);
 
-                }
-            }
-            
+        return $res;
 
-
-        }
-        //$resultado->free();
-        $mysqli->close();
     }
 
     public function traerChatPorUsuario() {
-        $mysqli = new mysqli('localhost', 'u115752684_desa', '@Chivas11', 'u115752684_desa');
+        //$mysqli = new mysqli('localhost', 'u115752684_desa', '@Chivas11', 'u115752684_desa');
         //$mysqli = new mysqli('localhost', 'root', '', 'u115752684_asesores');
         
         $error = '';
-        if ($mysqli->connect_errno) {
-            $error = "No se pudo establecar una conexcion.";
-            return $error;
-        } else {
-            $sql = "select
-                        r.idchat,
-                        r.reftabla,
-                        r.idreferencia,
-                        r.email,
-                        r.emaildestinatario,
-                        r.esdirectorio,
-                        r.nombre,
-                        r.mensaje,
-                        r.fechacrea,
-                        r.leido,
-                        r.lado
-                    from (
-                    SELECT 
-                        idchat,
-                        reftabla,
-                        idreferencia,
-                        email,
-                        emaildestinatario,
-                        esdirectorio,
-                        nombre,
-                        mensaje,
-                        fechacrea,
-                        leido,
-                        0 as lado
-                    FROM
-                        dbchat
-                    WHERE
-                        email = '".$this->getEmail()."'
-                            AND emaildestinatario = '".$this->getEmaildestinatario()."'
-                            AND idreferencia = ".$this->getIdreferencia()."
-                            
-                    union all
-                    
-                    SELECT 
-                        idchat,
-                        reftabla,
-                        idreferencia,
-                        email,
-                        emaildestinatario,
-                        esdirectorio,
-                        nombre,
-                        mensaje,
-                        fechacrea,
-                        leido,
-                        1 as lado
-                    FROM
-                        dbchat
-                    WHERE
-                        email = '".$this->getEmaildestinatario()."'
-                            AND emaildestinatario = '".$this->getEmail()."'
-                            AND idreferencia = ".$this->getIdreferencia()."
-                    ) r
-                    order by r.fechacrea";
-
-            
-            if (!$resultado = $mysqli->query($sql)) {
+        
+        $sql = "select
+                    r.idchat,
+                    r.reftabla,
+                    r.idreferencia,
+                    r.email,
+                    r.emaildestinatario,
+                    r.esdirectorio,
+                    r.nombre,
+                    r.mensaje,
+                    r.fechacrea,
+                    r.leido,
+                    r.lado
+                from (
+                SELECT 
+                    idchat,
+                    reftabla,
+                    idreferencia,
+                    email,
+                    emaildestinatario,
+                    esdirectorio,
+                    nombre,
+                    mensaje,
+                    fechacrea,
+                    leido,
+                    0 as lado
+                FROM
+                    dbchat
+                WHERE
+                    email = '".$this->getEmail()."'
+                        AND emaildestinatario = '".$this->getEmaildestinatario()."'
+                        AND idreferencia = ".$this->getIdreferencia()."
+                        
+                union all
                 
-                echo "Error: La ejecución de la consulta falló debido a: \n";
-                echo "Query: " . $sql . "\n";
-                echo "Errno: " . $mysqli->errno . "\n";
-                echo "Error: " . $mysqli->error . "\n";
-                
-            } else {
-                // no hay filas
-                if ($resultado->num_rows === 0) {
-                    return 0;
-                } else {
-                    
-                    return $mysqli->query($sql);
+                SELECT 
+                    idchat,
+                    reftabla,
+                    idreferencia,
+                    email,
+                    emaildestinatario,
+                    esdirectorio,
+                    nombre,
+                    mensaje,
+                    fechacrea,
+                    leido,
+                    1 as lado
+                FROM
+                    dbchat
+                WHERE
+                    email = '".$this->getEmaildestinatario()."'
+                        AND emaildestinatario = '".$this->getEmail()."'
+                        AND idreferencia = ".$this->getIdreferencia()."
+                ) r
+                order by r.fechacrea";
 
-                }
-            }
+        
+        $res = $this->query($sql,0);
+
+        return $res;
             
 
-
-        }
-        //$resultado->free();
-        $mysqli->close();
     }
 
     public function contruirChat() {
@@ -479,6 +435,43 @@ class chatCrea {
 
         return $this;
     }
+
+    public function query($sql,$accion) {
+
+
+
+		require_once 'appconfig.php';
+
+		$appconfig	= new appconfig();
+		$datos		= $appconfig->conexion();
+		$hostname	= $datos['hostname'];
+		$database	= $datos['database'];
+		$username	= $datos['username'];
+		$password	= $datos['password'];
+
+		$conex = mysql_connect($hostname,$username,$password) or die ("no se puede conectar".mysql_error());
+
+		mysql_select_db($database);
+
+		        $error = 0;
+		mysql_query("BEGIN");
+		$result=mysql_query($sql,$conex);
+		if ($accion && $result) {
+			$result = mysql_insert_id();
+		}
+		if(!$result){
+			$error=1;
+		}
+		if($error==1){
+			mysql_query("ROLLBACK");
+			return false;
+		}
+		 else{
+			mysql_query("COMMIT");
+			return $result;
+		}
+
+	}
 }
 
 
