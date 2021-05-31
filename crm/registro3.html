@@ -1261,6 +1261,38 @@
       			});
       		}
 
+
+            function insertarPixel() {
+      			jQuery.ajax({
+      				url: 'ajax/ajax.php',
+      				type: 'POST',
+      				// Form data
+      				//datos del formulario
+      				data: {
+      					accion: 'insertarPixel',
+      					reforigen: 1,
+                     donde: 'registro',
+                     evento: 'acceso',
+                     dato1: 'obtenerip'
+      				},
+      				//mientras enviamos el archivo
+      				beforeSend: function(){
+                     
+      				},
+      				//una vez finalizado correctamente
+      				success: function(data){
+      					
+      				},
+      				//si ha ocurrido un error
+      				error: function(){
+                     jQuery('.erroresCURP').html('<h4>Actualice la pagina</h4>');
+
+      				}
+      			});
+      		}
+
+            insertarPixel();
+
             function vaciarFisicaRFC() {
                jQuery('#input_email_fisica_rfc').val('');
                jQuery('#input_cemail_fisica_rfc').val('');

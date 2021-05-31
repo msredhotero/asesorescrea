@@ -352,10 +352,7 @@ if ($err) {
 										</button>
 										<?php } ?>
 
-										<button type="button" class="btn bg-black waves-effect btnTarjetaVRIM">
-											<i class="material-icons">done_all</i>
-											<span>GENERAR TARJETA VRIM</span>
-										</button>
+								
 									</div>
 								</div>
 

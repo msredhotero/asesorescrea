@@ -1278,18 +1278,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 													</select>
 												</div>
 
-												<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" style="display:block">
-													<p>
-	                                       <b>Admin/Mesa de Control</b>
-	                                    </p>
-													<select required id="mesacontrol_select" name="mesacontrol_select[]"  class="js-example-basic-multiple" multiple="multiple">
-												<?php
-												while ($rowD = mysql_fetch_array($resMesaControl)) {
-												?>
-													<option value="<?php echo $rowD['iddirectorioasesor']; ?>"><?php echo $rowD['razonsocial']; ?></option>
-												<?php } ?>
-													</select>
-												</div>
+												
 
 												<?php if (mysql_num_rows($resVentas)>0) { ?>
 												<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" style="display:block">
@@ -2801,29 +2790,78 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 	        }
 	    });
 
+		var lstIdSuscriptor = '';
+		var lstIdMesaControl = '';
+		var lstIdVentas = '';
+
 		function cargarDirectorioCotizacion() {
+			lstIdSuscriptor = '';
+			lstIdMesaControl = '';
+			lstIdVentas = '';
+
 			$("#suscriptor_select option").each(function()
 			{
 			   if ($(this).prop('selected')) {
-					insertarCotizacionesdirectorio($(this).val());
+					//insertarCotizacionesdirectorio($(this).val());
+					lstIdSuscriptor = lstIdSuscriptor + $(this).val() + ',';
 				}
 			});
 
 			$("#mesacontrol_select option").each(function()
 			{
 			   if ($(this).prop('selected')) {
-					insertarCotizacionesdirectorio($(this).val());
+					//insertarCotizacionesdirectorio($(this).val());
+					lstIdMesaControl = lstIdMesaControl + $(this).val() + ',';
 				}
 			});
 
 			$("#ventas_select option").each(function()
 			{
 			   if ($(this).prop('selected')) {
-					insertarCotizacionesdirectorio($(this).val());
+					//insertarCotizacionesdirectorio($(this).val());
+					lstIdVentas = lstIdVentas + $(this).val() + ',';
 				}
 			});
 
+			insertarCotizacionesdirectorioMasivo(lstIdVentas,1);
+			insertarCotizacionesdirectorioMasivo(lstIdSuscriptor,2);
+			insertarCotizacionesdirectorioMasivo(lstIdMesaControl,3);
+
 			modificarCotizacion(4);
+		}
+
+		function insertarCotizacionesdirectorioMasivo(refdirectorioasesores, area) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'insertarCotizacionesdirectorioMasivo',
+					refcotizaciones: <?php echo $id; ?>,
+					refdirectorioasesores: refdirectorioasesores,
+					area:area
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
 		}
 
 		function insertarCotizacionesdirectorio(refdirectorioasesores) {

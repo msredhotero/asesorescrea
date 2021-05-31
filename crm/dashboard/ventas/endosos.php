@@ -61,8 +61,8 @@ $idcotizacion = mysql_result($resultado,0,'refcotizaciones');
 /////////////////////// Opciones para la creacion del formulario  /////////////////////
 $tabla 			= "dbventas";
 
-$lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','vigenciadesde');
-$lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Vigencia Desde');
+$lblCambio	 	= array('refcotizaciones','primaneta','primatotal','foliotys','foliointerno','fechavencimientopoliza','nropoliza','vigenciadesde','reftipomoneda');
+$lblreemplazo	= array('Venta','Prima Neta','Prima Total','Folio TYS','Folio Interno','Fecha Vencimiento de la Poliza','Nro Poliza','Vigencia Desde','Tipo Moneda');
 
 $modificar = "modificarVentas";
 $idTabla = "idventa";
@@ -73,9 +73,12 @@ $cadRef = $serviciosFunciones->devolverSelectBoxActivo($resVar,array(1,2,3),' ',
 $resVar1 = $serviciosReferencias->traerEstadoventa();
 $cadRef2 = $serviciosFunciones->devolverSelectBoxActivo($resVar1,array(1),' ',mysql_result($resultado,0,'refestadoventa'));
 
+$resTipoMoneda = $serviciosReferencias->traerTipomoneda();
+$cadTipoMoneda = $serviciosFunciones->devolverSelectBoxActivo($resTipoMoneda,array(1),'',mysql_result($resultado,0,'reftipomoneda'));
 
-$refdescripcion = array(0=>$cadRef,1=>$cadRef2);
-$refCampo 	=  array('refcotizaciones','refestadoventa');
+
+$refdescripcion = array(0=>$cadRef,1=>$cadRef2,2=>$cadTipoMoneda);
+$refCampo 	=  array('refcotizaciones','refestadoventa','reftipomoneda');
 
 $formulario = $serviciosFunciones->camposTablaModificar($id, $idTabla,$modificar,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 
@@ -86,9 +89,11 @@ $resPeriodicidad = $serviciosReferencias->traerPeriodicidadventasPorVenta($id);
 $version = $serviciosReferencias->generarVersion($id);
 
 
-$resPeriodicidadVenta = $serviciosReferencias->traerPeriodicidadventasdetallePorVentaPagados($id,mysql_result($resultado,0,'refventas'));
+$resPeriodicidadVenta = $serviciosReferencias->traerPeriodicidadventasdetallePorVentaPagados($id);
 
 $stockMeses = mysql_result($resPeriodicidad,0,'meses') - mysql_num_rows($resPeriodicidadVenta);
+
+//die(var_dump($stockMeses));
 
 $resVersion = $serviciosReferencias->traerVentasPorVersionVenta($version,$id);
 ?>
@@ -237,7 +242,7 @@ $resVersion = $serviciosReferencias->traerVentasPorVersionVenta($version,$id);
 										<?php } ?>
 										<button type="button" class="btn bg-deep-orange waves-effect">
 											<i class="material-icons">build</i>
-											<span>DEBERA CARGAR <?php echo $stockMeses; ?> RECIBOS LOS DEMAS YA FUERON PAGADOS</span>
+											<span>DEBERA CARGAR (<?php echo $stockMeses; ?>) RECIBOS </span>
 										</button>
 									</div>
 								</div>

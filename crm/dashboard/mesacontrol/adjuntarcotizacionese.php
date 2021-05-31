@@ -213,7 +213,7 @@ if (mysql_num_rows($resCobranzaCargada)>0) {
 	$puedeSeguirAux = 0;
 }
 
-$resEmision = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosArea($idasesor,6);
+$resEmision = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosArea($idasesor,3);
 
 if (mysql_num_rows($resEmision)>0) {
 	$existeEmisionPerfil = 1;
@@ -223,7 +223,7 @@ if (mysql_num_rows($resEmision)>0) {
 
 }
 
-$resEmisionCargada = $serviciosReferencias->traerCotizacionesdirectorioPorCotizacionArea($id,6);
+$resEmisionCargada = $serviciosReferencias->traerCotizacionesdirectorioPorCotizacionArea($id,3);
 if (mysql_num_rows($resEmisionCargada)>0) {
 	$puedeSeguirAux2 = 1;
 } else {
@@ -428,7 +428,7 @@ if (mysql_num_rows($resDocumentacionEspecialAprueba)>0) {
 			<div class="row" style="margin-bottom:20px !important;">
 				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<button type="button" class="btn btn-info waves-effect btnVolverFiltro" data-ir="modificar" data-referencia="<?php echo $id; ?>"><i class="material-icons">reply</i><span>VOLVER</span></button>
-					<button type="button" class="btn btn-success waves-effect btnCobranzaModal"><i class="material-icons">account_balance</i><span>SELECCIONE LOS PERFILES DE EMISION Y COBRANZA</span></button>
+					<button type="button" class="btn btn-success waves-effect btnCobranzaModal"><i class="material-icons">account_balance</i><span>SELECCIONE LOS PERFILES DE MESA DE CONTROL Y COBRANZA</span></button>
 				</div>
 			</div>
 
@@ -608,7 +608,7 @@ if (mysql_num_rows($resDocumentacionEspecialAprueba)>0) {
 								}
 								?>
 								</select>
-								<h4>EMISION</h4>
+								<h4>MESA DE CONTROL</h4>
 								<select required id="emision_select" name="emision_select[]" class="js-example-basic-multiple" multiple="multiple">
 								<?php
 								while ($rowD = mysql_fetch_array($resEmision)) {
@@ -621,21 +621,13 @@ if (mysql_num_rows($resDocumentacionEspecialAprueba)>0) {
 							</div>
 							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
 								<h5>Cargados Cobranza</h5>
-								<ul>
-									<?php
-									while ($rowD = mysql_fetch_array($resCobranzaCargada)) {
-									?>
-									<li><?php echo $rowD['razonsocial']; ?></li>
-									<?php } ?>
+								<ul id="lstCobranza">
+	
 								</ul>
 								<hr>
-								<h5>Cargados Emision</h5>
-								<ul>
-									<?php
-									while ($rowD = mysql_fetch_array($resEmisionCargada)) {
-									?>
-									<li><?php echo $rowD['razonsocial']; ?></li>
-									<?php } ?>
+								<h5>Cargados Mesa de Control</h5>
+								<ul id="lstMesaControl">
+									
 								</ul>
 							</div>
 						</div>
@@ -762,37 +754,122 @@ if (mysql_num_rows($resDocumentacionEspecialAprueba)>0) {
 <script>
 
 	$(document).ready(function(){
+		var lstIdCobranza = '';
+		var lstIdMesaControl = '';
 
 		$('.btnGuardarPerfiles').click(function() {
+			lstIdCobranza = '';
+			lstIdMesaControl = '';
+
+			setTimeout(1000);
 			$("#suscriptor_select option").each(function()
 			{
 				if ($(this).prop('selected')) {
-					insertarCotizacionesdirectorioUnico($(this).val());
-					location.reload();
+					lstIdCobranza = lstIdCobranza + $(this).val() + ',';
+					
 				}
 			});
 
 			$("#emision_select option").each(function()
 			{
 				if ($(this).prop('selected')) {
-					insertarCotizacionesdirectorioUnico($(this).val());
-					location.reload();
+					lstIdMesaControl = lstIdMesaControl + $(this).val() + ',';
+					
 				}
 			});
+
+			insertarCotizacionesdirectorioMasivo(lstIdCobranza,4);
+			insertarCotizacionesdirectorioMasivo(lstIdMesaControl,3);
+
+			location.reload();
 		});
 
+		traerCotizacionesdirectorioPorCotizacionArea( 4, 'lstCobranza');
+		traerCotizacionesdirectorioPorCotizacionArea( 3, 'lstMesaControl');
 
-		function insertarCotizacionesdirectorioUnico(refdirectorioasesores) {
+		
+		function traerCotizacionesdirectorioPorCotizacionArea( area, contenedor) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
 				// Form data
 				//datos del formulario
 				data: {
-					accion: 'insertarCotizacionesdirectorioUnico',
+					accion: 'traerCotizacionesdirectorioPorCotizacionArea',
+					idcotizacion: <?php echo $id; ?>,
+					area:area
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('#' + contenedor).html('');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					//k =0;
+					if (data != '') {
+						$('#' + contenedor).append(data);
+					}
+					
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
+		function eliminarCotizacionesdirectorioUnico( area) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'eliminarCotizacionesdirectorioUnico',
+					refcotizaciones: <?php echo $id; ?>,
+					area:area
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
+
+		function insertarCotizacionesdirectorioMasivo(refdirectorioasesores, area) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'insertarCotizacionesdirectorioMasivo',
 					refcotizaciones: <?php echo $id; ?>,
 					refdirectorioasesores: refdirectorioasesores,
-					area:4
+					area:area
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){

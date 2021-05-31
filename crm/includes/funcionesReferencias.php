@@ -9,6 +9,12 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+   function insertarChat($reftabla,$idreferencia,$email,$emaildestinatario,$esdirectorio,$nombre,$mensaje,$fechacrea,$leido) {
+      $sql = "insert into dbchat(idchat,reftabla,idreferencia,email,emaildestinatario,esdirectorio,nombre,mensaje,fechacrea,leido)
+      values ('',".$reftabla.",".$idreferencia.",'".$email."','".$emaildestinatario."','".$esdirectorio."','".$nombre."','".$mensaje."','".$fechacrea."','".$leido."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
    
 /* PARA Pixel */
 
@@ -1381,6 +1387,8 @@ return $res;
 
    function enviarEmailModificacionCotizacion($id,$dato,$adcional,$enviaEmail=1,$refevento) {
 
+      $emailFijoMesaControl = "mesadecontrol@masseguros.mx";
+
       $resCotizaciones = $this->traerCotizacionesPorIdCompleto($id);
 
       $resEvento = $this->traerEventosPorId($refevento);
@@ -1500,7 +1508,7 @@ return $res;
       $rutaUrl = '';
       $cadDestinoLog = '';
 
-      // para las notificaciones del directorio
+      // para las notificaciones del directorio en cada etapa de la cotizacion
       if (mysql_result($resEvento,0,'enviaemailaagente') == '1') {
 
          if ($refevento == 33) {
@@ -1516,6 +1524,9 @@ return $res;
                break;
                case 6:
                   $rutaUrl = 'mesacontrol';
+               break;
+               case 5:
+                  $rutaUrl = 'emision';
                break;
             }
 
@@ -1538,13 +1549,16 @@ return $res;
                case 32:
                   $rutaUrl = 'mesacontrol';
                break;
+               case 29:
+                  $rutaUrl = 'emision';
+               break;
             }
 
 
          }
 
 
-
+         // si no es un agente
          if ($direccion==0) {
             $resDirectorioEmail = $this->traerCotizacionesdirectorioPorCotizacionCompleto($id, mysql_result($resEvento,0,'idevento'));
 
@@ -1619,6 +1633,13 @@ return $res;
             $cuerpo .= '</body>';
 
             $exito = $this->enviarEmail($emailasesor, utf8_decode( $asunto),utf8_decode($cuerpo));
+
+            //disparo siempre este correo para mesa de control cada vez ue cae en mesa de control
+            if ($rutaUrl == 'mesacontrol') {
+               $exito = $this->enviarEmail($emailFijoMesaControl, utf8_decode( $asunto),utf8_decode($cuerpo));
+            }
+            
+
          } else {
             $resUsuarios = $this->traerUsuariosPorRoles($idrol);
             $resContactos = $this->traerContactosperfilesPorRol($idrol);
@@ -8240,7 +8261,7 @@ return $res;
 		return $res;
 	}
 
-   function traerPeriodicidadventasdetallePorVentaPagados($idnuevo,$idviejo) {
+   function traerPeriodicidadventasdetallePorVentaPagados($idnuevo) {
 		$sql = "select
 		pd.idperiodicidadventadetalle,pd.refperiodicidadventas,pd.montototal,
 		pd.primaneta,pd.porcentajecomision,pd.montocomision,
@@ -8250,7 +8271,7 @@ return $res;
 		from dbperiodicidadventasdetalle pd
 		inner join dbperiodicidadventas pv ON pv.idperiodicidadventa = pd.refperiodicidadventas
 		inner join dbventas v on v.idventa = pv.refventas
-		where ((v.idventa = ".$idviejo." and v.refventas = 0) or v.refventas = ".$idviejo.") and pd.refestadopago = 5";
+		where ((v.idventa = ".$idnuevo." and v.refventas = 0) or v.refventas = ".$idnuevo.") and pd.refestadopago = 5";
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -8630,7 +8651,7 @@ return $res;
 
 	/* PARA Ventas */
 
-   function generarEndoso($id,$version,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$versionvieja,$observaciones,$vigenciadesde) {
+   function generarEndoso($id,$version,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$versionvieja,$observaciones,$vigenciadesde,$reftipomoneda,$comisioncedida,$financiamiento,$gastosexpedicion,$iva) {
       $error = false;
 
       // pongo los recibos en cancelados.
@@ -8638,13 +8659,11 @@ return $res;
 
       if ($resEliminarCobros) {
 
-         $comisioncedida = 0;
-         $financiamiento = 0;
-         $gastosexpedicion = 0;
-         $iva = 0;
+         //para ser validada
+         $refestadoventa = 1;
 
          //creo la venta con la nueva version
-         $resI = $this->insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$id,$version,0,$observaciones,$vigenciadesde,'',1,$comisioncedida,$financiamiento,$gastosexpedicion,$iva);
+         $resI = $this->insertarVentas($refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$id,$version,0,$observaciones,$vigenciadesde,'',$reftipomoneda,$comisioncedida,$financiamiento,$gastosexpedicion,$iva);
 
          $resP = $this->insertarPeriodicidadventasPorVenta($resI,$id);
          return $resI;
@@ -14030,7 +14049,7 @@ return $res;
 
    }
 
-   function ajustarCotizacion($idcotizacion, $fechacrea,$fechamodi,$usuariocrea,$usuariomodi) {
+   function ajustarCotizacion($idcotizacion, $fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$estadocotizacion,$etapa) {
       $version = $this->generarVersionCotizacion($idcotizacion);
       $folio = $this->generaFolioInternoCotizaciones();
 
@@ -14061,7 +14080,7 @@ return $res;
                       `refproductos`,
                       `refasesores`,
                       `refasociados`,
-                      1,
+                      ".$estadocotizacion.",
                       `cobertura`,
                       `reasegurodirecto`,
                       `tiponegocio`,
@@ -14084,7 +14103,7 @@ return $res;
                       '".$folio."',
                       ".$version.",
                       ".$idcotizacion.",
-                      1,
+                      ".$etapa.",
                       `primaneta`,
                       `primatotal`,
                       `bitacoracrea`,

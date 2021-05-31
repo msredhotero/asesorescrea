@@ -329,11 +329,18 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 				</div>
 				<div class="modal-body">
 				 <h3>¿Esta seguro que desea rechazar la poliza, esta se enviara al historial y la cotización volverá a emisión?</h3>
+				 <hr>
+				 <div class="form-group col-md-12 frmContobservaciones" style="display:block">
+					<label for="observaciones" class="control-label" style="text-align:left">Escriba una observación </label>
+					<div class="input-group col-md-12">
+						<textarea type="text" rows="10" cols="6" class="form-control" id="observaciones" name="observaciones" placeholder="Ingrese la observación..."></textarea>
+					</div>
+				</div>
 				 <input type="hidden" name="idpolizainiciadar" id="idpolizainiciadar" />
 
 				</div>
 				<div class="modal-footer">
-					 <button type="button" class="btn waves-effect bg-red btnRechazarPoliza" data-dismiss="modal">Rechazar</button>
+					 <button type="button" class="btn waves-effect bg-red btnRechazarPoliza">Rechazar</button>
 					 <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
 				</div>
 		  </div>
@@ -370,8 +377,18 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 		});
 
 		$('.btnRechazarPoliza').click( function() {
-
-			rechazarPolizarAgente($('#idpolizainiciadar').val());
+			if ($('#observaciones').val() != '') {
+				rechazarPolizarAgente($('#idpolizainiciadar').val());
+			} else {
+				swal({
+					title: "Respuesta",
+					text: 'Ingrese una observación por favor.',
+					type: "error",
+					timer: 2000,
+					showConfirmButton: false
+				});
+			}
+			
 		});
 
 		function rechazarPolizarAgente(id) {
@@ -382,6 +399,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 				//datos del formulario
 				data: {
 					accion: 'rechazarPolizarAgente',
+					observaciones: $('#observaciones').val(),
 					id: id
 				},
 				//mientras enviamos el archivo
@@ -392,34 +410,35 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 				success: function(data){
 					if (data.error == false) {
 						swal({
-								title: "Respuesta",
-								text: 'Rechazada correctamente',
-								type: "success",
-								timer: 1000,
-								showConfirmButton: false
+							title: "Respuesta",
+							text: 'Rechazada correctamente',
+							type: "success",
+							timer: 1000,
+							showConfirmButton: false
 						});
 						table.draw();
 						table2.draw();
 						table3.draw();
+						$('#lgmRECHAZAR').modal('toggle');
 
 					} else {
 						swal({
-								title: "Respuesta",
-								text: data.mensaje,
-								type: "error",
-								timer: 2000,
-								showConfirmButton: false
+							title: "Respuesta",
+							text: data.mensaje,
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
 						});
 					}
 				},
 				//si ha ocurrido un error
 				error: function(){
 					swal({
-							title: "Respuesta",
-							text: 'Actualice la pagina',
-							type: "error",
-							timer: 2000,
-							showConfirmButton: false
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
 					});
 
 				}

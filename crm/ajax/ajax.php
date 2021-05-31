@@ -11,6 +11,7 @@ include ('../includes/funcionesPostal.php');
 include ('../includes/funcionesComercio.php');
 include ('../includes/base.php');
 include ('../includes/EnvioSMS.class.php');
+include ('../includes/chat.class.php');
 
 $serviciosUsuarios  		= new ServiciosUsuarios();
 $serviciosFunciones 		= new Servicios();
@@ -1467,9 +1468,237 @@ switch ($accion) {
    case 'verificarNIPSMS':
       verificarNIPSMS($serviciosUsuarios, $serviciosReferencias);
    break;
+   case 'eliminarCotizacionesdirectorioUnico':
+      eliminarCotizacionesdirectorioUnico($serviciosReferencias);
+   break;
+   case 'traerCotizacionesdirectorioPorCotizacionArea':
+      traerCotizacionesdirectorioPorCotizacionArea($serviciosReferencias);
+   break;
+   case 'insertarCotizacionesdirectorioMasivo':
+      insertarCotizacionesdirectorioMasivo($serviciosReferencias);
+   break;
+   case 'traerChatPorUsuarios':
+      traerChatPorUsuarios();
+   break;
+   case 'insertarChat':
+      insertarChat($serviciosReferencias);
+   break;
+   case 'insertarPixel':
+      insertarPixel($serviciosReferencias);
+   break;
+   case 'traerUsuariosChat':
+      traerUsuariosChat();
+   break;
+   
+   
 
 }
 /* FinFinFin */
+
+function insertarPixel($serviciosReferencias) {
+   $reforigen = $_POST['reforigen'];
+   $donde = $_POST['donde'];
+   $evento = $_POST['evento'];
+   $dato1 = $_POST['dato1'];
+   $dato2 = '';
+   $dato3 = '';
+   $fechacrea = date('Y-m-d H:i:s');
+
+   if ($dato1 = 'obtenerip') {
+      $ipaddress = '';
+      if (getenv('HTTP_CLIENT_IP'))
+         $ipaddress = getenv('HTTP_CLIENT_IP');
+      else if(getenv('HTTP_X_FORWARDED_FOR'))
+         $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+      else if(getenv('HTTP_X_FORWARDED'))
+         $ipaddress = getenv('HTTP_X_FORWARDED');
+      else if(getenv('HTTP_FORWARDED_FOR'))
+         $ipaddress = getenv('HTTP_FORWARDED_FOR');
+      else if(getenv('HTTP_FORWARDED'))
+         $ipaddress = getenv('HTTP_FORWARDED');
+      else if(getenv('REMOTE_ADDR'))
+         $ipaddress = getenv('REMOTE_ADDR');
+      else
+         $ipaddress = 'UNKNOWN';
+
+      $dato1 = $ipaddress;
+   }
+   
+   $res = $serviciosReferencias->insertarPixel($reforigen,$donde,$evento,$dato1,$dato2,$dato3,$fechacrea);
+   
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function insertarChat($serviciosReferencias) {
+   $reftabla = $_POST['reftabla'];
+   $idreferencia = $_POST['idreferencia'];
+   $email = $_POST['email'];
+   $emaildestinatario = $_POST['emaildestinatario'];
+   $esdirectorio = $_POST['esdirectorio'];
+   $nombre = $_POST['nombre'];
+   $mensaje = $_POST['mensaje'];
+   $fechacrea = date('Y-m-d H:i:s');
+   $leido = '0';
+   
+   $res = $serviciosReferencias->insertarChat($reftabla,$idreferencia,$email,$emaildestinatario,$esdirectorio,$nombre,$mensaje,$fechacrea,$leido);
+   
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function traerUsuariosChat() {
+   session_start();
+   $email = $_SESSION['usuaid_sahilices'];
+   $emaildestinatario = $_POST['emaildestinatario'];
+   $emailasesor = $_POST['emailasesor'];
+
+   $chat = new chatCrea($email, $emaildestinatario,$_SESSION['idroll_sahilices'],$emailasesor,0);
+
+
+   $resultado = $chat->traerUsuariosChat();
+   //die(var_dump($resultado));
+   $cadMensajes = '';
+   $rows = $resultado->fetch_all(MYSQLI_ASSOC);
+
+   foreach ($rows as $mensaje) {
+      //active_chat
+      //<span class="chat_date">Dec 25</span> ultima fecha que se conecto
+
+      if ($emaildestinatario == $mensaje['email']) {
+         $cadMensajes .= '<div class="chat_list active_chat" id="'.$mensaje['email'].'" style="cursor:pointer !important;">
+         <div class="chat_people">
+             <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+             <div class="chat_ib">
+                 <h5>'.$mensaje['nombrecompleto'].' </h5>
+                 <p>'.$mensaje['posicion'].'</p>
+             </div>
+         </div>
+         </div>';
+      } else {
+         $cadMensajes .= '<div class="chat_list" id="'.$mensaje['email'].'" style="cursor:pointer !important;">
+         <div class="chat_people">
+             <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+             <div class="chat_ib">
+                 <h5>'.$mensaje['nombrecompleto'].' </h5>
+                 <p>'.$mensaje['posicion'].'</p>
+             </div>
+         </div>
+         </div>';
+      }
+      
+   
+      
+      
+   }
+
+   $resultado->free();
+
+   
+
+   $resV['usuarios'] = $cadMensajes;
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function traerChatPorUsuarios() {
+   session_start();
+   $email = $_POST['email'];
+   $emaildestinatario = $_POST['emaildestinatario'];
+   $emailasesor = $_POST['emailasesor'];
+   $idreferencia = $_POST['idreferencia'];
+
+   $chat = new chatCrea($email, $emaildestinatario,$_SESSION['idroll_sahilices'],$_SESSION['usuaid_sahilices'],$idreferencia);
+
+
+   $resultado = $chat->traerChatPorUsuario();
+   
+   $cadMensajes = '';
+   if (is_object($resultado)) {
+      $rows = $resultado->fetch_all(MYSQLI_ASSOC);
+
+      foreach ($rows as $mensaje) {
+         
+         if ($mensaje['lado'] == 0) {
+            $cadMensajes .= '<div class="outgoing_msg">
+            <div class="sent_msg">
+               <p>'.$mensaje['mensaje'].'</p>
+               <span class="time_date"> '.$mensaje['fechacrea'].'</span> </div>
+            </div>';
+         } else {
+            $cadMensajes .= '<div class="incoming_msg">
+            <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+            <div class="received_msg">
+               <div class="received_withd_msg">
+               <p>'.$mensaje['mensaje'].'</p>
+               <span class="time_date"> '.$mensaje['fechacrea'].'</div>
+            </div>
+            </div>';
+         }
+      
+         
+         
+      }
+
+      $resultado->free();
+   }
+   
+
+   
+
+   $resV['mensajes'] = $cadMensajes;
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function insertarCotizacionesdirectorioMasivo($serviciosReferencias) {
+   $refcotizaciones = $_POST['refcotizaciones'];
+   $refdirectorioasesores = $_POST['refdirectorioasesores'];
+   $idarea = $_POST['area'];
+
+   $resEliminar = $serviciosReferencias->eliminarCotizacionesdirectorioPorCotizacionArea($refcotizaciones,$idarea);
+
+   if ($refdirectorioasesores != '') {
+      $ar = explode(',',$refdirectorioasesores);
+      foreach ($ar as $value) {
+         $res = $serviciosReferencias->insertarCotizacionesdirectorio($refcotizaciones,$value);
+      }
+      
+   } else {
+      $res = 1;
+   }
+   
+
+   if ((integer)$res > 0) {
+      echo '';
+   } else {
+      echo 'Hubo un error al insertar datos';
+   }
+}
+
+function traerCotizacionesdirectorioPorCotizacionArea($serviciosReferencias) {
+   $idcotizacion = $_POST['idcotizacion'];
+   $area = $_POST['area'];
+
+   $res = $serviciosReferencias->traerCotizacionesdirectorioPorCotizacionArea($idcotizacion,$area);
+
+   $cad = '';
+
+   while ($row = mysql_fetch_array($res)) {
+      $cad .= "<li>".$row['razonsocial']."</li>";
+   }
+
+   echo $cad;
+
+}
 
 function verificarNIPSMS($serviciosUsuarios, $serviciosReferencias) {
    $idusuario = $_POST['idusuario'];
@@ -1704,12 +1933,22 @@ function generarRecibosCalculados($serviciosReferencias) {
    echo $cad;
 }
 
+function eliminarCotizacionesdirectorioUnico($serviciosReferencias) {
+   $refcotizaciones = $_POST['refcotizaciones'];
+   
+   $idarea = $_POST['area'];
+
+   $resEliminar = $serviciosReferencias->eliminarCotizacionesdirectorioPorCotizacionArea($refcotizaciones,$idarea);
+
+   echo '';
+}
+
 function insertarCotizacionesdirectorioUnico($serviciosReferencias) {
    $refcotizaciones = $_POST['refcotizaciones'];
    $refdirectorioasesores = $_POST['refdirectorioasesores'];
    $idarea = $_POST['area'];
 
-   $resEliminar = $serviciosReferencias->eliminarCotizacionesdirectorioPorCotizacionArea($refcotizaciones,$idarea);
+   //$resEliminar = $serviciosReferencias->eliminarCotizacionesdirectorioPorCotizacionArea($refcotizaciones,$idarea);
 
    $res = $serviciosReferencias->insertarCotizacionesdirectorio($refcotizaciones,$refdirectorioasesores);
 
@@ -1790,11 +2029,19 @@ function rechazarPolizarAgente($serviciosReferencias) {
    $usuariomodi = $_SESSION['usua_sahilices'];
 
    $id = $_POST['id'];
+   $observaciones = $_POST['observaciones'];
 
    $resVenta = $serviciosReferencias->traerVentasPorId($id);
 
    $idcotizacion = mysql_result($resVenta,0,'refcotizaciones');
    $versionvieja = mysql_result($resVenta,0,'version');
+
+   $resCotizacion = $serviciosReferencias->traerCotizacionesPorId($idcotizacion);
+
+   $observacionesNuevo = mysql_result($resCotizacion,0,'observaciones').' \n'.$observaciones;
+
+   //agrego la observacion
+   $resModE = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'observaciones',$observacionesNuevo,$usuariomodi);
 
    // pongo los recibos en cancelados.
    $resEliminarCobros = $serviciosReferencias->eliminarPeriodicidadventasdetalleEndoso($id,$versionvieja);
@@ -1803,13 +2050,19 @@ function rechazarPolizarAgente($serviciosReferencias) {
    $resModEstadoVenta = $serviciosReferencias->modificarVentasUnicaDocumentacion($id, 'refestadoventa', 7);
 
    //modifico la cotizacion anterior a historial
-   $resModE = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestados',4,$usuariomodi);
+   //$resModE = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestados',4,$usuariomodi);
 
    //modifico la cotizacion anterior a historial
-   $resModEc = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestadocotizaciones',27,$usuariomodi);
+   //$resModEc = $serviciosReferencias->modificarCotizacionesPorCampo($idcotizacion,'refestadocotizaciones',27,$usuariomodi);
+
+
+   $fechacrea = date('Y-m-d H:i:s');
+   $usuariocrea = $_SESSION['usua_sahilices'];
+
+   $resMM = $serviciosReferencias->ajustarCotizacion($idcotizacion, $fechacrea,$fechacrea,$usuariomodi,$usuariomodi,27,4);
 
    //trazabilidad 29- endoso a emision
-   $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$id, date('Y-m-d H:i:s'),29,$usuariomodi,0,0,0,'Se endoso un poliza y se volvio la cotizacion a emision','');
+   //$resTZ = $serviciosReferencias->insertarTrazabilidad(12,$idcotizacion, date('Y-m-d H:i:s'),29,$usuariomodi,0,0,0,'Se endoso un poliza y se volvio la cotizacion a emision','');
 
    $resV['error'] = false;
 
@@ -2595,7 +2848,7 @@ function ajustarCotizacion($serviciosReferencias) {
    $fechacrea = date('Y-m-d H:i:s');
    $usuariocrea = $_SESSION['usua_sahilices'];
 
-   $resMM = $serviciosReferencias->ajustarCotizacion($id, $fechacrea,$fechacrea,$usuariocrea,$usuariocrea);
+   $resMM = $serviciosReferencias->ajustarCotizacion($id, $fechacrea,$fechacrea,$usuariocrea,$usuariocrea,1,1);
 
    $resEvento = $serviciosReferencias->traerEventosPorReferencia(16, 'tbestadocotizaciones', 'idestadocotizacion', $idestado);
 
@@ -3344,7 +3597,14 @@ function generarEndoso($serviciosReferencias) {
    $observaciones = $_POST['observaciones'];
    $vigenciadesde = $_POST['vigenciadesde'];
 
-   $res = $serviciosReferencias->generarEndoso($id,$version,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$versionvieja,$observaciones,$vigenciadesde);
+   $reftipomoneda = $_POST['reftipomoneda'];
+
+   $comisioncedida = $_POST['comisioncedida'];
+   $financiamiento = $_POST['financiamiento'];
+   $gastosexpedicion = $_POST['gastosexpedicion'];
+   $iva = $_POST['iva'];
+
+   $res = $serviciosReferencias->generarEndoso($id,$version,$refcotizaciones,$refestadoventa,$primaneta,$primatotal,$fechavencimientopoliza,$nropoliza,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi,$foliotys,$foliointerno,$refproductosaux,$versionvieja,$observaciones,$vigenciadesde,$reftipomoneda,$comisioncedida,$financiamiento,$gastosexpedicion,$iva);
 
    if ((integer)$res > 0) {
       $resV['error'] = false;
