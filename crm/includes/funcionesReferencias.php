@@ -1389,6 +1389,11 @@ return $res;
 
       $emailFijoMesaControl = "mesadecontrol@masseguros.mx";
 
+      $emailFijoEmision1 = "rmrodriguez@masseguros.mx";
+      $emailFijoEmision2 = "emisioncaptura3@masseguros.mx"; 
+      $emailFijoEmision3 = "emision_tramites@masseguros.mx";
+      $emailFijoEmision4 = "atavera@masseguros.mx";
+
       $resCotizaciones = $this->traerCotizacionesPorIdCompleto($id);
 
       $resEvento = $this->traerEventosPorId($refevento);
@@ -1717,6 +1722,19 @@ return $res;
                   $exito = $this->enviarEmail(substr($cadDestino,0,-2), utf8_decode( $asunto),utf8_decode($cuerpo));
                } else {
                   $exito = $this->enviarEmail(substr($cadDestino,0,-2), utf8_decode( $asunto),utf8_decode($cuerpo));
+               }
+
+               //disparo siempre este correo para mesa de control cada vez ue cae en mesa de control
+               if ($rutaUrl == 'mesacontrol') {
+                  $exito = $this->enviarEmail($emailFijoMesaControl, utf8_decode( $asunto),utf8_decode($cuerpo));
+               }
+
+               //disparo siempre este correo para emision fijos cada vez ue cae en emision
+               if ($rutaUrl == 'emision') {
+                  $exito = $this->enviarEmail($emailFijoEmision1, utf8_decode( $asunto),utf8_decode($cuerpo));
+                  $exito = $this->enviarEmail($emailFijoEmision2, utf8_decode( $asunto),utf8_decode($cuerpo));
+                  $exito = $this->enviarEmail($emailFijoEmision3, utf8_decode( $asunto),utf8_decode($cuerpo));
+                  $exito = $this->enviarEmail($emailFijoEmision4, utf8_decode( $asunto),utf8_decode($cuerpo));
                }
             }
          }
