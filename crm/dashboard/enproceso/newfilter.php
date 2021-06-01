@@ -3406,6 +3406,7 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 				//una vez finalizado correctamente
 				success: function(data){
 					$('#refbeneficiarioaux').html(data.dato);
+					$('#refbeneficiarioaux').append('<option value="0">Sin beneficiario</option>');
 
 					$('#refbeneficiarioaux').val(idbeneficiario);
 				},
