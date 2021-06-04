@@ -2077,7 +2077,8 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 					}
 					<?php }  ?>
 
-
+					alert(currentIndex);
+					alert(newIndex);
 
 	            if (currentIndex > newIndex) { return true; }
 
@@ -2085,14 +2086,6 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	                form.find('.body:eq(' + newIndex + ') label.error').remove();
 	                form.find('.body:eq(' + newIndex + ') .error').removeClass('error');
 
-						 <?php if (!(isset($_GET['id']))) { ?>
-
-	 						if ($tab.trim() == 'CUESTIONARIO DEL PRODUCTO') {
-	 							validarCuestionario($('#refproductos').val());
-	 							//guardarCotizacion(1);
-	 						}
-
-	 					<?php } ?>
 	            }
 
 	            form.validate().settings.ignore = ':disabled,:hidden';
