@@ -794,95 +794,8 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 												</div>
 
                               </fieldset>
-										<?php
-										$cargados = 0;
-										$i = 0;
-										if ($iddocumentacion > 0) {
-										?>
-										<h3>GALERIA PRODUCTO</h3>
-                              <fieldset>
-											<?php if ($documentacionNombre != '') { ?>
-												<p>Archivos que debera cargar para continuar</p>
-											<?php } else { ?>
-												<p>No existen archivos solicitados para cargar</p>
-											<?php } ?>
-											<div class="col-xs-4">
-											<?php
-												$i = 0;
-												$cargados = 0;
-												while ($rowD = mysql_fetch_array($documentacionesrequeridas)) {
-													$i += 1;
-													if ($rowD['archivo'] != '') {
-														$cargados += 1;
-													}
-											?>
-
-											<div class="form-group form-float">
-												<button type="button" class="btn bg-<?php echo $rowD['color']; ?> waves-effect btn<?php echo str_replace(' ','',$rowD['documentacion']); ?>"><i class="material-icons">unarchive</i><span><?php echo $rowD['documentacion']; ?></span></button>
-												<input type="text" readonly="readonly" name="archivo<?php echo $i; ?>" id="archivo<?php echo $i; ?>" value="<?php echo $rowD['archivo']; ?>" required/>
-											</div>
-
-											<?php
-												}
-
-											?>
-											</div>
-											<div class="col-xs-8">
-												<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-													<div class="card">
-														<div class="header bg-blue">
-															<h2>
-																ARCHIVO CARGADO
-															</h2>
-															<ul class="header-dropdown m-r--5">
-																<li class="dropdown">
-																	<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-																		<i class="material-icons">more_vert</i>
-																	</a>
-																</li>
-															</ul>
-														</div>
-														<div class="body">
-															<div class="row">
-																<button type="button" class="btn bg-red waves-effect btnEliminar">
-																	<i class="material-icons">remove</i>
-																	<span>ELIMINAR</span>
-																</button>
-															</div>
-															<div class="row">
-																<a href="javascript:void(0);" class="thumbnail timagen1">
-																	<img class="img-responsive">
-																</a>
-																<div id="example1"></div>
-															</div>
-															<div class="row">
-																<div class="alert bg-<?php echo $color; ?>">
-																	<h4>
-																		Estado: <b><?php echo $estadoDocumentacion; ?></b>
-																	</h4>
-																</div>
-																<div class="col-xs-6 col-md-6" style="display:block">
-																	<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
-																	<div class="input-group col-md-12">
-																		<select class="form-control show-tick" id="refestados" name="refestados">
-																			<?php echo $cadRefEstados; ?>
-																		</select>
-																	</div>
-																	<?php
-																	if (($_SESSION['idroll_sahilices'] == 1) || ($_SESSION['idroll_sahilices'] == 4) || ($_SESSION['idroll_sahilices'] == 11)) {
-																	?>
-																	<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
-																<?php } ?>
-																</div>
-
-															</div>
-														</div>
-													</div>
-												</div>
-
-											</div>
-                              </fieldset>
-										<?php } ?>
+									
+									
 
                               <h3>INFORMACIÓN DEL NEGOCIO</h3>
                               <fieldset>
@@ -2078,6 +1991,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 					<?php }  ?>
 
 
+
 	            if (currentIndex > newIndex) { return true; }
 
 	            if (currentIndex < newIndex) {
@@ -2092,20 +2006,24 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	        onStepChanged: function (event, currentIndex, priorIndex) {
 	            setButtonWavesEffect(event);
 
-							var $tab = $('#wizard_with_validation-h-' + currentIndex).html();
+				var $tab = $('#wizard_with_validation-h-' + currentIndex).html();
 
-							if ($tab.trim() == 'INFORMACIÓN DEL NNEGOCIO') {
-								$('.contSubirArchivos1').hide();
-								$('.contSubirArchivos2').show();
-							} else {
-								if ($tab.trim() == 'GALERIA PRODUCTO') {
-									$('.contSubirArchivos2').hide();
-									$('.contSubirArchivos1').show();
-								} else {
-									$('.contSubirArchivos1').hide();
-									$('.contSubirArchivos2').hide();
-								}
-							}
+				if ($tab.trim() == 'INFORMACIÓN DEL NEGOCIO') {
+					validarCuestionario($('#refproductos').val());
+					$('.contSubirArchivos1').hide();
+					$('.contSubirArchivos2').show();
+				} else {
+					if ($tab.trim() == 'GALERIA PRODUCTO') {
+						$('.contSubirArchivos2').hide();
+						$('.contSubirArchivos1').show();
+					} else {
+						$('.contSubirArchivos1').hide();
+						$('.contSubirArchivos2').hide();
+					}
+				}
+
+				
+
 
 
 	        },
@@ -2115,7 +2033,7 @@ $cadRefAse = $serviciosFunciones->devolverSelectBox($resAseguradoras,array(1),''
 	            return form.valid();
 	        },
 	        onFinished: function (event, currentIndex) {
-	            modificarCotizacion(1);
+	            guardarCotizacion(1);
 	        }
 	    });
 
