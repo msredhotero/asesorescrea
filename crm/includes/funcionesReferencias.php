@@ -5436,6 +5436,17 @@ return $res;
 
       $preguntasSencibles = $this->necesitoPreguntaSencible($idcliente,$idcuestionario);
 
+      if ($idcliente == 0) {
+         $sexo = 'Femenino';
+      } else {
+         $resCliente = $this->traerClientesPorId($idcliente);
+         if (mysql_result($resCliente,0,'genero') == '') {
+            $sexo = 'Femenino';
+         } else {
+            $sexo = mysql_result($resCliente,0,'genero');
+         }
+      }
+      
 
 
       $arPreguntas = array();
@@ -5444,9 +5455,11 @@ return $res;
       //$columna = array_column($preguntasSencibles, 'idpreguntanecesario');
       //die(var_dump(array_search( '24' , $columna ) ));
 
+      $arPreguntasFemenino = array(700);
+
       while ($row = mysql_fetch_array($resultado)) {
 
-
+         if ((($sexo == 'Femenino') && (in_array($row['idpreguntacuestionario'] , $arPreguntasFemenino))) || (!(in_array($row['idpreguntacuestionario'] , $arPreguntasFemenino)))) {
          //if ($this->getOption($preguntasSencibles[0],$row['idpreguntacuestionario'] ) == 0 ) {
 
 
@@ -5523,15 +5536,28 @@ return $res;
                      $cadValorRespuesta = '';
                   }
 
-                  $cadInput .= '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 frmContrespuesta" style="display:block">
+                  if ($row['obligatoria'] == '1') {
+                     $cadInput .= '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 frmContrespuesta" style="display:block">
 
-                     <div class="form-group input-group">
-                        <div class="demo-radio-button">
-                           <input class="aparecer" type="radio" id="radio_'.$rowR['idrespuestacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.$rowR['idrespuestacuestionario'].'" '.$dependenciaData.' data-idpregunta="'.$row['idpreguntacuestionario'].'" '.$cadValorRespuesta.' >
-                           <label for="radio_'.$rowR['idrespuestacuestionario'].'">'.$rowR['respuesta'].'</label>
+                        <div class="form-group input-group">
+                           <div class="demo-radio-button">
+                              <input required class="aparecer" type="radio" id="radio_'.$rowR['idrespuestacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.$rowR['idrespuestacuestionario'].'" '.$dependenciaData.' data-idpregunta="'.$row['idpreguntacuestionario'].'" '.$cadValorRespuesta.' >
+                              <label for="radio_'.$rowR['idrespuestacuestionario'].'">'.$rowR['respuesta'].'</label>
+                           </div>
                         </div>
-                     </div>
-                  </div>';
+                     </div>';
+                  } else {
+                     $cadInput .= '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 frmContrespuesta" style="display:block">
+
+                        <div class="form-group input-group">
+                           <div class="demo-radio-button">
+                              <input class="aparecer" type="radio" id="radio_'.$rowR['idrespuestacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.$rowR['idrespuestacuestionario'].'" '.$dependenciaData.' data-idpregunta="'.$row['idpreguntacuestionario'].'" '.$cadValorRespuesta.' >
+                              <label for="radio_'.$rowR['idrespuestacuestionario'].'">'.$rowR['respuesta'].'</label>
+                           </div>
+                        </div>
+                     </div>';
+                  }
+                  
                }
 
                // tipo de pregunta multiple
@@ -5591,6 +5617,7 @@ return $res;
 
 
          //}
+         }
 
       }
 
