@@ -5455,7 +5455,7 @@ return $res;
       //$columna = array_column($preguntasSencibles, 'idpreguntanecesario');
       //die(var_dump(array_search( '24' , $columna ) ));
 
-      $arPreguntasFemenino = array(700);
+      $arPreguntasFemenino = array(695,732,854,855);
 
       while ($row = mysql_fetch_array($resultado)) {
 
