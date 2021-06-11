@@ -121,7 +121,7 @@ if ($idProducto == 54) {
 
 	
 	$pesoCliente = 0;
-	$resRespuestaValorPeso = $serviciosReferencias->traerCuestionariodetallePorTablaReferenciaIdRespuesta(11, 'dbcotizaciones', 'idcotizacion', $id,'1077');
+	$resRespuestaValorPeso = $serviciosReferencias->traerCuestionariodetallePorTablaReferenciaIdRespuesta(11, 'dbcotizaciones', 'idcotizacion', $id,'1070');
 
 	if (mysql_num_rows($resRespuestaValorPeso)>0) {
 		$pesoCliente = (integer)mysql_result($resRespuestaValorPeso,0,'respuestavalor');
@@ -129,7 +129,7 @@ if ($idProducto == 54) {
 	}
 
 	$alturaCliente = 0;
-	$resRespuestaValorAltura = $serviciosReferencias->traerCuestionariodetallePorTablaReferenciaIdRespuesta(11, 'dbcotizaciones', 'idcotizacion', $id,'1078');
+	$resRespuestaValorAltura = $serviciosReferencias->traerCuestionariodetallePorTablaReferenciaIdRespuesta(11, 'dbcotizaciones', 'idcotizacion', $id,'1071');
 
 	if (mysql_num_rows($resRespuestaValorAltura)>0) {
 		$alturaCliente = (integer)mysql_result($resRespuestaValorAltura,0,'respuestavalor');
