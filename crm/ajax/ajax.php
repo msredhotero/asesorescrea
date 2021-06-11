@@ -1519,6 +1519,8 @@ function enviarParaPagarAlCliente($serviciosReferencias) {
 
    $idventa = mysql_result($resultado,0,'refventas');
 
+   $refestadopago = mysql_result($resultado,0,'refestadopago');
+
    $resVenta = $serviciosReferencias->traerVentasPorIdCompleto($idventa);
 
    $resCliente = $serviciosReferencias->traerClientesPorId(mysql_result($resVenta,0,'refclientes'));
@@ -1534,48 +1536,54 @@ function enviarParaPagarAlCliente($serviciosReferencias) {
    $email = mysql_result($resCliente,0,'email');
 
    if ($email != '') {
+      if (($refestadopago == 1) || ($refestadopago == 3)) {
 
-      $token = $serviciosReferencias->GUID();
+         $token = $serviciosReferencias->GUID();
 
-      $url = 'cobranza/metodopago.php?id='.$id;
-      $resAutoLogin = $serviciosReferencias->insertarAutologin($refusuarios,$token,$url,'0');
+         $url = 'cobranza/metodopago.php?id='.$id;
+         $resAutoLogin = $serviciosReferencias->insertarAutologin($refusuarios,$token,$url,'0');
 
-      $resV['url'] = 'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token;
-      //$resV['url'] = 'http://localhost/asesorescrea_nuevo.git/trunk/crm/alogin.php?token='.$token;
+         $resV['url'] = 'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token;
+         //$resV['url'] = 'http://localhost/asesorescrea_nuevo.git/trunk/crm/alogin.php?token='.$token;
 
-      $cuerpo = '';
+         $cuerpo = '';
 
-      $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+         $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
 
-      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+         $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
 
-      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+         $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
 
-      $cuerpo .= "
-      <style>
-         body { font-family: 'Lato', sans-serif; }
-         header { font-family: 'Prata', serif; }
-      </style>";
+         $cuerpo .= "
+         <style>
+            body { font-family: 'Lato', sans-serif; }
+            header { font-family: 'Prata', serif; }
+         </style>";
 
-      $cuerpo .= '<body>';
+         $cuerpo .= '<body>';
 
-      $cuerpo .= '<h3>Estimado, '.$cliente.'</h3><p>';
+         $cuerpo .= '<h3>Estimado, '.$cliente.'</h3><p>';
 
-      $cuerpo .= '<p>Accede a este <a href="'.'https://asesorescrea.com/desarrollo/crm/token.php?token='.$token.'">LINK</a> para pagar el producto solicitado.</p>';
-
-
-      $cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
-
-      $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
-
-      $cuerpo .= '</body>';
-
-      $resMensaje = $serviciosReferencias->insertarMensajes($cuerpo,$usuariocrea,$email,$fechacrea);
+         $cuerpo .= '<p>Accede a este <a href="'.'https://asesorescrea.com/desarrollo/crm/token.php?token='.$token.'">LINK</a> para pagar el producto solicitado.</p>';
 
 
-      $retorno = $serviciosReferencias->enviarEmail($email,utf8_decode('Pago del producto solicitado'),utf8_decode($cuerpo));
+         $cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
 
-      $resV['error'] = false;
+         $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+         $cuerpo .= '</body>';
+
+         $resMensaje = $serviciosReferencias->insertarMensajes($cuerpo,$usuariocrea,$email,$fechacrea);
+
+
+         $retorno = $serviciosReferencias->enviarEmail($email,utf8_decode('Pago del producto solicitado'),utf8_decode($cuerpo));
+
+         $resV['error'] = false;
+
+      } else {
+         $resV['error'] = true;
+         $resV['leyenda'] = 'El recibo ya fue '.mysql_result($resultado,0,'estadopago');
+      }
 
    } else {
       $resV['error'] = true;
