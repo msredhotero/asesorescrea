@@ -1533,47 +1533,55 @@ function enviarParaPagarAlCliente($serviciosReferencias) {
 
    $email = mysql_result($resCliente,0,'email');
 
-   $token = $serviciosReferencias->GUID();
+   if ($email != '') {
 
-   $url = 'cobranza/metodopago.php?id='.$id;
-   $resAutoLogin = $serviciosReferencias->insertarAutologin($refusuarios,$token,$url,'0');
+      $token = $serviciosReferencias->GUID();
 
-   $resV['url'] = 'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token;
-   //$resV['url'] = 'http://localhost/asesorescrea_nuevo.git/trunk/crm/alogin.php?token='.$token;
+      $url = 'cobranza/metodopago.php?id='.$id;
+      $resAutoLogin = $serviciosReferencias->insertarAutologin($refusuarios,$token,$url,'0');
 
-   $cuerpo = '';
+      $resV['url'] = 'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token;
+      //$resV['url'] = 'http://localhost/asesorescrea_nuevo.git/trunk/crm/alogin.php?token='.$token;
 
-   $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+      $cuerpo = '';
 
-   $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+      $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
 
-   $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
 
-   $cuerpo .= "
-   <style>
-      body { font-family: 'Lato', sans-serif; }
-      header { font-family: 'Prata', serif; }
-   </style>";
+      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
 
-   $cuerpo .= '<body>';
+      $cuerpo .= "
+      <style>
+         body { font-family: 'Lato', sans-serif; }
+         header { font-family: 'Prata', serif; }
+      </style>";
 
-   $cuerpo .= '<h3>Estimado, '.$cliente.'</h3><p>';
+      $cuerpo .= '<body>';
 
-   $cuerpo .= '<p>Accede a este <a href="'.'https://asesorescrea.com/desarrollo/crm/token.php?token='.$token.'">LINK</a> para pagar el producto solicitado.</p>';
+      $cuerpo .= '<h3>Estimado, '.$cliente.'</h3><p>';
 
-
-   $cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
-
-   $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
-
-   $cuerpo .= '</body>';
-
-   $resMensaje = $serviciosReferencias->insertarMensajes($cuerpo,$usuariocrea,$email,$fechacrea);
+      $cuerpo .= '<p>Accede a este <a href="'.'https://asesorescrea.com/desarrollo/crm/token.php?token='.$token.'">LINK</a> para pagar el producto solicitado.</p>';
 
 
-   $retorno = $serviciosReferencias->enviarEmail($email,utf8_decode('Pago del producto solicitado'),utf8_decode($cuerpo));
+      $cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
 
-   $resV['error'] = false;
+      $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+      $cuerpo .= '</body>';
+
+      $resMensaje = $serviciosReferencias->insertarMensajes($cuerpo,$usuariocrea,$email,$fechacrea);
+
+
+      $retorno = $serviciosReferencias->enviarEmail($email,utf8_decode('Pago del producto solicitado'),utf8_decode($cuerpo));
+
+      $resV['error'] = false;
+
+   } else {
+      $resV['error'] = true;
+      $resV['leyenda'] = 'El cliente no posee un email';
+
+   }
 
    header('Content-type: application/json');
    echo json_encode($resV);
