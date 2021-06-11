@@ -445,17 +445,7 @@ class serviciosAsegurados
                                                  </div>
                                              </div>
          
-                                             <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrefestadocivil" style="display:block">
-                                                 <label class="form-label">Estado Civil <span style="color:red;">*</span>  </label>
-                                                 <div class="form-group input-group">
-                                                     <div class="form-line">
-                                                         <select class="form-control" id="refestadocivilBNF" name="refestadocivil"  required >
-                                                             <option value="">-- Seleccionar --</option>
-                                                             '.$cadRefEstadoCivil.'
-                                                         </select>
-                                                     </div>
-                                                 </div>
-                                             </div>
+                                             
          
                                          </div>
          
