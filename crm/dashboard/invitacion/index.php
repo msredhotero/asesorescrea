@@ -1077,7 +1077,7 @@ $cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ')
 					//una vez finalizado correctamente
 					success: function(data){
 
-						if (data == '') {
+						if (data.error == false) {
 							swal({
 								title: "Respuesta",
 								text: "Registro Creado con exito!!",
