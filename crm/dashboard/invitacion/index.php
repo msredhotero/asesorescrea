@@ -713,7 +713,8 @@ $cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ')
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
-			$('.erroresCURP').html('');
+					$('.erroresCURP').html('');
+					$('#rfc').val('');
 				},
 				//una vez finalizado correctamente
 				success: function(data){
