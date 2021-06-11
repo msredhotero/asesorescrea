@@ -406,7 +406,6 @@ class serviciosAsegurados
                                                              <option value="1">Padres</option>
                                                              <option value="2">Conyuge</option>
                                                              <option value="3">Hijos</option>
-                                                             <option value="4">Otro</option>
                                                          </select>
                                                      </div>
                                                  </div>

@@ -770,7 +770,7 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
                             </ul>
                         </div>
                         <div class="body">
-									<?php if ($inhabilitadoPorRespuesta == 1) { ?>
+									<?php if ($inhabilitadoPorRespuesta == 99) { ?>
 										<h3 class="display-4">Lo sentimos las preguntas que respondio en el cuestionario, no superan lo necesario para acceder al Servicio/Producto.</h3>
 										<br>
 										<hr>
@@ -1078,7 +1078,7 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 									<label class="form-label">Tel. Movil: <span style="color:red;">*</span>  </label>
 									<div class="form-group input-group">
 										<div class="form-line">
-											<input type="text" class="form-control" id="dctelefonocelular" name="dctelefonocelular" value="<?php echo mysql_result($rCliente,0,'telefonocelular'); ?>" />
+											<input type="text" maxlength="10" minlength="10" class="form-control" id="dctelefonocelular" name="dctelefonocelular" value="<?php echo mysql_result($rCliente,0,'telefonocelular'); ?>" />
 										</div>
 									</div>
 								</div>
@@ -1087,7 +1087,7 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 									<label class="form-label">Tel. Fijo: <span style="color:red;">*</span>  </label>
 									<div class="form-group input-group">
 										<div class="form-line">
-											<input type="text" class="form-control" id="dctelefonofijo" name="dctelefonofijo" value="<?php echo mysql_result($rCliente,0,'telefonofijo'); ?>" />
+											<input type="text" maxlength="10" minlength="10" class="form-control" id="dctelefonofijo" name="dctelefonofijo" value="<?php echo mysql_result($rCliente,0,'telefonofijo'); ?>" />
 										</div>
 									</div>
 								</div>
@@ -1699,7 +1699,7 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 						<?php if (isset($_GET['id'])) { ?>
 						if (data.sigue) {
 
-							<?php if ($existenDatosCompletosContratenta == 1) { ?>
+							<?php if (($existenDatosCompletosContratenta == 1) && ($rIdProducto == 41)) { ?>
 							form.steps("next");
 							<?php } else { ?>
 								
@@ -1708,7 +1708,7 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 						} else {
 							form.steps("next");
 							<?php //si los datos no estan completos pero no son obligatorios, sigo
-								if ($resPreguntasObligatoriasClientesCargadas == 0) { 
+								if (($resPreguntasObligatoriasClientesCargadas == 0) && ($rIdProducto == 41)) { 
 							?>
 							form.steps("next");
 							<?php } ?>	
@@ -2462,13 +2462,13 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 
 
 		<?php
-		//nuevo 13/05/2021 determina si puedo pasar en el cuestionario porque no falta nada
+		//nuevo 13/05/2021 determina si puedo pasar en el cuestionario porque no falta nada, ver!!
 		if (($resPreguntasObligatoriasClientesCargadas == 0) && ($id==0)) { 
 		?>
 		<?php if ($existeBckUpCliente == 0) { ?>
 
 		<?php } else { ?>
-			form.steps("next");	
+			//form.steps("next");	
 		<?php } ?>
 		
 		<?php } ?>
@@ -2503,9 +2503,9 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 	            'confirm': {
 	                equalTo: '#password'
 	            },
-					'refclientes': {
-						required: true
-					}
+				'refclientes': {
+					required: true
+				}
 	        }
 	    });
 

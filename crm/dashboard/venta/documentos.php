@@ -61,7 +61,15 @@ $lblCliente = mysql_result($resCotizaciones,0,'clientesolo');
 
 $idProducto = mysql_result($resCotizaciones,0,'refproductos');
 
-if ($idProducto == 41) {
+// verifico si ya guarde los datos de domicilio y telelfono en dbclientesbck
+$resBckUpCliente = $serviciosReferencias->traerClientesbckPorId($idCliente);
+if (mysql_num_rows($resBckUpCliente) > 0) {
+	$existeBckUpCliente = 1;
+} else {
+	$existeBckUpCliente = 0;
+}
+
+if ((($idProducto == 41) || ($idProducto == 54)) && ($existeBckUpCliente==1)) {
 	$pathSolcitud  = '../../archivos/solicitudes/cotizaciones/'.$id;
 
 	if (!file_exists($pathSolcitud)) {
@@ -195,6 +203,15 @@ if (mysql_num_rows($resMetodoPago)>0) {
 	
 } else {
 	$existeMetodoPago = 0;
+	// creo el archivo grande
+	// pregunto rpimero si existe.
+	$pathSolcitud  = '../../archivos/solicitudes/cotizaciones/'.$id;
+
+	if (!file_exists($pathSolcitud)) {
+		mkdir($pathSolcitud, 0777);
+	}
+
+	$filesSolicitud = array_diff(scandir($pathSolcitud), array('.', '..'));
 }
 
 $documentacionesrequeridas = $serviciosReferencias->traerDocumentacionPorClienteDocumentacionCompletaIn($idCliente,'3,4');
@@ -225,7 +242,7 @@ $comoEnvioNIP = 0;
 //////////////////// verifico en el proceso si firma con fiel, simple o autografa ////////////////
 
 // verifico si necesita una solicitud
-if ($consolicitud == 1) {
+if (($consolicitud == 1) && ($existeBckUpCliente == 1)) {
 	$generoFirmaAlFinal = 0;
 
 	$solicitudParaFirmar = '../../archivos/solicitudes/cotizaciones/'.$id.'/FSOLICITUDAC.pdf';
@@ -465,6 +482,11 @@ if ($consolicitud == 1) {
 	$puedeContinuar = 1;
 }
 
+if ($existeBckUpCliente == 0) {
+	$puedeContinuar = 0;
+	$existeNIP = 0;
+}
+
 if ($idProducto == 41) {
 	$necesariasParaAprobar = 1;
 	$cargados = 1;
@@ -497,6 +519,11 @@ if ($idProducto == 41) {
 	<!-- Dropzone Css -->
 	<link href="../../plugins/dropzone/dropzone.css" rel="stylesheet">
 
+	<!-- CSS file -->
+	<link rel="stylesheet" href="../../css/easy-autocomplete.min.css">
+	<!-- Additional CSS Themes file - not required-->
+	<link rel="stylesheet" href="../../css/easy-autocomplete.themes.min.css">
+
 
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/jquery.dataTables.min.css">
 	<link rel="stylesheet" href="../../DataTables/DataTables-1.10.18/css/dataTables.bootstrap.css">
@@ -511,6 +538,9 @@ if ($idProducto == 41) {
 			border: 10px solid rgba(0,0,0,.2);
 			margin: 0;
 		}
+		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
+		.tscodigopostal { width: 400px; }
+
 		.numero {
 			font-size:2.6em;
 			height:80px;
@@ -729,7 +759,45 @@ if ($idProducto == 41) {
 									}
 								}
 
-								
+
+								//si es vida 500 y tiene alguna pregunta que inhabilite, por ahora asi queda
+								//id: 54
+								if ($idProducto == 54) {
+									$resInhabilitaRespuesta = $serviciosReferencias->inhabilitaRespuestascuestionarioPorCotizacion($id);
+									if (mysql_num_rows($resInhabilitaRespuesta)>0) {
+										//envio email a vidaseleccion@inbursa.com y a ruth
+										$asunto = 'Emisión en VIDA 500';
+
+										$cuerpo = '';
+
+										$cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+										$cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+										$cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+										$cuerpo .= "
+										<style>
+											body { font-family: 'Lato', sans-serif; }
+											header { font-family: 'Prata', serif; }
+										</style>";
+
+										$cuerpo .= '<body>';
+
+										
+										$cuerpo .= '<p> Cliente: '.$lblCliente.' - Producto: VIDA 500 </p>';
+										
+
+										$cuerpo .= '</body>';
+
+										$exito = $serviciosReferencias->enviarEmail('vidaseleccion@inbursa.com', utf8_decode( $asunto),utf8_decode($cuerpo));
+
+										$exitoRuth = $serviciosReferencias->enviarEmail('ruth-arana@asesorescrea.com', utf8_decode( $asunto),utf8_decode($cuerpo));
+
+										$resMensaje = $serviciosReferencias->insertarMensajes($cuerpo,$_SESSION['usua_sahilices'],'vidaseleccion@inbursa.com, ruth-arana@asesorescrea.com', date('Y-m-d H:i:s'));
+
+									}
+								}
 								?>
 
 								<div class="text-center">
@@ -958,7 +1026,7 @@ if ($idProducto == 41) {
 </section>
 
 
-<?php if (($puedeContinuar == 0) && ($tipoFirma == 2) && ($existeNIP == 1)) { ?>
+<?php if (($puedeContinuar == 0) && ($tipoFirma == 2) && ($existeNIP == 1) && ($existeBckUpCliente == 1)) { ?>
 <div class="modal fade" id="lgmNotificacion" tabindex="-1" role="dialog">
 	 <div class="modal-dialog modal-lg" role="document">
 		  <div class="modal-content">
@@ -983,6 +1051,137 @@ if ($idProducto == 41) {
 </div>
 <?php } ?>
 
+
+<div class="modal fade" id="lgmDomicilioTelefono" tabindex="-1" role="dialog">
+		 <div class="modal-dialog modal-xlg" role="document">
+			  <div class="modal-content">
+					<div class="modal-header">
+						 <h4 class="modal-title" id="largeModalLabel">POR FAVOR CONFIRME O MODIFIQUE LA SIGUIENTE INFORMACION</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<p style="color:red;">* Si falta algun dato o un dato esta incorrecto, agregue o modifique.</p>
+							<div class="row">
+								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">Tel. Movil: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" maxlength="10" class="form-control" id="dctelefonocelular" name="dctelefonocelular" value="<?php echo mysql_result($resCliente,0,'telefonocelular'); ?>" />
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:none;">
+									<label class="form-label">Tel. Fijo: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dctelefonofijo" name="dctelefonofijo" value="<?php echo mysql_result($resCliente,0,'telefonofijo'); ?>" />
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 frmContrfc" style="display:block;">
+									<label class="form-label">Calle: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dccalle" name="dccalle" value="<?php echo mysql_result($resCliente,0,'domicilio'); ?>" />
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">Nro. Interior: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dcnrointerior" name="dcnrointerior" value="<?php echo mysql_result($resCliente,0,'nrointerior'); ?>" />
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">Nro. Exterior: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dcnroexterior" name="dcnroexterior" value="<?php echo mysql_result($resCliente,0,'nroexterior'); ?>" />
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">Edificio: </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dcedificio" name="dcedificio" value="<?php echo mysql_result($resCliente,0,'edificio'); ?>" />
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">Cod. Postal: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dccodigopostal" name="dccodigopostal" value="<?php echo mysql_result($resCliente,0,'codigopostal'); ?>" />
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">Estado: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dcestado" name="dcestado" value="<?php echo mysql_result($resCliente,0,'estado'); ?>" readonly/>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">Colonia: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dccolonia" name="dccolonia" value="<?php echo mysql_result($resCliente,0,'colonia'); ?>" readonly/>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">Alcaldía: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dcmunicipio" name="dcmunicipio" value="<?php echo mysql_result($resCliente,0,'municipio'); ?>" readonly/>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">Ciudad: </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" class="form-control" id="dcciudad" name="dcciudad" value="<?php echo mysql_result($resCliente,0,'ciudad'); ?>"/>
+										</div>
+									</div>
+								</div>
+
+
+
+							</div>
+
+
+
+
+						</div>
+
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-success waves-effect btnModificarDC">CONTINUAR</button>
+					</div>
+			  </div>
+		 </div>
+	</div>
+
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
@@ -991,6 +1190,8 @@ if ($idProducto == 41) {
 <script src="../../js/pages/cards/colored.js"></script>
 
 <script src="../../plugins/jquery-validation/jquery.validate.js"></script>
+
+<script src="../../js/jquery.easy-autocomplete.min.js"></script>
 
 <script src="../../js/pages/examples/sign-in.js"></script>
 
@@ -1006,6 +1207,91 @@ if ($idProducto == 41) {
 
 <script>
 	$(document).ready(function(){
+
+		$('.btnModificarDC').click(function() {
+			if (($('#dctelefonocelular').val() == '') || ($('#dccalle').val() == '') || ($('#dcnrointerior').val() == '') || ($('#dcnroexterior').val() == '') || ($('#dccodigopostal').val() == '') || ($('#dcestado').val() == '') || ($('#dccolonia').val() == '') || ($('#dcmunicipio').val() == '') ) {
+				swal({
+					title: "Respuesta",
+					text: 'Complete todos los campos obligatorios para modificar los datos',
+					type: "error",
+					timer: 2000,
+					showConfirmButton: false
+				});
+			} else {
+				modificarDatosClientes( $('#dctelefonofijo').val(),$('#dctelefonocelular').val(),$('#dccalle').val(),$('#dcnrointerior').val(),$('#dcnroexterior').val(),$('#dcedificio').val(),$('#dccodigopostal').val(),$('#dcestado').val(),$('#dccolonia').val(),$('#dcmunicipio').val(),$('#dcciudad').val());
+
+			}
+
+		});
+
+		function modificarDatosClientes(telefonofijo,telefonocelular,calle,nrointerior,nroexterior,edificio,codigopostal,estado,colonia,municipio,ciudad) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificarDatosClientes',
+					id: <?php echo $idCliente; ?>,
+					telefonofijo: telefonofijo,
+					telefonocelular:telefonocelular,
+					calle:calle,
+					nrointerior: nrointerior,
+					nroexterior: nroexterior,
+					edificio: edificio,
+					codigopostal: codigopostal,
+					estado: estado,
+					colonia: colonia,
+					municipio: municipio,
+					ciudad: ciudad
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error == false) {
+						swal({
+							title: "Respuesta",
+							text: 'Datos actualizados',
+							type: "success",
+							timer: 2000,
+							showConfirmButton: false
+						});
+
+						setTimeout(function(){ location.reload(); }, 2000);
+
+
+					} else {
+						swal({
+							title: "Respuesta",
+							text: 'No existe cuestionario para completar, continue',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+					});
+				}
+			});
+		}
+
+		<?php if ($existeBckUpCliente == 0) { ?>
+		$('#lgmDomicilioTelefono').modal({backdrop: 'static', keyboard: false});
+		<?php } ?>
+		
 
 		<?php if (($puedeContinuar == 0) && ($tipoFirma == 2) && ($existeNIP == 1)) { ?>
 			$('#lgmNotificacion').modal();
@@ -1096,7 +1382,49 @@ if ($idProducto == 41) {
 			insertarTokens();
 		});
 
+		<?php if ($existeBckUpCliente == 1) { ?>
 		PDFObject.embed('<?php echo $solicitudParaFirmar; ?>', "#example1");
+		<?php } ?>
+
+		var optionsDC = {
+
+		url: "../../json/jsbuscarpostal.php",
+
+		getValue: function(element) {
+			return element.estado + ' ' + element.municipio + ' ' + element.colonia + ' ' + element.codigo;
+		},
+
+		ajaxSettings: {
+			dataType: "json",
+			method: "POST",
+			data: {
+				busqueda: $("#dccodigopostal").val()
+			}
+		},
+
+		preparePostData: function (data) {
+			data.busqueda = $("#dccodigopostal").val();
+			return data;
+		},
+
+		list: {
+			maxNumberOfElements: 20,
+			match: {
+				enabled: true
+			},
+			onClickEvent: function() {
+				var value = $("#dccodigopostal").getSelectedItemData().codigo;
+				$("#dccodigopostal").val(value);
+				$("#dcmunicipio").val($("#dccodigopostal").getSelectedItemData().municipio);
+				$("#dcestado").val($("#dccodigopostal").getSelectedItemData().estado);
+				$("#dccolonia").val($("#dccodigopostal").getSelectedItemData().colonia);
+
+
+			}
+		}
+		};
+
+		$("#dccodigopostal").easyAutocomplete(optionsDC);
 
 		$('.numero').keypress(function() {
 			idnumber =  $(this).attr("id");
@@ -1139,34 +1467,36 @@ if ($idProducto == 41) {
 
 					if (data.error) {
 						swal({
-								title: "Respuesta",
-								text: 'Se genero un error al guardar el paso',
-								type: "error",
-								timer: 1000,
-								showConfirmButton: false
+							title: "Respuesta",
+							text: 'Se genero un error al guardar el paso',
+							type: "error",
+							timer: 1000,
+							showConfirmButton: false
 						});
 
 
 					} else {
 						swal({
-								title: "Respuesta",
-								text: 'Se genero correctamente el token y se envio al cliente',
-								type: "success",
-								timer: 2000,
-								showConfirmButton: false
+							title: "Respuesta",
+							text: 'Se genero correctamente el token y se envio al cliente',
+							type: "success",
+							timer: 2000,
+							showConfirmButton: false
 						});
-						location.reload();
+						setTimeout(function() {
+							location.reload();
+						}, 2000);
 
 					}
 				},
 				//si ha ocurrido un error
 				error: function(){
 					swal({
-							title: "Respuesta",
-							text: 'Actualice la pagina',
-							type: "error",
-							timer: 2000,
-							showConfirmButton: false
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
 					});
 
 				}
@@ -1231,16 +1561,20 @@ if ($idProducto == 41) {
 
 						$('#btnConfirmarF').show();
 
+						if (data.tipo == 2) {
+							insertarTokens();
+						}
+
 						setTimeout($.unblockUI, 2000);
 
 
 					} else {
 						swal({
-								title: "Respuesta",
-								text: 'Se firmo correctamente LA SOLICIUTD!',
-								type: "success",
-								timer: 2000,
-								showConfirmButton: false
+							title: "Respuesta",
+							text: 'Se firmo correctamente LA SOLICIUTD!',
+							type: "success",
+							timer: 2000,
+							showConfirmButton: false
 						});
 
 						setTimeout(function() {
@@ -1293,9 +1627,7 @@ if ($idProducto == 41) {
 
 <?php
 
-if ($generoFirmaAlFinal == 1) {
 
-}
 
 ?>
 

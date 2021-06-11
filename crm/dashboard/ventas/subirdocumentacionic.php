@@ -286,8 +286,9 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumenta
 
 			<div class="row">
 				<?php
+				$exiteArchivo = 0;
 				while ($row = mysql_fetch_array($resDocumentaciones)) {
-
+					$existeArchivo = 1;
 				?>
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 						<div class="info-box-3 bg-<?php echo $row['color']; ?> hover-zoom-effect btnDocumentacion" id="<?php echo $row['iddocumentacion']; ?>">
@@ -301,6 +302,19 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumenta
 						</div>
 					</div>
 				<?php }  ?>
+				<?php if ($existeArchivo == 1) { ?>
+					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+						<div class="info-box-3 bg-orange hover-zoom-effect btnEnviarPagoAlCliente" id="<?php echo $id; ?>">
+							<div class="icon">
+								<i class="material-icons">monetization_on</i>
+							</div>
+							<div class="content">
+								<div class="text">ENVIAR PARA QUE EL CLIENTE PAGUE</div>
+								<div class="number">ENVIAR</div>
+							</div>
+						</div>
+					</div>
+				<?php } ?>
 			</div>
 
 			<div class="row">
@@ -465,6 +479,38 @@ $resDocumentaciones = $serviciosReferencias->traerDocumentacionPorVentaDocumenta
 <script>
 
 	$(document).ready(function(){
+
+		$('.btnEnviarPagoAlCliente').click(function() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'enviarParaPagarAlCliente',
+					id: <?php echo $id; ?>
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.btnEliminar').hide();
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error == false) {
+						swal("Ok!", 'Se envio correctamente el recibo de pago al cliente' , "success");
+
+					} else {
+						swal("Error!", data.leyenda, "warning");
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		});
 
 
 		$('.btnModificar').click(function() {

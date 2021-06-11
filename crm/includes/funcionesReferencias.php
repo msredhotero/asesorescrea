@@ -9,6 +9,24 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+   function verificoExistenciaProductoPorCliente($idproducto,$idcliente) {
+      $sql = "select * from dbcotizaciones where refproductos = ".$idproducto." and refclientes = ".$idcliente;
+
+      $res = $this->query($sql,0);
+
+      if (mysql_num_rows($res)>0) {
+         return 1;
+      }
+      return 0;
+   }
+
+   function insertarMensajes($mensaje,$origen,$destinatario,$fecha) {
+      $sql = "insert into dbmensajes(idmensaje,mensaje,origen,destinatario,fecha)
+      values ('','".str_replace("'",'"',$mensaje)."','".$origen."','".$destinatario."','".$fecha."')";
+      $res = $this->query($sql,1);
+      return $res;
+   }
+
    function insertarChat($reftabla,$idreferencia,$email,$emaildestinatario,$esdirectorio,$nombre,$mensaje,$fechacrea,$leido) {
       $sql = "insert into dbchat(idchat,reftabla,idreferencia,email,emaildestinatario,esdirectorio,nombre,mensaje,fechacrea,leido)
       values ('',".$reftabla.",".$idreferencia.",'".$email."','".$emaildestinatario."','".$esdirectorio."','".$nombre."','".$mensaje."','".$fechacrea."','".$leido."')";
@@ -1501,6 +1519,8 @@ return $res;
                $exito = $this->enviarEmail(substr($cadDestino,0,-2), utf8_decode( $asunto),utf8_decode($cuerpo));
             }
 
+            $resMensaje = $this->insertarMensajes($cuerpo,$_SESSION['usua_sahilices'],substr($cadDestino,0,-2), date('Y-m-d H:i:s'));
+
 
             $gestor = fopen('logemails'.date('Y_m_d_H_i_s').'_gestion_etapa_'.$refetapa.'_id_'.$id.'_evento_'.$refevento.'.txt', 'w');
             fwrite($gestor, $cadDestino.' '.date('Y-m-d H:i:s'));
@@ -1604,6 +1624,8 @@ return $res;
 
                $exito = $this->enviarEmail($cadDestino, utf8_decode( $asunto),utf8_decode($cuerpo));
 
+               $resMensaje = $this->insertarMensajes($cuerpo,$_SESSION['usua_sahilices'],$cadDestino, date('Y-m-d H:i:s'));
+
             }
 
             $cadDestinoLog .= $emailasesor;
@@ -1642,6 +1664,8 @@ return $res;
             //disparo siempre este correo para mesa de control cada vez ue cae en mesa de control
             if ($rutaUrl == 'mesacontrol') {
                $exito = $this->enviarEmail($emailFijoMesaControl, utf8_decode( $asunto),utf8_decode($cuerpo));
+
+               $resMensaje = $this->insertarMensajes($cuerpo,$_SESSION['usua_sahilices'],$emailFijoMesaControl, date('Y-m-d H:i:s'));
             }
             
 
@@ -1724,9 +1748,13 @@ return $res;
                   $exito = $this->enviarEmail(substr($cadDestino,0,-2), utf8_decode( $asunto),utf8_decode($cuerpo));
                }
 
+               $resMensaje = $this->insertarMensajes($cuerpo,$_SESSION['usua_sahilices'],substr($cadDestino,0,-2), date('Y-m-d H:i:s'));
+
                //disparo siempre este correo para mesa de control cada vez ue cae en mesa de control
                if ($rutaUrl == 'mesacontrol') {
                   $exito = $this->enviarEmail($emailFijoMesaControl, utf8_decode( $asunto),utf8_decode($cuerpo));
+
+                  $resMensaje = $this->insertarMensajes($cuerpo,$_SESSION['usua_sahilices'],$emailFijoMesaControl, date('Y-m-d H:i:s'));
                }
 
                //disparo siempre este correo para emision fijos cada vez ue cae en emision
@@ -1735,6 +1763,8 @@ return $res;
                   $exito = $this->enviarEmail($emailFijoEmision2, utf8_decode( $asunto),utf8_decode($cuerpo));
                   $exito = $this->enviarEmail($emailFijoEmision3, utf8_decode( $asunto),utf8_decode($cuerpo));
                   $exito = $this->enviarEmail($emailFijoEmision4, utf8_decode( $asunto),utf8_decode($cuerpo));
+
+                  $resMensaje = $this->insertarMensajes($cuerpo,$_SESSION['usua_sahilices'],$emailFijoEmision1.' '.$emailFijoEmision2.' '.$emailFijoEmision3.' '.$emailFijoEmision4, date('Y-m-d H:i:s'));
                }
             }
          }
@@ -5540,10 +5570,8 @@ return $res;
                      $cadInput .= '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 frmContrespuesta" style="display:block">
 
                         <div class="form-group input-group">
-                           <div class="demo-radio-button">
-                              <input required class="aparecer" type="radio" id="radio_'.$rowR['idrespuestacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.$rowR['idrespuestacuestionario'].'" '.$dependenciaData.' data-idpregunta="'.$row['idpreguntacuestionario'].'" '.$cadValorRespuesta.' >
-                              <label for="radio_'.$rowR['idrespuestacuestionario'].'">'.$rowR['respuesta'].'</label>
-                           </div>
+                           <input class="with-gap" type="radio" id="radio_'.$rowR['idrespuestacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.$rowR['idrespuestacuestionario'].'" '.$dependenciaData.' data-idpregunta="'.$row['idpreguntacuestionario'].'" '.$cadValorRespuesta.' data-rule-required="true"/>
+                           <label for="radio_'.$rowR['idrespuestacuestionario'].'">'.$rowR['respuesta'].'</label>
                         </div>
                      </div>';
                   } else {
@@ -20314,6 +20342,12 @@ return $res;
 		return $res;
 	}
 
+   function traerClientesPorTipo($dato,$tipo) {
+		$sql = "select idcliente,reftipopersonas,nombre,apellidopaterno,apellidomaterno,razonsocial,domicilio,telefonofijo,telefonocelular,email,rfc,ine,numerocliente,refusuarios,fechacrea,fechamodi,usuariocrea,usuariomodi,idclienteinbursa,emisioncomprobantedomicilio,emisionrfc,vencimientoine,colonia,municipio,codigopostal,edificio,nroexterior,nrointerior,estado,ciudad,curp,fechanacimiento,genero,refestadocivil,reftipoidentificacion,nroidentificacion from dbclientes where ".$tipo." = '".$dato."'";
+		$res = $this->query($sql,0);
+		return $res;
+	}
+
 
 	/* Fin */
 	/* /* Fin de la Tabla: dbclientes*/
@@ -22112,6 +22146,12 @@ return $res;
    $res = $this->query($sql,0);
    return $res;
    }
+
+   function traerUsuariosPorEmail($email) {
+      $sql = "select idusuario,usuario,refroles,email,nombrecompleto,(case when activo = 1 then 'Si' else 'No' end) as activo,refsocios,validaemail,validamovil,validasignatura from dbusuarios where email ='".$email."'";
+      $res = $this->query($sql,0);
+      return $res;
+      }
 
    function modPassword($id, $pass) {
       $sql = "update dbusuarios set password = '".$pass."' where idusuario = ".$id;

@@ -165,6 +165,67 @@ if (mysql_num_rows($resRenovacion) > 0) {
 	$idrenovacion = 0;
 }
 
+$iddocumentacion = 243;
+$resEstados = $serviciosReferencias->traerEstadodocumentaciones();
+
+$color = 'blue';
+$estadoDocumentacion = 'Falta';
+$cadRefEstados = $serviciosFunciones->devolverSelectBox($resEstados,array(1),'');
+$iddocumentacionasociado = 0;
+
+$resInhabilitaRespuesta = $serviciosReferencias->inhabilitaRespuestascuestionarioPorCotizacion($id);
+if (mysql_num_rows($resInhabilitaRespuesta)>0) {
+	$cotizacionEnCurso = 1;
+
+	$pathSolcitud1  = '../../archivos/cotizaciones/'.$id;
+
+	if (!file_exists($pathSolcitud1)) {
+		mkdir($pathSolcitud1, 0777);
+	}
+	
+	$pathSolcitud  = '../../archivos/cotizaciones/'.$id.'/autorizacionvida';
+
+	if (!file_exists($pathSolcitud)) {
+		mkdir($pathSolcitud, 0777);
+	}
+
+	$filesSolicitud = array_diff(scandir($pathSolcitud), array('.', '..'));
+	// si subi el archivo
+	if (count($filesSolicitud) < 1) {
+		$exiteArchivo = 0;
+		$cotizacionEnCurso = 1;
+
+	} else {
+		$resImagen = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacion($id,$iddocumentacion);
+
+		if (mysql_num_rows($resImagen)>0) {
+			if (mysql_result($resImagen,0,'refestadodocumentaciones') == 5) {
+				$exiteArchivo = 1;
+				$cotizacionEnCurso = 0;
+				
+				
+			} else {
+				$exiteArchivo = 1;
+				$cotizacionEnCurso = 1;
+			}
+
+			$iddocumentacionasociado = mysql_result($resImagen,0,0);
+
+			$resEstados = $serviciosReferencias->traerEstadodocumentaciones();
+
+			$color = mysql_result($resImagen,0,'color');
+			$estadoDocumentacion = mysql_result($resImagen,0,'estadodocumentacion');
+			$cadRefEstados = $serviciosFunciones->devolverSelectBoxActivo($resEstados,array(1),'',mysql_result($resImagen,0,'refestadodocumentaciones'));
+		} else {
+			$exiteArchivo = 0;
+			$cotizacionEnCurso = 1;
+		}
+		
+	}
+} else {
+	$cotizacionEnCurso = 0;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -203,6 +264,30 @@ if (mysql_num_rows($resRenovacion) > 0) {
 
 	<style>
 		.alert > i{ vertical-align: middle !important; }
+		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
+		#codigopostal { width: 400px; }
+		.pdfobject-container { height: 50rem; border: 1rem solid rgba(0,0,0,.1); }
+
+		  .thumbnail2 {
+		    display: block;
+		    padding: 4px;
+		    margin-bottom: 20px;
+		    line-height: 1.42857143;
+		    background-color: #fff;
+		    border: 1px solid #ddd;
+		    border-radius: 4px;
+		    -webkit-transition: border .2s ease-in-out;
+		    -o-transition: border .2s ease-in-out;
+		    transition: border .2s ease-in-out;
+			 text-align: center;
+		}
+		.progress {
+			background-color: #1b2646;
+		}
+
+		.btnDocumentacion, .btnCursor {
+			cursor: pointer;
+		}
 	</style>
 
 
@@ -252,7 +337,127 @@ if (mysql_num_rows($resRenovacion) > 0) {
 
 	<div class="container-fluid">
 		<div class="row clearfix">
+		<?php if ($cotizacionEnCurso == 1) { ?>
+			<div class="row">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<div class="card ">
+						<div class="header bg-blue">
+							<h2>
+								<?php foreach ($formularioAr as $frm) { ?>
+								POLIZA - <?php echo $frm['producto']; ?><?php if ($frm['monto']>0) {?> - Precio: MX $ <?php echo $frm['monto']; ?><?php } ?>
+								<?php } ?>
+							</h2>
+							<ul class="header-dropdown m-r--5">
+								<li class="dropdown">
+									<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+										<i class="material-icons">more_vert</i>
+									</a>
+									<ul class="dropdown-menu pull-right">
 
+									</ul>
+								</li>
+							</ul>
+						</div>
+						<div class="body table-responsive">
+							
+						<div class="row">
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+								<div class="card">
+									<div class="header bg-blue">
+										<h2>
+											SUBIR ARCHIVO
+										</h2>
+										<ul class="header-dropdown m-r--5">
+											<li class="dropdown">
+												<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+													<i class="material-icons">more_vert</i>
+												</a>
+											</li>
+										</ul>
+									</div>
+									<div class="body">
+										<button type="button" class="btn bg-blue waves-effect btnVolver" style="margin-bottom:15px;">
+											VOLVER
+										</button>
+
+
+										<form action="subirautorizacion.php" id="frmFileUpload" class="dropzone" method="post" enctype="multipart/form-data">
+											<div class="dz-message">
+												<div class="drag-icon-cph">
+													<i class="material-icons">touch_app</i>
+												</div>
+												<h3>Arrastre y suelte una imagen O PDF aqui o haga click y busque una imagen en su ordenador.</h3>
+											</div>
+											<div class="fallback">
+												<input name="file" type="file" id="archivos" />
+												<input type="hidden" id="idasociado" name="idasociado" value="<?php echo $id; ?>" />
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+								<div class="card ">
+									<div class="header bg-blue">
+										<h2>
+											AUTORIZACION VIDA 500
+										</h2>
+									</div>
+									<div class="body table-responsive">
+
+
+										<div class="row">
+											<button type="button" class="btn bg-red waves-effect btnEliminar">
+												<i class="material-icons">remove</i>
+												<span>ELIMINAR</span>
+											</button>
+										</div>
+
+										<div class="row">
+											<a href="javascript:void(0);" class="thumbnail timagen1">
+												<img class="img-responsive">
+											</a>
+											<div id="example1"></div>
+										</div>
+
+										<div class="row">
+											<div class="alert bg-<?php echo $color; ?>">
+												<h4>
+													Estado: <b><?php echo $estadoDocumentacion; ?></b>
+												</h4>
+											</div>
+											<?php
+											if ($exiteArchivo == 1) {
+											?>
+											<div class="col-xs-6 col-md-6" style="display:block">
+												<label for="reftipodocumentos" class="control-label" style="text-align:left">Modificar Estado</label>
+												<div class="input-group col-md-12">
+													<select class="form-control show-tick" id="refestados" name="refestados">
+														<?php echo $cadRefEstados; ?>
+													</select>
+												</div>
+
+												<button type="button" class="btn btn-primary guardarEstado" style="margin-left:0px;">Guardar Estado</button>
+
+											</div>
+											<?php } ?>
+
+										</div>
+										
+										
+
+
+
+									</div>
+								</div>
+							</div>
+						</div> <!-- fin del card -->
+
+						</div>
+					</div>
+				</div>
+			</div>				
+		<?php } else { ?>
 			<?php
 				$formParticular = 'formAlta';
 				$cantForm = 0;
@@ -278,6 +483,7 @@ if (mysql_num_rows($resRenovacion) > 0) {
 							</ul>
 						</div>
 						<div class="body table-responsive">
+							
 							<?php if ($existeRenovacion == 1) { ?>
 							<div class="alert alert-warning">
 								<p>Esta Poliza es una renovación de la <b>Poliza: <?php echo $polizaVieja; ?></b> , fecha de vencimiento: <b><?php echo $fechavencimientoVieja; ?></p>
@@ -344,6 +550,7 @@ if (mysql_num_rows($resRenovacion) > 0) {
 				</div>
 			</div>
 			<?php } ?>
+		<?php } ?>
 		</div>
 	</div>
 </section>
@@ -391,6 +598,8 @@ if (mysql_num_rows($resRenovacion) > 0) {
 <script src="../../plugins/jquery-inputmask/jquery.inputmask.bundle.js"></script>
 
 <script src="../../DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js"></script>
+
+<script src="../../plugins/dropzone/dropzone.js"></script>
 
 <script src="../../js/picker.js"></script>
 <script src="../../js/picker.date.js"></script>
@@ -832,6 +1041,134 @@ if (mysql_num_rows($resRenovacion) > 0) {
 				}
 			});
 		}
+
+
+
+		<?php if ($cotizacionEnCurso == 1) { ?>
+			function traerImagen(contenedorpdf, contenedor) {
+			$.ajax({
+				data:  {idcotizacion: <?php echo $id; ?>,
+						iddocumentacion: 243,
+						accion: 'traerDocumentacionPorCotizacionDocumentacion'},
+				url:   '../../ajax/ajax.php',
+				type:  'post',
+				beforeSend: function () {
+					$("." + contenedor + " img").attr("src",'');
+				},
+				success:  function (response) {
+					var cadena = response.datos.type.toLowerCase();
+
+					if (response.datos.type != '') {
+						if (cadena.indexOf("pdf") > -1) {
+							PDFObject.embed(response.datos.imagen, "#"+contenedorpdf);
+							$('#'+contenedorpdf).show();
+							$("."+contenedor).hide();
+
+						} else {
+							$("." + contenedor + " img").attr("src",response.datos.imagen);
+							$("."+contenedor).show();
+							$('#'+contenedorpdf).hide();
+						}
+					}
+
+					if (response.error) {
+
+						$('.btnEliminar').hide();
+						$('.guardarEstado').hide();
+					} else {
+
+						$('.btnEliminar').show();
+						$('.guardarEstado').show();
+					}
+
+
+
+				}
+			});
+		}
+
+		traerImagen('example1','timagen1');
+
+		Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
+
+		Dropzone.options.frmFileUpload = {
+			maxFilesize: 30,
+			acceptedFiles: ".jpg,.jpeg,.pdf,.xml",
+			accept: function(file, done) {
+				done();
+			},
+			init: function() {
+				this.on("sending", function(file, xhr, formData){
+					formData.append("idasociado", '<?php echo $id; ?>');
+					formData.append("iddocumentacion", '243');
+				});
+				this.on('success', function( file, resp ){
+					traerImagen('example1','timagen1');
+					$('.lblPlanilla').hide();
+					swal("Correcto!", resp.replace("1", ""), "success");
+					$('.btnGuardar').show();
+					$('.infoPlanilla').hide();
+					location.reload();
+				});
+
+				this.on('error', function( file, resp ){
+					swal("Error!", resp.replace("1", ""), "warning");
+				});
+			}
+		};
+
+
+
+		var myDropzone = new Dropzone("#archivos", {
+			params: {
+				 idasociado: <?php echo $id; ?>,
+				 iddocumentacion: 243
+			},
+			url: 'subirautorizacion.php'
+		});
+
+
+		$('.guardarEstado').click(function() {
+			modificarEstadoDocumentacionCotizaciones($('#refestados').val());
+		});
+
+		function modificarEstadoDocumentacionCotizaciones(idestado) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificarEstadoDocumentacionCotizaciones',
+					iddocumentacioncotizacion: <?php echo $iddocumentacionasociado; ?>,
+					idestado: idestado
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.guardarEstado').hide();
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error == false) {
+						swal("Ok!", 'Se modifico correctamente el estado de la documentación', "success");
+						$('.guardarEstado').show();
+						location.reload();
+					} else {
+						swal("Error!", data.leyenda, "warning");
+
+						$("#load").html('');
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					$(".alert").html('<strong>Error!</strong> Actualice la pagina');
+					$("#load").html('');
+				}
+			});
+		}
+
+		<?php } ?>
 	});
 </script>
 

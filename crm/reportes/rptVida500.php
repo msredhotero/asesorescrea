@@ -411,6 +411,10 @@ $pdf->SetXY(57.6, 104.2);
 $pdf->Write(0, "x");
 //echo "3,3,'beneficiario',".$pdf->GetX().",".$pdf->GetY().",'beneficiario irrevocable','','beneficiario irrevocable'".'<br>';
 
+//beneficiario 100%
+$pdf->SetXY(127.6, 105);
+$pdf->Write(0, "100");
+
 //primer nombre
 $pdf->SetXY(8.2, 114.8);
 $pdf->Write(0, "SAUPUREIN");

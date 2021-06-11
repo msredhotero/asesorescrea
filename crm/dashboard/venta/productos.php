@@ -278,7 +278,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 								<h4 style="line-height: 1.5; "><b>Contrata un Seguro de Vida y deja a tus beneficiarios $500,000 en caso de que faltes. También puedes cotizar suma asegurada de $1,000,000 de pesos.</b></h4>
                            		<h4 style="line-height: 1.5; "><b>No hay pretexto para no estar asegurado; el trámite es sencillo y sin moverte de tu lugar.</b></h4>
 
-                           <?php if ($lblPrecioVIDA500 != '') { ?>
+                           <?php if (($lblPrecioVIDA500 != '') && ($serviciosReferencias->verificoExistenciaProductoPorCliente(41,$rIdCliente)==0)) { ?>
                            <div class="row" style="margin-top:40px; text-align:center;">
       							<button type="button" id="btnCotizarS500" class="btn bg-blue waves-effect btnCotizarS500" style="padding:40px 80px; font-size:100%;">CONTRATAR PLAN ANUAL POR <?php echo $lblPrecioVIDA500; ?></button>
       							</div>
@@ -396,7 +396,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
       $('#cirugia').change(function() {
          calcularRD();
       });
-
+	  /* 41 */
 		$('#btnCotizarVrim').click(function() {
 			$(location).attr('href','new.php?producto=41');
 		});

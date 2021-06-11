@@ -108,9 +108,52 @@ if (mysql_num_rows($resAux)>0) {
 * $resAsegurado
 * $resCliente
 * $id
+* para el producto vida 500 verifico la estatura y peso , el peso no puede ser calculo: abs(altura - 100 - peso) > 20
 */
-
 $inhabilitadoPorRespuesta = 0;
+$nopuedeContinuar = 0;
+$arErrorLbl = array();
+
+/******************** para vida 500 nada mas id:54 *****************/
+if ($idProducto == 54) {
+	//peso id pregunta: 692
+	//altura id: 693
+
+	
+	$pesoCliente = 0;
+	$resRespuestaValorPeso = $serviciosReferencias->traerCuestionariodetallePorTablaReferenciaIdRespuesta(11, 'dbcotizaciones', 'idcotizacion', $id,'1077');
+
+	if (mysql_num_rows($resRespuestaValorPeso)>0) {
+		$pesoCliente = (integer)mysql_result($resRespuestaValorPeso,0,'respuestavalor');
+		
+	}
+
+	$alturaCliente = 0;
+	$resRespuestaValorAltura = $serviciosReferencias->traerCuestionariodetallePorTablaReferenciaIdRespuesta(11, 'dbcotizaciones', 'idcotizacion', $id,'1078');
+
+	if (mysql_num_rows($resRespuestaValorAltura)>0) {
+		$alturaCliente = (integer)mysql_result($resRespuestaValorAltura,0,'respuestavalor');
+	}
+
+	if (($pesoCliente == 0) || ($alturaCliente == 0)) {
+		
+		$inhabilitadoPorRespuesta = 1;
+		$nopuedeContinuar = 1;
+		array_push($arErrorLbl,array('error' => 'El peso o la altura no pueden ser igual a cero, esta cotización no puede ser aceptada, intente nuevamente'));
+	} else {
+		if (abs($alturaCliente - 100 - $pesoCliente) > 20) {
+			$inhabilitadoPorRespuesta = 1;
+			$nopuedeContinuar = 1;
+			array_push($arErrorLbl,array('error' => 'El peso y la altura no no califican para este producto'));
+		}
+	}
+}
+
+//die(var_dump(abs(abs($alturaCliente - 100 - $pesoCliente))));
+
+/*********************** fin */
+
+
 
 $aplicaA = '';
 
@@ -133,8 +176,9 @@ $edadNoAplica = 0;
 if ($edad >= 60) {
 	$nopuedeContinuar = 1;
 	$edadNoAplica = 1;
+	array_push($arErrorLbl,array('error' => 'Lo sentimos para el Producto solicitado no es alcanzable para la edad del '.$aplicaA.' '.$edad.' años'));
 } else {
-	$nopuedeContinuar = 0;
+	
 
 	//para RC medicos por ahora
 	if ($idProducto == 55) {
@@ -193,6 +237,7 @@ if ($edad >= 60) {
 
 			} else {
 				$nopuedeContinuar = 1;
+				array_push($arErrorLbl,array('error' => 'Lo sentimos para el Producto solicitado no es alcanzable para la edad del '.$aplicaA.' '.$edad.' años'));
 			}
 
 		}
@@ -211,6 +256,14 @@ $resInhabilitaRespuesta = $serviciosReferencias->inhabilitaRespuestascuestionari
 if (mysql_num_rows($resInhabilitaRespuesta)>0) {
 	$nopuedeContinuar = 1;
 	$inhabilitadoPorRespuesta = 1;
+	//si es vida 500, lo dejo pasar, lo envio a cargar el INE, a firmar la solicitud y aviso a ruth y a vidaseleccion@inbursa.com con asunto emision vida 500
+	//id: 54 vida 500
+	if ($idProducto == 54) {
+		$resModificar1 = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',20,$_SESSION['usua_sahilices']);
+
+		header('Location: archivos.php?id='.$id);
+	}
+	array_push($arErrorLbl,array('error'=>'Lo sentimos las preguntas que respondio en el cuestionario, no superan lo necesario para acceder al Producto.'));
 }
 
 $resBancos = $serviciosReferencias->traerBancos();
@@ -566,12 +619,13 @@ $esFinancieraCrea = 0;
 						} else {
 					?>
 					<div class="text-center">
-						<?php if ($aplicaA != '') { ?>
-						<h3 class="display-4">Lo sentimos para el Producto solicitado no es alcanzable para la edad del <?php echo $aplicaA; ?> <?php echo $edad; ?> años</h3>
-						<?php } ?>
-						<?php if ($inhabilitadoPorRespuesta == 1) { ?>
-						<h3 class="display-4">Lo sentimos las preguntas que respondio en el cuestionario, no superan lo necesario para acceder al Producto.</h3>
-						<?php } ?>
+						<?php
+							foreach ($arErrorLbl as $value) {
+								# code...
+								echo '<h3>'.$value['error'].'</h3>';
+							}
+						?>
+						<br>
 						<h5>Por favor pongase en contacto con uno de nuestros representantes para solicitar asesoramiento, acerca del producto</h5>
 						<p>Puedes contactarnos en el Teléfono: <b><span style="color:#5DC1FD;">55 51 35 02 59</span></b></p>
 						<br>

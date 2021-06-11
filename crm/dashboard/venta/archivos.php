@@ -48,26 +48,55 @@ if (!(isset($_GET['id']))) {
 
 $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
+$idProducto = mysql_result($resCotizaciones,0,'refproductos');
+
 $resMetodoPago = $serviciosReferencias->traerMetodopagoPorCotizacion($id);
 
 
+/*
+*	verifico si existe metodo de pago, pero en el caso de que el producto sea vida 500, puede que alguna pregunta inhabilite
+*	en este caso salto el metodo de pago y cargo los archivos y firmo
+*
+*/
 
+$resInhabilitaRespuesta = $serviciosReferencias->inhabilitaRespuestascuestionarioPorCotizacion($id);
 
-if (mysql_num_rows($resMetodoPago) > 0) {
-	$idcobro = mysql_result($resMetodoPago,0,0);
-	$esDomiciliado = mysql_result($resMetodoPago,0,'reftipocobranza');
-	$existeMetodoPago = 1;
+//id: 54 vida 500
+if ($idProducto == 54) {
+	if (mysql_num_rows($resInhabilitaRespuesta)>0) {
+		$existeMetodoPago = 1;
+	} else {
+		if (mysql_num_rows($resMetodoPago) > 0) {
+			$idcobro = mysql_result($resMetodoPago,0,0);
+			$esDomiciliado = mysql_result($resMetodoPago,0,'reftipocobranza');
+			$existeMetodoPago = 1;
+		} else {
+			// creo el cobro
+			$idcobro = 0;
+			$existeMetodoPago = 0;
+		}
+	}
 } else {
-	// creo el cobro
-	$idcobro = 0;
-	$existeMetodoPago = 0;
+	if (mysql_num_rows($resMetodoPago) > 0) {
+		$idcobro = mysql_result($resMetodoPago,0,0);
+		$esDomiciliado = mysql_result($resMetodoPago,0,'reftipocobranza');
+		$existeMetodoPago = 1;
+	} else {
+		// creo el cobro
+		$idcobro = 0;
+		$existeMetodoPago = 0;
+	}
 }
+
+
+
+
 
 $idCliente = mysql_result($resCotizaciones,0,'refclientes');
 
 $lblCliente = mysql_result($resCotizaciones,0,'clientesolo');
 
-$idProducto = mysql_result($resCotizaciones,0,'refproductos');
+
 
 $resProducto = $serviciosReferencias->traerProductosPorId($idProducto);
 
@@ -352,6 +381,9 @@ if (count($filesSolicitud) < 1) {
 		case 55:
 			require ('../../reportes/rptRCMedicosR.php');
 		break;
+		case 8:
+			require ('../../reportes/rptVida500R.php');
+		break;
 	}
 	//die(var_dump(__DIR__));
 }
@@ -502,9 +534,12 @@ if (count($filesSolicitud) < 1) {
 						<!-- inicio del primer tab -->
 						<div class="tab-content">
                      <div role="tabpanel" class="tab-pane fade <?php echo $jqueryactivocliente2; ?>" id="tabcontratente">
-								<?php if (mysql_result($resClientes,0,'nroidentificacion') == '') { ?>
+							<?php 
+								$identificacionCargada = 0;
+								if (mysql_result($resClientes,0,'nroidentificacion') == '') { 
+							?>
 								<div class="row">
-									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmConttipoidentificacion" style="display:block">
+									<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 frmConttipoidentificacion" style="display:block">
 										<label class="form-label">Tipo Identificación <span style="color:red;">*</span>  </label>
 										<div class="form-group input-group">
 											<div class="form-line">
@@ -517,16 +552,31 @@ if (count($filesSolicitud) < 1) {
 										</div>
 									</div>
 
-									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContidentificacion" style="display:block">
+									<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 frmContidentificacion" style="display:block">
 										<label class="form-label">No. Identificación <span style="color:red;">*</span>  </label>
 										<div class="form-group input-group">
 											<div class="form-line">
-												<input type="text" class="form-control" id="nroidentificacion" name="nroidentificacion" maxlength="13" required />
+												<input type="text" class="form-control" id="nroidentificacion" name="nroidentificacion" minlength="9" maxlength="13" required />
 											</div>
 										</div>
 									</div>
+
+									<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 frmContidentificacion" style="display:block">
+										
+										<div class="form-group input-group">
+											
+											<button type="button" class="btn bg-light-blue waves-effect btnGuardarIdentificacion">
+												<i class="material-icons">save</i>
+												<span>GUARDAR</span>
+											</button>
+											
+										</div>
+									</div>
 								</div>
-							<?php } else { ?>
+							<?php 
+								} else { 
+									$identificacionCargada = 1;
+							?>
 								<input type="hidden" name="nroidentificacion" id="nroidentificacion" value="<?php echo mysql_result($resClientes,0,'nroidentificacion'); ?>" />
 								<input type="hidden" name="reftipoidentificacion" id="reftipoidentificacion" value="<?php echo mysql_result($resClientes,0,'reftipoidentificacion'); ?>" />
 							<?php } ?>
@@ -974,6 +1024,83 @@ if (count($filesSolicitud) < 1) {
 				}
 			});
 		}
+
+		$('.btnGuardarIdentificacion').click(function() {
+			if (($('#nroidentificacion').val() != '') && ($('#reftipoidentificacion').val() != '')) {
+				guardarIdentificacion();
+			} else {
+				swal({
+					title: "Respuesta",
+					text: 'El Tipo y No. de Identificación es obligatorio',
+					type: "error",
+					timer: 2200,
+					showConfirmButton: false
+				});
+			}
+		});
+
+
+		function guardarIdentificacion() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'guardarIdentificacion',
+					id: <?php echo $id; ?>,
+					reftipoidentificacion: $('#reftipoidentificacion').val(),
+					nroidentificacion: $('#nroidentificacion').val()
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error) {
+						swal({
+							title: "Respuesta",
+							text: 'Se genero un error al guardar los datos',
+							type: "error",
+							timer: 1000,
+							showConfirmButton: false
+						});
+
+
+					} else {
+						swal({
+							title: "Respuesta",
+							text: 'Se guardaron correctamente los datos de Identificación',
+							type: "success",
+							timer: 2000,
+							showConfirmButton: false
+						});
+
+						
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
+		<?php if (($identificacionCargada == 1) && ($cargados == $i)) { ?>
+			
+			setTimeout(function(){ $('#btnConfirmar3').click(); }, 1200);
+			//ineCargadoCotizacion();
+		<?php } ?>
 
 	});
 </script>

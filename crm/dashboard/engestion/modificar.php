@@ -914,6 +914,38 @@ $htmlChat = $chat->contruirChat();
 
 		//inbox_chat
 
+		function traerBitacoraCrea() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'traerBitacoraCrea',
+					id: <?php echo $id; ?>
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+					$('.inbox_chat').html('');
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					$('#bitacoracrea').html(data);
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+					});
+
+				}
+			});
+		}
+
 		function cargarChatUsuarios() {
 			$.ajax({
 				url: '../../ajax/ajax.php',
@@ -972,6 +1004,7 @@ $htmlChat = $chat->contruirChat();
 				success: function(data){
 					if (data == '') {
 						cargarChat();
+						traerBitacoraCrea();
 						$('.write_msg').val('');
 					} else {
 						swal({

@@ -422,6 +422,10 @@ if ($refEstadoCotizacion == 22) {
 
 
 					 <?php } ?>
+					 <button type="button" class="btn btn-lg btn-block btn-success" id="btnAvanzar" style="font-size:1.5em;">
+						<i class="material-icons" style="font-size:1.5em;">cached</i>
+						<span>SI YA VALIDARON SU COMPROBANTE PUEDE HACER CLICK Y AVANZAR</span>
+					</button>
 					 <button type="button" class="btn btn-lg btn-block btn-primary" id="btnCambiar" style="font-size:1.5em;">
 						<i class="material-icons" style="font-size:1.5em;">cached</i>
 						<span>Cambiar Metodo de Pago</span>
@@ -465,6 +469,10 @@ if ($refEstadoCotizacion == 22) {
 
 <script>
 	$(document).ready(function(){
+
+		$('#btnAvanzar').click(function() {
+			location.reload();
+		});
 
 		$('#btnCambiar').click(function(e){
 
