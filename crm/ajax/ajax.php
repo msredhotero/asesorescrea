@@ -1726,7 +1726,7 @@ function registrarEnviarCotizadorAlCliente($serviciosReferencias, $serviciosUsua
 
                $cuerpo .= '<h3>Estimado, '.$nombre.'</h3><p>';
 
-               $cuerpo .= '<p>Accede a este <a href="'.'https://asesorescrea.com/desarrollo/crm/token.php?token='.$token.'">LINK</a> para pagar el producto solicitado.</p>';
+               $cuerpo .= '<p>Accede a este <a href="'.'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">LINK</a> para pagar el producto solicitado.</p>';
 
 
                $cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
