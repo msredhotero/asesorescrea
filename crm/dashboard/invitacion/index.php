@@ -484,33 +484,7 @@ $cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ')
 
 								</div>
 
-								<div class="row">
-									<div class="row" style="padding: 5px 20px;">
-
-										<table id="example" class="display table " style="width:100%">
-											<thead>
-												<tr>
-													<th>Clientes</th>
-													<th>Evento</th>
-													<th>URL</th>
-													<th>Fecha Crea</th>
-													<th>Estado</th>
-													<th>Acciones</th>
-												</tr>
-											</thead>
-											<tfoot>
-												<tr>
-													<th>Clientes</th>
-													<th>Evento</th>
-													<th>URL</th>
-													<th>Fecha Crea</th>
-													<th>Estado</th>
-													<th>Acciones</th>
-												</tr>
-											</tfoot>
-										</table>
-									</div>
-								</div>
+								
 
 
 							</div>
