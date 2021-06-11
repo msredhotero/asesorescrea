@@ -144,7 +144,7 @@ if ($idProducto == 54) {
 		if (abs($alturaCliente - 100 - $pesoCliente) > 20) {
 			$inhabilitadoPorRespuesta = 1;
 			$nopuedeContinuar = 1;
-			array_push($arErrorLbl,array('error' => 'El peso y la altura no no califican para este producto'));
+			array_push($arErrorLbl,array('error' => 'El peso y la altura no califican para este producto'));
 		}
 	}
 }
