@@ -4711,7 +4711,7 @@ function modificarPagos($serviciosReferencias) {
 
                $cuerpo .= '<body>';
 
-               $cuerpo .= '<h3><small><p>Su autorizo su pago</small></h3><p>';
+               $cuerpo .= '<h3><small><p>Se autorizo su pago</small></h3><p>';
 
                $cuerpo .= '<h4>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$tokenL.'">AQUI</a> para continuar</h4>';
 
@@ -4721,6 +4721,8 @@ function modificarPagos($serviciosReferencias) {
                $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
 
                $cuerpo .= '</body>';
+
+               $retorno = $serviciosReferencias->enviarEmail($emailcliente,'Se autorizo su pago',utf8_decode($cuerpo));
             }
             
          }
