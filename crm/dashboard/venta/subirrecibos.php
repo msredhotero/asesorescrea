@@ -119,6 +119,8 @@ if (!isset($_SESSION['usua_sahilices']))
 			$res = $serviciosNotificaciones->insertarNotificaciones($mensaje,$idpagina,$autor,$destinatario,$id1,$id2,$id3,$icono,$estilo,$fecha,$url);
 			/*** fin de la notificacion ****/
 
+			$retorno = $serviciosReferencias->enviarEmail($emailReferente,utf8_decode('Se genero un pago por transferencia bancaria'),utf8_decode("<h4>Cliente: ".$autor."</h4><h5>Ingrese a este <a href='https://asesorescrea.com/desarrollo/crm/dashboard/listadopagos/'>link</a> para aceptarlo.</h5>"));
+
 			if ($pos === false) {
 				$image = new \Gumlet\ImageResize($imagen_subida);
 				$image->scale(50);

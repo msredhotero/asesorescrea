@@ -1059,7 +1059,12 @@ switch ($tabla) {
 
 		if ($_SESSION['idroll_sahilices'] == 7) {
 
-			$datos = $serviciosReferencias->traerVentasajaxPorUsuario($length, $start, $busqueda,$colSort,$colSortDir,$_SESSION['usuaid_sahilices']);
+			$responsableComercial = '';
+
+			$resAsesores = $serviciosReferencias->traerAsesoresPorUsuario($_SESSION['usuaid_sahilices']);
+			$idasesor = mysql_result($resAsesores,0,0);
+
+			$datos = $serviciosReferencias->traerVentasIniciadasajax($length, $start, $busqueda,$colSort,$colSortDir,$responsableComercial,$min,$max,$idasesor);
 
 			$resAjax = $datos[0];
 			$res = $datos[1];

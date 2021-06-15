@@ -272,6 +272,7 @@ $refCampo 	=  array();
 		       </div>
 		   </div>
 			<input type="hidden" id="accion" name="accion" value="<?php echo $modificar; ?>"/>
+			<input type="hidden" id="avisocliente" name="avisocliente" value="1" />
 		</form>
 
 

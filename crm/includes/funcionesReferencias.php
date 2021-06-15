@@ -1127,21 +1127,29 @@ return $res;
 
       $resEvento = $this->traerEventosPorId($refevento);
 
-      if (mysql_num_rows($resEvento)>0) {
-         if (mysql_result($resEvento,0,'activo') == '1') {
-            $sql = "insert into dbtrazabilidad(idtrazabilidad,reftabla,idreferencia,fechacrea,refevento,usuariocrea,idreferenciaaux1,idreferenciaaux2,idreferenciaaux3,dato,url)
-            values ('',".$reftabla.",".$idreferencia.",'".$fechacrea."',".$refevento.",'".$usuariocrea."',".$idreferenciaaux1.",".$idreferenciaaux2.",".$idreferenciaaux3.",'".$dato."','".$url."')";
-            $res = $this->query($sql,1);
-
-            if (((integer)$res > 0) && ($reftabla==12) && ((mysql_result($resEvento,0,'enviaemailaagente') == '1') || (mysql_result($resEvento,0,'enviaemailagestion') == '1') || ($url != ''))) {
-               $resMensaje = $this->enviarEmailModificacionCotizacion($idreferencia,mysql_result($resEvento,0,'nombre').' - '.$dato,$url,1,$refevento);
+      if ($refevento == 99) {
+         $resMensaje = $this->enviarEmailModificacionCotizacion($idreferencia,'Emision - '.$dato,$url,1,29);
+         $sql = "insert into dbtrazabilidad(idtrazabilidad,reftabla,idreferencia,fechacrea,refevento,usuariocrea,idreferenciaaux1,idreferenciaaux2,idreferenciaaux3,dato,url)
+               values ('',".$reftabla.",".$idreferencia.",'".$fechacrea."',12,'".$usuariocrea."',".$idreferenciaaux1.",".$idreferenciaaux2.",".$idreferenciaaux3.",'".$dato."','".$url."')";
+               $res = $this->query($sql,1);
+      } else {
+         if (mysql_num_rows($resEvento)>0) {
+            if (mysql_result($resEvento,0,'activo') == '1') {
+               $sql = "insert into dbtrazabilidad(idtrazabilidad,reftabla,idreferencia,fechacrea,refevento,usuariocrea,idreferenciaaux1,idreferenciaaux2,idreferenciaaux3,dato,url)
+               values ('',".$reftabla.",".$idreferencia.",'".$fechacrea."',".$refevento.",'".$usuariocrea."',".$idreferenciaaux1.",".$idreferenciaaux2.",".$idreferenciaaux3.",'".$dato."','".$url."')";
+               $res = $this->query($sql,1);
+   
+               if (((integer)$res > 0) && ($reftabla==12) && ((mysql_result($resEvento,0,'enviaemailaagente') == '1') || (mysql_result($resEvento,0,'enviaemailagestion') == '1') || ($url != ''))) {
+                  $resMensaje = $this->enviarEmailModificacionCotizacion($idreferencia,mysql_result($resEvento,0,'nombre').' - '.$dato,$url,1,$refevento);
+               }
+            } else {
+               $res = 0;
             }
          } else {
             $res = 0;
          }
-      } else {
-         $res = 0;
       }
+      
 
 
 

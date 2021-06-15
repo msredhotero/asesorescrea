@@ -1662,6 +1662,7 @@ function registrarEnviarCotizadorAlCliente($serviciosReferencias, $serviciosUsua
    $ciudad           =  ($_POST['ciudad'] == '' ? $_POST['municipio'] : $_POST['ciudad']);
    $refestadocivil   =  $_POST['refestadocivil'];
    $refasesores      =  25;
+   $reftiporegistro  =  $_POST['reftiporegistro'];
 
    $fechacrea = date('Y-m-d H:i:s');
    $usuariocrea = $_SESSION['usua_sahilices'];
@@ -1686,63 +1687,93 @@ function registrarEnviarCotizadorAlCliente($serviciosReferencias, $serviciosUsua
 
          if ((integer)$refclientes > 0) {
 
-            //cargo la cotizacion justo para pagar
-            $refestadocotizaciones = 19;
+            //elegio una cotizacion completa
+            if ($reftiporegistro == 1) {
 
-            $resCotizacion = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,0,$refestadocotizaciones,'0','0','Negocio nuevo','No','',date('Y-m-d'),'',$fechacrea,$fechacrea,$usuariocrea,$usuariocrea,$refusuarios,'Creado desde redes sociales','',0,'0',0,0,1,'','');
+               //cargo la cotizacion justo para pagar
+               $refestadocotizaciones = 19;
+
+               $resCotizacion = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,0,$refestadocotizaciones,'0','0','Negocio nuevo','No','',date('Y-m-d'),'',$fechacrea,$fechacrea,$usuariocrea,$usuariocrea,$refusuarios,'Creado desde redes sociales','',0,'0',0,0,1,'','');
 
 
-            if ((integer)$resCotizacion > 0) {
+               if ((integer)$resCotizacion > 0) {
 
-               $resModificar1 = $serviciosReferencias->modificarCotizacionesPorCampo($resCotizacion,'primaneta',1501,$usuariocrea);
-               $resModificar2 = $serviciosReferencias->modificarCotizacionesPorCampo($resCotizacion,'primatotal',1501,$usuariocrea);
-               $resModificar3 = $serviciosReferencias->modificarCotizacionesPorCampo($resCotizacion,'refestados',1,$usuariocrea);
+                  $resModificar1 = $serviciosReferencias->modificarCotizacionesPorCampo($resCotizacion,'primaneta',1501,$usuariocrea);
+                  $resModificar2 = $serviciosReferencias->modificarCotizacionesPorCampo($resCotizacion,'primatotal',1501,$usuariocrea);
+                  $resModificar3 = $serviciosReferencias->modificarCotizacionesPorCampo($resCotizacion,'refestados',1,$usuariocrea);
 
-               $token = $serviciosReferencias->GUID();
-               //$url = 'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token;
-               $url = 'venta/metodopago.php?id='.$resCotizacion;
-               $resAutoLogin = $serviciosReferencias->insertarAutologin($refusuarios,$token,$url,'0');
+                  $token = $serviciosReferencias->GUID();
+                  //$url = 'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token;
+                  $url = 'venta/metodopago.php?id='.$resCotizacion;
+                  $resAutoLogin = $serviciosReferencias->insertarAutologin($refusuarios,$token,$url,'0');
 
-               $resV['url'] = 'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token;
-               //$resV['url'] = 'http://localhost/asesorescrea_nuevo.git/trunk/crm/alogin.php?token='.$token;
+                  $resV['url'] = 'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token;
+                  //$resV['url'] = 'http://localhost/asesorescrea_nuevo.git/trunk/crm/alogin.php?token='.$token;
+
+                  
+
+                  $cuerpo = '';
+
+                  $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+                  $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+                  $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+                  $cuerpo .= "
+                  <style>
+                     body { font-family: 'Lato', sans-serif; }
+                     header { font-family: 'Prata', serif; }
+                  </style>";
+
+                  $cuerpo .= '<body>';
+
+                  $cuerpo .= '<h3>Estimad@, '.$nombre.'</h3><p>';
+
+                  $cuerpo .= '<p>Accede a este <a href="'.'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">LINK</a> para pagar el producto solicitado.</p>';
+
+
+                  $cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
+
+                  $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+                  $cuerpo .= '</body>';
+
+                  $resMensaje = $serviciosReferencias->insertarMensajes($cuerpo,$usuariocrea,$email,$fechacrea);
+
+                  $retorno = $serviciosReferencias->enviarEmail($email,utf8_decode('Proceso de Cotización'),utf8_decode($cuerpo));
+
+                  $resV['mensaje'] = 'Se genero correctamente la cotizacion';
+               } else {
+                  $resV['mensaje'] = 'Se genero un error al crear la cotizacion';
+                  $resV['error'] = true;
+               }
+            } else {
+               //genero un lead
 
                
+               $fechacrea = date('Y-m-d H:i:s');
+               $fechamodi = date('Y-m-d H:i:s');
+               $contactado = 0;
+               $usuariocontacto = '';
+               $usuarioresponsable = '';
+               $cita = '';
+               $refestadolead = 1;
+               $fechacreacita = '';
+               $observaciones = 'Generado desde el CRM';
+               $refproductosweb = $refproductos;
+               $reforigencomercio = 1;
 
-               $cuerpo = '';
+               $res = $serviciosReferencias->insertarLead($refclientes,0,$fechacrea,$fechamodi,$contactado,$usuariocontacto,$usuarioresponsable,$cita,$refestadolead,$fechacreacita,$observaciones,$refproductosweb,$reforigencomercio);
 
-               $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+               if ((integer)$res > 0) {
+                  $resV['error'] = false;
+                  $resV['mensaje'] = 'Se genero correctamente el LEAD';
+               } else {
+                  $resV['error'] = true;
+                  $resV['mensaje'] = 'Hubo un error al insertar datos, vuelva a intentarlo';
+               }
 
-               $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
-
-               $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
-
-               $cuerpo .= "
-               <style>
-                  body { font-family: 'Lato', sans-serif; }
-                  header { font-family: 'Prata', serif; }
-               </style>";
-
-               $cuerpo .= '<body>';
-
-               $cuerpo .= '<h3>Estimado, '.$nombre.'</h3><p>';
-
-               $cuerpo .= '<p>Accede a este <a href="'.'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">LINK</a> para pagar el producto solicitado.</p>';
-
-
-               $cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
-
-               $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
-
-               $cuerpo .= '</body>';
-
-               $resMensaje = $serviciosReferencias->insertarMensajes($cuerpo,$usuariocrea,$email,$fechacrea);
-
-               $retorno = $serviciosReferencias->enviarEmail($email,utf8_decode('Proceso de Cotización'),utf8_decode($cuerpo));
-
-               $resV['mensaje'] = 'Se genero correctamente la cotizacion';
-            } else {
-               $resV['mensaje'] = 'Se genero un error al crear la cotizacion';
-               $resV['error'] = true;
             }
 
             
@@ -4112,7 +4143,7 @@ function mostrarComprobanteDePago($serviciosReferencias) {
 
 
    	}
-   	if (mysql_result($resultado,0,'refcuentasbancarias') == 1) {
+   	if ((mysql_result($resultado,0,'refcuentasbancarias') == 1) || (mysql_result($resultado,0,'refcuentasbancarias') == 3)) {
    		$urlArchivo = '../../archivos/comprobantespago/'.mysql_result($resultado,0,'idreferencia').'/'.mysql_result($resultado,0,'archivos');
    	}
 
@@ -4596,7 +4627,7 @@ function insertarVentas($serviciosReferencias) {
       }
 
       //trazabilidad finaliza la cotizacion en una poliza
-      $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$refcotizaciones,$fechacrea,12,$usuariocrea,0,0,0,'Cotización Aceptada - Poliza/Nro Tarjeta: '.$nropoliza,'');
+      $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$refcotizaciones,$fechacrea,99,$usuariocrea,0,0,0,'Cotización Aceptada - Poliza/Nro Tarjeta: '.$nropoliza,'');
 
       
 
@@ -4630,16 +4661,66 @@ function modificarPagos($serviciosReferencias) {
    $contratante = $_POST['contratante'];
    $nrorecibo = $_POST['nrorecibo'];
 
+   if (isset($_POST['avisocliente'])) {
+      $avisocliente = 1;
+   } else {
+      $avisocliente = 0;
+   }
+
    $res = $serviciosReferencias->modificarPagos($id,$reftabla,$idreferencia,$monto,$token,$destino,$refcuentasbancarias,$conciliado,$archivos,$type,$fechacrea,$usuariocrea,$refestado,$razonsocial,$contratante,$nrorecibo,'0');
    if ($res == true) {
       if ($refestado == 5) {
          if ($reftabla == 12) {
-            $resCotizaciones = $serviciosReferencias->traerCotizacionesPorId($idreferencia);
+            $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($idreferencia);
 
+            $emailcliente = mysql_result($resCotizaciones,0,'email');
+            $idcliente = mysql_result($resCotizaciones,0,'refclientes');
+            
+            //41 producto vrim no sube ine
             if (mysql_result($resCotizaciones,0,'refproductos') == 41) {
                $resModCotizacion = $serviciosReferencias->modificarCotizacionesPorCampo($idreferencia,'refestadocotizaciones',21, $_SESSION['usua_sahilices']);
             } else {
                $resModCotizacion = $serviciosReferencias->modificarCotizacionesPorCampo($idreferencia,'refestadocotizaciones',20, $_SESSION['usua_sahilices']);
+            }
+
+            if ($avisocliente == 1) {
+               $cuerpo = '';
+
+               $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+               $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+               $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+               $cuerpo .= "
+               <style>
+                  body { font-family: 'Lato', sans-serif; }
+                  header { font-family: 'Prata', serif; }
+               </style>";
+
+               $resCliente = $serviciosReferencias->traerClientesPorId($idcliente);
+
+               $refusuariosclientes = mysql_result($resCliente,0,'refusuarios');
+
+               $url = 'http://localhost/asesorescrea_nuevo.git/trunk/crm/dashboard/venta/comprobantepago.php?id='.$idreferencia;
+
+               $tokenL = $serviciosReferencias->GUID();
+               $resAutoLogin = $serviciosReferencias->insertarAutologin($refusuariosclientes,$tokenL,$url,'0');
+
+               
+
+               $cuerpo .= '<body>';
+
+               $cuerpo .= '<h3><small><p>Su autorizo su pago</small></h3><p>';
+
+               $cuerpo .= '<h4>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$tokenL.'">AQUI</a> para continuar</h4>';
+
+
+               $cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
+
+               $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+               $cuerpo .= '</body>';
             }
             
          }

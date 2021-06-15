@@ -434,6 +434,8 @@ $cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ')
 															</div>
 														</div>
 													</div>
+												</div>
+												<div class="row">
 													<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12" style="display:block">
 														<label class="form-label">Cod. Postal</label>
 														<div class="form-group input-group">
@@ -444,7 +446,19 @@ $cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ')
 														</div>
 													</div>
 
-													<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="display:block">
+													<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" style="display:block">
+														<label class="form-label">Tipo de Registro</label>
+														<div class="form-group input-group">
+															<div class="form-line">
+																<select class="form-control" id="reftiporegistro" name="reftiporegistro">
+																	<option value="1">Registro + Producto</option>
+																	<option value="2">Registro Simple</option>
+																</select>
+															</div>
+														</div>
+													</div>
+
+													<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" style="display:block">
 														<label class="form-label">PRODUCTO/SERVICIO</label>
 														<div class="form-group input-group">
 															<div class="form-line">
@@ -549,6 +563,15 @@ $cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ')
 
 	$(document).ready(function(){
 
+		$('#reftiporegistro').change(function() {
+			if ($(this).val() == 1) {
+				$('#refproductos').html('<option value="41">VRIM PLATINO - $ 1,501.00</option>');
+			} else {
+				$('#refproductos').html('<option value="1">VIDA</option><option value="2">AUTOS</option><option value="3">GASTOS MÉDICOS</option><option value="4">PROTECCIÓN HOGAR</option><option value="5">CRÉDITO HIPOTECARIO</option><option value="6">CUENTA DE AHORRO</option><option value="7">TARJETA DE CRÉDITO</option><option value="8">CRÉDITO TELMEX</option>');
+			}
+			
+		});
+
 		$('.btnGenerarEnviar').hide();
 
 		function existeCliente(dato,tipo) {
@@ -625,6 +648,14 @@ $cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ')
 				//mientras enviamos el archivo
 				beforeSend: function(){
 					$('.erroresRFC').html('');
+					$('#domicilio').val('');
+					$('#nroexterior').val('');
+					$('#nrointerior').val('');
+					$('#email').val('');
+					$('#estado').val('');
+					$('#colonia').val('');
+					$('#municipio').val('');
+					$('#codigopostal').val('');
 
 				},
 				//una vez finalizado correctamente
@@ -689,6 +720,14 @@ $cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ')
 				beforeSend: function(){
 					$('.erroresCURP').html('');
 					$('#rfc').val('');
+					$('#domicilio').val('');
+					$('#nroexterior').val('');
+					$('#nrointerior').val('');
+					$('#email').val('');
+					$('#estado').val('');
+					$('#colonia').val('');
+					$('#municipio').val('');
+					$('#codigopostal').val('');
 				},
 				//una vez finalizado correctamente
 				success: function(data){
