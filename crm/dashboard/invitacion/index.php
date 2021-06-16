@@ -328,7 +328,7 @@ $cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ')
 												</div>
 												<div class="row">
 													<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" style="display:block">
-														<label class="form-label">Fecha Naciimento</label>
+														<label class="form-label">Fecha Nacimiento</label>
 														<div class="form-group input-group">
 															<div class="form-line">
 																<input type="date" class="form-control" id="fechanacimiento" name="fechanacimiento" >
