@@ -714,7 +714,7 @@ jQuery(document).ready(function(){
          ?>
 
       <div class="row">
-         <p><bottom class="wpcf7-form-control" onClick="window.location='https://asesorescrea.com/registro.html'" style="display: inline-block;
+         <p><bottom class="wpcf7-form-control" onClick="window.location='https://asesorescrea.com/desarrollo/crm/registro3.html'" style="display: inline-block;
           transition: background-color 300ms;
           color: #fff;
           border-radius: 0;
