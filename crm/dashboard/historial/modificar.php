@@ -184,7 +184,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',mysql_result($resultado,0,'refestadocotizaciones'));
 } else {
 
-	$resVar6 = $serviciosReferencias->traerEstadocotizacionesPorIn('1,4,8,10,12,13,26,27');
+	$resVar6 = $serviciosReferencias->traerEstadocotizaciones();
 	$cadRef6 = $serviciosFunciones->devolverSelectBoxActivo($resVar6,array(1),'',mysql_result($resultado,0,'refestadocotizaciones'));
 }
 
