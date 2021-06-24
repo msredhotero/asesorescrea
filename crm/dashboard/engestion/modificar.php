@@ -621,11 +621,8 @@ $htmlChat = $chat->contruirChat();
 								<div class="row" style="padding: 5px 20px;">
 
 									<?php echo $frmUnidadNegocios; ?>
-									<div class="form-group col-md-12 frmContobservaciones" style="display:block">
-										<label for="observaciones" class="control-label" style="text-align:left">Escriba mensaje para la bitacora </label>
-										<div class="input-group col-md-12">
-											<textarea type="text" rows="4" cols="6" class="form-control" id="bitacora" name="bitacora" placeholder="Ingrese el mensaje..."></textarea>
-										</div>
+									<div class="form-group col-md-12 frmContiniciarchat" style="display:block">
+										<button type="button" data-bitacora="bitacorainbursa" class="btn btn-success waves-effect btnIniciarChat">INICIAR CHAT</button>
 
 									</div>
 									<input type="hidden" id="estadoactual" name="estadoactual" value=""/>
@@ -705,7 +702,7 @@ $htmlChat = $chat->contruirChat();
 									<p>Acciones</p>
 									<div class="modal-footer">
 										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-											<button type="button" data-bitacora="bitacorainbursa" class="btn btn-success waves-effect btnModificarBitacora">MODIFICAR BITACORA</button>
+											<!--<button type="button" data-bitacora="bitacorainbursa" class="btn btn-success waves-effect btnModificarBitacora">MODIFICAR BITACORA</button>-->
 									<?php if ($_SESSION['idroll_sahilices'] != 7) { ?>
 										<?php if (($idestado == 4 )) { ?>
 											<?php
@@ -890,7 +887,11 @@ $htmlChat = $chat->contruirChat();
 		
 		$(".inbox_chat").on("click",'.chat_list', function(){	
 
+			$(".inbox_chat .chat_list").removeClass('active_chat');
+
 			idTable =  $(this).attr("id");
+
+			$(this).addClass('active_chat');
 
 			emaildest = idTable;
 
@@ -956,7 +957,8 @@ $htmlChat = $chat->contruirChat();
 					accion: 'traerUsuariosChat',
 					email: '<?php echo $_SESSION['usua_sahilices']; ?>',
 					emaildestinatario: emaildest,
-					emailasesor: '<?php echo $emailasesor; ?>'
+					emailasesor: '<?php echo $emailasesor; ?>',
+					idreferencia: <?php echo $id; ?>
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
@@ -965,6 +967,12 @@ $htmlChat = $chat->contruirChat();
 				//una vez finalizado correctamente
 				success: function(data){
 					$('.inbox_chat').html(data.usuarios);
+					if (data.seteo != '') {
+						emaildest = data.seteo;
+
+						cargarChat();
+					}
+					
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -1031,6 +1039,8 @@ $htmlChat = $chat->contruirChat();
 			});
 		}
 
+		
+
 		function cargarChat() {
 			$.ajax({
 				url: '../../ajax/ajax.php',
@@ -1051,7 +1061,7 @@ $htmlChat = $chat->contruirChat();
 				//una vez finalizado correctamente
 				success: function(data){
 					$('.msg_history').html(data.mensajes);
-					cargarChatUsuarios();
+					
 				},
 				//si ha ocurrido un error
 				error: function(){
@@ -1068,10 +1078,17 @@ $htmlChat = $chat->contruirChat();
 		}
 
 		cargarChat();
+		cargarChatUsuarios();
 
 		$('#iniciarChat').click(function() {
 			$('#lgmChat').modal();
 		});
+
+		$('.btnIniciarChat').click(function() {
+			$('#lgmChat').modal();
+		});
+
+		$('.frmContobservaciones').hide();
 
 		$('.btnMotivos').click(function() {
 			$('#lgmMOTIVOS').modal();

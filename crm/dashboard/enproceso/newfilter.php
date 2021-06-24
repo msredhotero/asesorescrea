@@ -610,6 +610,7 @@ $resSuscriptores = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesa
 $resMesaControl = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosArea($idasesor,3);
 $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosArea($idasesor,1);
 
+// el usuario de suscripcion que esta cargando este cotizacion sera el seteado por defecto en el combobox
 
 
 ?>
@@ -1270,9 +1271,15 @@ $resVentas = $serviciosReferencias->traerDirectorioasesoresPorAsesorNecesariosAr
 													<select required id="suscriptor_select" name="suscriptor_select[]" class="js-example-basic-multiple" multiple="multiple">
 												<?php
 												while ($rowD = mysql_fetch_array($resSuscriptores)) {
+													if ($_SESSION['usua_sahilices'] == $rowD['email']) { 
 												?>
-														<option value="<?php echo $rowD['iddirectorioasesor']; ?>"><?php echo $rowD['razonsocial']; ?></option>
+													<option value="<?php echo $rowD['iddirectorioasesor']; ?>" selected><?php echo $rowD['razonsocial']; ?></option>
+													<?php
+													} else {
+													?>
+													<option value="<?php echo $rowD['iddirectorioasesor']; ?>"><?php echo $rowD['razonsocial']; ?></option>
 												<?php
+													}
 												}
 												?>
 													</select>

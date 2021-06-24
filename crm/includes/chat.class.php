@@ -42,57 +42,165 @@ class chatCrea {
             break;
             case 20:
                 $sql = "SELECT 
-                    u.email, u.nombrecompleto, r.descripcion AS posicion
+                r.email, r.nombrecompleto, r.posicion
+            FROM
+                (SELECT 
+                    da.email COLLATE utf8_spanish_ci AS email,
+                        da.razonsocial COLLATE utf8_spanish_ci AS nombrecompleto,
+                        a.area COLLATE utf8_spanish_ci AS posicion
+                FROM
+                    dbdirectorioasesores da
+                INNER JOIN tbareasdirectorio a ON a.idareadirectorio = da.refareadirectorios
+                INNER JOIN dbasesores ase ON ase.idasesor = da.refasesores
+                INNER JOIN dbusuarios u ON u.idusuario = ase.refusuarios
+                WHERE
+                    u.email = '".$this->getEmailasesor()."'
+                        AND a.idareadirectorio IN (2 , 3) UNION ALL SELECT 
+                    u.email COLLATE utf8_spanish_ci AS email,
+                        u.nombrecompleto COLLATE utf8_spanish_ci AS nombrecompleto,
+                        r.descripcion COLLATE utf8_spanish_ci AS posicion
                 FROM
                     dbusuarios u
-                        INNER JOIN
-                    tbroles r ON r.idrol = u.refroles
-                where (u.refroles in (2,3,4,11,21) or (u.refroles = 7 and u.email = '".$this->getEmailasesor()."'))";
+                INNER JOIN tbroles r ON r.idrol = u.refroles
+                WHERE
+                    (u.refroles IN (2,3,4,11,21)
+                        OR (u.refroles = 7
+                        AND u.email = '".$this->getEmailasesor()."'))) r";
             break;
             case 21:
                 $sql = "SELECT 
-                    u.email, u.nombrecompleto, r.descripcion AS posicion
+                r.email, r.nombrecompleto, r.posicion
+            FROM
+                (SELECT 
+                    da.email COLLATE utf8_spanish_ci AS email,
+                        da.razonsocial COLLATE utf8_spanish_ci AS nombrecompleto,
+                        a.area COLLATE utf8_spanish_ci AS posicion
+                FROM
+                    dbdirectorioasesores da
+                INNER JOIN tbareasdirectorio a ON a.idareadirectorio = da.refareadirectorios
+                INNER JOIN dbasesores ase ON ase.idasesor = da.refasesores
+                INNER JOIN dbusuarios u ON u.idusuario = ase.refusuarios
+                WHERE
+                    u.email = '".$this->getEmailasesor()."'
+                        AND a.idareadirectorio IN (2 , 3) UNION ALL SELECT 
+                    u.email COLLATE utf8_spanish_ci AS email,
+                        u.nombrecompleto COLLATE utf8_spanish_ci AS nombrecompleto,
+                        r.descripcion COLLATE utf8_spanish_ci AS posicion
                 FROM
                     dbusuarios u
-                        INNER JOIN
-                    tbroles r ON r.idrol = u.refroles
-                where (u.refroles in (2,3,4,11,20) or (u.refroles = 7 and u.email = '".$this->getEmailasesor()."'))";
+                INNER JOIN tbroles r ON r.idrol = u.refroles
+                WHERE
+                    (u.refroles IN (2,3,4,11,20)
+                        OR (u.refroles = 7
+                        AND u.email = '".$this->getEmailasesor()."'))) r";
             break;
             case 2:
                 $sql = "SELECT 
-                    u.email, u.nombrecompleto, r.descripcion AS posicion
+                r.email, r.nombrecompleto, r.posicion
+            FROM
+                (SELECT 
+                    da.email COLLATE utf8_spanish_ci AS email,
+                        da.razonsocial COLLATE utf8_spanish_ci AS nombrecompleto,
+                        a.area COLLATE utf8_spanish_ci AS posicion
+                FROM
+                    dbdirectorioasesores da
+                INNER JOIN tbareasdirectorio a ON a.idareadirectorio = da.refareadirectorios
+                INNER JOIN dbasesores ase ON ase.idasesor = da.refasesores
+                INNER JOIN dbusuarios u ON u.idusuario = ase.refusuarios
+                WHERE
+                    u.email = '".$this->getEmailasesor()."'
+                        AND a.idareadirectorio IN (2 , 3) UNION ALL SELECT 
+                    u.email COLLATE utf8_spanish_ci AS email,
+                        u.nombrecompleto COLLATE utf8_spanish_ci AS nombrecompleto,
+                        r.descripcion COLLATE utf8_spanish_ci AS posicion
                 FROM
                     dbusuarios u
-                        INNER JOIN
-                    tbroles r ON r.idrol = u.refroles
-                where (u.refroles in (21,3,4,11,20) or (u.refroles = 7 and u.email = '".$this->getEmailasesor()."'))";
+                INNER JOIN tbroles r ON r.idrol = u.refroles
+                WHERE
+                    (u.refroles IN (21,3,4,11,20)
+                        OR (u.refroles = 7
+                        AND u.email = '".$this->getEmailasesor()."'))) r";
             break;
             case 3:
                 $sql = "SELECT 
-                    u.email, u.nombrecompleto, r.descripcion AS posicion
+                r.email, r.nombrecompleto, r.posicion
+            FROM
+                (SELECT 
+                    da.email COLLATE utf8_spanish_ci AS email,
+                        da.razonsocial COLLATE utf8_spanish_ci AS nombrecompleto,
+                        a.area COLLATE utf8_spanish_ci AS posicion
+                FROM
+                    dbdirectorioasesores da
+                INNER JOIN tbareasdirectorio a ON a.idareadirectorio = da.refareadirectorios
+                INNER JOIN dbasesores ase ON ase.idasesor = da.refasesores
+                INNER JOIN dbusuarios u ON u.idusuario = ase.refusuarios
+                WHERE
+                    u.email = '".$this->getEmailasesor()."'
+                        AND a.idareadirectorio IN (2 , 3) UNION ALL SELECT 
+                    u.email COLLATE utf8_spanish_ci AS email,
+                        u.nombrecompleto COLLATE utf8_spanish_ci AS nombrecompleto,
+                        r.descripcion COLLATE utf8_spanish_ci AS posicion
                 FROM
                     dbusuarios u
-                        INNER JOIN
-                    tbroles r ON r.idrol = u.refroles
-                where (u.refroles in (2,21,4,11,20) or (u.refroles = 7 and u.email = '".$this->getEmailasesor()."'))";
+                INNER JOIN tbroles r ON r.idrol = u.refroles
+                WHERE
+                    (u.refroles IN (2,21,4,11,20)
+                        OR (u.refroles = 7
+                        AND u.email = '".$this->getEmailasesor()."'))) r";
             break;
             case 4:
                 $sql = "SELECT 
-                    u.email, u.nombrecompleto, r.descripcion AS posicion
+                r.email, r.nombrecompleto, r.posicion
+            FROM
+                (SELECT 
+                    da.email COLLATE utf8_spanish_ci AS email,
+                        da.razonsocial COLLATE utf8_spanish_ci AS nombrecompleto,
+                        a.area COLLATE utf8_spanish_ci AS posicion
+                FROM
+                    dbdirectorioasesores da
+                INNER JOIN tbareasdirectorio a ON a.idareadirectorio = da.refareadirectorios
+                INNER JOIN dbasesores ase ON ase.idasesor = da.refasesores
+                INNER JOIN dbusuarios u ON u.idusuario = ase.refusuarios
+                WHERE
+                    u.email = '".$this->getEmailasesor()."'
+                        AND a.idareadirectorio IN (2 , 3) UNION ALL SELECT 
+                    u.email COLLATE utf8_spanish_ci AS email,
+                        u.nombrecompleto COLLATE utf8_spanish_ci AS nombrecompleto,
+                        r.descripcion COLLATE utf8_spanish_ci AS posicion
                 FROM
                     dbusuarios u
-                        INNER JOIN
-                    tbroles r ON r.idrol = u.refroles
-                where (u.refroles in (2,21,3,11,20) or (u.refroles = 7 and u.email = '".$this->getEmailasesor()."'))";
+                INNER JOIN tbroles r ON r.idrol = u.refroles
+                WHERE
+                    (u.refroles IN (2,21,3,11,20)
+                        OR (u.refroles = 7
+                        AND u.email = '".$this->getEmailasesor()."'))) r";
             break;
             case 1:
                 $sql = "SELECT 
-                    u.email, u.nombrecompleto, r.descripcion AS posicion
+                r.email, r.nombrecompleto, r.posicion
+            FROM
+                (SELECT 
+                    da.email COLLATE utf8_spanish_ci AS email,
+                        da.razonsocial COLLATE utf8_spanish_ci AS nombrecompleto,
+                        a.area COLLATE utf8_spanish_ci AS posicion
+                FROM
+                    dbdirectorioasesores da
+                INNER JOIN tbareasdirectorio a ON a.idareadirectorio = da.refareadirectorios
+                INNER JOIN dbasesores ase ON ase.idasesor = da.refasesores
+                INNER JOIN dbusuarios u ON u.idusuario = ase.refusuarios
+                WHERE
+                    u.email = '".$this->getEmailasesor()."'
+                        AND a.idareadirectorio IN (2 , 3) UNION ALL SELECT 
+                    u.email COLLATE utf8_spanish_ci AS email,
+                        u.nombrecompleto COLLATE utf8_spanish_ci AS nombrecompleto,
+                        r.descripcion COLLATE utf8_spanish_ci AS posicion
                 FROM
                     dbusuarios u
-                        INNER JOIN
-                    tbroles r ON r.idrol = u.refroles
-                where (u.refroles in (2,21,3,11,20,4) or (u.refroles = 7 and u.email = '".$this->getEmailasesor()."'))";
+                INNER JOIN tbroles r ON r.idrol = u.refroles
+                WHERE
+                    (u.refroles IN (2,21,3,11,20,4)
+                        OR (u.refroles = 7
+                        AND u.email = '".$this->getEmailasesor()."'))) r";
             break;
         }
 

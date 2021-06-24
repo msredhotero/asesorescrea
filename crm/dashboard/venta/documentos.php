@@ -57,6 +57,8 @@ $idCliente = mysql_result($resCotizaciones,0,'refclientes');
 
 $resCliente = $serviciosReferencias->traerClientesPorIdCompleto($idCliente);
 
+$rfcCliente = strtoupper(mysql_result($resCliente,0,'rfc') == '' ? substr(mysql_result($resCliente,0,'curp'),0,10) : mysql_result($resCliente,0,'rfc'));
+
 $lblCliente = mysql_result($resCotizaciones,0,'clientesolo');
 
 $idProducto = mysql_result($resCotizaciones,0,'refproductos');
@@ -762,9 +764,13 @@ if ($idProducto == 41) {
 
 								//si es vida 500 y tiene alguna pregunta que inhabilite, por ahora asi queda
 								//id: 54
+								$envioSolicitudParaAutorizar = 0;
 								if ($idProducto == 54) {
 									$resInhabilitaRespuesta = $serviciosReferencias->inhabilitaRespuestascuestionarioPorCotizacion($id);
 									if (mysql_num_rows($resInhabilitaRespuesta)>0) {
+
+										$envioSolicitudParaAutorizar = 1;
+
 										//envio email a vidaseleccion@inbursa.com y a ruth
 										$asunto = 'Emisión en VIDA 500';
 
@@ -785,7 +791,9 @@ if ($idProducto == 41) {
 										$cuerpo .= '<body>';
 
 										
-										$cuerpo .= '<p> Cliente: '.$lblCliente.' - Producto: VIDA 500 </p>';
+										$cuerpo .= '<h3> Cliente: '.$lblCliente.' - Producto: VIDA 500 </h3>';
+
+										$cuerpo .= '<p> Haga click <a href="https://asesorescrea.com/desarrollo/crm/dashboard/entradas/index.php?id='.$id.'">aqui</a> para acceder a la solicitud </p>';
 										
 
 										$cuerpo .= '</body>';
@@ -1056,11 +1064,43 @@ if ($idProducto == 41) {
 		 <div class="modal-dialog modal-xlg" role="document">
 			  <div class="modal-content">
 					<div class="modal-header">
-						 <h4 class="modal-title" id="largeModalLabel">POR FAVOR CONFIRME O MODIFIQUE LA SIGUIENTE INFORMACION</h4>
+						 <h4 class="modal-title" id="largeModalLabel">POR FAVOR CONFIRME O MODIFIQUE LA SIGUIENTE INFORMACIóN</h4>
 					</div>
 					<div class="modal-body">
 						<div class="row">
 							<p style="color:red;">* Si falta algun dato o un dato esta incorrecto, agregue o modifique.</p>
+							<div class="row">
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">CREAR CONTRASEÑA: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="password" minlength="8" maxlength="20" class="form-control" id="dcpassword" name="dcpassword" />
+										</div>
+									</div>
+									<h6 style="color:red;">Tu PASSWORD debe contener (8 caracteres, al menos una mayúscula, al menos una minúscula y un numero).</h6>
+								</div>
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">RFC: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" minlength="12" maxlength="13" class="form-control" id="dcrfc" name="dcrfc" value="<?php echo $rfcCliente; ?>" />
+										</div>
+									</div>
+								</div>
+								<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" style="display:block">
+									<label class="form-label">Estado Civil</label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<select class="form-control" name="dcrefestadocivil" id="dcrefestadocivil">
+												<option value="7">No indico</option>
+												<option value="1">Soltero</option>
+												<option value="2">Casado</option>
+											</select>
+
+										</div>
+									</div>
+								</div>
+							</div>
 							<div class="row">
 								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContrfc" style="display:block">
 									<label class="form-label">Tel. Movil: <span style="color:red;">*</span>  </label>
@@ -1208,8 +1248,22 @@ if ($idProducto == 41) {
 <script>
 	$(document).ready(function(){
 
+		$('#dcrefestadocivil').val(<?php echo (mysql_result($resCliente,0,'refestadocivil') == '' ? 7 : mysql_result($resCliente,0,'refestadocivil')); ?>);
+
+		function validarPASS(pass) {
+				var re = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/,
+				validado = pass.match(re);
+
+			if (!validado)  //Coincide con el formato general?
+				return false;
+
+			return true; //Validado
+		}
+
+	
+
 		$('.btnModificarDC').click(function() {
-			if (($('#dctelefonocelular').val() == '') || ($('#dccalle').val() == '') || ($('#dcnrointerior').val() == '') || ($('#dcnroexterior').val() == '') || ($('#dccodigopostal').val() == '') || ($('#dcestado').val() == '') || ($('#dccolonia').val() == '') || ($('#dcmunicipio').val() == '') ) {
+			if (($('#dctelefonocelular').val() == '') || ($('#dcrfc').val() == '') ||  ($('#dcpassword').val() == '') || ($('#dccalle').val() == '') || ($('#dcnrointerior').val() == '') || ($('#dcnroexterior').val() == '') || ($('#dccodigopostal').val() == '') || ($('#dcestado').val() == '') || ($('#dccolonia').val() == '') || ($('#dcmunicipio').val() == '') ) {
 				swal({
 					title: "Respuesta",
 					text: 'Complete todos los campos obligatorios para modificar los datos',
@@ -1218,13 +1272,24 @@ if ($idProducto == 41) {
 					showConfirmButton: false
 				});
 			} else {
-				modificarDatosClientes( $('#dctelefonofijo').val(),$('#dctelefonocelular').val(),$('#dccalle').val(),$('#dcnrointerior').val(),$('#dcnroexterior').val(),$('#dcedificio').val(),$('#dccodigopostal').val(),$('#dcestado').val(),$('#dccolonia').val(),$('#dcmunicipio').val(),$('#dcciudad').val());
+				if ((validarPASS($('#dcpassword').val()) == true)) {
+					modificarDatosClientes( $('#dctelefonofijo').val(),$('#dctelefonocelular').val(),$('#dccalle').val(),$('#dcnrointerior').val(),$('#dcnroexterior').val(),$('#dcedificio').val(),$('#dccodigopostal').val(),$('#dcestado').val(),$('#dccolonia').val(),$('#dcmunicipio').val(),$('#dcciudad').val(),$('#dcrfc').val(),$('#dcpassword').val());
+				} else {
+					swal({
+						title: "Respuesta",
+						text: 'El PASSWORD debe contener (8 caracteres, al menos una mayúscula, al menos una minúscula y un numero).',
+						type: "error",
+						timer: 3000,
+						showConfirmButton: false
+					});
+				}
+				
 
 			}
 
 		});
 
-		function modificarDatosClientes(telefonofijo,telefonocelular,calle,nrointerior,nroexterior,edificio,codigopostal,estado,colonia,municipio,ciudad) {
+		function modificarDatosClientes(telefonofijo,telefonocelular,calle,nrointerior,nroexterior,edificio,codigopostal,estado,colonia,municipio,ciudad,rfc,password) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
@@ -1243,7 +1308,9 @@ if ($idProducto == 41) {
 					estado: estado,
 					colonia: colonia,
 					municipio: municipio,
-					ciudad: ciudad
+					ciudad: ciudad,
+					rfc: rfc,
+					password: password
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){

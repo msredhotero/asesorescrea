@@ -452,6 +452,11 @@ $pdf->Write(0, "SAUPUREIN");
 //echo "3,3,'beneficiario',".$pdf->GetX().",".$pdf->GetY().",'parentesco','','parentesco'".'<br>';
 
 //otros seguros
+$pdf->SetXY(26.1, 207.9);
+$pdf->Write(0, "x");
+//echo "3,3,'beneficiario',".$pdf->GetX().",".$pdf->GetY().",'otros seguros','','si'".'<br>';
+
+//otros seguros
 $pdf->SetXY(36.1, 207.9);
 $pdf->Write(0, "x");
 //echo "3,3,'beneficiario',".$pdf->GetX().",".$pdf->GetY().",'otros seguros','','no'".'<br>';

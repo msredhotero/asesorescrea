@@ -273,6 +273,10 @@ $cadBancos .= $serviciosFunciones->devolverSelectBoxText($resBancos,array(1),'')
 /********************** fin de las validaciones ********************************/
 
 $esFinancieraCrea = 0;
+
+if ($nopuedeContinuar == 1) {
+	$resInsertarLead = $serviciosReferencias->insertarLeadCompleto($idCliente,$idProducto,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),'0','','','',1,'','Por preguntas del cuestionario o por el peso y la altura, no puede cotizarce',1,7,$id);
+}
 ?>
 
 <!DOCTYPE html>

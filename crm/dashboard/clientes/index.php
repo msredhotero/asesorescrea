@@ -83,6 +83,7 @@ $refCampo 	=  array('reftipopersonas','refestadocivil','genero','reftipoidentifi
 $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$lblCambio,$lblreemplazo,$refdescripcion,$refCampo);
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
+
 ?>
 
 <!DOCTYPE html>

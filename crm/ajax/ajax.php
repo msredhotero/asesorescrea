@@ -1426,7 +1426,7 @@ switch ($accion) {
       buscarRFC($serviciosValidador,$serviciosReferencias);
    break;
    case 'modificarDatosClientes':
-      modificarDatosClientes($serviciosReferencias);
+      modificarDatosClientes($serviciosReferencias,$serviciosUsuarios);
    break;
    case 'insertarBckUpCliente':
       insertarBckUpCliente($serviciosReferencias);
@@ -1487,7 +1487,7 @@ switch ($accion) {
       insertarPixel($serviciosReferencias);
    break;
    case 'traerUsuariosChat':
-      traerUsuariosChat();
+      traerUsuariosChat($serviciosReferencias);
    break;
    case 'registrarEnviarCotizadorAlCliente':
       registrarEnviarCotizadorAlCliente($serviciosReferencias, $serviciosUsuarios, $serviciosValidador);
@@ -1690,21 +1690,72 @@ function registrarEnviarCotizadorAlCliente($serviciosReferencias, $serviciosUsua
             //elegio una cotizacion completa
             if ($reftiporegistro == 1) {
 
-               //cargo la cotizacion justo para pagar
-               $refestadocotizaciones = 19;
+               //dependeiendo el producto lo lanzo a un lugar u otro
+               if ($refproductos == 41) {
 
-               $resCotizacion = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,0,$refestadocotizaciones,'0','0','Negocio nuevo','No','',date('Y-m-d'),'',$fechacrea,$fechacrea,$usuariocrea,$usuariocrea,$refusuarios,'Creado desde redes sociales','',0,'0',0,0,1,'','');
+               
+                  //cargo la cotizacion justo para pagar
+                  $refestadocotizaciones = 19;
+
+                  $resCotizacion = $serviciosReferencias->insertarCotizaciones($refclientes,$refproductos,$refasesores,0,$refestadocotizaciones,'0','0','Negocio nuevo','No','',date('Y-m-d'),'',$fechacrea,$fechacrea,$usuariocrea,$usuariocrea,$refusuarios,'Creado desde redes sociales','',0,'0',0,0,1,'','');
 
 
-               if ((integer)$resCotizacion > 0) {
+                  if ((integer)$resCotizacion > 0) {
 
-                  $resModificar1 = $serviciosReferencias->modificarCotizacionesPorCampo($resCotizacion,'primaneta',1501,$usuariocrea);
-                  $resModificar2 = $serviciosReferencias->modificarCotizacionesPorCampo($resCotizacion,'primatotal',1501,$usuariocrea);
-                  $resModificar3 = $serviciosReferencias->modificarCotizacionesPorCampo($resCotizacion,'refestados',1,$usuariocrea);
+                     $resModificar1 = $serviciosReferencias->modificarCotizacionesPorCampo($resCotizacion,'primaneta',1501,$usuariocrea);
+                     $resModificar2 = $serviciosReferencias->modificarCotizacionesPorCampo($resCotizacion,'primatotal',1501,$usuariocrea);
+                     $resModificar3 = $serviciosReferencias->modificarCotizacionesPorCampo($resCotizacion,'refestados',1,$usuariocrea);
 
+                     $token = $serviciosReferencias->GUID();
+                     //$url = 'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token;
+                     $url = 'venta/metodopago.php?id='.$resCotizacion;
+                     $resAutoLogin = $serviciosReferencias->insertarAutologin($refusuarios,$token,$url,'0');
+
+                     $resV['url'] = 'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token;
+                     //$resV['url'] = 'http://localhost/asesorescrea_nuevo.git/trunk/crm/alogin.php?token='.$token;
+
+                     
+
+                     $cuerpo = '';
+
+                     $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+                     $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+                     $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+                     $cuerpo .= "
+                     <style>
+                        body { font-family: 'Lato', sans-serif; }
+                        header { font-family: 'Prata', serif; }
+                     </style>";
+
+                     $cuerpo .= '<body>';
+
+                     $cuerpo .= '<h3>Estimad@, '.$nombre.'</h3><p>';
+
+                     $cuerpo .= '<p>Accede a este <a href="'.'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">LINK</a> para pagar el producto solicitado.</p>';
+
+
+                     $cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
+
+                     $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+                     $cuerpo .= '</body>';
+
+                     $resMensaje = $serviciosReferencias->insertarMensajes($cuerpo,$usuariocrea,$email,$fechacrea);
+
+                     $retorno = $serviciosReferencias->enviarEmail($email,utf8_decode('Proceso de Cotización'),utf8_decode($cuerpo));
+
+                     $resV['mensaje'] = 'Se genero correctamente la cotizacion';
+                  } else {
+                     $resV['mensaje'] = 'Se genero un error al crear la cotizacion';
+                     $resV['error'] = true;
+                  }
+               } else {
                   $token = $serviciosReferencias->GUID();
                   //$url = 'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token;
-                  $url = 'venta/metodopago.php?id='.$resCotizacion;
+                  $url = 'venta/new.php?producto='.$refproductos;
                   $resAutoLogin = $serviciosReferencias->insertarAutologin($refusuarios,$token,$url,'0');
 
                   $resV['url'] = 'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token;
@@ -1743,10 +1794,9 @@ function registrarEnviarCotizadorAlCliente($serviciosReferencias, $serviciosUsua
 
                   $retorno = $serviciosReferencias->enviarEmail($email,utf8_decode('Proceso de Cotización'),utf8_decode($cuerpo));
 
-                  $resV['mensaje'] = 'Se genero correctamente la cotizacion';
-               } else {
-                  $resV['mensaje'] = 'Se genero un error al crear la cotizacion';
-                  $resV['error'] = true;
+                  $resV['mensaje'] = 'Se genero correctamente la liga y se envio por email';
+
+
                }
             } else {
                //genero un lead
@@ -1853,13 +1903,47 @@ function insertarChat($serviciosReferencias) {
       $nombredestino = $emaildestinatario;
    }
 
-   $resCot = $serviciosReferencias->traerCotizacionesPorId($idreferencia);
+   $resCot = $serviciosReferencias->traerCotizacionesPorIdCompleto($idreferencia);
 
    $valor = mysql_result($resCot,0,'bitacoracrea').' '.$nombre.' - '.$nombredestino.'.\n'.$mensaje.' - '.date('Y-m-d H:i:s').'.\n';
    
    $res = $serviciosReferencias->insertarChat($reftabla,$idreferencia,$email,$emaildestinatario,$esdirectorio,$nombre,$mensaje,$fechacrea,$leido);
    
    if ((integer)$res > 0) {
+
+      //enviar a la persona a la que le escribio un email
+
+      $folioagente = mysql_result($resCot,0,'folioagente');
+
+      $lblcliente = mysql_result($resCot,0,'clientesolo');
+
+      $lblproducto = mysql_result($resCot,0,'producto');
+
+      $asunto = 'Alerta Cotización, cotización: folio: '.$folioagente.' - Cliente: '.$lblcliente.' - Producto: '.$lblproducto.' - Asesor: '.mysql_result($resCot,0,'asesor');
+
+      $cuerpo = '';
+
+      $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+      $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+      $cuerpo .= "
+      <style>
+         body { font-family: 'Lato', sans-serif; }
+         header { font-family: 'Prata', serif; }
+      </style>";
+
+      $cuerpo .= '<body>';
+
+      $cuerpo .= $mensaje;
+
+      $exito = $serviciosReferencias->enviarEmail($emaildestinatario, utf8_decode( $asunto),utf8_decode($cuerpo));
+
+      $resMensaje = $serviciosReferencias->insertarMensajes($cuerpo,$_SESSION['usua_sahilices'],$emaildestinatario, date('Y-m-d H:i:s'));
+
+      //fin del email
 
       if ($_SESSION['idroll_sahilices'] == 7) {
          $resEnviarEmail = $serviciosReferencias->enviarEmailModificacionCotizacion($idreferencia,'Bitacora: '.$valor,'',$enviaEmail=1,33);
@@ -1875,14 +1959,41 @@ function insertarChat($serviciosReferencias) {
    }
 }
 
-function traerUsuariosChat() {
+function traerUsuariosChat($serviciosReferencias) {
    session_start();
    $email = $_SESSION['usuaid_sahilices'];
    $emaildestinatario = $_POST['emaildestinatario'];
    $emailasesor = $_POST['emailasesor'];
+   $idreferencia = $_POST['idreferencia'];
 
-   $chat = new chatCrea($email, $emaildestinatario,$_SESSION['idroll_sahilices'],$emailasesor,0);
+   $chat = new chatCrea($email, $emaildestinatario,$_SESSION['idroll_sahilices'],$emailasesor,$idreferencia);
 
+   $resCotizacion = $serviciosReferencias->traerCotizacionesPorId($idreferencia);
+
+   $seteo = '';
+
+   if ($emaildestinatario == '') {
+      //si es un asesor, seteo el area tecnica en cuestion para iniciar el chat
+      if ($_SESSION['idroll_sahilices'] == 7) {
+         //determino el producto para avisar a quien corresponda, por ahora solo para los roles de areas tecnicas y sus contactos
+         $refproductos = mysql_result($resCotizacion,0,'refproductos');
+
+         $resProduto = $serviciosReferencias->traerProductosPorId($refproductos);
+
+         $idrol = mysql_result($resProduto,0,'refgestion');
+
+         $resUsuarios = $serviciosReferencias->traerUsuariosPorRoles($idrol);
+
+         if (mysql_num_rows($resUsuarios)>0) {
+            $seteo = mysql_result($resUsuarios,0,'email');
+         } else {
+            $seteo = 'ruth-arana@asesorescrea.com';
+         }
+      } else {
+         //si es un asesor seteo el email que cargo la cotizacion
+         $seteo = mysql_result($resCotizacion,0,'usuariocrea');
+      }
+   }
 
    $resultado = $chat->traerUsuariosChat();
    //die(var_dump($resultado));
@@ -1893,7 +2004,7 @@ function traerUsuariosChat() {
       //active_chat
       //<span class="chat_date">Dec 25</span> ultima fecha que se conecto
 
-      if ($emaildestinatario == $mensaje['email']) {
+      if (($emaildestinatario == $mensaje['email']) || ($seteo == $mensaje['email'])) {
          $cadMensajes .= '<div class="chat_list active_chat" id="'.$mensaje['email'].'" style="cursor:pointer !important;">
          <div class="chat_people">
              <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
@@ -1922,6 +2033,8 @@ function traerUsuariosChat() {
    
 
    $resV['usuarios'] = $cadMensajes;
+   $resV['seteo'] = $seteo;
+
 
    header('Content-type: application/json');
    echo json_encode($resV);
@@ -2392,7 +2505,7 @@ function insertarBckUpCliente($serviciosReferencias) {
    echo json_encode($resV);
 }
 
-function modificarDatosClientes($serviciosReferencias) {
+function modificarDatosClientes($serviciosReferencias,$serviciosUsuarios) {
    $id = $_POST['id'];
    $telefonofijo = str_replace('_','',$_POST['telefonofijo']);
    $telefonocelular = str_replace('_','',$_POST['telefonocelular']);
@@ -2405,6 +2518,24 @@ function modificarDatosClientes($serviciosReferencias) {
    $colonia = $_POST['colonia'];
    $municipio = $_POST['municipio'];
    $ciudad = ($_POST['ciudad'] == '' ? $_POST['municipio'] : $_POST['ciudad']);
+   $rfc = $_POST['rfc'];
+   //si crea su password actualizo
+   if (isset($_POST['password'])) {
+      $password = $_POST['password'];
+   } else {
+      $password = '';
+   }
+
+   $resCliente = $serviciosReferencias->traerClientesPorId($id);
+
+   $idusuario = mysql_result($resCliente,0,'refusuarios');
+
+   if ($password != '') {
+      if ((integer)$idusuario > 0) {
+         $resUsuario = $serviciosUsuarios->preactivarUsuario($idusuario,$password);
+      }
+      
+   }
 
    $resBck = $serviciosReferencias->insertarClientesbck($id);
 
@@ -3641,6 +3772,11 @@ function insertarVentasCompleto($serviciosReferencias) {
       // inserto la cartera de productos del cliente
       $resIC = $serviciosReferencias->insertarClientescartera($refclientes,$refproductos,$vigenciadesde,'','1');
 
+      /**** auditoria ****/
+      $tabla = 'dbventas';
+      $operacion = 'I';
+      $serviciosReferencias->insertAuditoria($tabla, $operacion,$resVenta,$usuariocrea,null,null,'1',0);
+      /**** fin audi  ****/
 
 
       /**** fin cuestionario     ****/
@@ -4635,6 +4771,12 @@ function insertarVentas($serviciosReferencias) {
          $resRenovacion = $serviciosReferencias->modificarRenovacionesPorVenta($_POST['idrenovacion'], $res);
       }
 
+      /**** auditoria ****/
+      $tabla = 'dbventas';
+      $operacion = 'I';
+      $serviciosReferencias->insertAuditoria($tabla, $operacion,$res,$usuariocrea,null,null,'1',0);
+      /**** fin audi  ****/
+
       echo '';
    } else {
       echo 'Hubo un error al insertar datos';
@@ -4812,104 +4954,111 @@ function insertarFirmarcontratos($serviciosReferencias) {
 
    $resNIP = $serviciosReferencias->traerTokensPorCotizacionVigente($refcotizaciones);
 
+   $resNIPvalido = $serviciosReferencias->traerTokensPorCotizacionNIP($refcotizaciones,$nip);
 
 
-   if (mysql_num_rows($resNIP) > 0) {
+   if (mysql_num_rows($resNIPvalido) > 0) {
+      if (mysql_num_rows($resNIP) > 0) {
 
-      if ($nip !== mysql_result($resNIP,0,'token')) {
-         $resV['error'] = true;
-         $resV['mensaje'] = 'El NIP no coincide con el que le enviamos por email, verifiquelo';
-         $resV['tipo'] = 1;
-      } else {
-         $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($refcotizaciones);
-
-         $idCliente = mysql_result($resCotizaciones,0,'refclientes');
-
-         $resCliente = $serviciosReferencias->traerClientesPorId($idCliente);
-
-         $email = mysql_result($resCliente,0,'email');
-
-         $nombrecompleto = mysql_result($resCliente,0,'apellidopaterno').' '.mysql_result($resCliente,0,'apellidomaterno').' '.mysql_result($resCliente,0,'nombre');
-
-         $folio = mysql_result($resCliente,0,'curp');
-
-         $nip = mysql_result($resNIP,0,'token');
-
-         /***** api para la firma *****/
-         $url = 'https://crea.signaturainnovacionesjuridicas.com/api/firmasimple/crear';
-         $archivo = '../archivos/solicitudes/cotizaciones/'.$refcotizaciones.'/FSOLICITUDAC.pdf';
-         $sha256 = hash_file('sha256', $archivo);
-
-         $ch = curl_init();
-
-         curl_setopt($ch, CURLOPT_URL, $url);
-         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-
-         $data = array(
-            'folio' => $folio,
-            'pin' => $nip,
-            'usuario' => $nombrecompleto,
-            'sha256' => $sha256,
-         );
-         //attach encoded JSON string to the POST fields
-         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-         //set the content type to application/json
-         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-         //return response instead of outputting
-         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-         //execute the POST request
-         $result = curl_exec($ch);
-
-         if ($result == false) {
-            $refestadofirma = 2;
+         if ($nip !== mysql_result($resNIP,0,'token')) {
+            $resV['error'] = true;
+            $resV['mensaje'] = 'El NIP no coincide con el que le enviamos por email, verifiquelo';
+            $resV['tipo'] = 1;
          } else {
-
-            if (!file_exists('../archivos/firmas/cotizaciones/'.$refcotizaciones.'/')) {
-      			mkdir('../archivos/firmas/cotizaciones/'.$refcotizaciones.'/', 0777);
-      		}
-
-
-            $result = trim($result,'"');
-
-            //echo '<p>Resultado: '.$result.'</p>';
-
-            //echo '<p>Documento Hashado: '.$documento.'</p>';
-
-            $textoXML = mb_convert_encoding($result, "UTF-8");
-
-            $xml = $textoXML;
-
-            $gestor = fopen('../archivos/firmas/cotizaciones/'.$refcotizaciones.'/firma.xml', 'w');
-         	fwrite($gestor, $textoXML);
-         	fclose($gestor);
-
-            $refestadofirma = 1;
-         }
-
-         curl_close($ch);
-
-         /***** fin api **************/
-
-         if (isset($xml)) {
-            $usuario = $nombrecompleto;
-            $fechacrea = date('Y-m-d H:i:s');
-            $fechamodi = date('Y-m-d H:i:s');
-            $vigdesde = date('Y-m-d H:i:s');
-            $vighasta = date('Y-m-d H:i:s');
-
-            $res = $serviciosReferencias->insertarFirmarcontratos($refcotizaciones,$folio,$nip,$usuario,$sha256,$refestadofirma,$fechacrea,$fechamodi,$vigdesde,$vighasta,$xml);
-
-            if ($refestadofirma == 1) {
-               if ((integer)$res > 0) {
-                  $resV['error'] = false;
-                  $resV['tipo'] = 0;
-
-                  $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($refcotizaciones,'refestadocotizaciones',12,$_SESSION['usua_sahilices']);
-
-                  $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($refcotizaciones,'refestados',4,$_SESSION['usua_sahilices']);
+            $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($refcotizaciones);
+   
+            $idCliente = mysql_result($resCotizaciones,0,'refclientes');
+   
+            $resCliente = $serviciosReferencias->traerClientesPorId($idCliente);
+   
+            $email = mysql_result($resCliente,0,'email');
+   
+            $nombrecompleto = mysql_result($resCliente,0,'apellidopaterno').' '.mysql_result($resCliente,0,'apellidomaterno').' '.mysql_result($resCliente,0,'nombre');
+   
+            $folio = mysql_result($resCliente,0,'curp');
+   
+            $nip = mysql_result($resNIP,0,'token');
+   
+            /***** api para la firma *****/
+            $url = 'https://crea.signaturainnovacionesjuridicas.com/api/firmasimple/crear';
+            $archivo = '../archivos/solicitudes/cotizaciones/'.$refcotizaciones.'/FSOLICITUDAC.pdf';
+            $sha256 = hash_file('sha256', $archivo);
+   
+            $ch = curl_init();
+   
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+   
+            $data = array(
+               'folio' => $folio,
+               'pin' => $nip,
+               'usuario' => $nombrecompleto,
+               'sha256' => $sha256,
+            );
+            //attach encoded JSON string to the POST fields
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+            //set the content type to application/json
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+            //return response instead of outputting
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            //execute the POST request
+            $result = curl_exec($ch);
+   
+            if ($result == false) {
+               $refestadofirma = 2;
+            } else {
+   
+               if (!file_exists('../archivos/firmas/cotizaciones/'.$refcotizaciones.'/')) {
+                  mkdir('../archivos/firmas/cotizaciones/'.$refcotizaciones.'/', 0777);
+               }
+   
+   
+               $result = trim($result,'"');
+   
+               //echo '<p>Resultado: '.$result.'</p>';
+   
+               //echo '<p>Documento Hashado: '.$documento.'</p>';
+   
+               $textoXML = mb_convert_encoding($result, "UTF-8");
+   
+               $xml = $textoXML;
+   
+               $gestor = fopen('../archivos/firmas/cotizaciones/'.$refcotizaciones.'/firma.xml', 'w');
+               fwrite($gestor, $textoXML);
+               fclose($gestor);
+   
+               $refestadofirma = 1;
+            }
+   
+            curl_close($ch);
+   
+            /***** fin api **************/
+   
+            if (isset($xml)) {
+               $usuario = $nombrecompleto;
+               $fechacrea = date('Y-m-d H:i:s');
+               $fechamodi = date('Y-m-d H:i:s');
+               $vigdesde = date('Y-m-d H:i:s');
+               $vighasta = date('Y-m-d H:i:s');
+   
+               $res = $serviciosReferencias->insertarFirmarcontratos($refcotizaciones,$folio,$nip,$usuario,$sha256,$refestadofirma,$fechacrea,$fechamodi,$vigdesde,$vighasta,$xml);
+   
+               if ($refestadofirma == 1) {
+                  if ((integer)$res > 0) {
+                     $resV['error'] = false;
+                     $resV['tipo'] = 0;
+   
+                     $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($refcotizaciones,'refestadocotizaciones',12,$_SESSION['usua_sahilices']);
+   
+                     $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($refcotizaciones,'refestados',4,$_SESSION['usua_sahilices']);
+                  } else {
+                     $resV['error'] = true;
+                     $resV['mensaje'] = 'Se genero un error al modificar los datos, vuelva a intentarlo '.$res;
+                     $resV['tipo'] = 1;
+                  }
                } else {
                   $resV['error'] = true;
-                  $resV['mensaje'] = 'Se genero un error al modificar los datos, vuelva a intentarlo '.$res;
+                  $resV['mensaje'] = 'Se genero un inconveniente con la firma, por favor vuelva a intentarlo en unos minutos';
                   $resV['tipo'] = 1;
                }
             } else {
@@ -4917,21 +5066,22 @@ function insertarFirmarcontratos($serviciosReferencias) {
                $resV['mensaje'] = 'Se genero un inconveniente con la firma, por favor vuelva a intentarlo en unos minutos';
                $resV['tipo'] = 1;
             }
-         } else {
-            $resV['error'] = true;
-            $resV['mensaje'] = 'Se genero un inconveniente con la firma, por favor vuelva a intentarlo en unos minutos';
-            $resV['tipo'] = 1;
+   
+   
          }
-
-
+   
+   
+      } else {
+         $resV['error'] = true;
+         $resV['mensaje'] = 'No se pudo firmar el documento, el NIP esta vencido, necesita volver a crear uno';
+         $resV['tipo'] = 2;
       }
-
-
    } else {
       $resV['error'] = true;
-      $resV['mensaje'] = 'No se pudo firmar el documento, el NIP esta vencido, necesita volver a crear uno';
-      $resV['tipo'] = 2;
+      $resV['mensaje'] = 'El NIP es incorrecto';
+      $resV['tipo'] = 1;
    }
+   
 
 
    header('Content-type: application/json');
@@ -6620,7 +6770,13 @@ function insertarAsegurados($serviciosReferencias) {
    $resCliente = $serviciosReferencias->traerClientesPorId($refclientes);
 
    $genero = $_POST['genero'];
-   $refestadocivil = ($_POST['refestadocivil'] == '' ? 0 : $_POST['refestadocivil']);
+
+   if (isset($_POST['reftipoidentificacion'])) {
+      $refestadocivil = ($_POST['refestadocivil'] == '' ? 0 : $_POST['refestadocivil']);
+   } else {
+      $refestadocivil = 7;
+   }
+   
 
    if (isset($_POST['reftipoidentificacion'])) {
       $reftipoidentificacion = $_POST['reftipoidentificacion'];
@@ -8634,12 +8790,22 @@ function eliminarVentas($serviciosReferencias) {
 }
 
 function eliminarVentasDefinitivo($serviciosReferencias) {
+   session_start();
+
    $id = $_POST['id'];
+
+   /**** auditoria ****/
+   $tabla = 'dbventas';
+   $operacion = 'E';
+   $serviciosReferencias->insertAuditoria($tabla, $operacion,$id,$_SESSION['usua_sahilices'],null,null,'1',0);
+   /**** fin audi  ****/
 
 
    $res = $serviciosReferencias->eliminarVentasDefinitivo($id);
 
    if ($res == true) {
+      
+
       echo '';
    } else {
       echo 'Hubo un error al eliminar datos';

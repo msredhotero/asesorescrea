@@ -3707,6 +3707,12 @@ return $res;
       return $res;
    }
 
+   function traerTokensPorCotizacionNIP($id,$nip) {
+      $sql = "select idtoken,refcotizaciones,reftipo,token,fechacreac,refestadotoken,vigenciafin from dbtokens where refcotizaciones =".$id." and token = '".$nip."'";
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
 
    /* Fin */
    /* /* Fin de la Tabla: dbtokens*/
@@ -5578,7 +5584,7 @@ return $res;
                      $cadInput .= '<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 frmContrespuesta" style="display:block">
 
                         <div class="form-group input-group">
-                           <input class="with-gap" type="radio" id="radio_'.$rowR['idrespuestacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.$rowR['idrespuestacuestionario'].'" '.$dependenciaData.' data-idpregunta="'.$row['idpreguntacuestionario'].'" '.$cadValorRespuesta.' data-rule-required="true"/>
+                           <input class="aparecer" type="radio" id="radio_'.$rowR['idrespuestacuestionario'].'" name="respuesta'.$row['idpreguntacuestionario'].'" value="'.$rowR['idrespuestacuestionario'].'" '.$dependenciaData.' data-idpregunta="'.$row['idpreguntacuestionario'].'" '.$cadValorRespuesta.' data-rule-required="true"/>
                            <label for="radio_'.$rowR['idrespuestacuestionario'].'">'.$rowR['respuesta'].'</label>
                         </div>
                      </div>';
@@ -13049,6 +13055,7 @@ return $res;
 
 
    // traigo todas las documentaciones menos las cotizaciones de inbursa
+   // tambien traigo las documentaciones de inbursa, gustavo tinoco lo pidio, pero la que esta aceptada la pongo en rechazada
    function traerDocumentacioncotizacionesPorCotizacionCopia($id) {
 		$sql = "select
       dc.iddocumentacioncotizacion,
@@ -13056,7 +13063,7 @@ return $res;
       from dbdocumentacioncotizaciones dc
       inner join dbcotizaciones co on co.idcotizacion = dc.refcotizaciones
       inner join dbdocumentaciones d on d.iddocumentacion = dc.refdocumentaciones
-      where co.idcotizacion =".$id." and d.iddocumentacion not in (82,83,84,85,86)";
+      where co.idcotizacion =".$id." ";
 		$res = $this->query($sql,0);
 		return $res;
 	}
@@ -14109,7 +14116,13 @@ return $res;
 
                //insert
                if ($resCopy) {
-                  $resInsertarArchivo = $this->insertarDocumentacioncotizaciones($res,$rowAr['refdocumentaciones'],$rowAr['archivo'],$rowAr['type'],$rowAr['refestadodocumentaciones'],$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
+                  if ($rowAr['refestadodocumentaciones'] == 5) {
+                     $resInsertarArchivo = $this->insertarDocumentacioncotizaciones($res,$rowAr['refdocumentaciones'],$rowAr['archivo'],$rowAr['type'],2,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
+                  } else {
+                     $resInsertarArchivo = $this->insertarDocumentacioncotizaciones($res,$rowAr['refdocumentaciones'],$rowAr['archivo'],$rowAr['type'],$rowAr['refestadodocumentaciones'],$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
+                     
+                  }
+                  
                }
 
             }

@@ -459,14 +459,16 @@ $cadRef7 = $serviciosFunciones->devolverSelectBox($resTipoProducto,array(1),' ')
 													</div>
 
 													<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" style="display:block">
-														<label class="form-label">PRODUCTO/SERVICIO</label>
+														<label class="form-label">PRODUCTO/SERVICIO <span class="valorproducto"></span></label>
 														<div class="form-group input-group">
 															<div class="form-line">
 																<select class="form-control" id="refproductos" name="refproductos">
 																	<option value="41">VRIM PLATINO - $ 1,501.00</option>
+																	<option value="54">SEGURO DE VIDA 500</option>
 																</select>
 															</div>
 														</div>
+														
 													</div>
 												</div>
 											</div>

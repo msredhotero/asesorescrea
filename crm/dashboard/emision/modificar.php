@@ -57,6 +57,8 @@ $cuestionario = $serviciosReferencias->traerCuestionariodetallePorTablaReferenci
 
 $idCliente = mysql_result($resultado,0,'refclientes');
 
+$idAsesor = mysql_result($resultado,0,'refasesores');
+
 $vigenciasCliente = $serviciosReferencias->vigenciasDocumentacionesClientes($idCliente);
 
 if ($id == 0) {
@@ -384,6 +386,15 @@ $refDoc = '3,'.$refdoctipo;
 $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($id, $refDoc);
 
 //$resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDocumentacionCompletaPorTipoDocumentacionE($id,5);
+include ('../../includes/chat.class.php');
+
+$resAsesoresAux = $serviciosReferencias->traerAsesoresPorId($idAsesor);
+
+$emailasesor = mysql_result($resAsesoresAux,0,'email');
+
+$chat = new chatCrea($_SESSION['usuaid_sahilices'], 'javier@javier.com',$_SESSION['idroll_sahilices'],$emailasesor, $id);
+
+$htmlChat = $chat->contruirChat();
 
 
 ?>
@@ -427,10 +438,23 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 	<!-- Additional CSS Themes file - not required-->
 	<link rel="stylesheet" href="../../css/easy-autocomplete.themes.min.css">
 
+	<link rel="stylesheet" type="text/css" href="../../css/chatcrea.css"/>
+
 	<style>
 		.alert > i{ vertical-align: middle !important; }
 		.easy-autocomplete-container { width: 400px; z-index:999999 !important; }
 		#codigopostal { width: 400px; }
+
+		.modal-dialog {
+			width: 80%;
+			height: 80%;
+			/*margin: 10px 10px;*/
+			padding: 0;
+		}
+
+		.setting-list li .switch label:hover {
+			color: white !important;
+		}
 
 		#bitacoracrea {
 			border: ridge 2px;
@@ -514,7 +538,9 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 										<i class="material-icons">more_vert</i>
 									</a>
 									<ul class="dropdown-menu pull-right">
-
+										<li>
+											<a href="javascript:void(0);" id="iniciarChat" class="waves-effect waves-block">CHAT</a>
+										</li>
 									</ul>
 								</li>
 							</ul>
@@ -550,11 +576,8 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 								<div class="row" style="padding: 5px 20px;">
 
 									<?php echo $frmUnidadNegocios; ?>
-									<div class="form-group col-md-12 frmContobservaciones" style="display:block">
-										<label for="observaciones" class="control-label" style="text-align:left">Escriba mensaje para la bitacora </label>
-										<div class="input-group col-md-12">
-											<textarea type="text" rows="4" cols="6" class="form-control" id="bitacora" name="bitacora" placeholder="Ingrese el mensaje..."></textarea>
-										</div>
+									<div class="form-group col-md-12 frmContiniciarchat" style="display:block">
+										<button type="button" data-bitacora="bitacorainbursa" class="btn btn-success waves-effect btnIniciarChat">INICIAR CHAT</button>
 									</div>
 
 									<input type="hidden" id="estadoactual" name="estadoactual" value=""/>
@@ -780,6 +803,25 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 <input type="hidden" name="idmodificarestadorechazo" id="idmodificarestadorechazo" value="0">
 <input type="hidden" name="estadomodificarestadorechazo" id="estadomodificarestadorechazo" value="0">
 
+
+<div class="modal fade" id="lgmChat" tabindex="-1" role="dialog" style="overflow-y: scroll;">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header bg-blue">
+				<h4 class="modal-title" id="largeModalLabel">CHAT</h4>
+			</div>
+			<div class="modal-body">
+				<?php echo $htmlChat; ?>
+			</div>
+			
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
@@ -806,7 +848,213 @@ $resCotizacionInbursa = $serviciosReferencias->traerDocumentacionPorCotizacionDo
 <script src="../../plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
 
 <script>
+	var emaildest = '';
 	$(document).ready(function(){
+
+		$(".inbox_chat").on("click",'.chat_list', function(){	
+
+		$(".inbox_chat .chat_list").removeClass('active_chat');
+
+		idTable =  $(this).attr("id");
+
+		$(this).addClass('active_chat');
+
+		emaildest = idTable;
+
+		cargarChat();
+		});
+
+		$('.write_msg').keyup(function(e) {
+		if(e.keyCode == 13) {
+			if ($('.write_msg').val() != '') {
+				insertarChat();
+			}
+		}
+		});
+
+		$('.msg_send_btn').click(function() {
+
+		if ($('.write_msg').val() != '') {
+			insertarChat();
+		}
+		});
+
+		//inbox_chat
+
+		function traerBitacoraCrea() {
+		$.ajax({
+			url: '../../ajax/ajax.php',
+			type: 'POST',
+			// Form data
+			//datos del formulario
+			data: {
+				accion: 'traerBitacoraCrea',
+				id: <?php echo $id; ?>
+			},
+			//mientras enviamos el archivo
+			beforeSend: function(){
+				$('.inbox_chat').html('');
+			},
+			//una vez finalizado correctamente
+			success: function(data){
+				$('#bitacoracrea').html(data);
+			},
+			//si ha ocurrido un error
+			error: function(){
+				swal({
+					title: "Respuesta",
+					text: 'Actualice la pagina',
+					type: "error",
+					timer: 2000,
+					showConfirmButton: false
+				});
+
+			}
+		});
+		}
+
+		function cargarChatUsuarios() {
+		$.ajax({
+			url: '../../ajax/ajax.php',
+			type: 'POST',
+			// Form data
+			//datos del formulario
+			data: {
+				accion: 'traerUsuariosChat',
+				email: '<?php echo $_SESSION['usua_sahilices']; ?>',
+				emaildestinatario: emaildest,
+				emailasesor: '<?php echo $emailasesor; ?>',
+				idreferencia: <?php echo $id; ?>
+			},
+			//mientras enviamos el archivo
+			beforeSend: function(){
+				$('.inbox_chat').html('');
+			},
+			//una vez finalizado correctamente
+			success: function(data){
+				$('.inbox_chat').html(data.usuarios);
+				if (data.seteo != '') {
+					emaildest = data.seteo;
+
+					cargarChat();
+				}
+				
+			},
+			//si ha ocurrido un error
+			error: function(){
+				swal({
+					title: "Respuesta",
+					text: 'Actualice la pagina',
+					type: "error",
+					timer: 2000,
+					showConfirmButton: false
+				});
+
+			}
+		});
+		}
+
+		function insertarChat() {
+		$.ajax({
+			url: '../../ajax/ajax.php',
+			type: 'POST',
+			// Form data
+			//datos del formulario 
+			data: {
+				accion: 'insertarChat',
+				reftabla: 12,
+				idreferencia: <?php echo $id; ?>,
+				email: '<?php echo $_SESSION['usua_sahilices']; ?>',
+				emaildestinatario: emaildest,
+				esdirectorio: '0',
+				nombre: '<?php echo $_SESSION['nombre_sahilices']; ?>',
+				mensaje: $('.write_msg').val()
+			},
+			//mientras enviamos el archivo
+			beforeSend: function(){
+
+			},
+			//una vez finalizado correctamente
+			success: function(data){
+				if (data == '') {
+					cargarChat();
+					traerBitacoraCrea();
+					$('.write_msg').val('');
+				} else {
+					swal({
+						title: "Respuesta",
+						text: 'No se pudo entregar el mensaje',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+					});
+				}
+				
+			},
+			//si ha ocurrido un error
+			error: function(){
+				swal({
+					title: "Respuesta",
+					text: 'Actualice la pagina',
+					type: "error",
+					timer: 2000,
+					showConfirmButton: false
+				});
+
+			}
+		});
+		}
+
+
+
+		function cargarChat() {
+		$.ajax({
+			url: '../../ajax/ajax.php',
+			type: 'POST',
+			// Form data
+			//datos del formulario
+			data: {
+				accion: 'traerChatPorUsuarios',
+				email: '<?php echo $_SESSION['usua_sahilices']; ?>',
+				emaildestinatario: emaildest,
+				idreferencia: <?php echo $id; ?>,
+				emailasesor: '<?php echo $emailasesor; ?>'
+			},
+			//mientras enviamos el archivo
+			beforeSend: function(){
+				$('.msg_history').html('');
+			},
+			//una vez finalizado correctamente
+			success: function(data){
+				$('.msg_history').html(data.mensajes);
+				
+			},
+			//si ha ocurrido un error
+			error: function(){
+				swal({
+					title: "Respuesta",
+					text: 'Actualice la pagina',
+					type: "error",
+					timer: 2000,
+					showConfirmButton: false
+				});
+
+			}
+		});
+		}
+
+		cargarChat();
+		cargarChatUsuarios();
+
+		$('#iniciarChat').click(function() {
+		$('#lgmChat').modal();
+		});
+
+		$('.btnIniciarChat').click(function() {
+		$('#lgmChat').modal();
+		});
+
+		$('.frmContobservaciones').hide();
 
 
 		$('.frmContbitacorainbursa').hide();

@@ -628,6 +628,10 @@ if (mysql_num_rows($resBckUpCliente) > 0) {
 
 $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$cadRefEstadoCivil,$rIdCliente);
 
+$resClienteAux = $serviciosReferencias->traerClientesPorId($rIdCliente);
+
+$rfcCliente = strtoupper(mysql_result($resClienteAux,0,'rfc') == '' ? substr(mysql_result($resClienteAux,0,'curp'),0,10) : mysql_result($resClienteAux,0,'rfc'));
+
 ?>
 
 <!DOCTYPE html>
@@ -1074,6 +1078,29 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 						<div class="row">
 							<p style="color:red;">* Si falta algun dato o un dato esta incorrecto, agregue o modifique.</p>
 							<div class="row">
+								<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 frmContrfc" style="display:block">
+									<label class="form-label">RFC: <span style="color:red;">*</span>  </label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<input type="text" minlength="12" maxlength="13" class="form-control" id="dcrfc" name="dcrfc" value="<?php echo $rfcCliente; ?>" />
+										</div>
+									</div>
+								</div>
+								<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" style="display:block">
+									<label class="form-label">Estado Civil</label>
+									<div class="form-group input-group">
+										<div class="form-line">
+											<select class="form-control" name="dcrefestadocivil" id="dcrefestadocivil">
+												<option value="7">No indico</option>
+												<option value="1">Soltero</option>
+												<option value="2">Casado</option>
+											</select>
+
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
 								<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12 frmContrfc" style="display:block">
 									<label class="form-label">Tel. Movil: <span style="color:red;">*</span>  </label>
 									<div class="form-group input-group">
@@ -1244,8 +1271,10 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 <script>
 	$(document).ready(function(){
 
+		$('#dcrefestadocivil').val(<?php echo (mysql_result($resClienteAux,0,'refestadocivil') == '' ? 7 : mysql_result($resClienteAux,0,'refestadocivil')); ?>);
+
 		$('.btnModificarDC').click(function() {
-			if (($('#dctelefonocelular').val() == '') || ($('#dccalle').val() == '') || ($('#dcnrointerior').val() == '') || ($('#dcnroexterior').val() == '') || ($('#dccodigopostal').val() == '') || ($('#dcestado').val() == '') || ($('#dccolonia').val() == '') || ($('#dcmunicipio').val() == '') ) {
+			if (($('#dctelefonocelular').val() == '') || ($('#dcrfc').val() == '') || ($('#dccalle').val() == '') || ($('#dcnrointerior').val() == '') || ($('#dcnroexterior').val() == '') || ($('#dccodigopostal').val() == '') || ($('#dcestado').val() == '') || ($('#dccolonia').val() == '') || ($('#dcmunicipio').val() == '') ) {
 				swal({
 					title: "Respuesta",
 					text: 'Complete todos los campos obligatorios para modificar los datos',
@@ -1254,13 +1283,13 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 					showConfirmButton: false
 				});
 			} else {
-				modificarDatosClientes( $('#dctelefonofijo').val(),$('#dctelefonocelular').val(),$('#dccalle').val(),$('#dcnrointerior').val(),$('#dcnroexterior').val(),$('#dcedificio').val(),$('#dccodigopostal').val(),$('#dcestado').val(),$('#dccolonia').val(),$('#dcmunicipio').val(),$('#dcciudad').val());
+				modificarDatosClientes( $('#dctelefonofijo').val(),$('#dctelefonocelular').val(),$('#dccalle').val(),$('#dcnrointerior').val(),$('#dcnroexterior').val(),$('#dcedificio').val(),$('#dccodigopostal').val(),$('#dcestado').val(),$('#dccolonia').val(),$('#dcmunicipio').val(),$('#dcciudad').val(),$('#dcrfc').val(),'');
 
 			}
 
 		});
 
-		function modificarDatosClientes(telefonofijo,telefonocelular,calle,nrointerior,nroexterior,edificio,codigopostal,estado,colonia,municipio,ciudad) {
+		function modificarDatosClientes(telefonofijo,telefonocelular,calle,nrointerior,nroexterior,edificio,codigopostal,estado,colonia,municipio,ciudad,rfc,password) {
 			$.ajax({
 				url: '../../ajax/ajax.php',
 				type: 'POST',
@@ -1279,7 +1308,9 @@ $arAseguradosForm = $serviciosAsegurados->devolverFormPorProducto($rIdProducto,$
 					estado: estado,
 					colonia: colonia,
 					municipio: municipio,
-					ciudad: ciudad
+					ciudad: ciudad,
+					rfc: rfc,
+					password: password
 				},
 				//mientras enviamos el archivo
 				beforeSend: function(){
