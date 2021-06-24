@@ -1939,10 +1939,13 @@ function insertarChat($serviciosReferencias) {
 
       $cuerpo .= $mensaje;
 
-      $exito = $serviciosReferencias->enviarEmail($emaildestinatario, utf8_decode( $asunto),utf8_decode($cuerpo));
+      if ($emaildestinatario != 'gtinocop@inbursa.com') {
+         $exito = $serviciosReferencias->enviarEmail($emaildestinatario, utf8_decode( $asunto),utf8_decode($cuerpo));
 
-      $resMensaje = $serviciosReferencias->insertarMensajes($cuerpo,$_SESSION['usua_sahilices'],$emaildestinatario, date('Y-m-d H:i:s'));
+         $resMensaje = $serviciosReferencias->insertarMensajes($cuerpo,$_SESSION['usua_sahilices'],$emaildestinatario, date('Y-m-d H:i:s'));
 
+      }
+      
       //fin del email
 
       if ($_SESSION['idroll_sahilices'] == 7) {
