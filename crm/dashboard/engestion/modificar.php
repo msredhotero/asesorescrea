@@ -1088,7 +1088,7 @@ $htmlChat = $chat->contruirChat();
 			$('#lgmChat').modal();
 		});
 
-		$('.frmContobservaciones').hide();
+		$('.frmContobservaciones').show();
 
 		$('.btnMotivos').click(function() {
 			$('#lgmMOTIVOS').modal();

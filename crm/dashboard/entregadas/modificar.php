@@ -1174,7 +1174,7 @@ $htmlChat = $chat->contruirChat();
 		$('#lgmChat').modal();
 		});
 
-		$('.frmContobservaciones').hide();
+		$('.frmContobservaciones').show();
 
 
 		function traerImagen1(contenedorpdf, contenedor) {

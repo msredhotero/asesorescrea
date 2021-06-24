@@ -1073,7 +1073,7 @@ $htmlChat = $chat->contruirChat();
 		$('#lgmChat').modal();
 		});
 
-		$('.frmContobservaciones').hide();
+		$('.frmContobservaciones').show();
 
 		<?php if ($cotAceptada != 0) { ?>
 			PDFObject.embed("<?php echo $cotPDF; ?>", "#example1");

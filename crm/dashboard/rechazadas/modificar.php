@@ -1244,7 +1244,7 @@ $htmlChat = $chat->contruirChat();
 		$('#lgmChat').modal();
 		});
 
-		$('.frmContobservaciones').hide();
+		$('.frmContobservaciones').show();
 
 		$('#nocompartioinformacion').val(<?php echo $nocompartioinformacionMR; ?>);
 		$('#motivo').val('<?php echo $precioMR; ?>');
