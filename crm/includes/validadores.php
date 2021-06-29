@@ -74,16 +74,16 @@ class serviciosValidador {
 
    function validarRFC($string) {
       // TRANSFORMARMOS EN STRING EN MAYÚSCULAS RESPETANDO LAS Ñ PARA EVITAR ERRORES
-        $string = mb_strtoupper($string, "UTF-8");
-        // EL REGEX POR @MARIANO
-        $pattern = '/^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/';
-        $validate = preg_match($pattern, $string, $match);
-        if( $validate === false ){
-           // SI EL STRING NO CUMPLE CON EL PATRÓN REQUERIDO RETORNA FALSE
-            return false;
-        }
+      $string = mb_strtoupper($string, "UTF-8");
+      // EL REGEX POR @MARIANO
+      $pattern = '/^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/';
+      $validate = preg_match($pattern, $string, $match);
+      if( $validate === false ){
+         // SI EL STRING NO CUMPLE CON EL PATRÓN REQUERIDO RETORNA FALSE
+         return false;
+      }
 
-        return true;
+      return true;
    }
 
 
