@@ -45,24 +45,14 @@ $fechanacimiento = '1985-05-20';
 
 //echo $cliente->usuario->getNombrecompleto();
 
-/*
-   $cliente->buscarClientePorValor('curp','BADD110313HCMLNS0');
+
+   $cliente->buscarClientePorValor('idcliente',28);
 
    echo '<pre>';
    echo $cliente->getApellidopaterno().'<br>';
    echo $cliente->usuario->getNombrecompleto();
    echo '</pre>';
-*/
-$user_input = '123456';
-//echo hash('sha256', $user_input,false);
-$pass = urlencode($user_input);
-$pass_crypt = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92';
-//if (sha256($str) === '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92') {
-if ('8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' === hash('sha256', $user_input,false)) {
- echo 'es';
-} else {
-   echo 'no es';
-}
+
 
 
 ?>
