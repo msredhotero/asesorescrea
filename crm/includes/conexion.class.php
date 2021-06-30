@@ -2,20 +2,15 @@
  class Conexion extends PDO {
    private $tipo_de_base = 'mysql';
    private $host = 'localhost';
+   /*
+   private $nombre_de_base = 'u115752684_asesores';
+   private $usuario = 'root';
+   private $contrasena = '';
+   */
+   private $nombre_de_base = 'u115752684_desa';
+   private $usuario = 'u115752684_desa';
+   private $contrasena = '@Chivas11';
 
-   public $server;
-
-   $server = 1;
-
-   if ($server == 0) {
-      private $nombre_de_base = 'u115752684_asesores';
-      private $usuario = 'root';
-      private $contrasena = '';
-   } else {
-      private $nombre_de_base = 'u115752684_desa';
-      private $usuario = 'u115752684_desa';
-      private $contrasena = '@Chivas11';
-   }
    public function __construct() {
       //Sobreescribo el método constructor de la clase PDO.
       try{
