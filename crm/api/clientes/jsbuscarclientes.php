@@ -6,76 +6,97 @@ include ('../../includes/funciones.php');
 include ('../../includes/funcionesUsuarios.php');
 include ('../../includes/funcionesHTML.php');
 include ('../../includes/funcionesReferencias.php');
+include ('../../includes/clientes.class.php');
 
 $serviciosFunciones = new Servicios();
 $serviciosUsuario 	= new ServiciosUsuarios();
 $serviciosHTML 		= new ServiciosHTML();
 $serviciosReferencias 	= new ServiciosReferencias();
+$cliente = new clienteCrea();
 
 $fecha = date('Y-m-d');
 
-if ((isset($_GET['tipopersona']))) {
-	$tipopersona = $_POST['tipopersona'];
+if ((isset($_GET['idcliente']))) {
+	$idcliente = $_GET['idcliente'];
 } else {
-	$tipopersona = 1;
+	$idcliente = '';
 }
 
-if ((isset($_GET['idasesor']))) {
-	$asesor = $_POST['idasesor'];
+if ((isset($_GET['idusuario']))) {
+	$idusuario = $_GET['idusuario'];
 } else {
-	$asesor = 0;
+	$idusuario = '';
+}
+
+if ((isset($_GET['curp']))) {
+	$curp = $_GET['curp'];
+} else {
+	$curp = '';
+}
+
+if ((isset($_GET['rfc']))) {
+	$rfc = $_GET['rfc'];
+} else {
+	$rfc = '';
 }
 
 
 $token = $_GET['callback'];
-
+//https://financieracrea.com
 header("content-type: Access-Control-Allow-Origin: *");
 
-$ar = array();
+$resV['errores'] = array();
 
-if ((isset($_GET['busqueda'])) && ($_GET['busqueda'] != '')) {
-	$busqueda = trim($_GET['busqueda']);
+//die(var_dump($idcliente));
 
-	if ($asesor == 0) {
-		$resTraerClientes = $serviciosReferencias->bClientes($busqueda,$tipopersona);
+if (($idcliente != '') || ($idusuario != '') || ($curp != '') || ($rfc != '')) {
+	if ($idcliente != '') {
+		$cliente->buscarClientePorValor('idcliente',$idcliente);
+
 	} else {
-		$resTraerClientes = $serviciosReferencias->bClientesasesoresPorAsesor($busqueda,$tipopersona,$asesor);
+		if ($idusuario != '') {
+			if ($idusuario != 0) {
+				$cliente->buscarClientePorValor('refusuarios',$idusuario);
+			} else {
+				$resV['estatus'] = 'error';
+				array_push($resV['errores'],array('Mensaje'=> 'Dato invalido '));
+			}
+		} else {
+			if ($curp != '') {
+				$cliente->buscarClientePorCurp($curp);
+			} else {
+				$cliente->buscarClientePorRfc($curp);
+			}
+		}
+	}
+
+	if (count($resV['errores'])<= 0) {
+		if ($cliente->getIdcliente() == null) {
+			$resV['estatus'] = 'error';
+			array_push($resV['errores'],array('Mensaje'=> 'Dato invalido '));
+		} else {
+			$resV['cliente'] = array(
+				'idcliente' => $cliente->getIdcliente(),
+				'refusuarios' => $cliente->getRefusuarios(),
+				'curp' => $cliente->getCurp(),
+				'rfc' => $cliente->getRfc(),
+				'apellidopaterno' => $cliente->getApellidopaterno(),
+				'apellidomaterno' => $cliente->getApellidomaterno(),
+				'nombre' => $cliente->getNombre(),
+			);
+		}
 	}
 
 } else {
-	$resTraerClientes = $serviciosReferencias->bClientes('*****',0);
+	$resV['estatus'] = 'error';
+	array_push($resV['errores'],array('Mensaje'=> 'Debe enviar algun parametro (idcliente, idusuario, rfc o curp) para hacer la busqueda '));
 }
 
-	$cad = '';
-	if ($tipopersona == 1) {
-		while ($row = mysql_fetch_array($resTraerClientes)) {
-
-			array_push($ar,array(
-				'id'=>$row['idcliente'],
-				'nombrecompleto'=> $row['nombrecompleto'],
-				'idclienteinbursa'=>$row['idclienteinbursa'],
-				'reftipopersonas' => $row['reftipopersonas']
-				)
-			);
-		}
-	} else {
-		while ($row = mysql_fetch_array($resTraerClientes)) {
-
-			array_push($ar,array(
-				'id'=>$row['idcliente'],
-				'nombrecompleto'=> $row['razonsocial'],
-				'idclienteinbursa'=>$row['idclienteinbursa'],
-				'reftipopersonas' => $row['reftipopersonas']
-				)
-			);
-		}
-	}
 
 
 
-//echo "[".substr($cad,0,-1)."]";
-//echo "[".json_encode($ar)."]";
-echo $token.'('.json_encode($ar).');';
+header('Content-type: application/json');
+echo json_encode($resV);
 
 
 ?>

@@ -48,7 +48,7 @@ class ServiciosUsuarios {
 		}
 	}
 
-	
+
 /* PARA Usuariosnip */
 
 function insertarUsuariosnip($refusuarios,$idevento,$nip,$fechacrea,$destino) {
@@ -57,8 +57,8 @@ function insertarUsuariosnip($refusuarios,$idevento,$nip,$fechacrea,$destino) {
 	$res = $this->query($sql,1);
 	return $res;
 }
-	
-	
+
+
 	function modificarUsuariosnip($id,$refusuarios,$idevento,$nip,$fechacrea) {
 	$sql = "update dbusuariosnip
 	set
@@ -67,15 +67,15 @@ function insertarUsuariosnip($refusuarios,$idevento,$nip,$fechacrea,$destino) {
 	$res = $this->query($sql,0);
 	return $res;
 	}
-	
-	
+
+
 	function eliminarUsuariosnip($id) {
 	$sql = "delete from dbusuariosnip where idusuariosnip =".$id;
 	$res = $this->query($sql,0);
 	return $res;
 	}
-	
-	
+
+
 	function traerUsuariosnip() {
 	$sql = "select
 	u.idusuariosnip,
@@ -88,8 +88,8 @@ function insertarUsuariosnip($refusuarios,$idevento,$nip,$fechacrea,$destino) {
 	$res = $this->query($sql,0);
 	return $res;
 	}
-	
-	
+
+
 	function traerUsuariosnipPorId($id) {
 	$sql = "select idusuariosnip,refusuarios,idevento,nip,fechacrea,destino from dbusuariosnip where idusuariosnip =".$id;
 	$res = $this->query($sql,0);
@@ -119,8 +119,8 @@ function insertarUsuariosnip($refusuarios,$idevento,$nip,$fechacrea,$destino) {
 		$res = $this->query($sql,0);
 		return $res;
 	}
-	
-	
+
+
 	/* Fin */
 	/* /* Fin de la Tabla: dbusuariosnip*/
 
@@ -280,47 +280,76 @@ function login($usuario,$pass) {
 
          return 1;
       }
-
+	/* fin para la parte del directorio */
    } else {
-      $sqlusu = "select * from dbusuarios where email = '".$usuario."' and refroles <> 19";
-
+      $sqlusu = "select idusuario, password, usuarioexterno from dbusuarios where email = '".$usuario."' and refroles <> 19";
+		/************ usuario y pass no nulos */
    	if (trim($usuario) != '' and trim($pass) != '') {
 
-   	$respusu = $this->query($sqlusu,0);
+   		$respusu = $this->query($sqlusu,0);
 
-   	if (mysql_num_rows($respusu) > 0) {
+   		if (mysql_num_rows($respusu) > 0) {
+
+				$passwordUsuario = mysql_result($respusu,0,'password');
+				$usuarioexterno = mysql_result($respusu,0,'usuarioexterno');
+   			$idUsua = mysql_result($respusu,0,0);
+
+				if ($usuarioexterno == '1') {
+					$sqlpass = "SELECT
+	                      u.nombrecompleto,
+	                      u.email,
+	                      u.usuario,
+	                      r.descripcion,
+	                      r.idrol,
+	                      coalesce(tk.token,'') as token
+	                  FROM
+	                      dbusuarios u
+	                          INNER JOIN
+	                      tbroles r ON r.idrol = u.refroles
+	                        left join dbtokenasesores tk on tk.refusuarios = u.idusuario
+	                  WHERE
+	                     u.activo = 1
+	                     AND idusuario = ".$idUsua;
 
 
-   		$idUsua = mysql_result($respusu,0,0);
-   		$sqlpass = "SELECT
-                      u.nombrecompleto,
-                      u.email,
-                      u.usuario,
-                      r.descripcion,
-                      r.idrol,
-                      coalesce(tk.token,'') as token
-                  FROM
-                      dbusuarios u
-                          INNER JOIN
-                      tbroles r ON r.idrol = u.refroles
-                        left join dbtokenasesores tk on tk.refusuarios = u.idusuario
-                  WHERE
-                      password = '".$pass."' AND u.activo = 1
-                          AND idusuario = ".$idUsua;
+	   			$resppass = $this->query($sqlpass,0);
+
+		   		if ((mysql_num_rows($resppass) > 0) && ($passwordUsuario === hash('sha256', $pass,false))) {
+	   				$error = '';
+	   			} else {
+	   				$error = 'Usuario o Password incorrecto';
+	   			}
 
 
-   		$resppass = $this->query($sqlpass,0);
+				} else {
+					$sqlpass = "SELECT
+	                      u.nombrecompleto,
+	                      u.email,
+	                      u.usuario,
+	                      r.descripcion,
+	                      r.idrol,
+	                      coalesce(tk.token,'') as token
+	                  FROM
+	                      dbusuarios u
+	                          INNER JOIN
+	                      tbroles r ON r.idrol = u.refroles
+	                        left join dbtokenasesores tk on tk.refusuarios = u.idusuario
+	                  WHERE
+	                      password = '".$pass."' AND u.activo = 1
+	                          AND idusuario = ".$idUsua;
 
-   		if (mysql_num_rows($resppass) > 0) {
-   			$error = '';
-   			} else {
-   				$error = 'Usuario o Password incorrecto';
-   			}
 
-   		}
-   		else
+	   			$resppass = $this->query($sqlpass,0);
 
-   		{
+		   		if (mysql_num_rows($resppass) > 0) {
+	   				$error = '';
+	   			} else {
+	   				$error = 'Usuario o Password incorrecto';
+	   			}
+
+				}
+
+			} else {
    			$error = 'Usuario o Password incorrecto';
    		}
 
@@ -997,7 +1026,7 @@ function registrarCliente($email,$apellido, $nombre,$refcliente,$refusuarios,$pa
    $cuerpo .= '<body><p style="font-family: '."'Lato'".', serif; font-size:1.7em;">A continuación, le enviamos sus datos de acceso a nuestra plataforma:</p>';
 
    $cuerpo .= '<h3 style="font-family: '."'Lato'".', serif; font-size:1.6em;">Nombre de usuario: '.$email.'</h3>';
-   
+
 
    $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
 

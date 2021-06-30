@@ -33,7 +33,7 @@ class ServiciosReferencias {
       $res = $this->query($sql,1);
       return $res;
    }
-   
+
 /* PARA Pixel */
 
 function insertarPixel($reforigen,$donde,$evento,$dato1,$dato2,$dato3,$fechacrea) {
@@ -42,8 +42,8 @@ function insertarPixel($reforigen,$donde,$evento,$dato1,$dato2,$dato3,$fechacrea
    $res = $this->query($sql,1);
    return $res;
    }
-   
-   
+
+
    function modificarPixel($id,$reforigen,$donde,$evento,$dato1,$dato2,$dato3,$fechacrea) {
    $sql = "update dbpixel
    set
@@ -52,15 +52,15 @@ function insertarPixel($reforigen,$donde,$evento,$dato1,$dato2,$dato3,$fechacrea
    $res = $this->query($sql,0);
    return $res;
    }
-   
-   
+
+
    function eliminarPixel($id) {
    $sql = "delete from dbpixel where idpixel =".$id;
    $res = $this->query($sql,0);
    return $res;
    }
-   
-   
+
+
    function traerPixel() {
    $sql = "select
    p.idpixel,
@@ -76,15 +76,15 @@ function insertarPixel($reforigen,$donde,$evento,$dato1,$dato2,$dato3,$fechacrea
    $res = $this->query($sql,0);
    return $res;
    }
-   
-   
+
+
    function traerPixelPorId($id) {
    $sql = "select idpixel,reforigen,donde,evento,dato1,dato2,dato3,fechacrea from dbpixel where idpixel =".$id;
    $res = $this->query($sql,0);
    return $res;
    }
-   
-   
+
+
    /* Fin */
    /* /* Fin de la Tabla: dbpixel*/
 
@@ -174,8 +174,8 @@ function insertarPixel($reforigen,$donde,$evento,$dato1,$dato2,$dato3,$fechacrea
    }
 
    function traerSolicitudvrimPorIdCotizacion($id) {
-      $sql = "select sv.idsolicitudvrim,sv.reftokenvrim 
-         from dbsolicitudvrim sv 
+      $sql = "select sv.idsolicitudvrim,sv.reftokenvrim
+         from dbsolicitudvrim sv
          inner join dbtokenvrim tv on tv.idtokenvrim = sv.reftokenvrim and tv.reftabla = 11
          where tv.idreferencia =".$id;
       $res = $this->query($sql,0);
@@ -1138,7 +1138,7 @@ return $res;
                $sql = "insert into dbtrazabilidad(idtrazabilidad,reftabla,idreferencia,fechacrea,refevento,usuariocrea,idreferenciaaux1,idreferenciaaux2,idreferenciaaux3,dato,url)
                values ('',".$reftabla.",".$idreferencia.",'".$fechacrea."',".$refevento.",'".$usuariocrea."',".$idreferenciaaux1.",".$idreferenciaaux2.",".$idreferenciaaux3.",'".$dato."','".$url."')";
                $res = $this->query($sql,1);
-   
+
                if (((integer)$res > 0) && ($reftabla==12) && ((mysql_result($resEvento,0,'enviaemailaagente') == '1') || (mysql_result($resEvento,0,'enviaemailagestion') == '1') || ($url != ''))) {
                   $resMensaje = $this->enviarEmailModificacionCotizacion($idreferencia,mysql_result($resEvento,0,'nombre').' - '.$dato,$url,1,$refevento);
                }
@@ -1149,7 +1149,7 @@ return $res;
             $res = 0;
          }
       }
-      
+
 
 
 
@@ -1416,7 +1416,7 @@ return $res;
       $emailFijoMesaControl = "mesadecontrol@masseguros.mx";
 
       $emailFijoEmision1 = "rmrodriguez@masseguros.mx";
-      $emailFijoEmision2 = "emisioncaptura3@masseguros.mx"; 
+      $emailFijoEmision2 = "emisioncaptura3@masseguros.mx";
       $emailFijoEmision3 = "emision_tramites@masseguros.mx";
       $emailFijoEmision4 = "atavera@masseguros.mx";
 
@@ -1675,7 +1675,7 @@ return $res;
 
                $resMensaje = $this->insertarMensajes($cuerpo,$_SESSION['usua_sahilices'],$emailFijoMesaControl, date('Y-m-d H:i:s'));
             }
-            
+
 
          } else {
             $resUsuarios = $this->traerUsuariosPorRoles($idrol);
@@ -3713,6 +3713,12 @@ return $res;
       return $res;
    }
 
+   function traerTokensPorCotizacionVigenteTipo($token,$tipo) {
+      $sql = "select idtoken,refcotizaciones,reftipo,token,fechacreac,refestadotoken,vigenciafin from dbtokens where token ='".$id."' and now() between fechacreac and vigenciafin and reftipo = ".$tipo;
+      $res = $this->query($sql,0);
+      return $res;
+   }
+
 
    /* Fin */
    /* /* Fin de la Tabla: dbtokens*/
@@ -5490,7 +5496,7 @@ return $res;
             $sexo = mysql_result($resCliente,0,'genero');
          }
       }
-      
+
 
 
       $arPreguntas = array();
@@ -5599,7 +5605,7 @@ return $res;
                         </div>
                      </div>';
                   }
-                  
+
                }
 
                // tipo de pregunta multiple
@@ -8986,7 +8992,7 @@ return $res;
 	}
 
 
-   
+
 
    function traerVentasActivos() {
 		$sql = "select
@@ -9849,7 +9855,7 @@ return $res;
       p.producto,
       c.fechacrea,
       c.folio
-      
+
       order by c.fechacrea desc";
 		$res = $this->query($sql,0);
 		return $res;
@@ -14079,7 +14085,7 @@ return $res;
                       `observaciones`
                   FROM `dbcotizaciones` where idcotizacion = ".$idcotizacion;
       }
-      
+
 
       $res = $this->query($sql,1);
 
@@ -14120,9 +14126,9 @@ return $res;
                      $resInsertarArchivo = $this->insertarDocumentacioncotizaciones($res,$rowAr['refdocumentaciones'],$rowAr['archivo'],$rowAr['type'],2,$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
                   } else {
                      $resInsertarArchivo = $this->insertarDocumentacioncotizaciones($res,$rowAr['refdocumentaciones'],$rowAr['archivo'],$rowAr['type'],$rowAr['refestadodocumentaciones'],$fechacrea,$fechamodi,$usuariocrea,$usuariomodi);
-                     
+
                   }
-                  
+
                }
 
             }

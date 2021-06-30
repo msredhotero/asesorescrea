@@ -9,7 +9,7 @@ include ('../../includes/funcionesReferencias.php');
 include ('../../includes/clientes.class.php');
 
 $serviciosFunciones = new Servicios();
-$serviciosUsuario 	= new ServiciosUsuarios();
+$serviciosUsuarios 	= new ServiciosUsuarios();
 $serviciosHTML 		= new ServiciosHTML();
 $serviciosReferencias 	= new ServiciosReferencias();
 $cliente = new clienteCrea();
@@ -18,30 +18,32 @@ $fecha = date('Y-m-d');
 
 $token = $_GET['callback'];
 
+$resV['errores'] = array();
+
 header("content-type: Access-Control-Allow-Origin: *");
 
 if ((isset($_GET['reftipopersonas']))) {
 	$reftipopersonas = $_GET['reftipopersonas'];
 } else {
-	array_push($resV['errores'],array('Mensaje'=>'Debe ingresar el tipo de persona \n'));
+	array_push($resV['errores'],array('Mensaje'=>'Debe ingresar el tipo de persona '));
 }
 
 if ((isset($_GET['nombre']))) {
 	$nombre = $_GET['nombre'];
 } else {
-	array_push($resV['errores'],array('Mensaje'=>'Debe ingresar el nombre \n'));
+	array_push($resV['errores'],array('Mensaje'=>'Debe ingresar el nombre '));
 }
 
 if ((isset($_GET['apellidopaterno']))) {
 	$apellidopaterno = $_GET['apellidopaterno'];
 } else {
-	array_push($resV['errores'],array('Mensaje'=>'Debe ingresar el apellido paterno \n'));
+	array_push($resV['errores'],array('Mensaje'=>'Debe ingresar el apellido paterno '));
 }
 
 if ((isset($_GET['apellidomaterno']))) {
 	$apellidomaterno = $_GET['apellidomaterno'];
 } else {
-	array_push($resV['errores'],array('Mensaje'=>'Debe ingresar el apellido materno \n'));
+	array_push($resV['errores'],array('Mensaje'=>'Debe ingresar el apellido materno '));
 }
 
 if ((isset($_GET['razonsocial']))) {
@@ -68,10 +70,15 @@ if ((isset($_GET['telefonocelular']))) {
 	$telefonocelular = '';
 }
 
-if ((isset($_GET['email'])) && ($_GET['email'] != '') && (filter_var($email, FILTER_VALIDATE_EMAIL))) {
-	$email = $_GET['email'];
+if ((isset($_GET['email'])) && ($_GET['email'] != '')) {
+	if ((filter_var($_GET['email'], FILTER_VALIDATE_EMAIL) === false)) {
+		array_push($resV['errores'],array('Mensaje'=>'Debe ingresar un email valido '));
+	} else {
+		$email = $_GET['email'];
+	}
+
 } else {
-	array_push($resV['errores'],array('Mensaje'=>'Debe ingresar un email valido \n'));
+	array_push($resV['errores'],array('Mensaje'=>'Debe ingresar un email valido '));
 }
 
 if ((isset($_GET['rfc']))) {
@@ -87,11 +94,17 @@ if (isset($_GET['idclienteinbursa'])) {
 	$idclienteinbursa = '';
 }
 
+if ((isset($_GET['fechanacimiento']))) {
+	$fechanacimiento = $_GET['fechanacimiento'];
+} else {
+	array_push($resV['errores'],array('Mensaje'=>'Debe ingresar una Fecha de Nacimiento '));
+}
+
 
 if ((isset($_GET['curp']))) {
 	$curp = $_GET['curp'];
 } else {
-	$curp = '';
+	array_push($resV['errores'],array('Mensaje'=>'Debe ingresar un curp '));
 }
 
 if ((isset($_GET['genero']))) {
@@ -103,7 +116,7 @@ if ((isset($_GET['genero']))) {
 if ((isset($_GET['refestadocivil']))) {
 	$refestadocivil = $_GET['refestadocivil'];
 } else {
-	$refestadocivil = '';
+	$refestadocivil = '7';
 }
 
 if ((isset($_GET['reftipoidentificacion']))) {
@@ -189,57 +202,76 @@ if ((isset($_GET['ciudad']))) {
 /*************** fin domicilio *********************************/
 
 
-/************ para el suaurio ***************************/
-$existeEmail = $serviciosUsuarios->existeUsuario($email);
-
-if ($existeEmail == 1) {
-	array_push($resV['errores'],array('Mensaje'=>'El email ya existe en la base de datos \n'));
-
+/************ para el usuario ***************************/
+if ((isset($_GET['usuario']))) {
+	$usuario = $_GET['usuario'];
 } else {
-
-	//inserto el usuario
-
-	if ((isset($_GET['usuario']))) {
-		$usuario = $_GET['usuario'];
-	} else {
-		array_push($resV['errores'],array('Mensaje'=>'Debe ingresar un usuario \n'));
-	}
-
-	$cliente->usuario->guardar($usuario,$password,$refroles,$email,$nombrecompleto,$activo,$refsocios,$validaemail,$validamovil,$validasignatura,$usuarioexterno);
-
-
-
-	/************* fin usuario ******************************/
-
-	$existeCurp = $cliente->buscarClientePorValor('curp',$curp);
-
-	if ($existeCurp != null) {
-		array_push($resV['errores'],array('Mensaje'=>'El cliente ya existe en la base de datos \n'));
-	} else {
-		$res = $cliente->guardar($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$refusuarios,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion,$fechanacimiento);
-
-		if ($cliente->getIdcliente() == null) {
-			array_push($resV['errores'],array('Mensaje'=> $res.' \n'));
-
-		} else {
-
-			$resV['estatus'] = 'ok';
-
-			array_push($resV['cliente'],array(
-				'id'=>$row['idcliente'],
-				'nombrecompleto'=> $row['nombrecompleto'],
-				'idclienteinbursa'=>$row['idclienteinbursa'],
-				'reftipopersonas' => $row['reftipopersonas']
-				)
-			);
-		}
-	}
-
-
-
+	array_push($resV['errores'],array('Mensaje'=>'Debe ingresar un usuario '));
 }
 
-if (isset($resV['error'])) {
+if ((isset($_GET['password']))) {
+	$password = $_GET['password'];
+} else {
+	array_push($resV['errores'],array('Mensaje'=>'Debe ingresar un password '));
+}
+
+if ((isset($_GET['nombrecompleto']))) {
+	$nombrecompleto = $_GET['nombrecompleto'];
+} else {
+	array_push($resV['errores'],array('Mensaje'=>'Debe ingresar un nombre de usuario '));
+}
+/*********** fin usuario **************************************/
+
+if (count($resV['errores'])<=0) {
+
+	$existeEmail = $serviciosUsuarios->existeUsuario($email);
+
+	if ($existeEmail == 1) {
+		array_push($resV['errores'],array('Mensaje'=>'El email ya existe en la base de datos '));
+
+	} else {
+
+		$existeCurp = $cliente->buscarClientePorValor('curp',$curp);
+
+		if ($existeCurp != null) {
+			array_push($resV['errores'],array('Mensaje'=>'El cliente ya existe en la base de datos '));
+		} else {
+
+			//datos del usuario
+			$refroles = 16;
+			$activo = '1';
+			$refsocios = 0;
+			$validaemail = '1';
+			$validamovil = '1';
+			$validasignatura = '1';
+			$usuarioexterno = '1';
+
+			//inserto el usuario
+			$cliente->usuario->guardar($usuario,$password,$refroles,$email,$nombrecompleto,$activo,$refsocios,$validaemail,$validamovil,$validasignatura,$usuarioexterno);
+
+			$refusuarios = $cliente->usuario->getIdusuario();
+			/************* fin usuario ******************************/
+
+
+			$res = $cliente->guardar($reftipopersonas,$nombre,$apellidopaterno,$apellidomaterno,$razonsocial,$domicilio,$telefonofijo,$telefonocelular,$email,$rfc,$ine,$refusuarios,$usuariocrea,$usuariomodi,$emisioncomprobantedomicilio,$emisionrfc,$vencimientoine,$idclienteinbursa,$colonia,$municipio,$codigopostal,$edificio,$nroexterior,$nrointerior,$estado,$ciudad,$curp,$genero,$refestadocivil,$reftipoidentificacion,$nroidentificacion,$fechanacimiento);
+
+			if ($cliente->getIdcliente() == null) {
+				array_push($resV['errores'],array('Mensaje'=> $res.' '));
+
+			} else {
+
+				$resV['estatus'] = 'ok';
+				$resV['idusuario'] = $cliente->usuario->getIdusuario();
+				$resV['idcliente'] = $cliente->getIdcliente();
+			}
+		}
+
+
+
+	}
+}
+
+if (count($resV['errores'])>0) {
 	$resV['estatus'] = 'error';
 }
 
