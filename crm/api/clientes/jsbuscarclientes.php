@@ -75,6 +75,7 @@ if (($idcliente != '') || ($idusuario != '') || ($curp != '') || ($rfc != '')) {
 			$resV['estatus'] = 'error';
 			array_push($resV['errores'],array('Mensaje'=> 'Dato invalido '));
 		} else {
+			$resV['estatus'] = 'ok';
 			$resV['cliente'] = array(
 				'idcliente' => $cliente->getIdcliente(),
 				'refusuarios' => $cliente->getRefusuarios(),
