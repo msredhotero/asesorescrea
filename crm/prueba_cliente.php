@@ -2,8 +2,8 @@
 
 include ('includes/clientes.class.php');
 include ('includes/validadores.php');
-/*
-$cliente = new clienteCrea();*/
+
+$cliente = new clienteCrea();
 $validador = new serviciosValidador();
 
 $reftipopersonas = 1;

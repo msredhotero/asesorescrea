@@ -3,8 +3,11 @@
    private $tipo_de_base = 'mysql';
    private $host = 'localhost';
 
-   $server = $_SERVER['SERVER_NAME'];
-   if ($server == 'localhost') {
+   public $server;
+
+   $server = 1;
+
+   if ($server == 0) {
       private $nombre_de_base = 'u115752684_asesores';
       private $usuario = 'root';
       private $contrasena = '';
