@@ -1,7 +1,5 @@
 <?php
 
-
-
 include ('../../includes/funciones.php');
 include ('../../includes/funcionesUsuarios.php');
 include ('../../includes/funcionesHTML.php');
@@ -40,8 +38,6 @@ if ((isset($_GET['rfc']))) {
 	$rfc = '';
 }
 
-
-$token = $_GET['callback'];
 //https://financieracrea.com
 header("content-type: Access-Control-Allow-Origin: *");
 
