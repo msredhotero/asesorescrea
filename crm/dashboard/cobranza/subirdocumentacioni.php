@@ -686,18 +686,36 @@ if (($_SESSION['idroll_sahilices'] == 7) && ($iddocumentacion == 39)) {
 					$i += 1;
 					if ($row['idestadodocumentacion'] == 5) {
 						$completos += 1;
+					} else {
+						if (($archivoTransferencia != '') && ($row['iddocumentacion'] == 39)) {
+							$completos += 1;
+						}
 					}
 				?>
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-						<div class="info-box-3 bg-<?php echo $row['color']; ?> btnCursor hover-zoom-effect btnDocumentacion<?php echo $row['iddocumentacion']; ?>" id="<?php echo $row['iddocumentacion']; ?>">
-							<div class="icon">
-								<i class="material-icons">unarchive</i>
+						<?php if (($archivoTransferencia != '') && ($row['iddocumentacion'] == 39)) { ?>
+							<div class="info-box-3 bg-green btnCursor hover-zoom-effect btnDocumentacion39" id="39">
+								<div class="icon">
+									<i class="material-icons">unarchive</i>
+								</div>
+								<div class="content">
+									<div class="text"><?php echo $row['documentacion']; ?> (seleccionar)</div>
+									<div class="number">Aceptada</div>
+								</div>
 							</div>
-							<div class="content">
-								<div class="text"><?php echo $row['documentacion']; ?> (seleccionar)</div>
-								<div class="number"><?php echo $row['estadodocumentacion']; ?></div>
+						<?php } else { ?>
+							<div class="info-box-3 bg-<?php echo $row['color']; ?> btnCursor hover-zoom-effect btnDocumentacion<?php echo $row['iddocumentacion']; ?>" id="<?php echo $row['iddocumentacion']; ?>">
+								<div class="icon">
+									<i class="material-icons">unarchive</i>
+								</div>
+								<div class="content">
+									<div class="text"><?php echo $row['documentacion']; ?> (seleccionar)</div>
+									<div class="number"><?php echo $row['estadodocumentacion']; ?></div>
+								</div>
 							</div>
-						</div>
+						<?php } ?>
+
+
 					</div>
 				<?php }  ?>
 
