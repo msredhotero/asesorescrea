@@ -1618,7 +1618,7 @@ if (($_SESSION['idroll_sahilices'] == 7) && ($iddocumentacion == 39)) {
 
 		Dropzone.options.frmFileUpload = {
 			maxFilesize: 30,
-			acceptedFiles: ".pdf,.xml",
+			acceptedFiles: ".pdf,.xml,.png,.jpg",
 			accept: function(file, done) {
 				done();
 			},
