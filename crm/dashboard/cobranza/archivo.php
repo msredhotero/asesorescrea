@@ -37,7 +37,7 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 	$resAsesor 		= 	$serviciosReferencias->traerAsesoresPorUsuario($idusuario);
    $idasesor = mysql_result($resAsesor,0,0);
 } else {
-	$idasesor = 0;
+	$idasesor = 25;
 
 }
 

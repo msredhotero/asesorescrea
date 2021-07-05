@@ -65,7 +65,15 @@ $frmUnidadNegocios 	= $serviciosFunciones->camposTablaViejo($insertar ,$tabla,$l
 //////////////////////////////////////////////  FIN de los opciones //////////////////////////
 
 //asesor rosales david
-$idasesor = 25;
+if ($_SESSION['idroll_sahilices'] == 7) {
+	$idusuario = $_SESSION['usuaid_sahilices'];
+	// ver despues poque ahora va por venta
+	$resAsesor 		= 	$serviciosReferencias->traerAsesoresPorUsuario($idusuario);
+   $idasesor = mysql_result($resAsesor,0,0);
+} else {
+	$idasesor = 25;
+
+}
 
 ?>
 
