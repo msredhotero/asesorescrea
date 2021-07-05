@@ -29,6 +29,8 @@ $serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cobranza/
 
 $fecha = date('Y-m-d');
 
+$id = $_GET['id'];
+
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
 $resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Recibos de Pago",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
 
@@ -160,7 +162,7 @@ $idasesor = 25;
 					<div class="card ">
 						<div class="header bg-blue">
 							<h2>
-								CARGAR TRANSACCION DE MULTIPLES RECIBOS
+								DETALLE DE RECIBOS PAGADOS POR LA TRANSACCION
 							</h2>
 							<ul class="header-dropdown m-r--5">
 								<li class="dropdown">
@@ -174,106 +176,29 @@ $idasesor = 25;
 							</ul>
 						</div>
 						<div class="body table-responsive">
-							<form class="formulario frmNuevo" role="form" id="sign_in">
-								<div class="row">
-									<?php echo $frmUnidadNegocios; ?>
-								</div>
 
-								<hr>
-								<h4>Busqueda de Recibos</h4>
-								<hr>
-								<div class="row">
-									<div class="col-xs-8">
-										<h4>Seleccionar</h4>
-										<table id="example" class="display table " style="width:100%">
-											<thead>
-												<tr>
-													<th>Cliente</th>
-													<th>Nro Poliza</th>
-													<th>Fecha Vencimiento</th>
-													<th>Nro Recibo</th>
-													<th>Estado</th>
-													<th>Monto</th>
-													<th>Acciones</th>
-												</tr>
-											</thead>
-											<tfoot>
-												<tr>
-													<th>Cliente</th>
-													<th>Nro Poliza</th>
-													<th>Fecha Vencimiento</th>
-													<th>Nro Recibo</th>
-													<th>Estado</th>
-													<th>Monto</th>
-													<th>Acciones</th>
-												</tr>
-											</tfoot>
-										</table>
-									</div>
-									<div class="col-xs-4">
-										<h4>Recibos Seleccionados</h4>
-										<table id="example2" class="display table " style="width:100%">
-											<thead>
-												<tr>
-													<th>Nro Poliza</th>
-													<th>Nro Recibo</th>
-													<th>Monto</th>
-													<th>Acciones</th>
-												</tr>
-											</thead>
-											<tbody id="lstRecibos">
+                     <div class="row" style="padding: 5px 20px;">
+                        <button type="button" class="btn btn-info waves-effect btnVolverFiltro" data-ir="transferencia" data-referencia="0"><i class="material-icons">reply</i><span>VOLVER</span></button>
 
-											</tbody>
-											<tfoot>
-												<tr>
-													<th>Nro Poliza</th>
-													<th>Nro Recibo</th>
-													<th>Monto</th>
-													<th>Acciones</th>
-												</tr>
-												<tr>
-													<th>Total:</th>
-													<th><input class="form-control" type="text" name="totalRecibos" id="totalRecibos" readonly/></th>
-													<th>Diferencia</th>
-													<th><input class="form-control" type="text" name="diferencia" id="diferencia" readonly/></th>
-												</tr>
-											</tfoot>
-										</table>
-									</div>
-								</div>
+                     </div>
 
-
-								<div class="row">
-
-									<div class="modal-footer">
-										<button type="button" class="btn btn-info waves-effect btnVolverFiltro" data-ir="index" data-referencia="0"><i class="material-icons">reply</i><span>VOLVER</span></button>
-										<button id="btnGuardar" type="submit" class="btn btn-success waves-effect nuevo">GUARDAR</button>
-									</div>
-								</div>
-
-							</form>
 
 							<div class="row" style="padding: 5px 20px;">
+
 
 								<table id="example3" class="display table " style="width:100%">
 									<thead>
 										<tr>
-											<th>Asesor</th>
-											<th>Nro Transaccion</th>
-											<th>Monto</th>
-											<th>Fecha Transferencia</th>
-											<th>Subio Comprobante</th>
-											<th>Acciones</th>
+                                 <th>Nro Poliza</th>
+                                 <th>Nro Recibo</th>
+                                 <th>Monto</th>
 										</tr>
 									</thead>
 									<tfoot>
 										<tr>
-											<th>Asesor</th>
-											<th>Nro Transaccion</th>
-											<th>Monto</th>
-											<th>Fecha Transferencia</th>
-											<th>Subio Comprobante</th>
-											<th>Acciones</th>
+                                 <th>Nro Poliza</th>
+                                 <th>Nro Recibo</th>
+                                 <th>Monto</th>
 										</tr>
 									</tfoot>
 								</table>
@@ -316,7 +241,7 @@ $idasesor = 25;
 		var table3 = $('#example3').DataTable({
 			"bProcessing": true,
 			"bServerSide": true,
-			"sAjaxSource": "../../json/jstablasajax.php?tabla=transferencias&idasesor=<?php echo $idasesor; ?>",
+			"sAjaxSource": "../../json/jstablasajax.php?tabla=transferenciadetalles&idasesor=<?php echo $idasesor; ?>&id=<?php echo $id; ?>",
 			"language": {
 				"emptyTable":     "No hay datos cargados",
 				"info":           "Mostrar _START_ hasta _END_ del total de _TOTAL_ filas",
@@ -341,9 +266,6 @@ $idasesor = 25;
 				}
 			}
 		});
-
-		$('.frmContarchivo').hide();
-		$('.frmConttype').hide();
 
 		$("#example3").on("click",'.btnDetalle', function(){
 			idTable =  $(this).attr("id");

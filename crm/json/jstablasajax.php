@@ -69,6 +69,41 @@ function armarAccionesDropDown($id,$label='',$class,$icon) {
 }
 
 switch ($tabla) {
+	case 'transferenciadetalles':
+		$idasesor = $_GET['idasesor'];
+		$id = $_GET['id'];
+
+		$datos = $serviciosReferencias->traerTransferenciaDetallesAjax($length, $start, $busqueda,$colSort,$colSortDir,$idasesor,$id);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array();
+		$class = array();
+		$icon = array();
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 3;
+	break;
+	case 'transferencias':
+		$idasesor = $_GET['idasesor'];
+
+		$datos = $serviciosReferencias->traerTransferenciasAjax($length, $start, $busqueda,$colSort,$colSortDir,$idasesor);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array('btnDetalle','btnArchivo');
+		$class = array('bg-green','bg-orange');
+		$icon = array('search','assignment');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 5;
+	break;
 	case 'cobrostransferencias':
 		$idasesor = $_GET['idasesor'];
 

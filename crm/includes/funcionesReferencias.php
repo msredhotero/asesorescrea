@@ -946,17 +946,26 @@ function traerTokenvrimPorIdCotizacion($id) {
 /* PARA Transferencias */
 
 function insertarTransferencias($nrotransferencia,$monto,$fechatransaccion,$fechacrea,$usuariocrea,$observaciones) {
-$sql = "insert into dbtransferencias(idtransferencia,nrotransferencia,monto,fechatransaccion,fechacrea,usuariocrea,observaciones)
-values ('','".$nrotransferencia."',".$monto.",'".$fechatransaccion."','".$fechacrea."','".$usuariocrea."','".$observaciones."')";
+$sql = "insert into dbtransferencias(idtransferencia,nrotransferencia,monto,fechatransaccion,fechacrea,usuariocrea,observaciones,archivo,type)
+values ('','".$nrotransferencia."',".$monto.",'".$fechatransaccion."','".$fechacrea."','".$usuariocrea."','".$observaciones."','','')";
 $res = $this->query($sql,1);
 return $res;
 }
 
 
-function modificarTransferencias($id,$nrotransferencia,$monto,$fechatransaccion,$fechacrea,$usuariocrea,$observaciones) {
+function modificarTransferencias($id,$nrotransferencia,$monto,$fechatransaccion,$fechacrea,$usuariocrea,$observaciones,$archivo) {
 $sql = "update dbtransferencias
 set
-nrotransferencia = '".$nrotransferencia."',monto = ".$monto.",fechatransaccion = '".$fechatransaccion."',fechacrea = '".$fechacrea."',usuariocrea = '".$usuariocrea."',observaciones = '".$observaciones."'
+nrotransferencia = '".$nrotransferencia."',monto = ".$monto.",fechatransaccion = '".$fechatransaccion."',fechacrea = '".$fechacrea."',usuariocrea = '".$usuariocrea."',observaciones = '".$observaciones."',archivo = '".$archivo."',type = '".$type."'
+where idtransferencia =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+function modificarTransferenciasArchivo($id,$archivo,$type) {
+$sql = "update dbtransferencias
+set
+archivo = '".$archivo."',type = '".$type."'
 where idtransferencia =".$id;
 $res = $this->query($sql,0);
 return $res;
@@ -978,7 +987,7 @@ t.monto,
 t.fechatransaccion,
 t.fechacrea,
 t.usuariocrea,
-t.observaciones
+t.observaciones, t.archivo, t.type
 from dbtransferencias t
 order by 1";
 $res = $this->query($sql,0);
@@ -987,9 +996,108 @@ return $res;
 
 
 function traerTransferenciasPorId($id) {
-$sql = "select idtransferencia,nrotransferencia,monto,fechatransaccion,fechacrea,usuariocrea,observaciones from dbtransferencias where idtransferencia =".$id;
+$sql = "select idtransferencia,nrotransferencia,monto,fechatransaccion,fechacrea,usuariocrea,observaciones,archivo,type from dbtransferencias where idtransferencia =".$id;
 $res = $this->query($sql,0);
 return $res;
+}
+
+
+function traerTransferenciasAjax($length, $start, $busqueda,$colSort,$colSortDir,$idasesor) {
+   $where = '';
+
+   if ($idasesor != 0) {
+      $cadAsesor = ' and ase.idasesor = '.$idasesor.' ';
+   }
+
+
+   $busqueda = str_replace("'","",$busqueda);
+   if ($busqueda != '') {
+      $where = " and ( concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or t.nrotransferencia like '%".$busqueda."%' or t.monto like '%".$busqueda."%' or t.fechacrea like '%".$busqueda."%')";
+   }
+
+
+   $sql = "select
+            t.idtransferencia, concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) as asesor,t.nrotransferencia, t.monto, t.fechatransaccion, (case when t.archivo = '' then 'No' else 'Si' end) subioarchivo
+            from		dbtransferencias t
+            inner
+            join		dbtransferenciarecibos tr
+            on			t.idtransferencia = tr.reftransferencias
+            inner
+            join		dbperiodicidadventasdetalle r
+            on			tr.refrecibos = r.idperiodicidadventadetalle
+            inner
+            join		dbperiodicidadventas pv
+            on			pv.idperiodicidadventa = r.refperiodicidadventas
+            inner
+            join		dbventas v
+            on			v.idventa = pv.refventas
+            inner
+            join		dbcotizaciones c
+            on			c.idcotizacion = v.refcotizaciones
+            inner
+            join		dbasesores ase
+            on			ase.idasesor = c.refasesores
+            where 1=1 ".$cadAsesor.$where."
+            group by	t.idtransferencia, ase.apellidopaterno, ase.apellidomaterno,
+                     ase.nombre,t.nrotransferencia, t.monto, t.fechatransaccion, t.archivo
+
+   ORDER BY ".$colSort." ".$colSortDir." ";
+   $limit = "limit ".$start.",".$length;
+
+   //die(var_dump($sql));
+
+   $res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+   return $res;
+}
+
+
+function traerTransferenciaDetallesAjax($length, $start, $busqueda,$colSort,$colSortDir,$idasesor,$id) {
+   $where = '';
+
+   if ($idasesor != 0) {
+      $cadAsesor = ' and ase.idasesor = '.$idasesor.' ';
+   }
+
+
+   $busqueda = str_replace("'","",$busqueda);
+   if ($busqueda != '') {
+      $where = " and (v.nropoliza like '%".$busqueda."%' or r.nrorecibo like '%".$busqueda."%' or r.monto like '%".$busqueda."%')";
+   }
+
+
+   $sql = "select
+            r.idperiodicidadventadetalle,
+            v.nropoliza,
+            r.nrorecibo,
+            r.montototal
+            from		dbtransferencias t
+            inner
+            join		dbtransferenciarecibos tr
+            on			t.idtransferencia = tr.reftransferencias
+            inner
+            join		dbperiodicidadventasdetalle r
+            on			tr.refrecibos = r.idperiodicidadventadetalle
+            inner
+            join		dbperiodicidadventas pv
+            on			pv.idperiodicidadventa = r.refperiodicidadventas
+            inner
+            join		dbventas v
+            on			v.idventa = pv.refventas
+            inner
+            join		dbcotizaciones c
+            on			c.idcotizacion = v.refcotizaciones
+            inner
+            join		dbasesores ase
+            on			ase.idasesor = c.refasesores
+            where t.idtransferencia=".$id." ".$cadAsesor.$where."
+
+   ORDER BY ".$colSort." ".$colSortDir." ";
+   $limit = "limit ".$start.",".$length;
+
+   //die(var_dump($sql));
+
+   $res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+   return $res;
 }
 
 
@@ -1041,6 +1149,19 @@ return $res;
 
 function traerTransferenciarecibosPorId($id) {
 $sql = "select idtransferenciarecibo,reftransferencias,refrecibos,monto,completo from dbtransferenciarecibos where idtransferenciarecibo =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+function traerTransferenciarecibosPorRecibo($id) {
+$sql = "select
+   tr.reftransferencias,tr.refrecibos, t.archivo, t.type
+   from dbtransferenciarecibos tr
+   inner
+   join  dbperiodicidadventasdetalle pd on pd.idperiodicidadventadetalle = tr.refrecibos
+   inner
+   join  dbtransferencias t on t.idtransferencia = tr.reftransferencias
+   where pd.idperiodicidadventadetalle =".$id;
 $res = $this->query($sql,0);
 return $res;
 }

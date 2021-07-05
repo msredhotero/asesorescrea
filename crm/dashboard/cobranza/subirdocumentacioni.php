@@ -39,6 +39,7 @@ if ($_SESSION['idroll_sahilices'] == 10) {
 
 $resultado 		= 	$serviciosReferencias->traerPeriodicidadventasdetallePorIdCompleto($id);
 
+$resTransferencia = $serviciosReferencias->traerTransferenciarecibosPorRecibo($id);
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
 $resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Recibos de Pago",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
@@ -183,7 +184,25 @@ $idCotizacion = mysql_result($resVenta,0,'refcotizaciones');
 
 $resPagoRecibos = $serviciosReferencias->traerPagosPorRecibo($id);
 
+$noPuedeSubirComprobante = 0;
+
+if (mysql_num_rows($resTransferencia)>0) {
+	$noPuedeSubirComprobante = 1;
+
+	if (mysql_result($resTransferencia,0,'archivo') != '') {
+		$archivoTransferencia = '../../archivos/transferencias/'.mysql_result($resTransferencia,0,'reftransferencias').'/'.mysql_result($resTransferencia,0,'archivo');
+		$typeTransferencia = mysql_result($resTransferencia,0,'type');
+	} else {
+		$archivoTransferencia = '';
+		$typeTransferencia = '';
+	}
+
+}
+
+// para el pago por venta online
 if (mysql_num_rows($resPagoRecibos) > 0) {
+
+
 	if (mysql_result($resultado,0,'refformapago') == 1) {
 		$resComercio = $serviciosComercio->traerComercioinicioPorOrderId($id);
 		if (mysql_num_rows($resComercio)>0) {
@@ -193,15 +212,12 @@ if (mysql_num_rows($resPagoRecibos) > 0) {
 		} else {
 			$urlArchivo = '';
 		}
-
-
-
+	} else {
+		if (mysql_result($resultado,0,'refformapago') == 2) {
+			$urlArchivo = '../../archivos/comprobantespagorecibos/'.$id.'/'.mysql_result($resPagoRecibos,0,'archivos');
+		}
 	}
-	if (mysql_result($resultado,0,'refformapago') == 2) {
-		$urlArchivo = '../../archivos/comprobantespagorecibos/'.$id.'/'.mysql_result($resPagoRecibos,0,'archivos');
 
-
-	}
 
 	$datosDelPago = mysql_result($resPagoRecibos,0,'destino').' - Monto: '.mysql_result($resPagoRecibos,0,'monto');
 	$idDelPago = mysql_result($resPagoRecibos,0,0);
@@ -211,7 +227,7 @@ if (mysql_num_rows($resPagoRecibos) > 0) {
 									<div class="form-group input-group col-md-12">
 									<div class="form-line"><select class="form-control" name="refdatopago" id="refdatopago"><option value="'.mysql_result($resPagoRecibos,0,'idpago').'">'.$datosDelPago.'</option></select></div></div></div>';
 } else {
-
+	// para el pago por cobranza
 	$resPagoCotizacion = $serviciosReferencias->traerPagosPorCotizacion($idCotizacion);
 	$urlArchivo = '';
 	$selectPago = '';
@@ -511,6 +527,9 @@ if (($_SESSION['idroll_sahilices'] == 7) && ($iddocumentacion == 39)) {
 	$puedeCargarDocumentaciones = 1;
 }
 
+
+//die(var_dump($archivoTransferencia));
+
 ?>
 
 <!DOCTYPE html>
@@ -709,6 +728,7 @@ if (($_SESSION['idroll_sahilices'] == 7) && ($iddocumentacion == 39)) {
 
 						</div>
 						<div class="body table-responsive">
+
 							<div class="row">
 								<div class="col-xs-3">
 									<div class="alert alert-info">
@@ -939,6 +959,7 @@ if (($_SESSION['idroll_sahilices'] == 7) && ($iddocumentacion == 39)) {
 			</div> <!-- fin del card -->
 
 		<?php } else { ?>
+			<?php if ($noPuedeSubirComprobante == 0) { ?>
 			<div class="row">
 			<?php if ($puedeCargarDocumentaciones == 1) { ?>
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
@@ -1023,6 +1044,7 @@ if (($_SESSION['idroll_sahilices'] == 7) && ($iddocumentacion == 39)) {
 					</div>
 				</div>
 			</div> <!-- fin del card -->
+			<?php } ?>
 		<?php } ?>
 
 
@@ -1507,6 +1529,28 @@ if (($_SESSION['idroll_sahilices'] == 7) && ($iddocumentacion == 39)) {
 		PDFObject.embed('<?php echo $archivos; ?>', "#example2");
 
 		function traerImagen(contenedorpdf, contenedor) {
+			<?php
+				if (($iddocumentacion == 39) && ($noPuedeSubirComprobante == 1)) {
+			?>
+			var archivoT = '<?php echo $archivoTransferencia; ?>';
+         var typeT = '<?php echo $typeTransferencia; ?>';
+
+         if (archivoT != '') {
+            var cadena = typeT.toLowerCase();
+
+				PDFObject.embed('<?php echo $archivoTransferencia; ?>', "#example2");
+            if (cadena.indexOf("pdf") > -1) {
+               PDFObject.embed(archivoT, "#"+contenedorpdf);
+               $('#'+contenedorpdf).show();
+               $("."+contenedor).hide();
+
+            } else {
+               $("." + contenedor + " img").attr("src",archivoT);
+               $("."+contenedor).show();
+               $('#'+contenedorpdf).hide();
+            }
+         }
+			<?php } else { ?>
 			$.ajax({
 				data:  {idventa: <?php echo $id; ?>,
 						iddocumentacion: <?php echo $iddocumentacion; ?>,
@@ -1546,6 +1590,8 @@ if (($_SESSION['idroll_sahilices'] == 7) && ($iddocumentacion == 39)) {
 
 				}
 			});
+			<?php } ?>
+
 		}
 
 		traerImagen('example1','timagen1');
@@ -1578,7 +1624,8 @@ if (($_SESSION['idroll_sahilices'] == 7) && ($iddocumentacion == 39)) {
 		};
 
 
-		<?php if ($puedeCargarDocumentaciones == 1) { ?>
+		<?php if (($puedeCargarDocumentaciones == 1) && ($noPuedeSubirComprobante == 0)) { ?>
+
 		var myDropzone = new Dropzone("#archivos", {
 			params: {
 				 idasociado: <?php echo $id; ?>,

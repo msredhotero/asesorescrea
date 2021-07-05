@@ -1504,8 +1504,8 @@ switch ($accion) {
    case 'enviarParaPagarAlCliente':
       enviarParaPagarAlCliente($serviciosReferencias);
    break;
-   
-   
+
+
 
 }
 /* FinFinFin */
@@ -1693,7 +1693,7 @@ function registrarEnviarCotizadorAlCliente($serviciosReferencias, $serviciosUsua
                //dependeiendo el producto lo lanzo a un lugar u otro
                if ($refproductos == 41) {
 
-               
+
                   //cargo la cotizacion justo para pagar
                   $refestadocotizaciones = 19;
 
@@ -1714,7 +1714,7 @@ function registrarEnviarCotizadorAlCliente($serviciosReferencias, $serviciosUsua
                      $resV['url'] = 'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token;
                      //$resV['url'] = 'http://localhost/asesorescrea_nuevo.git/trunk/crm/alogin.php?token='.$token;
 
-                     
+
 
                      $cuerpo = '';
 
@@ -1761,7 +1761,7 @@ function registrarEnviarCotizadorAlCliente($serviciosReferencias, $serviciosUsua
                   $resV['url'] = 'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token;
                   //$resV['url'] = 'http://localhost/asesorescrea_nuevo.git/trunk/crm/alogin.php?token='.$token;
 
-                  
+
 
                   $cuerpo = '';
 
@@ -1801,7 +1801,7 @@ function registrarEnviarCotizadorAlCliente($serviciosReferencias, $serviciosUsua
             } else {
                //genero un lead
 
-               
+
                $fechacrea = date('Y-m-d H:i:s');
                $fechamodi = date('Y-m-d H:i:s');
                $contactado = 0;
@@ -1826,7 +1826,7 @@ function registrarEnviarCotizadorAlCliente($serviciosReferencias, $serviciosUsua
 
             }
 
-            
+
          } else {
             $resV['mensaje'] = 'Se genero un error al crear el cliente';
             $resV['error'] = true;
@@ -1840,7 +1840,7 @@ function registrarEnviarCotizadorAlCliente($serviciosReferencias, $serviciosUsua
 
    header('Content-type: application/json');
    echo json_encode($resV);
-   
+
 
 }
 
@@ -1872,9 +1872,9 @@ function insertarPixel($serviciosReferencias) {
 
       $dato1 = $ipaddress;
    }
-   
+
    $res = $serviciosReferencias->insertarPixel($reforigen,$donde,$evento,$dato1,$dato2,$dato3,$fechacrea);
-   
+
    if ((integer)$res > 0) {
       echo '';
    } else {
@@ -1906,9 +1906,9 @@ function insertarChat($serviciosReferencias) {
    $resCot = $serviciosReferencias->traerCotizacionesPorIdCompleto($idreferencia);
 
    $valor = mysql_result($resCot,0,'bitacoracrea').' '.$nombre.' - '.$nombredestino.'.\n'.$mensaje.' - '.date('Y-m-d H:i:s').'.\n';
-   
+
    $res = $serviciosReferencias->insertarChat($reftabla,$idreferencia,$email,$emaildestinatario,$esdirectorio,$nombre,$mensaje,$fechacrea,$leido);
-   
+
    if ((integer)$res > 0) {
 
       //enviar a la persona a la que le escribio un email
@@ -1945,7 +1945,7 @@ function insertarChat($serviciosReferencias) {
          $resMensaje = $serviciosReferencias->insertarMensajes($cuerpo,$_SESSION['usua_sahilices'],$emaildestinatario, date('Y-m-d H:i:s'));
 
       }
-      
+
       //fin del email
 
       if ($_SESSION['idroll_sahilices'] == 7) {
@@ -2028,12 +2028,12 @@ function traerUsuariosChat($serviciosReferencias) {
          </div>
          </div>';
       }
-      
-   
-      
-      
+
+
+
+
    }
-   
+
 
    $resV['usuarios'] = $cadMensajes;
    $resV['seteo'] = $seteo;
@@ -2054,12 +2054,12 @@ function traerChatPorUsuarios() {
 
 
    $resultado = $chat->traerChatPorUsuario();
-   
+
    $cadMensajes = '';
 
 
    while($mensaje = mysql_fetch_array($resultado)) {
-      
+
       if ($mensaje['lado'] == 0) {
          $cadMensajes .= '<div class="outgoing_msg">
          <div class="sent_msg">
@@ -2076,7 +2076,7 @@ function traerChatPorUsuarios() {
          </div>
          </div>';
       }
-      
+
    }
 
 
@@ -2098,11 +2098,11 @@ function insertarCotizacionesdirectorioMasivo($serviciosReferencias) {
       foreach ($ar as $value) {
          $res = $serviciosReferencias->insertarCotizacionesdirectorio($refcotizaciones,$value);
       }
-      
+
    } else {
       $res = 1;
    }
-   
+
 
    if ((integer)$res > 0) {
       echo '';
@@ -2136,7 +2136,7 @@ function verificarNIPSMS($serviciosUsuarios, $serviciosReferencias) {
    } else {
       $activacion = '';
    }
-   
+
 
    $resUsuario = $serviciosUsuarios->traerUsuarioId($idusuario);
 
@@ -2151,19 +2151,19 @@ function verificarNIPSMS($serviciosUsuarios, $serviciosReferencias) {
          $destino = mysql_result($resNIP,0,'destino');
 
          if ($activacion == '') {
-            
 
-            
+
+
 
             $resV['leyenda'] = 'La activación no es correcta';
             $resV['error'] = true;
-            
+
          } else {
 
             if ($destino == 0) {
                $resModValidaMovil = $serviciosUsuarios->modificarUsuarioValidaMovil($idusuario,'1');
             }
-            
+
 
             //pongo al usuario $activo, espero el nip
             $resUsuario = $serviciosUsuarios->activarUsuario($idusuario, mysql_result($resUsuario,0,'password'));
@@ -2179,16 +2179,16 @@ function verificarNIPSMS($serviciosUsuarios, $serviciosReferencias) {
             $resV['error'] = false;
             //$resV['login'] = 'http://localhost/asesorescrea_nuevo.git/trunk/crm/alogin.php?token='.$token;
             $resV['login'] = 'https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token;
-            
+
          }
-         
+
       } else {
          $resV['leyenda'] = 'Error NIP erroneo';
          $resV['error'] = true;
       }
 
-      
-   
+
+
       header('Content-type: application/json');
       echo json_encode($resV);
    }
@@ -2199,7 +2199,7 @@ function enviarNIPmovil($serviciosUsuarios, $serviciosReferencias) {
    $telmovil = $_POST['telmovil'];
 
    $telefono = $serviciosReferencias->limpiarTelfono($telmovil);
-   
+
    $resUsuario = $serviciosUsuarios->traerUsuarioId($idusuario);
 
    $EnvioSMS = new EnvioSMS();
@@ -2260,7 +2260,7 @@ function enviarNIPmovil($serviciosUsuarios, $serviciosReferencias) {
             $resV['leyenda'] = 'Hubo un error al modificar datos';
             $resV['error'] = true;
          }
-      
+
          header('Content-type: application/json');
          echo json_encode($resV);
 
@@ -2281,14 +2281,14 @@ function enviarNIPmovil($serviciosUsuarios, $serviciosReferencias) {
                $resV['leyenda'] = 'Hubo un error al modificar datos';
                $resV['error'] = true;
             }
-         
+
             header('Content-type: application/json');
             echo json_encode($resV);
 
          }
       }
 
-      
+
    }
 
 
@@ -2362,7 +2362,7 @@ function generarRecibosCalculados($serviciosReferencias) {
 
 function eliminarCotizacionesdirectorioUnico($serviciosReferencias) {
    $refcotizaciones = $_POST['refcotizaciones'];
-   
+
    $idarea = $_POST['area'];
 
    $resEliminar = $serviciosReferencias->eliminarCotizacionesdirectorioPorCotizacionArea($refcotizaciones,$idarea);
@@ -2537,7 +2537,7 @@ function modificarDatosClientes($serviciosReferencias,$serviciosUsuarios) {
       if ((integer)$idusuario > 0) {
          $resUsuario = $serviciosUsuarios->preactivarUsuario($idusuario,$password);
       }
-      
+
    }
 
    $resBck = $serviciosReferencias->insertarClientesbck($id);
@@ -2826,7 +2826,7 @@ function buscarCURP($serviciosValidador, $serviciosReferencias) {
 
    if ((isset($_POST['curp']))) {
 
-      
+
       $resPixel = $serviciosReferencias->insertarPixel(1,'registro3','buscarCURP',$_POST['curp'],'','',$fechacrea);
 
       $curp = $_POST['curp'];
@@ -3012,7 +3012,7 @@ function insertarTransferencias($serviciosReferencias) {
             $resRecibo = $serviciosReferencias->insertarTransferenciarecibos($res,$idRecibo,0,$completo);
 
             // modifico el estado del recibo a pagado
-            $resMod = $serviciosReferencias->modificarPeriodicidadventasdetalleEstado($idRecibo,5,$usuariocrea,$fechacrea);
+            $resMod = $serviciosReferencias->modificarPeriodicidadventasdetalleEstado($idRecibo,2,$usuariocrea,$fechacrea);
 
          }
       }
@@ -3978,7 +3978,7 @@ function generarRenovacion($serviciosReferencias) {
       $primatotal = ($_POST['primatotal'] == '' ? 0 : $_POST['primatotal']);
       $fechavencimientopoliza = $_POST['fechavencimientopoliza'];
       $nropoliza = $_POST['nropoliza'];
-      
+
       $foliotys = $_POST['foliotys'];
       $foliointerno = $serviciosReferencias->generaFolioInterno();
 
@@ -4022,7 +4022,7 @@ function generarRenovacion($serviciosReferencias) {
 
    header('Content-type: application/json');
    echo json_encode($resV);
-   
+
 
 }
 
@@ -4768,7 +4768,7 @@ function insertarVentas($serviciosReferencias) {
       //trazabilidad finaliza la cotizacion en una poliza
       $resTZ = $serviciosReferencias->insertarTrazabilidad(12,$refcotizaciones,$fechacrea,99,$usuariocrea,0,0,0,'Cotización Aceptada - Poliza/Nro Tarjeta: '.$nropoliza,'');
 
-      
+
 
       if ((isset($_POST['idrenovacion'])) && ($_POST['idrenovacion'] != 0)) {
          $resRenovacion = $serviciosReferencias->modificarRenovacionesPorVenta($_POST['idrenovacion'], $res);
@@ -4820,7 +4820,7 @@ function modificarPagos($serviciosReferencias) {
 
             $emailcliente = mysql_result($resCotizaciones,0,'email');
             $idcliente = mysql_result($resCotizaciones,0,'refclientes');
-            
+
             //41 producto vrim no sube ine
             if (mysql_result($resCotizaciones,0,'refproductos') == 41) {
                $resModCotizacion = $serviciosReferencias->modificarCotizacionesPorCampo($idreferencia,'refestadocotizaciones',21, $_SESSION['usua_sahilices']);
@@ -4852,7 +4852,7 @@ function modificarPagos($serviciosReferencias) {
                $tokenL = $serviciosReferencias->GUID();
                $resAutoLogin = $serviciosReferencias->insertarAutologin($refusuariosclientes,$tokenL,$url,'0');
 
-               
+
 
                $cuerpo .= '<body>';
 
@@ -4869,9 +4869,9 @@ function modificarPagos($serviciosReferencias) {
 
                $retorno = $serviciosReferencias->enviarEmail($emailcliente,'Se autorizo su pago',utf8_decode($cuerpo));
             }
-            
+
          }
-         
+
       }
       echo '';
    } else {
@@ -4969,29 +4969,29 @@ function insertarFirmarcontratos($serviciosReferencias) {
             $resV['tipo'] = 1;
          } else {
             $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($refcotizaciones);
-   
+
             $idCliente = mysql_result($resCotizaciones,0,'refclientes');
-   
+
             $resCliente = $serviciosReferencias->traerClientesPorId($idCliente);
-   
+
             $email = mysql_result($resCliente,0,'email');
-   
+
             $nombrecompleto = mysql_result($resCliente,0,'apellidopaterno').' '.mysql_result($resCliente,0,'apellidomaterno').' '.mysql_result($resCliente,0,'nombre');
-   
+
             $folio = mysql_result($resCliente,0,'curp');
-   
+
             $nip = mysql_result($resNIP,0,'token');
-   
+
             /***** api para la firma *****/
             $url = 'https://crea.signaturainnovacionesjuridicas.com/api/firmasimple/crear';
             $archivo = '../archivos/solicitudes/cotizaciones/'.$refcotizaciones.'/FSOLICITUDAC.pdf';
             $sha256 = hash_file('sha256', $archivo);
-   
+
             $ch = curl_init();
-   
+
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-   
+
             $data = array(
                'folio' => $folio,
                'pin' => $nip,
@@ -5006,53 +5006,53 @@ function insertarFirmarcontratos($serviciosReferencias) {
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             //execute the POST request
             $result = curl_exec($ch);
-   
+
             if ($result == false) {
                $refestadofirma = 2;
             } else {
-   
+
                if (!file_exists('../archivos/firmas/cotizaciones/'.$refcotizaciones.'/')) {
                   mkdir('../archivos/firmas/cotizaciones/'.$refcotizaciones.'/', 0777);
                }
-   
-   
+
+
                $result = trim($result,'"');
-   
+
                //echo '<p>Resultado: '.$result.'</p>';
-   
+
                //echo '<p>Documento Hashado: '.$documento.'</p>';
-   
+
                $textoXML = mb_convert_encoding($result, "UTF-8");
-   
+
                $xml = $textoXML;
-   
+
                $gestor = fopen('../archivos/firmas/cotizaciones/'.$refcotizaciones.'/firma.xml', 'w');
                fwrite($gestor, $textoXML);
                fclose($gestor);
-   
+
                $refestadofirma = 1;
             }
-   
+
             curl_close($ch);
-   
+
             /***** fin api **************/
-   
+
             if (isset($xml)) {
                $usuario = $nombrecompleto;
                $fechacrea = date('Y-m-d H:i:s');
                $fechamodi = date('Y-m-d H:i:s');
                $vigdesde = date('Y-m-d H:i:s');
                $vighasta = date('Y-m-d H:i:s');
-   
+
                $res = $serviciosReferencias->insertarFirmarcontratos($refcotizaciones,$folio,$nip,$usuario,$sha256,$refestadofirma,$fechacrea,$fechamodi,$vigdesde,$vighasta,$xml);
-   
+
                if ($refestadofirma == 1) {
                   if ((integer)$res > 0) {
                      $resV['error'] = false;
                      $resV['tipo'] = 0;
-   
+
                      $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($refcotizaciones,'refestadocotizaciones',12,$_SESSION['usua_sahilices']);
-   
+
                      $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($refcotizaciones,'refestados',4,$_SESSION['usua_sahilices']);
                   } else {
                      $resV['error'] = true;
@@ -5069,11 +5069,11 @@ function insertarFirmarcontratos($serviciosReferencias) {
                $resV['mensaje'] = 'Se genero un inconveniente con la firma, por favor vuelva a intentarlo en unos minutos';
                $resV['tipo'] = 1;
             }
-   
-   
+
+
          }
-   
-   
+
+
       } else {
          $resV['error'] = true;
          $resV['mensaje'] = 'No se pudo firmar el documento, el NIP esta vencido, necesita volver a crear uno';
@@ -5084,7 +5084,7 @@ function insertarFirmarcontratos($serviciosReferencias) {
       $resV['mensaje'] = 'El NIP es incorrecto';
       $resV['tipo'] = 1;
    }
-   
+
 
 
    header('Content-type: application/json');
@@ -5201,7 +5201,7 @@ function insertarTokens($serviciosReferencias, $serviciosUsuarios) {
       $tokenL = $serviciosReferencias->GUID();
 
       $lstNIPporUsuario = $serviciosUsuarios->traerUsuariosnipPorIdUsuarioEventoDestino($idusuario,$refcotizaciones,0);
-      
+
 
       // si valido si telefono movil, se lo envio al telefono
       if ((mysql_result($resUsuario,0,'validamovil') == '1') && (mysql_num_rows($lstNIPporUsuario) <= 3)) {
@@ -5259,7 +5259,7 @@ function insertarTokens($serviciosReferencias, $serviciosUsuarios) {
          $retorno = $serviciosReferencias->enviarEmail($email,'NIP para firma',utf8_decode($cuerpo));
       }
 
-      
+
 
       echo '';
    } else {
@@ -5625,7 +5625,7 @@ function modificoAseguradoPorCotizacion($serviciosReferencias) {
 
    $resProducto = $serviciosReferencias->traerProductosPorIdCompleta($rIdProducto);
 
-   
+
 
 
    if ($tieneasegurado == 1) {
@@ -5640,7 +5640,7 @@ function modificoAseguradoPorCotizacion($serviciosReferencias) {
 
          if ($resMCA) {
             $resV['error'] = false;
-      
+
          } else {
             $resV['error'] = true;
             $resV['leyenda'] = 'Se genero un error al guardar los datos, verifique';
@@ -5649,14 +5649,14 @@ function modificoAseguradoPorCotizacion($serviciosReferencias) {
          $resV['error'] = true;
          $resV['leyenda'] = 'Debe completar los campos obligatorios';
       }
-      
 
-      
+
+
    } else {
       $resMCA = $serviciosReferencias->modificarCotizacionesAsegurado($id,'0',0);
       if ($resMCA) {
          $resV['error'] = false;
-   
+
       } else {
          $resV['error'] = true;
          $resV['leyenda'] = 'Se genero un error al guardar los datos, verifique';
@@ -5665,7 +5665,7 @@ function modificoAseguradoPorCotizacion($serviciosReferencias) {
 
    }
 
-   
+
 
    header('Content-type: application/json');
    echo json_encode($resV);
@@ -6460,9 +6460,9 @@ function validarCuestionarioPersona($serviciosReferencias) {
    if ($ar['rules'] != '') {
       foreach ($ar['rules'] as $valor) {
          $pregunta = $valor['pregunta'];
-   
-   
-   
+
+
+
          // $array[3] se actualizará con cada valor de $array...
          if ($valor['tipo'] == 1) {
             if (!(isset($_POST[$valor['respuesta']]))) {
@@ -6475,9 +6475,9 @@ function validarCuestionarioPersona($serviciosReferencias) {
                         array_push($arErrores,array('error' => 'Debe completar la respuesta','pregunta'=>$pregunta));
                      }
                   }
-   
+
                }
-   
+
             } else {
                array_push($arRespuestas,
                      array('refpreguntascuestionario' => $valor['idpregunta'],
@@ -6488,7 +6488,7 @@ function validarCuestionarioPersona($serviciosReferencias) {
                   );
             }
          }
-   
+
          if ($valor['tipo'] == 2) {
             if (!(isset($_POST[$valor['respuesta']]))) {
                if ($valor['obligatoria'] == '1') {
@@ -6501,7 +6501,7 @@ function validarCuestionarioPersona($serviciosReferencias) {
                         array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
                      }
                   }
-   
+
                }
             } else {
                $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($_POST[$valor['respuesta']]);
@@ -6514,7 +6514,7 @@ function validarCuestionarioPersona($serviciosReferencias) {
                   );
             }
          }
-   
+
          if ($valor['tipo'] == 3) {
             if (!(isset($_POST[$valor['respuesta']]))) {
                if ($valor['obligatoria'] == '1') {
@@ -6527,7 +6527,7 @@ function validarCuestionarioPersona($serviciosReferencias) {
                         array_push($arErrores,array('error' => 'Debe elegir una respuesta','pregunta'=>$pregunta));
                      }
                   }
-   
+
                }
             } else {
                $rRespuesta = $serviciosReferencias->traerRespuestascuestionarioPorId($_POST[$valor['respuesta']]);
@@ -6540,13 +6540,13 @@ function validarCuestionarioPersona($serviciosReferencias) {
                   );
             }
          }
-   
+
          if ($valor['tipo'] == 4) {
             $existio4 = 1;
             if ($idpregunta != $valor['idpregunta']) {
                $idpregunta = $valor['idpregunta'];
-   
-   
+
+
                if (($bandera == 1) && ($evaluoVerdadero == 1)) {
                   if ($valor['obligatoria'] == '1') {
                      if ($dependeValor == '') {
@@ -6560,16 +6560,16 @@ function validarCuestionarioPersona($serviciosReferencias) {
                            $resV['error'] = true;
                         }
                      }
-   
+
                   }
-   
+
                   $evaluoVerdadero = 1;
-   
+
                }
-   
-   
+
+
                $bandera = 0;
-   
+
             }
             if ((isset($_POST[$valor['respuesta']]))) {
                $evaluoVerdadero = 0;
@@ -6583,12 +6583,12 @@ function validarCuestionarioPersona($serviciosReferencias) {
                      'respuestavalor' => $_POST[$valor['respuesta']])
                   );
             }
-   
-   
+
+
             $bandera = 1;
          }
-   
-   
+
+
          if ((integer)$valor['depende'] > 0) {
             if (isset($_POST[$valor['respuesta']])) {
                $dependePreguntaID = $valor['depende'];
@@ -6599,20 +6599,20 @@ function validarCuestionarioPersona($serviciosReferencias) {
                $dependeRespuestaID = $valor['dependerespuesta'];
                $dependeValor = 0;
             }
-   
+
          }
-   
+
          if ((integer)($valor['depende'] == 0) && (integer)($valor['dependeaux'] == 0)) {
             $dependePreguntaID = '';
             $dependeRespuestaID = '';
             $dependeValor = '';
          }
-   
+
          $ultimaDependeAux = $valor['dependerespuestaaux'];
       }
-   
+
       //die(var_dump($arRespuestas));
-   
+
       if (($bandera == 1) && ($evaluoVerdadero == 1) && ($existio4 == 1)) {
          if ($dependeValor == '') {
             $errorGeneral = 1;
@@ -6625,13 +6625,13 @@ function validarCuestionarioPersona($serviciosReferencias) {
                $resV['error'] = true;
             }
          }
-   
+
       }
    } else {
       $resV['error'] = false;
 
    }
-   
+
 
    $resV['errores'] = $arErrores;
 
@@ -6753,7 +6753,7 @@ function insertarAsegurados($serviciosReferencias) {
    } else {
       $reftipoparentesco = 4;
    }
-   
+
 
    $domicilio = '';
    $email = '';
@@ -6779,7 +6779,7 @@ function insertarAsegurados($serviciosReferencias) {
    } else {
       $refestadocivil = 7;
    }
-   
+
 
    if (isset($_POST['reftipoidentificacion'])) {
       $reftipoidentificacion = $_POST['reftipoidentificacion'];
@@ -8807,7 +8807,7 @@ function eliminarVentasDefinitivo($serviciosReferencias) {
    $res = $serviciosReferencias->eliminarVentasDefinitivo($id);
 
    if ($res == true) {
-      
+
 
       echo '';
    } else {
@@ -10172,7 +10172,7 @@ function modificarCotizaciones($serviciosReferencias) {
             //inserto el registro que me marca la renovacion
             $resRenovacion = $serviciosReferencias->insertarRenovaciones(mysql_result($resVentas,0,'idventa'),0,$fechamodi,mysql_result($resVentas,0,'refcotizaciones'),$id);
          }
-         
+
       }
 
       echo '';
@@ -11605,7 +11605,7 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
                      $apellidopaterno  = mysql_result($resClienteAux,0,'apellidopaterno');
                      $apellidomaterno  = mysql_result($resClienteAux,0,'apellidomaterno');
                      $email            = mysql_result($resClienteAux,0,'email');
-                     
+
                   } else {
                      $nombre           = '';
                      $apellidopaterno  = '';
@@ -11621,7 +11621,7 @@ function modificarEstadoPostulante($serviciosReferencias, $serviciosUsuarios) {
                   // concreto la activacion, espsero el nip
                   //$resConcretar = $serviciosUsuarios->eliminarActivacionusuarios($activacion);
 
-                  
+
                   //if ($resUsuario == '') {
                      /* email base */
                      //$destinatario = 'msaupurein@asesorescrea.com';

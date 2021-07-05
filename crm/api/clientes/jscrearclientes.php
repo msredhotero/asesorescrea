@@ -64,11 +64,6 @@ if ((isset($_GET['telefonocelular']))) {
 	$telefonocelular = '';
 }
 
-if ((isset($_GET['telefonocelular']))) {
-	$telefonocelular = $_GET['telefonocelular'];
-} else {
-	$telefonocelular = '';
-}
 
 if ((isset($_GET['email'])) && ($_GET['email'] != '')) {
 	if ((filter_var($_GET['email'], FILTER_VALIDATE_EMAIL) === false)) {

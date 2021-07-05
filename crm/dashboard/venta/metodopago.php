@@ -15,6 +15,7 @@ if (!isset($_SESSION['usua_sahilices']))
 	include ('../../includes/funcionesReferencias.php');
 	include ('../../includes/base.php');
 	include ('../../includes/funcionesComercio.php');
+	include ('../../includes/clientes.class.php');
 
 	$serviciosFunciones 	= new Servicios();
 	$serviciosUsuario 		= new ServiciosUsuarios();
@@ -22,6 +23,7 @@ if (!isset($_SESSION['usua_sahilices']))
 	$serviciosReferencias 	= new ServiciosReferencias();
 	$baseHTML = new BaseHTML();
 	$serviciosComercio      = new serviciosComercio();
+	$clienteClass	= new clienteCrea();
 
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
@@ -41,7 +43,7 @@ $tituloWeb = mysql_result($configuracion,0,'sistema');
 $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 if (!(isset($_GET['id']))) {
-	
+
 	header('Location: ../cotizacionesvigentes/index.php');
 } else {
 	$id = $_GET['id'];
@@ -65,6 +67,8 @@ if (mysql_num_rows($resVentas) > 0) {
 
 $idCliente = mysql_result($resCotizaciones,0,'refclientes');
 
+$clienteClass->buscarClientePorId($idCliente);
+
 $resCliente = $serviciosReferencias->traerClientesPorIdCompleto($idCliente);
 
 $lblCliente = mysql_result($resCotizaciones,0,'clientesolo');
@@ -85,7 +89,7 @@ if (mysql_num_rows($resCotizaciones)>0) {
 	//$lblPrecio = str_replace('.','',$precio);
 
 } else {
-	
+
 	header('Location: ../cotizacionesvigentes/index.php');
 }
 
@@ -119,13 +123,13 @@ if ($idProducto == 54) {
 	//peso id pregunta: 692
 	//altura id: 693
 
-	
+
 	$pesoCliente = 0;
 	$resRespuestaValorPeso = $serviciosReferencias->traerCuestionariodetallePorTablaReferenciaIdRespuesta(11, 'dbcotizaciones', 'idcotizacion', $id,'1070');
 
 	if (mysql_num_rows($resRespuestaValorPeso)>0) {
 		$pesoCliente = (integer)mysql_result($resRespuestaValorPeso,0,'respuestavalor');
-		
+
 	}
 
 	$alturaCliente = 0;
@@ -136,7 +140,7 @@ if ($idProducto == 54) {
 	}
 
 	if (($pesoCliente == 0) || ($alturaCliente == 0)) {
-		
+
 		$inhabilitadoPorRespuesta = 1;
 		$nopuedeContinuar = 1;
 		array_push($arErrorLbl,array('error' => 'El peso o la altura no pueden ser igual a cero, esta cotización no puede ser aceptada, intente nuevamente'));
@@ -178,7 +182,7 @@ if ($edad >= 60) {
 	$edadNoAplica = 1;
 	array_push($arErrorLbl,array('error' => 'Lo sentimos para el Producto solicitado no es alcanzable para la edad del '.$aplicaA.' '.$edad.' años'));
 } else {
-	
+
 
 	//para RC medicos por ahora
 	if ($idProducto == 55) {
@@ -199,7 +203,7 @@ if ($edad >= 60) {
 		if (mysql_num_rows($resCalculoMedico4)==2) {
 			$acumPrecio = 4278.8;
 		}
-		
+
 	} else {
 		// calculos
 		$resProductosPaquete = $serviciosReferencias->traerPaquetedetallesPorPaquete($idProducto);
@@ -242,7 +246,7 @@ if ($edad >= 60) {
 
 		}
 	}
-	
+
 }
 
 $precio = $acumPrecio;
@@ -272,7 +276,7 @@ $cadBancos .= $serviciosFunciones->devolverSelectBoxText($resBancos,array(1),'')
 
 /********************** fin de las validaciones ********************************/
 
-$esFinancieraCrea = 0;
+$esFinancieraCrea = $clienteClass->usuario->getUsuarioexterno();
 
 if ($nopuedeContinuar == 1) {
 	$resInsertarLead = $serviciosReferencias->insertarLeadCompleto($idCliente,$idProducto,date('Y-m-d H:i:s'),date('Y-m-d H:i:s'),'0','','','',1,'','Por preguntas del cuestionario o por el peso y la altura, no puede cotizarce',1,7,$id);
@@ -402,7 +406,7 @@ if ($nopuedeContinuar == 1) {
 											<div class="panel-body">
 												<p>El cobro sera procesado por Financiera CREA.</p>
 
-												<h5>16 cuotas de MX $<?php echo number_format( ceil(($precio * 1.115 / 16)) , 2, ',', '.'); ?></h5>
+												<h5>16 cuotas de MX $<?php echo number_format( ceil(($precio * 1.095 / 16)) , 2, ',', '.'); ?></h5>
 												<div class="right">
 													<input name="metodopago" type="radio" value="3" class="with-gap radioMetodo" id="radio_3" require>
 	                                 	<label for="radio_3">Seleccionar</label>
@@ -410,7 +414,7 @@ if ($nopuedeContinuar == 1) {
 											</div>
 										</div>
 									</div>
-									<?php } ?>
+								<?php } else { ?>
 
 									<div class="panel panel-col-cyan panelMP panelMP1">
 										<div class="panel-heading" role="tab" id="headingOne_17">
@@ -446,9 +450,9 @@ if ($nopuedeContinuar == 1) {
 												<?php if ($idProducto == 41) { ?>
 													<p>Clabe Interbancaria para transferencias: 036180500010368744</p>
 												<?php } else { ?>
-													<p>Clabe Interbancaria para transferencias: 036180500079200351</p>	
+													<p>Clabe Interbancaria para transferencias: 036180500079200351</p>
 												<?php } ?>
-												
+
 												<p><small>1 pago de </small></p>
 												<h4>Monto a pagar: MXN <?php echo number_format($precio, 2, ',', '.'); ?></h4>
 												<div class="right">
@@ -481,7 +485,7 @@ if ($nopuedeContinuar == 1) {
 										</div>
 									</div>
 									<?php } ?>
-
+								<?php } ?>
 
 
 								</div>
