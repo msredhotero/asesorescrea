@@ -3014,6 +3014,19 @@ function insertarTransferencias($serviciosReferencias) {
             // modifico el estado del recibo a pagado
             $resMod = $serviciosReferencias->modificarPeriodicidadventasdetalleEstado($idRecibo,2,$usuariocrea,$fechacrea);
 
+            $resPD = $serviciosReferencias->traerPeriodicidadventasdetallePorId($idRecibo);
+
+            if (mysql_num_rows($resPD) > 0) {
+               $montoP = mysql_result($resPD,0,'montototal');
+               $nroreciboP = ''; //es el folio
+               $fechapagoP = $fechatransaccion;
+               $nrofacturaP = '';
+               //inserto el pago automatico
+               $resInstPago = $serviciosReferencias->insertarPeriodicidadventaspagos($idRecibo,$montoP,$nroreciboP,$fechapagoP,$usuariocrea,$usuariocrea,$fechacrea,$fechacrea,$nrofacturaP);
+            }
+
+
+
          }
       }
       echo '';
