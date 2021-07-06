@@ -3014,6 +3014,9 @@ function insertarTransferencias($serviciosReferencias) {
             // modifico el estado del recibo a pagado
             $resMod = $serviciosReferencias->modificarPeriodicidadventasdetalleEstado($idRecibo,2,$usuariocrea,$fechacrea);
 
+            //modifico la fecha de pago del recibo
+            $resFechaPago = $serviciosReferencias->modificarVentaUnicaDocumentacion($idRecibo, 'fechapago', $fechatransaccion);
+
             $resPD = $serviciosReferencias->traerPeriodicidadventasdetallePorId($idRecibo);
 
             if (mysql_num_rows($resPD) > 0) {
