@@ -1504,11 +1504,115 @@ switch ($accion) {
    case 'enviarParaPagarAlCliente':
       enviarParaPagarAlCliente($serviciosReferencias);
    break;
-
+   case 'avisarInbursaMasivo':
+      avisarInbursaMasivo($serviciosReferencias);
+   break;
+   case 'cambiarCotizacionHuerfana':
+      cambiarCotizacionHuerfana($serviciosReferencias);
+   break;
 
 
 }
 /* FinFinFin */
+
+function cambiarCotizacionHuerfana($serviciosReferencias) {
+   $id =  $_POST['id'];
+   $refcotizacioneshuerfanas = $_POST['refcotizacioneshuerfanas'];
+
+   $resVenta = $serviciosReferencias->traerVentasPorId($id);
+   //id de la cotizacion que se genero automatico y voy a cambiar por la cotizacion que esta en entregadas
+   $idcotizacionviejo = mysql_result($resVenta,0,'refcotizaciones');
+
+   //hago el cambio
+   $resModCC = $serviciosReferencias->modificarVentasUnicaDocumentacion($id,'refcotizaciones',$refcotizacioneshuerfanas);
+
+   // mando la cotizacion automatica a reemplazo
+   $resModCestadoViejo = $serviciosReferencias->modificarCotizacionUnicaDocumentacionCot($idcotizacionviejo,'refestadocotizaciones',31);
+   // mando la cotizacion automatica a reemplazo
+   $resModCestapaViejo = $serviciosReferencias->modificarCotizacionUnicaDocumentacionCot($idcotizacionviejo,'refestados',7);
+
+   // la cotizacion en entregadas la saco y la mando a aceptadas
+   $resModCestadoNuevo = $serviciosReferencias->modificarCotizacionUnicaDocumentacionCot($refcotizacioneshuerfanas,'refestadocotizaciones',12);
+   // la cotizacion en entregadas la saco y la mando a aceptadas
+   $resModCestapaNuevo = $serviciosReferencias->modificarCotizacionUnicaDocumentacionCot($refcotizacioneshuerfanas,'refestados',4);
+
+
+   $resV['error'] = false;
+   $resV['mensaje'] = 'El cambio se realizo completamente';
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
+
+function avisarInbursaMasivo($serviciosReferencias) {
+   session_start();
+
+   $idtransferencia  = $_POST['id'];
+
+   $resLstPeriodicidadDetalle = $serviciosReferencias->traerTransferenciarecibosPorTransferencia($idtransferencia);
+
+   $subcuerpo = '';
+
+   while ($row = mysql_fetch_array($resLstPeriodicidadDetalle)) {
+
+      $id = $row['refrecibos'];
+
+      $resultado 		= 	$serviciosReferencias->traerPeriodicidadventasdetallePorIdCompleto($id);
+
+      $nropoliza = mysql_result($resultado,0,'nropoliza');
+
+      $nrorecibo = mysql_result($resultado,0,'nrorecibo');
+
+      $url = "cobranza/subirdocumentacioni.php?id=".$id;
+      $token = $serviciosReferencias->GUID();
+      $resAutoLogin = $serviciosReferencias->insertarAutologin(168,$token,$url,'0');
+
+      $subcuerpo     .= '<h3><small><p>Se genero un pago del recibo: <b>'.$nrorecibo.'</b> cuya poliza es: <b>'.$nropoliza.'</b></p></small></h3><p><h4>Haga click <a href="https://asesorescrea.com/desarrollo/crm/alogin.php?token='.$token.'">AQUI</a> para acceder</h4></p>';
+
+      $resAvisar = $serviciosReferencias->avisarVentaPago($id,'1');
+
+      $resmodificar = $serviciosReferencias->modificarVentaUnicaDocumentacion($id,'fechamodi',date('Y-m-d H:m:s'));
+   }
+
+
+   $cuerpo = '';
+
+   $cuerpo .= '<img src="https://asesorescrea.com/desarrollo/crm/imagenes/encabezado-Asesores-CREA.jpg" alt="ASESORESCREA" width="100%">';
+
+   $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Prata&display=swap" rel="stylesheet">';
+
+   $cuerpo .= '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap" rel="stylesheet">';
+
+   $cuerpo .= "
+   <style>
+   	body { font-family: 'Lato', sans-serif; }
+   	header { font-family: 'Prata', serif; }
+   </style>";
+
+   $cuerpo .= '<body>';
+
+   $cuerpo .= $subcuerpo;
+
+	$cuerpo .='<p> No responda este mensaje, el remitente es una dirección de notificación</p>';
+
+   $cuerpo .= '<p style="font-family: '."'Lato'".', serif; font-size:1.7em;">Saludos cordiales,</p>';
+
+   $cuerpo .= '</body>';
+
+   // por ahora corregir email
+   $email = 'mcasarrubiass@inbursa.com';
+
+   $retorno = $serviciosReferencias->enviarEmail($email,'Se genero un pago por transferencia',utf8_decode($cuerpo));
+
+
+   $resV['error'] = false;
+
+   $resMensaje = $serviciosReferencias->insertarMensajes($cuerpo,$_SESSION['usua_sahilices'],$email, date('Y-m-d H:i:s'));
+
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function enviarParaPagarAlCliente($serviciosReferencias) {
    session_start();

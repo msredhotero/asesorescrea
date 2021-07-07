@@ -95,9 +95,9 @@ switch ($tabla) {
 		$resAjax = $datos[0];
 		$res = $datos[1];
 
-		$label = array('btnDetalle','btnArchivo');
-		$class = array('bg-green','bg-orange');
-		$icon = array('search','assignment');
+		$label = array('btnDetalle','btnArchivo','btnAvisarInbursa');
+		$class = array('bg-green','bg-orange','bg-yellow');
+		$icon = array('search','assignment','send');
 
 
 		$indiceID = 0;

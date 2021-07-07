@@ -9,6 +9,25 @@ date_default_timezone_set('America/Mexico_City');
 
 class ServiciosReferencias {
 
+   function traerCotizacionesHuerfanas($idcliente, $idproducto, $idasesor) {
+      $sql = "SELECT
+               c.idcotizacion,concat('ID: ',c.idcotizacion,' - Fecha: ',c.fechacrea, ' - Folio Agente: ', coalesce(c.folioagente,''),' - Folio Version: ', c.version, ' - OT: ',c.ot) as cotizacion
+            FROM
+               dbcotizaciones c
+            left join
+               dbventas v on v.refcotizaciones = c.idcotizacion
+            WHERE
+               v.idventa is null
+               and c.refestadocotizaciones = 8
+               and c.refasesores = ".$idasesor."
+               AND c.refclientes = ".$idcliente."
+               AND c.refproductos = ".$idproducto;
+
+      $res = $this->query($sql,0);
+
+      return $res;
+   }
+
    function verificoExistenciaProductoPorCliente($idproducto,$idcliente) {
       $sql = "select * from dbcotizaciones where refproductos = ".$idproducto." and refclientes = ".$idcliente;
 
@@ -1162,6 +1181,19 @@ $sql = "select
    inner
    join  dbtransferencias t on t.idtransferencia = tr.reftransferencias
    where pd.idperiodicidadventadetalle =".$id;
+$res = $this->query($sql,0);
+return $res;
+}
+
+function traerTransferenciarecibosPorTransferencia($id) {
+$sql = "select
+   tr.reftransferencias,tr.refrecibos, t.archivo, t.type
+   from dbtransferenciarecibos tr
+   inner
+   join  dbperiodicidadventasdetalle pd on pd.idperiodicidadventadetalle = tr.refrecibos
+   inner
+   join  dbtransferencias t on t.idtransferencia = tr.reftransferencias
+   where tr.reftransferencias =".$id;
 $res = $this->query($sql,0);
 return $res;
 }

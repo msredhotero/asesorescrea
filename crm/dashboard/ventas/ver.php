@@ -104,6 +104,12 @@ if (mysql_num_rows($resRenovacion) > 0) {
 	$idrenovacion = 0;
 }
 
+$resCotizacionesHuerfanas = $serviciosReferencias->traerCotizacionesHuerfanas(mysql_result($resVar,0,'refclientes'), mysql_result($resVar,0,'refproductos'), mysql_result($resVar,0,'refasesores'));
+
+//die(var_dump($resCotizacionesHuerfanas));
+
+$cadCotizacionesHuerfanas = $serviciosFunciones->devolverSelectBox($resCotizacionesHuerfanas,array(1),'');
+
 /*
 $vrimAPI = new ApiVrim('password', 'as350rcr3a', 'vr1m@2021_cr3a',$_SESSION['usua_sahilices']);
 
@@ -307,7 +313,7 @@ if ($err) {
 								<div class="alert alert-warning">
 									<p>Esta Poliza es una renovación de la <b>Poliza: <?php echo $polizaVieja; ?></b> , fecha de vencimiento: <b><?php echo $fechavencimientoVieja; ?></p>
 								</div>
-							
+
 							<?php } ?>
 							<form class="formulario frmModificar" role="form" id="sign_in">
 								<div class="row">
@@ -352,7 +358,20 @@ if ($err) {
 										</button>
 										<?php } ?>
 
-								
+
+									</div>
+								</div>
+								<hr>
+								<div class="row">
+									<p>Cambiar la cotización por la que esta en entregadas para corregir cotizaciones huérfanas</p>
+									<div class="button-demo">
+										<select class="form-control" name="refcotizacioneshuerfanas" id="refcotizacioneshuerfanas">
+											<?php echo $cadCotizacionesHuerfanas; ?>
+										</select>
+										<button type="button" class="btn bg-brown waves-effect btnCambiar">
+											<i class="material-icons">compare_arrows</i>
+											<span>CAMBIAR</span>
+										</button>
 									</div>
 								</div>
 
@@ -415,6 +434,27 @@ if ($err) {
 		</div>
 
 
+		<div class="modal fade" id="lgmCAMBIO" tabindex="-1" role="dialog">
+			 <div class="modal-dialog modal-lg" role="document">
+				  <div class="modal-content">
+						<div class="modal-header bg-green">
+							<h4>IMPORTANTE</h4>
+						</div>
+						<div class="modal-body">
+						<div class="row">
+							<h4>¿Estas seguro que quieres CAMBIAR la cotización?.</h4>
+						</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-success waves-effect btnCambiarCotizacion" data-dismiss="modal">CAMBIAR</button>
+							<button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+						</div>
+
+				  </div>
+			 </div>
+		</div>
+
+
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
@@ -437,6 +477,61 @@ if ($err) {
 
 <script>
 	$(document).ready(function(){
+
+		$('.btnCambiar').click(function() {
+			$('#lgmCAMBIO').modal();
+		});
+
+		$('.btnCambiarCotizacion').click(function() {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'cambiarCotizacionHuerfana',
+					id: <?php echo $id; ?>,
+					refcotizacioneshuerfanas: $('#refcotizacioneshuerfanas').val()
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					if (data.error == false) {
+						swal({
+							title: "Respuesta",
+							text: data.mensaje,
+							type: "success",
+							timer: 2000,
+							showConfirmButton: false
+						});
+
+						location.reload();
+					} else {
+						swal({
+							title: "Respuesta",
+							text: data.mensaje,
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+						});
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+					});
+
+				}
+			});
+		});
 
 		$('#iva').number( true, 2 ,'.','');
 		$('#comisioncedida').number( true, 2 ,'.','');
@@ -487,7 +582,7 @@ if ($err) {
 
 		//tokenVRIM();
 
-		
+
 
 		function solicitudVRIM() {
 
@@ -570,7 +665,7 @@ if ($err) {
 
 		//solicitudVRIM();
 
-		
+
 
 		function aceptarPolizarAgente() {
 			$.ajax({
@@ -638,7 +733,7 @@ if ($err) {
 		<?php if (mysql_result($resultado,0,'refestadoventa') == 9) { ?>
 			$('.frmContrefmotivorechazopoliza').show();
 		<?php } else { ?>
-			$('.frmContrefmotivorechazopoliza').hide();	
+			$('.frmContrefmotivorechazopoliza').hide();
 		<?php } ?>
 
 		$('.btnArchivos').click(function() {

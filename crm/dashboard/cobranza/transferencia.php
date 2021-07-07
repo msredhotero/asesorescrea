@@ -353,6 +353,64 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 		$('.frmContarchivo').hide();
 		$('.frmConttype').hide();
 
+		$('#monto').number( true, 2,'.','' );
+
+		$("#example3").on("click",'.btnAvisarInbursa', function(){
+			idTable =  $(this).attr("id");
+			avisarInbursa(idTable);
+
+		});//fin del boton modificar
+
+		function avisarInbursa(id) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'avisarInbursaMasivo',
+					id: id
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+					if (data.error == false) {
+
+						swal({
+							title: "Respuesta",
+							text: 'Ya se envio un email al responsable de cobranza en Inbursa',
+							type: "success",
+							timer: 2000,
+							showConfirmButton: false
+						});
+
+					} else {
+						swal({
+							title: "Respuesta",
+							text: 'No se encontraron datos',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+						});
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+						title: "Respuesta",
+						text: 'Actualice la pagina',
+						type: "error",
+						timer: 2000,
+						showConfirmButton: false
+					});
+				}
+			});
+		}
+
 		$("#example3").on("click",'.btnDetalle', function(){
 			idTable =  $(this).attr("id");
 			$(location).attr('href','detalle.php?id=' + idTable);
@@ -426,6 +484,9 @@ if ($_SESSION['idroll_sahilices'] == 7) {
 				traerPeriodicidadventasdetallePorId(idTable2);
 			}
 		});
+
+
+
 
 		function traerPeriodicidadventasdetallePorId(id) {
 			$.ajax({
