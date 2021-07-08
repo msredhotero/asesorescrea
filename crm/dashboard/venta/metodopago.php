@@ -402,7 +402,7 @@ if ($nopuedeContinuar == 1) {
 											</a>
 											</h4>
 										</div>
-										<div id="collapseThree_17" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree_17" aria-expanded="false">
+										<div id="collapseThree_17" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingThree_17" aria-expanded="false">
 											<div class="panel-body">
 												<p>El cobro sera procesado por Financiera CREA.</p>
 

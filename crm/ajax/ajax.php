@@ -12,6 +12,7 @@ include ('../includes/funcionesComercio.php');
 include ('../includes/base.php');
 include ('../includes/EnvioSMS.class.php');
 include ('../includes/chat.class.php');
+include ('../includes/usuarios.class.php');
 
 $serviciosUsuarios  		= new ServiciosUsuarios();
 $serviciosFunciones 		= new Servicios();
@@ -6492,7 +6493,12 @@ function validarCuestionarioPersona($serviciosReferencias) {
       $refasegurados = 0;
    }
 
-   $tieneasegurado = $_POST['tieneasegurado'];
+   if (isset($_POST['tieneasegurado'])) {
+      $tieneasegurado = $_POST['tieneasegurado'];
+   } else {
+      $tieneasegurado = '0';
+   }
+
    $idcotizacion = $_POST['idcotizacion'];
 
    $actualizacliente = $_POST['actualizacliente'];
@@ -6791,7 +6797,7 @@ function validarCuestionarioPersona($serviciosReferencias) {
                $resMCA = $serviciosReferencias->modificarCotizacionesAsegurado($idcotizacion,'0',0);
             }
          } else {
-            if ($_POST['tieneasegurado'] != '') {
+            if ($tieneasegurado != '') {
                $resMCA = $serviciosReferencias->modificarCotizacionesAsegurado($idcotizacion,'0',0);
             }
 
@@ -7586,9 +7592,16 @@ function traerRespuestascuestionarioPorPregunta($serviciosReferencias, $servicio
 
 // valida primer cuestionario cuestionario1
 function validarCuestionario($serviciosReferencias) {
+   session_start();
+
+
    $id = $_POST['refproductos'];
    $refclientes = $_POST['refclientes'];
    $lead = $_POST['lead'];
+
+   $usuario = new usuarioCrea();
+
+   $usuario->buscarUsuarioPorId($_SESSION['usuaid_sahilices']);
 
 
    $preguntasSeleccionadas = '';
@@ -7852,8 +7865,6 @@ function validarCuestionario($serviciosReferencias) {
    //die(var_dump($arErrores));
 
    if ($resV['error'] == false) {
-      session_start();
-
 
       $refproductos = $_POST['refproductos'];
       $refasesores = $_POST['refasesores'];
@@ -7923,6 +7934,12 @@ function validarCuestionario($serviciosReferencias) {
 
 
       if ((integer)$res > 0) {
+
+         if ($usuario->getUsuarioexterno() == 1) {
+            //seteo que no lleva asegurado
+            $resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($res,'tieneasegurado','0',$usuariomodi);
+
+         }
 
          // modifico la cotizacion a la primer etapa
          $resModificarPN = $serviciosReferencias->modificarCotizacionesPorCampo($res,'refestados',1,$usuariomodi);

@@ -15,6 +15,7 @@ include ('../../includes/funcionesHTML.php');
 include ('../../includes/funcionesReferencias.php');
 include ('../../includes/base.php');
 include ('../../includes/funcionesAsegurados.php');
+include ('../../includes/usuarios.class.php');
 
 $serviciosFunciones 	= new Servicios();
 $serviciosUsuario 		= new ServiciosUsuarios();
@@ -22,6 +23,9 @@ $serviciosHTML 			= new ServiciosHTML();
 $serviciosReferencias 	= new ServiciosReferencias();
 $baseHTML = new BaseHTML();
 $serviciosAsegurados = new serviciosAsegurados();
+$usuario = new usuarioCrea();
+
+$usuario->buscarUsuarioPorId($_SESSION['usuaid_sahilices']);
 
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
@@ -463,7 +467,7 @@ if (isset($_GET['id'])) {
 } else {
 
 	$id = 0;
-	
+
 
 	if (!(isset($_GET['producto']))) {
 		header('Location: ../index.php');
@@ -858,7 +862,7 @@ $rfcCliente = strtoupper(mysql_result($resClienteAux,0,'rfc') == '' ? substr(mys
                               </fieldset>
 									<?php } ?>
 
-										<?php if ($llevaAsegurado == 1) { ?>
+										<?php if (($llevaAsegurado == 1) && ($usuario->getUsuarioexterno() == '0')) { ?>
 										<h3>INFORMACION DEL ASEGURADO</h3>
                                  <fieldset>
 												<div class="row">
@@ -967,7 +971,7 @@ $rfcCliente = strtoupper(mysql_result($resClienteAux,0,'rfc') == '' ? substr(mys
 																		Estado: <b><?php echo $estadoDocumentacion; ?></b>
 																	</h4>
 																</div>
-																
+
 
 															</div>
 														</div>
@@ -1062,7 +1066,7 @@ $rfcCliente = strtoupper(mysql_result($resClienteAux,0,'rfc') == '' ? substr(mys
 
 <!-- NUEVO BENEFICIARIO -->
 	<?php echo $arAseguradosForm['beneficiario']; ?>
-	
+
 
 
 
@@ -1733,20 +1737,20 @@ $rfcCliente = strtoupper(mysql_result($resClienteAux,0,'rfc') == '' ? substr(mys
 							<?php if (($existenDatosCompletosContratenta == 1) && ($rIdProducto == 41)) { ?>
 							form.steps("next");
 							<?php } else { ?>
-								
-							<?php } ?>	
+
+							<?php } ?>
 							form.steps("next");
 						} else {
 							form.steps("next");
 							<?php //si los datos no estan completos pero no son obligatorios, sigo
-								if (($resPreguntasObligatoriasClientesCargadas == 0) && ($rIdProducto == 41)) { 
+								if (($resPreguntasObligatoriasClientesCargadas == 0) && ($rIdProducto == 41)) {
 							?>
 							form.steps("next");
-							<?php } ?>	
+							<?php } ?>
 						}
 						<?php } ?>
 
-						
+
 
 
 					} else {
@@ -1774,7 +1778,7 @@ $rfcCliente = strtoupper(mysql_result($resClienteAux,0,'rfc') == '' ? substr(mys
 			});
 		}
 
-		
+
 
 		function cuestionarioPersonas(idproducto,idcotizacion,idcliente,idasegurado) {
 			$.ajax({
@@ -1969,7 +1973,7 @@ $rfcCliente = strtoupper(mysql_result($resClienteAux,0,'rfc') == '' ? substr(mys
 							weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
 						});
 
-						
+
 						$('#wizard_with_validation #respuestaAntigüedadenelejercicioprofesional1').pickadate({
 							format: 'yyyy-mm-dd',
 							labelMonthNext: 'Siguiente mes',
@@ -2005,7 +2009,7 @@ $rfcCliente = strtoupper(mysql_result($resClienteAux,0,'rfc') == '' ? substr(mys
 						});
 
 
-						
+
 
 
 					} else {
@@ -2096,7 +2100,7 @@ $rfcCliente = strtoupper(mysql_result($resClienteAux,0,'rfc') == '' ? substr(mys
 					showConfirmButton: false
 				});
 			}
-			
+
 		}
 
 
@@ -2409,7 +2413,7 @@ $rfcCliente = strtoupper(mysql_result($resClienteAux,0,'rfc') == '' ? substr(mys
 
 					<?php if ($tieneAsegurado == '') { ?>
 					if ($tab.trim() == 'INFORMACION DEL ASEGURADO') {
-						
+
 						if (currentIndex < newIndex) {
 							modificoAseguradoPorCotizacion();
 						}
@@ -2494,14 +2498,14 @@ $rfcCliente = strtoupper(mysql_result($resClienteAux,0,'rfc') == '' ? substr(mys
 
 		<?php
 		//nuevo 13/05/2021 determina si puedo pasar en el cuestionario porque no falta nada, ver!!
-		if (($resPreguntasObligatoriasClientesCargadas == 0) && ($id==0)) { 
+		if (($resPreguntasObligatoriasClientesCargadas == 0) && ($id==0)) {
 		?>
 		<?php if ($existeBckUpCliente == 0) { ?>
 
 		<?php } else { ?>
-			//form.steps("next");	
+			//form.steps("next");
 		<?php } ?>
-		
+
 		<?php } ?>
 
 		var esconde1 = 0;
@@ -2697,7 +2701,7 @@ $rfcCliente = strtoupper(mysql_result($resClienteAux,0,'rfc') == '' ? substr(mys
  								timer: 2000,
  								showConfirmButton: false
  						});
-						  
+
 						$(location).attr('href', 'metodopago.php?id=<?php echo $id; ?>');
 
  					} else {
@@ -2792,7 +2796,7 @@ $rfcCliente = strtoupper(mysql_result($resClienteAux,0,'rfc') == '' ? substr(mys
 		<?php
 		} else {
 		?>
-		
+
 		$('#wizard_with_validation .frmContaseguradoaux').hide();
 
 		$('#wizard_with_validation #tieneasegurado').change(function() {
@@ -2800,14 +2804,14 @@ $rfcCliente = strtoupper(mysql_result($resClienteAux,0,'rfc') == '' ? substr(mys
 				$('#wizard_with_validation .frmContaseguradoaux').show();
 				traerAseguradosPorCliente(0);
 				$('#wizard_with_validation .contCuestionarioPersonas').hide();
-				
+
 			} else {
 				if ($('#wizard_with_validation #tieneasegurado option:selected').text() == 'Yo mismo') {
-					
+
 					//cuestionarioPersonas(<?php //echo $rIdProducto; ?>,<?php //echo $id; ?>,<?php //echo $rIdCliente; ?>,0);
-					
+
 				} else {
-					
+
 					$('#wizard_with_validation .contCuestionarioPersonas').hide();
 				}
 
@@ -3454,7 +3458,7 @@ $rfcCliente = strtoupper(mysql_result($resClienteAux,0,'rfc') == '' ? substr(mys
 
 		$('.contRangers').hide();
 
-		
+
 
 
 	});
