@@ -241,7 +241,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 						<?php if ($archivosPRIMERRECIBO != '') { ?>
 							<button type="button" onClick="window.open('<?php echo $archivosPRIMERRECIBO; ?>')" class="btn bg-blue waves-effect btnPRIMERRECIBO" style="margin-bottom:15px;">
 								<i class="material-icons">file_download</i>
-								<span>EXPEDIENTE</span>
+								<span>RECIBO</span>
 							</button>
 						<?php } ?>
 						<?php
