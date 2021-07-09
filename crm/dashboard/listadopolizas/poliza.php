@@ -69,6 +69,14 @@ $resDocumentacionReciboExistentePDF = $serviciosReferencias->traerDocumentacionP
 $resDocumentacionReciboExistenteCLAUSULAS = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, 153);
 $resDocumentacionReciboExistenteEXPEDIENTE = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, 154);
 
+$resDocumentacionReciboExistentePRIMERRECIBO = $serviciosReferencias->traerDocumentacionPorVentaDocumentacion($id, 237);
+
+if (mysql_num_rows($resDocumentacionReciboExistentePRIMERRECIBO)>0) {
+	$archivosPRIMERRECIBO = "../../archivos/ventas/".$id.'/'.mysql_result($resDocumentacionReciboExistentePRIMERRECIBO,0,'carpeta').'/'.mysql_result($resDocumentacionReciboExistentePRIMERRECIBO,0,'archivo');
+} else {
+	$archivosPRIMERRECIBO = '';
+}
+
 if (mysql_num_rows($resDocumentacionReciboExistenteXML)>0) {
 	$archivosXML = "../../archivos/ventas/".$id.'/'.mysql_result($resDocumentacionReciboExistenteXML,0,'carpeta').'/'.mysql_result($resDocumentacionReciboExistenteXML,0,'archivo');
 } else {
@@ -226,6 +234,12 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 						<?php } ?>
 						<?php if ($archivosEXP != '') { ?>
 							<button type="button" onClick="window.open('<?php echo $archivosEXP; ?>')" class="btn bg-blue waves-effect btnEXP" style="margin-bottom:15px;">
+								<i class="material-icons">file_download</i>
+								<span>EXPEDIENTE</span>
+							</button>
+						<?php } ?>
+						<?php if ($archivosPRIMERRECIBO != '') { ?>
+							<button type="button" onClick="window.open('<?php echo $archivosPRIMERRECIBO; ?>')" class="btn bg-blue waves-effect btnPRIMERRECIBO" style="margin-bottom:15px;">
 								<i class="material-icons">file_download</i>
 								<span>EXPEDIENTE</span>
 							</button>
