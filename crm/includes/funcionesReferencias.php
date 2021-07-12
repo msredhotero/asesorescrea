@@ -3485,6 +3485,14 @@ return $res;
    return $res;
    }
 
+   function modificarPagosPorCampo($id,$campo,$valor) {
+   $sql = "update dbpagos
+   set
+   ".$campo." = '".$valor."' where idpago =".$id;
+   $res = $this->query($sql,0);
+   return $res;
+   }
+
    function avisarPago($id,$avisoinbursa) {
    $sql = "update dbpagos
    set
@@ -4319,6 +4327,18 @@ return $res;
       $sql = "insert into dblead(idlead,refclientes,refproductos,fechacrea,fechamodi,contactado,usuariocontacto,usuarioresponsable,cita,refestadolead,fechacreacita,observaciones,refproductosweb,reforigencomercio)
       values ('',".$refclientes.",".$refproductos.",'".$fechacrea."','".$fechamodi."','".$contactado."','".$usuariocontacto."','".$usuarioresponsable."','".$cita."',".$refestadolead.",'".$fechacreacita."','".$observaciones."',".$refproductosweb.",".$reforigencomercio.")";
       $res = $this->query($sql,1);
+
+      $resCliente = $this->traerClientesPorId($refclientes);
+
+      if (mysql_num_rows($resCliente)>0) {
+         $clienteNombre = mysql_result($resCliente,0,'apellidopaterno').' '.mysql_result($resCliente,0,'apellidomaterno').' '.mysql_result($resCliente,0,'nombre');
+         $resMensaje = $this->insertarMensajes('se genero un lead - cliente: '.$clienteNombre,'automatico','ruth-arana@asesorescrea.com',$fechacrea);
+
+         $retorno = $this->enviarEmail('ruth-arana@asesorescrea.com',utf8_decode('se genero un lead'),utf8_decode('Cliente: '.$clienteNombre));
+      }
+
+
+
       return $res;
    }
 
@@ -14685,6 +14705,53 @@ return $res;
       est.estadocotizacion,
       c.folio,
       c.version
+		ORDER BY ".$colSort." ".$colSortDir." ";
+		$limit = "limit ".$start.",".$length;
+
+		//die(var_dump($sql));
+
+		$res = array($this->query($sql.$limit,0) , $this->query($sql,0));
+		return $res;
+	}
+
+   function traerCotizacionesFinancieraajax($length, $start, $busqueda,$colSort,$colSortDir) {
+		$where = '';
+
+		$busqueda = str_replace("'","",$busqueda);
+		if ($busqueda != '') {
+			$where = " and (concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) like '%".$busqueda."%' or pro.producto like '%".$busqueda."%' or concat(ase.apellidopaterno, ' ', ase.apellidomaterno, ' ', ase.nombre) like '%".$busqueda."%' or concat(aso.apellidopaterno, ' ', aso.apellidomaterno, ' ', aso.nombre) like '%".$busqueda."%' or est.estadocotizacion like '%".$busqueda."%' or c.folio like '%".$busqueda."%')";
+		}
+
+
+		$sql = "select
+		c.idcotizacion,
+      concat(cli.apellidopaterno, ' ', cli.apellidomaterno, ' ', cli.nombre) as cliente,
+		pro.producto,
+      c.fechacrea,
+		est.estadocotizacion,
+      c.folio,
+		c.refclientes,
+		c.refproductos,
+		c.refasesores,
+		c.refasociados,
+		c.refestadocotizaciones,
+		c.observaciones,
+		c.fechavencimiento,
+		c.coberturaactual,
+		c.fechamodi,
+		c.usuariocrea,
+		c.usuariomodi,
+		c.refusuarios
+		from dbcotizaciones c
+		inner join dbclientes cli ON cli.idcliente = c.refclientes
+		inner join tbtipopersonas ti ON ti.idtipopersona = cli.reftipopersonas
+		inner join tbproductos pro ON pro.idproducto = c.refproductos
+		inner join dbasesores ase ON ase.idasesor = c.refasesores
+		inner join dbusuarios us ON us.idusuario = cli.refusuarios and us.usuarioexterno='1'
+		left join dbasociados aso ON aso.idasociado = c.refasociados
+		inner join tbestadocotizaciones est ON est.idestadocotizacion = c.refestadocotizaciones
+		left join dbventas v on v.refcotizaciones = c.idcotizacion
+		where ((v.idventa IS NULL or c.refestadocotizaciones IN (12,23)) and c.refestadocotizaciones in (12,23) ".$where.")
 		ORDER BY ".$colSort." ".$colSortDir." ";
 		$limit = "limit ".$start.",".$length;
 

@@ -15,6 +15,7 @@ class financieraCrea extends PDO {
    private $descripcion;
    private $error;
    private $descripcionError;
+   private $idServicio;
 
    public function __construct() {
 
@@ -63,7 +64,7 @@ class financieraCrea extends PDO {
 
 		$dataUno = array(
          'idUsuarioAsesor' => $this->idusuario,
-         'idServicio' => '10',
+         'idServicio' => $this->idServicio,
          'descripcion'=> $this->descripcion,
          'monto' => $this->precio,
          'refPoliza' => ''
@@ -84,23 +85,28 @@ class financieraCrea extends PDO {
       //var_dump($result);
       $arr = json_decode($arrayResultado);
 
-      //die(var_dump($arr->{'error'}));
-
-      if(curl_errno($ch)){
-         //throw new Exception(curl_error($ch));
+      //die(var_dump($arr));
+      if ($arr == null) {
          $this->setError(1);
-         $this->setDescripcionError('El servicio no esta funcionando, pruebe nuevamente');
+         $this->setDescripcionError('Tenemos un inconveniente, pruebe nuevamente');
       } else {
-         if ($arr->{'error'} == 1) {
+         if(curl_errno($ch)){
+            //throw new Exception(curl_error($ch));
             $this->setError(1);
-            $this->setDescripcionError($arr->{'error_descripcion'});
+            $this->setDescripcionError('Tenemos un inconveniente, pruebe nuevamente');
          } else {
-            $this->setError(0);
-            $this->setDescripcionError($arr->{'Se genero correctamente la solicitud del credito'});
+            if ($arr->{'error'} == 1) {
+               $this->setError(1);
+               $this->setDescripcionError($arr->{'error_descripcion'});
+            } else {
+               $this->setError(0);
+               $this->setDescripcionError($arr->{'Se genero correctamente la solicitud del credito'});
 
-            $this->guardar($this->refcotizaciones,$this->refsolicitudes,1);
+               $this->guardar($this->refcotizaciones,$this->refsolicitudes,1);
+            }
          }
       }
+
 
 
       curl_close($ch);
@@ -111,6 +117,60 @@ class financieraCrea extends PDO {
       $this->setRefcotizaciones($refcotizaciones);
       $this->setRefsolicitudes($refsolicitudes);
       $this->setRefestado($refestado);
+
+   }
+
+
+   public function buscarCotizacionesFinancieraPorValor($campo, $valor) {
+      $conexion = new Conexion();
+
+      $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+      $sql = "select idcotizacionfinanciera from ".self::TABLA." where ".$campo." = :".$campo." ";
+
+      $consulta = $conexion->prepare($sql);
+      $consulta->bindParam(':'.$campo, $valor);
+
+      $consulta->execute();
+
+      $res = $consulta->fetch();
+
+      if($res){
+
+         $this->buscarCotizacionesFinancieraPorId($res['idcotizacionfinanciera']);
+
+      }else{
+         return false;
+      }
+   }
+
+   public function buscarCotizacionesFinancieraPorId($id) {
+      $conexion = new Conexion();
+
+      $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+      $sql = "SELECT idcotizacionfinanciera,
+                     refcotizaciones,
+                     refsolicitudes,
+                     refestado,
+                     fechacrea
+            FROM ".self::TABLA." where idcotizacionfinanciera = :idcotizacionfinanciera";
+
+      $consulta = $conexion->prepare($sql);
+
+      $consulta->bindParam(':idcotizacionfinanciera', $id);
+
+      $consulta->execute();
+
+      $res = $consulta->fetch();
+
+      if($res){
+         $this->cargar($res['refcotizaciones'],$res['refsolicitudes'],$res['refestado']);
+         $this->setIdcotizacionfinanciera($id);
+
+      }else{
+         return false;
+      }
 
    }
 
@@ -354,6 +414,31 @@ class financieraCrea extends PDO {
     public function setDescripcionError($descripcionError)
     {
         $this->descripcionError = $descripcionError;
+
+        return $this;
+    }
+
+
+    /**
+     * Get the value of Id Servicio
+     *
+     * @return mixed
+     */
+    public function getIdServicio()
+    {
+        return $this->idServicio;
+    }
+
+    /**
+     * Set the value of Id Servicio
+     *
+     * @param mixed $idServicio
+     *
+     * @return self
+     */
+    public function setIdServicio($idServicio)
+    {
+        $this->idServicio = $idServicio;
 
         return $this;
     }
