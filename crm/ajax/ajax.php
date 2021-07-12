@@ -12,7 +12,7 @@ include ('../includes/funcionesComercio.php');
 include ('../includes/base.php');
 include ('../includes/EnvioSMS.class.php');
 include ('../includes/chat.class.php');
-include ('../includes/usuarios.class.php');
+//include ('../includes/usuarios.class.php');
 
 $serviciosUsuarios  		= new ServiciosUsuarios();
 $serviciosFunciones 		= new Servicios();
@@ -1511,10 +1511,33 @@ switch ($accion) {
    case 'cambiarCotizacionHuerfana':
       cambiarCotizacionHuerfana($serviciosReferencias);
    break;
+   case 'finalizarComprobanteFinanciera':
+      finalizarComprobanteFinanciera($serviciosReferencias);
+   break;
 
 
 }
 /* FinFinFin */
+
+function finalizarComprobanteFinanciera($serviciosReferencias) {
+   $id = $_POST['id'];
+   $estado = $_POST['estado'];
+
+   $res = $serviciosReferencias->modificarPagosPorCampo($id,'refestado',$estado);
+
+   $resPagos = $serviciosReferencias->traerPagosPorId($id);
+
+   $idcotizacion = mysql_result($resPagos,0,'idreferencia');
+
+   $modEst =   $serviciosReferencias->modificarCotizacionUnicaDocumentacionCot($idcotizacion,'refestadocotizaciones',27);
+   $modEta =   $serviciosReferencias->modificarCotizacionUnicaDocumentacionCot($idcotizacion,'refestados',4);
+
+   $resV['error'] = false;
+   $resV['mensaje'] = 'El cambio se realizo completamente';
+
+   header('Content-type: application/json');
+   echo json_encode($resV);
+}
 
 function cambiarCotizacionHuerfana($serviciosReferencias) {
    $id =  $_POST['id'];
@@ -1909,7 +1932,7 @@ function registrarEnviarCotizadorAlCliente($serviciosReferencias, $serviciosUsua
 
                $fechacrea = date('Y-m-d H:i:s');
                $fechamodi = date('Y-m-d H:i:s');
-               $contactado = 0;
+               $contactado = '0';
                $usuariocontacto = '';
                $usuarioresponsable = '';
                $cita = '';
@@ -5644,6 +5667,12 @@ function guardarMetodoDePagoPorCotizacion($serviciosReferencias) {
 
    $resCotizacion = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
+   $idproducto = mysql_result($resCotizacion,0,'refproductos');
+
+   $usuario = new usuarioCrea();
+
+   $usuario->buscarUsuarioPorId($_SESSION['usua_sahilices']);
+
    $metodopago = $_POST['metodopago'];
    $banco = $_POST['banco'];
    $afiliacionnumber = $_POST['afiliacion'];
@@ -5716,7 +5745,14 @@ function guardarMetodoDePagoPorCotizacion($serviciosReferencias) {
       $resMetodoPago = $serviciosReferencias->insertarMetodopago($id,$reftipoperiodicidad,$reftipocobranza,$banco,$afiliacionnumber,$tipotarjeta);
    }
 
-   $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',$nuevoEstadocotizacion,$_SESSION['usua_sahilices']);
+   if (($idproducto == 54) && ($usuario->getUsuarioexterno() == '1')) {
+      //cuando es un usuario de financiera crea y el producto de vida 500
+      //lo envio a firmar directamente
+      $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',21,$_SESSION['usua_sahilices']);
+   } else {
+      $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',$nuevoEstadocotizacion,$_SESSION['usua_sahilices']);
+   }
+
 
    $resPrimaNeta = $serviciosReferencias->modificarCotizacionesPorCampo($id,'primaneta',$precio,$_SESSION['usua_sahilices']);
 
