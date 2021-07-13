@@ -37,7 +37,7 @@ $resCotizacion = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
 $usuario = new usuarioCrea();
 
-$usuario->buscarUsuarioPorId($_SESSION['usua_sahilices']);
+$usuario->buscarUsuarioPorId($_SESSION['usuaid_sahilices']);
 
 if ($usuario->getUsuarioexterno() == '1') {
    $resCliente = $serviciosReferencias->traerClientesPorIdPDF(715);
