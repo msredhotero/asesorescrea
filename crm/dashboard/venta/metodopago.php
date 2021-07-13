@@ -53,7 +53,7 @@ $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
 $usuario = new usuarioCrea();
 
-$usuario->buscarUsuarioPorId($_SESSION['usua_sahilices']);
+$usuario->buscarUsuarioPorId($_SESSION['usuaid_sahilices']);
 
 /*
 $resVentas = $serviciosReferencias->traerVentasPorCotizacion($id);

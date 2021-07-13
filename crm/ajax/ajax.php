@@ -5671,7 +5671,7 @@ function guardarMetodoDePagoPorCotizacion($serviciosReferencias) {
 
    $usuarioAjax = new usuarioCrea();
 
-   $usuarioAjax->buscarUsuarioPorId($_SESSION['usua_sahilices']);
+   $usuarioAjax->buscarUsuarioPorId($_SESSION['usuaid_sahilices']);
 
    $metodopago = $_POST['metodopago'];
    $banco = $_POST['banco'];

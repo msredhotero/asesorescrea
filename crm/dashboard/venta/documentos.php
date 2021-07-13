@@ -36,7 +36,7 @@ $fecha = date('Y-m-d');
 
 $usuario = new usuarioCrea();
 
-$usuario->buscarUsuarioPorId($_SESSION['usua_sahilices']);
+$usuario->buscarUsuarioPorId($_SESSION['usuaid_sahilices']);
 
 //$resProductos = $serviciosProductos->traerProductosLimite(6);
 $resMenu = $serviciosHTML->menu($_SESSION['nombre_sahilices'],"Venta",$_SESSION['refroll_sahilices'],$_SESSION['email_sahilices']);
@@ -503,7 +503,6 @@ $redireccionar = 0;
 if (($idProducto == 54) && ($usuario->getUsuarioexterno() == '1')) {
 	$cargados = 0;
 	$necesariasParaAprobar = 0;
-	die();
 }
 
 ?>
