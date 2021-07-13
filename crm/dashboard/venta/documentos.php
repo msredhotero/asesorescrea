@@ -202,7 +202,7 @@ if (mysql_num_rows($resMetodoPago)>0) {
 	}
 
 	$filesSolicitud = array_diff(scandir($pathSolcitud), array('.', '..'));
-	
+
 } else {
 	$existeMetodoPago = 0;
 	// creo el archivo grande
@@ -276,18 +276,18 @@ if (($consolicitud == 1) && ($existeBckUpCliente == 1)) {
 
 		   if ((integer)$res > 0) {
 
-			
+
 			// si valido si telefono movil, se lo envio al telefono
 			if ((mysql_result($resUsuario,0,'validamovil') == '1') && (mysql_num_rows($lstNIPporUsuario) <= 3)) {
 
 				$comoEnvioNIP = 1;
-				
+
 				$EnvioSMS = new EnvioSMS();
-	   
+
 				$msg = 'ASESORES CREA - NIP: '.$token ." Ingresa este numero para firmar tu solicitud";
-	   
+
 				$envio = $EnvioSMS->enviarSMS($telefono, $msg );
-	   
+
 				if ($envio == 1) {
 				    $resMarca = $serviciosUsuario->insertarUsuariosnip($_SESSION['usuaid_sahilices'],$id,$token,date('Y-m-d H:i:s'),0);
 				    if ((integer)$resMarca > 0) {
@@ -297,18 +297,18 @@ if (($consolicitud == 1) && ($existeBckUpCliente == 1)) {
 						$resEliminar = $serviciosReferencias->eliminarTokens($res);
 						$existeNIP = 0;
 				    }
-				   
+
 				} else {
 				   echo 'Hubo un error al enviar el SMS';
 				   $resEliminar = $serviciosReferencias->eliminarTokens($res);
 				   $existeNIP = 0;
 				}
-	   
-	   
+
+
 			} else {
 
 				$comoEnvioNIP = 2;
-				
+
 				$email = mysql_result($resCliente,0,'email');
 
 		      $cuerpo = '';
@@ -353,9 +353,9 @@ if (($consolicitud == 1) && ($existeBckUpCliente == 1)) {
 
 			}
 
-		      
 
-		      
+
+
 		   } else {
 				$existeNIP = 0;
 			}
@@ -428,7 +428,7 @@ if (($consolicitud == 1) && ($existeBckUpCliente == 1)) {
 			   $token = $nuevoToken;
 
 
-			   
+
 
 			   $fechacreac = date('Y-m-d H:i:s');
 			   $nuevafecha = strtotime ( '+48 hour' , strtotime ( $fechacreac ) ) ;
@@ -472,7 +472,7 @@ if (($consolicitud == 1) && ($existeBckUpCliente == 1)) {
 		} else {
 			$puedeContinuar = 0;
 		}
-		
+
 	} else {
 		$existeFirma = 0;
 	}
@@ -493,6 +493,8 @@ if ($idProducto == 41) {
 	$necesariasParaAprobar = 1;
 	$cargados = 1;
 }
+
+$redireccionar = 0;
 
 ?>
 
@@ -665,7 +667,7 @@ if ($idProducto == 41) {
 
 										</div>
 									<?php } ?>
-								
+
 							<?php } else { ?>
 								<div class="bs-wizard-info text-center"><i class="material-icons">done</i> PASO 1 - CARGA TUS DOCUMENTOS</div>
 								<hr>
@@ -689,7 +691,7 @@ if ($idProducto == 41) {
 
 										$tokenVRIM = $vrimAPI->tokenVRIM();
 
-										
+
 										if ($vrimAPI->getError() == '') {
 											//genero bien el token
 											$tokenBear = $vrimAPI->getAccesstoken();
@@ -732,7 +734,7 @@ if ($idProducto == 41) {
 													$arTarjeta['Celular'] = '5551355135';
 												}
 
-												
+
 
 												$arPedidos = array('cveProducto'=>'VD24','Tarjetas'=>$arTarjeta);
 
@@ -752,7 +754,7 @@ if ($idProducto == 41) {
 												echo '<div class="alert alert-danger"><p>'.$resItoken.'</p></div>';
 											}
 
-											
+
 										} else {
 											//se genero un error, que recargue la pagina o que se comunique con un asesor para obtener la membresia vrim
 											echo '<div class="alert alert-danger"><p>'.$vrimAPI->getError().'</p></div>';
@@ -766,6 +768,8 @@ if ($idProducto == 41) {
 								//id: 54
 								$envioSolicitudParaAutorizar = 0;
 								if ($idProducto == 54) {
+									$redireccionar = 1;
+
 									$resInhabilitaRespuesta = $serviciosReferencias->inhabilitaRespuestascuestionarioPorCotizacion($id);
 									if (mysql_num_rows($resInhabilitaRespuesta)>0) {
 
@@ -790,11 +794,11 @@ if ($idProducto == 41) {
 
 										$cuerpo .= '<body>';
 
-										
+
 										$cuerpo .= '<h3> Cliente: '.$lblCliente.' - Producto: VIDA 500 </h3>';
 
 										$cuerpo .= '<p> Haga click <a href="https://asesorescrea.com/desarrollo/crm/dashboard/entradas/index.php?id='.$id.'">aqui</a> para acceder a la solicitud </p>';
-										
+
 
 										$cuerpo .= '</body>';
 
@@ -806,6 +810,12 @@ if ($idProducto == 41) {
 
 									}
 								}
+
+								//lo reenvio a descuento por nomina para generar la solicitud
+								//importante, cambio de lugar
+								$resEstadoMod = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',23,$_SESSION['usua_sahilices']);
+
+
 								?>
 
 								<div class="text-center">
@@ -838,7 +848,7 @@ if ($idProducto == 41) {
 							<?php if ($idProducto == 41) { ?>
 								<hr>
 								<div class="bs-wizard-info text-center"><i class="material-icons">done</i> PASO 1 - FIRMAR LA SOLICITUD DE FORMA DIGITAL</div>
-								
+
 							<?php } else { ?>
 								<div class="row bs-wizard" style="border-bottom:0;margin-left:25px; margin-right:25px;">
 									<div class="col-xs-6 bs-wizard-step complete">
@@ -859,7 +869,7 @@ if ($idProducto == 41) {
 									</div>
 								</div>
 							<?php } ?>
-							
+
 
 
 
@@ -1248,6 +1258,10 @@ if ($idProducto == 41) {
 <script>
 	$(document).ready(function(){
 
+		<?php if ($redireccionar == 1) { ?>
+			setTimeout(function(){ $(location).attr('href', 'descuentopornomina.php?id=<?php echo $id; ?>'); }, 1000);
+		<?php } ?>
+
 		$('#dcrefestadocivil').val(<?php echo (mysql_result($resCliente,0,'refestadocivil') == '' ? 7 : mysql_result($resCliente,0,'refestadocivil')); ?>);
 
 		function validarPASS(pass) {
@@ -1260,7 +1274,7 @@ if ($idProducto == 41) {
 			return true; //Validado
 		}
 
-	
+
 
 		$('.btnModificarDC').click(function() {
 			if (($('#dctelefonocelular').val() == '') || ($('#dcrfc').val() == '') ||  ($('#dcpassword').val() == '') || ($('#dccalle').val() == '') || ($('#dcnrointerior').val() == '') || ($('#dcnroexterior').val() == '') || ($('#dccodigopostal').val() == '') || ($('#dcestado').val() == '') || ($('#dccolonia').val() == '') || ($('#dcmunicipio').val() == '') ) {
@@ -1283,7 +1297,7 @@ if ($idProducto == 41) {
 						showConfirmButton: false
 					});
 				}
-				
+
 
 			}
 
@@ -1358,7 +1372,7 @@ if ($idProducto == 41) {
 		<?php if ($existeBckUpCliente == 0) { ?>
 		$('#lgmDomicilioTelefono').modal({backdrop: 'static', keyboard: false});
 		<?php } ?>
-		
+
 
 		<?php if (($puedeContinuar == 0) && ($tipoFirma == 2) && ($existeNIP == 1)) { ?>
 			$('#lgmNotificacion').modal();

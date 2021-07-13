@@ -15,6 +15,7 @@ if (!isset($_SESSION['usua_sahilices']))
 	include ('../../includes/funcionesReferencias.php');
 	include ('../../includes/base.php');
 	include ('../../includes/funcionesComercio.php');
+	include ('../../includes/financiera.class.php');
 
 	$serviciosFunciones 	= new Servicios();
 	$serviciosUsuario 		= new ServiciosUsuarios();
@@ -22,6 +23,7 @@ if (!isset($_SESSION['usua_sahilices']))
 	$serviciosReferencias 	= new ServiciosReferencias();
 	$baseHTML = new BaseHTML();
 	$serviciosComercio      = new serviciosComercio();
+	$financiera = new financieraCrea();
 
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
@@ -73,6 +75,8 @@ $idcuestionario = mysql_result($resProducto,0,'refcuestionarios');
 
 $detalleProducto = mysql_result($resProducto,0,'detalle');
 
+$producto = mysql_result($resProducto,0,'producto');
+
 
 if (mysql_num_rows($resCotizaciones)>0) {
 	$precio = mysql_result($resCotizaciones,0,'primatotal');
@@ -85,18 +89,38 @@ if (mysql_num_rows($resCotizaciones)>0) {
 
 $resultado = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
-
+$refEstadoCotizacion = mysql_result($resultado,0,'refestadocotizaciones');
 
 $puedeEntrar = 0;
-/*
+
 if ($refEstadoCotizacion == 23) {
 
 	$puedeEntrar = 0;
 } else {
 	return header('Location: ../cotizacionesvigentes/new.php?id='.$id);
 
-}*/
+}
 
+$financiera->buscarCotizacionesFinancieraPorValor('refcotizaciones',$id);
+
+//$financiera->setIdusuario($_SESSION['usuaid_sahilices']);
+$financiera->setIdusuario(311);
+$financiera->setPrecio($precio);
+$financiera->setDescripcion($producto);
+$financiera->setIdServicio($idProducto);
+
+$financiera->setRefcotizaciones($id);
+$financiera->setRefsolicitudes(0);
+
+if ($financiera->getIdcotizacionfinanciera() == null) {
+	$financiera->servicioSolicitud();
+
+
+} else {
+	$financiera->setError(0);
+}
+
+//die(var_dump($financiera->getError()));
 
 ?>
 
@@ -192,7 +216,14 @@ if ($refEstadoCotizacion == 23) {
 		          </div>
 		          <div class="body table-responsive">
 						 <div class="text-center">
-							 <h1 class="display-4">¡Una vez que completemos todos los pasos necesarios en Financiera CREA, podrás firmar tu solicitud de forma digital!</h1>
+							<?php
+ 							if ($financiera->getError() == 0) {
+ 							?>
+							<h1 class="display-4">¡Finalizo correctamente la solicitud del producto, lo redireccionaremos a Financiera CREA!</h1>
+						<?php } else { ?>
+							<h4><?php echo $financiera->getDescripcionError(); ?>.</h4>
+						<?php } ?>
+
 
 						 </div>
 
@@ -240,113 +271,11 @@ if ($refEstadoCotizacion == 23) {
 <script>
 	$(document).ready(function(){
 
-		function traerImagen(contenedorpdf, contenedor) {
-			$.ajax({
-				data:  {idpago: <?php echo $idpago; ?>,
-						accion: 'traerPagosPorId'},
-				url:   '../../ajax/ajax.php',
-				type:  'post',
-				beforeSend: function () {
-					$("." + contenedor + " img").attr("src",'');
-				},
-				success:  function (response) {
-					var cadena = response.datos.type.toLowerCase();
-
-					if (response.datos.type != '') {
-						if (cadena.indexOf("pdf") > -1) {
-							PDFObject.embed(response.datos.imagen, "#"+contenedorpdf);
-							$('#'+contenedorpdf).show();
-							$("."+contenedor).hide();
-
-						} else {
-							$("." + contenedor + " img").attr("src",response.datos.imagen);
-							$("."+contenedor).show();
-							$('#'+contenedorpdf).hide();
-						}
-					}
-
-					if (response.error) {
-
-						$('.btnEliminar').hide();
-						$('.guardarEstado').hide();
-					} else {
-
-						$('.btnEliminar').show();
-						$('.guardarEstado').show();
-					}
-
-
-
-				}
-			});
-		}
-
-		traerImagen('example1','timagen1');
-
-		Dropzone.prototype.defaultOptions.dictFileTooBig = "Este archivo es muy grande ({{filesize}}MiB). Peso Maximo: {{maxFilesize}}MiB.";
-
-		Dropzone.options.frmFileUpload = {
-			maxFilesize: 30,
-			acceptedFiles: ".jpg,.jpeg,.pdf",
-			accept: function(file, done) {
-				done();
-			},
-			init: function() {
-				this.on("sending", function(file, xhr, formData){
-					formData.append("idpago", '<?php echo $idpago; ?>');
-
-				});
-				this.on('success', function( file, resp ){
-					traerImagen('example1','timagen1');
-					$('.lblPlanilla').hide();
-
-					$('.btnGuardar').show();
-					$('.infoPlanilla').hide();
-					if (resp.indexOf('Error')!== -1) {
-						swal("Error!", resp.replace("1", ""), "error");
-					} else {
-						swal("Correcto!", resp.replace("1", ""), "success");
-
-						location.reload();
-					}
-					//
-				});
-
-				this.on('error', function( file, resp ){
-					swal("Error!", resp.replace("1", ""), "warning");
-				});
-			}
-		};
-
-
-		<?php if ($idpagoestado != 5) { ?>
-		var myDropzone = new Dropzone("#archivos", {
-			params: {
-				 idpago: <?php echo $idpago; ?>
-			},
-			url: 'subirrecibos.php'
-		});
+		<?php if ($financiera->getError() == '0') { ?>
+			<?php if ($financiera->getUrl() != '') { ?>
+			setTimeout(function(){ $(location).attr('href', '<?php echo $financiera->getUrl(); ?>'); }, 1000);
+			<?php } ?>
 		<?php } ?>
-
-
-
-		$('.maximizar').click(function() {
-			if ($('.icomarcos').text() == 'web') {
-				$('#marcos').show();
-				$('.content').css('marginLeft', '315px');
-				$('.icomarcos').html('aspect_ratio');
-			} else {
-				$('#marcos').hide();
-				$('.content').css('marginLeft', '15px');
-				$('.icomarcos').html('web');
-			}
-
-		});
-
-
-		$("#sign_in").submit(function(e){
-			e.preventDefault();
-		});
 
 
 	});

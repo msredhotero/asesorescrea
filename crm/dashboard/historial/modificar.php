@@ -528,6 +528,7 @@ $habilitacambio = 1;
 									<input type="hidden" id="estadoactual" name="estadoactual" value=""/>
 
 
+
 								</div>
 
 
@@ -696,6 +697,27 @@ $habilitacambio = 1;
 <input type="hidden" name="idmodificarestadorechazo" id="idmodificarestadorechazo" value="0">
 <input type="hidden" name="estadomodificarestadorechazo" id="estadomodificarestadorechazo" value="0">
 
+
+<div class="modal fade" id="lgmENVIAR2" tabindex="-1" role="dialog">
+	 <div class="modal-dialog modal-lg" role="document">
+		  <div class="modal-content">
+				<div class="modal-header bg-green">
+					<h4>IMPORTANTE</h4>
+				</div>
+				<div class="modal-body">
+				<div class="row">
+					<h4>¿Estas seguro que quieres ACTIVAR la poliza?.</h4>
+				</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success waves-effect btnActivarPoliza" data-dismiss="modal">ACTIVAR</button>
+					<button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+				</div>
+
+		  </div>
+	 </div>
+</div>
+
 <?php echo $baseHTML->cargarArchivosJS('../../'); ?>
 <!-- Wait Me Plugin Js -->
 <script src="../../plugins/waitme/waitMe.js"></script>
@@ -725,6 +747,8 @@ $habilitacambio = 1;
 
 <script>
 	$(document).ready(function(){
+
+		
 
 		function traerImagen(contenedorpdf, contenedor) {
 			$.ajax({

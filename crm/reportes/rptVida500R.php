@@ -35,7 +35,16 @@ $id         =  $_GET['id'];
 
 $resCotizacion = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
-$resCliente = $serviciosReferencias->traerClientesPorIdPDF(mysql_result($resCotizacion,0,'refclientes'));
+$usuario = new usuarioCrea();
+
+$usuario->buscarUsuarioPorId($_SESSION['usua_sahilices']);
+
+if ($usuario->getUsuarioexterno() == '1') {
+   $resCliente = $serviciosReferencias->traerClientesPorIdPDF(715);
+} else {
+   $resCliente = $serviciosReferencias->traerClientesPorIdPDF(mysql_result($resCotizacion,0,'refclientes'));
+}
+
 
 $resAsesor = $serviciosReferencias->traerAsesoresPorId(mysql_result($resCotizacion,0,'refasesores'));
 
@@ -83,29 +92,40 @@ $yCuadrado1 = 6;
 $yConstCuadrado1 = 28;
 
 
+if ($usuario->getUsuarioexterno() == '1') {
+   $idasegurado = mysql_result($resCotizacion,0,'refclientes');
+   $resAsegurado = $serviciosReferencias->traerClientesPorIdPDF(mysql_result($resCotizacion,0,'refclientes'));
 
-if (mysql_result($resCotizacion,0,'tieneasegurado') == '1') {
-    $idasegurado = mysql_result($resCotizacion,0,'refasegurados');
-    $resAsegurado = $serviciosReferencias->traerAseguradosPorIdPDF($idasegurado);
- 
-    /// fijo para entidad federativa de nacimiento
-    $pdf->SetXY(54.40, 142.00);
-    $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resAsegurado,0,'curp'), mysql_result($resAsegurado,0,'estado'));
-    $pdf->Write(0, strtoupper( utf8_decode($resEF)));
-    // fin de entidad federativa
- 
- 
- } else {
-    $idasegurado = 0;
- 
-    /// fijo para entidad federativa de nacimiento
- 
-    $pdf->SetXY(54.40, 142.00);
-    $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resCliente,0,'curp'), mysql_result($resCliente,0,'estado'));
-    $pdf->Write(0, strtoupper( utf8_decode($resEF)));
-    // fin de entidad federativa
- }
- 
+   /// fijo para entidad federativa de nacimiento
+   $pdf->SetXY(54.40, 142.00);
+   $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resAsegurado,0,'curp'), mysql_result($resAsegurado,0,'estado'));
+   $pdf->Write(0, strtoupper( utf8_decode($resEF)));
+   // fin de entidad federativa
+} else {
+   if (mysql_result($resCotizacion,0,'tieneasegurado') == '1') {
+       $idasegurado = mysql_result($resCotizacion,0,'refasegurados');
+       $resAsegurado = $serviciosReferencias->traerAseguradosPorIdPDF($idasegurado);
+
+       /// fijo para entidad federativa de nacimiento
+       $pdf->SetXY(54.40, 142.00);
+       $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resAsegurado,0,'curp'), mysql_result($resAsegurado,0,'estado'));
+       $pdf->Write(0, strtoupper( utf8_decode($resEF)));
+       // fin de entidad federativa
+
+
+    } else {
+       $idasegurado = 0;
+
+       /// fijo para entidad federativa de nacimiento
+
+       $pdf->SetXY(54.40, 142.00);
+       $resEF = $serviciosReferencias->devolverEntidadNacimientoPorCURP(mysql_result($resCliente,0,'curp'), mysql_result($resCliente,0,'estado'));
+       $pdf->Write(0, strtoupper( utf8_decode($resEF)));
+       // fin de entidad federativa
+    }
+}
+
+
  if (mysql_result($resCotizacion,0,'refbeneficiarios') > 0) {
     $idbeneficiario = mysql_result($resCotizacion,0,'refbeneficiarios');
     $resBeneficiario = $serviciosReferencias->traerAseguradosPorIdPDF($idbeneficiario);
@@ -114,12 +134,12 @@ if (mysql_result($resCotizacion,0,'tieneasegurado') == '1') {
     $resBeneficiario = $serviciosReferencias->traerAseguradosPorIdPDF($idbeneficiario);
  }
 
- 
 
 
 
 
-//------------------            pagina 1            ------------------------------------------------------ 
+
+//------------------            pagina 1            ------------------------------------------------------
 //------------------ datos generales del solicitante ------------------------------------------------------
 
 //emisor
@@ -268,7 +288,7 @@ while ($row = mysql_fetch_array($resReferencias)) {
                      }
                   } else {
                      $pdf->Write(0,strtoupper( utf8_decode( mysql_result($resCliente,0,$row['camporeferencia'])) ));
-                     
+
                   }
                }
 

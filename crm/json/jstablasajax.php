@@ -468,6 +468,24 @@ switch ($tabla) {
 		$termina = 7;
 
 	break;
+	case 'cotizacionesfinanciera':
+
+
+		$datos = $serviciosReferencias->traerCotizacionesFinancieraajax($length, $start, $busqueda,$colSort,$colSortDir);
+
+		$resAjax = $datos[0];
+		$res = $datos[1];
+
+		$label = array('btnArchivos');
+		$class = array('bg-blue');
+		$icon = array('archive');
+
+
+		$indiceID = 0;
+		$empieza = 1;
+		$termina = 5;
+
+	break;
 	case 'cotizacionesvigentes':
 
 

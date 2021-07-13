@@ -62,22 +62,6 @@ $lblPrecioSEVI = '';
 $lblPrecioVIDA500 = '';
 
 
-$existeCotizacionParaProductoVRIM = $serviciosReferencias->traerValoredadPorProductoEdad(41,$edad);
-
-if (mysql_num_rows($existeCotizacionParaProductoVRIM)>0) {
-   $lblPrecioVRIM = '$ '.number_format (mysql_result($existeCotizacionParaProductoVRIM,0,'valor'),2,'.',',');
-} else {
-   $lblPrecioVRIM = '';
-}
-
-$existeCotizacionParaProductoSEVI = $serviciosReferencias->traerValoredadPorProductoEdad(28,$edad);
-
-if (mysql_num_rows($existeCotizacionParaProductoSEVI)>0) {
-   //die(var_dump(mysql_result($existeCotizacionParaProductoSEVI,0,'valor')));
-   $lblPrecioSEVI = '$ '.number_format (mysql_result($existeCotizacionParaProductoSEVI,0,'valor'),2,'.',',');
-} else {
-   $lblPrecioSEVI = '';
-}
 
 
 $existeCotizacionParaProductoS500 = $serviciosReferencias->traerValoredadPorProductoEdad(54,$edad);
@@ -238,7 +222,7 @@ $breadCumbs = '<a class="navbar-brand" href="../index.php">Dashboard</a>';
 
 					</div>
 
-					<?php if ($_SESSION['usuaid_sahilices'] == 294) { ?>
+					<?php if ($_SESSION['usuaid_sahilices'] != 0) { ?>
 					<div class="row" style="margin-top:40px;">
 							<div class="col-xs-12 col-md-6">
 								<img src="../../imagenes/vida-500-1000000_.jpg" width="100%"/>

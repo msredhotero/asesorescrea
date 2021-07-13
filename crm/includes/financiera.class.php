@@ -16,6 +16,7 @@ class financieraCrea extends PDO {
    private $error;
    private $descripcionError;
    private $idServicio;
+   private $url;
 
    public function __construct() {
 
@@ -31,11 +32,12 @@ class financieraCrea extends PDO {
 
 
       //die(var_dump($this->reftipopersonas));
-      $consulta = $conexion->prepare('INSERT INTO '.self::TABLA.'(refcotizaciones,refsolicitudes,refestado,fechacrea) VALUES(:refcotizaciones,:refsolicitudes,:refestado,:fechacrea)');
+      $consulta = $conexion->prepare('INSERT INTO '.self::TABLA.'(refcotizaciones,refsolicitudes,refestado,fechacrea,url) VALUES(:refcotizaciones,:refsolicitudes,:refestado,:fechacrea,:url)');
       $consulta->bindParam(':refcotizaciones', $this->refcotizaciones);
       $consulta->bindParam(':refsolicitudes', $this->refsolicitudes);
       $consulta->bindParam(':refestado', $this->refestado);
-      $consulta->bindParam(':fechacrea', $this->getFechacrea());
+      $consulta->bindParam(':fechacrea', date('Y-m-d H:i:s'));
+      $consulta->bindParam(':url', $this->url);
 
       try {
           $consulta->execute();
@@ -100,9 +102,11 @@ class financieraCrea extends PDO {
                $this->setDescripcionError($arr->{'error_descripcion'});
             } else {
                $this->setError(0);
-               $this->setDescripcionError($arr->{'Se genero correctamente la solicitud del credito'});
+               $this->setDescripcionError('Se genero correctamente la solicitud del credito');
 
-               $this->guardar($this->refcotizaciones,$this->refsolicitudes,1);
+               $this->setUrl($arr->{'urlSolicitud'});
+
+               $this->guardar($this->refcotizaciones,$this->refsolicitudes,1,$this->url);
             }
          }
       }
@@ -112,11 +116,12 @@ class financieraCrea extends PDO {
       curl_close($ch);
    }
 
-   public function cargar($refcotizaciones,$refsolicitudes,$refestado) {
+   public function cargar($refcotizaciones,$refsolicitudes,$refestado,$url) {
 
       $this->setRefcotizaciones($refcotizaciones);
       $this->setRefsolicitudes($refsolicitudes);
       $this->setRefestado($refestado);
+      $this->setUrl($url);
 
    }
 
@@ -153,7 +158,8 @@ class financieraCrea extends PDO {
                      refcotizaciones,
                      refsolicitudes,
                      refestado,
-                     fechacrea
+                     fechacrea,
+                     url
             FROM ".self::TABLA." where idcotizacionfinanciera = :idcotizacionfinanciera";
 
       $consulta = $conexion->prepare($sql);
@@ -165,7 +171,7 @@ class financieraCrea extends PDO {
       $res = $consulta->fetch();
 
       if($res){
-         $this->cargar($res['refcotizaciones'],$res['refsolicitudes'],$res['refestado']);
+         $this->cargar($res['refcotizaciones'],$res['refsolicitudes'],$res['refestado'],$res['url']);
          $this->setIdcotizacionfinanciera($id);
 
       }else{
@@ -441,6 +447,31 @@ class financieraCrea extends PDO {
         $this->idServicio = $idServicio;
 
         return $this;
+    }
+
+
+    /**
+     * Set the value of Url
+     *
+     * @param mixed $url
+     *
+     * @return self
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of Url
+     *
+     * @return mixed
+     */
+    public function getUrl()
+    {
+        return $this->url;
     }
 
 }

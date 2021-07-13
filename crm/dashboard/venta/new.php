@@ -15,7 +15,7 @@ include ('../../includes/funcionesHTML.php');
 include ('../../includes/funcionesReferencias.php');
 include ('../../includes/base.php');
 include ('../../includes/funcionesAsegurados.php');
-include ('../../includes/usuarios.class.php');
+//include ('../../includes/usuarios.class.php');
 
 $serviciosFunciones 	= new Servicios();
 $serviciosUsuario 		= new ServiciosUsuarios();

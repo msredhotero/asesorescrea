@@ -5749,6 +5749,7 @@ function guardarMetodoDePagoPorCotizacion($serviciosReferencias) {
       //cuando es un usuario de financiera crea y el producto de vida 500
       //lo envio a firmar directamente
       $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',21,$_SESSION['usua_sahilices']);
+      $url = 'documentos.php?id='.$id;
    } else {
       $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',$nuevoEstadocotizacion,$_SESSION['usua_sahilices']);
    }

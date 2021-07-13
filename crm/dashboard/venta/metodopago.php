@@ -51,6 +51,10 @@ if (!(isset($_GET['id']))) {
 
 $resCotizaciones = $serviciosReferencias->traerCotizacionesPorIdCompleto($id);
 
+$usuario = new usuarioCrea();
+
+$usuario->buscarUsuarioPorId($_SESSION['usua_sahilices']);
+
 /*
 $resVentas = $serviciosReferencias->traerVentasPorCotizacion($id);
 
@@ -257,18 +261,23 @@ $lblPrecioFC = str_replace('.','', $precio * 1.115 ) ;
 
 $resInhabilitaRespuesta = $serviciosReferencias->inhabilitaRespuestascuestionarioPorCotizacion($id);
 
-if (mysql_num_rows($resInhabilitaRespuesta)>0) {
-	$nopuedeContinuar = 1;
-	$inhabilitadoPorRespuesta = 1;
-	//si es vida 500, lo dejo pasar, lo envio a cargar el INE, a firmar la solicitud y aviso a ruth y a vidaseleccion@inbursa.com con asunto emision vida 500
-	//id: 54 vida 500
-	if ($idProducto == 54) {
-		$resModificar1 = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',20,$_SESSION['usua_sahilices']);
+if ($usuario->getUsuarioexterno() == '1') {
 
-		header('Location: archivos.php?id='.$id);
+} else {
+	if (mysql_num_rows($resInhabilitaRespuesta)>0) {
+		$nopuedeContinuar = 1;
+		$inhabilitadoPorRespuesta = 1;
+		//si es vida 500, lo dejo pasar, lo envio a cargar el INE, a firmar la solicitud y aviso a ruth y a vidaseleccion@inbursa.com con asunto emision vida 500
+		//id: 54 vida 500
+		if (($idProducto == 54)) {
+			$resModificar1 = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',20,$_SESSION['usua_sahilices']);
+
+			header('Location: archivos.php?id='.$id);
+		}
+		array_push($arErrorLbl,array('error'=>'Lo sentimos las preguntas que respondio en el cuestionario, no superan lo necesario para acceder al Producto.'));
 	}
-	array_push($arErrorLbl,array('error'=>'Lo sentimos las preguntas que respondio en el cuestionario, no superan lo necesario para acceder al Producto.'));
 }
+
 
 $resBancos = $serviciosReferencias->traerBancos();
 $cadBancos = "<option value=''>-- Seleccionar --</option>";
@@ -608,7 +617,11 @@ if ($nopuedeContinuar == 1) {
 
 							<?php } ?>
 							<?php if (mysql_result($resultado,0,'refestadocotizaciones') == 19) { ?>
+								<?php if ($esFinancieraCrea == '1') { ?>
+								<a href="javascript:void(0);" class="list-group-item bg-green btnConfirmar">CONTINUAR CON LA FIRMA DIGITAL</a>
+								<?php } else { ?>
 								<a href="comercio_fin.php?id=<?php echo $id; ?>" class="list-group-item bg-green">CONTINUAR CON EL PAGO ONLINE</a>
+								<?php } ?>
 							<?php } ?>
 							<?php if (mysql_result($resultado,0,'refestadocotizaciones') == 20) { ?>
 								<a href="archivos.php?id=<?php echo $id; ?>" class="list-group-item bg-green">CONTINUAR CON LOS ARCHIVOS NECESARIOS</a>
@@ -677,6 +690,66 @@ if ($nopuedeContinuar == 1) {
 
 <script>
 	$(document).ready(function(){
+
+
+		$('.btnConfirmar').click(function(e) {
+			$.ajax({
+				url: '../../ajax/ajax.php',
+				type: 'POST',
+				// Form data
+				//datos del formulario
+				data: {
+					accion: 'modificarCotizacionUnicaDocumentacionCot',
+					idcotizacion: <?php echo $id; ?>,
+					campo: 'refestadocotizaciones',
+					valor: 21
+				},
+				//mientras enviamos el archivo
+				beforeSend: function(){
+
+				},
+				//una vez finalizado correctamente
+				success: function(data){
+
+					if (data.error) {
+						swal({
+								title: "Respuesta",
+								text: 'Se genero un error al guardar el metodo de pago',
+								type: "error",
+								timer: 1000,
+								showConfirmButton: false
+						});
+
+
+					} else {
+						swal({
+								title: "Respuesta",
+								text: 'Se guardo correctamente el metodo de pago',
+								type: "success",
+								timer: 2000,
+								showConfirmButton: false
+						});
+
+						$(location).attr('href', 'documentos.php?id=<?php echo $id; ?>');
+
+					}
+				},
+				//si ha ocurrido un error
+				error: function(){
+					swal({
+							title: "Respuesta",
+							text: 'Actualice la pagina',
+							type: "error",
+							timer: 2000,
+							showConfirmButton: false
+					});
+
+				}
+			});
+
+		});
+
+		<?php if ($existeMetodoPago == 0) { ?>
 
 		$('#accordion_18').hide();
 		var cardNumberField1 = $('#card-number-field1');
@@ -790,6 +863,8 @@ if ($nopuedeContinuar == 1) {
 			guardarMetodoDePagoPorCotizacion();
 
 		});
+
+
 
 		function guardarMetodoDePagoPorCotizacion() {
 			var errorGeneral = false;
@@ -935,6 +1010,7 @@ if ($nopuedeContinuar == 1) {
 
 		}
 
+		<?php } ?>
 
 		$("#sign_in").submit(function(e){
 			e.preventDefault();
