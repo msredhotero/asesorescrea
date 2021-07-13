@@ -294,7 +294,7 @@ if ($refEstadoCotizacion == 23) {
 						</div>
 						<div class="body">
 							<?php if ($puedeSubirArchivos != 0) { ?>
-                     <button type="button" class="btn btn-info waves-effect btnVolverFiltro" data-ir="transferencia" data-referencia="0"><i class="material-icons">reply</i><span>VOLVER</span></button>
+                     <button type="button" class="btn btn-info waves-effect btnVolverFiltro" data-ir="index" data-referencia="0"><i class="material-icons">reply</i><span>VOLVER</span></button>
 							<?php if ($archivo != '') { ?>
 								<button type="button" class="btn bg-green waves-effect btnFinalizar" ><i class="material-icons">done_all</i><span>FINALIZAR PROCESO</span></button>
 							<?php } ?>
