@@ -104,10 +104,6 @@ if (isset($_GET['id'])) {
 
 	$estadoCotizacionGral = mysql_result($resultado,0,'refestadocotizaciones');
 
-	$usuario = new usuarioCrea();
-
-	$usuario->buscarUsuarioPorId($_SESSION['usua_sahilices']);
-
 	if ($estadoCotizacionGral == 19) {
 		$resVentas = $serviciosReferencias->traerVentasPorCotizacion($id);
 
