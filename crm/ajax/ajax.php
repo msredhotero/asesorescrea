@@ -5745,6 +5745,9 @@ function guardarMetodoDePagoPorCotizacion($serviciosReferencias) {
       $resMetodoPago = $serviciosReferencias->insertarMetodopago($id,$reftipoperiodicidad,$reftipocobranza,$banco,$afiliacionnumber,$tipotarjeta);
    }
 
+   $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',21,$_SESSION['usua_sahilices']);
+   $url = 'documentos.php?id='.$id;
+
    if (($idproducto == 54) && ($usuario->getUsuarioexterno() == '1')) {
       //cuando es un usuario de financiera crea y el producto de vida 500
       //lo envio a firmar directamente
