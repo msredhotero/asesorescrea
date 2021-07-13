@@ -22,13 +22,13 @@ class financieraCrea extends PDO {
 
    }
 
-   public function guardar($refcotizaciones,$refsolicitudes,$refestado) {
+   public function guardar($refcotizaciones,$refsolicitudes,$refestado, $url) {
 
       $conexion = new Conexion();
 
       $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-      $this->cargar($refcotizaciones,$refsolicitudes,$refestado);
+      $this->cargar($refcotizaciones,$refsolicitudes,$refestado,$url);
 
 
       //die(var_dump($this->reftipopersonas));
