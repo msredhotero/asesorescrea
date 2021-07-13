@@ -5748,6 +5748,7 @@ function guardarMetodoDePagoPorCotizacion($serviciosReferencias) {
    $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',21,$_SESSION['usua_sahilices']);
    $url = 'documentos.php?id='.$id;
 
+   /*
    if (($idproducto == 54) && ($usuarioAjax->getUsuarioexterno() == '1')) {
       //cuando es un usuario de financiera crea y el producto de vida 500
       //lo envio a firmar directamente
@@ -5756,7 +5757,7 @@ function guardarMetodoDePagoPorCotizacion($serviciosReferencias) {
    } else {
       $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',$nuevoEstadocotizacion,$_SESSION['usua_sahilices']);
    }
-
+   */
 
    $resPrimaNeta = $serviciosReferencias->modificarCotizacionesPorCampo($id,'primaneta',$precio,$_SESSION['usua_sahilices']);
 
