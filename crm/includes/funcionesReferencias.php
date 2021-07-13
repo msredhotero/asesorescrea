@@ -1919,14 +1919,17 @@ return $res;
                }
 
                //disparo siempre este correo para emision fijos cada vez ue cae en emision
-               if ($rutaUrl == 'emision') {
-                  $exito = $this->enviarEmail($emailFijoEmision1, utf8_decode( $asunto),utf8_decode($cuerpo));
-                  $exito = $this->enviarEmail($emailFijoEmision2, utf8_decode( $asunto),utf8_decode($cuerpo));
-                  $exito = $this->enviarEmail($emailFijoEmision3, utf8_decode( $asunto),utf8_decode($cuerpo));
-                  $exito = $this->enviarEmail($emailFijoEmision4, utf8_decode( $asunto),utf8_decode($cuerpo));
+               if ($idasesor == 31) {
+                  if ($rutaUrl == 'emision') {
+                     $exito = $this->enviarEmail($emailFijoEmision1, utf8_decode( $asunto),utf8_decode($cuerpo));
+                     $exito = $this->enviarEmail($emailFijoEmision2, utf8_decode( $asunto),utf8_decode($cuerpo));
+                     $exito = $this->enviarEmail($emailFijoEmision3, utf8_decode( $asunto),utf8_decode($cuerpo));
+                     $exito = $this->enviarEmail($emailFijoEmision4, utf8_decode( $asunto),utf8_decode($cuerpo));
 
-                  $resMensaje = $this->insertarMensajes($cuerpo,$_SESSION['usua_sahilices'],$emailFijoEmision1.' '.$emailFijoEmision2.' '.$emailFijoEmision3.' '.$emailFijoEmision4, date('Y-m-d H:i:s'));
+                     $resMensaje = $this->insertarMensajes($cuerpo,$_SESSION['usua_sahilices'],$emailFijoEmision1.' '.$emailFijoEmision2.' '.$emailFijoEmision3.' '.$emailFijoEmision4, date('Y-m-d H:i:s'));
+                  }
                }
+
             }
          }
 
