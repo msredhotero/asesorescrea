@@ -114,7 +114,7 @@ if (isset($_GET['id'])) {
 		if (mysql_num_rows($resVentas) > 0) {
 			$resMetodoPago = $serviciosReferencias->traerPeriodicidadventasPorVenta(mysql_result($resVentas,0,0));
 			if (mysql_num_rows($resMetodoPago) > 0) {
-				if ($usuario->getUsuarioexterno() == '0') {
+				if ($usuario->getUsuarioexterno() == '1') {
 					header('Location: metodopago.php?id='.$id);
 				} else {
 					header('Location: comercio_fin.php?id='.$id);
