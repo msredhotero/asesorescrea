@@ -503,6 +503,7 @@ $redireccionar = 0;
 if (($idProducto == 54) && ($usuario->getUsuarioexterno() == '1')) {
 	$cargados = 0;
 	$necesariasParaAprobar = 0;
+	die();
 }
 
 ?>
