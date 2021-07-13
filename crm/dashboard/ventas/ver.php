@@ -199,6 +199,8 @@ if ($err) {
 
 */
 
+$arEstadosPosibles = array(6,3,4,7,8,9,10);
+
 
 ?>
 
@@ -351,7 +353,7 @@ if ($err) {
 											<span>CONTACTOS</span>
 										</button>
 										<?php } ?>
-										<?php if ((mysql_result($resultado,0,'refestadoventa') == 6) && (mysql_num_rows($resPeriodicidad)>0)) { ?>
+										<?php if (in_array(mysql_result($resultado,0,'refestadoventa'), $arEstadosPosibles)) { ?>
 										<button type="button" class="btn bg-black waves-effect btnActivar">
 											<i class="material-icons">done_all</i>
 											<span>ACTIVAR</span>
@@ -368,10 +370,12 @@ if ($err) {
 										<select class="form-control" name="refcotizacioneshuerfanas" id="refcotizacioneshuerfanas">
 											<?php echo $cadCotizacionesHuerfanas; ?>
 										</select>
+										<?php if ($cadCotizacionesHuerfanas != '') { ?>
 										<button type="button" class="btn bg-brown waves-effect btnCambiar">
 											<i class="material-icons">compare_arrows</i>
 											<span>CAMBIAR</span>
 										</button>
+									<?php } ?>
 									</div>
 								</div>
 
