@@ -5669,9 +5669,9 @@ function guardarMetodoDePagoPorCotizacion($serviciosReferencias) {
 
    $idproducto = mysql_result($resCotizacion,0,'refproductos');
 
-   $usuario = new usuarioCrea();
+   $usuarioAjax = new usuarioCrea();
 
-   $usuario->buscarUsuarioPorId($_SESSION['usua_sahilices']);
+   $usuarioAjax->buscarUsuarioPorId($_SESSION['usua_sahilices']);
 
    $metodopago = $_POST['metodopago'];
    $banco = $_POST['banco'];
@@ -5748,7 +5748,7 @@ function guardarMetodoDePagoPorCotizacion($serviciosReferencias) {
    $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',21,$_SESSION['usua_sahilices']);
    $url = 'documentos.php?id='.$id;
 
-   if (($idproducto == 54) && ($usuario->getUsuarioexterno() == '1')) {
+   if (($idproducto == 54) && ($usuarioAjax->getUsuarioexterno() == '1')) {
       //cuando es un usuario de financiera crea y el producto de vida 500
       //lo envio a firmar directamente
       $resEstado = $serviciosReferencias->modificarCotizacionesPorCampo($id,'refestadocotizaciones',21,$_SESSION['usua_sahilices']);
