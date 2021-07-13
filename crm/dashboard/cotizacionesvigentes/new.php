@@ -27,6 +27,10 @@ $serviciosSeguridad = new ServiciosSeguridad();
 $serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../cotizacionesvigentes/');
 //*** FIN  ****/
 
+$usuario = new usuarioCrea();
+
+$usuario->buscarUsuarioPorId($_SESSION['usuaid_sahilices']);
+
 $fecha = date('Y-m-d');
 
 $rCliente = $serviciosReferencias->traerClientesPorUsuario($_SESSION['usuaid_sahilices']);
@@ -48,7 +52,12 @@ if (isset($_GET['id'])) {
 		$resVentas = $serviciosReferencias->traerMetodopagoPorCotizacion($_GET['id']);
 
 		if (mysql_num_rows($resVentas) > 0) {
-			return header('Location: ../venta/comercio_fin.php?id='.$_GET['id']);
+			if ($usuario->getUsuarioexterno() == '1') {
+				return header('Location: ../venta/metodopago.php?id='.$_GET['id']);
+			} else {
+				return header('Location: ../venta/comercio_fin.php?id='.$_GET['id']);
+			}
+
 		} else {
 			return header('Location: ../venta/metodopago.php?id='.$_GET['id']);
 		}
