@@ -104,13 +104,22 @@ if (isset($_GET['id'])) {
 
 	$estadoCotizacionGral = mysql_result($resultado,0,'refestadocotizaciones');
 
+	$usuario = new usuarioCrea();
+
+	$usuario->buscarUsuarioPorId($_SESSION['usua_sahilices']);
+
 	if ($estadoCotizacionGral == 19) {
 		$resVentas = $serviciosReferencias->traerVentasPorCotizacion($id);
 
 		if (mysql_num_rows($resVentas) > 0) {
 			$resMetodoPago = $serviciosReferencias->traerPeriodicidadventasPorVenta(mysql_result($resVentas,0,0));
 			if (mysql_num_rows($resMetodoPago) > 0) {
-				header('Location: comercio_fin.php?id='.$id);
+				if ($usuario->getUsuarioexterno() == '0') {
+					header('Location: metodopago.php?id='.$id);
+				} else {
+					header('Location: comercio_fin.php?id='.$id);
+				}
+
 			} else {
 				header('Location: metodopago.php?id='.$id);
 			}
