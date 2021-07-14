@@ -1912,14 +1912,24 @@ return $res;
                $resMensaje = $this->insertarMensajes($cuerpo,$_SESSION['usua_sahilices'],substr($cadDestino,0,-2), date('Y-m-d H:i:s'));
 
                //disparo siempre este correo para mesa de control cada vez ue cae en mesa de control
-               if ($rutaUrl == 'mesacontrol') {
-                  $exito = $this->enviarEmail($emailFijoMesaControl, utf8_decode( $asunto),utf8_decode($cuerpo));
+               if ($idasesor == 31) {
+                 if ($rutaUrl == 'mesacontrol') {
+                    $exito = $this->enviarEmail($emailFijoMesaControl, utf8_decode( $asunto),utf8_decode($cuerpo));
 
-                  $resMensaje = $this->insertarMensajes($cuerpo,$_SESSION['usua_sahilices'],$emailFijoMesaControl, date('Y-m-d H:i:s'));
-               }
+                    $resMensaje = $this->insertarMensajes($cuerpo,$_SESSION['usua_sahilices'],$emailFijoMesaControl, date('Y-m-d H:i:s'));
+
+
+                    $exito = $this->enviarEmail($emailFijoEmision1, utf8_decode( $asunto),utf8_decode($cuerpo));
+                    $exito = $this->enviarEmail($emailFijoEmision2, utf8_decode( $asunto),utf8_decode($cuerpo));
+                    $exito = $this->enviarEmail($emailFijoEmision3, utf8_decode( $asunto),utf8_decode($cuerpo));
+                    $exito = $this->enviarEmail($emailFijoEmision4, utf8_decode( $asunto),utf8_decode($cuerpo));
+
+                    $resMensaje = $this->insertarMensajes($cuerpo,$_SESSION['usua_sahilices'],$emailFijoEmision1.' '.$emailFijoEmision2.' '.$emailFijoEmision3.' '.$emailFijoEmision4, date('Y-m-d H:i:s'));
+
+                 }
 
                //disparo siempre este correo para emision fijos cada vez ue cae en emision
-               if ($idasesor == 31) {
+
                   if ($rutaUrl == 'emision') {
                      $exito = $this->enviarEmail($emailFijoEmision1, utf8_decode( $asunto),utf8_decode($cuerpo));
                      $exito = $this->enviarEmail($emailFijoEmision2, utf8_decode( $asunto),utf8_decode($cuerpo));
