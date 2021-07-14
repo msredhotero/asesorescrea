@@ -388,7 +388,7 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 					showConfirmButton: false
 				});
 			}
-			
+
 		});
 
 		function rechazarPolizarAgente(id) {
@@ -697,6 +697,16 @@ $lblreemplazo	= array('Prima Neta','Prima Total','% Comision','Monto Comision','
 			$(location).attr('href','poliza.php?id=' + idTable);
 
 		});//fin del boton modificar
+
+
+		$("#example").on("click",'.btnEndoso', function(){
+			idTable =  $(this).attr("id");
+			$(location).attr('href','endoso.php?id=' + idTable);
+
+		});//fin del boton modificar
+
+
+
 
 		$("#example2").on("click",'.btnPoliza', function(){
 			idTable =  $(this).attr("id");

@@ -24,7 +24,7 @@ $baseHTML = new BaseHTML();
 //*** SEGURIDAD ****/
 include ('../../includes/funcionesSeguridad.php');
 $serviciosSeguridad = new ServiciosSeguridad();
-$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../ventas/');
+$serviciosSeguridad->seguridadRuta($_SESSION['refroll_sahilices'], '../listadopolizas/');
 
 $arRoles = array(1,4,11,7,10);
 //*** FIN  ****/

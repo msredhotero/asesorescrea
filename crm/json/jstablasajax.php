@@ -167,9 +167,9 @@ switch ($tabla) {
 			$class = array('bg-green','bg-red','bg-blue');
 			$icon = array('done','remove','search');
 		} else {
-			$label = array('btnPoliza');
-			$class = array('bg-blue');
-			$icon = array('file_download');
+			$label = array('btnPoliza','btnEndoso');
+			$class = array('bg-blue','bg-orange');
+			$icon = array('file_download','swap_vert');
 		}
 
 
